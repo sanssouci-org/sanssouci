@@ -1,0 +1,10 @@
+X <- matrix(rnorm(1e5), 1e3, 1e2)
+y <- (runif(1e2)>0.5)
+
+res <- apply(X, 1, FUN=function(x) wilcox.test(x[y==0], x[y==1]))
+str(res)
+p.value <- sapply(res, FUN=function(x) x$p.value)
+statistic <- sapply(res, FUN=function(x) x$statistic)
+str(p.value)
+str(statistic)
+plot(statistic, p.value)

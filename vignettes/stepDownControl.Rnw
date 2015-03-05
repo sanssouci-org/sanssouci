@@ -1,0 +1,141 @@
+% \VignetteEngine{knitr::knitr}
+
+\documentclass{article}
+\usepackage[sc]{mathpazo}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{verbose,tmargin=2.5cm,bmargin=2.5cm,lmargin=2.5cm,rmargin=2.5cm}
+\setcounter{secnumdepth}{2}
+\setcounter{tocdepth}{2}
+\usepackage{url}
+\usepackage[unicode=true,pdfusetitle,
+bookmarks=true,bookmarksnumbered=true,bookmarksopen=true,bookmarksopenlevel=2,
+breaklinks=false,pdfborder={0 0 1},backref=false,colorlinks=false]
+{hyperref}
+\usepackage{breakurl}
+\begin{document}
+
+
+\title{Step-down JFWER control using package \texttt{sansSouci}}
+
+\author{Pierre}
+
+\maketitle
+
+<<setup, include=FALSE, cache=FALSE, show=FALSE>>=
+library(knitr)
+# set global chunk options
+opts_chunk$set(fig.path='fig/', fig.align='center', fig.show='hold')
+options(replace.assign=TRUE,width=90)
+cachePath <- "/tmp/Rcache/"
+if (!file.exists(cachePath)) {
+    dir.create(cachePath)
+}
+opts_chunk$set(cache=TRUE, cache.path=cachePath)
+@
+
+<<>>=
+library(sansSouci)
+@ 
+
+\section{Simulation settings}
+Parameters:
+<<>>=
+m <- 2e2
+rho <- 0
+n <- 123
+pi0 <- 0.6
+B <- 1e3
+
+#set.seed(0xBEEF)
+sim <- simulateMein2006(m, rho, n, pi0, SNR=2)
+X <- sim$X
+y <- sim$y
+H0 <- which(sim$H==0)
+H1 <- which(sim$H==1)
+m0 <- length(H0)
+m1 <- length(H1)
+@ 
+
+Test statistics
+<<>>=
+w <- wilcoxStat(X, y, B=B)
+scoreMat <- w$stat0Mat
+stat <- w$stat
+@
+
+Show test statistics
+<<testStat>>=
+pch <- 20
+plot(stat, col=rep(c(1, 2), times=c(m0, m1)), main="Test statistics", pch=pch)
+legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
+@
+
+\section{Step-down JFWER control}
+<<>>=
+alpha <- 0.25
+
+resSD <- stepDownControl(stat, scoreMat, tau="kFWER", alpha=alpha, verbose=TRUE)
+thrMat <- resSD$thrMat
+@ 
+
+Confidence envelopes
+<<>>=
+nSteps <- ncol(thrMat)
+thr <- thrMat[, nSteps]
+o <- order(stat, decreasing=TRUE)
+statO <- stat[o]
+
+Vbar <- upperBoundFP(statO, thr)  ## default is flavor "Roquain2014"
+VbarM <- upperBoundFP(statO, thr, flavor="Mein2006")  ## faster for now
+identical(Vbar, VbarM)  ## Generally TRUE
+
+bounds <- apply(thrMat, 2, function(thr) upperBoundFP(statO, thr, flavor="Mein2006"))
+@ 
+
+True number of false discoveries among first rejections
+<<>>=
+V <- cumsum(o %in% H0)
+@ 
+
+"Oracle" JFWER thresholds
+<<>>= 
+scoreMatOracle <- scoreMat[-H1, ]
+resOracle <- getJointFWERThresholds(scoreMatOracle, tau="kFWER", alpha=alpha)
+thrO <- c(resOracle$thr, rep(-Inf, m1))
+VbarO <- upperBoundFP(statO, thrO, flavor="Mein2006")
+@
+
+Graphically:
+<<JFWER_SD,tidy=FALSE>>=
+cols1 <- seq.int(nSteps)
+ltys1 <- rep(1, nSteps)
+ttag <- paste("m=", m, ", rho=", rho, ", alpha=", alpha, sep="")
+ttl <- paste("Bounds on #FP among rejected hypotheses", ttag, sep="\n")
+xmax <- min(200, m)
+ymax <- bounds[xmax, 1]
+matplot(bounds, t='s', lty=1, ylab="V", col=cols1, 
+        main=ttl, xlim=c(1, xmax), ylim=c(0, ymax))
+
+cols2 <- c("purple", "pink")
+ltys2 <- rep(1, 2)
+lines(V, col=cols2[1], t="s", lty=ltys2[1])
+lines(VbarO, col=cols2[2], t="s", lty=ltys2[2])
+
+lgd <- c(paste("SD-JFWER(step=", 1:nSteps, ")", sep=""), "True V", "Oracle JFWER")
+ltys <- c(ltys1, ltys2)
+cols <- c(cols1, cols2)
+legend("top", lgd, col=cols, lty=ltys)
+
+statSc <- stat/max(stat)*ymax  ## scaled test statistics (for display)
+colStat <- 1+sim$H
+points(statSc[o], col=colStat[o], pch=pch, cex=0.5)
+legend("left", c("H0", "H1"), pch=pch, col=1:2)
+@
+
+\section{Session information}
+<<>>=
+sessionInfo()
+@ 
+
+\end{document}
