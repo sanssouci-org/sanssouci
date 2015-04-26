@@ -23,21 +23,28 @@ simulateMein2006 <- structure(function(
   if (length(SNR)>1) {
     stopifnot(length(SNR)==m1)
   }
-  
+
   ## equi-correlated noise
   eps <- simulateGaussianEquiCorrelatedNulls(m, n=n, rho=rho, w=w)
   w <- attr(eps, "w")
-  
+
   ## binomial response
   y <- rbinom(n, 1, p)
 
   ## means
   mu <- matrix(0, nrow=nrow(eps), ncol=ncol(eps)) ## m x n
   if (m0<m) {
-    w1 <- which(y==1)
-    mu[H1, w1] <- SNR*sqrt(2*log(n)/n)
+      w1 <- which(y==1)
+      mu[H1, w1] <- SNR*sqrt(2*log(n)/n)
   }
   X <- mu+eps
+  ## *not* faster:
+  ## mu <- SNR*sqrt(2*log(n)/n)
+  ## if (m0<m) {
+  ##     w1 <- which(y==1)
+  ##     eps[H1, w1] <- eps[H1, w1] + mu
+  ## }
+  }
   list(
       X=X,
 ### An \eqn{m x n} covariate matrix
@@ -61,7 +68,7 @@ simulateMein2006 <- structure(function(
   sim <- simulateMein2006(m, rho, n, pi0, SNR=1)
   X <- sim$X
   y <- sim$y
-  
+
   w <- wilcoxStat(X, y, B=B)
   scoreMat <- w$stat0Mat
   stat <- w$stat

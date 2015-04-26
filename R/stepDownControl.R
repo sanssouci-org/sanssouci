@@ -16,7 +16,8 @@ stepDownControl <- structure(function(
     ) {
   m <- nrow(mat)
   stopifnot(length(stat)==m)
-
+  stopifnot(tau=="kFWER")  ## other flavor not implemented yet (?)
+  
   ## Generic 'tau' function
   tauQR <- function(alpha, Q, r) {
     m <- nrow(Q)

@@ -104,7 +104,9 @@ getJointFWERThresholds <- structure(function(
     warning("Could not achieve target JFWER control")
   }
   if (length(thr)==0) { ## may occur when 'idx' in 'tau' is 0...
-    thr <- rep(Inf, kMax)
+      thr <- rep(Inf, kMax)
+  } else {
+      probk <- rowMeans(isAbove)
   }
   
   stopifnot(length(thr)==kMax)  ## sanity check
@@ -112,27 +114,20 @@ getJointFWERThresholds <- structure(function(
   thr[idxs] <- thr[kMax]
   stopifnot(length(thr)==m)  ## sanity check
 
-  res <- list(thr=thr,
-### A numeric vector \code{thr}, such that the estimated probability that
-### there exists an index \eqn{k} between 1 and m such that the k-th maximum
-### of the test statistics of is greater than \eqn{thr[k]}, is less than \eqn{\alpha}.
-              prob=prob,
-### Achieved proportion (should be between \eqn{alpha-tol} and \eqn{alpha}).
-              probs=probs,
-### The sequence of such proportions along the steps of the dichotomy.
-              steps=steps,
-### Number of dichotomy steps performed.
-              lambda=eta,
-### Correction factor (in [0,1]) from the original (kFWER) thresholds to JFWER thresholds.
-              etas=etas,
-### The sequence of such correction factors along the steps of the dichotomy.
-              reason=reason,
-### A character sequence, the reason for stopping.
-              tau=tau,
-### A function that returns a vector of \code{m} thresholds (see \link{details}).  It corresponds to the input argument \code{tau} if it was a function. Otherwise, it is calculated from the input matrix.
+  ##value<< List with elements:
+  res <- list(thr=thr,  ##<< A numeric vector \code{thr}, such that the estimated probability that ##<< there exists an index \eqn{k} between 1 and m such that the k-th maximum ##<< of the test statistics of is greater than \eqn{thr[k]}, is less than \eqn{\alpha}.
+              prob=prob, ##<< Estimated probability that there exists an index \eqn{k} between 1 ##<< and m such that the k-th maximum of the test statistics of is ##<< greater than \eqn{thr[k]} (should be in \eqn{[\alpha-tol, alpha]}).
+              probs=probs, ##<< The sequence of such estimated probabilities along the steps of the dichotomy.
+              probk=probk, ##<< A vector of length \eqn{m} whose \eqn{k}th entry is the estimated probability that the k-th maximum of the test statistics of is greater than \eqn{thr[k]}.
+              steps=steps, ##<< Number of dichotomy steps performed.
+              lambda=eta, ##<< Correction factor (in [0,1]) from the original (kFWER) thresholds to JFWER thresholds.
+              etas=etas, ##<< The sequence of such correction factors along the steps of the dichotomy.
+              reason=reason, ##<< A character sequence, the reason for stopping.
+              tau=tau, ##<< A function that returns a vector of \code{m} thresholds (see \link{details}).  It corresponds to the input argument \code{tau} if it was a function. Otherwise, it is calculated from the input matrix.
               Q=Q
-### A \eqn{m} x \eqn{B} matrix of B realizations of ranked test statistics under H0
+              ##end<<
               )
+### A \eqn{m} x \eqn{B} matrix of B realizations of ranked test statistics under H0
 }, ex=function(){
   m <- 1023
   B <- 1e3
