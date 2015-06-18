@@ -44,7 +44,6 @@ simulateMein2006 <- structure(function(
   ##     w1 <- which(y==1)
   ##     eps[H1, w1] <- eps[H1, w1] + mu
   ## }
-  }
   list(
       X=X,
 ### An \eqn{m x n} covariate matrix
