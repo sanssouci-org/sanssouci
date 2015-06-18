@@ -53,3 +53,46 @@ dev.off()
 pdf("fig/BNR/gamma,kFWER.pdf")
 boxplot(t(res[, "kFWER",]), ylab=expression(gamma), xlab=expression(rho), main="gamma adjustment for kFWER thresholds")
 dev.off()
+
+## kfwer
+resK <- mclapply(1:length(rhos), FUN=function(rr) {
+    rho <- rhos[rr]
+    print(rho)
+
+    mat <- simulateGaussianNullsFromFactorModel(m, n=B, flavor=flavor, rho=rho)
+
+    resList <- NULL
+    for (mm in methods) {
+        resJ <- getJointFWERThresholds(mat, tau=mm, alpha, maxSteps=maxSteps, kMax=kMax)
+        resList[[mm]] <- resJ$probk
+    }
+    resList
+}, mc.cores=3)
+
+library("abind")
+resSimes <- sapply(resK, "[[", "Simes")
+resKFWER <- sapply(resK, "[[", "kFWER")
+colnames(resSimes) <- rhos
+colnames(resKFWER) <- rhos
+
+ww <- match(c(0, 0.1, 0.2, 0.5), rhos)
+cols <- seq(along=ww)
+
+pdf("unbalanced.pdf")
+par(lwd=1.5)
+matplot(resSimes[, ww], t='l', lty=1, col=cols, ylab=expression(P(p[(k)] < tau[k])), xlab="k")
+matlines(resKFWER[, ww], t='l', lty=2, col=cols)
+legend("topright", col=cols, as.character(rhos[ww]), title=expression(rho), lty=1)
+legend("topleft", col=1, lty=1:2, c("Simes", "kFWER"))
+dev.off()
+
+pdf("unbalanced,zoom.pdf")
+matplot(resSimes[, ww], t='l', lty=1, col=cols, ylab=expression(P(p[(k)] < tau[k])), xlim=c(1,20), xlab="k")
+matlines(resKFWER[, ww], t='l', lty=2, col=cols)
+legend("topright", col=cols, as.character(rhos[ww]), title=expression(rho), lty=1)
+legend("topleft", col=1, lty=1:2, c("Simes", "kFWER"))
+dev.off()
+
+matplot(-log10(resSimes[, ww]), t='l', lty=1)
+matlines(-log10(resKFWER[, ww]), t='l', lty=2)
+
