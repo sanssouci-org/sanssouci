@@ -21,7 +21,7 @@ if (detectCores()<30) stop("This is intended to be run on a 32 CPU machine")
 resP <- mclapply(1:length(rhos), FUN=function(rr) {
     rho <- rhos[rr]
     print(rho)
-    
+
     resRR <- mclapply(1:nbSimu, FUN=function(bb) {
         mat <- simulateGaussianNullsFromFactorModel(m, n=B, flavor=flavor, rho=rho)
         gammas <- numeric(0L)
@@ -42,6 +42,14 @@ dimnames(res) <- list(rho=as.character(rhos),
                       B=as.character(1:nbSimu))
 
 saveRDS(res, file="resData/gamma.rds")
-res <- readRDS("resData/gamma.rds")
-boxplot(t(res[, 1,]), ylab=expression(gamma), xlab=expression(rho), main="gamma adjustment -- Simes thresholds")
 
+##
+res <- readRDS("resData/gamma.rds")
+
+pdf("fig/BNR/gamma,Simes.pdf")
+boxplot(t(res[, "Simes",]), ylab=expression(gamma), xlab=expression(rho), main="gamma adjustment for Simes' thresholds")
+dev.off()
+
+pdf("fig/BNR/gamma,kFWER.pdf")
+boxplot(t(res[, "kFWER",]), ylab=expression(gamma), xlab=expression(rho), main="gamma adjustment for kFWER thresholds")
+dev.off()
