@@ -1,3 +1,6 @@
 exportPattern(".")
 
 importFrom("Matrix", isSymmetric)
+importFrom("Matrix", Matrix)
+importFrom("matrixStats", rowMaxs)
+importFrom("matrixStats", rowRanks)

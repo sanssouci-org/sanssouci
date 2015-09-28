@@ -17,7 +17,7 @@ falseDiscoveryEnvelope <- structure(function(
   m <- 200
   alpha <- 0.2
   thr <- alpha*1:m/m  ## Simes
-  
+
   falseDiscoveryEnvelope(0.1, thr)
   curve(falseDiscoveryEnvelope(x, thr))
 
@@ -25,7 +25,7 @@ falseDiscoveryEnvelope <- structure(function(
   B <- 1e3
   rho <- 0.3
   flavor <- c("independent", "equi-correlated", "3-factor")[2]
-  mat <- replicate(B, simulateGaussianNulls(m, flavor=flavor, rho=rho)$Y)
+  mat <- replicate(B, simulateGaussianNullsFromFactorModel(m, flavor=flavor, rho=rho)$Y)
 
   res <- getJointFWERThresholds(mat, tau="Simes", alpha, maxSteps=100)
   thr <- 1-pnorm(res$thr) ## converting to p-value scale
