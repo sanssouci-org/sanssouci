@@ -13,8 +13,11 @@ getJointFWERThresholds <- structure(function(
     kMax=nrow(mat),
 ### For simultaneous control of (\eqn{k}-FWER for all \eqn{k \le
 ### k[max]}).
-    flavor=c("dichotomy", "direct"),
-### How should the threshold be calibrated? Defaults to 'dichotomy'.
+    flavor=c("dichotomy", "pivotalStat"),
+### How should the threshold be calibrated? Defaults to
+### 'dichotomy'. The other option ('pivotalStat') avoids dichotomy by
+### directly calculating a pivotal statistic of which the target value
+### of \expr{lambda} is simply the quantile of order \expr{alpha}.
     maxSteps=100,
 ### Maximal number of steps in dichotomy (hence only used when
 ### \code{flavor=='dichotomy'}).  If \code{maxSteps==1}, no dichotomy
@@ -127,7 +130,17 @@ getJointFWERThresholds <- structure(function(
             idxs <- seq(from=kMax+1, to=m, length=m-kMax)
             thr[idxs] <- thr[kMax]
             stopifnot(length(thr)==m)  ## sanity check
-        } else {            ## Etienne's trick
+        } else {            ## flavor=="pivotalStat"
+            ###<<details{If \code{flavor=="pivotalStat"}, then the
+            ###function returns an element \code{pivotalStat}, whose
+            ###quantile of order \code{alpha} is the target
+            ###\code{lambda(\alpha)}. A major advantage of this option
+            ###is that \lambda(\alpha) may then be calculated for any
+            ###\code{\alpha} at no additional comutational cost. This
+            ###flavor is slightly faster than the default flavor for
+            ###Simes thresholds, but it is substantially slower (with
+            ###the current implementation) for kFWER thresholds.}
+
             stopifnot(tauCh %in% c("Simes", "kFWER"))
             if (tauCh=="Simes") {
             ## for Simes, s_k^{-1}(u) = (m/k)*(1-pnorm(u))
@@ -236,6 +249,9 @@ getJointFWERThresholds <- structure(function(
 
 ############################################################################
 ## HISTORY:
+## 2015-12-10
+## o Added argument 'flavor' to make use of the pivotal statistic
+## identified by Etienne (and thus avoid dichotomy).
 ## 2014-05-09
 ## o Added item 'tau' to return value.
 ## 2014-02-11
