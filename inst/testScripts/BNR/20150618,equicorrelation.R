@@ -1,8 +1,8 @@
 library("sansSouci")
 
 ## model parameters
-m <- 1e3
-B <- 1e4
+m <- 5e2+1
+B <- 5e3
 
 ## JFWER setup
 maxSteps <- 100
@@ -32,7 +32,6 @@ resP <- mclapply(1:length(rhos), FUN=function(rr) {
         gammas
     }, mc.cores=8)
     resRR <- do.call(cbind, resRR)
-    res[rr,,] <- resRR
 }, mc.cores=3)
 
 library("abind")
@@ -47,12 +46,30 @@ saveRDS(res, file="resData/gamma.rds")
 res <- readRDS("resData/gamma.rds")
 
 pdf("fig/BNR/gamma,Simes.pdf")
-boxplot(t(res[, "Simes",]), ylab=expression(gamma), xlab=expression(rho), main="gamma adjustment for Simes' thresholds")
+par(mar=c(4, 5, 0, 0)+0.1, cex.lab=1.5)
+boxplot(t(res[, "Simes",]), xlab=expression(rho), ylab=expression(lambda(alpha)/alpha))
 dev.off()
 
 pdf("fig/BNR/gamma,kFWER.pdf")
-boxplot(t(res[, "kFWER",]), ylab=expression(gamma), xlab=expression(rho), main="gamma adjustment for kFWER thresholds")
+par(mar=c(4, 5, 0, 0)+0.1, cex.lab=1.5)
+boxplot(t(res[, "kFWER",]), xlab=expression(rho), ylab=expression(lambda(alpha)/alpha))
 dev.off()
+
+## unbalancedness
+seqk <- 1:m
+alpha <- 0.1
+
+pSimes <- function(k, m, alpha) pbeta(alpha*k/m, k, m-k+1)
+pkSimes <- function(alpha, m) sapply(seqk, pSimes, m, alpha)
+probakSimes <- pkSimes(alpha, m)
+                                        #plot(seqk[1:10],log(probakSimes)[1:10],type="l",col="red",lwd=2,ylab="",xlab="")
+ks <- c(1:5,10,100)
+cors <- c(1:6)
+signif(probakSimes[ks], 2)
+
+lambdas <- alpha*rowMeans(res[, "Simes",])  ## average value of $\lambda(\alpha)$
+las <- sapply(lambdas, pkSimes, m)
+signif(las[ks, cors], 2)
 
 ## kfwer
 resK <- mclapply(1:length(rhos), FUN=function(rr) {

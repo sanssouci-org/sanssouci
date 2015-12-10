@@ -5,7 +5,7 @@ getJointFWERThresholds <- structure(function(
 ### statistics under the null hypothesis. \describe{ \item{m}{is the
 ### number of null hypotheses tested} \item{B}{is the number of
 ### Monte-Carlo samples}}
-    tau=c("Simes", "kFWER", "LR06"),
+    tau=c("Simes", "kFWER"),
 ### A character value or a function that returns a vector of \code{m}
 ### thresholds (see \link{details}).
     alpha,
@@ -33,9 +33,10 @@ getJointFWERThresholds <- structure(function(
         if (alpha*B<1) {  ## sanity check
             stop("Please make sure that alpha*ncol(mat) is greater than 1!")
         }
-        matS <- apply(mat, 2, sort, decreasing=TRUE)
+        ## k-max of the test statistics under H0:
+        kmaxH0 <- apply(mat, 2, sort, decreasing=TRUE)
         ## truncate to [1,kMax]
-        matS <- matS[1:kMax, , drop=FALSE]
+        kmaxH0 <- kmaxH0[1:kMax, , drop=FALSE]
 
         Q <- NULL
         if (mode(tau)=="character") {
@@ -43,22 +44,23 @@ getJointFWERThresholds <- structure(function(
 ###   \item{Simes}{The classical family of thresholds introduced by Simes (1986): \eqn{\alpha*k/m}. This family yields joint FWER control if the test statistics are positively dependent (PRDS) under H0.}
 ###   \item{kFWER}{A family \eqn{(t_k)} calibrated so that for each k, \eqn{(t_k)} controls the (marginal) k-FWER.}
 ### }
+            tauCh <- tau
             tau <- match.arg(tau)
             if (tau=="kFWER") {
                 etaMax <- min(2, 1/alpha)
-                matSS <- apply(matS, 1, sort, decreasing=TRUE)
-                matSS <- t(matSS)
+                kmaxH0s <- apply(kmaxH0, 1, sort, decreasing=TRUE)
+                Q <- t(kmaxH0s) ## corresponds to matrix 'Q' in Meinshausen 2006
                 tau <- function(alpha) {
                     idx <- floor(min(alpha,1)*(B-1))   ## NB: B-1 ensures *non-asymptotically* valid quantiles
-                    matSS[, idx]
+                    Q[, idx]
                 }
-                Q <- matSS  ## Meinshausen's 'Q' matrix
             } else if (tau=="Simes") {
                 etaMax <- min(20, 1/alpha)
                 tau <- function(alpha) qnorm(1-min(alpha, 1)*(1:kMax)/m)
             }
         } else if (mode(tau)=="function") {
 ###<<details{If \code{\tau} is a function, it has to be of the form \eqn{\tau:\alpha \mapsto (\tau_k(\alpha))_{k=1 \dots m}}, such that \eqn{\tau(\alpha)} ensures marginal kFWER control, that is, \eqn{\forall k, P(k-inf(P_{i}) \leq \tau_k(alpha)) \leq \alpha}}
+            tauCh <- "user-defined"
             etaMax <- 2
         }
 
@@ -79,7 +81,7 @@ getJointFWERThresholds <- structure(function(
                 steps <- steps+1
                 eta <- (etaMin+etaMax)/2  ## candidate value
                 thr <- tau(alpha*eta)
-                isAbove <- apply(matS, 2, ">", thr)
+                isAbove <- sweep(kmaxH0, 1, thr,  ">")
                 ## details << A null hypothesis si rejected iff its test statistic is greater _or equal_ to a threshold value
                 ## Hence the ">" and not ">=" in the definition of 'isAbove'
                 dim(isAbove) <- c(length(thr), B); ## avoid coercion to vector if only one column (B==1)
@@ -119,21 +121,33 @@ getJointFWERThresholds <- structure(function(
             } else {
                 probk <- rowMeans(isAbove)
             }
+            pivotalStat <- NA_real_
 
             stopifnot(length(thr)==kMax)  ## sanity check
             idxs <- seq(from=kMax+1, to=m, length=m-kMax)
             thr[idxs] <- thr[kMax]
             stopifnot(length(thr)==m)  ## sanity check
-        } else {
-            ## Etienne's trick
-            rks <- apply(mat, 1, rank, ties.method="min")
-            maxs <- rowMaxs(rks)
-            res <- (B+1-maxs)/B
-            alphaEta <- quantile(res, alpha, type=1)
+        } else {            ## Etienne's trick
+            stopifnot(tauCh %in% c("Simes", "kFWER"))
+            if (tauCh=="Simes") {
+            ## for Simes, s_k^{-1}(u) = (m/k)*(1-pnorm(u))
+                pval <- 1-pnorm(kmaxH0)
+                skInv <- sweep(pval, 1, m/1:m, "*")
+                mins <- colMins(skInv)
+            } else if (tauCh=="kFWER") {
+                getMin <- function(bb) {
+                    kb <- kmaxH0[,bb]
+                    sw <- sweep(Q, 1, kb, "<")
+                    Fkhat <- rowSums(sw)/B  ## B+1???
+                    return(min(Fkhat))
+                }
+                mins <- sapply(1:B, getMin)
+            }
+            lambda <- quantile(mins, alpha, type=1)
 
-            ## return values:
-            thr <- tau(alphaEta)
-            isAbove <- apply(matS, 2, ">", thr)
+            ## return values
+            thr <- tau(lambda)
+            isAbove <- sweep(kmaxH0, 1, thr,  ">")
             dim(isAbove) <- c(length(thr), B); ## avoid coercion to vector if only one column (B==1)
             nAbove <- colSums(isAbove)
             probk <- rowMeans(isAbove)
@@ -146,10 +160,11 @@ getJointFWERThresholds <- structure(function(
             }
             probs <- prob
             steps <- 0L
-            eta <- alphaEta/alpha
+            eta <- lambda/alpha
             etas <- eta
             reason <- NA_character_
-        }
+            pivotalStat <- mins
+        } ## if (flavor) { ...
 
         ##value<< List with elements:
         res <- list(thr=thr,  ##<< A numeric vector \code{thr}, such that the estimated probability that ##<< there exists an index \eqn{k} between 1 and m such that the k-th maximum ##<< of the test statistics of is greater than \eqn{thr[k]}, is less than \eqn{\alpha}.
@@ -161,7 +176,8 @@ getJointFWERThresholds <- structure(function(
                     etas=etas, ##<< The sequence of such correction factors along the steps of the dichotomy.
                     reason=reason, ##<< A character sequence, the reason for stopping.
                     tau=tau, ##<< A function that returns a vector of \code{m} thresholds (see \link{details}).  It corresponds to the input argument \code{tau} if it was a function. Otherwise, it is calculated from the input matrix.
-                    Q=Q
+                    Q=Q,
+                    pivotalStat=pivotalStat ##<< A numeric vector, the values of the pivotal statistic whose quantile of order \eqn{alpha} is \eqn{lambda}
                     ##end<<
                     )
 ### A \eqn{m} x \eqn{B} matrix of B realizations of ranked test statistics under H0
@@ -225,7 +241,7 @@ getJointFWERThresholds <- structure(function(
 ## 2014-02-11
 ## o Now using '(B-1)' instead of 'B' in previous SPEEDUP.
 ## 2014-01-16
-## o SPEEDUP: now pre-sorting 'matS' instead of using rowQuantiles within
+## o SPEEDUP: now pre-sorting 'kmaxH0' instead of using rowQuantiles within
 ## 'tau' for 'kFWER'.
 ## 2013-03-29
 ## o Created.

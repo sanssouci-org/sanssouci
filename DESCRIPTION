@@ -4,8 +4,8 @@ Title: Confidence envelopes for the false discovery process
 Author: Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 Maintainer: Pierre Neuvial <pierre.neuvial@genopole.cnrs.fr>
 License: GPL-3
-Version: 0.0.11
-Date: 2015-08-14
+Version: 0.1.0
+Date: 2015-12-10
 Description: This package implements confidence envelopes for the false discovery process that adapt to dependence.
 Imports: Matrix, matrixStats
 Suggests: knitr
