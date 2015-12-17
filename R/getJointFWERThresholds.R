@@ -30,7 +30,9 @@ getJointFWERThresholds <- structure(function(
 ### Defaults to \code{FALSE}.
     {
         flavor <- match.arg(flavor)
-        print(flavor)
+        if (verbose) {
+            print(flavor)
+        }
         m <- nrow(mat)
         B <- ncol(mat)
         if (alpha*B<1) {  ## sanity check
