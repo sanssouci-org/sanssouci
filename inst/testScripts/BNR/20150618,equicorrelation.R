@@ -47,14 +47,17 @@ if (FALSE) {
 ##
 res <- readRDS("resData/gamma.rds")
 
-pdf("fig/BNR/gamma,Simes.pdf")
+pdf("../../../../fig/BNR/gamma,Simes.pdf")
 par(mar=c(4, 5, 0, 0)+0.1, cex.lab=1.5)
-boxplot(t(res[, "Simes",]), xlab=expression(rho), ylab=expression(lambda(alpha)/alpha))
+resS <- t(res[, "Simes",])
+boxplot(resS, xlab=expression(rho), ylab=expression(lambda(alpha)/alpha))
 dev.off()
 
-pdf("fig/BNR/gamma,kFWER.pdf")
+pdf("../../../../fig/BNR/gamma,kFWER.pdf")
 par(mar=c(4, 5, 0, 0)+0.1, cex.lab=1.5)
-boxplot(t(res[, "kFWER",]), xlab=expression(rho), ylab=expression(lambda(alpha)/alpha))
+resK <- t(res[, "kFWER",])
+boxplot(resK, xlab=expression(rho), ylab=expression(lambda(alpha)/alpha), ylim=c(0, max(resK)))
+abline(h=1/m, lty=2)
 dev.off()
 
 ## unbalancedness

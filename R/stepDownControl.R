@@ -92,15 +92,10 @@ stepDownControl <- structure(function(
     tau <- function(alpha) tauQR(alpha, Q, r1)
   }
 
-  list(thr=thr,
-### A numeric vector \code{thr} of length \eqn{m}, such that the estimated probability that
-### there exists an index \eqn{k} between 1 and m such that the k-th maximum
-### of the test statistics of is greater than \eqn{thr[k]}, is less than \eqn{\alpha}.
-       thrMat=thrMat,
-### A matrix of size \eqn{m} x the number of steps down, containing
-### successive JFWER threshold estimates.
-       steps=resJList
-### A list of results of successive applications of 'getJointFWERThresholds'
+  ##value<< List with elements:
+  list(thr=thr, ##<< A numeric vector \code{thr} of length \eqn{m}, such that the estimated probability that there exists an index \eqn{k} between 1 and m such that the \eqn{k}-th maximum of the test statistics of is greater than \eqn{thr[k]}, is less than \eqn{\alpha}.
+       thrMat=thrMat, ##<< A matrix of size \eqn{m} x the number of steps down, containing successive JFWER threshold estimates.
+       steps=resJList ##<< A list of results of successive applications of 'getJointFWERThresholds'
        )
 }, ex=function(){
   ## parameters
