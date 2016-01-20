@@ -33,6 +33,9 @@ getJointFWERThresholds <- structure(function(
         if (verbose) {
             print(flavor)
         }
+        if (flavor=="pivotalStat" && B>1e3) {
+            warning("The current implementation of flavor 'pivotalStat' is too slow for large values of 'B'. Forcing flavor='dichotomy'")
+        }
         m <- nrow(mat)
         B <- ncol(mat)
         if (alpha*B<1) {  ## sanity check
@@ -65,6 +68,7 @@ getJointFWERThresholds <- structure(function(
             }
         } else if (mode(tau)=="function") {
 ###<<details{If \code{\tau} is a function, it has to be of the form \eqn{\tau:\alpha \mapsto (\tau_k(\alpha))_{k=1 \dots m}}, such that \eqn{\tau(\alpha)} ensures marginal kFWER control, that is, \eqn{\forall k, P(k-inf(P_{i}) \leq \tau_k(alpha)) \leq \alpha}}
+            stopifnot(tau(alpha)==m)   ## sanity check
             tauCh <- "user-defined"
             etaMax <- 2
         }
@@ -127,6 +131,8 @@ getJointFWERThresholds <- structure(function(
                 probk <- rowMeans(isAbove)
             }
             pivotalStat <- NA_real_
+            lambdas <- alpha*etas
+            lambda <- alpha*eta
 
             stopifnot(length(thr)==kMax)  ## sanity check
             idxs <- seq(from=kMax+1, to=m, length=m-kMax)
@@ -150,13 +156,13 @@ getJointFWERThresholds <- structure(function(
                 skInv <- sweep(pval, 1, m/1:m, "*")
                 mins <- colMins(skInv)
             } else if (tauCh=="kFWER") {
-                getMin <- function(bb) {
+                getMin <- function(bb, Q) {
                     kb <- kmaxH0[,bb]
                     sw <- sweep(Q, 1, kb, "<")
-                    Fkhat <- rowSums(sw)/B  ## B+1???
+                    Fkhat <- rowSums(sw)
                     return(min(Fkhat))
                 }
-                mins <- sapply(1:B, getMin)
+                mins <- sapply(1:B, getMin, Q)/B   ## B+1???
             }
             lambda <- quantile(mins, alpha, type=1)
 
@@ -175,8 +181,7 @@ getJointFWERThresholds <- structure(function(
             }
             probs <- prob
             steps <- 0L
-            eta <- lambda/alpha
-            etas <- eta
+            lambdas <- lambda
             reason <- NA_character_
             pivotalStat <- mins
         } ## if (flavor) { ...
@@ -187,11 +192,12 @@ getJointFWERThresholds <- structure(function(
                     probs=probs, ##<< The sequence of such estimated probabilities along the steps of the dichotomy.
                     probk=probk, ##<< A vector of length \eqn{m} whose \eqn{k}th entry is the estimated probability that the k-th maximum of the test statistics of is greater than \eqn{thr[k]}.
                     steps=steps, ##<< Number of dichotomy steps performed.
-                    lambda=eta, ##<< Correction factor (in [0,1]) from the original (kFWER) thresholds to JFWER thresholds.
-                    etas=etas, ##<< The sequence of such correction factors along the steps of the dichotomy.
+                    lambda=lambda, ##<< JFWER threshold.
+                    lambdas=lambdas, ##<< The sequence of candidate JFWER thresholds along the steps of dichotomy, or the JFWER threshold \eqn{lambda} if \code{flavor=="pivotalStat"}
                     reason=reason, ##<< A character sequence, the reason for stopping.
                     tau=tau, ##<< A function that returns a vector of \code{m} thresholds (see \link{details}).  It corresponds to the input argument \code{tau} if it was a function. Otherwise, it is calculated from the input matrix.
-                    Q=Q,
+                    Q=Q, ##<< Result of sorting the input score matrix by row and then by columns. Corresponds to matrix 'Q' in Meinshausen (2006).
+                    sLambda=tau, ##<< The function \eqn{lambda \mapsto s(lambda)}, such that \code{thr} is identical to \code{sLambda(lambda)}.
                     pivotalStat=pivotalStat ##<< A numeric vector, the values of the pivotal statistic whose quantile of order \eqn{alpha} is \eqn{lambda}
                     ##end<<
                     )
@@ -200,57 +206,27 @@ getJointFWERThresholds <- structure(function(
         m <- 1023
         B <- 1e3
 
-        if (FALSE) {
-            flavor <- c("independent", "equi-correlated", "3-factor model")[2]
-            rho <- 0.2
-
-            mat <- simulateGaussianNullsFromFactorModel(m, B, flavor=flavor, rho=rho)
-        } else {
-            ## Toeplitz
-            tcoefs <- toeplitz((1:m)^(-2))
-            Sigma <- Matrix::Matrix(tcoefs, sparse = TRUE)
-            mat <- simulateGaussianNullsFromSigma(m, B, Sigma)
-        }
-
-        str(mat)
-
+        flavor <- c("independent", "equi-correlated", "3-factor model")[2]
+        rho <- 0.2
+        mat <- simulateGaussianNullsFromFactorModel(m, B, flavor=flavor, rho=rho)
         alpha <- 0.2
-        thrMat <- NULL
-        lambdas <- NULL
-        probs <- NULL
-        cols <- NULL
-        ltys <- NULL
 
-        maxSteps <- 100
-        methods <- c("Simes", "kFWER")
-        kMaxs <- c(NA, 1, 2, 10, m)
-        for (mm in seq(along=methods)) {
-            meth <- methods[mm]
-            for (ss in seq(along=kMaxs)) {
-                ms <- maxSteps
-                kMax <- kMaxs[[ss]]
-                if (is.na(kMax)) {
-                    ## just a trick to get the original thresholds
-                    kMax <- m
-                    ms <- 1  ## no dichotomy: original thresholds
-                }
-                res <- getJointFWERThresholds(mat, tau=meth, alpha, maxSteps=ms, kMax=kMax)
-                thrMat <- cbind(thrMat, res$thr)
-                lambdas <- c(lambdas, res$lambda)
-                probs <- c(probs, res$prob)
-                cols <- c(cols, ss)
-                ltys <- c(ltys, mm)
-            }
-        }
-        lgd <- paste(methods[ltys], "; k[max]=", kMaxs, "; lambda=", round(lambdas, 2), "; p=", round(probs, 2))
-        matplot(thrMat, t='l', log="x", col=cols, lty=ltys, cex=0.6)
-        matpoints(thrMat[1:10,], col=cols, cex=0.4, pch=1)
-        legend("bottomleft", as.expression(lgd), col=cols, lty=ltys)
+        res <- getJointFWERThresholds(mat, tau="kFWER", alpha)
+        str(res)
+
+        resP <- getJointFWERThresholds(mat, tau="kFWER", alpha, flavor="pivotalStat")
+        str(resP)
+
     })
 
 
 ############################################################################
 ## HISTORY:
+##
+## 2016-01-07
+## o Changed the return value from 'eta' to 'lambda' for consistency
+## with the notation of the BNR paper.
+## o Added 'sLambda' to the return values of the function.
 ## 2015-12-10
 ## o Added argument 'flavor' to make use of the pivotal statistic
 ## identified by Etienne (and thus avoid dichotomy).

@@ -8,6 +8,8 @@ stepDownControl <- structure(function(
 ### \item{B}{is the number of Monte-Carlo samples}}
     tau=c("Simes", "kFWER", "LR06"),
 ### A character value or a function that returns a vector of \code{m} thresholds (see \link{details}).
+    H0=NULL,
+### A numeric vector, the indices of true null hypotheses (between \code{1} and \code{m}) Defaults to \code{NULL}. This paramenter is typically used to perform simulations.
     ...,
 ### Further arguments to be passed to getJointFWERControl.
     verbose=FALSE
@@ -17,13 +19,11 @@ stepDownControl <- structure(function(
   m <- nrow(mat)
   stopifnot(length(stat)==m)
   stopifnot(tau=="kFWER")  ## other flavor not implemented yet (?)
-  
-  ## Generic 'tau' function
-  tauQR <- function(alpha, Q, r) {
-    m <- nrow(Q)
-    B <- ncol(Q)
-    idx <- floor(min(alpha,1)*(B-1))   ## NB: B-1 ensures *non-asymptotically* valid quantiles
-    Q[1:(m-r), idx]  ## A vector \eqn{\tau(\alpha)} which ensures marginal kFWER control, that is, \eqn{\forall k, P(k-inf(P_{i}) \leq \tau_k(alpha)) \leq \alpha}}
+
+  if (!is.null(H0)) {
+      ## sanity checks
+      stopifnot(length(H0)<m)
+      stopifnot(all(H0<m))
   }
 
   ## Initialization
@@ -35,61 +35,64 @@ stepDownControl <- structure(function(
   thrMat <- NULL
   resJList <- list()
   converged <- FALSE
-  
+
   ## joint FWER control through gammatification
   resJ <- getJointFWERThresholds(mat, tau="kFWER", ..., verbose=FALSE)
   resJList[[step]] <- resJ
 
+  ## One-parameter threshold family \eqn{s_lambda} in the BNR paper:
+  sLambda <- resJ$sLambda
+  ## Note that this family does not change during the step-down process
+  ## only the value of \code{lambda} can change
   thr <- resJ$thr
+  lambda <- resJ$lambda
+  stopifnot(identical(thr, sLambda(lambda)))    ## sanity check
   thrMat <- cbind(thrMat, thr)
 
-  thr1 <- thr[1]  ## FWER threshold
-  R1 <- which(stat>=thr1)
-  r1 <- length(R1)
-  
-  ## updated threshold function after removing |R1| smallest items
-  Q <- resJ$Q
-  stopifnot(!is.null(Q)) ## sanity check: 'Q' is not NULL (expecting a matrix...)
-  tau <- function(alpha) tauQR(alpha, Q, r1)
+  ##details<<The default for \code{H0} is \code{NULL}, corresponding to the usual situation where the true null hypotheses are not known. The case where \code{H0} is not \code{NULL} implements an "Oracle" version of the step-down procedure, with only one step down.
+  if (!is.null(H0)) {
+      R1 <- setdiff(1:m, H0)
+  } else {
+      thr1 <- thr[1]   ## (1-)FWER threshold
+      R1 <- which(stat>=thr1)
+  }
 
   while (!converged) {
-    step <- step+1
-    if (verbose) {
-      print(paste("Step:", step))
-      print(paste("|R1|=", r1))
-    }
-    
-    if (length(R1)) {
-      ## updated score matrix given R1
-      mat1 <- mat[-R1, ]
-    } else {
-      mat1 <- mat
-    }
-    
-    ## joint FWER control through gammatification
-    resJ <- getJointFWERThresholds(mat1, tau=tau, ..., verbose=FALSE)
-    resJList[[step]] <- resJ
-    
-    ## FWER threshold
-    thr <- resJ$thr
-    R1new <- which(stat>=thr[1])
+      step <- step+1
+      if (verbose) {
+          print(paste("Step:", step))
+          print(paste("|R1|=", length(R1)))
+      }
 
-    ## fill the vector of joint FWER thresholds with -Inf (if k>|H_0|, R_k=H works)
-    thr <- c(thr, rep(-Inf, length(R1)))
-    stopifnot(length(thr)==m)               ## sanity check
-    thrMat <- cbind(thrMat, thr)
+      if (length(R1)) {
+          ## updated score matrix given R1
+          print(R1)
+          mat1 <- mat[-R1, ]
+      } else {
+          mat1 <- mat
+      }
 
-    ## convergence reached?
-    converged1 <- (length(R1new)==r1)
-    converged <- identical(R1new, R1)
-    stopifnot(converged==converged1)
+      ## joint FWER control through gammatification
+      resJ <- getJointFWERThresholds(mat1, tau="kFWER", ..., verbose=FALSE)
+      resJList[[step]] <- resJ
 
-    ## update R1 and friends
-    R1 <- R1new
-    r1 <- length(R1)
-    
-    ## updated threshold function after removing |R1| smallest items
-    tau <- function(alpha) tauQR(alpha, Q, r1)
+      ## FWER threshold
+      lambda <- resJ$lambda
+      thr <- sLambda(lambda)
+      thrMat <- cbind(thrMat, thr)
+
+      if (!is.null(H0)) {
+          R1new <- R1  ## force convergence
+      } else {
+          thr1 <- thr[1]   ## (1-)FWER threshold
+          R1new <- which(stat>=thr1)
+      }
+
+      ## convergence reached?
+      converged <- identical(R1new, R1)
+
+      ## update R1
+      R1 <- R1new
   }
 
   ##value<< List with elements:
@@ -103,9 +106,9 @@ stepDownControl <- structure(function(
   rho <- 0.2
   n <- 123
   pi0 <- 0.8
-  B <- 1e4
-  
-  set.seed(0xBEEF)
+  B <- 1e3
+
+  ##  set.seed(0xBEEF)
   sim <- simulateMein2006(m, rho, n, pi0, SNR=2)
   X <- sim$X
   y <- sim$y
@@ -113,7 +116,7 @@ stepDownControl <- structure(function(
   H1 <- which(sim$H==1)
   m0 <- length(H0)
   m1 <- length(H1)
-  
+
   ## Test statistics
   w <- wilcoxStat(X, y, B=B)
   scoreMat <- w$stat0Mat
@@ -128,7 +131,7 @@ stepDownControl <- structure(function(
 
   resSD <- stepDownControl(stat, scoreMat, tau="kFWER", alpha=alpha, verbose=TRUE)
   thrMat <- resSD$thrMat
-  
+
   ## confidence envelopes
   nSteps <- ncol(thrMat)
   thr <- thrMat[, nSteps]
@@ -143,12 +146,17 @@ stepDownControl <- structure(function(
   ## True V (number of false discoveries among first rejections)
   V <- cumsum(o %in% H0)
 
-  ## comparison with "Oracle" JFWER thresholds
-  scoreMatOracle <- scoreMat[-H1, ]
-  resOracle <- getJointFWERThresholds(scoreMatOracle, tau="kFWER", alpha=alpha)
-  thrO <- c(resOracle$thr, rep(-Inf, m1))
+  ## comparison with "Oracle" step-down JFWER thresholds
+  resO <- stepDownControl(stat, scoreMat, tau="kFWER", alpha=alpha, verbose=TRUE, H0=H0)  ## does this work?
+  thrO <- resO$thr
   VbarO <- upperBoundFP(statO, thrO, flavor="Mein2006")
-  
+
+  ## comparison with "double Oracle" JFWER thresholds
+  scoreMatOracle <- scoreMat[-H1, ]
+  resO2 <- getJointFWERThresholds(scoreMatOracle, tau="kFWER", alpha=alpha)
+  thrO2 <- c(resO2$thr, rep(-Inf, m1))
+  VbarO2 <- upperBoundFP(statO, thrO2, flavor="Mein2006")
+
   cols1 <- seq.int(nSteps)
   ltys1 <- rep(1, nSteps)
   ttl <- paste("Bounds on #FP among rejected hypotheses",
@@ -158,12 +166,13 @@ stepDownControl <- structure(function(
   matplot(bounds, t='s', lty=1, ylab="V", col=cols1, main=ttl,
           xlim=c(1, xmax), ylim=c(0, ymax))
 
-  cols2 <- c("purple", "pink")
-  ltys2 <- rep(1, 2)
+  cols2 <- c("purple", "pink", "orange")
+  ltys2 <- rep(1, length(cols2))
   lines(V, col=cols2[1], t="s", lty=ltys2[1])
   lines(VbarO, col=cols2[2], t="s", lty=ltys2[2])
-  
-  lgd <- c(paste("SD-JFWER(step=", 1:nSteps, ")", sep=""), "True V", "Oracle JFWER")
+  lines(VbarO2, col=cols2[3], t="s", lty=ltys2[3])
+
+  lgd <- c(paste("SD-JFWER(step=", 1:nSteps, ")", sep=""), "True V", "Oracle SD-JFWER", "Oracle JFWER")
   ltys <- c(ltys1, ltys2)
   cols <- c(cols1, cols2)
   legend("top", lgd, col=cols, lty=ltys)
@@ -177,9 +186,10 @@ stepDownControl <- structure(function(
 ############################################################################
 ## HISTORY:
 ##
-## 2014-12-10
-## o 'tauQR' depends on 'R' only through its length.
-## 
+## 2016-01-07
+## o BUG FIX: the one-parameter family should not be updated at each step down!
+## o Example fixed accordingly.
+## o Implemented the "Oracle" version of step-down control.
 ## 2014-05-09
 ## o Created from 'getJointFWERThresholds'.
 ############################################################################

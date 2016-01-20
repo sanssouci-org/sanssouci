@@ -11,7 +11,7 @@ testStepDown <- function(m, rho, B, pi0, SNR, alpha) {
         if (is.na(xmin) || is.na(shape) || is.na(scale)) {
             stop("'SNR' parameter ill-specified in 'testStepDown'")
         }
-        
+
         m1 <- round(m*(1-pi0))
         SNR <- xmin + rpareto(m1, shape, scale)
     }
@@ -19,36 +19,35 @@ testStepDown <- function(m, rho, B, pi0, SNR, alpha) {
     X0 <- sim$X0
     x <- sim$x
     H <- sim$H
-    
+
     ## truth
     H0 <- which(sim$H==0)
     H1 <- which(sim$H==1)
     m0 <- length(H0)
     m1 <- length(H1)
 #    cols <- c(1, 2)[1+H]
-    
+
     # SD control
     resSD <- stepDownControl(x, X0, tau="kFWER", alpha=alpha, verbose=FALSE)
     thrMat <- resSD$thrMat
-    
+
     # Final thresholds
     nSteps <- ncol(thrMat)
     thr <- thrMat[, nSteps]
     o <- order(x, decreasing=TRUE)
-    xO <- x[o]
-    
-    # "Oracle" JFWER thresholds
+
+    # "Oracle" JFWER thresholds (double Oracle!!!)
     X0Oracle <- X0[-H1, ]
     resOracle <- getJointFWERThresholds(X0Oracle, tau="kFWER", alpha=alpha)
     thrO <- c(resOracle$thr, rep(-Inf, m1))
-    
-    # JFWER 
+
+    # JFWER
     nbBadK <- function(thr) {
         xNulls <- x[H0]
         nbFP <- sapply(thr, FUN=function(ss) sum(xNulls > ss))
         sum(nbFP >= 1:m)
     }
-    
+
     allThr <- cbind(thrMat, thrO)
     badK <- apply(allThr, 2, nbBadK)
     return(badK)
@@ -75,7 +74,7 @@ ncores <- 38
 for (SNR in SNRs) {
     for (rho in rhos) {
         for (pi0 in pi0s) {
-            
+
 
 tags <- sprintf("m=%s,pi0=%s,rho=%s,SNR=%s,B=%s,alpha=%s,nbSimu=%s",
                 m, pi0, rho, SNR, B, alpha, nbSimu)
