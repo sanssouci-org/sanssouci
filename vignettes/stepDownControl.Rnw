@@ -1,4 +1,6 @@
 % \VignetteEngine{knitr::knitr}
+%\VignetteIndexEntry{Post hoc inference}
+%\VignetteIndexEntry{Step-down joint Family-Wise Error Rate control}
 
 \documentclass{article}
 \usepackage[sc]{mathpazo}
@@ -36,7 +38,7 @@ opts_chunk$set(cache=TRUE, cache.path=cachePath)
 
 <<>>=
 library(sansSouci)
-@ 
+@
 
 \section{Simulation settings}
 Parameters:
@@ -55,7 +57,7 @@ H0 <- which(sim$H==0)
 H1 <- which(sim$H==1)
 m0 <- length(H0)
 m1 <- length(H1)
-@ 
+@
 
 Test statistics
 <<>>=
@@ -75,9 +77,9 @@ legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
 <<>>=
 alpha <- 0.25
 
-resSD <- stepDownControl(stat, scoreMat, tau="kFWER", alpha=alpha, verbose=TRUE)
+resSD <- stepDownControl(stat, scoreMat, refFamily="kFWER", alpha=alpha, verbose=TRUE)
 thrMat <- resSD$thrMat
-@ 
+@
 
 Confidence envelopes
 <<>>=
@@ -91,17 +93,17 @@ VbarM <- upperBoundFP(statO, thr, flavor="Mein2006")  ## faster for now
 identical(Vbar, VbarM)  ## Generally TRUE
 
 bounds <- apply(thrMat, 2, function(thr) upperBoundFP(statO, thr, flavor="Mein2006"))
-@ 
+@
 
 True number of false discoveries among first rejections
 <<>>=
 V <- cumsum(o %in% H0)
-@ 
+@
 
 "Oracle" JFWER thresholds
-<<>>= 
+<<>>=
 scoreMatOracle <- scoreMat[-H1, ]
-resOracle <- getJointFWERThresholds(scoreMatOracle, tau="kFWER", alpha=alpha)
+resOracle <- getJointFWERThresholds(scoreMatOracle, refFamily="kFWER", alpha=alpha)
 thrO <- c(resOracle$thr, rep(-Inf, m1))
 VbarO <- upperBoundFP(statO, thrO, flavor="Mein2006")
 @
@@ -114,7 +116,7 @@ ttag <- paste("m=", m, ", rho=", rho, ", alpha=", alpha, sep="")
 ttl <- paste("Bounds on #FP among rejected hypotheses", ttag, sep="\n")
 xmax <- min(200, m)
 ymax <- bounds[xmax, 1]
-matplot(bounds, t='s', lty=1, ylab="V", col=cols1, 
+matplot(bounds, t='s', lty=1, ylab="V", col=cols1,
         main=ttl, xlim=c(1, xmax), ylim=c(0, ymax))
 
 cols2 <- c("purple", "pink")
@@ -136,6 +138,6 @@ legend("left", c("H0", "H1"), pch=pch, col=1:2)
 \section{Session information}
 <<>>=
 sessionInfo()
-@ 
+@
 
 \end{document}

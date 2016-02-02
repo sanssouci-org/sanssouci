@@ -5,11 +5,11 @@ getJointFWERThresholds <- structure(function(
 ### statistics under the null hypothesis. \describe{ \item{m}{is the
 ### number of null hypotheses tested} \item{B}{is the number of
 ### Monte-Carlo samples}}
-    tau=c("Simes", "kFWER"),
+    refFamily=c("Simes", "kFWER"),
 ### A character value or a function that returns a vector of \code{m}
-### thresholds (see \link{details}).
+### thresholds (see details).
     alpha,
-### Target joint-FWER level.
+### Target joint FWER level.
     kMax=nrow(mat),
 ### For simultaneous control of (\eqn{k}-FWER for all \eqn{k \le
 ### k[max]}).
@@ -17,7 +17,7 @@ getJointFWERThresholds <- structure(function(
 ### How should the threshold be calibrated? Defaults to
 ### 'dichotomy'. The other option ('pivotalStat') avoids dichotomy by
 ### directly calculating a pivotal statistic of which the target value
-### of \expr{lambda} is simply the quantile of order \expr{alpha}.
+### of \eqn{lambda} is simply the quantile of order \eqn{alpha}.
     maxSteps=100,
 ### Maximal number of steps in dichotomy (hence only used when
 ### \code{flavor=='dichotomy'}).  If \code{maxSteps==1}, no dichotomy
@@ -25,6 +25,11 @@ getJointFWERThresholds <- structure(function(
     tol=1e-4,
 ### Maximal tolerated distance between joint FWER level achieved by the
 ### result and the target level \eqn{\alpha}.
+    Rcpp=FALSE,
+### If \code{TRUE}, some costly operations (sorting) are performed in C++.
+    fullOutput=FALSE,
+### Should marginal kFWERs and the equivalent of Meinshausen's matrix
+### 'Q' be returned? Mainly used for troubleshooting.
     verbose=FALSE)
 ### If \code{TRUE}, print results of intermediate calculations.
 ### Defaults to \code{FALSE}.
@@ -41,35 +46,45 @@ getJointFWERThresholds <- structure(function(
         if (alpha*B<1) {  ## sanity check
             stop("Please make sure that alpha*ncol(mat) is greater than 1!")
         }
-        ## k-max of the test statistics under H0:
-        kmaxH0 <- apply(mat, 2, sort, decreasing=TRUE)
-        ## truncate to [1,kMax]
-        kmaxH0 <- kmaxH0[1:kMax, , drop=FALSE]
+        if (Rcpp) {
+            kmaxH0 <- partialColSortDesc(mat, kMax);
+        } else {
+            ## k-max of the test statistics under H0:
+            kmaxH0 <- apply(mat, 2, sort, decreasing=TRUE)
+            ## truncate to [1,kMax]
+            kmaxH0 <- kmaxH0[1:kMax, , drop=FALSE]
+        }
 
-        Q <- NULL
-        if (mode(tau)=="character") {
-###<<details{If \code{\tau} is a character value, it must be one of the following:\describe{
+        probk <- NULL;
+        Q <- NULL;
+
+        if (mode(refFamily)=="character") {
+###<<details{If \code{\refFamily} is a character value, it must be one of the following:\describe{
 ###   \item{Simes}{The classical family of thresholds introduced by Simes (1986): \eqn{\alpha*k/m}. This family yields joint FWER control if the test statistics are positively dependent (PRDS) under H0.}
 ###   \item{kFWER}{A family \eqn{(t_k)} calibrated so that for each k, \eqn{(t_k)} controls the (marginal) k-FWER.}
 ### }
-            tauCh <- tau
-            tau <- match.arg(tau)
-            if (tau=="kFWER") {
+            refFamilyCh <- refFamily
+            refFamily <- match.arg(refFamily)
+            if (refFamily=="kFWER") {
                 etaMax <- min(2, 1/alpha)
-                kmaxH0s <- apply(kmaxH0, 1, sort, decreasing=TRUE)
-                Q <- t(kmaxH0s) ## corresponds to matrix 'Q' in Meinshausen 2006
-                tau <- function(alpha) {
+                if (Rcpp) {
+                    Q <- rowSortDesc(kmaxH0)
+                } else {
+                    kmaxH0s <- apply(kmaxH0, 1, sort, decreasing=TRUE)
+                    Q <- t(kmaxH0s) ## corresponds to matrix 'Q' in Meinshausen 2006
+                }
+                refFamily <- function(alpha) {
                     idx <- floor(min(alpha,1)*(B-1))   ## NB: B-1 ensures *non-asymptotically* valid quantiles
                     Q[, idx]
                 }
-            } else if (tau=="Simes") {
+            } else if (refFamily=="Simes") {
                 etaMax <- min(20, 1/alpha)
-                tau <- function(alpha) qnorm(1-min(alpha, 1)*(1:kMax)/m)
+                refFamily <- function(alpha) qnorm(1-min(alpha, 1)*(1:kMax)/m)
             }
-        } else if (mode(tau)=="function") {
-###<<details{If \code{\tau} is a function, it has to be of the form \eqn{\tau:\alpha \mapsto (\tau_k(\alpha))_{k=1 \dots m}}, such that \eqn{\tau(\alpha)} ensures marginal kFWER control, that is, \eqn{\forall k, P(k-inf(P_{i}) \leq \tau_k(alpha)) \leq \alpha}}
-            stopifnot(tau(alpha)==m)   ## sanity check
-            tauCh <- "user-defined"
+        } else if (mode(refFamily)=="function") {
+###<<details{If \code{refFamily} is a function \eqn{tau}, it has to be of the form \eqn{tau:\alpha \mapsto (\tau_k(\alpha))_{k=1 \dots m}}, such that \eqn{\tau(\alpha)} ensures marginal kFWER control, that is, \eqn{\forall k, P(k-inf(P_{i}) \leq \tau_k(alpha)) \leq \alpha}}
+            stopifnot(length(refFamily(alpha))==m)   ## sanity check
+            refFamilyCh <- "user-defined"
             etaMax <- 2
         }
 
@@ -89,13 +104,27 @@ getJointFWERThresholds <- structure(function(
                 prob0 <- prob
                 steps <- steps+1
                 eta <- (etaMin+etaMax)/2  ## candidate value
-                thr <- tau(alpha*eta)
-                isAbove <- sweep(kmaxH0, 1, thr,  ">")
-                ## details << A null hypothesis si rejected iff its test statistic is greater _or equal_ to a threshold value
-                ## Hence the ">" and not ">=" in the definition of 'isAbove'
-                dim(isAbove) <- c(length(thr), B); ## avoid coercion to vector if only one column (B==1)
-                nAbove <- colSums(isAbove)
-                prob <- mean(nAbove>0)
+                thr <- refFamily(alpha*eta)
+
+                ## details << A null hypothesis si rejected iff its
+                ## test statistic is greater _or equal_ to a threshold
+                ## value. Hence the ">" and not ">=" in the below
+                ## definition of 'isAbove'.
+                if (Rcpp) {
+                    prob <- coverage(thr, kmaxH0);
+                    if (fullOutput) {
+                        probk <- marginalKFWER(thr, kmaxH0);
+                    }
+                } else {
+                    isAbove <- sweep(kmaxH0, 1, thr,  ">")
+                    dim(isAbove) <- c(length(thr), B); ## avoid coercion to vector if only one column (B==1)
+                    nAbove <- colSums(isAbove)
+                    prob <- mean(nAbove>0)
+                    if (fullOutput) {
+                        probk <- rowMeans(isAbove)
+                    }
+                }
+
                 if (verbose) {
                     cat("Step:", steps, "\n")
                     print(prob)
@@ -125,10 +154,8 @@ getJointFWERThresholds <- structure(function(
             if (!admissible) {
                 warning("Could not achieve target JFWER control")
             }
-            if (length(thr)==0) { ## may occur when 'idx' in 'tau' is 0...
+            if (length(thr)==0) { ## may occur when 'idx' in 'refFamily' is 0...
                 thr <- rep(Inf, kMax)
-            } else {
-                probk <- rowMeans(isAbove)
             }
             pivotalStat <- NA_real_
             lambdas <- alpha*etas
@@ -149,13 +176,13 @@ getJointFWERThresholds <- structure(function(
             ###Simes thresholds, but it is substantially slower (with
             ###the current implementation) for kFWER thresholds.}
 
-            stopifnot(tauCh %in% c("Simes", "kFWER"))
-            if (tauCh=="Simes") {
+            stopifnot(refFamilyCh %in% c("Simes", "kFWER"))
+            if (refFamilyCh=="Simes") {
             ## for Simes, s_k^{-1}(u) = (m/k)*(1-pnorm(u))
                 pval <- 1-pnorm(kmaxH0)
                 skInv <- sweep(pval, 1, m/1:m, "*")
                 mins <- colMins(skInv)
-            } else if (tauCh=="kFWER") {
+            } else if (refFamilyCh=="kFWER") {
                 getMin <- function(bb, Q) {
                     kb <- kmaxH0[,bb]
                     sw <- sweep(Q, 1, kb, "<")
@@ -167,12 +194,21 @@ getJointFWERThresholds <- structure(function(
             lambda <- quantile(mins, alpha, type=1)
 
             ## return values
-            thr <- tau(lambda)
-            isAbove <- sweep(kmaxH0, 1, thr,  ">")
-            dim(isAbove) <- c(length(thr), B); ## avoid coercion to vector if only one column (B==1)
-            nAbove <- colSums(isAbove)
-            probk <- rowMeans(isAbove)
-            prob <- mean(nAbove>0)
+            thr <- refFamily(lambda)
+            if (Rcpp) {
+                prob <- coverage(thr, kmaxH0);
+                if (fullOutput) {
+                    probk <- marginalKFWER(thr, kmaxH0);
+                }
+            } else {
+                isAbove <- sweep(kmaxH0, 1, thr,  ">")
+                dim(isAbove) <- c(length(thr), B); ## avoid coercion to vector if only one column (B==1)
+                nAbove <- colSums(isAbove)
+                prob <- mean(nAbove>0)
+                if (fullOutput) {
+                    probk <- rowMeans(isAbove)
+                }
+            }
             if (verbose) {
                 print(prob)
             }
@@ -190,16 +226,17 @@ getJointFWERThresholds <- structure(function(
         res <- list(thr=thr,  ##<< A numeric vector \code{thr}, such that the estimated probability that ##<< there exists an index \eqn{k} between 1 and m such that the k-th maximum ##<< of the test statistics of is greater than \eqn{thr[k]}, is less than \eqn{\alpha}.
                     prob=prob, ##<< Estimated probability that there exists an index \eqn{k} between 1 ##<< and m such that the k-th maximum of the test statistics of is ##<< greater than \eqn{thr[k]} (should be in \eqn{[\alpha-tol, alpha]}).
                     probs=probs, ##<< The sequence of such estimated probabilities along the steps of the dichotomy.
-                    probk=probk, ##<< A vector of length \eqn{m} whose \eqn{k}th entry is the estimated probability that the k-th maximum of the test statistics of is greater than \eqn{thr[k]}.
+                    probk=probk, ##<< A vector of length \eqn{m} whose \eqn{k}th entry is the estimated probability that the k-th maximum of the test statistics of is greater than \eqn{thr[k]}. Only returned if argument \code{fullOutput} is set to \code{TRUE}.
                     steps=steps, ##<< Number of dichotomy steps performed.
                     lambda=lambda, ##<< JFWER threshold.
                     lambdas=lambdas, ##<< The sequence of candidate JFWER thresholds along the steps of dichotomy, or the JFWER threshold \eqn{lambda} if \code{flavor=="pivotalStat"}
                     reason=reason, ##<< A character sequence, the reason for stopping.
-                    tau=tau, ##<< A function that returns a vector of \code{m} thresholds (see \link{details}).  It corresponds to the input argument \code{tau} if it was a function. Otherwise, it is calculated from the input matrix.
-                    Q=Q, ##<< Result of sorting the input score matrix by row and then by columns. Corresponds to matrix 'Q' in Meinshausen (2006).
-                    sLambda=tau, ##<< The function \eqn{lambda \mapsto s(lambda)}, such that \code{thr} is identical to \code{sLambda(lambda)}.
-                    pivotalStat=pivotalStat ##<< A numeric vector, the values of the pivotal statistic whose quantile of order \eqn{alpha} is \eqn{lambda}
+                    sLambda=refFamily, ##<< The function \eqn{lambda \mapsto sLambda}, such that \code{thr} is identical to \code{sLambda(lambda)}. If the input argument \code{refFamily} is a function, then \code{sLambda=refFamily}.
+                    pivotalStat=pivotalStat, ##<< A numeric vector, the values of the pivotal statistic whose quantile of order \eqn{alpha} is \eqn{lambda}
                     ##end<<
+                    Q=Q, ##<< Result of sorting the input score matrix by row and then by columns. Corresponds to matrix 'Q' in Meinshausen (2006).
+                    kmaxH0=kmaxH0 ##<< k-max of the test statistics under H0 for \eqn{1 \leq k \leq kMax}.
+#                    getCoverage=getCoverage  ##<< function that returns the 'coverage' of a threshold family in terms of JFWER.
                     )
 ### A \eqn{m} x \eqn{B} matrix of B realizations of ranked test statistics under H0
     }, ex=function(){
@@ -211,10 +248,10 @@ getJointFWERThresholds <- structure(function(
         mat <- simulateGaussianNullsFromFactorModel(m, B, flavor=flavor, rho=rho)
         alpha <- 0.2
 
-        res <- getJointFWERThresholds(mat, tau="kFWER", alpha)
+        res <- getJointFWERThresholds(mat, refFamily="kFWER", alpha)
         str(res)
 
-        resP <- getJointFWERThresholds(mat, tau="kFWER", alpha, flavor="pivotalStat")
+        resP <- getJointFWERThresholds(mat, refFamily="kFWER", alpha, flavor="pivotalStat")
         str(resP)
 
     })
@@ -223,6 +260,9 @@ getJointFWERThresholds <- structure(function(
 ############################################################################
 ## HISTORY:
 ##
+## 2016-01-28
+## o Changed the input value from 'tau' to 'refFamily' for consistency
+## with the notation of the BNR paper.
 ## 2016-01-07
 ## o Changed the return value from 'eta' to 'lambda' for consistency
 ## with the notation of the BNR paper.

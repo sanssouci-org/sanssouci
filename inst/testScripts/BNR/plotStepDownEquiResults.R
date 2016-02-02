@@ -1,5 +1,5 @@
 path <- "../../../../resData/stepDownEqui"
-typeOfSNR <- c("constantSNR", "Pareto")[2]
+typeOfSNR <- c("constantSNR", "Pareto")[1]
 
 res <- NULL
 fls <- list.files(path)
@@ -48,8 +48,8 @@ rownames(dat) <- NULL
 dat <- dat[ww, ]  ## keep either Pareto or non-Pareto results
 
 #datS <- dat
-#datS <- subset(dat, nbSimu==10000)
-datS <- subset(dat, nbSimu==2000)
+datS <- subset(dat, nbSimu==10000 & SNR != 10)
+#datS <- subset(dat, nbSimu==2000)
 #datS <- subset(dat, B==10000 & nbSimu==2000)
 #datS <- subset(dat, B==5000 & nbSimu==1000)
 

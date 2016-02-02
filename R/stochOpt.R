@@ -37,7 +37,7 @@ stochOpt <- structure(function( ### Stochastic algorithm
 
   ## Compare with dichotomy
   flavor <- "equi-correlated"
-  rho <- 0.2    
+  rho <- 0.2
   sim <- simulateGaussianNullsFromFactorModel(m, B=B, flavor=flavor, rho=rho)
   mat <- sim$Y
   str(mat)
@@ -45,6 +45,6 @@ stochOpt <- structure(function( ### Stochastic algorithm
 
   alpha <- 0.2
   maxSteps <- 1e3
-  res <- getJointFWERThresholds(mat, tau="Simes", alpha, maxSteps=m, kMax=m)
+  res <- getJointFWERThresholds(mat, refFamily="Simes", alpha, maxSteps=m, kMax=m)
   str(res)
 })

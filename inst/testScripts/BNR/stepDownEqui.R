@@ -28,7 +28,7 @@ testStepDown <- function(m, rho, B, pi0, SNR, alpha) {
 #    cols <- c(1, 2)[1+H]
 
     # SD control
-    resSD <- stepDownControl(x, X0, tau="kFWER", alpha=alpha, verbose=FALSE)
+    resSD <- stepDownControl(x, X0, refFamily="kFWER", alpha=alpha, verbose=FALSE)
     thrMat <- resSD$thrMat
 
     # Final thresholds
@@ -36,10 +36,15 @@ testStepDown <- function(m, rho, B, pi0, SNR, alpha) {
     thr <- thrMat[, nSteps]
     o <- order(x, decreasing=TRUE)
 
-    # "Oracle" JFWER thresholds (double Oracle!!!)
+    ## comparison with *Oracle step-down* JFWER thresholds (only the step-down is Oracle)
+    resOracleSD <- stepDownControl(x, X0, refFamily="kFWER", alpha=alpha, verbose=TRUE, H0=H0)
+    ##    thrOSD <- c(resOracleJ$thr, rep(-Inf, m1))
+    thrOSD <- resOracleJ$thr
+
+    # *Oracle JFWER* thresholds (double Oracle!!!)
     X0Oracle <- X0[-H1, ]
-    resOracle <- getJointFWERThresholds(X0Oracle, tau="kFWER", alpha=alpha)
-    thrO <- c(resOracle$thr, rep(-Inf, m1))
+    resOracleJ <- getJointFWERThresholds(X0Oracle, refFamily="kFWER", alpha=alpha)
+    thrOJ <- c(resOracleJ$thr, rep(-Inf, m1))
 
     # JFWER
     nbBadK <- function(thr) {
@@ -48,7 +53,7 @@ testStepDown <- function(m, rho, B, pi0, SNR, alpha) {
         sum(nbFP >= 1:m)
     }
 
-    allThr <- cbind(thrMat, thrO)
+    allThr <- cbind(thrMat, thrOSD, thrOJ)
     badK <- apply(allThr, 2, nbBadK)
     return(badK)
 }

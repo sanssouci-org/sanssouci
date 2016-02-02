@@ -6,8 +6,8 @@ stepDownControl <- structure(function(
 ### A \eqn{m} x \eqn{B} matrix of Monte-Carlo samples of test statistics under the null hypothesis. \describe{
 ### \item{m}{is the number of tested hypotheses}
 ### \item{B}{is the number of Monte-Carlo samples}}
-    tau=c("Simes", "kFWER", "LR06"),
-### A character value or a function that returns a vector of \code{m} thresholds (see \link{details}).
+    refFamily=c("Simes", "kFWER", "LR06"),
+### A character value or a function that returns a vector of \code{m} thresholds (see Details).
     H0=NULL,
 ### A numeric vector, the indices of true null hypotheses (between \code{1} and \code{m}) Defaults to \code{NULL}. This paramenter is typically used to perform simulations.
     ...,
@@ -18,12 +18,12 @@ stepDownControl <- structure(function(
     ) {
   m <- nrow(mat)
   stopifnot(length(stat)==m)
-  stopifnot(tau=="kFWER")  ## other flavor not implemented yet (?)
+  stopifnot(refFamily=="kFWER")  ## other flavor not implemented yet (?)
 
   if (!is.null(H0)) {
       ## sanity checks
-      stopifnot(length(H0)<m)
-      stopifnot(all(H0<m))
+      stopifnot(length(H0)<=m)
+      stopifnot(all(H0<=m))
   }
 
   ## Initialization
@@ -37,13 +37,23 @@ stepDownControl <- structure(function(
   converged <- FALSE
 
   ## joint FWER control through gammatification
-  resJ <- getJointFWERThresholds(mat, tau="kFWER", ..., verbose=FALSE)
+  resJ <- getJointFWERThresholds(mat, refFamily="kFWER", ..., verbose=FALSE)
   resJList[[step]] <- resJ
+
+  ##details<<At 'step 0', a one-parameter family \code{sLambda}
+  ##ensuring JFWER control at level \code{alpha} is inferred using
+  ##\code{getJointFWERThresholds}. This family is then kept fixed
+  ##throughout the step-down process. What changes throughout the
+  ##steps down is the over-estimation of \eqn{H_0}: starting with
+  ##\eqn{H} at step 0, a first lower bound is derived from
+  ##\code{sLambda(lambda)}, which allows re-calibration of
+  ##\eqn{lambda} by applying \code{getJointFWERThresholds} to the
+  ##subset of not-yet-rejected hypotheses, etc.
 
   ## One-parameter threshold family \eqn{s_lambda} in the BNR paper:
   sLambda <- resJ$sLambda
-  ## Note that this family does not change during the step-down process
-  ## only the value of \code{lambda} can change
+  ## Note that this family does not change during the step-down process!
+  ## Only the value of \code{lambda} may change
   thr <- resJ$thr
   lambda <- resJ$lambda
   stopifnot(identical(thr, sLambda(lambda)))    ## sanity check
@@ -68,12 +78,15 @@ stepDownControl <- structure(function(
           ## updated score matrix given R1
           print(R1)
           mat1 <- mat[-R1, ]
+          sLambda1 <- function(alpha) sLambda(alpha)[-R1]
+
       } else {
           mat1 <- mat
+          sLambda1 <- sLambda
       }
 
-      ## joint FWER control through gammatification
-      resJ <- getJointFWERThresholds(mat1, tau="kFWER", ..., verbose=FALSE)
+      ## joint FWER control through gammatification, *holding sLambda fixed*
+      resJ <- getJointFWERThresholds(mat1, refFamily=sLambda1, ..., verbose=FALSE)
       resJList[[step]] <- resJ
 
       ## FWER threshold
@@ -102,7 +115,7 @@ stepDownControl <- structure(function(
        )
 }, ex=function(){
   ## parameters
-  m <- 1e3
+  m <- 1e3+1
   rho <- 0.2
   n <- 123
   pi0 <- 0.8
@@ -122,14 +135,15 @@ stepDownControl <- structure(function(
   scoreMat <- w$stat0Mat
   stat <- w$stat
 
-  ## show test statistics
-  pch <- 20
-  plot(stat, col=rep(c(1, 2), times=c(m0, m1)), main="Test statistics", pch=pch)
-  legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
-
+  if (FALSE) {
+      ## show test statistics
+      pch <- 20
+      plot(stat, col=rep(c(1, 2), times=c(m0, m1)), main="Test statistics", pch=pch)
+      legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
+  }
   alpha <- 0.1
 
-  resSD <- stepDownControl(stat, scoreMat, tau="kFWER", alpha=alpha, verbose=TRUE)
+  resSD <- stepDownControl(stat, scoreMat, refFamily="kFWER", alpha=alpha, verbose=TRUE)
   thrMat <- resSD$thrMat
 
   ## confidence envelopes
@@ -147,13 +161,13 @@ stepDownControl <- structure(function(
   V <- cumsum(o %in% H0)
 
   ## comparison with "Oracle" step-down JFWER thresholds
-  resO <- stepDownControl(stat, scoreMat, tau="kFWER", alpha=alpha, verbose=TRUE, H0=H0)  ## does this work?
+  resO <- stepDownControl(stat, scoreMat, refFamily="kFWER", alpha=alpha, verbose=TRUE, H0=H0)  ## does this work?
   thrO <- resO$thr
   VbarO <- upperBoundFP(statO, thrO, flavor="Mein2006")
 
   ## comparison with "double Oracle" JFWER thresholds
   scoreMatOracle <- scoreMat[-H1, ]
-  resO2 <- getJointFWERThresholds(scoreMatOracle, tau="kFWER", alpha=alpha)
+  resO2 <- getJointFWERThresholds(scoreMatOracle, refFamily="kFWER", alpha=alpha)
   thrO2 <- c(resO2$thr, rep(-Inf, m1))
   VbarO2 <- upperBoundFP(statO, thrO2, flavor="Mein2006")
 

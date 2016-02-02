@@ -1,14 +1,19 @@
 # Package: sansSouci
 
-## Version: 0.1.3 [2016-01-20]
+## Version: 0.2.0 [2016-02-02]
 
-* changed names of return values of 'getJointFWERThresholds' for consistency with the notation of the BNR paper.
-* added test script for unbalancedness.
+* SPEEDUP: 'getJointFWERThresholds' now calls Rcpp functions for time costly operations (sorting).
+* fixed some typos in the documentation.
 
-## Version: 0.1.2 [2016-01-07]
+## Version: 0.1.3 [2016-01-28]
 
 * BUG FIX: the one-parameter family should not be updated at each step down!
 * Example fixed accordingly.
+* Changed names of input and return values of 'getJointFWERThresholds' for consistency with the notation of the BNR paper.
+* Added test script for unbalancedness.
+
+## Version: 0.1.2 [2016-01-07]
+
 * Implemented the "Oracle" version of step-down control.
 
 ## Version: 0.1.1 [2015-12-17]

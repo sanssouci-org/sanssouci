@@ -32,11 +32,11 @@ falseDiscoveryProportionEnvelope <- structure(function(
   FDPbar <- falseDiscoveryProportionEnvelope(pval, thr0)
   tHat <- falseDiscoveryProportionControl(pval, thr0, gamma)
   t1 <- "FDP envelope using Simes' thresholds"
-  t2 <- sprintf("%s; m=%s; alpha=%s", m, alpha)
-  
+  t2 <- sprintf("m=%s; alpha=%s", m, alpha)
+
   curve(FDPbar(x), 0, 5*tHat, type="S", ylim=c(0,1), ylab=expression(bar(FDP)(t)), xlab="t")
-  stext(t1, side=3, pos=0)
-  stext(t2, side=3, pos=1)
+  text(t1, side=3, pos=0)
+  text(t2, side=3, pos=1)
   abline(h=gamma, col="lightgray")
   stripchart(pval[idxs1], add=TRUE, at=0, col=2, cex=0.3)
   stripchart(pval[-idxs1], add=TRUE, at=0, col=1, cex=0.3)
