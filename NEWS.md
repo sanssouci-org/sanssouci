@@ -1,9 +1,13 @@
 # Package: sansSouci
 
+## Version: 0.2.1 [2016-02-04]
+
+* Fixed NAMESPACE for calling Rcpp.
+
 ## Version: 0.2.0 [2016-02-02]
 
 * SPEEDUP: 'getJointFWERThresholds' now calls Rcpp functions for time costly operations (sorting).
-* fixed some typos in the documentation.
+* Fixed some typos in the documentation.
 
 ## Version: 0.1.3 [2016-01-28]
 

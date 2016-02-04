@@ -76,7 +76,9 @@ stepDownControl <- structure(function(
 
       if (length(R1)) {
           ## updated score matrix given R1
-          print(R1)
+          if (verbose) {
+              print(R1)
+          }
           mat1 <- mat[-R1, ]
           sLambda1 <- function(alpha) sLambda(alpha)[-R1]
 

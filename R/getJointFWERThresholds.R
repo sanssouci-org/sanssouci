@@ -75,7 +75,9 @@ getJointFWERThresholds <- structure(function(
                 }
                 refFamily <- function(alpha) {
                     idx <- floor(min(alpha,1)*(B-1))   ## NB: B-1 ensures *non-asymptotically* valid quantiles
-                    print(idx)
+                    if (verbose) {
+                        print(idx)
+                    }
                     Q[, idx]
                 }
             } else if (refFamily=="Simes") {

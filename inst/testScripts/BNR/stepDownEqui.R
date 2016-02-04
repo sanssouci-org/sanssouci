@@ -28,7 +28,7 @@ testStepDown <- function(m, rho, B, pi0, SNR, alpha) {
 #    cols <- c(1, 2)[1+H]
 
     # SD control
-    resSD <- stepDownControl(x, X0, refFamily="kFWER", alpha=alpha, verbose=FALSE)
+    resSD <- stepDownControl(x, X0, refFamily="kFWER", alpha=alpha)
     thrMat <- resSD$thrMat
 
     # Final thresholds
@@ -37,11 +37,11 @@ testStepDown <- function(m, rho, B, pi0, SNR, alpha) {
     o <- order(x, decreasing=TRUE)
 
     ## comparison with *Oracle step-down* JFWER thresholds (only the step-down is Oracle)
-    resOracleSD <- stepDownControl(x, X0, refFamily="kFWER", alpha=alpha, verbose=TRUE, H0=H0)
+    resOracleSD <- stepDownControl(x, X0, refFamily="kFWER", alpha=alpha, H0=H0)
     ##    thrOSD <- c(resOracleJ$thr, rep(-Inf, m1))
-    thrOSD <- resOracleJ$thr
+    thrOSD <- resOracleSD$thr
 
-    # *Oracle JFWER* thresholds (double Oracle!!!)
+    ## *Oracle JFWER* thresholds (double Oracle!!!)
     X0Oracle <- X0[-H1, ]
     resOracleJ <- getJointFWERThresholds(X0Oracle, refFamily="kFWER", alpha=alpha)
     thrOJ <- c(resOracleJ$thr, rep(-Inf, m1))
@@ -66,15 +66,15 @@ pi0 <- 0.9
 B <- 5e3
 #SNR <- 2
 alpha <- 0.25
-nbSimu <- 1e3
+nbSimu <- 1e2
 
-#SNRs <- c(0, 1, 2, 3, 10)
-SNRs <- "Pareto(2,2,1)"
+SNRs <- c(0, 1, 2, 3, 4, 5)
+#SNRs <- "Pareto(2,2,1)"
 rhos <- c(0, 0.2, 0.4)
 pi0s <- c(0.9, 0.99, 0.999)
 
 library("parallel")
-ncores <- 38
+ncores <- 4
 
 for (SNR in SNRs) {
     for (rho in rhos) {
