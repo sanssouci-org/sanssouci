@@ -38,13 +38,13 @@ getJointFWERThresholds <- structure(function(
         if (verbose) {
             print(flavor)
         }
-        if (flavor=="pivotalStat" && B>1e3) {
-            warning("The current implementation of flavor 'pivotalStat' is too slow for large values of 'B'. Forcing flavor='dichotomy'")
-        }
         m <- nrow(mat)
         B <- ncol(mat)
         if (alpha*B<1) {  ## sanity check
             stop("Please make sure that alpha*ncol(mat) is greater than 1!")
+        }
+        if (flavor=="pivotalStat") {
+            warning("Flavor 'pivotalStat' not fully implemented yet!")
         }
         if (Rcpp) {
             kmaxH0 <- partialColSortDesc(mat, kMax);
@@ -75,6 +75,7 @@ getJointFWERThresholds <- structure(function(
                 }
                 refFamily <- function(alpha) {
                     idx <- floor(min(alpha,1)*(B-1))   ## NB: B-1 ensures *non-asymptotically* valid quantiles
+                    print(idx)
                     Q[, idx]
                 }
             } else if (refFamily=="Simes") {
@@ -181,17 +182,12 @@ getJointFWERThresholds <- structure(function(
             ## for Simes, s_k^{-1}(u) = (m/k)*(1-pnorm(u))
                 pval <- 1-pnorm(kmaxH0)
                 skInv <- sweep(pval, 1, m/1:m, "*")
-                mins <- colMins(skInv)
+                pivotalStat <- colMins(skInv)
             } else if (refFamilyCh=="kFWER") {
-                getMin <- function(bb, Q) {
-                    kb <- kmaxH0[,bb]
-                    sw <- sweep(Q, 1, kb, "<")
-                    Fkhat <- rowSums(sw)
-                    return(min(Fkhat))
-                }
-                mins <- sapply(1:B, getMin, Q)/B   ## B+1???
+                rks <- rowRanks(kmaxH0) +1
+                pivotalStat <- colMins(rks)/B
             }
-            lambda <- quantile(mins, alpha, type=1)
+            lambda <- quantile(pivotalStat, alpha, type=1)
 
             ## return values
             thr <- refFamily(lambda)
@@ -219,7 +215,6 @@ getJointFWERThresholds <- structure(function(
             steps <- 0L
             lambdas <- lambda
             reason <- NA_character_
-            pivotalStat <- mins
         } ## if (flavor) { ...
 
         ##value<< List with elements:
