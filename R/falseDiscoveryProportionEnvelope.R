@@ -35,12 +35,12 @@ falseDiscoveryProportionEnvelope <- structure(function(
   t2 <- sprintf("m=%s; alpha=%s", m, alpha)
 
   curve(FDPbar(x), 0, 5*tHat, type="S", ylim=c(0,1), ylab=expression(bar(FDP)(t)), xlab="t")
-  text(t1, side=3, pos=0)
-  text(t2, side=3, pos=1)
+  mtext(t1, side=3, adj=0)
+  mtext(t2, side=3, adj=1)
   abline(h=gamma, col="lightgray")
   stripchart(pval[idxs1], add=TRUE, at=0, col=2, cex=0.3)
   stripchart(pval[-idxs1], add=TRUE, at=0, col=1, cex=0.3)
-  abline(v=thr, col="brown", lty=2, lwd=0.2)
+  abline(v=thr0, col="brown", lty=2, lwd=0.2)
   abline(v=tHat, col="blue")
 })
 

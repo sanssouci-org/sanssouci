@@ -1,4 +1,4 @@
-path <- "../../../../resData/stepDownEqui"
+path <- "../../../../resData/stepDownEqui,Rcpp"
 typeOfSNR <- c("constantSNR", "Pareto")[1]
 
 res <- NULL
@@ -6,8 +6,8 @@ fls <- list.files(path)
 for (ff in fls) {
     pathname <- file.path(path, ff)
     dat <- readRDS(pathname)
-    resMat <- sapply(dat, FUN=function(x) x[c(1, length(x)-c(1, 0))])
-    res <- rbind(res, rowMeans(resMat>0))
+    resMat <- Reduce(rbind, dat)    
+    res <- rbind(res, colMeans(resMat>0))
 }
 colnames(res) <- c("Single step", "Step down", "Oracle")
 ## lgd <- gsub("stepDownEqui,m=1000,(.*),B.*", "\\1", fls)

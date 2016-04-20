@@ -12,6 +12,7 @@ simulateGaussianNullsFromSigma <- structure(function(
   t(chol(Sigma)) %*% matrix(rnorm(m*n), nrow=m, ncol=n)
 ### A \code{m x n} \code{Matrix} simulated test statistics, where \code{m} is the dimension of \code{Sigma}
 }, ex=function(){
+  library("Matrix")
   m <- 100
   n <- 1000
   

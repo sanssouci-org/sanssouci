@@ -136,10 +136,10 @@ stepDownControl <- structure(function(
   w <- wilcoxStat(X, y, B=B)
   scoreMat <- w$stat0Mat
   stat <- w$stat
-
+    
+  pch <- 20
   if (FALSE) {
       ## show test statistics
-      pch <- 20
       plot(stat, col=rep(c(1, 2), times=c(m0, m1)), main="Test statistics", pch=pch)
       legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
   }

@@ -25,7 +25,7 @@ stochOpt <- structure(function( ### Stochastic algorithm
   ## Y <- sim$Y
   HX <- function(lambda, alpha=0.2) {
     h <- 1
-    P <- Matrix(1, m, length(h))
+    P <- Matrix::Matrix(1, m, length(h))
     rho <- 0.2
     Y <- simulateFactorModelNullsFromSingularValuesAndLoadings(m, h, P, rho=rho)$Y
     ts <- sort(Y, decreasing=TRUE)
@@ -38,10 +38,7 @@ stochOpt <- structure(function( ### Stochastic algorithm
   ## Compare with dichotomy
   flavor <- "equi-correlated"
   rho <- 0.2
-  sim <- simulateGaussianNullsFromFactorModel(m, B=B, flavor=flavor, rho=rho)
-  mat <- sim$Y
-  str(mat)
-  image(sim$Sigma)
+  mat <- simulateGaussianNullsFromFactorModel(m, n=B, flavor=flavor, rho=rho)
 
   alpha <- 0.2
   maxSteps <- 1e3

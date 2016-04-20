@@ -3,8 +3,7 @@ importFrom(Rcpp, sourceCpp)
 
 exportPattern(".")
 
-importFrom("Matrix", isSymmetric)
-importFrom("Matrix", Matrix)
-importFrom("matrixStats", rowMaxs)
-importFrom("matrixStats", rowRanks)
-importFrom("matrixStats", colMins)
+importFrom("Matrix", isSymmetric, Matrix, t)
+importFrom("matrixStats", rowMaxs, rowRanks, colMins)
+
+

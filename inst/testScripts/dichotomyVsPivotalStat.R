@@ -12,25 +12,31 @@ alpha <- 0.2
 maxSteps <- 100
 kMax <- m
 
-meth <- "Simes"
+refFamily <- "Simes"
 flavor <- "dichotomy"
-system.time(res2 <- getJointFWERThresholds(mat, tau=meth, alpha,
+system.time(res2 <- getJointFWERThresholds(mat, refFamily=refFamily, alpha,
                                            maxSteps=maxSteps, kMax=kMax,
                                            flavor=flavor))
 flavor <- "pivotalStat"
-system.time(res <- getJointFWERThresholds(mat, tau=meth, alpha,
+system.time(res <- getJointFWERThresholds(mat, refFamily=refFamily, alpha,
                                           maxSteps=maxSteps, kMax=kMax,
                                           flavor=flavor))
 
-meth <- "kFWER"
+refFamily <- "kFWER"
 flavor <- "dichotomy"
-system.time(resk2 <- getJointFWERThresholds(mat, tau=meth, alpha,
+system.time(resk2 <- getJointFWERThresholds(mat, refFamily=refFamily, alpha,
                                            maxSteps=maxSteps, kMax=kMax,
                                            flavor=flavor))
 flavor <- "pivotalStat"
-system.time(resk <- getJointFWERThresholds(mat, tau=meth, alpha,
+system.time(resk <- getJointFWERThresholds(mat, refFamily=refFamily, alpha,
                                            maxSteps=maxSteps, kMax=kMax))
 
+
+refFamily <- "kFWER"
+flavor <- "dichotomy"
+system.time(resk2c <- getJointFWERThresholds(mat, refFamily=refFamily, alpha,
+                                           maxSteps=maxSteps, kMax=kMax,
+                                           flavor=flavor, Rcpp=TRUE))
 
 
 
@@ -44,3 +50,18 @@ foo <- function(m, B, alpha) {
     abline(h=c(ps$lambda, di$lambda), col=c(1,2), lty=c(1,4))
     list(ps, di)
 }
+
+#devtools::install_github("rstudio/profvis")
+library("profvis")
+
+profvis({
+    resk2c <- getJointFWERThresholds(mat, refFamily=refFamily, alpha,
+                                     maxSteps=maxSteps, kMax=kMax,
+                                     flavor=flavor, Rcpp=TRUE)
+})
+
+p <- profvis({
+    resk2 <- getJointFWERThresholds(mat, refFamily=refFamily, alpha,
+                                     maxSteps=maxSteps, kMax=kMax,
+                                     flavor=flavor, Rcpp=FALSE)
+})

@@ -44,11 +44,7 @@ simEqui <- structure(function( ### Simulate Gaussian equi-correlated test statis
         pi0 <- 0.5
         
         sim <- simEqui(m, rho, B, pi0, SNR=1)
-        X <- sim$X
-        
-        w <- wilcoxStat(X, y, B=B)
-        scoreMat <- w$stat0Mat
-        stat <- w$stat
+        stat <- sim$x
         
         ## show test statistics
         pch <- 20

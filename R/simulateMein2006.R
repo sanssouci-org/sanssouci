@@ -68,7 +68,7 @@ simulateMein2006 <- structure(function(
   X <- sim$X
   y <- sim$y
 
-  w <- wilcoxStat(X, y, B=B)
+  w <- wilcoxStat(X, y, B=1e3)
   scoreMat <- w$stat0Mat
   stat <- w$stat
 

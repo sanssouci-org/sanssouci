@@ -1,5 +1,10 @@
 # Package: sansSouci
 
+## Version: 0.2.2 [2016-04-20]
+
+* Updated examples to pass R CMD check without ERROR.
+* 'stepDownControl' vignette now in .Rmd.
+
 ## Version: 0.2.1 [2016-02-04]
 
 * Fixed NAMESPACE for calling Rcpp.

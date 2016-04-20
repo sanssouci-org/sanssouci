@@ -49,8 +49,7 @@ simulateGaussianNullsFromFactorModel <- structure(function(
   
   ## independent
   Y <- simulateGaussianNullsFromFactorModel(m, flavor="independent")
-  S0 <- attr(Y, "Sigma")
-  image(S0)
+    image(Y)
   
   ## equi-correlated
   Y <- simulateGaussianNullsFromFactorModel(m, flavor="equi-correlated", rho=0.2, cov=TRUE)
@@ -67,8 +66,7 @@ simulateGaussianNullsFromFactorModel <- structure(function(
   
   ## 3-factor model
   m <- 4*floor(m/4) ## make sure m/4 is an integer
-  Y <- simulateGaussianNullsFromFactorModel(m, flavor="3-factor", rho=0.5)
-  S3 <- attr(Y, "Sigma")
+  S3 <- simulateGaussianNullsFromFactorModel(m, flavor="3-factor", rho=0.5)
   image(S3)
 })
 

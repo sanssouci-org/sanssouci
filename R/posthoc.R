@@ -38,6 +38,7 @@ posthoc <- structure(function(
   if (require(cherry)) {
     data("NAEP", package="cherry")
     p <- NAEP
+    hom <- hommelFast(NAEP)
     R <- c("HI","MN","IA")
   } else {
     m <- 1e2
@@ -48,14 +49,14 @@ posthoc <- structure(function(
   posthoc(p, R)
 
   if (require(cherry)) {   ## Comparison with 'cherry picking'
-    pickSimes(p, R)
+    pickSimes(hom, R)
   }
   
   if (require(cherry)) {   ## Comparison with 'cherry picking'
     kk <- 0
     res <- NULL
     diffIdxs <- NULL
-    while (TRUE) {
+    while (kk<100) {
       kk <- kk+1
       if (kk %% 1000 == 0) {
         cat(paste("Iteration: ", kk, "\n", sep=""))
@@ -65,8 +66,9 @@ posthoc <- structure(function(
       p <- 1-pnorm(c(rnorm(m0, mean=4), rnorm(m-m0, mean=0)))
       nR <- min(m, rpois(1, lambda=100))
       R <- sample(1:m, nR)
+      hom <- hommelFast(p)
       ph <- posthoc(p, R, silent=TRUE)
-      ps <- pickSimes(p, R, silent=TRUE)
+      ps <- pickSimes(hom, R, silent=TRUE)
       res <- c(res, ph)
       diff <- ph-ps
       if (diff!=0) {
