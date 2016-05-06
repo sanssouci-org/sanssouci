@@ -1,5 +1,4 @@
 library("sansSouci")
-library("actuar")
 
 Rcpp <- c(TRUE, FALSE)[1]
 
@@ -15,7 +14,7 @@ testStepDown <- function(m, rho, B, pi0, SNR, alpha, Rcpp=FALSE) {
         }
 
         m1 <- round(m*(1-pi0))
-        SNR <- xmin + rpareto(m1, shape, scale)
+        SNR <- xmin + actuar::rpareto(m1, shape, scale)
     }
     sim <- simEqui(m, rho, B, pi0, SNR=SNR)
     X0 <- sim$X0
@@ -32,16 +31,44 @@ testStepDown <- function(m, rho, B, pi0, SNR, alpha, Rcpp=FALSE) {
     # SD control
     resSD <- stepDownControl(x, X0, refFamily="kFWER", alpha=alpha, Rcpp=Rcpp)
     thrMat <- resSD$thrMat
-
     # Final thresholds
     nSteps <- ncol(thrMat)
     thr <- thrMat[, nSteps]
     o <- order(x, decreasing=TRUE)
 
     ## comparison with *Oracle step-down* JFWER thresholds (only the step-down is Oracle)
-    resOracleSD <- stepDownControl(x, X0, refFamily="kFWER", alpha=alpha, H0=H0, Rcpp=Rcpp)
+
+    if (FALSE) {
+        xx <- rep(Inf, length(x))
+        xx[H0] <- -Inf
+        resOracleSD <- stepDownControl(xx, X0, refFamily="kFWER", alpha=alpha)
+    } else {
+        resOracleSD <- stepDownControl(x, X0, refFamily="kFWER", alpha=alpha, H0=H0, Rcpp=Rcpp)
+    }
     ##    thrOSD <- c(resOracleJ$thr, rep(-Inf, m1))
     thrOSD <- resOracleSD$thr
+
+    head(cbind(thrMat, thrOSD))
+
+
+
+    if (FALSE) { ## pasting here calculations that *work* for real...
+        res <- getJointFWERThresholds(X0, refFamily="kFWER", alpha)
+        res$lambda
+        sLambda <- res$sLambda
+        str(res$thr)
+
+        mat0 <- mat[H0, ]
+        sLambda0 <- function(alpha) sLambda(alpha)[H0]
+        res0 <- getJointFWERThresholds(mat0, refFamily=sLambda0, alpha)  ## WORKS!
+        thr <- res$sLambda(res0$lambda)
+        thrMat <- cbind(res$thr[1:m0], res0$thr, thr[1:m0])
+        head(thrMat)
+    } ##... well it does *not* work!!
+
+
+
+
 
     ## *Oracle JFWER* thresholds (double Oracle!!!)
     X0Oracle <- X0[-H1, ]
@@ -56,13 +83,14 @@ testStepDown <- function(m, rho, B, pi0, SNR, alpha, Rcpp=FALSE) {
     }
 
     allThr <- cbind(thrMat, thrOSD, thrOJ)
+    head(allThr)
     badK <- apply(allThr, 2, nbBadK)
     return(badK)
 }
 
 
 # Parameters:
-m <- 1e3
+m <- 2e2
 rho <- 0
 pi0 <- 0.9
 B <- 1e4
@@ -77,7 +105,7 @@ rhos <- c(0, 0.2, 0.4)
 pi0s <- c(0.9, 0.99, 0.999)
 
 library("parallel")
-ncores <- 8
+ncores <- 3
 
 for (SNR in SNRs) {
     for (rho in rhos) {
@@ -91,7 +119,7 @@ if (Rcpp) {
 } else {
     sname <- "stepDownEqui"
 }
-            
+
 filename <- sprintf("%s,%s.rds", sname, gsub("\\.", "_", tags))
 path <- "resData"
 path <- file.path(path, sname)
@@ -101,13 +129,13 @@ print(tags)
 
 #set.seed(0xBEEF)
 res <- mclapply(1:nbSimu, FUN=function(bb) {
-    if (bb %% 100 == 0) {
+    if (bb %% 10 == 0) {
         print(bb)
     }
     #print(system.time(res <- testStepDown(m, rho, B, pi0, alpha)))
     res <- testStepDown(m, rho, B, pi0, SNR, alpha)
-    #str(res)
-    return(res)
+    str(res)
+    ##    return(res)
 }, mc.cores=ncores)
 
 pathname <- file.path(path, filename)

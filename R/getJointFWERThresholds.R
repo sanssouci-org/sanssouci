@@ -78,7 +78,12 @@ getJointFWERThresholds <- structure(function(
                     if (verbose) {
                         print(idx)
                     }
-                    Q[, idx]
+                    if (idx==0) {
+                        thr <- rep(Inf, nrow(Q))
+                    } else {
+                        thr <- Q[, idx]
+                    }
+                    thr
                 }
             } else if (refFamily=="Simes") {
                 etaMax <- min(20, 1/alpha)
@@ -120,6 +125,7 @@ getJointFWERThresholds <- structure(function(
                     }
                 } else {
                     isAbove <- sweep(kmaxH0, 1, thr,  ">")
+##                    browser()
                     dim(isAbove) <- c(length(thr), B); ## avoid coercion to vector if only one column (B==1)
                     nAbove <- colSums(isAbove)
                     prob <- mean(nAbove>0)

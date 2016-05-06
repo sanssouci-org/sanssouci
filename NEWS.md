@@ -1,5 +1,10 @@
 # Package: sansSouci
 
+## Version: 0.2.3 [2016-05-06]
+
+* BUG FIX: in 'getJointFWERThresholds', function 'refFamily' could
+  return a matrix of dimensions m x 0 instead of a vector of length m.
+
 ## Version: 0.2.2 [2016-04-20]
 
 * Updated examples to pass R CMD check without ERROR.

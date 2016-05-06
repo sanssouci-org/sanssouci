@@ -3,6 +3,7 @@ typeOfSNR <- c("constantSNR", "Pareto")[1]
 
 res <- NULL
 fls <- list.files(path)
+str(fls)
 for (ff in fls) {
     pathname <- file.path(path, ff)
     dat <- readRDS(pathname)

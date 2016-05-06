@@ -8,8 +8,6 @@ stepDownControl <- structure(function(
 ### \item{B}{is the number of Monte-Carlo samples}}
     refFamily=c("Simes", "kFWER", "LR06"),
 ### A character value or a function that returns a vector of \code{m} thresholds (see Details).
-    H0=NULL,
-### A numeric vector, the indices of true null hypotheses (between \code{1} and \code{m}) Defaults to \code{NULL}. This paramenter is typically used to perform simulations.
     ...,
 ### Further arguments to be passed to getJointFWERControl.
     verbose=FALSE
@@ -19,12 +17,6 @@ stepDownControl <- structure(function(
   m <- nrow(mat)
   stopifnot(length(stat)==m)
   stopifnot(refFamily=="kFWER")  ## other flavor not implemented yet (?)
-
-  if (!is.null(H0)) {
-      ## sanity checks
-      stopifnot(length(H0)<=m)
-      stopifnot(all(H0<=m))
-  }
 
   ## Initialization
   step <- 1
@@ -43,9 +35,9 @@ stepDownControl <- structure(function(
   ##details<<At 'step 0', a one-parameter family \code{sLambda}
   ##ensuring JFWER control at level \code{alpha} is inferred using
   ##\code{getJointFWERThresholds}. This family is then kept fixed
-  ##throughout the step-down process. What changes throughout the
-  ##steps down is the over-estimation of \eqn{H_0}: starting with
-  ##\eqn{H} at step 0, a first lower bound is derived from
+  ##throughout the step-down process. What changes during the steps
+  ##down is the over-estimation of \eqn{H_0}: starting with \eqn{H} at
+  ##step 0, a first lower bound is derived from
   ##\code{sLambda(lambda)}, which allows re-calibration of
   ##\eqn{lambda} by applying \code{getJointFWERThresholds} to the
   ##subset of not-yet-rejected hypotheses, etc.
@@ -59,13 +51,8 @@ stepDownControl <- structure(function(
   stopifnot(identical(thr, sLambda(lambda)))    ## sanity check
   thrMat <- cbind(thrMat, thr)
 
-  ##details<<The default for \code{H0} is \code{NULL}, corresponding to the usual situation where the true null hypotheses are not known. The case where \code{H0} is not \code{NULL} implements an "Oracle" version of the step-down procedure, with only one step down.
-  if (!is.null(H0)) {
-      R1 <- setdiff(1:m, H0)
-  } else {
-      thr1 <- thr[1]   ## (1-)FWER threshold
-      R1 <- which(stat>=thr1)
-  }
+  thr1 <- thr[1]   ## (1-)FWER threshold
+  R1 <- which(stat>=thr1)
 
   while (!converged) {
       step <- step+1
@@ -96,12 +83,8 @@ stepDownControl <- structure(function(
       thr <- sLambda(lambda)
       thrMat <- cbind(thrMat, thr)
 
-      if (!is.null(H0)) {
-          R1new <- R1  ## force convergence
-      } else {
-          thr1 <- thr[1]   ## (1-)FWER threshold
-          R1new <- which(stat>=thr1)
-      }
+      thr1 <- thr[1]   ## (1-)FWER threshold
+      R1new <- which(stat>=thr1)
 
       ## convergence reached?
       converged <- identical(R1new, R1)
@@ -120,7 +103,7 @@ stepDownControl <- structure(function(
   m <- 1e3+1
   rho <- 0.2
   n <- 123
-  pi0 <- 0.8
+  pi0 <- 0.9
   B <- 1e3
 
   ##  set.seed(0xBEEF)
@@ -136,7 +119,7 @@ stepDownControl <- structure(function(
   w <- wilcoxStat(X, y, B=B)
   scoreMat <- w$stat0Mat
   stat <- w$stat
-    
+
   pch <- 20
   if (FALSE) {
       ## show test statistics
@@ -163,8 +146,11 @@ stepDownControl <- structure(function(
   V <- cumsum(o %in% H0)
 
   ## comparison with "Oracle" step-down JFWER thresholds
-  resO <- stepDownControl(stat, scoreMat, refFamily="kFWER", alpha=alpha, verbose=TRUE, H0=H0)  ## does this work?
+  statO <- rep(Inf, m)
+  statO[H0] <- -Inf
+  resO <- stepDownControl(statO, scoreMat, refFamily="kFWER", alpha=alpha, verbose=TRUE)  ## does this work?
   thrO <- resO$thr
+  stopifnot(all(thr-thrO>=0))
   VbarO <- upperBoundFP(statO, thrO, flavor="Mein2006")
 
   ## comparison with "double Oracle" JFWER thresholds
@@ -202,10 +188,16 @@ stepDownControl <- structure(function(
 ############################################################################
 ## HISTORY:
 ##
+## 2016-02-05
+## o de-Implemented the "Oracle" version of step-down control, as it
+## can be obtained direclty by tweaking the 'stat' parameter (see
+## example).
+##
 ## 2016-01-07
 ## o BUG FIX: the one-parameter family should not be updated at each step down!
 ## o Example fixed accordingly.
 ## o Implemented the "Oracle" version of step-down control.
+##
 ## 2014-05-09
 ## o Created from 'getJointFWERThresholds'.
 ############################################################################
