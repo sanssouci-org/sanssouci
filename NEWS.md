@@ -1,5 +1,9 @@
 # Package: sansSouci
 
+## Version 0.3.1 [2016-06-02]
+* BUG FIX in 'stepDownJointFWERControl': in some rare situations the algorithm could be stuck alternating between two candidate rejection sets R1, hence never terminating. Now forcing the 'best' candidate (ie the largest one) to be selected.
+* Added a test (using 'extdata/simTrace.rda') to make sure that 'stepDownJointFWERControl' terminates in such situations.
+
 ## Version: 0.3.0 [2016-06-02]
 
 Major rewriting of the code for increased clarity and efficiency:

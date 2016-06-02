@@ -41,6 +41,7 @@
 ##' matrix of size \eqn{m} x the number of steps down, containing
 ##' successive pivotal test statistics}
 ##' \item{sk}{threshold family}
+##' \item{lambda}{JFWER threshold.}
 ##' }
 ##' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 ##' @export
@@ -87,7 +88,7 @@ stepDownJointFWERControl <- function(
     refFamily=c("Simes", "kFWER"),
     alpha,
     kMax=nrow(mat),
-    maxSteps=Inf,
+    maxSteps=100,
     Rcpp=FALSE,
     ...,
     verbose=FALSE)
@@ -117,7 +118,7 @@ stepDownJointFWERControl <- function(
         thr <- sk(lambda)
 
         ## for storing results
-        thrMat <- thr
+        thrMat <- matrix(thr, ncol=1)
         pivMat <- pivStat
         converged <- FALSE
 
@@ -128,6 +129,9 @@ stepDownJointFWERControl <- function(
 
         while (!converged && step<maxSteps) {
             step <- step+1
+
+            lambda0 <- lambda
+            thr0 <- thr
 
             if (verbose) {
                 print(paste("Step:", step))
@@ -151,17 +155,32 @@ stepDownJointFWERControl <- function(
             lambda <- quantile(pivStat, alpha, type=1)
             thr <- sk1(lambda)
             thr <- c(thr, rep(-Inf, length(R1)))
-            thrMat <- cbind(thrMat, thr)
-            pivMat <- cbind(pivMat, pivStat)
 
             thr1 <- thr[1]   ## (1-)FWER threshold
             R1new <- which(stat>=thr1)
 
             ## convergence reached?
-            converged <- identical(R1new, R1)
+            noNewRejection <- all(R1new %in% R1)
+            ## in rare situations R1new is strictly included in R1
+            ## we need to declare convergence in such cases as well
+            ## (and keep the largest rejection set!)
+            if (noNewRejection) {
+                if (!identical(R1new, R1)) {
+                    ## not a 'TRUE' convergence: override the last step down!
+                    thr <- thr0
+                    lambda <- lambda0
+                }
+                converged <- TRUE ## stop the step-down process
+            }
 
             ## update R1
             R1 <- R1new
+
+            thrMat <- cbind(thrMat, thr)
+            pivMat <- cbind(pivMat, pivStat)
+        }
+        if (step==maxSteps) {
+            warning("Maximal number of steps down reached without reaching convergence")
         }
 
         ## TODO: also return step at which hyp j is rejected!
@@ -169,11 +188,19 @@ stepDownJointFWERControl <- function(
         list(thr=thr,
              thrMat=thrMat,
              pivMat=pivMat,
-             sk=sk)
+             sk=sk,
+             lambda=lambda)
     }
 
 ############################################################################
 ## HISTORY:
+##
+## 2016-06-02
+## o BUG FIX: in some rare situations the algorithm could be stuck
+## alternating between two candidate rejection sets R1, hence never
+## terminating. Now forcing the 'best' candidate (ie the largest one)
+## to be selected.
+## o Made 'maxSteps=100' the default instead of 'Inf'.
 ##
 ## 2016-02-05
 ## o de-Implemented the "Oracle" version of step-down control, as it

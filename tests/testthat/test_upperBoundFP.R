@@ -11,7 +11,7 @@ test_that("upperBoundFP flavors give identical results", {
                            upperBoundFP(T, s, flavor="BNR2016"),
                            upperBoundFP(T, s, flavor="Mein2006"))
 
-              ntests <- 100
+              ntests <- 10
               for (tt in 1:ntests) {
                   m <- 1e4
                   it <- sort(sample(2*m, m, replace=FALSE))
