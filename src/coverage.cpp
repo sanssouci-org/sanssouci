@@ -3,6 +3,21 @@
 using namespace Rcpp;
 // [[Rcpp::depends(RcppArmadillo)]]
 
+//' Empirical coverage of a threshold family
+//'
+//' @param thr A numeric vector of length \code{m}, a threshold family. Should
+//'   be sorted in decreasing order.
+//' @param Z A \code{m} x \code{B} matrix of \code{B} Monte-Carlo samples of test statistics
+//'   under the null hypothesis. Each column should be sorted in decreasing order.
+//' @return The empirical coverage of \code{thr} according to \code{Z}.
+//'
+//' @details The empirical coverage of \code{thr} according to
+//'   \code{Z} is defined as the empirical probability that there exists \eqn{k}
+//'   in \eqn{1 \dots m} such that \eqn{k}-th max of the joint distribution of
+//'   the test statistics under the null hypothesis exceeds the \eqn{k}-th
+//'   largest value of \code{thr}, that is, \code{thr[k]}.
+//'
+//' @export
 // [[Rcpp::export]]
 NumericVector coverage(NumericVector thr, arma::mat Z) {
     // Calculate P_n(k-max(thr) > thr(k))
@@ -30,5 +45,12 @@ m <- 10
 B <- 20
 thr <- sort(rnorm(m), decreasing=TRUE)
 Z <- matrix(rnorm(m*B), m, B)
-coverage(thr, Z)
+p <- coverage(thr, Z)
+
+## R version:
+isAbove <- sweep(Z, 1, thr,  ">")
+nAbove <- colSums(isAbove)
+pR <- mean(nAbove>0)
+
+stopifnot(identical(pR,p))
 */

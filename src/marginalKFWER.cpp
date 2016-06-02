@@ -3,6 +3,21 @@
 using namespace Rcpp;
 // [[Rcpp::depends(RcppArmadillo)]]
 
+//' Marginal Empirical coverage of a threshold family
+//'
+//' @param thr A numeric vector of length \code{m}, a threshold family. Should
+//'   be sorted in decreasing order.
+//' @param Z A \code{m} x \code{B} matrix of \code{B} Monte-Carlo samples of test statistics
+//'   under the null hypothesis. Each column should be sorted in decreasing order.
+//' @return The marginal empirical coverage of \code{thr} according to \code{Z}.
+//'
+//' @details The marginal empirical coverage of \code{thr} according to
+//'   \code{Z} is defined for an hypothesis of index \code{k} in \eqn{1 \dots m}
+//'   as the empirical probability the \eqn{k}-th max of the joint distribution of
+//'   the test statistics under the null hypothesis exceeds the \eqn{k}-th
+//'   largest value of \code{thr}, that is, \code{thr[k]}.
+//'
+//' @export
 // [[Rcpp::export]]
 NumericVector marginalKFWER(NumericVector thr, arma::mat Z) {
     // Calculate P_n(k-max(thr) > thr(k))

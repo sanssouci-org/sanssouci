@@ -3,8 +3,13 @@
 using namespace Rcpp;
 // [[Rcpp::depends(RcppArmadillo)]]
 
+//' partial sorting of the rows of a matrix by descending order
+//'
+//' @param X A numeric matrix
+//' @param k An integer value between 1 and \code{nrow(mat)}
+//' @export
 // [[Rcpp::export]]
-arma::mat partialColSortDesc(arma::mat X, int k) {
+arma::mat partialColSortDescCpp(arma::mat X, int k) {
 // partial sorting by column in descending order
     int B = X.n_cols;
     arma::mat Y(k, B, arma::fill::zeros);
@@ -12,7 +17,6 @@ arma::mat partialColSortDesc(arma::mat X, int k) {
         arma::vec x = -X.col(bb);  // descending order
         std::nth_element(x.begin(), x.begin()+k, x.end());
         std::sort(x.begin(), x.begin()+k);
-//        Y.col(bb) = -x;
         for (int rr=0; rr<k; rr++) {
             Y(rr,bb) = -x(rr);    // back to original values
         }
@@ -23,13 +27,13 @@ arma::mat partialColSortDesc(arma::mat X, int k) {
 /*** R
 A <- matrix(rnorm(15), 5, 3);
 print(A)
-B <- partialColSortDesc(A, 2);
+B <- partialColSortDescCpp(A, 2);
 print(B);
 
-if (FALSE) {
+if (require("rbenchmark")) {
     A <- matrix(rnorm(1e6), 10000, 1000);
     kmax <- 1000;
-    benchmark(partialColSortDesc(A, kmax),
+    benchmark(partialColSortDescCpp(A, kmax),
               -apply(-A, 2, sort, partial=kmax), replications=1)
 }
 */

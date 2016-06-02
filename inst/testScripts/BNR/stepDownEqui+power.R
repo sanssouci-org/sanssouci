@@ -30,19 +30,19 @@ testStepDown <- function(m, rho, B, pi0, SNR, alpha, Rcpp=FALSE) {
 #    cols <- c(1, 2)[1+H]
 
     # SD control
-    resSD <- stepDownControl(x, X0, refFamily="kFWER", alpha=alpha, Rcpp=Rcpp)
+    resSD <- stepDownJointFWERControl(x, X0, refFamily="kFWER", alpha=alpha, Rcpp=Rcpp, verbose=TRUE)
     thrMat <- resSD$thrMat
     nSteps <- ncol(thrMat)
     thrMat <- cbind("step0"=thrMat[, 1], "stepDown"=thrMat[, nSteps])
 
     ## comparison with *Oracle step-down* JFWER thresholds (only the step-down is Oracle)
-    resOracleSD <- stepDownControl(x, X0, refFamily="kFWER", alpha=alpha, H0=H0, Rcpp=Rcpp)
+    resOracleSD <- stepDownJointFWERControl(x, X0, refFamily="kFWER", alpha=alpha, H0=H0, Rcpp=Rcpp)
     ##    thrOSD <- c(resOracleJ$thr, rep(-Inf, m1))
     thrOSD <- resOracleSD$thr
 
     ## *Oracle JFWER* thresholds (double Oracle!!!)
     X0Oracle <- X0[-H1, ]
-    resOracleJ <- getJointFWERThresholds(X0Oracle, refFamily="kFWER", alpha=alpha, Rcpp=Rcpp)
+    resOracleJ <- jointFWERControl(X0Oracle, refFamily="kFWER", alpha=alpha, Rcpp=Rcpp)
     thrOJ <- c(resOracleJ$thr, rep(-Inf, m1))
 
     res <- cbind(x=x, truth=sim$H, thrMat, "Oracle"=thrOSD, "Oracle2"=thrOJ)
@@ -80,7 +80,7 @@ if (Rcpp) {
 } else {
     sname <- "stepDownEqui+power"
 }
-            
+
 filename <- sprintf("%s,%s.rds", sname, gsub("\\.", "_", tags))
 path <- "resData"
 path <- file.path(path, sname)

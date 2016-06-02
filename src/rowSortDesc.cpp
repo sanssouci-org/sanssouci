@@ -3,6 +3,12 @@
 using namespace Rcpp;
 // [[Rcpp::depends(RcppArmadillo)]]
 
+//' Sorting of the rows of a matrix by descending order
+//'
+//' @param X A numeric matrix.
+//' @return A numeric matrix whose rows are sorted by descending order.
+//'
+//' @export
 // [[Rcpp::export]]
 arma::mat rowSortDesc(arma::mat X) {
 // sorting by row in descending order

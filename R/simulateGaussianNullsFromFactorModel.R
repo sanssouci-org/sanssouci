@@ -1,3 +1,45 @@
+##' simulateGaussianNullsFromFactorModel
+##'
+##' Simulate test statistic null distribution in a Gaussian factor model
+##'
+##'
+##' @param m Number of tests
+##' @param n Number of replications of the simulation
+##' @param flavor The type of factor model to be simulated
+##' @param rho \code{1-rho} is the standard deviation of the noise
+##' @param cov should the covariance matrix of the model be returned ?
+##' @return A \code{m x n} \code{Matrix} simulated test statistics.  If
+##' \code{cov} is set to TRUE, the covariance matrix of the model may be
+##' accessed by \code{attr(Y, "Sigma")}.
+##' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
+##' @export
+##' @importFrom Matrix Matrix t
+##' @examples
+##'
+##' m <- 20
+##'
+##' ## independent
+##' Y <- simulateGaussianNullsFromFactorModel(m, flavor="independent")
+##'   image(Y)
+##'
+##' ## equi-correlated
+##' Y <- simulateGaussianNullsFromFactorModel(m, flavor="equi-correlated", rho=0.2, cov=TRUE)
+##' S <- attr(Y, "Sigma")
+##' image(S)
+##'
+##' ## check equi-correlation:
+##' Y <- simulateGaussianNullsFromFactorModel(m, n=1237, flavor="equi-correlated", rho=0.2)
+##' covmat <- cov(t(Y))
+##' image(covmat)
+##' diag(covmat) <- NA
+##' dim(covmat) <- NULL
+##' summary(covmat)
+##'
+##' ## 3-factor model
+##' m <- 4*floor(m/4) ## make sure m/4 is an integer
+##' S3 <- simulateGaussianNullsFromFactorModel(m, flavor="3-factor", rho=0.5)
+##' image(S3)
+##'
 simulateGaussianNullsFromFactorModel <- structure(function(
 ### Simulate test statistic null distribution in a Gaussian factor model
     m,
@@ -37,7 +79,7 @@ simulateGaussianNullsFromFactorModel <- structure(function(
     P <- Matrix(cbind(gamma1, gamma2, gamma3)/sqrt(m))
     Y <- replicate(n, simulateFactorModelNullsFromSingularValuesAndLoadings(m, h=h, P=P, rho=rho)$Y)
   }
-  
+
   if (cov) {
     Sigma <- getFactorModelCovarianceMatrix(m, h=h, P=P, rho=rho)
     attr(Y, "Sigma") <- Sigma
@@ -46,11 +88,11 @@ simulateGaussianNullsFromFactorModel <- structure(function(
 ### A \code{m x n} \code{Matrix} simulated test statistics.  If \code{cov} is set to TRUE, the covariance matrix of the model may be accessed by \code{attr(Y, "Sigma")}.
 }, ex=function(){
   m <- 20
-  
+
   ## independent
   Y <- simulateGaussianNullsFromFactorModel(m, flavor="independent")
     image(Y)
-  
+
   ## equi-correlated
   Y <- simulateGaussianNullsFromFactorModel(m, flavor="equi-correlated", rho=0.2, cov=TRUE)
   S <- attr(Y, "Sigma")
@@ -63,7 +105,7 @@ simulateGaussianNullsFromFactorModel <- structure(function(
   diag(covmat) <- NA
   dim(covmat) <- NULL
   summary(covmat)
-  
+
   ## 3-factor model
   m <- 4*floor(m/4) ## make sure m/4 is an integer
   S3 <- simulateGaussianNullsFromFactorModel(m, flavor="3-factor", rho=0.5)

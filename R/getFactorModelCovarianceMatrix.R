@@ -1,7 +1,19 @@
+##' getFactorModelCovarianceMatrix
+##'
+##' calculate the covariance matrix of a factor model
+##'
+##'
+##' @param m Number of tests
+##' @param h A vector of \code{k} singular values associated to each factor
+##' @param P A \code{m x k} matrix of factor loadings
+##' @param rho \code{1-rho} is the standard deviation of the noise
+##' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
+##' @importFrom Matrix Matrix
+##' @export
 getFactorModelCovarianceMatrix <- function(
 ### calculate the covariance matrix of a factor model
                                            m,
-### Number of tests                                               
+### Number of tests
                                            h=numeric(0),
 ### A vector of \code{k} singular values associated to each factor
                                            P=Matrix(nrow=m, ncol=length(h)),
@@ -26,7 +38,7 @@ getFactorModelCovarianceMatrix <- function(
   }
   mat
 }
-                                            
+
 ############################################################################
 ## HISTORY:
 ## 2014-03-03

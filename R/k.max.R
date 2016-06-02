@@ -1,3 +1,19 @@
+##' k max
+##'
+##' k^th maximum of a numeric vector
+##'
+##'
+##' @param x A numeric vector
+##' @param k An integer vector of test statistics of length m
+##' @return the k^th maximum of x
+##' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
+##' @export
+##' @examples
+##'
+##' x <- rnorm(100)
+##' k.max(x, 10);
+##' sort(x)[100-10+1]
+##'
 k.max  <- structure(function(
 ### k^{th} maximum of a numeric vector
                    x,

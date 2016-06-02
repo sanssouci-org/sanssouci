@@ -1,3 +1,14 @@
+##' wilcoxStat
+##'
+##' Fast calculation of Wilcoxon sum rank test statistic
+##'
+##'
+##' @param X An \eqn{m x n} covariate matrix
+##' @param y A vector of \eqn{n} phenotypes in \eqn{{0,1}}
+##' @param B Number of resamplings
+##' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
+##' @importFrom matrixStats rowRanks
+##' @export
 wilcoxStat <- function(
     ### Fast calculation of Wilcoxon sum rank test statistic
     X,
@@ -12,7 +23,7 @@ wilcoxStat <- function(
   n1 <- sum(y==1)
   rs <- n0*(n0+1)/2  ## mininmal rank sum
   med <- n0*n1/2
-  
+
   w0 <- which(y==0)
   stat <- rowSums(rks[, w0])
 

@@ -1,7 +1,35 @@
+##' simulateGaussianEquiCorrelatedNulls
+##'
+##' Simulate equi-correlated null hypotheses
+##'
+##'
+##' @param m Number of tests
+##' @param n Number of replications
+##' @param rho \code{1-rho} is the standard deviation of the noise
+##' @param w An optional vector of length \code{n}, the underlying factor
+##' driving equi-correlation
+##' @return A \code{m x n} matrix of simulated observations. The underlying
+##' factor driving equi-correlation is given as \code{attr(Y, "w")}.
+##' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
+##' @export
+##' @examples
+##'
+##' m <- 1331
+##' n <- 111
+##' ## equi-correlated
+##' rho <- 0.2
+##'
+##' Y <- simulateGaussianEquiCorrelatedNulls(m, n, rho)
+##' ## check equi-correlation:
+##' covmat <- cov(t(Y))
+##' diag(covmat) <- NA
+##' dim(covmat) <- NULL
+##' summary(covmat)
+##'
 simulateGaussianEquiCorrelatedNulls <- structure(function(
 ### Simulate equi-correlated null hypotheses
     m,
-### Number of tests                                               
+### Number of tests
     n=1e3,
 ### Number of replications
     rho=0,
@@ -32,7 +60,7 @@ simulateGaussianEquiCorrelatedNulls <- structure(function(
   n <- 111
   ## equi-correlated
   rho <- 0.2
-  
+
   Y <- simulateGaussianEquiCorrelatedNulls(m, n, rho)
   ## check equi-correlation:
   covmat <- cov(t(Y))

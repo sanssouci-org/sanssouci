@@ -1,3 +1,42 @@
+##' simulateMein2006
+##'
+##'
+##'
+##' @param m Number of hypotheses
+##' @param rho Level of equi-correlation between pairs of variables
+##' @param n Number of observations
+##' @param pi0 Proportion of true null hypotheses
+##' @param SNR Signal to noise ratio. Either a numeric value (a measure of
+##' distance between H0 and H1) or a vector of length \code{m*(1-pi0)}
+##' @param p Probability of success of the outcome variable
+##' @param w An optional vector of length \code{n}, the underlying factor
+##' driving equi-correlation
+##' @return A vector of length \code{n}, the underlying factor driving
+##' equi-correlation
+##' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
+##' @export
+##' @importFrom stats rbinom
+##' @examples
+##'
+##' m <- 123
+##' rho <- 0.2
+##' n <- 100
+##' pi0 <- 0.5
+##'
+##' sim <- simulateMein2006(m, rho, n, pi0, SNR=1)
+##' X <- sim$X
+##' y <- sim$y
+##'
+##' w <- wilcoxStat(X, y, B=1e3)
+##' scoreMat <- w$stat0Mat
+##' stat <- w$stat
+##'
+##' ## show test statistics
+##' pch <- 20
+##' colStat <- 1+sim$H
+##' plot(stat, col=colStat, main="Test statistics", pch=pch)
+##' legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
+##'
 simulateMein2006 <- structure(function(
     m,
     ### Number of hypotheses

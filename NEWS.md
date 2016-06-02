@@ -1,5 +1,15 @@
 # Package: sansSouci
 
+## Version: 0.3.0 [2016-06-02]
+
+Major rewriting of the code for increased clarity and efficiency:
+* Renamed and reshaped the functions to calibrate JFWER thresholds (step down and single step).
+* Dropped dichotomy in favor of pivotal statistic for the computation of JFWER thresholds.
+* Speedup in 'upperBoundFP'.
+* Added 'SimesThresholdFamily', 'pivotalStat', 'thresholdFamily', 'kFWERThresholdFamily', 'partialColSortDesc', 'biSort'.
+* Added test scripts (using package "testthat").
+* Moved from "inlinedocs" to "roxygen2" for documentation (mostly because documenting Rcpp functions is easier and the nice integration with other (dev)tools for checking package, running examples and performing package tests).
+
 ## Version: 0.2.3 [2016-05-06]
 
 * BUG FIX: in 'getJointFWERThresholds', function 'refFamily' could

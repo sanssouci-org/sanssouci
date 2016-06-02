@@ -1,0 +1,80 @@
+##' kFWERThresholdFamily
+##'
+##' calibration of the 'balanced' threshold family of BNR
+##'
+##' This family \eqn{(t_k)} of thresholds is calibrated in such a way that for
+##' each \eqn{k\leq kMax}, \eqn{(t_k)} controls the (marginal) k-FWER
+##'
+##' The \eqn{m} x \eqn{B} matrix resulting of sorting the argument \code{mat}
+##' by row and then by columns is returned as the attribute 'Q' of the return
+##' value.
+##'
+##' @param mat A \eqn{m} x \eqn{B} matrix of Monte-Carlo samples of test
+##' statistics under the null hypothesis. \describe{ \item{m}{is the number of
+##' tested hypotheses} \item{B}{is the number of Monte-Carlo samples}}
+##' @param kMax For simultaneous control of (\eqn{k}-FWER for all \eqn{k \leq
+##' k[max]}).
+##' @param Rcpp If \code{TRUE} (the default), some costly operations (sorting)
+##' are performed in C++.
+##' @param verbose If \code{TRUE}, print results of intermediate calculations.
+##' Defaults to \code{FALSE}.
+##' @return A function \eqn{f:alpha \mapsto f(alpha)} such that for each
+##' \eqn{alpha}, \eqn{f(alpha)} is a candidate threshold family for controlling
+##' the joint FWER.
+##' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
+##' @export
+##' @examples
+##'
+##' m <- 1023
+##' B <- 1e3
+##'
+##' flavor <- c("independent", "equi-correlated", "3-factor model")[2]
+##' rho <- 0.2
+##' mat <- simulateGaussianNullsFromFactorModel(m, B, flavor=flavor, rho=rho)
+##'
+##' sk <- kFWERThresholdFamily(mat)
+##'
+##' thr <- sk(0.2)
+##'
+##'
+kFWERThresholdFamily <- structure(function(
+### calibration of the 'balanced' threshold family of BNR
+    mat,
+### A \eqn{m} x \eqn{B} matrix of Monte-Carlo samples of test statistics under the null hypothesis. \describe{
+### \item{m}{is the number of tested hypotheses}
+### \item{B}{is the number of Monte-Carlo samples}}
+    kMax=nrow(mat),
+### For simultaneous control of (\eqn{k}-FWER for all \eqn{k \leq
+### k[max]}).
+    Rcpp=TRUE,
+### If \code{TRUE} (the default), some costly operations (sorting) are performed in C++.
+    verbose=FALSE)
+### If \code{TRUE}, print results of intermediate calculations.
+### Defaults to \code{FALSE}.
+    {
+        ##details<<This family \eqn{(t_k)} of thresholds is calibrated
+        ##in such a way that for each \eqn{k\leq kMax}, \eqn{(t_k)}
+        ##controls the (marginal) k-FWER
+        Q <- bisort(mat, kMax=kMax, Rcpp=Rcpp)
+        sk <- function(alpha) thresholdFamily(alpha, Q)
+        attr(sk, 'Q') <- Q
+        ##details<<The \eqn{m} x \eqn{B} matrix resulting of sorting the argument
+        ##\code{mat} by row and then by columns is returned as the
+        ##attribute 'Q' of the return value.
+        return(sk)
+        ### A function \eqn{f:alpha \mapsto f(alpha)} such that for
+        ### each \eqn{alpha}, \eqn{f(alpha)} is a candidate threshold
+        ### family for controlling the joint FWER.
+    }, ex=function(){
+        m <- 1023
+        B <- 1e3
+
+        flavor <- c("independent", "equi-correlated", "3-factor model")[2]
+        rho <- 0.2
+        mat <- simulateGaussianNullsFromFactorModel(m, B, flavor=flavor, rho=rho)
+
+        sk <- kFWERThresholdFamily(mat, refFamily="kFWER")
+
+        thr <- sk(0.2)
+
+    })

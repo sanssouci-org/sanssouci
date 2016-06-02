@@ -30,15 +30,15 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
-// partialColSortDesc
-arma::mat partialColSortDesc(arma::mat X, int k);
-RcppExport SEXP sansSouci_partialColSortDesc(SEXP XSEXP, SEXP kSEXP) {
+// partialColSortDescCpp
+arma::mat partialColSortDescCpp(arma::mat X, int k);
+RcppExport SEXP sansSouci_partialColSortDescCpp(SEXP XSEXP, SEXP kSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
-    __result = Rcpp::wrap(partialColSortDesc(X, k));
+    __result = Rcpp::wrap(partialColSortDescCpp(X, k));
     return __result;
 END_RCPP
 }
