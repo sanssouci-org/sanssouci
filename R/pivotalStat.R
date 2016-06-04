@@ -16,6 +16,9 @@
 ##' targeted.
 ##' @param Rcpp If \code{TRUE}, some costly operations (sorting) are performed
 ##' in C++.
+##' @return A numeric vector, the values of the pivotal statistic
+##' whose quantile of order \eqn{alpha} is the \eqn{lambda}-adjustment
+##' factor of BNR
 ##' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 ##' @export
 ##' @importFrom stats pnorm
@@ -41,26 +44,11 @@
 ##' prob <- coverage(thr, kmaxH0);
 ##'
 ##'
-pivotalStat <- structure(function( ## calculate the pivotal statistic of BNR.
+pivotalStat <- structure(function(
     mat,
-### A \eqn{m} x \eqn{B} matrix of Monte-Carlo samples of test
-### statistics under the null hypothesis. \describe{ \item{m}{is the
-### number of null hypotheses tested} \item{B}{is the number of
-### Monte-Carlo samples}}
     refFamily=c("Simes", "kFWER"),
-### A character value which can be \describe{ \item{Simes}{The
-###   classical family of thresholds introduced by Simes (1986):
-###   \eqn{\alpha*k/m}. This family yields joint FWER control if the
-###   test statistics are positively dependent (PRDS) under H0.}
-###   \item{kFWER}{A family \eqn{(t_k)} calibrated so that for each k,
-###   \eqn{(t_k)} controls the (marginal) k-FWER.}
-### }
     kMax=nrow(mat),
-### A scalar value between \code{1} and \code{m} such that
-### simultaneous control of (\eqn{k}-FWER for all \eqn{k \le k[max]})
-### is targeted.
     Rcpp=FALSE)
-### If \code{TRUE}, some costly operations (sorting) are performed in C++.
     {
         m <- nrow(mat)
         B <- ncol(mat)
@@ -84,7 +72,7 @@ pivotalStat <- structure(function( ## calculate the pivotal statistic of BNR.
             rks <- rowRanks(kmaxH0, ties.method="max") ## 'max' is the default in 'matrixStats'
             pivotalStat <- colMins(rks)/B
         }
-        return(pivotalStat) ##<< A numeric vector, the values of the pivotal statistic whose quantile of order \eqn{alpha} is the \eqn{lambda}-adjustment factor of BNR
+        return(pivotalStat)
     }, ex=function(){
         m <- 1023
         B <- 1e3

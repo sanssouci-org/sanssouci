@@ -100,16 +100,10 @@ stepDownJointFWERControl <- function(
         ## get threshold family
         Q <- NULL
         if (refFamily=="kFWER") {
-            if (is.null(mat)) {
-                stop("Argument 'mat' should be provided for family 'kFWER'")
-            }
             sk <- kFWERThresholdFamily(mat, kMax=kMax, Rcpp=Rcpp)
             Q <- attr(sk, 'Q')
             attr(sk, 'Q') <- NULL
         } else if (refFamily=="Simes") {
-            if (!is.null(mat)) {
-                warning("Unused argument 'mat' for family 'Simes'")
-            }
             sk <- SimesThresholdFamily(m, kMax=kMax)
         }
         ## single-step thresholds
