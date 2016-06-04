@@ -4,10 +4,10 @@ Rcpp <- c(TRUE, FALSE)[1]
 m <- 1e3
 rho <- 0
 pi0 <- 0.9
-B <- 1e3
+B <- 5e3
 #SNR <- 2
 alpha <- 0.25
-nbSimu <- 1e3
+nbSimu <- 5e3
 typeOfSNR <- c("constantSNR", "Pareto")[1]
 
 

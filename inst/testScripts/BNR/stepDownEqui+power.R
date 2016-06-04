@@ -1,7 +1,7 @@
 ##library("sansSouci")
 library("actuar")
 library("parallel")
-ncores <- 36
+ncores <- 7
 
 if (Rcpp) {
     sname0 <- "stepDownEqui+power,Rcpp"
@@ -12,50 +12,43 @@ if (Rcpp) {
 ptag <- sprintf("sansSouci_%s", packageVersion("sansSouci"))
 htag <- system("hostname", inter=TRUE)
 sname <- sprintf("%s,%s,%s", sname0, ptag, htag)
+pname <- sprintf("m=%s,B=%s,alpha=%s,nbSimu=%s", m, B, alpha, nbSimu)
+
+resPath <- "resData"
+path <- file.path(resPath, sname, pname)
+path <- R.utils::Arguments$getWritablePath(path)
 
 for (SNR in SNRs) {
     for (rho in rhos) {
         for (pi0 in pi0s) {
+            tags <- sprintf("pi0=%s,rho=%s,SNR=%s", pi0, rho, SNR)
+            filename <- sprintf("%s.rds", gsub("\\.", "_", tags))
+            print(tags)
+            
+            res <- mclapply(1:nbSimu, FUN=function(bb) {
+                if (bb %% 100 == 0) {
+                    print(bb)
+                }
+                
+                rr <- testStepDown(m, rho, B, pi0, SNR, alpha)
+            }, mc.cores=ncores)
 
-rootPath <- "resData"
-
-if (FALSE) {
-    tags <- sprintf("m=%s,pi0=%s,rho=%s,SNR=%s,B=%s,alpha=%s,nbSimu=%s",
-                    m, pi0, rho, SNR, B, alpha, nbSimu)
-    filename <- sprintf("%s.rds", gsub("\\.", "_", tags))
-    path <- file.path(rootPath, sname)
-    path <- R.utils::Arguments$getWritablePath(path)
-} else {
-    ## one folder per simulation setting, one file per simulation run
-    tags <- sprintf("m=%s,pi0=%s,rho=%s,SNR=%s,B=%s,alpha=%s",
-                    m, pi0, rho, SNR, B, alpha)
-    simdir <- sprintf("%s,nbSimu=%s", gsub("\\.", "_", tags), nbSimu)
-#    path <- file.path(rootPath, sname, simdir)
-#    path <- R.utils::Arguments$getWritablePath(path)
-}
-
-filename <- sprintf("%s,%s.rds", sname, gsub("\\.", "_", tags))
-path <- "resData"
-path <- file.path(path, sname)
-path <- R.utils::Arguments$getWritablePath(path)
-
-print(tags)
-
-res <- mclapply(1:nbSimu, FUN=function(bb) {
-    if (bb %% 100 == 0) {
-        print(bb)
-    }
-    
-    rr <- testStepDown(m, rho, B, pi0, SNR, alpha)
-    return(rr)
-}, mc.cores=ncores)
-
-pathname <- file.path(path, filename)
-saveRDS(res, file=pathname)
-
+            ## tidy? too many rows! (m*nbSimu>=1e6 per setting...)
+            if (FALSE) {
+                names(res) <- as.character(1:nbSimu) 
+                dat <- plyr::ldply(res, cbind, .id="runId")
+            } else {  ## summarize into JFWER and Power estimates
+                dat <- Reduce(rbind, res)
+                nms <- rownames(dat)
+                eJR <- colMeans(dat[which(nms=="rej0"), ]>0)
+                ePow <- colMeans(dat[which(nms=="rej1"), ]>0)
+                mat <- rbind(JFWER=eJR, Power=ePow)
+                names(dimnames(mat)) <- c("risk", "method")
+                dat <- reshape2::melt(mat)
+                dat <- cbind(pi0=pi0, rho=rho, SNR=SNR, dat)
+            }
+            pathname <- file.path(path, filename)
+            saveRDS(dat, file=pathname)
         }
     }
 }
-
-
-

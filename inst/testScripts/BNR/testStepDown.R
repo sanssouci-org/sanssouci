@@ -54,7 +54,22 @@ testStepDown <- function(m, rho, B, pi0, SNR, alpha, Rcpp=FALSE, maxTime=100) {
         ##pryr::mem_used()
     }
 
-
-    res <- cbind(x=x, truth=H, thrMat, "Oracle"=thrOSD, "Oracle2"=thrOJ)
+    thrMat <- cbind(thrMat, "Oracle"=thrOSD, "Oracle2"=thrOJ)
+    if (FALSE) { ## too much disk space required!
+        res <- cbind(x=x, truth=H, thrMat)
+    } else {     ## summarize results 
+        x0 <- x[which(H==0)]
+        x1 <- x[which(H==1)]
+        rej0 <- apply(thrMat, 2, rej, x0)
+        rej1 <- apply(thrMat, 2, rej, x1)
+        res <- rbind(rej0, rej1)
+    }
     return(res)
 }
+
+## to estimate JFWER and power
+rej <- function(thr, x) {
+    nover <- sapply(thr, FUN=function(ss) sum(x > ss))
+    sum(nover >= 1:length(thr))
+}
+
