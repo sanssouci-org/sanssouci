@@ -9,6 +9,7 @@
 ##' than 'Mein2006' (example situation?). Flavor 'BNR2016' has a
 ##' linear time complexity, hence it is much faster than 'Mein2006'
 ##' and much much faster than 'BNR2014'.
+##' @return An upper bound on the number of false discoveries
 ##' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 ##' @export
 ##' @examples
@@ -80,7 +81,7 @@ upperBoundFP <- function(stat, thr, flavor=c("BNR2016", "Mein2006", "BNR2014")) 
     cA <- cummax(A)[K[ww]]
     Vbar[ww] <- pmin(ww-cA, K[ww])
   }
-  Vbar  ## A bound on the number of false discoveries
+  Vbar  
 }
 ############################################################################
 ## HISTORY:

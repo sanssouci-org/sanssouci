@@ -6,15 +6,15 @@
 
 using namespace Rcpp;
 
-// coverage
-NumericVector coverage(NumericVector thr, arma::mat Z);
-RcppExport SEXP sansSouci_coverage(SEXP thrSEXP, SEXP ZSEXP) {
+// empiricalCoverageO
+NumericVector empiricalCoverageO(NumericVector thr, arma::mat Z);
+RcppExport SEXP sansSouci_empiricalCoverageO(SEXP thrSEXP, SEXP ZSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< NumericVector >::type thr(thrSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type Z(ZSEXP);
-    __result = Rcpp::wrap(coverage(thr, Z));
+    __result = Rcpp::wrap(empiricalCoverageO(thr, Z));
     return __result;
 END_RCPP
 }

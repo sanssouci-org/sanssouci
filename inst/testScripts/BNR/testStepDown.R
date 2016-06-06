@@ -35,26 +35,31 @@ testStepDown <- function(m, rho, B, pi0, SNR, alpha, Rcpp=FALSE, maxTime=100) {
     nSteps <- ncol(thrMat)
     thrMat <- cbind("step0"=thrMat[, 1], "stepDown"=thrMat[, nSteps])
 
+    resSD <- stepDownJointFWERControl(x, X0, refFamily="Simes", alpha=alpha, Rcpp=Rcpp)
+    thrMat <- resSD$thrMat
+    nSteps <- ncol(thrMat)
+    thrMat <- cbind("step0.Simes"=thrMat[, 1], "stepDown.Simes"=thrMat[, nSteps])
+
     ## comparison with *Oracle step-down* JFWER thresholds (only the step-down is Oracle)
     xx <- rep(Inf, length(x))
     xx[H0] <- -Inf
     resOracleSD <- stepDownJointFWERControl(xx, X0, refFamily="kFWER", alpha=alpha)
     thrOSD <- resOracleSD$thr
 
+    resOracleSD <- stepDownJointFWERControl(xx, X0, refFamily="Simes", alpha=alpha)
+    thrOSD.Simes <- resOracleSD$thr
+
     ## *Oracle JFWER* thresholds (double Oracle!!!)
     X0Oracle <- X0[H0, ]
     resOracleJ <- jointFWERControl(X0Oracle, refFamily="kFWER", alpha=alpha, Rcpp=Rcpp)
     thrOJ <- c(resOracleJ$thr, rep(-Inf, m1))
 
+    resOracleJ <- jointFWERControl(X0Oracle, refFamily="Simes", alpha=alpha, Rcpp=Rcpp)
+    thrOJ.Simes <- c(resOracleJ$thr, rep(-Inf, m1))
+
     file.remove(filename); ## delete trace file if the above code worked!
     
-    td <- Sys.time()-t0
-    if (td>maxTime) {
-        print(td)
-        ##pryr::mem_used()
-    }
-
-    thrMat <- cbind(thrMat, "Oracle"=thrOSD, "Oracle2"=thrOJ)
+    thrMat <- cbind(thrMat, "Oracle"=thrOSD, "Oracle2"=thrOJ, "Oracle.Simes"=thrOSD.Simes, "Oracle2.Simes"=thrOJ.Simes)
     if (FALSE) { ## too much disk space required!
         res <- cbind(x=x, truth=H, thrMat)
     } else {     ## summarize results 

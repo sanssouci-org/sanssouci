@@ -1,93 +1,189 @@
-##' jointFWERControl
+##' Calibration of joint Family-Wise error rate thresholds
 ##'
-##' get a family of thresholds that provide joint FWER control
+##' Calibration of a family of thresholds that provide joint FWER control
 ##'
-##'
-##' @param mat A \eqn{m} x \eqn{B} matrix of Monte-Carlo samples of test
-##' statistics under the null hypothesis. \describe{ \item{m}{is the number of
-##' tested hypotheses} \item{B}{is the number of Monte-Carlo samples}}
-##' @param refFamily A character value which can be \describe{ \item{Simes}{The
-##' classical family of thresholds introduced by Simes (1986):
-##' \eqn{\alpha*k/m}. This family yields joint FWER control if the test
-##' statistics are positively dependent (PRDS) under H0.} \item{kFWER}{A family
-##' \eqn{(t_k)} calibrated so that for each k, \eqn{(t_k)} controls the
-##' (marginal) k-FWER.} }
+##' @param stat A vector of \eqn{m} test statistics.
+##' @param mat A \eqn{m} x \eqn{B} matrix of Monte-Carlo samples of
+##'     test statistics under the null hypothesis. \describe{
+##'     \item{m}{is the number of tested hypotheses} \item{B}{is the
+##'     number of Monte-Carlo samples}}
+##' @param referenceFamily A character value, the reference family for
+##'     calibration (see details).  \code{m} thresholds (see Details).
 ##' @param alpha Target joint FWER level.
-##' @param kMax For simultaneous control of (\eqn{k}-FWER for all \eqn{k \le
-##' k[max]}).
-##' @param Rcpp If \code{TRUE} (the default), some costly operations (sorting)
-##' are performed in C++.
-##' @param \dots Further arguments to be passed to getJointFWERControl.
-##' @param verbose If \code{TRUE}, print results of intermediate calculations.
-##' Defaults to \code{FALSE}.
-##'
-##' @return A list with elements:\describe{
-##' \item{thr}{A numeric vector \code{thr}, such that the estimated
-##' probability that there exists an index \eqn{k} between 1 and m
-##' such that the k-th maximum of the test statistics of is greater
-##' than \eqn{thr[k]}, is less than \eqn{\alpha}.}
-##' \item{prob}{Estimated probability that there exists an index
-##' \eqn{k} between 1 and m such that the k-th maximum of the test
-##' statistics of is greater than \eqn{thr[k]} (should be in
-##' \eqn{[\alpha-tol, alpha]}).}
-##' \item{lambda}{JFWER threshold.}
-##' \item{sk}{A function such that \code{thr} is identical to
-##' \code{sk(lambda)}. If the input argument \code{refFamily} is a
-##' function, then \code{sLambda=refFamily}.}
-##' \item{pivStat}{A numeric vector, the values of the pivotal
-##' statistic whose quantile of order \eqn{alpha} is \eqn{lambda}}
-##' \item{Q}{Result of sorting the input score matrix by row and then
-##' by columns. Corresponds to matrix 'Q' in Meinshausen (2006).}
-##' \item{kMaxH0}{k-max of the test statistics under H0 for \eqn{1
-##' \leq k \leq kMax}.}
-##' }
-##'
+##' @param kMax For simultaneous control of (\eqn{k}-FWER for all
+##'     \eqn{k \le k[max]}).
+##' @param maxSteps Maximum number of steps down to be performed.
+##'     \code{maxSteps=1} corresponds to single step JFWER control.
+##' @param Rcpp If \code{TRUE}, some costly operations (sorting) are
+##'     performed in C++.
+##' @param \dots Further arguments to be passed to
+##'     \code{\link{jointFWERControl}}.
+##' @return A list with elements: \describe{
+
+##'     \item{thr}{A numeric vector \code{thr}, such that the
+##'     estimated probability that there exists an index \eqn{k}
+##'     between 1 and m such that the k-th maximum of the test
+##'     statistics of is greater than \eqn{thr[k]}, is less than
+##'     \eqn{\alpha}.}
+
+##'     \item{pivStat}{A numeric vector, the values of the pivotal
+##'     statistic whose quantile of order \eqn{alpha} is \eqn{lambda}.}
+
+##'     \item{lambda}{JFWER threshold.}  
+
+##'     \item{Vbar}{An upper bound on the number of false discoveries,
+##'     as calculated by \code{upperBoundFP(stat, thr)}.}
+
+##'     \item{steps}{a list with elements named 'thr', 'pivStat' and
+##'     'lambda' giving the sequence of corresponding vectors/values
+##'     along the steps down.}}
 ##' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
-##' @importFrom stats quantile
 ##' @export
 ##' @examples
 ##'
-##' mat <- simulateGaussianNullsFromFactorModel(m=1023, n=1000, flavor="equi-correlated", rho=0.2)
+##' set.seed(0xBEEF)
+##' sim <- simulateMein2006(m=1e2, rho=0.2, n=300, pi0=0.9, SNR=2)
+##' X <- sim$X
+##' y <- sim$y
+##' H0 <- which(sim$H==0)
+##' H1 <- which(sim$H==1)
+##' m0 <- length(H0)
+##' m1 <- length(H1)
 ##'
-##' alpha <- 0.2
-##' resK <- jointFWERControl(mat, refFamily="kFWER", alpha)
-##' str(resK)
+##' ## Test statistics
+##' w <- wilcoxStat(X, y, B=ncol(X))
+##' scoreMat <- w$stat0Mat
+##' stat <- w$stat
 ##'
-##' resS <- jointFWERControl(mat, refFamily="Simes", alpha)
-##' str(resS)
+##' pch <- 20
+##' ## show test statistics
+##' plot(stat, col=rep(c(1, 2), times=c(m0, m1)), main="Test statistics", pch=pch)
+##' legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
 ##'
-jointFWERControl <- function(mat, refFamily=c("Simes", "kFWER"), alpha, kMax=nrow(mat), Rcpp=TRUE, ..., verbose=FALSE) {
-    m <- nrow(mat)
-    refFamily <- match.arg(refFamily)
-    Q <- NULL
-    if (refFamily=="kFWER") {
+##' alpha <- 0.1
+##' res <- jointFWERControl(stat, scoreMat, refFamily="kFWER", alpha=alpha)
+##'
+##' ## confidence envelopes
+##' thr <- resSD$thr
+##' o <- order(stat, decreasing=TRUE)
+##' statO <- stat[o]
+##'
+##' Vbar <- upperBoundFP(statO, thr)
+##'
+##' thrMat <- resSD$thrMat
+##' bounds <- apply(thrMat, 2, function(thr) upperBoundFP(statO, thr, flavor="Mein2006"))
+##' ## True V (number of false discoveries among first rejections)
+##' V <- cumsum(o %in% H0)
+##'
+##'
+
+jointFWERControl <- function(stat=NULL,
+                             mat=NULL,
+                             refFamily=c("Simes", "kFWER"),
+                             kMax=nrow(mat),
+                             maxStepsDown=100,
+                             alpha,
+                             Rcpp=TRUE) {
+    ## This function is the main workhorse of the package.
+
+    ## sanity checks
+    m <- nrow(mat);
+    if (is.null(stat)) {
+        stopifnot(refFamily=="Simes")
+    } else {
+        stopifnot(length(stat)==m)
+    }
+    stopifnot(kMax<=m)
+
+    if (refFamily=="Simes") {
+        sk <- SimesThresholdFamily(m, kMax=m)
+        pivStatFUN <- SimesPivotalStatistic
+    } else if (refFamily=="kFWER") {
         sk <- kFWERThresholdFamily(mat, kMax=kMax, Rcpp=Rcpp)
-        Q <- attr(sk, 'Q')
-    } else if (refFamily=="Simes") {
-        sk <- SimesThresholdFamily(m, kMax=kMax)
+        pivStatFUN <- kFWERPivotalStatistic
     }
 
-    pivStat <-  pivotalStat(mat, refFamily=refFamily)
-    lambda <- quantile(pivStat, alpha, type=1)
+    ## single-step JFWER control
+    res0 <- jointFWERThresholdCalibration(mat, thresholdFamily=sk, pivotalStatFUN=pivotalStatFUN,
+                             alpha=alpha, kMax=kMax, Rcpp=Rcpp)
+    lambda <- res0$lambda
     thr <- sk(lambda)
 
-    kmaxH0 <- partialColSortDesc(mat, nrow(mat));
-    prob <- coverage(thr, kmaxH0);
+    ## storing results
+    thrMat <- matrix(thr, ncol=1)
+    pivMat <- matrix(pivStat, ncol=1)
+    lambdas <- lambda
+    converged <- FALSE
 
-    res <- list(
-        thr=thr,
-        prob=prob,
-        lambda=lambda,
-        sk=sk,
-        pivStat=pivStat,
-        Q=Q,
-        kmaxH0=kmaxH0
-    )
+    ## step 0
+    step <- 0
+    thr1 <- thr[1]   ## (1-)FWER threshold
+    R1 <- which(stat>=thr1)
+
+    while (!converged && step<maxSteps) {
+        step <- step+1
+
+        ## backup
+        lambda0 <- lambda
+        thr0 <- thr
+        R10 <- R1
+
+        if (length(R1)) {
+            matL1 <- matL[-R1, ]
+            sk1 <- function(alpha) sk(alpha)[-R1]
+        } else {
+            matL1 <- matL
+            sk1 <- sk
+        }
+
+        ## joint FWER control through lambda-adjustment, *holding sk fixed*
+        res <- jointFWERControl(mat1, sk1, pivotalStatFUN, alpha, kMax=kMax, Rcpp=Rcpp)
+        thr <- res$thr
+        pivStat <-  res$pivStat
+        lambda <-res$lambda1
+        thr <- c(thr, rep(-Inf, length(R1)))
+
+        thr1 <- thr[1]   ## (1-)FWER threshold
+        R1 <- which(stat>=thr1)
+
+        ## convergence reached?
+        noNewRejection <- all(R1 %in% R10)
+        ## In rare situations R1 is strictly included in R10,
+        ## we need to declare convergence in such cases as well
+        ## (and keep the largest rejection set!)
+        if (noNewRejection) {
+            if (!identical(R1, R10)) {
+                ## not a 'TRUE' convergence: override the last step down!
+                thr <- thr0
+                lambda <- lambda0
+            }
+            converged <- TRUE ## stop the step-down process
+        }
+
+        thrMat <- cbind(thrMat, thr)
+        pivMat <- cbind(pivMat, pivStat)
+        lambdas <- c(lambdas, lambda)
+    }
+    if (step==maxSteps) {
+        warning("Maximal number of steps down reached without reaching convergence")
+    }
+
+    ## upper bound on the number of false positives among first 'natural' rejections
+    o <- order(stat, decreasing=TRUE)
+    Vbar <- upperBoundFP(stat[o], thr)
+    
+    stepsDown <- list(
+        thr=thrMat,
+        pivStat=pivMat,
+        lambda=lambdas)
+    res <- list(thr=thr,
+                pivStat=pivStat,
+                lambda=lambda, 
+                Vbar=Vbar,
+                stepsDown=stepsDown)
+    ## TODO: also return step at which hyp j is rejected as in Romano-Wolf's programs?
+    ## TODO: also return 'Sbar' (aka 'lowerBoundTP')
+    return(res);    
 }
-############################################################################
-## HISTORY:
-##
-## 2016-05-26
-## o Created from 'getJointFWERThresholds'.
-############################################################################
 
+                                         

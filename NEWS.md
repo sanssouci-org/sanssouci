@@ -1,5 +1,12 @@
 # Package: sansSouci
 
+## Version 0.4.0 [2016-06-06]
+
+Another major change in the package interface: 
+* added functions 'SimesPivotalStatistic', 'jointFWERThresholdCalibration', 'kFWERPivotalStatistic'.
+* the main user-level entry function is now 'jointFWERControl', which performs step-down JFWER control by default.
+
+
 ## Version 0.3.1 [2016-06-02]
 * BUG FIX in 'stepDownJointFWERControl': in some rare situations the algorithm could be stuck alternating between two candidate rejection sets R1, hence never terminating. Now forcing the 'best' candidate (ie the largest one) to be selected.
 * Added a test (using 'extdata/simTrace.rda') to make sure that 'stepDownJointFWERControl' terminates in such situations.

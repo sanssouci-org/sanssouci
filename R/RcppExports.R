@@ -5,8 +5,9 @@
 #'
 #' @param thr A numeric vector of length \code{m}, a threshold family. Should
 #'   be sorted in decreasing order.
-#' @param Z A \code{m} x \code{B} matrix of \code{B} Monte-Carlo samples of test statistics
-#'   under the null hypothesis. Each column should be sorted in decreasing order.
+#' @param Z A \code{m} x \code{B} matrix of \code{B} Monte-Carlo
+#'    samples of *ordered* test statistics under the null
+#'    hypothesis. Each column should be sorted in decreasing order.
 #' @return The empirical coverage of \code{thr} according to \code{Z}.
 #'
 #' @details The empirical coverage of \code{thr} according to
@@ -15,9 +16,8 @@
 #'   the test statistics under the null hypothesis exceeds the \eqn{k}-th
 #'   largest value of \code{thr}, that is, \code{thr[k]}.
 #'
-#' @export
-coverage <- function(thr, Z) {
-    .Call('sansSouci_coverage', PACKAGE = 'sansSouci', thr, Z)
+empiricalCoverageO <- function(thr, Z) {
+    .Call('sansSouci_empiricalCoverageO', PACKAGE = 'sansSouci', thr, Z)
 }
 
 #' Marginal Empirical coverage of a threshold family

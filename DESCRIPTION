@@ -1,6 +1,6 @@
 Package: sansSouci
-Version: 0.3.1
-Date: 2016-06-02
+Version: 0.4.0
+Date: 2016-06-06
 Title: Post hoc inference through JFWER control
 Author: Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 Maintainer: Pierre Neuvial <pierre.neuvial@math.cnrs.fr>

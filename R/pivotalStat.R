@@ -1,6 +1,6 @@
-##' # calculate the pivotal statistic of BNR.
+##' Pivotal statistic of BNR
 ##'
-##'
+##' Calculate the pivotal statistic of BNR
 ##'
 ##' @param mat A \eqn{m} x \eqn{B} matrix of Monte-Carlo samples of test
 ##' statistics under the null hypothesis. \describe{ \item{m}{is the number of
@@ -44,55 +44,24 @@
 ##' prob <- coverage(thr, kmaxH0);
 ##'
 ##'
-pivotalStat <- structure(function(
-    mat,
-    refFamily=c("Simes", "kFWER"),
-    kMax=nrow(mat),
-    Rcpp=FALSE)
-    {
-        m <- nrow(mat)
-        B <- ncol(mat)
-        refFamily <- match.arg(refFamily)
-
-        ## get matrix 'M' of BNR by (partial) sorting of hypotheses for each sample
-        if (Rcpp) {
-            kmaxH0 <- partialColSortDesc(mat, kMax);
-        } else {
-            kmaxH0 <- apply(mat, 2, sort, decreasing=TRUE)        ## k-max of the test statistics under H0:
-            kmaxH0 <- kmaxH0[1:kMax, , drop=FALSE]                ## truncate to [1,kMax]
-        }
-
-        ## get pivotal statistic
-        if (refFamily=="Simes") {
-            ## for Simes, s_k^{-1}(u) = (m/k)*(1-pnorm(u))
-            pval <- 1-pnorm(kmaxH0)
-            skInv <- sweep(pval, 1, m/1:m, "*")
-            pivotalStat <- colMins(skInv)
-        } else if (refFamily=="kFWER") {
-            rks <- rowRanks(kmaxH0, ties.method="max") ## 'max' is the default in 'matrixStats'
-            pivotalStat <- colMins(rks)/B
-        }
-        return(pivotalStat)
-    }, ex=function(){
-        m <- 1023
-        B <- 1e3
-
-        flavor <- c("independent", "equi-correlated", "3-factor model")[2]
-        rho <- 0.2
-        mat <- simulateGaussianNullsFromFactorModel(m, B, flavor=flavor, rho=rho)
-        piv <- pivotalStat(mat, refFamily="kFWER")
-        pivS <- pivotalStat(mat, refFamily="Simes")
-
-        ## check JFWER control using these statistics:
-        alpha <- 0.2
-        lambda <- quantile(piv, alpha, type=1)
-        Q <- bisort(mat, Rcpp=TRUE)
-        sk <- function(alpha) referenceFamily(alpha, Q)
-        thr <- sk(lambda)
-        kmaxH0 <- partialColSortDesc(mat, nrow(mat));
-        prob <- coverage(thr, kmaxH0);
-
-    })
+pivotalStat <- function(mat,
+                        pivotalStatFUN,
+                        kMax=nrow(mat),
+                        Rcpp=FALSE){
+    m <- nrow(mat)
+    B <- ncol(mat)
+    
+    ## get matrix 'M' of BNR by (partial) sorting of hypotheses for each sample
+    if (Rcpp) {
+        kmaxH0 <- partialColSortDesc(mat, kMax);
+    } else {
+        kmaxH0 <- apply(mat, 2, sort, decreasing=TRUE)        ## k-max of the test statistics under H0:
+        kmaxH0 <- kmaxH0[1:kMax, , drop=FALSE]                ## truncate to [1,kMax]
+    }
+    
+    pivotalStat <- pivotalStatFUN(kmaxH0)
+    return(pivotalStat)
+}
 
 
 ############################################################################

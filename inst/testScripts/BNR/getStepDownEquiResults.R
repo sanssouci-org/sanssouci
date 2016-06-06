@@ -1,4 +1,5 @@
 rootPath <- "resData/stepDownEqui+power,Rcpp,sansSouci_0.3.1,rei1"
+rootPath <- "resData/stepDownEqui+power,Rcpp,sansSouci_0.3.1,term9"
 pname <- sprintf("m=%s,B=%s,alpha=%s,nbSimu=%s", m, B, alpha, nbSimu)
 path <- file.path(rootPath, pname)
 path <- R.utils::Arguments$getReadablePath(path)
@@ -45,6 +46,8 @@ names(risks) <- risks
 datList <- lapply(risks, function(rr) subset(dat, risk==rr))
 
 figName <- "stepDownEqui"
+
+library("ggplot2")
 
 for (rr in risks) {
     filename <- sprintf("%s,%s,%s.pdf", figName, pname, rr)
