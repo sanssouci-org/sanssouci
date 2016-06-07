@@ -18,3 +18,5 @@ rhos <- c(0, 0.2, 0.4)
 pi0s <- c(0.9, 0.99, 0.999)
 
 source("package/inst/testScripts/BNR/testStepDown.R")
+sname0 <- "stepDownEqui+power"
+

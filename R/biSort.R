@@ -13,7 +13,7 @@
 ##' @param Rcpp If \code{TRUE} (the default), sorting operations are performed
 ##' in C++.  Otherwise, the are performed using \code{R}'s \code{base::sort}.
 ##' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
-##' @return A matrix of the same dimensions as the \code{mat} and whose rows and columns have been sorted decreasingly.  For convenience the matrix where only rows are sorted is returned as the attribute \code{'kmaxH0'} of \code{Q}.
+##' @return A matrix of the same dimensions as the \code{mat} and whose rows and columns have been sorted decreasingly.  For convenience the matrix where only columns are sorted is returned as the attribute \code{'kmaxH0'} of \code{Q}.
 ##' @details The output matrix is sometimes referred to as "the Q matrix", following the notation of Meinshausen (2006).
 ##' @export
 ##' @examples

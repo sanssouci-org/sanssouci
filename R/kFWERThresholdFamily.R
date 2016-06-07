@@ -36,8 +36,9 @@
 ##'
 ##' thr <- sk(0.2)
 ##'
+##' @export
 ##'
-kFWERThresholdFamily <- function(mat, 
+kFWERThresholdFamily <- function(mat,
                                  kMax=nrow(mat),
                                  Rcpp=TRUE,
                                  verbose=FALSE) {

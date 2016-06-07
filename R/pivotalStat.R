@@ -5,7 +5,7 @@
 ##' @param mat A \eqn{m} x \eqn{B} matrix of Monte-Carlo samples of test
 ##' statistics under the null hypothesis. \describe{ \item{m}{is the number of
 ##' null hypotheses tested} \item{B}{is the number of Monte-Carlo samples}}
-##' @param refFamily A character value which can be \describe{ \item{Simes}{The
+##' @param FUN A character value which can be \describe{ \item{Simes}{The
 ##' classical family of thresholds introduced by Simes (1986):
 ##' \eqn{\alpha*k/m}. This family yields joint FWER control if the test
 ##' statistics are positively dependent (PRDS) under H0.} \item{kFWER}{A family
@@ -25,32 +25,27 @@
 ##' @importFrom matrixStats colMins rowRanks
 ##' @examples
 ##'
-##' m <- 1023
-##' B <- 1e3
-##'
-##' flavor <- c("independent", "equi-correlated", "3-factor model")[2]
-##' rho <- 0.2
-##' mat <- simulateGaussianNullsFromFactorModel(m, B, flavor=flavor, rho=rho)
-##' piv <- pivotalStat(mat, refFamily="kFWER")
-##' pivS <- pivotalStat(mat, refFamily="Simes")
+##' mat <- simulateGaussianNullsFromFactorModel(m=1023, n=1000, flavor="equi-correlated", rho=0.2)
+##' piv <- pivotalStat(mat, FUN=kFWERPivotalStatistic)
+##' str(piv)
 ##'
 ##' ## check JFWER control using these statistics:
 ##' alpha <- 0.2
 ##' lambda <- quantile(piv, alpha, type=1)
-##' Q <- bisort(mat, Rcpp=TRUE)
-##' sk <- function(alpha) thresholdFamily(alpha, Q)
+##'
+##' sk <- kFWERThresholdFamily(mat)
 ##' thr <- sk(lambda)
-##' kmaxH0 <- partialColSortDesc(mat, nrow(mat));
-##' prob <- coverage(thr, kmaxH0);
+##' prob <- empiricalCoverage(thr, mat);
+##' (prob <= alpha)
 ##'
 ##'
 pivotalStat <- function(mat,
-                        pivotalStatFUN,
+                        FUN,
                         kMax=nrow(mat),
                         Rcpp=FALSE){
     m <- nrow(mat)
     B <- ncol(mat)
-    
+
     ## get matrix 'M' of BNR by (partial) sorting of hypotheses for each sample
     if (Rcpp) {
         kmaxH0 <- partialColSortDesc(mat, kMax);
@@ -58,8 +53,8 @@ pivotalStat <- function(mat,
         kmaxH0 <- apply(mat, 2, sort, decreasing=TRUE)        ## k-max of the test statistics under H0:
         kmaxH0 <- kmaxH0[1:kMax, , drop=FALSE]                ## truncate to [1,kMax]
     }
-    
-    pivotalStat <- pivotalStatFUN(kmaxH0)
+
+    pivotalStat <- FUN(kmaxH0)
     return(pivotalStat)
 }
 

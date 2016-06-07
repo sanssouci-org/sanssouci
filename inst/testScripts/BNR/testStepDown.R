@@ -29,44 +29,39 @@ testStepDown <- function(m, rho, B, pi0, SNR, alpha, Rcpp=FALSE, maxTime=100) {
     m0 <- length(H0)
     m1 <- m-m0
 
-    ## SD control
-    resSD <- stepDownJointFWERControl(x, X0, refFamily="kFWER", alpha=alpha, Rcpp=Rcpp)
-    thrMat <- resSD$thrMat
-    nSteps <- ncol(thrMat)
-    thrMat <- cbind("step0"=thrMat[, 1], "stepDown"=thrMat[, nSteps])
+    resMat <- NULL
+    for (refFam in c("kFWER", "Simes")) {
+        res <- jointFWERControl(X0, refFamily=refFam, alpha=alpha, stat=x)
+        thrMat <- res$stepsDown$thr
+        nSteps <- ncol(thrMat)
+        if (nSteps>2) print(nSteps)
+        thr0 <- thrMat[, 1]
+        thrSD <- res$thr
+        stopifnot(identical(thrSD, thrMat[, nSteps])) ## sanity check
 
-    resSD <- stepDownJointFWERControl(x, X0, refFamily="Simes", alpha=alpha, Rcpp=Rcpp)
-    thrMat <- resSD$thrMat
-    nSteps <- ncol(thrMat)
-    thrMat <- cbind("step0.Simes"=thrMat[, 1], "stepDown.Simes"=thrMat[, nSteps])
+        ## comparison with *Oracle step-down* JFWER thresholds (only the step-down is Oracle)
+        xx <- rep(Inf, length(x))
+        xx[H0] <- -Inf
+        resOracle <- jointFWERControl(X0, refFamily=refFam, alpha=alpha, stat=xx)
+        thrO <- resOracle$thr
 
-    ## comparison with *Oracle step-down* JFWER thresholds (only the step-down is Oracle)
-    xx <- rep(Inf, length(x))
-    xx[H0] <- -Inf
-    resOracleSD <- stepDownJointFWERControl(xx, X0, refFamily="kFWER", alpha=alpha)
-    thrOSD <- resOracleSD$thr
+        ## *Oracle JFWER* thresholds (double Oracle!!!)
+        X0Oracle <- X0[H0, ]
+        resOracleJ <- jointFWERControl(X0Oracle, refFamily=refFam, alpha=alpha, maxStepsDown=1)  ## single step
+        thrOJ <- c(resOracleJ$thr, rep(-Inf, m1))
 
-    resOracleSD <- stepDownJointFWERControl(xx, X0, refFamily="Simes", alpha=alpha)
-    thrOSD.Simes <- resOracleSD$thr
-
-    ## *Oracle JFWER* thresholds (double Oracle!!!)
-    X0Oracle <- X0[H0, ]
-    resOracleJ <- jointFWERControl(X0Oracle, refFamily="kFWER", alpha=alpha, Rcpp=Rcpp)
-    thrOJ <- c(resOracleJ$thr, rep(-Inf, m1))
-
-    resOracleJ <- jointFWERControl(X0Oracle, refFamily="Simes", alpha=alpha, Rcpp=Rcpp)
-    thrOJ.Simes <- c(resOracleJ$thr, rep(-Inf, m1))
-
-    file.remove(filename); ## delete trace file if the above code worked!
-    
-    thrMat <- cbind(thrMat, "Oracle"=thrOSD, "Oracle2"=thrOJ, "Oracle.Simes"=thrOSD.Simes, "Oracle2.Simes"=thrOJ.Simes)
+        resFam <- cbind("0"=thr0, "SD"=thrSD, "Oracle"=thrO, "Oracle2"=thrOJ)
+        colnames(resFam) <- paste(refFam, colnames(resFam), sep=".")
+        resMat <- cbind(resMat, resFam)
+    }
+    file.remove(filename); ## delete trace file if the above code terminated
     if (FALSE) { ## too much disk space required!
         res <- cbind(x=x, truth=H, thrMat)
-    } else {     ## summarize results 
+    } else {     ## summarize results
         x0 <- x[which(H==0)]
         x1 <- x[which(H==1)]
-        rej0 <- apply(thrMat, 2, rej, x0)
-        rej1 <- apply(thrMat, 2, rej, x1)
+        rej0 <- apply(resMat, 2, rej, x0)
+        rej1 <- apply(resMat, 2, rej, x1)
         res <- rbind(rej0, rej1)
     }
     return(res)

@@ -1,4 +1,4 @@
-##' ## Upper bound for the number of false discoveries
+##' Upper bound for the number of false discoveries
 ##'
 ##'
 ##'
@@ -12,25 +12,6 @@
 ##' @return An upper bound on the number of false discoveries
 ##' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 ##' @export
-##' @examples
-##'
-##' set.seed(0xBEEF)
-##' sim <- simulateMein2006(m=1e3, rho=0.2, n=300, pi0=0.9, SNR=2)
-##' X <- sim$X
-##' y <- sim$y
-##'
-##' ## Test statistics
-##' w <- wilcoxStat(X, y, B=ncol(X))
-##' scoreMat <- w$stat0Mat
-##' stat <- w$stat
-##'
-##' alpha <- 0.1
-##' resSD <- stepDownJointFWERControl(stat, scoreMat, refFamily="kFWER", alpha=alpha, verbose=TRUE)
-##' thr <- resSD$thr
-##' o <- order(stat, decreasing=TRUE)
-##' statO <- stat[o]
-##'
-##' Vbar <- upperBoundFP(statO, thr)
 
 
 upperBoundFP <- function(stat, thr, flavor=c("BNR2016", "Mein2006", "BNR2014")) {
@@ -81,7 +62,7 @@ upperBoundFP <- function(stat, thr, flavor=c("BNR2016", "Mein2006", "BNR2014")) 
     cA <- cummax(A)[K[ww]]
     Vbar[ww] <- pmin(ww-cA, K[ww])
   }
-  Vbar  
+  Vbar
 }
 ############################################################################
 ## HISTORY:

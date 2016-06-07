@@ -75,11 +75,10 @@ testStepDown <- function(m, rho, B, pi0, SNR, alpha, Rcpp=FALSE) {
     resOracleJ <- getJointFWERThresholds(X0Oracle, refFamily="kFWER", alpha=alpha, Rcpp=Rcpp)
     thrOJ <- c(resOracleJ$thr, rep(-Inf, m1))
 
-    # JFWER
-    nbBadK <- function(thr) {
-        xNulls <- x[H0]
-        nbFP <- sapply(thr, FUN=function(ss) sum(xNulls > ss))
-        sum(nbFP >= 1:m)
+    # to estimate JFWER and power
+    rej <- function(thr, x) {
+        nb <- sapply(thr, FUN=function(ss) sum(x > ss))
+        sum(nb >= 1:length(thr))
     }
 
     allThr <- cbind(thrMat, thrOSD, thrOJ)

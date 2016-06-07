@@ -2,7 +2,6 @@
 ##'
 ##' Simes' threshold family
 ##'
-##'
 ##' @param m The number of hypotheses tested
 ##' @param kMax For simultaneous control of (\eqn{k}-FWER for all \eqn{k \le
 ##' k[max]}).
