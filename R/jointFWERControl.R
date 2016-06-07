@@ -136,11 +136,9 @@ jointFWERControl <- function(mat,
         kMax <- min(kMax, nrow(mat1))
         res <- jointFWERThresholdCalibration(mat1, thresholdFamily=sk1, pivotalStatFUN=pivStatFUN,
                                           alpha=alpha, kMax=kMax, Rcpp=Rcpp)
-        thr <- res$thr
         pivStat <-  res$pivStat
-        lambda <-res$lambda1
-        thr <- c(thr, rep(-Inf, length(R1)))
-
+        lambda <-res$lambda
+        thr <- sk(lambda)  ## *not* c(res$thr, rep(-Inf, length(R1)))!!!
         thr1 <- thr[1]   ## (1-)FWER threshold
         R1 <- which(stat>=thr1)
 
@@ -176,6 +174,7 @@ jointFWERControl <- function(mat,
         thr=thrMat,
         pivStat=pivMat,
         lambda=lambdas)
+
     res <- list(thr=thr,
                 pivStat=pivStat,
                 lambda=lambda,

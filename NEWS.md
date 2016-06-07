@@ -1,5 +1,10 @@
 # Package: sansSouci
 
+## Version 0.4.1 [2016-06-07]
+
+* BUG fix in 'stepDownJointFWERControl': the threshold family was not
+  updated properly throughout the step-down process.
+
 ## Version 0.4.0 [2016-06-06]
 
 Another major change in the package interface:
