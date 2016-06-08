@@ -1,6 +1,5 @@
-testStepDown <- function(m, rho, B, pi0, SNR, alpha, Rcpp=FALSE, maxTime=100) {
-    pid <- Sys.getpid()
-    t0 <- Sys.time()
+testStepDown <- function(m, rho, B, pi0, SNR, alpha, flavor=c("equi", "Mein2006"), trace=FALSE) {
+    flavor <- match.arg(flavor)
     if (is.character(SNR)) {
         pattern <- "Pareto\\(([0-9]),([0-9]),([0-9]))"
         xmin <- as.numeric(gsub(pattern, "\\1", SNR))
@@ -14,14 +13,26 @@ testStepDown <- function(m, rho, B, pi0, SNR, alpha, Rcpp=FALSE, maxTime=100) {
         m1 <- round(m*(1-pi0))
         SNR <- xmin + rpareto(m1, shape, scale)
     }
-    sim <- simEqui(m, rho, B, pi0, SNR=SNR)
+
+    if (flavor=="equi") {
+        sim <- simulateEqui(m, rho, B, pi0, SNR=SNR)
+    } else if (flavor=="Mein2006") {
+        n <- 1e3 ## currently hardcoded.
+        sim <- simulateMein2006(m, rho, n, B, pi0, SNR=SNR)
+    }
     X0 <- sim$X0
     x <- sim$x
     H <- sim$H
 
-    t0f <-      format(t0, "%Y%m%d-%H:%M")
-    filename <- sprintf("simTrace,%s,%s.rda", pid, t0f)
-    save(x, X0, alpha=alpha, H=H, file=filename)
+    if (trace) {
+        t0f <-      format(Sys.time(), "%Y%m%d-%H:%M")
+        filename <- sprintf("simTrace,%s,%s.rda", Sys.getpid(), t0f)
+        save(x, X0, alpha=alpha, H=H, file=filename)
+    }
+
+    if (FALSE) {
+        plot(x, col=1+H, main="Test statistics", pch=20)
+    }
 
     ## m <- nrow(X0)
     ## B <- ncol(X0)
@@ -54,7 +65,9 @@ testStepDown <- function(m, rho, B, pi0, SNR, alpha, Rcpp=FALSE, maxTime=100) {
         colnames(resFam) <- paste(refFam, colnames(resFam), sep=".")
         resMat <- cbind(resMat, resFam)
     }
-    file.remove(filename); ## delete trace file if the above code terminated
+    if (trace) {
+        file.remove(filename); ## delete trace file if the above code terminated
+    }
     if (FALSE) { ## too much disk space required!
         res <- cbind(x=x, truth=H, thrMat)
     } else {     ## summarize results

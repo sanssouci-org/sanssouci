@@ -1,18 +1,22 @@
-##' simulateMein2006
-##'
-##'
+##' Simulate test statistics as in Meinshausen (2006)
 ##'
 ##' @param m Number of hypotheses
 ##' @param rho Level of equi-correlation between pairs of variables
 ##' @param n Number of observations
+##' @param B Number of resamplings to estimate the test statistics
 ##' @param pi0 Proportion of true null hypotheses
 ##' @param SNR Signal to noise ratio. Either a numeric value (a measure of
 ##' distance between H0 and H1) or a vector of length \code{m*(1-pi0)}
 ##' @param p Probability of success of the outcome variable
 ##' @param w An optional vector of length \code{n}, the underlying factor
 ##' driving equi-correlation
-##' @return A vector of length \code{n}, the underlying factor driving
-##' equi-correlation
+##' @return A list with elements \describe{
+##' \item{x}{A vector of length \eqn{m} test statistics}
+##' \item{X0}{An \eqn{m x B} matrix of test statistics under the null
+##' hypothesis}
+##' \item{H}{A vector of length \eqn{m}, the status of each
+##' hypothesis: 0 for true null hypothesis, and 1 for true alternative
+##' hypothesis} }
 ##' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 ##' @export
 ##' @importFrom stats rbinom
@@ -22,14 +26,11 @@
 ##' rho <- 0.2
 ##' n <- 100
 ##' pi0 <- 0.5
+##' B <- 1e3
 ##'
-##' sim <- simulateMein2006(m, rho, n, pi0, SNR=1)
-##' X <- sim$X
-##' y <- sim$y
-##'
-##' w <- wilcoxStat(X, y, B=1e3)
-##' scoreMat <- w$stat0Mat
-##' stat <- w$stat
+##' sim <- simulateMein2006(m, rho, n, B, pi0, SNR=1)
+##' scoreMat <- sim$X0
+##' stat <- sim$x
 ##'
 ##' ## show test statistics
 ##' pch <- 20
@@ -37,23 +38,7 @@
 ##' plot(stat, col=colStat, main="Test statistics", pch=pch)
 ##' legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
 ##'
-simulateMein2006 <- structure(function(
-    m,
-    ### Number of hypotheses
-    rho,
-    ### Level of equi-correlation between pairs of variables
-    n,
-    ### Number of observations
-    pi0,
-    ### Proportion of true null hypotheses
-    SNR=1,
-    ### Signal to noise ratio. Either a numeric value (a measure of distance between H0 and H1) or a vector of length \code{m*(1-pi0)}
-    p=0.5,
-    ### Probability of success of the outcome variable
-    w=NULL
-### An optional vector of length \code{n}, the underlying factor
-### driving equi-correlation
-    ) {
+simulateMein2006 <- structure(function(m, rho, n, B, pi0, SNR=1, p=0.5, w=NULL) {
   m0 <- round(m*pi0)
   m1 <- m-m0
   H <- rep(c(0, 1), times=c(m0, m1))
@@ -83,20 +68,13 @@ simulateMein2006 <- structure(function(
   ##     w1 <- which(y==1)
   ##     eps[H1, w1] <- eps[H1, w1] + mu
   ## }
-  list(
-      X=X,
-### An \eqn{m x n} covariate matrix
-      y=y,
-### A vector of \eqn{n} phenotypes in \eqn{{0,1}}
-      H=H,
-### A vector of length \eqn{m}, the status of each
-### hypothesis:\describe{
-### \item{0}{true null hypothesis}
-### \item{1}{true alternative hypothesis}
-### }
-      w=w)
-### A vector of length \code{n}, the underlying factor
-### driving equi-correlation
+
+  w <- wilcoxStat(X, y, B=B)
+  X0 <- w$stat0Mat
+  x <- w$stat
+  list(x=x,
+       X0=X0,
+       H=H)
 }, ex=function() {
   m <- 123
   rho <- 0.2
