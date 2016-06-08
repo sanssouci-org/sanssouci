@@ -1,4 +1,4 @@
-##' ## Simulate Gaussian equi-correlated test statistics
+##' Simulate Gaussian equi-correlated test statistics
 ##'
 ##' @param m Number of hypotheses
 ##' @param rho Level of equi-correlation between pairs of variables
