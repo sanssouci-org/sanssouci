@@ -44,8 +44,6 @@ testStepDown <- function(m, rho, B, pi0, SNR, alpha, Rcpp=FALSE, maxTime=100) {
         xx[H0] <- -Inf
         resOracle <- jointFWERControl(X0, refFamily=refFam, alpha=alpha, stat=xx)
         thrO <- resOracle$thr
-##        lambda <- resOracle$lambda
-##        thr <- sk(lambda)
 
         ## *Oracle JFWER* thresholds (double Oracle!!!)
         X0Oracle <- X0[H0, ]

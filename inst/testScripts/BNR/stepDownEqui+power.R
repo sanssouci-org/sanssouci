@@ -1,7 +1,7 @@
 ##library("sansSouci")
 library("actuar")
 library("parallel")
-ncores <- 7
+ncores <- 36
 
 ptag <- sprintf("sansSouci_%s", packageVersion("sansSouci"))
 htag <- system("hostname", inter=TRUE)
