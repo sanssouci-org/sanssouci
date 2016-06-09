@@ -14,6 +14,7 @@
 ##' \mapsto (m/k)*(1-pnorm(u))}.
 ##'
 ##' @export
+##' @importFrom matrixStats colMins
 ##'
 SimesPivotalStatistic <- function(mat, kMax, m) {
     ## for Simes, s_k^{-1}(u) = (m/k)*(1-pnorm(u))
