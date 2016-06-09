@@ -15,10 +15,14 @@
 ##'
 ##' @export
 ##'
-SimesPivotalStatistic <- function(kmaxH0, m) {
+SimesPivotalStatistic <- function(mat, kMax, m) {
     ## for Simes, s_k^{-1}(u) = (m/k)*(1-pnorm(u))
-    c <- nrow(kmaxH0)
-    stopifnot(c<=m)
+    B <- ncol(mat)
+    c <- min(kMax, nrow(mat))  # K \vee |C| in th BNR paper
+    stopifnot(kMax<=m)
+
+    ## get matrix 'M' of BNR by (partial) sorting of hypotheses for each sample
+    kmaxH0 <- partialColSortDesc(mat, c);
     pval <- 1-pnorm(kmaxH0)
     skInv <- sweep(pval, 1, m/1:c, "*")
     colMins(skInv)

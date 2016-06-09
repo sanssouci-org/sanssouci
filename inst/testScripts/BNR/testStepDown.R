@@ -69,7 +69,7 @@ testStepDown <- function(m, rho, B, pi0, SNR, alpha, flavor=c("equi", "Mein2006"
         thrOJ <- c(resOracleJ$thr, rep(-Inf, m1))
 
         resFam <- cbind("0"=thr0, "SD"=thrSD, "Oracle"=thrO, "Oracle2"=thrOJ)
-        if(refFam=="Simes") {
+        if (refFam=="Simes") {
             resFam <- cbind("alpha"=thrAlpha, resFam)
         }
         colnames(resFam) <- paste(refFam, colnames(resFam), sep=".")

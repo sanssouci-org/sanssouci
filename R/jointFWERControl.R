@@ -73,7 +73,8 @@ jointFWERControl <- function(mat,
                              stat=NULL,
                              maxStepsDown=100,
                              kMax=nrow(mat),
-                             Rcpp=TRUE) {
+                             Rcpp=TRUE,
+                             verbose=FALSE) {
     ## This function is the main workhorse of the package.
 
     ## sanity checks
@@ -82,6 +83,9 @@ jointFWERControl <- function(mat,
     if (is.null(stat)) {
         ## force single step control
         maxStepsDown <- 0
+        if (verbose) {
+            print("Arguement 'stat' not provided: cannot perform step-down control")
+        }
     } else {
         stopifnot(length(stat)==m)
     }
@@ -89,14 +93,19 @@ jointFWERControl <- function(mat,
 
     if (refFamily=="Simes") {
         sk <- SimesThresholdFamily(m, kMax=kMax)
-        pivStatFUN <- SimesPivotalStatistic
+        pivStatFUN <- function(mat, kMax, C) {
+            SimesPivotalStatistic(mat, kMax, m)
+        }
     } else if (refFamily=="kFWER") {
         sk <- kFWERThresholdFamily(mat, kMax=kMax, Rcpp=Rcpp)
-        pivStatFUN <- kFWERPivotalStatistic
+        pivStatFUN <- function(mat, kMax, C) {
+            kFWERPivotalStatistic(mat, kMax, C)
+        }
     }
 
     ## (single-step) joint FWER control
-    pivStat <-  pivotalStat(mat, m=m, kMax=kMax, FUN=pivStatFUN)
+    ## pivStat <-  pivotalStat(mat, m=m, kMax=kMax, FUN=pivStatFUN)
+    pivStat <-  pivStatFUN(mat, kMax=kMax, 1:m)
     lambda <- quantile(pivStat, alpha, type=1)
     thr <- sk(lambda)
 
@@ -108,7 +117,12 @@ jointFWERControl <- function(mat,
     ## step 0
     step <- 0
     thr1 <- thr[1]   ## (1-)FWER threshold
-    R1 <- which(stat>=thr1)
+    if (is.null(stat)) {
+        R1 <- integer(0)
+    } else {
+        R1 <- which(stat>=thr1)
+    }
+
 
     converged <- (length(R1)==0L)  ## force 'convergence' if no "FWER rejection"
 
@@ -125,7 +139,8 @@ jointFWERControl <- function(mat,
 
         ## re-calibration of lambda, *holding sk fixed*
         kMax <- min(kMax, nrow(mat1))
-        pivStat <-  pivotalStat(mat1, m=m, kMax=kMax, FUN=pivStatFUN)
+        C <- setdiff(1:m, R1)
+        pivStat <-  pivStatFUN(mat, kMax, C)
         lambda <- quantile(pivStat, alpha, type=1)
         thr <- sk(lambda)
 

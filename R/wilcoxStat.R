@@ -1,12 +1,15 @@
 ##' wilcoxStat
 ##'
-##' Fast calculation of Wilcoxon sum rank test statistic
+##' Calculation of Wilcoxon sum rank test statistic
 ##'
 ##'
 ##' @param X An \eqn{m x n} covariate matrix
 ##' @param y A vector of \eqn{n} phenotypes in \eqn{{0,1}}
 ##' @param B Number of resamplings
 ##' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
+##' @return A list with elements \describe{
+##'   \item{stat}{A vector of \code{m} Wilcoxon sum rank test statistics of association between \code{X} and \code{y}.}
+##'   \item{stat0Mat}{An \code{m} x \code{B} matrix of \code{B} realizations of a \code{m}-dimensional vector of test statistics under the null hypothesis of no association between \code{X} and \code{y}.}}
 ##' @importFrom matrixStats rowRanks
 ##' @export
 wilcoxStat <- function(

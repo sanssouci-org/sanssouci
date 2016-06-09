@@ -1,10 +1,18 @@
 # Package: sansSouci
 
+## Version 0.4.3 [2016-06-09]
+
+* BUG fix in 'pivotatStat' (cont'd): the pivotal statistic was not
+  calculated properly for kFWER threshold family when the cardinal of
+  the set of candidate hypotheses ($\cC$) was less than m.
+* Removed function 'pivotalStat' as the calculation of kFWER and Simes
+  statistics now have almost nothing to share.
+
 ## Version 0.4.2 [2016-06-09]
 
 * BUG fix in 'pivotatStat': the pivotal statistic was not calculated
-  properly when the cardinal of the set of candidate hypotheses
-  ($\cC$) was less than m.
+  properly for Simes' threshold family when the cardinal of the set of
+  candidate hypotheses ($\cC$) was less than m.
 * removed 'jointFWERThresholdCalibration' to make the code in 'jointFWERControl' more explicit.
 
 ## Version 0.4.1 [2016-06-07]

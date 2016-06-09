@@ -30,6 +30,42 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// minPseudoRanks1
+Rcpp::NumericVector minPseudoRanks1(arma::mat X, arma::mat Y);
+RcppExport SEXP sansSouci_minPseudoRanks1(SEXP XSEXP, SEXP YSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Y(YSEXP);
+    __result = Rcpp::wrap(minPseudoRanks1(X, Y));
+    return __result;
+END_RCPP
+}
+// minPseudoRanks2
+Rcpp::NumericVector minPseudoRanks2(arma::mat X, arma::mat Y);
+RcppExport SEXP sansSouci_minPseudoRanks2(SEXP XSEXP, SEXP YSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Y(YSEXP);
+    __result = Rcpp::wrap(minPseudoRanks2(X, Y));
+    return __result;
+END_RCPP
+}
+// minPseudoRanks
+Rcpp::NumericVector minPseudoRanks(arma::mat X, arma::mat Y);
+RcppExport SEXP sansSouci_minPseudoRanks(SEXP XSEXP, SEXP YSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Y(YSEXP);
+    __result = Rcpp::wrap(minPseudoRanks(X, Y));
+    return __result;
+END_RCPP
+}
 // partialColSortDescCpp
 arma::mat partialColSortDescCpp(arma::mat X, int k);
 RcppExport SEXP sansSouci_partialColSortDescCpp(SEXP XSEXP, SEXP kSEXP) {
