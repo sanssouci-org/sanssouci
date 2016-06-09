@@ -94,7 +94,7 @@ jointFWERControl <- function(mat,
     if (refFamily=="Simes") {
         sk <- SimesThresholdFamily(m, kMax=kMax)
         pivStatFUN <- function(mat, kMax, C) {
-            SimesPivotalStatistic(mat, kMax, m)
+            SimesPivotalStatistic(mat[C, ], kMax, nrow(mat))
         }
     } else if (refFamily=="kFWER") {
         sk <- kFWERThresholdFamily(mat, kMax=kMax, Rcpp=Rcpp)

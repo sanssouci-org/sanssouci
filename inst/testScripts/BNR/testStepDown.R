@@ -52,7 +52,6 @@ testStepDown <- function(m, rho, B, pi0, SNR, alpha, flavor=c("equi", "Mein2006"
         res <- jointFWERControl(X0, refFamily=refFam, alpha=alpha, stat=x)
         thrMat <- res$stepsDown$thr
         nSteps <- ncol(thrMat)
-        if (nSteps>2) print(nSteps)
         thr0 <- thrMat[, 1]
         thrSD <- res$thr
         stopifnot(identical(thrSD, thrMat[, nSteps])) ## sanity check

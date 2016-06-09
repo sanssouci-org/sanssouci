@@ -19,7 +19,7 @@
 SimesPivotalStatistic <- function(mat, kMax, m) {
     ## for Simes, s_k^{-1}(u) = (m/k)*(1-pnorm(u))
     B <- ncol(mat)
-    c <- min(kMax, nrow(mat))  # K \vee |C| in th BNR paper
+    c <- min(kMax, nrow(mat))  # K \vee |C| in the BNR paper
     stopifnot(kMax<=m)
 
     ## get matrix 'M' of BNR by (partial) sorting of hypotheses for each sample
