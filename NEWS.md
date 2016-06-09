@@ -1,8 +1,15 @@
 # Package: sansSouci
 
+## Version 0.4.2 [2016-06-09]
+
+* BUG fix in 'pivotatStat': the pivotal statistic was not calculated
+  properly when the cardinal of the set of candidate hypotheses
+  ($\cC$) was less than m.
+* removed 'jointFWERThresholdCalibration' to make the code in 'jointFWERControl' more explicit.
+
 ## Version 0.4.1 [2016-06-07]
 
-* BUG fix in 'stepDownJointFWERControl': the threshold family was not
+* BUG fix in 'jointFWERControl': the threshold family was not
   updated properly throughout the step-down process.
 
 ## Version 0.4.0 [2016-06-06]

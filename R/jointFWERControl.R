@@ -95,26 +95,22 @@ jointFWERControl <- function(mat,
         pivStatFUN <- kFWERPivotalStatistic
     }
 
-    ## single-step JFWER control
-    res0 <- jointFWERThresholdCalibration(mat, thresholdFamily=sk, pivotalStatFUN=pivStatFUN,
-                                          alpha=alpha, kMax=kMax, Rcpp=Rcpp)
-    thr <- res0$thr
-    pivStat <- res0$pivStat
-    lambda <- res0$lambda
+    ## (single-step) joint FWER control
+    pivStat <-  pivotalStat(mat, m=m, kMax=kMax, FUN=pivStatFUN)
+    lambda <- quantile(pivStat, alpha, type=1)
+    thr <- sk(lambda)
 
     ## storing results
     thrMat <- matrix(thr, ncol=1)
     pivMat <- matrix(pivStat, ncol=1)
     lambdas <- lambda
-    converged <- FALSE
 
     ## step 0
     step <- 0
     thr1 <- thr[1]   ## (1-)FWER threshold
     R1 <- which(stat>=thr1)
-    if (length(R1)==0L) {  ## no rejection: force 'convergence'.
-        converged <- TRUE
-    }
+
+    converged <- (length(R1)==0L)  ## force 'convergence' if no "FWER rejection"
 
     while (!converged && step<maxStepsDown) {
         step <- step+1
@@ -124,21 +120,15 @@ jointFWERControl <- function(mat,
         thr0 <- thr
         R10 <- R1
 
-        if (length(R1)) {
-            mat1 <- mat[-R1, ]
-            sk1 <- function(alpha) sk(alpha)[-R1]
-        } else {
-            mat1 <- mat
-            sk1 <- sk
-        }
+        stopifnot(length(R1)>0L)
+        mat1 <- mat[-R1, ]
 
-        ## joint FWER control through lambda-adjustment, *holding sk fixed*
+        ## re-calibration of lambda, *holding sk fixed*
         kMax <- min(kMax, nrow(mat1))
-        res <- jointFWERThresholdCalibration(mat1, thresholdFamily=sk1, pivotalStatFUN=pivStatFUN,
-                                          alpha=alpha, kMax=kMax, Rcpp=Rcpp)
-        pivStat <-  res$pivStat
-        lambda <-res$lambda
-        thr <- sk(lambda)  ## *not* c(res$thr, rep(-Inf, length(R1)))!!!
+        pivStat <-  pivotalStat(mat1, m=m, kMax=kMax, FUN=pivStatFUN)
+        lambda <- quantile(pivStat, alpha, type=1)
+        thr <- sk(lambda)
+
         thr1 <- thr[1]   ## (1-)FWER threshold
         R1 <- which(stat>=thr1)
 
@@ -149,6 +139,7 @@ jointFWERControl <- function(mat,
         ## (and keep the largest rejection set!)
         if (noNewRejection) {
             if (!identical(R1, R10)) {
+                print("strict inclusion!")
                 ## not a 'TRUE' convergence: override the last step down!
                 thr <- thr0
                 lambda <- lambda0

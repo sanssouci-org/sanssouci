@@ -3,7 +3,7 @@
 using namespace Rcpp;
 // [[Rcpp::depends(RcppArmadillo)]]
 
-//' partial sorting of the rows of a matrix by descending order
+//' partial sorting of the columns of a matrix by descending order
 //'
 //' @param X A numeric matrix
 //' @param k An integer value between 1 and \code{nrow(mat)}

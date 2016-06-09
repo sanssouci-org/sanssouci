@@ -1,13 +1,16 @@
 ##' partialColSortDesc
 ##'
-##' partial sorting of the rows of a matrix by descending order
+##' partial sorting of the columns of a matrix by descending order
 ##'
 ##'
-##' @param mat a numeric matrix
-##' @param k an integer value between 1 and \code{nrow(mat)}
+##' @param mat a \code{m} x \code{B} numeric matrix
+##' @param k an integer value between 1 and \code{m}
 ##' @param Rcpp sorting is performed in C++ if \code{TRUE} (the default), and
 ##' using \code{base::sort} if \code{FALSE}.
 ##' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
+##' @return a \code{k} x \code{B} numeric matrix, whose \code{b}-th
+##' column corresponds to the \code{k} largest values of the
+##' \code{b}-th column of \code{mat}, sorted decreasingly.
 ##' @export
 ##' @examples
 ##'
@@ -33,9 +36,9 @@ partialColSortDesc <- function(
     if (Rcpp) {
         pcsd <- partialColSortDescCpp(mat, k);
     } else {
-                                        pcsd <- -apply(-mat, 2, sort, partial=1:k)
-                                        pcsd <- pcsd[1:k, , drop=FALSE]
-                                    }
+        pcsd <- -apply(-mat, 2, sort, partial=1:k)
+        pcsd <- pcsd[1:k, , drop=FALSE]
+    }
     pcsd
 }
 

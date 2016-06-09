@@ -42,6 +42,13 @@ testStepDown <- function(m, rho, B, pi0, SNR, alpha, flavor=c("equi", "Mein2006"
 
     resMat <- NULL
     for (refFam in c("kFWER", "Simes")) {
+        if (refFam=="Simes") {
+            ## Simes control
+            sk <- SimesThresholdFamily(m)
+            thrAlpha <- sk(alpha)
+        }
+
+        ## Step-down control
         res <- jointFWERControl(X0, refFamily=refFam, alpha=alpha, stat=x)
         thrMat <- res$stepsDown$thr
         nSteps <- ncol(thrMat)
@@ -62,6 +69,9 @@ testStepDown <- function(m, rho, B, pi0, SNR, alpha, flavor=c("equi", "Mein2006"
         thrOJ <- c(resOracleJ$thr, rep(-Inf, m1))
 
         resFam <- cbind("0"=thr0, "SD"=thrSD, "Oracle"=thrO, "Oracle2"=thrOJ)
+        if(refFam=="Simes") {
+            resFam <- cbind("alpha"=thrAlpha, resFam)
+        }
         colnames(resFam) <- paste(refFam, colnames(resFam), sep=".")
         resMat <- cbind(resMat, resFam)
     }
