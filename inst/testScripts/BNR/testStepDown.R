@@ -42,12 +42,6 @@ testStepDown <- function(m, rho, B, pi0, SNR, alpha, flavor=c("equi", "Mein2006"
 
     resMat <- NULL
     for (refFam in c("kFWER", "Simes")) {
-        if (refFam=="Simes") {
-            ## Simes control
-            sk <- SimesThresholdFamily(m)
-            thrAlpha <- sk(alpha)
-        }
-
         ## Step-down control
         res <- jointFWERControl(X0, refFamily=refFam, alpha=alpha, stat=x)
         thrMat <- res$stepsDown$thr
@@ -64,12 +58,15 @@ testStepDown <- function(m, rho, B, pi0, SNR, alpha, flavor=c("equi", "Mein2006"
 
         ## *Oracle JFWER* thresholds (double Oracle!!!)
         X0Oracle <- X0[H0, ]
-        resOracleJ <- jointFWERControl(X0Oracle, refFamily=refFam, alpha=alpha, maxStepsDown=1)  ## single step
+        resOracleJ <- jointFWERControl(X0Oracle, refFamily=refFam, alpha=alpha,
+                                       maxStepsDown=0)  ## single step
         thrOJ <- c(resOracleJ$thr, rep(-Inf, m1))
 
         resFam <- cbind("0"=thr0, "SD"=thrSD, "Oracle"=thrO, "Oracle2"=thrOJ)
         if (refFam=="Simes") {
-            resFam <- cbind("alpha"=thrAlpha, resFam)
+            ## Simes control
+            sk <- SimesThresholdFamily(m)
+            resFam <- cbind(resFam, "alpha"=sk(alpha))
         }
         colnames(resFam) <- paste(refFam, colnames(resFam), sep=".")
         resMat <- cbind(resMat, resFam)

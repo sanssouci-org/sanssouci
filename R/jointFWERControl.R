@@ -74,7 +74,7 @@ jointFWERControl <- function(mat,
                              maxStepsDown=100,
                              kMax=nrow(mat),
                              Rcpp=TRUE,
-                             verbose=FALSE) {
+                             verbose=TRUE) {
     ## This function is the main workhorse of the package.
 
     ## sanity checks
@@ -90,7 +90,11 @@ jointFWERControl <- function(mat,
         stopifnot(length(stat)==m)
     }
     stopifnot(kMax<=m)
-
+    if (verbose) {
+        proc <- ifelse(maxStepsDown==0, "Single step", "Step down")
+        msg <- sprintf("Joint Family-Wise Error Rate control: %s procedure based on %s family", proc, refFamily)
+        print(msg)
+    }
     if (refFamily=="Simes") {
         sk <- SimesThresholdFamily(m, kMax=kMax)
         pivStatFUN <- function(mat, kMax, C) {

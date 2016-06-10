@@ -1,7 +1,7 @@
 library("sansSouci")
 
-m <- 1e2
-B <- 1e2
+m <- 1e3
+B <- 1e3
 
 rho <- 0
 pi0 <- 0.9

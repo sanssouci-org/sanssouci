@@ -32,6 +32,22 @@ kFWERPivotalStatistic2 <- function(kmaxH0, kmaxH0C) {
     colMins(R)
 }
 
+kFWERPivotalStatistic2b <- function(kmaxH0, kmaxH0C) {
+    B <- ncol(kmaxH0)
+    m <- nrow(kmaxH0)
+    c <- nrow(kmaxH0C)
+    stopifnot(c <= m)
+    ## NB: the calculation only requires the first c rows of kmaxH0
+    R <- matrix(NA_real_, c, B)
+    for (bb in 1:B) {
+        for (kk in 1:c) {
+            ekb <-kmaxH0[kk, ]
+            ekp <- kmaxH0C[kk, bb]
+            R[kk, bb] <- mean(ekb >= ekp)
+        }
+    }
+    colMins(R)
+}
 
 kFWERPivotalStatistic3 <- function(kmaxH0, kmaxH0C) {
     ## avoid storing all R because we only need the min!
@@ -75,11 +91,12 @@ kFWERPivotalStatistic4 <- function(kmaxH0, kmaxH0C) {
     res
 }
 
-kFWERPivotalStatistic <- function(mat, kMax, C=1:nrow(mat)) {
+kFWERPivotalStatistic <- function(mat, kMax=nrow(mat), C=1:nrow(mat)) {
     c <- length(C)
     c <- min(kMax, c)  # K \vee |C| in th BNR paper
 
-    kmaxH0 <- partialColSortDesc(mat, c);  ## no need to go further than c (??)
+##    kmaxH0 <- partialColSortDesc(mat, k=kMax);
+    kmaxH0 <- partialColSortDesc(mat, c);  ## no need to go further than c!
     kmaxH0C <- partialColSortDesc(mat[C, ], c);
-    minPseudoRanks(kmaxH0, kmaxH0C)
+    minPseudoRanksP(kmaxH0, kmaxH0C)
 }

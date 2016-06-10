@@ -1,5 +1,11 @@
 # Package: sansSouci
 
+## Version 0.4.4 [2016-06-10]
+
+* BUG fix in 'pivotatStat' (cont'd): the pivotal statistic was not
+  calculated properly for kFWER threshold family when the cardinal of
+  the set of candidate hypotheses ($\cC$) was less than m.
+
 ## Version 0.4.3 [2016-06-09]
 
 * BUG fix in 'pivotatStat' (cont'd): the pivotal statistic was not

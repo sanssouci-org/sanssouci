@@ -66,6 +66,18 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// minPseudoRanksP
+Rcpp::NumericVector minPseudoRanksP(arma::mat X, arma::mat Y);
+RcppExport SEXP sansSouci_minPseudoRanksP(SEXP XSEXP, SEXP YSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Y(YSEXP);
+    __result = Rcpp::wrap(minPseudoRanksP(X, Y));
+    return __result;
+END_RCPP
+}
 // partialColSortDescCpp
 arma::mat partialColSortDescCpp(arma::mat X, int k);
 RcppExport SEXP sansSouci_partialColSortDescCpp(SEXP XSEXP, SEXP kSEXP) {

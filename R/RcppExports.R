@@ -57,6 +57,10 @@ minPseudoRanks <- function(X, Y) {
     .Call('sansSouci_minPseudoRanks', PACKAGE = 'sansSouci', X, Y)
 }
 
+minPseudoRanksP <- function(X, Y) {
+    .Call('sansSouci_minPseudoRanksP', PACKAGE = 'sansSouci', X, Y)
+}
+
 #' partial sorting of the columns of a matrix by descending order
 #'
 #' @param X A numeric matrix

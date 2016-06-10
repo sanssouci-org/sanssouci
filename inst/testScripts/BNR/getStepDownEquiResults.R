@@ -1,6 +1,7 @@
 rootPath <- "resData/stepDownEqui+power,Mein2006,sansSouci_0.4.1,mine"
 ##rootPath <- "resData/stepDownEqui+power,equi,sansSouci_0.4.1,rei1"
 ##rootPath <- "resData/stepDownEqui+power,sansSouci_0.4.1,rei1"
+rootPath <- "resData/stepDownEqui+power,equi,sansSouci_0.4.3,rei1"
 
 figName <- gsub(".*,(.*),sansSouci.*,.*", "\\1", rootPath)
 pname <- sprintf("m=%s,B=%s,alpha=%s,nbSimu=%s", m, B, alpha, nbSimu)
@@ -50,7 +51,7 @@ for (rr in risks) {
         ##    p <- p + scale_x_continuous(breaks=unique(d$SNR)) + xlab(expression(mu))
         p <- p + ylab(rr)
         if (rr=="JFWER") {
-            p <- p + scale_y_continuous(breaks=c(0, 0.1, 0.2, 0.25), limits=c(0, 0.3))
+            p <- p + scale_y_continuous(breaks=c(0, 0.1, 0.2, 0.25), limits=c(0, 0.35))
             p <- p + geom_hline(aes(yintercept=alpha), linetype="dashed")
             p <- p + geom_hline(aes(yintercept=alpha*pi0), linetype="dotted")
         } else {
