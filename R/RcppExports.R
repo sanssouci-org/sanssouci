@@ -45,20 +45,8 @@ marginalKFWER <- function(thr, Z) {
 #' @return A numeric matrix whose rows are sorted by descending order.
 #'
 #' @export
-minPseudoRanks1 <- function(X, Y) {
-    .Call('sansSouci_minPseudoRanks1', PACKAGE = 'sansSouci', X, Y)
-}
-
-minPseudoRanks2 <- function(X, Y) {
-    .Call('sansSouci_minPseudoRanks2', PACKAGE = 'sansSouci', X, Y)
-}
-
 minPseudoRanks <- function(X, Y) {
     .Call('sansSouci_minPseudoRanks', PACKAGE = 'sansSouci', X, Y)
-}
-
-minPseudoRanksP <- function(X, Y) {
-    .Call('sansSouci_minPseudoRanksP', PACKAGE = 'sansSouci', X, Y)
 }
 
 #' partial sorting of the columns of a matrix by descending order

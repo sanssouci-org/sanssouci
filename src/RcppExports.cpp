@@ -30,30 +30,6 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
-// minPseudoRanks1
-Rcpp::NumericVector minPseudoRanks1(arma::mat X, arma::mat Y);
-RcppExport SEXP sansSouci_minPseudoRanks1(SEXP XSEXP, SEXP YSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type Y(YSEXP);
-    __result = Rcpp::wrap(minPseudoRanks1(X, Y));
-    return __result;
-END_RCPP
-}
-// minPseudoRanks2
-Rcpp::NumericVector minPseudoRanks2(arma::mat X, arma::mat Y);
-RcppExport SEXP sansSouci_minPseudoRanks2(SEXP XSEXP, SEXP YSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type Y(YSEXP);
-    __result = Rcpp::wrap(minPseudoRanks2(X, Y));
-    return __result;
-END_RCPP
-}
 // minPseudoRanks
 Rcpp::NumericVector minPseudoRanks(arma::mat X, arma::mat Y);
 RcppExport SEXP sansSouci_minPseudoRanks(SEXP XSEXP, SEXP YSEXP) {
@@ -63,18 +39,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type Y(YSEXP);
     __result = Rcpp::wrap(minPseudoRanks(X, Y));
-    return __result;
-END_RCPP
-}
-// minPseudoRanksP
-Rcpp::NumericVector minPseudoRanksP(arma::mat X, arma::mat Y);
-RcppExport SEXP sansSouci_minPseudoRanksP(SEXP XSEXP, SEXP YSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject __result;
-    Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type Y(YSEXP);
-    __result = Rcpp::wrap(minPseudoRanksP(X, Y));
     return __result;
 END_RCPP
 }
