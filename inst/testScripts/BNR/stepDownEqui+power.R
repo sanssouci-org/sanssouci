@@ -1,5 +1,5 @@
 ##library("sansSouci")
-library("actuar")
+#library("actuar")
 library("parallel")
 ncores <- 3
 
@@ -36,7 +36,17 @@ for (SNR in SNRs) {
                 nms <- rownames(dat)
                 eJR <- colMeans(dat[which(nms=="rej0"), ]>0)
                 ePow <- colMeans(dat[which(nms=="rej1"), ]>0)
-                mat <- rbind(JFWER=eJR, Power=ePow)
+                eV0 <- colMeans(dat[which(nms=="v0"), ])
+                eS1 <- colMeans(dat[which(nms=="s1"), ])
+
+                ## TODO: add sds, ie
+                if (FALSE) {
+                    d <- dat[which(nms=="rej0"), ]>0
+                    mode(d) <- "numeric"
+                    matrixStats::colSds(d)
+                }
+
+                mat <- rbind(JFWER=eJR, Power=ePow, V0=eV0, S1=eS1)
                 names(dimnames(mat)) <- c("risk", "method")
                 dat <- reshape2::melt(mat)
                 dat <- cbind(pi0=pi0, rho=rho, SNR=SNR, dat)

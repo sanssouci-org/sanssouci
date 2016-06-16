@@ -1,7 +1,5 @@
-rootPath <- "resData/stepDownEqui+power,Mein2006,sansSouci_0.4.1,mine"
-##rootPath <- "resData/stepDownEqui+power,equi,sansSouci_0.4.1,rei1"
-##rootPath <- "resData/stepDownEqui+power,sansSouci_0.4.1,rei1"
-rootPath <- "resData/stepDownEqui+power,equi,sansSouci_0.4.3,rei1"
+rootPath <- "resData/stepDownEqui+power,equi,sansSouci_0.4.4,rei1"
+rootPath <- "resData/stepDownEqui+power,equi,sansSouci_0.4.4,MacBook-Air-de-Pierre.local"
 
 figName <- gsub(".*,(.*),sansSouci.*,.*", "\\1", rootPath)
 pname <- sprintf("m=%s,B=%s,alpha=%s,nbSimu=%s", m, B, alpha, nbSimu)

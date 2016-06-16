@@ -9,6 +9,7 @@
 ##' scale) that control joint FWER at level \eqn{(1-\alpha)}
 ##' @return A vector of integers in [0, length(thr)].
 ##' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
+##' @export
 ##' @examples
 ##'
 ##' m <- 200

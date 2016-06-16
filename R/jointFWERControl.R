@@ -41,7 +41,7 @@
 ##' @examples
 ##'
 ##' set.seed(0xBEEF)
-##' sim <- simulateMein2006(m=1e2, rho=0.2, n=300, pi0=0.9, SNR=2)
+##' sim <- simulateMein2006(m=1e2, rho=0.2, n=300, B=1e3, pi0=0.9, SNR=2)
 ##' X <- sim$X
 ##' y <- sim$y
 ##' H0 <- which(sim$H==0)
@@ -82,10 +82,10 @@ jointFWERControl <- function(mat,
     refFamily <- match.arg(refFamily)
     if (is.null(stat)) {
         ## force single step control
-        maxStepsDown <- 0
-        if (verbose) {
+        if (verbose && (maxStepsDown>0)) {
             print("Arguement 'stat' not provided: cannot perform step-down control")
         }
+        maxStepsDown <- 0
     } else {
         stopifnot(length(stat)==m)
     }
@@ -128,7 +128,9 @@ jointFWERControl <- function(mat,
     }
 
 
-    converged <- (length(R1)==0L)  ## force 'convergence' if no "FWER rejection"
+    ## force 'convergence' if nb of "FWER rejections" is 0 (nothing to
+    ## gain) or m (nothing left to be rejected)
+    converged <- (length(R1)==0L)  | (length(R1)==m)
 
     while (!converged && step<maxStepsDown) {
         step <- step+1
@@ -139,6 +141,8 @@ jointFWERControl <- function(mat,
         R10 <- R1
 
         stopifnot(length(R1)>0L)
+        stopifnot(length(R1)<m)
+
         mat1 <- mat[-R1, ]
 
         ## re-calibration of lambda, *holding sk fixed*

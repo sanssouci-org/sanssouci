@@ -1,5 +1,8 @@
 # Package: sansSouci
 
+## Version 0.4.5 [2016-06-16]
+* Added alternative (finer?) definition of power to BNR test scripts.
+
 ## Version 0.4.4 [2016-06-10]
 
 * BUG fix in 'pivotatStat' (cont'd): the pivotal statistic was not
