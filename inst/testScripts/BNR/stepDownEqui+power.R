@@ -1,7 +1,7 @@
 ##library("sansSouci")
 #library("actuar")
 library("parallel")
-ncores <- 3
+ncores <- 24
 
 ptag <- sprintf("sansSouci_%s", packageVersion("sansSouci"))
 htag <- system("hostname", inter=TRUE)
@@ -24,7 +24,7 @@ for (SNR in SNRs) {
                     print(bb)
                 }
 
-                rr <- testStepDown(m, rho, B, pi0, SNR, alpha, flavor=flavor)
+                rr <- testStepDown(m, rho, B, pi0, SNR, typeOfSNR, alpha, flavor=flavor)
             }, mc.cores=ncores)
 
             ## tidy? too many rows! (m*nbSimu>=1e6 per setting...)

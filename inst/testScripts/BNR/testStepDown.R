@@ -1,4 +1,4 @@
-testStepDown <- function(m, rho, B, pi0, SNR, alpha, flavor=c("equi", "Mein2006"), trace=FALSE) {
+testStepDown <- function(m, rho, B, pi0, SNR, typeOfSNR, alpha, flavor=c("equi", "Mein2006"), trace=FALSE) {
     flavor <- match.arg(flavor)
     if (is.character(SNR)) {
         pattern <- "Pareto\\(([0-9]),([0-9]),([0-9]))"
@@ -12,7 +12,11 @@ testStepDown <- function(m, rho, B, pi0, SNR, alpha, flavor=c("equi", "Mein2006"
 
         m1 <- round(m*(1-pi0))
         SNR <- xmin + rpareto(m1, shape, scale)
+    } else if (typeOfSNR=="linear") {
+        m1 <- round(m*(1-pi0))
+        SNR <- seq(from=0, to=SNR, length=m1)
     }
+    
 
     if (flavor=="equi") {
         sim <- simulateEqui(m, rho, B, pi0, SNR=SNR)
