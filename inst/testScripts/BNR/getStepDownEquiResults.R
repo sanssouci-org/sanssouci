@@ -1,7 +1,8 @@
-##rootPath <- "resData/stepDownEqui+power,equi,sansSouci_0.4.4,rei1"
-##rootPath <- "resData/stepDownEqui+power,equi,sansSouci_0.4.4,term9"
-##rootPath <- "resData/stepDownEqui+power,Mein2006,sansSouci_0.4.4,term9" ## not done!
+nbSimu <- 2e3
 rootPath <- "resData/stepDownEqui+power,equi,sansSouci_0.4.5,rei1"
+
+nbSimu <- 1e3
+rootPath <- "resData/stepDownEqui+power,equi,linear,sansSouci_0.4.5,rei4"
 
 figName <- gsub(".*,(.*),sansSouci.*,.*", "\\1", rootPath)
 pname <- sprintf("m=%s,B=%s,alpha=%s,nbSimu=%s", m, B, alpha, nbSimu)
@@ -26,7 +27,7 @@ patt <- "pi0=(.*),rho=(.*),SNR=([0-9]+)"
 dat <- plyr::ldply(fls, readRDS, .id="id")
 dat$se <- sqrt(dat$value * (1-dat$value))/sqrt(nbSimu)
 
-risks <- c("JFWER", "Power")
+risks <- c("JFWER", "Power", "V0", "S1")
 names(risks) <- risks
 datList <- lapply(risks, function(rr) subset(dat, risk==rr))
 

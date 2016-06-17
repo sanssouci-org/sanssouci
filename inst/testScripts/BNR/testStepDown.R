@@ -1,4 +1,4 @@
-testStepDown <- function(m, rho, B, pi0, SNR, typeOfSNR, alpha, flavor=c("equi", "Mein2006"), trace=FALSE) {
+testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alpha, flavor=c("equi", "Mein2006", "Toeplitz"), trace=FALSE) {
     flavor <- match.arg(flavor)
     if (is.character(SNR)) {
         pattern <- "Pareto\\(([0-9]),([0-9]),([0-9]))"
@@ -16,13 +16,21 @@ testStepDown <- function(m, rho, B, pi0, SNR, typeOfSNR, alpha, flavor=c("equi",
         m1 <- round(m*(1-pi0))
         SNR <- seq(from=0, to=SNR, length=m1)
     }
-    
+
 
     if (flavor=="equi") {
+        rho <- dep
+        parName <- "rho"
         sim <- simulateEqui(m, rho, B, pi0, SNR=SNR)
     } else if (flavor=="Mein2006") {
         n <- 1e3 ## currently hardcoded.
+        rho <- dep
         sim <- simulateMein2006(m, rho, n, B, pi0, SNR=SNR)
+    } else if (flavor=="Toeplitz") {
+        ## Toeplitz, long range
+        pow <- dep
+        parName <- "pow"
+        sim <- simulateToeplitz(m, pow, B, pi0, SNR=SNR)
     }
     X0 <- sim$X0
     x <- sim$x

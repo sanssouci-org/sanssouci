@@ -1,5 +1,10 @@
 # Package: sansSouci
 
+## Version 0.4.6 [2016-06-17]
+* Added linearly decreasing SNR to BNR test scripts.
+* Added 'simulateToeplitz' to simulate under Gaussian distribution
+  with Toeplitz covariance matrix.
+
 ## Version 0.4.5 [2016-06-16]
 * Added alternative (finer?) definition of power to BNR test scripts.
 
