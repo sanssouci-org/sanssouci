@@ -1,10 +1,31 @@
-nbSimu <- 2e3
-rootPath <- "resData/stepDownEqui+power,equi,sansSouci_0.4.5,rei1"
+what <- c(1, 2, 3, 4)[1]
+if (what==1) {
+    nbSimu <- 1e3
+    flavor <- "equi"
+    typeOfSNR <- "linear"
+    ptag <- "sansSouci_0.4.5,rei4"
+} else if (what==2) {
+    nbSimu <- 2e3
+    flavor <- "Toeplitz"
+    typeOfSNR <- "constant"
+    ptag <- "sansSouci_0.4.6,rei4"
+} else if (what==3) {
+    nbSimu <- 2e3
+    flavor <- "Toeplitz"
+    typeOfSNR <- "linear"
+    ptag <- "sansSouci_0.4.6,rei1"
+} else if (what==4) {
+    stop("broken!")
+    nbSimu <- 2e3
+    flavor <- "equi"
+    typeOfSNR <- "constant"
+    ptag <- "sansSouci_0.4.5,rei1"
+}
 
-nbSimu <- 1e3
-rootPath <- "resData/stepDownEqui+power,equi,linear,sansSouci_0.4.5,rei4"
+tag <- sprintf("%s,%s", flavor, typeOfSNR)
+rootPath <- sprintf("resData/stepDownEqui+power,%s,%s", tag, ptag)
 
-figName <- gsub(".*,(.*),sansSouci.*,.*", "\\1", rootPath)
+figName <- tag
 pname <- sprintf("m=%s,B=%s,alpha=%s,nbSimu=%s", m, B, alpha, nbSimu)
 path <- file.path(rootPath, pname)
 path <- R.utils::Arguments$getReadablePath(path)
@@ -26,6 +47,10 @@ patt <- "pi0=(.*),rho=(.*),SNR=([0-9]+)"
 
 dat <- plyr::ldply(fls, readRDS, .id="id")
 dat$se <- sqrt(dat$value * (1-dat$value))/sqrt(nbSimu)
+gg <- grep("dep", colnames(dat))
+if (length(gg)) {
+    colnames(dat)[gg] <- "rho"
+}
 
 risks <- c("JFWER", "Power", "V0", "S1")
 names(risks) <- risks
@@ -64,4 +89,35 @@ for (rr in risks) {
         dev.off()
     }
 }
+
+## compare power to baseline: Simes(alpha)
+base <- "Simes.alpha"
+datRR <- subset(dat, risk=="S1")
+
+filename <- sprintf("%s,%s,%s,allVs%s.pdf", figName, pname, rr, base)
+pathname <- file.path(figPath, filename)
+
+gg <- which(!(datRR$method %in% c("Simes.Oracle", "Simes.Oracle2", "kFWER.Oracle", "kFWER.Oracle2")))
+gg <- which(datRR$method %in% c("Simes.0", "kFWER.0"))
+
+datMM <- datRR[gg, ]
+datBB <- datRR[grep(base, datRR$method), ]
+    mg <- merge(datMM, datBB, by=c("id", "pi0", "rho", "SNR", "risk"))
+    mg$value <- mg$value.x/mg$value.y
+
+    pdf(pathname)
+    p <- ggplot(mg, aes(x=SNR, y=value, group=method.x, color=method.x))
+    p <- p + geom_line() + geom_point()
+    p <- p + facet_grid(pi0 ~ rho)
+    ##p <- p + facet_grid(pi0 ~ rho, labeller=labeller(rho=label_bquote(rho*"="*.(x)), pi0=label_bquote(pi[0]*"="*.(x))))
+    ##    p <- p + scale_x_continuous(breaks=unique(d$SNR)) + xlab(expression(mu))
+    p <- p + ylab(rr)
+    if (rr=="JFWER") {
+        p <- p + scale_y_continuous(breaks=c(0, 0.1, 0.2, 0.25), limits=c(0, 0.35))
+        p <- p + geom_hline(aes(yintercept=alpha), linetype="dashed")
+        p <- p + geom_hline(aes(yintercept=alpha*pi0), linetype="dotted")
+    }
+    print(p)
+    dev.off()
+
 

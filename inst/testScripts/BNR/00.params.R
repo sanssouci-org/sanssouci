@@ -1,13 +1,13 @@
 library("sansSouci")
 
-m <- 1e2
-B <- 1e2
+m <- 1e3
+B <- 1e3
 
 alpha <- 0.25
-nbSimu <- 1e2
-typeOfSNR <- c("constant", "Pareto", "linear")[1]
+nbSimu <- 1e3
 
-flavor <- c("equi", "Mein2006", "Toeplitz")[3]
+typeOfSNR <- c("constant", "Pareto", "linear")[1]
+flavor <- c("equi", "Mein2006", "Toeplitz")[1]
 
 SNRs <- rev(c(0, 1, 2, 3, 4, 5))
 #SNRs <- "Pareto(2,2,1)"
