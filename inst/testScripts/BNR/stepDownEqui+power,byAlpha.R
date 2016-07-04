@@ -53,7 +53,7 @@ for (alpha in alphas) {
                 mat <- rbind(JFWER=eJR, Power=ePow, V0=eV0, S1=eS1)
                 names(dimnames(mat)) <- c("risk", "method")
                 dat <- reshape2::melt(mat)
-                dat <- cbind(pi0=pi0, dep=dep, SNR=SNR, dat)
+                dat <- cbind(pi0=pi0, dep=dep, alpha=alpha, dat)
             }
             pathname <- file.path(path, filename)
             saveRDS(dat, file=pathname)
