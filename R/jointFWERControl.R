@@ -89,7 +89,7 @@ jointFWERControl <- function(mat,
     } else {
         stopifnot(length(stat)==m)
     }
-    stopifnot(kMax<=m)
+    kMax <- min(kMax, m)  ## 'm' can be greater than 'kMax' throughout the step-down process
     if (verbose) {
         proc <- ifelse(maxStepsDown==0, "Single step", "Step down")
         msg <- sprintf("Joint Family-Wise Error Rate control: %s procedure based on %s family", proc, refFamily)
