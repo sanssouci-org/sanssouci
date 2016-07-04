@@ -1,4 +1,4 @@
-what <- c(1, 2, 3, 4)[1]
+what <- 5
 if (what==1) {
     nbSimu <- 1e3
     flavor <- "equi"
@@ -20,6 +20,11 @@ if (what==1) {
     flavor <- "equi"
     typeOfSNR <- "constant"
     ptag <- "sansSouci_0.4.5,rei1"
+} else if (what==5) {
+    nbSimu <- 1e3
+    flavor <- "equi"
+    typeOfSNR <- "constant"
+    ptag <- "sansSouci_0.4.6,rei1"
 }
 
 tag <- sprintf("%s,%s", flavor, typeOfSNR)
@@ -78,7 +83,8 @@ for (rr in risks) {
         ##    p <- p + scale_x_continuous(breaks=unique(d$SNR)) + xlab(expression(mu))
         p <- p + ylab(rr)
         if (rr=="JFWER") {
-            p <- p + scale_y_continuous(breaks=c(0, 0.1, 0.2, 0.25), limits=c(0, 0.35))
+            ##            p <- p + scale_y_continuous(breaks=c(0, 0.1, 0.2, 0.25), limits=c(0, 0.35))
+                        p <- p + scale_y_continuous(breaks=c(0, alpha), limits=c(0, alpha*1.3))
             p <- p + geom_hline(aes(yintercept=alpha), linetype="dashed")
             p <- p + geom_hline(aes(yintercept=alpha*pi0), linetype="dotted")
         } else {
