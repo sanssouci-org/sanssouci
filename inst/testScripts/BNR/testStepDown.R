@@ -72,12 +72,15 @@ testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alpha, flavor=c("equi",
         X0Oracle <- X0[H0, ]
         resOracleJ <- jointFWERControl(X0Oracle, refFamily=refFam, alpha=alpha,
                                        maxStepsDown=0, kMax=kMax, verbose=FALSE)  ## single step
-        thrOJ <- c(resOracleJ$thr, rep(-Inf, m1))
+        thrOJ <- resOracleJ$thr
+        if (m0<kMax) {
+            thrOJ <- c(thrOJ, rep(-Inf, kMax-m0))
+        }
 
         resFam <- cbind("0"=thr0, "SD"=thrSD, "Oracle"=thrO, "Oracle2"=thrOJ)
         if (refFam=="Simes") {
             ## Simes control
-            sk <- SimesThresholdFamily(m)
+            sk <- SimesThresholdFamily(m, kMax=kMax)
             resFam <- cbind(resFam, "alpha"=sk(alpha))
         }
         colnames(resFam) <- paste(refFam, colnames(resFam), sep=".")

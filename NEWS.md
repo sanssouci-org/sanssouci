@@ -1,5 +1,8 @@
 # Package: sansSouci
 
+## Version 0.4.7 [2016-07-04]
+* In 'upperBoundFP', implemented the case 'kMax<m' for all flavors. Added corresponding 'testthat' scripts.
+
 ## Version 0.4.6 [2016-06-17]
 * Added linearly decreasing SNR to BNR test scripts.
 * Added 'simulateToeplitz' to simulate under Gaussian distribution
