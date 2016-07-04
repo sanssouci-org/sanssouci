@@ -1,4 +1,4 @@
-testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alpha, flavor=c("equi", "Mein2006", "Toeplitz"), trace=FALSE) {
+testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alpha, flavor=c("equi", "Mein2006", "Toeplitz"), kMax=m, trace=FALSE) {
     flavor <- match.arg(flavor)
     if (is.character(SNR)) {
         pattern <- "Pareto\\(([0-9]),([0-9]),([0-9]))"
@@ -55,7 +55,7 @@ testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alpha, flavor=c("equi",
     resMat <- NULL
     for (refFam in c("kFWER", "Simes")) {
         ## Step-down control
-        res <- jointFWERControl(X0, refFamily=refFam, alpha=alpha, stat=x, verbose=FALSE)
+        res <- jointFWERControl(X0, refFamily=refFam, alpha=alpha, stat=x, kMax=kMax, verbose=FALSE)
         thrMat <- res$stepsDown$thr
         nSteps <- ncol(thrMat)
         thr0 <- thrMat[, 1]
@@ -65,13 +65,13 @@ testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alpha, flavor=c("equi",
         ## comparison with *Oracle step-down* JFWER thresholds (only the step-down is Oracle)
         xx <- rep(Inf, length(x))
         xx[H0] <- -Inf
-        resOracle <- jointFWERControl(X0, refFamily=refFam, alpha=alpha, stat=xx, verbose=FALSE)
+        resOracle <- jointFWERControl(X0, refFamily=refFam, alpha=alpha, stat=xx, kMax=kMax, verbose=FALSE)
         thrO <- resOracle$thr
 
         ## *Oracle JFWER* thresholds (double Oracle!!!)
         X0Oracle <- X0[H0, ]
         resOracleJ <- jointFWERControl(X0Oracle, refFamily=refFam, alpha=alpha,
-                                       maxStepsDown=0, verbose=FALSE)  ## single step
+                                       maxStepsDown=0, kMax=kMax, verbose=FALSE)  ## single step
         thrOJ <- c(resOracleJ$thr, rep(-Inf, m1))
 
         resFam <- cbind("0"=thr0, "SD"=thrSD, "Oracle"=thrO, "Oracle2"=thrOJ)

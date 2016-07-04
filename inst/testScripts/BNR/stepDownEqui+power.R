@@ -1,7 +1,7 @@
 ##library("sansSouci")
 #library("actuar")
 library("parallel")
-ncores <- 24
+ncores <- 26
 
 ptag <- sprintf("sansSouci_%s", packageVersion("sansSouci"))
 htag <- system("hostname", inter=TRUE)
@@ -15,7 +15,8 @@ path <- R.utils::Arguments$getWritablePath(path)
 for (SNR in SNRs) {
     for (dep in deps) {
         for (pi0 in pi0s) {
-            tags <- sprintf("pi0=%s,dep=%s,SNR=%s", pi0, dep, SNR)
+            kMax <- m/2
+            tags <- sprintf("pi0=%s,kMax=%s,dep=%s,SNR=%s", pi0, kMax, dep, SNR)
             filename <- sprintf("%s.rds", gsub("\\.", "_", tags))
             print(tags)
 
@@ -24,7 +25,7 @@ for (SNR in SNRs) {
                     print(bb)
                 }
 
-                rr <- testStepDown(m, dep, B, pi0, SNR, typeOfSNR, alpha, flavor=flavor)
+                rr <- testStepDown(m, dep, B, pi0, SNR, typeOfSNR, alpha, kMax=kMax, flavor=flavor)
             }, mc.cores=ncores)
 
             ## tidy? too many rows! (m*nbSimu>=1e6 per setting...)
