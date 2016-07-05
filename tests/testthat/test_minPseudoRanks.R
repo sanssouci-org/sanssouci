@@ -3,8 +3,7 @@ context("Calculation of the pivotal statistic of BNR for kFWER threshold family"
 test_that("minPseudoRanks gives identical results using R or C++ implementation", {
               m <- 1000
               B <- 101
-              m0 <- 800
-
+              m0 <- (1-0.2)*800  ## note that 'm0 != 200' due to numerical precision issues
 
               ntests <- 10
               for (tt in 1:ntests) {
