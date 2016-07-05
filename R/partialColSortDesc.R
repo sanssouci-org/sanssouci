@@ -32,6 +32,7 @@ partialColSortDesc <- function(
     mat,
     k=nrow(mat),
     Rcpp=TRUE)   {
+    k <- round(k)  ## make sure 'k' is not converted to the wront integer as in 'as.integer(1000*(1-0.8))==199'
     stopifnot( 1 <= k && k <= nrow(mat))
     if (Rcpp) {
         pcsd <- partialColSortDescCpp(mat, k);
@@ -39,6 +40,9 @@ partialColSortDesc <- function(
         pcsd <- -apply(-mat, 2, sort, partial=1:k)
         pcsd <- pcsd[1:k, , drop=FALSE]
     }
-    pcsd
+    ## sanity checks
+    stopifnot(nrow(pcsd)==k)
+    stopifnot(ncol(pcsd)==ncol(mat))
+    return(pcsd)
 }
 
