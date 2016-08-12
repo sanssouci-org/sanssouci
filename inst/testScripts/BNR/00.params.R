@@ -1,10 +1,10 @@
 library("sansSouci")
 
-m <- 1e3
+m <- 1e2
 B <- 1e3
 
 alpha <- 0.25
-nbSimu <- 1e3
+nbSimu <- 1e2
 
 typeOfSNR <- c("constant", "Pareto", "linear")[1]
 flavor <- c("equi", "Mein2006", "Toeplitz")[1]
@@ -17,8 +17,11 @@ if (flavor == "Toeplitz") {
 } else {
     deps <- c(0, 0.2, 0.4) ## correlation coefficient
 }
-pi0s <- c(0.8, 0.9, 0.99, 0.999)
-
 source("package/inst/testScripts/BNR/testStepDown.R")
 sname0 <- sprintf("%s,%s,%s", "stepDownEqui+power", flavor, typeOfSNR)
+
+
+pi0s <- c(0.8, 0.9, 0.99, 0.999)
+pi0s <- c(0.8, 0.9, 0.99)
+alphas <- c(0.05, 0.1, 0.2, 0.3, 0.4, 0.5)
 

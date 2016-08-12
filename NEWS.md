@@ -1,5 +1,8 @@
 # Package: sansSouci
 
+## Version 0.4.8 [2016-08-11]
+* Reshaped the scripts of the numerical experiments or the BNR paper.
+
 ## Version 0.4.7 [2016-07-04]
 * In 'upperBoundFP', implemented the case 'kMax<m' for all flavors. Added corresponding 'testthat' scripts.
 

@@ -1,7 +1,7 @@
 ##library("sansSouci")
 #library("actuar")
 library("parallel")
-ncores <- 38
+ncores <- 4
 
 ptag <- sprintf("sansSouci_%s", packageVersion("sansSouci"))
 htag <- system("hostname", inter=TRUE)
@@ -19,7 +19,7 @@ alphas <- c(0.025, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5)
 for (alpha in alphas) {
     for (dep in deps) {
         for (pi0 in pi0s) {
-            tags <- sprintf("pi0=%s,kMax=%s,dep=%s,SNR=%s", pi0, kMax, dep, SNR)
+            tags <- sprintf("pi0=%s,kMax=%s,dep=%s,alpha=%s", pi0, kMax, dep, alpha)
             filename <- sprintf("%s.rds", gsub("\\.", "_", tags))
             print(tags)
 
