@@ -17,6 +17,10 @@
 # RStudio files
 .Rproj.user/
 
+# C++ source compiled files
+src/*.o
+src/*.so
+
 # produced vignettes
 vignettes/*.html
 vignettes/*.pdf

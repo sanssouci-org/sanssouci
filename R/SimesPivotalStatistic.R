@@ -2,9 +2,10 @@
 ##'
 ##' The pivotal statistic for Simes' threshold family
 ##'
-##' @param kmaxH0 A \eqn{c} x \eqn{B} matrix of \code{B} Monte-Carlo
-##' samples of \code{c} test statistics under the null hypothesis,
-##' with each sample (column) sorted decreasingly.
+##' @param mat A \eqn{c} x \eqn{B} matrix of \code{B} Monte-Carlo
+##' samples of \code{c} test statistics under the null hypothesis.
+##' @param kMax For simultaneous control of (\eqn{k}-FWER for all \eqn{k \leq
+##' k[max]}).
 ##' @param m An integer value, the total number of hypotheses
 ##' tested. \code{m} should not be less than \code{c}.
 ##' @return the pivotal statistic \eqn{s_k} of BNR for Simes'
@@ -24,7 +25,7 @@ SimesPivotalStatistic <- function(mat, kMax, m) {
 
     ## get matrix 'M' of BNR by (partial) sorting of hypotheses for each sample
     kmaxH0 <- partialColSortDesc(mat, c);
-    pval <- 1-pnorm(kmaxH0)
+    pval <- 1-stats::pnorm(kmaxH0)
     skInv <- sweep(pval, 1, m/1:c, "*")
     colMins(skInv)
 }

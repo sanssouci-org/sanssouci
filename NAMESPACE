@@ -3,7 +3,6 @@
 export(SimesPivotalStatistic)
 export(SimesThresholdFamily)
 export(bisort)
-export(empiricalCoverage)
 export(falseDiscoveryEnvelope)
 export(falseDiscoveryProportionControl)
 export(falseDiscoveryProportionEnvelope)

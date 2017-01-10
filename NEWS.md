@@ -1,17 +1,26 @@
 # Package: sansSouci
 
+## Version 0.4.9 [2017-01-10]
+
+* Moved to github
+* Passes R CMD check locally
+
 ## Version 0.4.8 [2016-08-11]
+
 * Reshaped the scripts of the numerical experiments or the BNR paper.
 
 ## Version 0.4.7 [2016-07-04]
+
 * In 'upperBoundFP', implemented the case 'kMax<m' for all flavors. Added corresponding 'testthat' scripts.
 
 ## Version 0.4.6 [2016-06-17]
+
 * Added linearly decreasing SNR to BNR test scripts.
 * Added 'simulateToeplitz' to simulate under Gaussian distribution
   with Toeplitz covariance matrix.
 
 ## Version 0.4.5 [2016-06-16]
+
 * Added alternative (finer?) definition of power to BNR test scripts.
 
 ## Version 0.4.4 [2016-06-10]

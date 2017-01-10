@@ -6,6 +6,7 @@ using namespace Rcpp;
 //' Sorting of the rows of a matrix by descending order
 //'
 //' @param X A numeric matrix.
+//' @param Y A numeric matrix.
 //' @return A numeric matrix whose rows are sorted by descending order.
 //'
 //' @export

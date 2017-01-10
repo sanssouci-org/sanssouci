@@ -46,7 +46,7 @@ simulateToeplitz <- function(m, pow, B, pi0, SNR=1){
     mu[H1] <- SNR
 
     ## Toeplitz noise
-    tcoefs <- toeplitz((1:m)^(pow))
+    tcoefs <- stats::toeplitz((1:m)^(pow))
     Sigma <- Matrix(tcoefs, sparse = TRUE)
     sim <- simulateGaussianNullsFromSigma(Sigma, n=1+B)
     x <- mu + sim[, 1]

@@ -23,6 +23,7 @@
 ##'     \eqn{k \le k[max]}).
 ##' @param Rcpp If \code{TRUE}, some costly operations (sorting) are
 ##'     performed in C++.
+##' @param verbose A boolean value: should extra info be printed?
 ##' @return A list with elements: \describe{
 ##'     \item{thr}{A numeric vector of length \code{m}, such that the
 ##'     estimated probability that there exists an index \eqn{k} between 1
@@ -110,7 +111,7 @@ jointFWERControl <- function(mat,
     ## (single-step) joint FWER control
     ## pivStat <-  pivotalStat(mat, m=m, kMax=kMax, FUN=pivStatFUN)
     pivStat <-  pivStatFUN(mat, kMax=kMax, 1:m)
-    lambda <- quantile(pivStat, alpha, type=1)
+    lambda <- stats::quantile(pivStat, alpha, type=1)
     thr <- sk(lambda)
 
     ## storing results
@@ -149,7 +150,7 @@ jointFWERControl <- function(mat,
         kMax <- min(kMax, nrow(mat1))
         C <- setdiff(1:m, R1)
         pivStat <-  pivStatFUN(mat, kMax, C)
-        lambda <- quantile(pivStat, alpha, type=1)
+        lambda <- stats::quantile(pivStat, alpha, type=1)
         thr <- sk(lambda)
 
         thr1 <- thr[1]   ## (1-)FWER threshold

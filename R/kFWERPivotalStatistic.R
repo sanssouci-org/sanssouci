@@ -1,10 +1,11 @@
 ##' Pivotal statistic for the balanced threshold family of BNR
 ##'
-##' @param kmaxH0 A \eqn{c} x \eqn{B} matrix of \code{B} Monte-Carlo
+##' @param mat A \eqn{c} x \eqn{B} matrix of \code{B} Monte-Carlo
 ##' samples of \code{c} test statistics under the null hypothesis,
 ##' with each sample (column) sorted decreasingly.
-##' @param m An integer value, the total number of hypotheses
-##' tested. \code{m} should not be less than \code{c}.
+##' @param kMax For simultaneous control of (\eqn{k}-FWER for all \eqn{k \leq
+##' k[max]}).
+##' @param C A subset of \code{1:c} on which calibration is performed.
 ##' @return the pivotal statistic \eqn{s_k} for the balanced threshold family introduced by BNR
 ##'
 kFWERPivotalStatistic <- function(mat, kMax=nrow(mat), C=1:nrow(mat)) {
