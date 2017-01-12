@@ -3,15 +3,6 @@ library("listenv")
 ##computeNodes <- c("cauchy", "leibniz", "bolzano", "shannon", "euler", "hamming", "bernoulli")
 plan(remote, workers = rep("bernoulli", 100))
 
-pname <- sprintf("m=%s,B=%s,nbSimu=%s", m, B, nbSimu)
-resPath <- "resData"
-path <- file.path(resPath, sname, pname)
-path <- R.utils::Arguments$getWritablePath(path)
-
-##configs <- expand.grid(alpha=alphas, pi0=pi0s, dep=deps)
-configs <- expand.grid(pi0=pi0s, dep=deps, SNR=SNRs)
-configs
-
 for (ii in 1:nrow(configs)) {
     pi0 <- configs[ii, "pi0"]
     dep <- configs[ii, "dep"]
