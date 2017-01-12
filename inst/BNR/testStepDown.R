@@ -109,16 +109,18 @@ testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alphas, flavor=c("equi"
 
                 rejk0 <- apply(resFam, 2, rejk, x0)
                 rejk1 <- apply(resFam, 2, rejk, x1)
+                rejk01 <- apply(resFam, 2, rejk, x)
                 
                 ## sanity checks
-                stopifnot(all.equal(colSums(rejk0>=0, ), rej0))
+                stopifnot(all.equal(colSums(rejk0>=0), rej0))
                 stopifnot(all.equal(colSums(rejk1>=0), rej1))
                 
-                v0 <- (m0-1-pmax(0, matrixStats::colMaxs(rejk0)))/m0  ## estimate of Vbar(H0)/m0: |H0|-1 - max_k |Rk \cup H0| - k =  min_k |Rk^c \cup H0| + (k-1) 
+                v0 <- (m0-1-pmax(0, matrixStats::colMaxs(rejk0)))/m0  ## estimate of Vbar(H0)/m0: |H0|-1 - max_k |Rk \cup H0| - k =  min_k |Rk^c \cup H0| + (k-1) 
                 s1 <- pmax(0, matrixStats::colMaxs(rejk1))/m1         ## estimate of Sbar(H1)/m1:          max_k |Rk \cap H1| - k
-                sb <- pmax(0, matrixStats::colMaxs(rejk1))/m1         ## estimate of Sbar(H1)/m1:          max_k |Rk \cap H1| - (k-1) ## =(by the BNR book)
+                ## s1b <- pmax(0, matrixStats::colMaxs(rejk1))/m1+1   ## estimate of Sbar(H1)/m1:          max_k |Rk \cap H1| - (k-1) ## =(by the BNR book)
+                s01 <- pmax(0, matrixStats::colMaxs(rejk01))/m        ## estimate of Sbar(H)/m:            max_k |Rk \cap H | - k
                 
-                res <- rbind(JR=rej0>0, Power1=rej1>0, Power=rej01>0, v0, s1)
+                res <- rbind(JR=rej0>0, Power1=rej1>0, Power=rej01>0, v0, s1, s01)
                 resList[[atag]][[ktag]][[ftag]] <- res
                 rm(resFam, res);
             }
