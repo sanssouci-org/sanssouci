@@ -9,8 +9,12 @@ for (ii in 1:nrow(configs)) {
     kMaxs <- c(max(round(m*(1-pi0)), 1), m/2, m)
     
     tags <- sprintf("pi0=%s,dep=%s", pi0, dep)
-    filename <- sprintf("%s.rds", gsub("\\.", "_", tags))
     print(tags)
+    filename <- sprintf("%s.rds", gsub("\\.", "_", tags))
+    pathname <- file.path(path, filename)
+    if (file.exists(pathname)) {
+        next;
+    }    
     
     ## using futures =)
     res <- listenv()
@@ -35,6 +39,5 @@ for (ii in 1:nrow(configs)) {
     dat <- cbind(pi0=pi0, dep=dep, SNR=SNR, cres)
     head(dat)
     
-    pathname <- file.path(path, filename)
     saveRDS(dat, file=pathname)
 }
