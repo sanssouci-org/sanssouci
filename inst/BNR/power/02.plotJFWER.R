@@ -1,9 +1,10 @@
 library("future")
 library("listenv")
 ##computeNodes <- c("cauchy", "leibniz", "bolzano", "shannon", "euler", "hamming", "bernoulli")
-plan(remote, workers = rep("bernoulli", 10))
 
-## retrieve results (remote!)
+plan(remote, workers = rep("bernoulli", 2)) ## retrieve results (remote!)
+plan(eager) ## retrieve results (local!)
+
 test %<-% getwd()
 fl %<-% {
     rpath <- file.path("~/Documents/Packages/sanssouci", path)
@@ -17,8 +18,6 @@ dat %<-% {
     plyr::ldply(fls, readRDS, .id="id")
 }
 head(dat)
-risks <- c("JFWER", "Power", "v0", "s1")
-risks <- c("JR", "Power", "v0", "s1")
 
 ## plot JFWER
 figName <- sname0
