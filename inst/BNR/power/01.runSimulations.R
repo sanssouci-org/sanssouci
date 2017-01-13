@@ -7,9 +7,9 @@ for (ii in 1:nrow(configs)) {
     pi0 <- configs[ii, "pi0"]
     dep <- configs[ii, "dep"]
     SNR <- configs[ii, "SNR"]
-    kMaxs <- c(max(round(m*(1-pi0)), 1), m/2, m)
+    kMaxs <- c(max(round(m*(1-pi0)), 2), m/2, m)
     
-    tags <- sprintf("pi0=%s,dep=%s", pi0, dep)
+    tags <- sprintf("pi0=%s,dep=%s,SNR=%s", pi0, dep, SNR)
     print(tags)
     filename <- sprintf("%s.rds", gsub("\\.", "_", tags))
     pathname <- file.path(path, filename)

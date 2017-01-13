@@ -120,7 +120,7 @@ testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alphas, flavor=c("equi"
                 ## s1b <- pmax(0, matrixStats::colMaxs(rejk1))/m1+1   ## estimate of Sbar(H1)/m1:          max_k |Rk \cap H1| - (k-1) ## =(by the BNR book)
                 s01 <- pmax(0, matrixStats::colMaxs(rejk01))/m        ## estimate of Sbar(H)/m:            max_k |Rk \cap H | - k
                 
-                res <- rbind(JR=rej0>0, Power1=rej1>0, Power=rej01>0, v0, s1, s01)
+                res <- rbind(JR=rej0>0, detPow1=rej1>0, detPow=rej01>0, v0, estPow1=s1, estPow=s01)
                 resList[[atag]][[ktag]][[ftag]] <- res
                 rm(resFam, res);
             }
