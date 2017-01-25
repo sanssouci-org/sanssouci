@@ -13,20 +13,29 @@ dat %<-% {
     plyr::ldply(fls, readRDS, .id="id")
 }
 head(dat)
+kc <- as.character(dat$kMax)
+kc[which(dat$kMax==m)] <- "m"
+kc[which(dat$kMax==m/2)] <- "m/2"
+kc[which(dat$kMax==(1-dat$pi0)*m)] <- "(1-pi0)*m"
+dat$kMaxC <- kc
+dat$estPowM1 <- dat$estPow/(1-dat$pi0)
 
-SNRs <- unique(dat$SNR)
-powerz <-  list("Power1"="P(S(R,H1)>1", "Power"="P(S(R,H)>1", "s1"="E(S(R,H1))/m1")
+powerz <-  list("Power1"="P(S(R,H1)>1", "Power"="P(S(R,H)>1", "s1"="E(S(R,H1))/m1", "s1"="E(S(R,H1))/m1")
 ##                res <- rbind(JR=rej0>0, detPow1=rej1>0, detPow=rej01>0, v0, estPow1=s1, estPow=s01)
-## powerz <-  list("detPow1"="P(S(R,H1)>1", "detPow"="P(S(R,H)>1", "estPow1"="E(S(R,H1))/m1", "estPow"="E(S(R,H))/m")
+powerz <-  list("detPow1"="P(S(R,H1)>1", "detPow"="P(S(R,H)>1", 
+                "estPow1"="E(S(R,H1))/m1", "estPow"="E(S(R,H))/m", "estPowM1"="E(S(R,H))/m1")
 
 ## some reshaping
-datC <- subset(dat, kMax==as.character(m) & flavor != "unadjusted")
+datC <- subset(dat, kMax %in% as.character(c(10, 100, m, m/2))  & flavor != "unadjusted")
+datC <- subset(dat, flavor != "unadjusted")
+
 mm <- grep("Oracle|alpha", datC$flavor)
 datC <- datC[-mm, ]
 levels(datC$family) <- list("Balanced"="kFWER", "Simes"="Simes")
 datC$alpha <- as.numeric(datC$alpha)
 alphas <- unique(datC$alpha)
 datC$ff <- factor(paste(datC$family, datC$flavor))
+datC$ff <- factor(paste(datC$family, datC$kMaxC))
 
 if (FALSE) {
     ## drop outliers?
@@ -43,6 +52,9 @@ pname2 <- gsub("0\\.", "", pname)  ## to avoid '.' in LaTeX file names
 library("ggplot2")
 
 x <- c("JR", "alpha")
+SNRs <- unique(dat$SNR)
+#SNRs <- 2
+
 confs <- expand.grid(SNR=SNRs, power=names(powerz), x=x, stringsAsFactors=FALSE)
 
 for (ii in 1:nrow(confs)) {
@@ -66,7 +78,8 @@ for (ii in 1:nrow(confs)) {
     pdf(pathname)
     p <- ggplot(datI, aes_string(x=xx, y=pp, group="ff", color="ff"))
     ##p <- p + geom_line() + geom_point(aes(shape=factor(alpha))) + scale_shape_identity()
-    p <- p + geom_line(aes(linetype=flavor))
+    #p <- p + geom_line(aes(linetype=flavor))
+    p <- p + geom_line()
     ##p <- p + facet_grid(pi0 ~ rho, scales="free_y")
     p <- p + facet_grid(pi0 ~ dep,
                         scales="free_y",

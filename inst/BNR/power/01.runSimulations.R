@@ -2,7 +2,7 @@ library("future")
 library("listenv")
 ##computeNodes <- c("cauchy", "leibniz", "bolzano", "shannon", "euler", "hamming", "bernoulli")
 plan(remote, workers = rep("bernoulli", 100))
-
+res <- listenv()
 for (ii in 1:nrow(configs)) {
     pi0 <- configs[ii, "pi0"]
     dep <- configs[ii, "dep"]
