@@ -39,9 +39,11 @@ testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alphas, flavor=c("equi"
     ## Some data-driven rejection sets:
     ## subsample of a thresholding based rejection set
     pval <- 1-pnorm(x)  ## one-sided p-values
-    wwBH <- userSelect(pval, 0.05, samplingFraction=1/2, method="BH")
+    wwBH5 <- userSelect(pval, 0.05, samplingFraction=1/2, method="BH")
+    wwBH50 <- userSelect(pval, 0.5, samplingFraction=1/2, method="BH")
     ww0 <- userSelect(pval, 0.05, samplingFraction=1/2, method="none")
-    rBH <- x[wwBH]
+    rBH5 <- x[wwBH5]
+    rBH50 <- x[wwBH50]
     r0 <- x[ww0]
     
     if (trace) {
@@ -57,9 +59,13 @@ testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alphas, flavor=c("equi"
     ## m <- nrow(X0)
     ## B <- ncol(X0)
     H0 <- which(H==0)
+    H1 <- which(H==1)
     m0 <- length(H0)
     m1 <- m-m0
-
+    nBH51 <- length(intersect(H1, wwBH5))
+    nBH501 <- length(intersect(H1, wwBH50))
+    n01 <- length(intersect(H1, ww0))
+    
     resList <- NULL
     for (alpha in alphas) {
         ## atag <- sprintf("alpha=%s", alpha)
@@ -119,7 +125,8 @@ testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alphas, flavor=c("equi"
                 rejk0 <- apply(resFam, 2, rejk, x0)
                 rejk1 <- apply(resFam, 2, rejk, x1)
                 rejk01 <- apply(resFam, 2, rejk, x)
-                rejkBH <- apply(resFam, 2, rejk, rBH) ## subset of {p<BH(alpha)} 
+                rejkBH5 <- apply(resFam, 2, rejk, rBH5) ## subset of {p<BH(alpha)}
+                rejkBH50 <- apply(resFam, 2, rejk, rBH50) ## subset of {p<BH(alpha)} 
                 rejkP0 <- apply(resFam, 2, rejk, r0)  ## subset of {p<alpha}
                 
                 ## sanity checks
@@ -130,9 +137,13 @@ testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alphas, flavor=c("equi"
                 s1 <- pmax(0, matrixStats::colMaxs(rejk1))/m1         ## estimate of Sbar(H1)/m1:          max_k |Rk \cap H1| - k
                 ## s1b <- pmax(0, matrixStats::colMaxs(rejk1))/m1+1   ## estimate of Sbar(H1)/m1:          max_k |Rk \cap H1| - (k-1) ## =(by the BNR book)
                 s01 <- pmax(0, matrixStats::colMaxs(rejk01))/m1       ## estimate of Sbar(H)/m1
-                zBH <- pmax(0, matrixStats::colMaxs(rejkBH))/m1       ## estimate of Sbar(R_BH)/m1
-                z0 <- pmax(0, matrixStats::colMaxs(rejkP0))/m1         ## estimate of Sbar(R0)/m1                
-                res <- rbind(JR=rej0>0, detPow1=rej1>0, detPow=rej01>0, v0, estPow1=s1, estPow=s01, powBH=zBH, pow0=z0)
+                zBH5 <- pmax(0, matrixStats::colMaxs(rejkBH5))        ## estimate of Sbar(R_BH)
+                zBH5 <- ifelse(nBH51==0, NA, zBH5/nBH51)
+                zBH50 <- pmax(0, matrixStats::colMaxs(rejkBH50))        ## estimate of Sbar(R_BH)
+                zBH50 <- ifelse(nBH501==0, NA, zBH50/nBH501)
+                z0 <- pmax(0, matrixStats::colMaxs(rejkP0))           ## estimate of Sbar(R0)
+                z0 <- ifelse(n01==0, NA, z0/n01)
+                res <- rbind(JR=rej0>0, detPow1=rej1>0, detPow=rej01>0, v0, estPow1=s1, estPow=s01, powBH5=zBH5, powBH50=zBH50, pow0=z0)
                 resList[[atag]][[ktag]][[ftag]] <- res
                 rm(resFam, res);
             }
@@ -156,6 +167,14 @@ rejk <- function(thr, x) {
 ## subsample of thresholding-based rejection set
 userSelect <- function(pval, alpha, samplingFraction=0.5, method="BH") {
     R <- which(p.adjust(pval, method=method)<alpha)  ## uninteresting because too adaptative ?
-    probs <- pval[R]/max(pval[R])
-    sample(R, round(samplingFraction*length(R)), prob=probs)
+    if (length(R) <= 1L) {  ## if length(R)==1L, then R is interpreted by 'sample' as the *number* of items to choose from :(
+        ret <- R
+    } else {
+        probs <- rev(rank(pval[R]))/sum(1:length(R))
+        ret <- try(sample(R, round(samplingFraction*length(R)), prob=probs))
+        if (class(ret)=="try-error") {
+            print(probs)
+        }
+    }
+    ret
 }
