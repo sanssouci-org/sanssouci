@@ -17,5 +17,5 @@ test_that("Numerical reproducibility of one particular call to 'jointFWERControl
     pathname <- system.file("extdata/jointFWERControlResults.rds", package="sansSouci")
     ref <- readRDS(pathname)
     
-    expect_identical(ref, res)
+    expect_equal(ref, res)
 })
