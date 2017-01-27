@@ -10,10 +10,14 @@
 ##'
 kFWERPivotalStatistic <- function(mat, kMax=nrow(mat), C=1:nrow(mat)) {
     c <- length(C)
-    c <- min(kMax, c)  # K \vee |C| in th BNR paper
+    c <- min(kMax, c)  # K \vee |C| in th BNR paper: no need to go further than c!
 
 ##    kmaxH0 <- partialColSortDesc(mat, k=kMax);
-    kmaxH0 <- partialColSortDesc(mat, c);  ## no need to go further than c!
-    kmaxH0C <- partialColSortDesc(mat[C, ], c);
+    kmaxH0 <- partialColSortDesc(mat, c);
+    if (identical(C, 1:nrow(mat))) { ## avoid re-calculating the same statistics twice...
+        kmaxH0C <- kmaxH0
+    } else {
+        kmaxH0C <- partialColSortDesc(mat[C, ], c);
+    }
     minPseudoRanks(kmaxH0, kmaxH0C)
 }

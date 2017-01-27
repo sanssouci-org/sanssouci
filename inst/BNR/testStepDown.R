@@ -131,7 +131,7 @@ testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alphas, flavor=c("equi"
                 ## s1b <- pmax(0, matrixStats::colMaxs(rejk1))/m1+1   ## estimate of Sbar(H1)/m1:          max_k |Rk \cap H1| - (k-1) ## =(by the BNR book)
                 s01 <- pmax(0, matrixStats::colMaxs(rejk01))/m1       ## estimate of Sbar(H)/m1
                 zBH <- pmax(0, matrixStats::colMaxs(rejkBH))/m1       ## estimate of Sbar(R_BH)/m1
-                z0 <- pmax(0, matrixStats::colMaxs(rejkP0))/m1         ## estimate of Sbar(R0)/m1                
+                z0 <- pmax(0, matrixStats::colMaxs(rejkP0))/m1        ## estimate of Sbar(R0)/m1                
                 res <- rbind(JR=rej0>0, detPow1=rej1>0, detPow=rej01>0, v0, estPow1=s1, estPow=s01, powBH=zBH, pow0=z0)
                 resList[[atag]][[ktag]][[ftag]] <- res
                 rm(resFam, res);
@@ -156,6 +156,11 @@ rejk <- function(thr, x) {
 ## subsample of thresholding-based rejection set
 userSelect <- function(pval, alpha, samplingFraction=0.5, method="BH") {
     R <- which(p.adjust(pval, method=method)<alpha)  ## uninteresting because too adaptative ?
-    probs <- pval[R]/max(pval[R])
-    sample(R, round(samplingFraction*length(R)), prob=probs)
+    if (length(R)==1L) {
+        ret <- R
+    } else {
+        probs <- rev(rank(pval[R]))/sum(1:length(R))
+        ret <- sample(R, round(samplingFraction*length(R)), prob=probs)
+    }
+    ret
 }

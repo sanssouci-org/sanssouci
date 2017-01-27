@@ -1,5 +1,10 @@
 # Package: sansSouci
 
+## Version 0.4.10 [2017-01-27]
+
+* Added tiny test for numerical reproducibility of JR control function.
+* Speedup in 'kFWERPivotalStatistic': avoid calling 'partialColSortDesc' twice when 'C=H' (single step control)
+
 ## Version 0.4.9 [2017-01-10]
 
 * Moved to github
