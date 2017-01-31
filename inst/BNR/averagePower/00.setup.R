@@ -1,8 +1,6 @@
 library("sansSouci")
 
-typeOfSNR <- "constant"
-flavor <- "equi"
-sname0 <- sprintf("%s,%s", flavor, typeOfSNR)
+sname0 <- "averagePower"
 ptag <- sprintf("sansSouci_%s", packageVersion("sansSouci"))
 sname <- sprintf("%s,%s", sname0, ptag)
 

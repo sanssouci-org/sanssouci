@@ -3,7 +3,7 @@ library("listenv")
 ##computeNodes <- c("cauchy", "leibniz", "bolzano", "shannon", "euler", "hamming", "bernoulli")
 #plan(remote, workers = rep("bernoulli", 100))
 #plan(eager)
-plan(multiprocess, workers = 100)
+plan(multiprocess, workers = 50)
 
 res <- listenv()
 for (ii in 1:nrow(configs)) {
@@ -33,7 +33,7 @@ for (ii in 1:nrow(configs)) {
             pathname <- system.file("BNR/testStepDown.R", package="sansSouci")
             stopifnot(file.exists(pathname))
             source(pathname); rm(pathname)
-            testStepDown(m, dep, B, pi0, SNR, typeOfSNR, alphas, kMaxs=kMaxs, flavor=flavor)
+            testStepDown(m, dep, B, pi0, SNR, "constant", alphas, kMaxs=kMaxs, flavor=flavor)
         }
     }
     
