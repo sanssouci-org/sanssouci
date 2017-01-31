@@ -6,11 +6,11 @@ plan(eager) ## retrieve results (local!)
 
 head(dat)
 
-gat <- tidyr::gather(dat, "criterion", "value", JR, detPow, estPow, powBH, pow0)
+gat <- tidyr::gather(dat, "criterion", "value", JR, detPow, estPow, powBH5, powBH50, pow0)
 
 powerz <-  list("detPow1"="P(S(R,H1)>1", "detPow"="P(S(R,H)>1", 
                 "estPow1"="E(S(R,H1))/m1", "estPow"="E(S(R,H))/m1",
-                "powBH"="half of BH(0.05)", "pow0"="half of {p <= 0.05}",
+                "powBH5"="half of BH(0.05)", "powBH50"="half of BH(0.5)", "pow0"="half of {p <= 0.05}",
                 "JR"="JFWER")
 
 ## some reshaping
