@@ -1,3 +1,4 @@
+## For Table 1 in the BNR paper
 library("future")
 library("listenv")
 ##computeNodes <- c("cauchy", "leibniz", "bolzano", "shannon", "euler", "hamming", "bernoulli")
@@ -14,10 +15,13 @@ rhos <- c(0, 0.1, 0.2, 0.4, 0.8)
 alpha <- 0.2
 
 res <- listenv()
-plan(remote, workers = rep("bernoulli", 20))
-reps <- 100
+plan(remote, workers = rep("bernoulli", 100))
+reps <- 1000
 for (rep in seq_len(reps)) {
     res[[rep]] %<-% {
         sapply(rhos, FUN=function(rho) empCov(m, rho, B, alpha=alpha))
     }
 }
+mat <- Reduce(cbind, as.list(res))
+rowMeans(mat)/alpha
+matrixStats::rowSds(mat)/alpha/sqrt(reps)  ## standard error
