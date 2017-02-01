@@ -7,15 +7,13 @@ plan(multiprocess, workers = 50)
 
 res <- listenv()
 for (ii in 1:nrow(configs)) {
-    beta <- configs[ii, "beta"]
-    r <- configs[ii, "r"]
+    pi0 <- configs[ii, "pi0"]
     dep <- configs[ii, "dep"]
-    pi0 <- 1-m^(-beta)
-    
-    SNR <- sqrt(2*r*log(m))
-    kMaxs <- c(round(2*m*(1-pi0)), 10, 20, 100, m)
+
+    SNR <- sqrt(2*log(1/(1-pi0)))
+    kMaxs <- c(round(2*m*(1-pi0)), 10, 20, m)
     kMaxs <- unique(kMaxs)
-    tags <- sprintf("beta=%s,r=%s", beta, r)
+    tags <- sprintf("pi0=%s,dep=%s", pi0, dep)
     print(tags)
     filename <- sprintf("%s.rds", gsub("\\.", "_", tags))
     pathname <- file.path(path, filename)
@@ -46,7 +44,7 @@ for (ii in 1:nrow(configs)) {
     
     ## summarize into JFWER and Power estimates
     cres <- reshape2::dcast(mres, kMax+alpha+family+flavor~risk, mean, value.var="value", na.rm=TRUE)
-    dat <- cbind(beta=beta, r=r, pi0=pi0, dep=dep, SNR=SNR, cres)
+    dat <- cbind(pi0=pi0, dep=dep, SNR=SNR, cres)
     head(dat)
     
     saveRDS(dat, file=pathname)
