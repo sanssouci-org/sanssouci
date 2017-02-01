@@ -6,23 +6,34 @@ plan(eager) ## retrieve results (local!)
 
 head(dat)
 
-gat <- tidyr::gather(dat, "criterion", "value", JR, detPow, estPow, powBH5, powBH50, pow0)
+powerz <-  c("detPow1"="P(S(R,H1)>1", "detPow"="P(S(R,H)>1", 
+             "estPow1"="E(S(R,H1))/m1", "estPow"="E(S(R,H))/m1",
+             "powBH5"="Power(BH(0.05))", "powBH50"="Power(BH(0.5))", "pow0"="Power({p <= 0.05})",
+             "JR"="JFWER")
 
-powerz <-  list("detPow1"="P(S(R,H1)>1", "detPow"="P(S(R,H)>1", 
-                "estPow1"="E(S(R,H1))/m1", "estPow"="E(S(R,H))/m1",
-                "powBH5"="half of BH(0.05)", "powBH50"="half of BH(0.5)", "pow0"="half of {p <= 0.05}",
-                "JR"="JFWER")
+##gat <- tidyr::gather(dat, "criterion", "value", JR, detPow, estPow, powBH5, powBH50, pow0)
+gat <- tidyr::gather(dat, "criterion", "value", estPow, powBH5, powBH50, pow0)
+
 
 ## some reshaping
-#datC <- subset(dat, kMax %in% as.character(c(10, 100, m, m/2))  & flavor != "unadjusted")
 datC <- subset(gat, flavor == "Step down")
 datC$family <- factor(datC$family, levels=c("kFWER", "Simes"), labels=c("Balanced", "Linear"))
 datC$alpha <- as.numeric(datC$alpha)
 alphas <- unique(datC$alpha)
+alphas <- alphas[which(alphas<=0.2)]
 
-levk <- as.character(sort(as.numeric(unique(datC$kMax))))
+kc <- as.character(datC$kMax)
+kc[which(datC$kMax==m)] <- "m"
+kc[which(datC$kMax==m/2)] <- "m/2"
+kc[which(datC$kMax==2*(1-datC$pi0)*m)] <- "2m1"
+datC$kMaxC <- kc
+
+levk <- c("10", "2m1", "m")
+datC <- subset(datC, kMaxC %in% levk & alpha %in% alphas)
 levs <- c(paste("Balanced", levk), paste("Linear", rev(levk)))
-datC$ff <- factor(paste(datC$family, datC$kMax), levels=levs)
+#datC$ff <- factor(paste(datC$family, datC$kMaxC), levels=levs)
+datC$ff <- sprintf("%s (kMax=%s)", datC$family, datC$kMaxC)
+#datC$ff <- factor(ff, levels=levs)
 
 figName <- sname0
 date <- Sys.Date()
@@ -43,7 +54,7 @@ for (ii in 1:nrow(confs)) {
     
     filename <- sprintf("%s,BalancedVsLinear,indep,%s,%s.pdf", figName, pname2, ftag)
     pathname <- file.path(figPath, filename)
-    datI <- subset(datC, rho==rr & kMax %in% c(10, 20, m))
+    datI <- subset(datC, rho==rr)
     
     pdf(pathname)
     p <- ggplot(datI, aes_string(x="alpha", y="value", group="ff", color="ff"))
@@ -51,17 +62,17 @@ for (ii in 1:nrow(confs)) {
     p <- p + facet_grid(criterion ~ pi0,
                         scales="free_y",
                         labeller=label_bquote(
-                            rows= .(powerz[[criterion]]),
-                            cols= pi[0]==.(pi0)))
-    p <- p + scale_x_continuous(breaks=round(alphas, 2), minor_breaks=NULL, limits = range(alphas))
-    p <- p + scale_y_continuous(minor_breaks=NULL, limits=c(0,1))
-##    p <- p + scale_y_continuous(minor_breaks=NULL)
-    p <- p + theme(axis.text.x=element_text(angle=90))
-    p <- p + labs(color="Family",
-                  linetype=expression(lambda-adjustment))
-    p <- p + geom_point()
-    p <- p + labs(y="criterion")
-    p <- p + scale_color_brewer(type="div")
-    print(p)
-    dev.off()
+                        rows= .(powerz[[criterion]]),
+                        cols= pi[0]==.(pi0)))
+                        p <- p + scale_x_continuous(breaks=round(alphas, 2), minor_breaks=NULL, limits = range(alphas))
+                        p <- p + scale_y_continuous(minor_breaks=NULL, limits=c(0,1))
+                        ##    p <- p + scale_y_continuous(minor_breaks=NULL)
+                        p <- p + theme(axis.text.x=element_text(angle=90))
+                        p <- p + labs(color="Family",
+                                      linetype=expression(lambda-adjustment))
+                        p <- p + geom_point()
+                        p <- p + labs(y="criterion")
+                        p <- p + scale_color_brewer(type="div")
+                        print(p)
+                        dev.off()
 }
