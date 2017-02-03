@@ -33,7 +33,7 @@ for (ii in 1:nrow(configs)) {
             pathname <- system.file("BNR/testStepDown.R", package="sansSouci")
             stopifnot(file.exists(pathname))
             source(pathname); rm(pathname)
-            testStepDown(m, dep, B, pi0, SNR, "constant", alphas, kMaxs=kMaxs, flavor=flavor)
+            testStepDown(m, dep, B, pi0, SNR, "constant", alphas, kMaxs=kMaxs, flavor="equi")
         }
     }
     

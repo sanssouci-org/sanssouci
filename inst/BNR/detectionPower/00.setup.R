@@ -5,6 +5,7 @@ ptag <- sprintf("sansSouci_%s", packageVersion("sansSouci"))
 sname <- sprintf("%s,%s", sname0, ptag)
 
 deps <- c(0, 0.2, 0.4) ## correlation coefficient
+alphas <- c(0.01, 0.02, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5)
 # betar <- rbind(
 #     cbind(beta=0.5, r=c(0.1, 0.2)),
 #     cbind(beta=2/3, r=c(0.1, 0.2, 0.3, 0.4, 0.5)),
