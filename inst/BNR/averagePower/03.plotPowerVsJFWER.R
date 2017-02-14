@@ -52,7 +52,7 @@ for (ii in 1:nrow(confs)) {
     xx <- confs[ii, "x"] 
     ftag <- sprintf("rho=%s", rr)
     
-    filename <- sprintf("%s,BalancedVsLinear,indep,%s,%s.pdf", figName, pname2, ftag)
+    filename <- sprintf("%s,BalancedVsLinear,%s,%s.pdf", figName, pname2, ftag)
     pathname <- file.path(figPath, filename)
     datI <- subset(datC, rho==rr)
     
@@ -62,17 +62,17 @@ for (ii in 1:nrow(confs)) {
     p <- p + facet_grid(criterion ~ pi0,
                         scales="free_y",
                         labeller=label_bquote(
-                        rows= .(powerz[[criterion]]),
-                        cols= pi[0]==.(pi0)))
-                        p <- p + scale_x_continuous(breaks=round(alphas, 2), minor_breaks=NULL, limits = range(alphas))
-                        p <- p + scale_y_continuous(minor_breaks=NULL, limits=c(0,1))
-                        ##    p <- p + scale_y_continuous(minor_breaks=NULL)
-                        p <- p + theme(axis.text.x=element_text(angle=90))
-                        p <- p + labs(color="Family",
-                                      linetype=expression(lambda-adjustment))
-                        p <- p + geom_point()
-                        p <- p + labs(y="criterion")
-                        p <- p + scale_color_brewer(type="div")
-                        print(p)
-                        dev.off()
+                            rows= .(powerz[[criterion]]),
+                            cols= pi[0]==.(pi0)))
+    p <- p + scale_x_continuous(breaks=round(alphas, 2), minor_breaks=NULL, limits = range(alphas))
+    p <- p + scale_y_continuous(minor_breaks=NULL, limits=c(0,1))
+    ##    p <- p + scale_y_continuous(minor_breaks=NULL)
+    p <- p + theme(axis.text.x=element_text(angle=90))
+    p <- p + labs(color="Family",
+                  linetype=expression(lambda-adjustment))
+    p <- p + geom_point()
+    p <- p + labs(y="criterion")
+    p <- p + scale_color_brewer(type="div")
+    print(p)
+    dev.off()
 }

@@ -8,21 +8,28 @@ head(dat)
 
 gat <- tidyr::gather(dat, "criterion", "value", JR, detPow, estPow, powBH5, powBH50, pow0)
 
-powerz <-  list("detPow1"="P(S(R,H1)>1", "detPow"="P(S(R,H)>1", 
-                "estPow1"="E(S(R,H1))/m1", "estPow"="E(S(R,H))/m1",
-                "powBH5"="half of BH(0.05)", "powBH50"="half of BH(0.5)", "pow0"="half of {p <= 0.05}",
-                "JR"="JFWER")
+detPow <- "P(S(R,H)>1"
 
 ## some reshaping
 #datC <- subset(dat, kMax %in% as.character(c(10, 100, m, m/2))  & flavor != "unadjusted")
-datC <- subset(gat, flavor == "Step down")
+datC <- subset(gat, flavor == "Step down" & criterion=="detPow")
 datC$family <- factor(datC$family, levels=c("kFWER", "Simes"), labels=c("Balanced", "Linear"))
 datC$alpha <- as.numeric(datC$alpha)
 alphas <- unique(datC$alpha)
+alphas <- alphas[which(alphas<=0.2)]
 
-levk <- as.character(sort(as.numeric(unique(datC$kMax))))
+kc <- as.character(datC$kMax)
+kc[which(datC$kMax==m)] <- "m"
+kc[which(datC$kMax==m/2)] <- "m/2"
+kc[which(datC$kMax==2*(1-datC$pi0)*m)] <- "2m1"
+datC$kMaxC <- kc
+
+levk <- c("10", "m")
+datC <- subset(datC, kMaxC %in% levk & alpha %in% alphas)
 levs <- c(paste("Balanced", levk), paste("Linear", rev(levk)))
-datC$ff <- factor(paste(datC$family, datC$kMax), levels=levs)
+#datC$ff <- factor(paste(datC$family, datC$kMaxC), levels=levs)
+datC$ff <- sprintf("%s (kMax=%s)", datC$family, datC$kMaxC)
+#datC$ff <- factor(ff, levels=levs)
 
 figName <- sname0
 date <- Sys.Date()
@@ -34,47 +41,32 @@ pname2 <- gsub("0\\.", "", pname)  ## to avoid '.' in LaTeX file names
 library("ggplot2")
 
 x <- "alpha"
-SNRs <- unique(dat$SNR)
-#SNRs <- 2
-
-confs <- expand.grid(SNR=SNRs, x=x, stringsAsFactors=FALSE)
+rhos <- unique(dat$rho)
+confs <- expand.grid(rho=rhos, x=x, stringsAsFactors=FALSE)
 
 for (ii in 1:nrow(confs)) {
-    snr <- confs[ii, "SNR"]
+    rr <- confs[ii, "rho"]
     xx <- confs[ii, "x"] 
-    ftag <- sprintf("SNR=%s", snr)
-    if (xx=="JR") {
-        filename <- sprintf("BalancedVsLinear,indep,%s,%s,%s.pdf", figName, pname2, ftag)
-    } else if (xx=="alpha") {
-        filename <- sprintf("BalancedVsLinear,indep,%s,%s,%s.pdf", figName, pname2, ftag)
-    } else {
-        stop("I don't know what to do when x=", xx)
-    }
-        
+    ftag <- sprintf("rho=%s", rr)
+    
+    filename <- sprintf("%s,BalancedVsLinear,%s,%s.pdf", figName, pname2, ftag)
     pathname <- file.path(figPath, filename)
-    datI <- subset(datC, SNR==snr & kMax %in% c(10, 20, m))
+    datI <- subset(datC, rho==rr)
     
     pdf(pathname)
+    ##
     p <- ggplot(datI, aes_string(x=xx, y="value", group="ff", color="ff"))
     p <- p + geom_line()
-    p <- p + facet_grid(criterion ~ pi0,
+    p <- p + facet_grid(r ~ beta,
                         scales="free_y",
-                        labeller=label_bquote(
-                            rows= .(powerz[[criterion]]),
-                            cols= pi[0]==.(pi0)))
-    vdat <- data.frame(x=unique(datC$alpha))
-    #p <- p + geom_vline(aes(xintercept=x), data=vdat, linetype="dashed", color="gray")
+                        labeller=label_both)
     p <- p + scale_x_continuous(breaks=round(alphas, 2), minor_breaks=NULL, limits = range(alphas))
-    p <- p + scale_y_continuous(minor_breaks=NULL)
+    p <- p + scale_y_continuous(minor_breaks=NULL, limits=c(0,1))
+    ##    p <- p + scale_y_continuous(minor_breaks=NULL)
     p <- p + theme(axis.text.x=element_text(angle=90))
     p <- p + labs(color="Family",
                   linetype=expression(lambda-adjustment))
-    if (xx=="JR") {  ## not useful otherwise
-        p <- p + geom_point(aes(shape=factor(alpha))) + scale_shape_manual(values=1:9)
-        p <- p + labs(shape="Target JR level")
-    } else {
-        p <- p + geom_point()
-    }
+    p <- p + geom_point()
     p <- p + labs(y="criterion")
     p <- p + scale_color_brewer(type="div")
     print(p)

@@ -1,4 +1,4 @@
-## source("inst/BNR/power/00.setup.R")
+## source("inst/BNR/detectionPower/00.setup.R")
 
 rpath <- file.path("~/Documents/Packages/sanssouci", path)
 
