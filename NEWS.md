@@ -3,7 +3,7 @@
 ## Version 0.4.10 [2017-02-14]
 
 * Updated step down vignette and documentation.
-* Added travis CI and appveryor support.
+* Added travis CI and appveyor support.
 
 ## Version 0.4.10 [2017-01-27]
 
