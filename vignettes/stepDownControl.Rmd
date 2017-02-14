@@ -2,10 +2,10 @@
 title: "Step-down joint Family-Wise Error Rate control"
 author: "Pierre Neuvial"
 date: "`r Sys.Date()`"
-output: rmarkdown::pdf_document
+output: rmarkdown::html_document
 vignette: >
   %\VignetteIndexEntry{Step-down joint Family-Wise Error Rate control}
-  %\VignetteEngine{rmarkdown::render}
+  %\VignetteEngine{knitr::knitr}
   %\VignetteEncoding{UTF-8}
 ---
 
@@ -23,49 +23,38 @@ pi0 <- 0.6
 B <- 1e3
 
 #set.seed(0xBEEF)
-sim <- simulateMein2006(m, rho, n, pi0, SNR=2)
-X <- sim$X
-y <- sim$y
+sim <- simulateEqui(m, rho, B, pi0, SNR=3)
+X0 <- sim$X0
+x <- sim$x
 H0 <- which(sim$H==0)
 H1 <- which(sim$H==1)
-m0 <- length(H0)
-m1 <- length(H1)
-```
-
-
-Test statistics
-```{r}
-w <- wilcoxStat(X, y, B=B)
-scoreMat <- w$stat0Mat
-stat <- w$stat
 ```
 
 Show test statistics
 ```{r, testStat, fig.width=7, fig.height=5}
 pch <- 20
-plot(stat, col=rep(c(1, 2), times=c(m0, m1)), main="Test statistics", pch=pch)
+plot(x, col=1+sim$H, main="Test statistics", pch=pch)
 legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
 ```
 
 ## Step-down JFWER control
 ```{r}
-alpha <- 0.25
-resSD <- stepDownControl(stat, scoreMat, refFamily="kFWER", alpha=alpha, verbose=TRUE)
-thrMat <- resSD$thrMat
+alpha <- 0.1
+res <- jointFWERControl(X0, refFamily="kFWER", alpha=alpha, stat=x)
+thr <- res$thr
+thrMat <- res$stepsDown$thr
 ```
 
 Confidence envelopes
 ```{r}
-nSteps <- ncol(thrMat)
-thr <- thrMat[, nSteps]
-o <- order(stat, decreasing=TRUE)
-statO <- stat[o]
+o <- order(x, decreasing=TRUE)
+xo <- x[o]
 
-Vbar <- upperBoundFP(statO, thr)  ## default is flavor "Roquain2014"
-VbarM <- upperBoundFP(statO, thr, flavor="Mein2006")  ## faster for now
+Vbar <- upperBoundFP(xo, thr)  ## default is flavor "Roquain2014"
+VbarM <- upperBoundFP(xo, thr, flavor="Mein2006")  ## faster for now
 identical(Vbar, VbarM)  ## Generally TRUE
 
-bounds <- apply(thrMat, 2, function(thr) upperBoundFP(statO, thr, flavor="Mein2006"))
+bounds <- apply(thrMat, 2, function(thr) upperBoundFP(xo, thr, flavor="Mein2006"))
 ```
 
 True number of false discoveries among first rejections
@@ -75,14 +64,17 @@ V <- cumsum(o %in% H0)
 
 "Oracle" JFWER thresholds
 ```{r}
-scoreMatOracle <- scoreMat[-H1, ]
-resOracle <- getJointFWERThresholds(scoreMatOracle, refFamily="kFWER", alpha=alpha)
-thrO <- c(resOracle$thr, rep(-Inf, m1))
-VbarO <- upperBoundFP(statO, thrO, flavor="Mein2006")
+X0.Oracle <- X0[-H1, ]
+x.Oracle <- x[-H1]
+res.Oracle <- jointFWERControl(X0.Oracle, refFamily="kFWER", alpha=alpha, stat=x.Oracle)
+thrO <- c(res.Oracle$thr, rep(-Inf, length(H1)))
+xo.Oracle <- x.Oracle[order(x.Oracle, decreasing=TRUE)]
+VbarO <- upperBoundFP(xo.Oracle, res.Oracle$thr, flavor="Mein2006")
 ```
 
 Graphically:
 ```{r, JFWER_SD, fig.width=7, fig.height=5}
+nSteps <- ncol(thrMat)
 cols1 <- seq.int(nSteps)
 ltys1 <- rep(1, nSteps)
 ttag <- paste("m=", m, ", rho=", rho, ", alpha=", alpha, sep="")
@@ -102,9 +94,9 @@ ltys <- c(ltys1, ltys2)
 cols <- c(cols1, cols2)
 legend("top", lgd, col=cols, lty=ltys)
 
-statSc <- stat/max(stat)*ymax  ## scaled test statistics (for display)
+xSc <- x/max(x)*ymax  ## scaled test statistics (for display)
 colStat <- 1+sim$H
-points(statSc[o], col=colStat[o], pch=pch, cex=0.5)
+points(xSc[o], col=colStat[o], pch=pch, cex=0.5)
 legend("left", c("H0", "H1"), pch=pch, col=1:2)
 ```
 

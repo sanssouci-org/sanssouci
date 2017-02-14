@@ -1,5 +1,9 @@
 # Package: sansSouci
 
+## Version 0.4.10 [2017-02-14]
+
+* Updated step down vignette and documentation.
+
 ## Version 0.4.10 [2017-01-27]
 
 * Added tiny test for numerical reproducibility of JR control function.
