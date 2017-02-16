@@ -7,12 +7,12 @@ library("sansSouci")
 
 ## setup
 m <- 1e3
-kMaxs <- c(m, 10)
+kMaxs <- c(1, 2, 10, m)
 B <- 1e4
-methods <- c("Simes", "kFWER")
+nbSimu <- 100
+
 alpha <- 0.2
 
-nbSimu <- 100
 rhos <- seq(from=0, to=1, by=0.1)
 
 oneSim <- function(m, rho, B, alpha, pi0=1, SNR=0, kMaxs=kMaxs) {
@@ -30,12 +30,13 @@ oneSim <- function(m, rho, B, alpha, pi0=1, SNR=0, kMaxs=kMaxs) {
 }
 
 #plan(remote, workers = rep("bernoulli", 100))
-plan(multiprocess, workers = 100)
+plan(multiprocess, workers = 150)
+options("future.wait.times"=1e4)
 
-
-res <- listenv()
-for (rho in rhos) {
-    options("future.wait.times"=1e4)
+resr <- listenv()
+for (rr in seq(along=rhos)) {
+    rho %<-% rhos[rr]
+    res %<-% listenv()
     for (ss in 1:nbSimu) {
         if (ss %% 20==0) { print(ss);}
         res[[ss]] %<-% {
@@ -43,85 +44,45 @@ for (rho in rhos) {
             oneSim(m, rho, B, alpha, kMaxs=kMaxs)
         }
     }
+    names(res) %<-% 1:nbSimu
+    dat %<-% plyr::ldply(as.list(res), data.frame, .id="sid")
+    resr[[rr]] %<-% dat
 }
-rdat <- Reduce(rbind, res)
-rdat <- dplyr::bind_rows(as.list(res), .id=1:10)
-stop("Done!")
+names(resr) <- rhos
+lambdas <- ldply(resr, data.frame, .id="rho")
 
+#saveRDS(lambdas, file="resData/lambdas.rds")
+#lambdas <- readRDS("resData/lambdas.rds")
 
+ptag <- sprintf("sansSouci_%s", packageVersion("sansSouci"))
+date <- Sys.Date()
+figPath <- file.path("fig", sprintf("BNR,%s,%s", ptag, date))
+figPath <- R.utils::Arguments$getWritablePath(figPath)
+figName <- "lambda"
+library("ggplot2")
 
-##
-res <- readRDS("resData/gamma.rds")
-
-pdf("../../../../fig/BNR/gamma,Simes.pdf")
-par(mar=c(4, 5, 0, 0)+0.1, cex.lab=1.5)
-resS <- t(res[, "Simes",])
-boxplot(resS, xlab=expression(rho), ylab=expression(lambda(alpha)/alpha))
-dev.off()
-
-pdf("../../../../fig/BNR/gamma,kFWER.pdf")
-par(mar=c(4, 5, 0, 0)+0.1, cex.lab=1.5)
-resK <- t(res[, "kFWER",])
-boxplot(resK, xlab=expression(rho), ylab=expression(lambda(alpha)/alpha), ylim=c(0, max(resK)))
-abline(h=1/m, lty=2)
-dev.off()
-
-## unbalancedness
-seqk <- 1:m
-alpha <- 0.1
-
-pSimes <- function(k, m, alpha) pbeta(alpha*k/m, k, m-k+1)
-pkSimes <- function(alpha, m) sapply(seqk, pSimes, m, alpha)
-probakSimes <- pkSimes(alpha, m)
-                                        #plot(seqk[1:10],log(probakSimes)[1:10],type="l",col="red",lwd=2,ylab="",xlab="")
-ks <- c(1:5,10,100)
-cors <- c(1:6)
-signif(probakSimes[ks], 2)
-
-lambdas <- alpha*rowMeans(res[, "Simes",])  ## average value of $\lambda(\alpha)$
-las <- sapply(lambdas, pkSimes, m)
-signif(las[ks, cors], 2)
-
-## kfwer
-resK <- mclapply(1:length(rhos), FUN=function(rr) {
-    rho <- rhos[rr]
-    print(rho)
-
-    mat <- simulateGaussianNullsFromFactorModel(m, n=B, flavor=flavor, rho=rho)
-
-    resList <- NULL
-    for (mm in methods) {
-        resJ <- getJointFWERThresholds(mat, tau=mm, alpha, maxSteps=maxSteps, kMax=kMax)
-        resList[[mm]] <- resJ$probk
+for (fam in c("kFWER", "Simes")) {
+    filename <- sprintf("%s,%s.pdf", figName, fam)
+    pathname <- file.path(figPath, filename)
+    
+    dat <- subset(lambdas, refFam==fam)
+    dat$lambda <- dat$lambda/alpha
+    mns <- aggregate(dat$lambda, list(rho=dat$rho, kMax=dat$kMax), mean)
+    names(mns)[3] <- "lambda"
+    mns$K <- factor(mns$kMax)
+    
+    pdf(pathname, width=6, height=3)
+    p <- ggplot(mns, aes(rho, lambda, color=K, group=K))
+    p <- p + xlab(expression(rho))
+    p <- p + ylab(expression(lambda(alpha, Eta)/alpha))
+    p <- p + geom_point()
+    p <- p + geom_line()    
+    if (fam=="Simes") {
+        p <- p + coord_cartesian(ylim=c(1, 10))
     }
-    resList
-}, mc.cores=3)
-
-library("abind")
-resSimes <- sapply(resK, "[[", "Simes")
-resKFWER <- sapply(resK, "[[", "kFWER")
-colnames(resSimes) <- rhos
-colnames(resKFWER) <- rhos
-
-ww <- match(c(0, 0.1, 0.2, 0.5), rhos)
-cols <- seq(along=ww)
-
-pdf("unbalanced.pdf")
-par(lwd=1.5)
-matplot(resSimes[, ww], t='l', lty=1, col=cols, ylab=expression(P(p[(k)] < tau[k])), xlab="k")
-matlines(resKFWER[, ww], t='l', lty=2, col=cols)
-legend("topright", col=cols, as.character(rhos[ww]), title=expression(rho), lty=1)
-legend("topleft", col=1, lty=1:2, c("Simes", "kFWER"))
-dev.off()
-
-pdf("unbalanced,zoom.pdf")
-matplot(resSimes[, ww], t='l', lty=1, col=cols, ylab=expression(P(p[(k)] < tau[k])), xlim=c(1,20), xlab="k")
-matlines(resKFWER[, ww], t='l', lty=2, col=cols)
-legend("topright", col=cols, as.character(rhos[ww]), title=expression(rho), lty=1)
-legend("topleft", col=1, lty=1:2, c("Simes", "kFWER"))
-dev.off()
-
-matplot(-log10(resSimes[, ww]), t='l', lty=1)
-matlines(-log10(resKFWER[, ww]), t='l', lty=2)
-
-
+    p <- p + theme_bw() + theme(panel.grid.major = element_line(colour = "grey90"),
+              panel.grid.minor = element_blank()
+        )
+    print(p)
+    dev.off()
+}
