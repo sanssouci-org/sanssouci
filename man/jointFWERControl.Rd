@@ -59,30 +59,26 @@ Calibration of a family of thresholds that provide joint FWER control
 \examples{
 
 set.seed(0xBEEF)
-sim <- simulateMein2006(m=1e2, rho=0.2, n=300, B=1e3, pi0=0.9, SNR=2)
-X <- sim$X
-y <- sim$y
-H0 <- which(sim$H==0)
-H1 <- which(sim$H==1)
-m0 <- length(H0)
-m1 <- length(H1)
+m <- 123
+rho <- 0.2
+n <- 100
+pi0 <- 0.5
+B <- 1e3
+
+sim <- simulateEqui(m, rho, B, pi0, SNR=3)
+X0 <- sim$X0
+x <- sim$x
 
 ## Test statistics
-w <- wilcoxStat(X, y, B=ncol(X))
-scoreMat <- w$stat0Mat
-stat <- w$stat
-
-if (FALSE) {
-  pch <- 20
-  ## show test statistics
-  plot(stat, col=rep(c(1, 2), times=c(m0, m1)), main="Test statistics", pch=pch)
-  legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
-}
+pch <- 20
+plot(x, col=1+sim$H, main="Test statistics", pch=pch)
+legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
 
 alpha <- 0.1
-res <- jointFWERControl(scoreMat, refFamily="kFWER", alpha=alpha, stat=stat)
+res <- jointFWERControl(X0, refFamily="kFWER", alpha=alpha, stat=x)
 Vbar <- res$Vbar
-V <- cumsum(order(stat, decreasing=TRUE) \%in\% H0)
+ttl <- paste("Upper bound on the number of false positives", "among first k hypotheses", sep="\\n")
+plot(Vbar, main=ttl, xlab="k", ylab=expression(bar(V(k))))
 
 }
 \author{

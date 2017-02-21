@@ -6,3 +6,6 @@
 ^\.travis\.yml$
 ^appveyor\.yml$
 appveyor.yml
+
+resData
+fig
