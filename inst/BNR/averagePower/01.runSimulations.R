@@ -14,7 +14,7 @@ for (ii in 1:nrow(configs)) {
     kMaxs <- c(round(2*m*(1-pi0)), 10, 20, m)
     kMaxs <- unique(kMaxs)
     
-    SNR <- sqrt(2*sf*log(1/(1-pi0)))
+    SNR <- getSNR(pi0, sf=sf)
     tags <- sprintf("pi0=%s,dep=%s,SNR=%sx", pi0, dep, sf)
     print(tags)
     filename <- sprintf("%s.rds", gsub("\\.", "_", tags))
