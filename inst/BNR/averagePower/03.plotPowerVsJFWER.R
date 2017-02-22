@@ -1,6 +1,6 @@
-# filename <- sprintf("%s,%s.rds", sname, pname)
-# pathname <- file.path(resPath, filename)
-# dat <- readRDS(pathname)
+filename <- sprintf("%s,%s.rds", sname, pname)
+pathname <- file.path(resPath, filename)
+dat <- readRDS(pathname)
 head(dat)
 
 powerz <-  c("detPow1"="P(S(R,H1)>1", "detPow"="P(S(R,H)>1", 
@@ -8,29 +8,38 @@ powerz <-  c("detPow1"="P(S(R,H1)>1", "detPow"="P(S(R,H)>1",
              "powBH5"="Power(BH(0.05))", "powBH50"="Power(BH(0.5))", "pow0"="Power({p <= 0.05})",
              "JR"="JFWER")
 
-##gat <- tidyr::gather(dat, "criterion", "value", JR, detPow, estPow, powBH5, powBH50, pow0)
-gat <- tidyr::gather(dat, "criterion", "value", estPow, powBH5, powBH50, pow0)
+powz <-  c("estPow"="H", "powBH5"="BH(0.05)", "powBH50"="BH(0.5)", "pow0"="{p <= 0.05}")
+powerz <- paste("R", powz, sep=" = ")
+names(powerz) <- names(powz)
 
+gat <- tidyr::gather(dat, "criterion", "value", JR, detPow, detPow1, v0, estPow, estPow1, powBH5, powBH50, pow0)
+gat <- subset(gat, criterion %in% names(powerz))
 
 ## some reshaping
-datC <- subset(gat, flavor == "Step down")
-datC$family <- factor(datC$family, levels=c("kFWER", "Simes"), labels=c("Balanced", "Linear"))
-datC$alpha <- as.numeric(datC$alpha)
-alphas <- unique(datC$alpha)
+kc <- as.character(gat$kMax)
+kc[which(gat$kMax==m)] <- "m"
+kc[which(gat$kMax==m/2)] <- "m/2"
+kc[which(gat$kMax==2*(1-gat$pi0)*m)] <- "2m1"
+gat$kMaxC <- kc
+
+## some more reshaping
+gat$alpha <- as.numeric(gat$alpha)
+alphas <- unique(gat$alpha)
 alphas <- alphas[which(alphas<=0.2)]
 
-kc <- as.character(datC$kMax)
-kc[which(datC$kMax==m)] <- "m"
-kc[which(datC$kMax==m/2)] <- "m/2"
-kc[which(datC$kMax==2*(1-datC$pi0)*m)] <- "2m1"
-datC$kMaxC <- kc
-
+## "balanced" kernel
+datB <- subset(gat, flavor == "Step down" & family=="kFWER")
 levk <- c("10", "2m1", "m")
-datC <- subset(datC, kMaxC %in% levk & alpha %in% alphas)
-levs <- c(paste("Balanced", levk), paste("Linear", rev(levk)))
-#datC$ff <- factor(paste(datC$family, datC$kMaxC), levels=levs)
-datC$ff <- sprintf("%s (kMax=%s)", datC$family, datC$kMaxC)
-#datC$ff <- factor(ff, levels=levs)
+datB<- subset(datB, kMaxC %in% levk)
+datB$ff <- sprintf("Balanced (K=%s)", datB$kMaxC)
+
+## "linear" kernel
+## datS <- subset(gat, family=="Simes" & flavor %in% c("unadjusted", "Single Step", "Step down") & kMax==m)
+datS <- subset(gat, family=="Simes" & flavor %in% c("unadjusted") & kMax==m)
+datS$ff <- "Simes/Linear"
+
+datC <- rbind(datB, datS)
+
 
 figName <- sname0
 date <- Sys.Date()
@@ -40,20 +49,26 @@ pname2 <- gsub("0\\.", "", pname)  ## to avoid '.' in LaTeX file names
 
 ## plot various statistics vs nominal JFWER
 library("ggplot2")
-
+x <- "alpha"
 rhos <- unique(dat$rho)
-confs <- expand.grid(rho=rhos, x=x, stringsAsFactors=FALSE)
+rhos <- unique(dat$rho)
+sfs <- unique(dat$sf)
+confs <- expand.grid(rho=rhos, sf=sfs, x=x, stringsAsFactors=FALSE)
 
 for (ii in 1:nrow(confs)) {
     rr <- confs[ii, "rho"]
     xx <- confs[ii, "x"] 
-    ftag <- sprintf("rho=%s", rr)
+    ss <- confs[ii, "sf"]
+    ftag <- sprintf("rho=%s,SNR=%sx", rr, ss)
     
     filename <- sprintf("%s,BalancedVsLinear,%s,%s.pdf", figName, pname2, ftag)
     pathname <- file.path(figPath, filename)
-    datI <- subset(datC, rho==rr)
-    
-    pdf(pathname)
+    datI <- subset(datC, rho==rr & sf==ss)
+    ## select relevant configs to plot
+    datI <- subset(datI,  pi0!=0.999 
+                   & criterion!="powBH50"
+                   & (family!="Linear" | kMax==m))
+    pdf(pathname, width=8, height=7)
     p <- ggplot(datI, aes_string(x="alpha", y="value", group="ff", color="ff"))
     p <- p + geom_line()
     p <- p + facet_grid(criterion ~ pi0,
@@ -68,8 +83,16 @@ for (ii in 1:nrow(confs)) {
     p <- p + labs(color="Family",
                   linetype=expression(lambda-adjustment))
     p <- p + geom_point()
-    p <- p + labs(y="criterion")
-    p <- p + scale_color_brewer(type="div")
+    p <- p + labs(y="Averaged power", x="Target JR level")
+#    p <- p + scale_color_brewer(palette="RdYlBu")
+#    p <- p + scale_color_hue()
+    pal <- RColorBrewer::brewer.pal(7,"PRGn")
+    pal <- pal[c(1, 2, 3, 6)]
+    p <- p + scale_colour_manual(values = pal)
+    p <- p + theme(axis.title=element_text(size=16),
+                   strip.text = element_text(size=12),
+                   legend.text = element_text(size=12),
+                   legend.title = element_text(size=12))
     print(p)
     dev.off()
 }

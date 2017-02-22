@@ -1,17 +1,11 @@
-library("future")
-library("listenv")
-##computeNodes <- c("cauchy", "leibniz", "bolzano", "shannon", "euler", "hamming", "bernoulli")
-plan(remote, workers = rep("bernoulli", 2)) ## retrieve results (remote!)
-plan(eager) ## retrieve results (local!)
-
+filename <- sprintf("%s,%s.rds", sname, pname)
+pathname <- file.path(resPath, filename)
+dat <- readRDS(pathname)
 head(dat)
 
-gat <- tidyr::gather(dat, "criterion", "value", JR, detPow, estPow, powBH5, powBH50, pow0)
-
-detPow <- "P(S(R,H)>1"
+gat <- tidyr::gather(dat, "criterion", "value", JR, detPow, detPow1, v0, estPow, estPow1, powBH5, powBH50, pow0)
 
 ## some reshaping
-#datC <- subset(dat, kMax %in% as.character(c(10, 100, m, m/2))  & flavor != "unadjusted")
 datC <- subset(gat, flavor == "Step down" & criterion=="detPow")
 datC$family <- factor(datC$family, levels=c("kFWER", "Simes"), labels=c("Balanced", "Linear"))
 datC$alpha <- as.numeric(datC$alpha)
@@ -28,7 +22,7 @@ levk <- c("10", "m")
 datC <- subset(datC, kMaxC %in% levk & alpha %in% alphas)
 levs <- c(paste("Balanced", levk), paste("Linear", rev(levk)))
 #datC$ff <- factor(paste(datC$family, datC$kMaxC), levels=levs)
-datC$ff <- sprintf("%s (kMax=%s)", datC$family, datC$kMaxC)
+datC$ff <- sprintf("%s (K=%s)", datC$family, datC$kMaxC)
 #datC$ff <- factor(ff, levels=levs)
 
 figName <- sname0
@@ -53,13 +47,15 @@ for (ii in 1:nrow(confs)) {
     pathname <- file.path(figPath, filename)
     datI <- subset(datC, rho==rr)
     
-    pdf(pathname)
+    pdf(pathname, width=9)
     ##
     p <- ggplot(datI, aes_string(x=xx, y="value", group="ff", color="ff"))
     p <- p + geom_line()
     p <- p + facet_grid(r ~ beta,
                         scales="free_y",
-                        labeller=label_both)
+                        labeller=label_bquote(
+                            rows= r==.(r),
+                            cols= beta==.(round(beta, 2))))
     p <- p + scale_x_continuous(breaks=round(alphas, 2), minor_breaks=NULL, limits = range(alphas))
     p <- p + scale_y_continuous(minor_breaks=NULL, limits=c(0,1))
     ##    p <- p + scale_y_continuous(minor_breaks=NULL)
@@ -67,8 +63,12 @@ for (ii in 1:nrow(confs)) {
     p <- p + labs(color="Family",
                   linetype=expression(lambda-adjustment))
     p <- p + geom_point()
-    p <- p + labs(y="criterion")
+    p <- p + labs(y="Detection power", x="Target JR level")
     p <- p + scale_color_brewer(type="div")
+    p <- p + theme(axis.title=element_text(size=16),
+                   strip.text = element_text(size=12),
+                   legend.text = element_text(size=12),
+                   legend.title = element_text(size=12))
     print(p)
     dev.off()
 }
