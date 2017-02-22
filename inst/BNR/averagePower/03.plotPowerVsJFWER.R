@@ -1,9 +1,6 @@
-library("future")
-library("listenv")
-##computeNodes <- c("cauchy", "leibniz", "bolzano", "shannon", "euler", "hamming", "bernoulli")
-plan(remote, workers = rep("bernoulli", 2)) ## retrieve results (remote!)
-plan(eager) ## retrieve results (local!)
-
+# filename <- sprintf("%s,%s.rds", sname, pname)
+# pathname <- file.path(resPath, filename)
+# dat <- readRDS(pathname)
 head(dat)
 
 powerz <-  c("detPow1"="P(S(R,H1)>1", "detPow"="P(S(R,H)>1", 
