@@ -52,6 +52,7 @@ for (ii in 1:nrow(configs)) {
 }
 
 ## tidy results and save to single file
+rpath <- file.path("~/Documents/Packages/sanssouci", path)
 fls <- list.files(rpath, full.names=TRUE)
 fls <- fls[-grep("molten", fls)]
 id <- gsub(".rds$", "", basename(fls))
