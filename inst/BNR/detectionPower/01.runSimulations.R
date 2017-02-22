@@ -51,3 +51,17 @@ for (ii in 1:nrow(configs)) {
     
     saveRDS(dat, file=pathname)
 }
+
+## tidy results and save to single file
+fls <- list.files(rpath, full.names=TRUE)
+fls <- fls[-grep("molten", fls)]
+id <- gsub(".rds$", "", basename(fls))
+names(fls) <- id
+dat <- plyr::ldply(fls, readRDS, .id="id")
+names(dat)[match("dep", names(dat))] <- "rho"
+
+head(dat)
+filename <- sprintf("%s,%s.rds", sname, pname)
+pathname <- file.path(resPath, filename)
+saveRDS(dat, file=pathname)
+print(pathname)
