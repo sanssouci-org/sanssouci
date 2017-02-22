@@ -1,7 +1,6 @@
 ## source("inst/BNR/averagePower/00.setup.R")
 
 rpath <- file.path("~/Documents/Packages/sanssouci", path)
-
 molten <- FALSE
 
 if (molten) {
@@ -13,6 +12,14 @@ if (molten) {
 } else {
     fls <- list.files(rpath, full.names=TRUE)
     fls <- fls[-grep("molten", fls)]
+    ## ## ad hoc fix to retrieve 'sf'
+    ## sf <- as.numeric(gsub(".*SNR=([0-9])x.rds$", "\\1", basename(fls)))
+    ## for (ff in seq(along=fls)) {
+    ##     fl <- fls[ff]
+    ##     dat <- readRDS(fl)
+    ##     dat$sf <- sf[ff]
+    ##     saveRDS(dat, fl)
+    ## }
     id <- gsub(".rds$", "", basename(fls))
     names(fls) <- id
     dat <- plyr::ldply(fls, readRDS, .id="id")
