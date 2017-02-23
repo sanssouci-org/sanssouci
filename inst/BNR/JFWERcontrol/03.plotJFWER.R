@@ -36,18 +36,19 @@ for (ii in 1:nrow(confs)) {
     kk <- confs[ii, "kMax"]
     aa <- confs[ii, "alpha"]
     fam <- confs[ii, "family"]
-    ftag <- sprintf("family=%s,alpha=%s,kMax=%s", fam, aa, kk)
+    ftag <- sprintf("family=%s,alpha=%s,kMax=%s", fam, 100*aa, kk)
     
-    filename <- sprintf("%s,BalancedVsLinear,%s,%s.pdf", figName, pname2, ftag)
+    filename <- sprintf("%s,%s,%s.pdf", figName, pname2, ftag)
     pathname <- file.path(figPath, filename)
     datI <- subset(datC, family==fam & alpha==aa & kMaxC==kk & flavor != "Oracle2")
-    pal <- RColorBrewer::brewer.pal(8,"BrBG")
-    
+
+    pal <- RColorBrewer::brewer.pal(4,"BrBG")
+    #pal <- rev(pal)
     if (fam=="Balanced") {
         datI <- subset(datI, flavor != "unadjusted")
-        pal <- pal[1:3]
+        pal <- pal[c(3,4,1,2)]
     } else if (fam=="Linear") {
-        pal <- pal[5:8]
+        pal <- pal[c(3,4,1,2)]
         datI$ff <- plyr::revalue(datI$ff, c("unadjusted"="Simes"))
     }
     pdf(pathname)
@@ -68,6 +69,10 @@ for (ii in 1:nrow(confs)) {
                    strip.text = element_text(size=12),
                    legend.text = element_text(size=12),
                    legend.title = element_text(size=12))
+    p <- p + geom_hline(aes(yintercept=alpha), linetype="dashed")
+    if (fam=="Linear") {
+        p <- p + geom_hline(aes(yintercept=alpha*pi0), linetype="dotted")
+    }
     print(p)
     dev.off()
 }
