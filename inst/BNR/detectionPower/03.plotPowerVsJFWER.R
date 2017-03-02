@@ -6,11 +6,11 @@ head(dat)
 gat <- tidyr::gather(dat, "criterion", "value", JR, detPow, detPow1, v0, estPow, estPow1, powBH5, powBH50, pow0)
 
 ## some reshaping
-datC <- subset(gat, flavor == "Step down" & criterion=="detPow")
+datC <- subset(gat, flavor == "Step down" & criterion=="detPow" & beta !=2/3)
 datC$family <- factor(datC$family, levels=c("kFWER", "Simes"), labels=c("Balanced", "Linear"))
 datC$alpha <- as.numeric(datC$alpha)
 alphas <- unique(datC$alpha)
-alphas <- alphas[which(alphas<=0.2)]
+alphas <- alphas[which(alphas<=0.25)]
 
 kc <- as.character(datC$kMax)
 kc[which(datC$kMax==m)] <- "m"
@@ -46,6 +46,8 @@ for (ii in 1:nrow(confs)) {
     filename <- sprintf("%s,BalancedVsLinear,%s,%s.pdf", figName, pname2, ftag)
     pathname <- file.path(figPath, filename)
     datI <- subset(datC, rho==rr)
+#    datI$rf <- factor(datI$r, levels=sort(unique(datI$r), decr=TRUE))
+#    datI$rf <- factor(datI$r, levels=sort(unique(datI$r), decr=FALSE))
     
     pdf(pathname, width=9)
     ##
@@ -54,8 +56,9 @@ for (ii in 1:nrow(confs)) {
     p <- p + facet_grid(r ~ beta,
                         scales="free_y",
                         labeller=label_bquote(
-                            rows= r==.(r),
-                            cols= beta==.(round(beta, 2))))
+                            rows= .(r),
+                            cols= beta==.(round(beta, 2))),
+                        as.table=FALSE)
     p <- p + scale_x_continuous(breaks=round(alphas, 2), minor_breaks=NULL, limits = range(alphas))
     p <- p + scale_y_continuous(minor_breaks=NULL, limits=c(0,1))
     ##    p <- p + scale_y_continuous(minor_breaks=NULL)
@@ -73,3 +76,41 @@ for (ii in 1:nrow(confs)) {
     dev.off()
 }
 
+detMax <- function(beta) (1-sqrt(1-beta))^2
+detHC <- function(beta) {
+    r <- detMax(beta)
+    r[beta<3/4] <- beta[beta<3/4]-1/2
+    r
+}
+bs <- unique(datC$beta)
+xy <- expand.grid(beta=bs, r=rs)
+isDetMax <- (xy$r>=detMax(xy$beta))
+isDetHC <- (xy$r>=detHC(xy$beta))
+xy$Region <- "Detectable"
+xy$Region[!isDetMax & isDetHC] <- "Detectable by HC only"
+xy$Region[!isDetHC] <- "Undetectable"
+
+pal <- RColorBrewer::brewer.pal(3,"Dark2")
+sz <- 14
+
+q <- qplot(beta, r, data=xy, color=Region, shape=Region)
+q <- q + stat_function(fun=detMax, colour = "black")
+q <- q + stat_function(fun=detHC, colour = "black")
+q <- q + xlab(expression(beta)) + geom_point(size=3)
+q <- q +  theme_bw() + theme(panel.grid.major = element_line(colour = "grey90"),
+                             panel.grid.minor = element_blank(),
+                             #legend.position = "top", legend.direction="vertical", 
+                             legend.text=element_text(size=sz),
+                             legend.title=element_text(size=sz),
+                             axis.title=element_text(size=sz),
+                             axis.text=element_text(size=sz),
+                             strip.text = element_text(size=sz))
+q <- q + scale_x_continuous(breaks=round(bs, 2), minor_breaks=NULL, limits = range(bs))
+q <- q + scale_y_continuous(breaks=round(rs, 2), minor_breaks=NULL, limits = range(rs))
+q <- q + scale_colour_manual(values = pal)
+q <- q + annotate("text", x = 0.555, y = 0.14, label = "FDR/FWER", angle=11)
+q <- q + annotate("text", x = 0.555, y = 0.025, label = "HC", angle=22)
+
+pdf("fig/DJ2004.pdf", width=8, height=4)
+print(q)
+dev.off()

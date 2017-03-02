@@ -10,8 +10,8 @@ SNRs <- c(0, 1, 2, 3, 4, 5)
 
 alphas <- c(0.25)
 
-m <- 1e3
-B <- 1e3
+m <- 2e3
+B <- 5e3
 nbSimu <- 1e3
 
 pname <- sprintf("m=%s,B=%s,nbSimu=%s", m, B, nbSimu)
