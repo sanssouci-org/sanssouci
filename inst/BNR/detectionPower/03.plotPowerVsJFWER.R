@@ -49,8 +49,6 @@ for (ii in 1:nrow(confs)) {
 #    datI$rf <- factor(datI$r, levels=sort(unique(datI$r), decr=TRUE))
 #    datI$rf <- factor(datI$r, levels=sort(unique(datI$r), decr=FALSE))
     
-    pdf(pathname, width=9)
-    ##
     p <- ggplot(datI, aes_string(x=xx, y="value", group="ff", color="ff"))
     p <- p + geom_line()
     p <- p + facet_grid(r ~ beta,
@@ -66,12 +64,13 @@ for (ii in 1:nrow(confs)) {
     p <- p + labs(color="Family",
                   linetype=expression(lambda-adjustment))
     p <- p + geom_point()
-    p <- p + labs(y="Detection power", x="Target JR level")
+    p <- p + labs(y="Detection power", x="Target JER level")
     p <- p + scale_color_brewer(type="div")
     p <- p + theme(axis.title=element_text(size=16),
                    strip.text = element_text(size=12),
                    legend.text = element_text(size=12),
                    legend.title = element_text(size=12))
+    pdf(pathname, width=9)
     print(p)
     dev.off()
 }

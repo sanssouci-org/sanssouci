@@ -6,8 +6,10 @@ head(dat)
 gat <- tidyr::gather(dat, "criterion", "value", JR, detPow, detPow1, v0, estPow, estPow1, powBH5, powBH50, pow0)
 
 ## some reshaping
-datC <- subset(gat, criterion=="JR")
-datC$family <- factor(datC$family, levels=c("kFWER", "Simes"), labels=c("Balanced", "Linear"))
+datC <- subset(gat, criterion=="JR" & pi0<0.999)
+datC$family <- factor(datC$family, 
+                      levels=c("kFWER", "Simes"), 
+                      labels=c("Balanced", "Linear"))
 datC$alpha <- as.numeric(datC$alpha)
 alphas <- unique(datC$alpha)
 
@@ -51,8 +53,6 @@ for (ii in 1:nrow(confs)) {
         pal <- pal[c(3,4,1,2)]
         datI$ff <- plyr::revalue(datI$ff, c("unadjusted"="Simes"))
     }
-    pdf(pathname)
-    ##
     p <- ggplot(datI, aes_string(x="SNR", y="value", group="ff", color="ff"))
     p <- p + geom_line()
     p <- p + facet_grid(pi0 ~ rho,
@@ -60,10 +60,10 @@ for (ii in 1:nrow(confs)) {
                         labeller=label_bquote(
                             rows= pi[0]==.(pi0),
                             cols= rho==.(rho)))
-    p <- p + scale_y_continuous(breaks=c(0, aa), limits=c(0, aa*1.3))
+    p <- p + scale_y_continuous(limits = c(0, 0.3))
     p <- p + labs(color=sprintf("%s family", fam))
     p <- p + geom_point()
-    p <- p + labs(y="JR", x=expression(bar(mu)))
+    p <- p + labs(y="JER", x=expression(bar(mu)))
     p <- p + scale_colour_manual(values = rev(pal))
     p <- p + theme(axis.title=element_text(size=16),
                    strip.text = element_text(size=12),
@@ -73,6 +73,7 @@ for (ii in 1:nrow(confs)) {
     if (fam=="Linear") {
         p <- p + geom_hline(aes(yintercept=alpha*pi0), linetype="dotted")
     }
+    pdf(pathname, width=8)
     print(p)
     dev.off()
 }

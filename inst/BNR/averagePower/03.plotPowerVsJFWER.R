@@ -91,7 +91,7 @@ for (ii in 1:nrow(confs)) {
     p <- p + labs(color="Family",
                   linetype=expression(lambda-adjustment))
     p <- p + geom_point()
-    p <- p + labs(y="Averaged power", x="Target JR level")
+    p <- p + labs(y="Averaged power", x="Target JER level")
     p <- p + scale_colour_manual(values = pal)
     p <- p + theme(axis.title=element_text(size=16),
                    strip.text = element_text(size=12),
