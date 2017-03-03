@@ -74,7 +74,7 @@ for (fam in c("kFWER", "Simes")) {
     pdf(pathname, width=6, height=3)
     p <- ggplot(mns, aes(rho, lambda, color=K, group=K))
     p <- p + xlab(expression(rho))
-    p <- p + ylab(expression(lambda(alpha, Eta)/alpha))
+    p <- p + ylab(expression(lambda(alpha, N[m])/alpha))
     p <- p + geom_point()
     p <- p + geom_line()    
     if (fam=="Simes") {
