@@ -76,7 +76,6 @@ for (ii in 1:nrow(confs)) {
                    & (family!="Linear" | kMax==m))
     datI$plab <- sprintf("pi[0]=%s ; mu=%s", datI$pi0, round(getSNR(datI$pi0, ss), 2))
     datI$plab <- "pi[0]"
-    pdf(pathname, width=8, height=7)
     p <- ggplot(datI, aes_string(x="alpha", y="value", group="ff", color="ff"))
     p <- p + geom_line()
     p <-
@@ -97,6 +96,7 @@ for (ii in 1:nrow(confs)) {
                    strip.text = element_text(size=12),
                    legend.text = element_text(size=12),
                    legend.title = element_text(size=12))
+    pdf(pathname, width=8, height=7)
     print(p)
     dev.off()
 }
