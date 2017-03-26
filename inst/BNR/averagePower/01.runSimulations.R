@@ -9,11 +9,13 @@ res <- listenv()
 for (ii in 1:nrow(configs)) {
     pi0 <- configs[ii, "pi0"]
     dep <- configs[ii, "dep"]
+    sf <- configs[ii, "sf"]
 
-    SNR <- sqrt(2*log(1/(1-pi0)))
     kMaxs <- c(round(2*m*(1-pi0)), 10, 20, m)
     kMaxs <- unique(kMaxs)
-    tags <- sprintf("pi0=%s,dep=%s", pi0, dep)
+    
+    SNR <- getSNR(pi0, sf=sf)
+    tags <- sprintf("pi0=%s,dep=%s,SNR=%sx", pi0, dep, sf)
     print(tags)
     filename <- sprintf("%s.rds", gsub("\\.", "_", tags))
     pathname <- file.path(path, filename)
@@ -36,7 +38,6 @@ for (ii in 1:nrow(configs)) {
             testStepDown(m, dep, B, pi0, SNR, "constant", alphas, kMaxs=kMaxs, flavor="equi")
         }
     }
-    
     ## summarize into JFWER and Power estimates
     mres <- reshape2::melt(as.list(res))
     names(mres) <- c("risk", "flavor", "value", "family", "kMax", "alpha", "sid")
@@ -44,8 +45,22 @@ for (ii in 1:nrow(configs)) {
     
     ## summarize into JFWER and Power estimates
     cres <- reshape2::dcast(mres, kMax+alpha+family+flavor~risk, mean, value.var="value", na.rm=TRUE)
-    dat <- cbind(pi0=pi0, dep=dep, SNR=SNR, cres)
+    dat <- cbind(pi0=pi0, dep=dep, SNR=SNR, sf=sf, cres)
     head(dat)
-    
+        
     saveRDS(dat, file=pathname)
 }
+
+## tidy results and save to single file
+fls <- list.files(rpath, full.names=TRUE)
+fls <- fls[-grep("molten", fls)]
+id <- gsub(".rds$", "", basename(fls))
+names(fls) <- id
+dat <- plyr::ldply(fls, readRDS, .id="id")
+names(dat)[match("dep", names(dat))] <- "rho"
+
+head(dat)
+filename <- sprintf("%s,%s.rds", sname, pname)
+pathname <- file.path(resPath, filename)
+saveRDS(dat, file=pathname)
+print(pathname)

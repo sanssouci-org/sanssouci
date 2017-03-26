@@ -7,15 +7,14 @@ plan(multiprocess, workers = 100)
 
 res <- listenv()
 for (ii in 1:nrow(configs)) {
-    beta <- configs[ii, "beta"]
-    r <- configs[ii, "r"]
+    pi0 <- configs[ii, "pi0"]
     dep <- configs[ii, "dep"]
-    pi0 <- 1-m^(-beta)
+    SNR <- configs[ii, "SNR"]
     
-    SNR <- sqrt(2*r*log(m))
-    kMaxs <- c(round(2*m*(1-pi0)), 10, 20, m)
+    kMaxs <- c(round(2*m*(1-pi0)), 2, 10, m)
     kMaxs <- unique(kMaxs)
-    tags <- sprintf("beta=%s,r=%s", beta, r)
+    
+    tags <- sprintf("pi0=%s,dep=%s,SNR=%s", pi0, dep, SNR)
     print(tags)
     filename <- sprintf("%s.rds", gsub("\\.", "_", tags))
     pathname <- file.path(path, filename)
@@ -38,7 +37,6 @@ for (ii in 1:nrow(configs)) {
             testStepDown(m, dep, B, pi0, SNR, "constant", alphas, kMaxs=kMaxs, flavor="equi")
         }
     }
-    
     ## summarize into JFWER and Power estimates
     mres <- reshape2::melt(as.list(res))
     names(mres) <- c("risk", "flavor", "value", "family", "kMax", "alpha", "sid")
@@ -46,9 +44,9 @@ for (ii in 1:nrow(configs)) {
     
     ## summarize into JFWER and Power estimates
     cres <- reshape2::dcast(mres, kMax+alpha+family+flavor~risk, mean, value.var="value", na.rm=TRUE)
-    dat <- cbind(beta=beta, r=r, pi0=pi0, dep=dep, SNR=SNR, cres)
+    dat <- cbind(pi0=pi0, dep=dep, SNR=SNR, cres)
     head(dat)
-    
+        
     saveRDS(dat, file=pathname)
 }
 
