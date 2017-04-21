@@ -44,4 +44,3 @@ posthocBySimes(p, R)
 \author{
 Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 }
-

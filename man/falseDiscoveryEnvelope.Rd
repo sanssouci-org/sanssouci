@@ -43,4 +43,3 @@ curve(falseDiscoveryEnvelope(x, thr), add=TRUE, col=2)
 \author{
 Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 }
-

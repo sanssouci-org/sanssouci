@@ -27,4 +27,3 @@ The pivotal statistic for Simes' threshold family
 The inverse function of \eqn{s_k} is: \eqn{s_k^{-1}:u
 \mapsto (m/k)*(1-pnorm(u))}.
 }
-

@@ -84,4 +84,3 @@ plot(Vbar, main=ttl, xlab="k", ylab=expression(bar(V(k))))
 \author{
 Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 }
-

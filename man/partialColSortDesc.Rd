@@ -42,4 +42,3 @@ if (require("rbenchmark")) {
 \author{
 Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 }
-

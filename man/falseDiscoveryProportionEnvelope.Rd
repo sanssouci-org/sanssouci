@@ -53,4 +53,3 @@ abline(v=tHat, col="blue")
 \author{
 Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 }
-

@@ -50,4 +50,3 @@ legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
 \author{
 Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 }
-

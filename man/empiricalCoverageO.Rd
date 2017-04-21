@@ -27,4 +27,3 @@ The empirical coverage of \code{thr} according to
   the test statistics under the null hypothesis exceeds the \eqn{k}-th
   largest value of \code{thr}, that is, \code{thr[k]}.
 }
-

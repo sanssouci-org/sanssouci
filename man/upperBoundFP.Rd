@@ -26,4 +26,3 @@ Upper bound for the number of false discoveries
 \author{
 Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 }
-

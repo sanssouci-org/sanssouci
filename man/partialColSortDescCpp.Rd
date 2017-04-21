@@ -14,4 +14,3 @@ partialColSortDescCpp(X, k)
 \description{
 partial sorting of the columns of a matrix by descending order
 }
-

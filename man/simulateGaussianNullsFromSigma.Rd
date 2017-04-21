@@ -61,4 +61,3 @@ lines(sl/sum(sl), col=2, t='b')
 \author{
 Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 }
-

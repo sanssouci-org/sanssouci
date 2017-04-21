@@ -52,4 +52,3 @@ kmaxH0 <- attr(Q, "kmaxH0")
 \author{
 Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 }
-

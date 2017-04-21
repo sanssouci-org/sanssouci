@@ -56,4 +56,3 @@ image(S3)
 \author{
 Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 }
-

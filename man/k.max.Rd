@@ -27,4 +27,3 @@ sort(x)[100-10+1]
 \author{
 Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 }
-
