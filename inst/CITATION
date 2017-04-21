@@ -1,0 +1,18 @@
+year <- sub("-.*", "", meta$Date)
+note <- sprintf("R package version %s", meta$Version)
+
+bibentry(bibtype="Manual",
+         title = "{sansSouci}: post-hoc inference via multiple testing",
+         author = personList(as.person("Pierre Neuvial")),
+         year = year,
+         note = note)
+
+bibentry(bibtype="Article",
+         title = "Post hoc inference via joint family-wise error rate control",
+         author = personList(as.person("Gilles Blanchard"),
+                             as.person("Etienne Roquain"),
+                             as.person("Pierre Neuvial")),
+         year = "2017",
+	     url = "http://arxiv.org/1703.02307",
+	     journal = "arXiv preprint 1703.02307")
+
