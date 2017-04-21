@@ -1,4 +1,4 @@
-#' @keywords internal
+#' @internal
 minPseudoRanksR <- function(kmaxH0, kmaxH0C) {
     B <- ncol(kmaxH0)
     m <- nrow(kmaxH0)
