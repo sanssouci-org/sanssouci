@@ -7,14 +7,14 @@
 twoGroupPermutationTest(X, cls, B, seed = NULL)
 }
 \arguments{
+\item{X}{a matrix of \code{m} variables by \code{n} observations}
+
 \item{cls}{a vector of length \code{n} class labels in \code{0,1}}
 
 \item{B}{a numeric values, the number of permutations to be performed}
 
 \item{seed}{an integer (or NULL) value used as a seed for random number 
 generation. If \code{NULL}, no seed is specified.}
-
-\item{x}{a matrix of \code{m} variables by \code{n} observations}
 }
 \value{
 a list with two
@@ -24,12 +24,19 @@ Perform permutation testing for a two-group model
 }
 \examples{
 
-data(golub, package="multtest")
-B <- 1000
-resPerm <- twoGroupPermutationTest(X=golub, cls=golub.cl, B=B, seed=123)
-str(resPerm)
+#' if (require("multtest")) { 
+    data(golub, package="multtest")
+    B <- 1000
+    resPerm <- twoGroupPermutationTest(X=golub, cls=golub.cl, B=B, seed=123)
+} else {
+    p <- 3051
+    n <- 38
+    mat <- matrix(rnorm(p*n), ncol=n)
+    cls <- rep(c(0, 1), times=c(27, n-27))
+    resPerm <- twoGroupPermutationTest(X=mat, cls=cls, B=B, seed=123)
+}
 
-alpha <- 0.05
+#alpha <- 0.05
 #res <- jointFWERControl(-resPerm$P, refFamily="Simes", alpha=alpha, stat=-resPerm$Pstar)
 
 }

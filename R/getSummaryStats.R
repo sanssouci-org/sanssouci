@@ -16,6 +16,8 @@
 #' 
 #' @author Pierre Neuvial
 #'   
+#' @export
+#'   
 #' @examples
 #' 
 #' if (require("multtest")) { 

@@ -13,7 +13,9 @@
 #' \item{p.value}{the p-value for the test}
 #' }
 #' @author Pierre Neuvial
+#' 
 #' @export
+#' @importFrom stats pt
 #' @examples
 #' 
 #' # Reproducing the results of the 't.test' function
