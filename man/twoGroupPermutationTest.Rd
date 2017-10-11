@@ -24,7 +24,7 @@ Perform permutation testing for a two-group model
 }
 \examples{
 
-#' if (require("multtest")) { 
+if (require("multtest")) { 
     data(golub, package="multtest")
     B <- 1000
     resPerm <- twoGroupPermutationTest(X=golub, cls=golub.cl, B=B, seed=123)
