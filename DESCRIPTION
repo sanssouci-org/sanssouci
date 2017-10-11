@@ -1,6 +1,6 @@
 Package: sansSouci
-Version: 0.4.11
-Date: 2017-02-14
+Version: 0.4.12
+Date: 2017-10-11
 Title: Post hoc inference through JFWER control
 Authors@R: c(person("Benjamin", "Sadacca", role="aut"),
              person("Gilles", "Blanchard", role="aut"),
@@ -13,8 +13,7 @@ Description: This package implements functions for post hoc inference based on
 Imports:
     Matrix,
     matrixStats,
-    Rcpp (>= 0.12.3),
-    genefilter
+    Rcpp (>= 0.12.3)
 LinkingTo: Rcpp, RcppArmadillo
 Suggests:
     knitr,
