@@ -7,6 +7,6 @@
 ^appveyor\.yml$
 appveyor.yml
 
-^resData$
-^fig$
-^localTests$
+/resData/
+/fig/
+/localTests/
