@@ -46,6 +46,9 @@ inst/doc
 
 png
 
+^resData$
+^fig$
+^localTests$
 
 ## OS X
 .DS_Store

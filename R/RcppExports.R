@@ -17,7 +17,7 @@
 #'   largest value of \code{thr}, that is, \code{thr[k]}.
 #'
 empiricalCoverageO <- function(thr, Z) {
-    .Call('sansSouci_empiricalCoverageO', PACKAGE = 'sansSouci', thr, Z)
+    .Call('_sansSouci_empiricalCoverageO', PACKAGE = 'sansSouci', thr, Z)
 }
 
 #' Marginal Empirical coverage of a threshold family
@@ -36,7 +36,7 @@ empiricalCoverageO <- function(thr, Z) {
 #'
 #' @export
 marginalKFWER <- function(thr, Z) {
-    .Call('sansSouci_marginalKFWER', PACKAGE = 'sansSouci', thr, Z)
+    .Call('_sansSouci_marginalKFWER', PACKAGE = 'sansSouci', thr, Z)
 }
 
 #' Sorting of the rows of a matrix by descending order
@@ -47,7 +47,7 @@ marginalKFWER <- function(thr, Z) {
 #'
 #' @export
 minPseudoRanks <- function(X, Y) {
-    .Call('sansSouci_minPseudoRanks', PACKAGE = 'sansSouci', X, Y)
+    .Call('_sansSouci_minPseudoRanks', PACKAGE = 'sansSouci', X, Y)
 }
 
 #' partial sorting of the columns of a matrix by descending order
@@ -56,7 +56,7 @@ minPseudoRanks <- function(X, Y) {
 #' @param k An integer value between 1 and \code{nrow(mat)}
 #' @export
 partialColSortDescCpp <- function(X, k) {
-    .Call('sansSouci_partialColSortDescCpp', PACKAGE = 'sansSouci', X, k)
+    .Call('_sansSouci_partialColSortDescCpp', PACKAGE = 'sansSouci', X, k)
 }
 
 #' Sorting of the rows of a matrix by descending order
@@ -66,6 +66,6 @@ partialColSortDescCpp <- function(X, k) {
 #'
 #' @export
 rowSortDesc <- function(X) {
-    .Call('sansSouci_rowSortDesc', PACKAGE = 'sansSouci', X)
+    .Call('_sansSouci_rowSortDesc', PACKAGE = 'sansSouci', X)
 }
 

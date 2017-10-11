@@ -2,15 +2,19 @@ Package: sansSouci
 Version: 0.4.11
 Date: 2017-02-14
 Title: Post hoc inference through JFWER control
-Author: Gilles Blanchard, Pierre Neuvial and Etienne Roquain
-Maintainer: Pierre Neuvial <pierre.neuvial@math.cnrs.fr>
+Authors@R: c(person("Benjamin", "Sadacca", role="aut"),
+             person("Gilles", "Blanchard", role="aut"),
+             person("Pierre", "Neuvial", role=c("aut", "cre"),
+                 email="pierre.neuvial@math.univ-toulouse.fr"),
+             person("Etienne", "Roquain", role="aut"))
 License: GPL-3
 Description: This package implements functions for post hoc inference based on
-    the control of a dedicated risk called the joint Family-Wise Error Rate.
+    the control of a dedicated risk called the Joint (Family-Wise) Error Rate.
 Imports:
     Matrix,
     matrixStats,
-    Rcpp (>= 0.12.3)
+    Rcpp (>= 0.12.3),
+    genefilter
 LinkingTo: Rcpp, RcppArmadillo
 Suggests:
     knitr,
@@ -19,4 +23,4 @@ Suggests:
     testthat,
     rbenchmark
 VignetteBuilder: knitr
-RoxygenNote: 6.0.1
+RoxygenNote: 6.0.1.9000
