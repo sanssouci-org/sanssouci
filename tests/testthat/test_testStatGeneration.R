@@ -16,20 +16,16 @@ test_that("Simulate Gaussian equi-correlated test statistics", {
     rho <- 0.2
     B <- 100
     pi0 <- 0.5
-    sim <- simulateEqui(m, rho, B, pi0, SNR=1)
-    expect_equal(length(sim$x), m)
-    expect_equal(nrow(sim$X0), m)
-    expect_equal(length(sim$H), m)
-    expect_equal(ncol(sim$X0), B)
-    expect_equal(round(m*pi0), m-sum(sim$H))
     
-    stat <- sim$x
-    H <- sim$H
-    sa <- tapply(stat, H, mean)
-    expect_gt(sa[2], sa[1])  ## test stat is larger under H1
-    
+    test <- replicate(10, {
+        sim <- simulateEqui(m, rho, B, pi0, SNR = 2)
+        expect_equal(length(sim$x), m)
+        expect_equal(nrow(sim$X0), m)
+        expect_equal(length(sim$H), m)
+        expect_equal(ncol(sim$X0), B)
+        expect_equal(round(m*pi0), m-sum(sim$H))
+    })
 })
-
 
 test_that("Simulation of null hypotheses from factor model", {
     m <- 10

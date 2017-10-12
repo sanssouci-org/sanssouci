@@ -24,17 +24,11 @@ Perform permutation testing for a two-group model
 }
 \examples{
 
-if (require("multtest")) { 
-    data(golub, package="multtest")
-    B <- 1000
-    resPerm <- twoGroupPermutationTest(X=golub, cls=golub.cl, B=B, seed=123)
-} else {
-    p <- 3051
-    n <- 38
-    mat <- matrix(rnorm(p*n), ncol=n)
-    cls <- rep(c(0, 1), times=c(27, n-27))
-    resPerm <- twoGroupPermutationTest(X=mat, cls=cls, B=B, seed=123)
-}
+p <- 3051
+n <- 38
+mat <- matrix(rnorm(p*n), ncol=n)
+cls <- rep(c(0, 1), times=c(27, n-27))
+resPerm <- twoGroupPermutationTest(X=mat, cls=cls, B=B, seed=123)
 
 #alpha <- 0.05
 #res <- jointFWERControl(-resPerm$P, refFamily="Simes", alpha=alpha, stat=-resPerm$Pstar)

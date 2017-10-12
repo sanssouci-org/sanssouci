@@ -1,7 +1,8 @@
 # Version 0.4.12 [2017-10-11]
 
-* Added "twoGroupPermutationTest" (written by @sbsad).
-* Added "rowWelchTest" to avoid genefilter dependency.
+* Added C++ verson of postHocBySimes (written by @sbsad) + corresponding test script.
+* Added "twoGroupPermutationTest" (written by @sbsad) + corresponding test script.
+* Added "rowWelchTest" + corresponding test script.
 
 # Version 0.4.11 [2017-02-14]
 

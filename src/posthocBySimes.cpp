@@ -16,6 +16,7 @@ NumericVector pmin2(NumericVector x, double y) {
   return out;
 }
 
+//' @describeIn posthocBySimes Rcpp version
 //' @export
 // [[Rcpp::export]]
 double posthocBySimesRcpp(NumericVector p, NumericVector select, double alpha){

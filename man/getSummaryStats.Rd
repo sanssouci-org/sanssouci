@@ -26,14 +26,10 @@ standard deviations, sample sizes
 }
 \examples{
 
-if (require("multtest")) { 
-  data(golub, package="multtest")
-  stats <- getSummaryStats(golub, categ=golub.cl)
-} else {
-  mat <- matrix(rnorm(3051*38), ncol=38)
-  cls <- rep(c(0, 1), times=c(27, 11))
-  stats <- getSummaryStats(mat, categ=cls)
-} 
+mat <- matrix(rnorm(3051*38), ncol=38)
+cls <- rep(c(0, 1), times=c(27, 11))
+stats <- getSummaryStats(mat, categ=cls)
+
 }
 \author{
 Pierre Neuvial

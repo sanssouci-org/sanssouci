@@ -31,24 +31,18 @@ of equal group variances (standard t-test and not Welch t-test)
 }
 \examples{
 
-if (require("multtest")) { 
-  data(golub, package="multtest")
-  fwt <- fastWelchTest(golub, categ=golub.cl)
-  str(fwt)
-} else {
-  p <- 1e5
-  n <- 38
-  mat <- matrix(rnorm(p*n), ncol=n)
-  cls <- rep(c(0, 1), times=c(27, n-27))
-  fwt <- rowWelchTests(mat, categ=cls)
-  str(fwt)
+p <- 1e3
+n <- 38
+mat <- matrix(rnorm(p*n), ncol=n)
+cls <- rep(c(0, 1), times=c(27, n-27))
+fwt <- rowWelchTests(mat, categ=cls)
+str(fwt)
   
-  # compare with ordinary t.test:
-  pwt <- apply(mat, 1, FUN=function(x) {
-     t.test(x[cls==0], x[cls==1])$p.value
-  })
-  sum(abs(fwt$p.value-pwt))  ## same results
-}
+# compare with ordinary t.test:
+pwt <- apply(mat, 1, FUN=function(x) {
+   t.test(x[cls==0], x[cls==1])$p.value
+})
+sum(abs(fwt$p.value-pwt))  ## same results
 
 }
 \references{
