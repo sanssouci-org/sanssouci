@@ -24,7 +24,7 @@ Perform permutation testing for a two-group model
 }
 \examples{
 
-p <- 3051
+p <- 513
 n <- 38
 mat <- matrix(rnorm(p*n), ncol=n)
 cls <- rep(c(0, 1), times=c(27, n-27))

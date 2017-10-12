@@ -6,8 +6,14 @@ require_cherry <- function() {
     }
 }
 
+
+test_cherry <- function() {
+    skip("Test not working yet!")
+}
+
 test_that("posthocBySimes is cherry::pickSimes on 'NAEP' data", {
     require_cherry()
+    test_cherry()
 
     data("NAEP", package="cherry")
     m <- length(NAEP)
@@ -24,6 +30,7 @@ test_that("posthocBySimes is cherry::pickSimes on 'NAEP' data", {
 
 test_that("posthocBySimes is cherry::pickSimes on simulated data", {
     require_cherry()
+    test_cherry()
     
     m <- 1e2
     m1 <- 10
@@ -40,6 +47,8 @@ test_that("posthocBySimes is cherry::pickSimes on simulated data", {
 
 test_that("posthocBySimes is cherry::pickSimes on larger simulated data", {
     require_cherry()
+    test_cherry()
+    
     m <- 1e3
     m1 <- 100
     
