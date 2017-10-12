@@ -59,6 +59,11 @@ partialColSortDescCpp <- function(X, k) {
     .Call('_sansSouci_partialColSortDescCpp', PACKAGE = 'sansSouci', X, k)
 }
 
+#' @export
+posthocBySimesRcpp <- function(p, select, alpha) {
+    .Call('_sansSouci_posthocBySimesRcpp', PACKAGE = 'sansSouci', p, select, alpha)
+}
+
 #' Sorting of the rows of a matrix by descending order
 #'
 #' @param X A numeric matrix.
