@@ -3,7 +3,7 @@ library("listenv")
 ##computeNodes <- c("cauchy", "leibniz", "bolzano", "shannon", "euler", "hamming", "bernoulli")
 #plan(remote, workers = rep("bernoulli", 100))
 #plan(eager)
-#plan(multiprocess, workers = 100)
+plan(multiprocess, workers = 100)
 
 res <- listenv()
 for (ii in 1:nrow(configs)) {
@@ -51,12 +51,8 @@ for (ii in 1:nrow(configs)) {
 }
 
 ## tidy results and save to single file
-<<<<<<< HEAD
 rpath <- file.path("~/Documents/Packages/sanssouci", path)
 fls <- list.files(rpath, full.names=TRUE)
-=======
-fls <- list.files(path, full.names=TRUE)
->>>>>>> 2c5c33cd9179e17f9a30991eb8dd1ca4f061c882
 fls <- fls[-grep("molten", fls)]
 id <- gsub(".rds$", "", basename(fls))
 names(fls) <- id

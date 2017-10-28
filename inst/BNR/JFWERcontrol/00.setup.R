@@ -12,7 +12,7 @@ alphas <- c(0.25)
 
 m <- 1e3
 B <- 1e3
-nbSimu <- 1e2
+nbSimu <- 1e3
 
 pname <- sprintf("m=%s,B=%s,nbSimu=%s", m, B, nbSimu)
 resPath <- "resData"
