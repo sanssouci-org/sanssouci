@@ -17,7 +17,10 @@ twoGroupPermutationTest(X, cls, B, seed = NULL)
 generation. If \code{NULL}, no seed is specified.}
 }
 \value{
-a list with two
+a list with two elements: \describe{
+\item{p}{A vector of \eqn{m} \eqn{p}-values}
+\item{p0}{A \eqn{m \times B} vector of permutation \eqn{p}-values}
+}
 }
 \description{
 Perform permutation testing for a two-group model
@@ -30,8 +33,8 @@ mat <- matrix(rnorm(p*n), ncol=n)
 cls <- rep(c(0, 1), times=c(27, n-27))
 resPerm <- twoGroupPermutationTest(X=mat, cls=cls, B=1000, seed=123)
 
-#alpha <- 0.05
-#res <- jointFWERControl(-resPerm$P, refFamily="Simes", alpha=alpha, stat=-resPerm$Pstar)
+alpha <- 0.05
+res <- jointFWERControl(-resPerm$p, refFamily="Simes", alpha=alpha, stat=-resPerm$p0)
 
 }
 \references{

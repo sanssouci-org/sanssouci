@@ -1,5 +1,6 @@
-# Version 0.4.12 [2017-10-11]
+# Version 0.4.12 [2017-10-28]
 
+* Added simulateEquiByGroupPermutation.
 * Added C++ verson of postHocBySimes (written by @sbsad) + corresponding test script.
 * Added "twoGroupPermutationTest" (written by @sbsad) + corresponding test script.
 * Added "rowWelchTest" + corresponding test script.

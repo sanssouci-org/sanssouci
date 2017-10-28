@@ -12,7 +12,10 @@
 #' @references Ge, Y., Dudoit, S. and Speed, T.P., 2003. Resampling-based
 #'   multiple testing for microarray data analysis. _Test_, 12(1), pp.1-77.
 #'   
-#' @return a list with two 
+#' @return a list with two elements: \describe{
+#' \item{p}{A vector of \eqn{m} \eqn{p}-values}
+#' \item{p0}{A \eqn{m \times B} vector of permutation \eqn{p}-values}
+#' }
 #' 
 #' @examples
 #' 
@@ -22,8 +25,8 @@
 #' cls <- rep(c(0, 1), times=c(27, n-27))
 #' resPerm <- twoGroupPermutationTest(X=mat, cls=cls, B=1000, seed=123)
 #' 
-#' #alpha <- 0.05
-#' #res <- jointFWERControl(-resPerm$P, refFamily="Simes", alpha=alpha, stat=-resPerm$Pstar)
+#' alpha <- 0.05
+#' res <- jointFWERControl(-resPerm$p, refFamily="Simes", alpha=alpha, stat=-resPerm$p0)
 #'
 #' @importFrom matrixStats rowRanks
 #' @export
@@ -34,7 +37,7 @@ twoGroupPermutationTest <- function(X, cls, B, seed=NULL){
     if (length(cls) != n) {
         stop("The number of columns of argument 'X' should match the length of argument 'cls'")
     }
-    if (!all(unique(cls)==c(0,1))) {
+    if (!all(sort(unique(cls))==c(0,1))) {
         stop("Argument 'cls' should contain (only) 0:s and 1:s")
     }
     if (!is.null(seed)) {
@@ -59,16 +62,7 @@ twoGroupPermutationTest <- function(X, cls, B, seed=NULL){
     ## get permutation test statistic
     for (bb in 1:B){
         cls_perm <- sample(cls, length(cls))
-        #Tb <- genefilter::fastT(X, which(cls_perm==0), which(cls_perm==1), 
-        #                        var.equal=FALSE)$z
         Tb <- rowWelchTests(X, cls_perm)$statistic
-        
-        # ## rowttests if we know var.equal=TRUE
-        # Tb <- genefilter::rowttests(X, factor(cls_perm), tstatOnly=TRUE)
-        
-        # ## For a data-driven approach, but longer
-        # fcls <- factor(cls_perm)
-        # Tb <- apply(X, 1, function(j) t.test(j ~ fcls)$statistic)
         T[, bb] <- Tb
     }
     
@@ -79,6 +73,6 @@ twoGroupPermutationTest <- function(X, cls, B, seed=NULL){
     ## get m x B matrix of pvalues under the null
     ## by sorting null test statistics as proposed by Ge et al (2003)
     pB <- rowRanks(-abs(T))/B
-    return(list(Pstar=p, P=pB))
+    return(list(p=p, p0=pB))
 }
 
