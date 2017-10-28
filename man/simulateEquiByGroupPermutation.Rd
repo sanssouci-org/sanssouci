@@ -18,22 +18,21 @@ simulateEquiByGroupPermutation(m, rho, n, B, pi0, SNR = 1, p = 0.5,
 
 \item{pi0}{Proportion of true null hypotheses}
 
-\item{SNR}{Signal to noise ratio. Either a numeric value (a measure of
+\item{SNR}{Signal to noise ratio. Either a numeric value (a measure of 
 distance between H0 and H1) or a vector of length \code{m*(1-pi0)}}
 
 \item{p}{Probability of success of the outcome variable}
 
-\item{w}{An optional vector of length \code{n}, the underlying factor
-driving equi-correlation}
+\item{w}{An optional vector of length \code{n}, the underlying factor driving
+equi-correlation}
 }
 \value{
-A list with elements \describe{
-\item{x}{A vector of length \eqn{m} test statistics}
-\item{X0}{An \eqn{m x B} matrix of test statistics under the null
-hypothesis}
-\item{H}{A vector of length \eqn{m}, the status of each
-hypothesis: 0 for true null hypothesis, and 1 for true alternative
-hypothesis} }
+A list with elements \describe{ \item{x}{A vector of length \eqn{m}
+  test statistics} \item{X0}{An \eqn{m x B} matrix of test statistics under
+  the null hypothesis} \item{H}{A vector of length \eqn{m}, the status of
+  each hypothesis: 0 for true null hypothesis, and 1 for true alternative 
+  hypothesis}} The test statistics are \eqn{\sim N(0,1)}, and \eqn{\sim
+  N(\mu,1)}, with \eqn{\mu>0}
 }
 \description{
 Simulate test statistics in the two-group model
@@ -46,7 +45,7 @@ n <- 100
 pi0 <- 0.5
 B <- 1e3
 
-sim <- simulateEquiByGroupPermutation(m, rho, n, B, pi0, SNR=1)
+sim <- simulateEquiByGroupPermutation(m, rho, n, B, pi0, SNR=2)
 scoreMat <- sim$X0
 stat <- sim$x
 

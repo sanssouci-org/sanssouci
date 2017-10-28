@@ -1,43 +1,42 @@
 #' Simulate test statistics in the two-group model
-#'
+#' 
 #' @param m Number of hypotheses
 #' @param rho Level of equi-correlation between pairs of variables
 #' @param n Number of observations
 #' @param B Number of resamplings to estimate the test statistics
 #' @param pi0 Proportion of true null hypotheses
-#' @param SNR Signal to noise ratio. Either a numeric value (a measure of
-#' distance between H0 and H1) or a vector of length \code{m*(1-pi0)}
+#' @param SNR Signal to noise ratio. Either a numeric value (a measure of 
+#'   distance between H0 and H1) or a vector of length \code{m*(1-pi0)}
 #' @param p Probability of success of the outcome variable
-#' @param w An optional vector of length \code{n}, the underlying factor
-#' driving equi-correlation
-#' @return A list with elements \describe{
-#' \item{x}{A vector of length \eqn{m} test statistics}
-#' \item{X0}{An \eqn{m x B} matrix of test statistics under the null
-#' hypothesis}
-#' \item{H}{A vector of length \eqn{m}, the status of each
-#' hypothesis: 0 for true null hypothesis, and 1 for true alternative
-#' hypothesis} }
+#' @param w An optional vector of length \code{n}, the underlying factor driving
+#'   equi-correlation
+#' @return A list with elements \describe{ \item{x}{A vector of length \eqn{m}
+#'   test statistics} \item{X0}{An \eqn{m x B} matrix of test statistics under
+#'   the null hypothesis} \item{H}{A vector of length \eqn{m}, the status of
+#'   each hypothesis: 0 for true null hypothesis, and 1 for true alternative 
+#'   hypothesis}} The test statistics are \eqn{\sim N(0,1)}, and \eqn{\sim
+#'   N(\mu,1)}, with \eqn{\mu>0}
 #' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 #' @export
 #' @importFrom stats rbinom
 #' @examples
-#'
+#' 
 #' m <- 123
 #' rho <- 0.2
 #' n <- 100
 #' pi0 <- 0.5
 #' B <- 1e3
-#'
+#' 
 #' sim <- simulateEquiByGroupPermutation(m, rho, n, B, pi0, SNR=2)
 #' scoreMat <- sim$X0
 #' stat <- sim$x
-#'
+#' 
 #' ## show test statistics
 #' pch <- 20
 #' colStat <- 1+sim$H
-#' plot(-log10(-stat), col=colStat, main="Test statistics", pch=pch)
+#' plot(stat, col=colStat, main="Test statistics", pch=pch)
 #' legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
-#'
+#' 
 simulateEquiByGroupPermutation <- function(m, rho, n, B, pi0, SNR=1, p=0.5, w=NULL) {
     m0 <- round(m*pi0)
     m1 <- m-m0
@@ -64,7 +63,7 @@ simulateEquiByGroupPermutation <- function(m, rho, n, B, pi0, SNR=1, p=0.5, w=NU
     X <- mu+eps
 
     perm <- twoGroupPermutationTest(X, y, B, seed=NULL)
-    list(x = -perm$p,
-         X0 = -perm$p0,
+    list(x = qnorm(1-perm$p),
+         X0 = qnorm(1-perm$p0),
          H = H)
 }
