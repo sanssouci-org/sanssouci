@@ -22,4 +22,3 @@ calculate the covariance matrix of a factor model
 \author{
 Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 }
-

@@ -18,4 +18,3 @@ The empirical coverage of \code{thr} with respect to \code{mat}.
 \description{
 Empirical coverage of a threshold family
 }
-

@@ -53,4 +53,3 @@ thr <- sk(0.2)
 \author{
 Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 }
-

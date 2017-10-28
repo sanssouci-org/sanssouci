@@ -42,10 +42,12 @@ vignettes/*.pdf
 .Rhistory
 .RData
 .Ruserdata
-inst/doc
 
-png
-
+/inst/doc/
+/png/
+/resData/
+/fig/
+/localTests/
 
 ## OS X
 .DS_Store

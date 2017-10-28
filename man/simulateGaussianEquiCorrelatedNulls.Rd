@@ -41,4 +41,3 @@ summary(covmat)
 \author{
 Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 }
-

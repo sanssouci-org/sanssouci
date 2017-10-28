@@ -1,6 +1,6 @@
-##' posthocBySimes
+##' post hoc bound obtained from Simes' inequality
 ##'
-##' Lower bound on the number of correct rejections using Simes' threshold
+##' Lower bound on the number of correct rejections using Simes' reference
 ##' family
 ##'
 ##' If (R_k)_k provides jFWER control at level \eqn{\alpha} then with
@@ -17,6 +17,8 @@
 ##'  correct rejections within the selected hypotheses
 ##' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 ##' @export
+##' @describeIn posthocBySimes R version
+##' 
 ##' @examples
 ##' m <- 1e3
 ##' m1 <- 200
@@ -26,12 +28,12 @@
 ##'   hom <- hommelFast(p)
 ##'   pickSimes(hom, R, silent=TRUE)
 ##' }
-##' posthocBySimes(p, R)
-
-posthocBySimes <- function(p, select, alpha=0.05, verbose=FALSE) {
+##' alpha <- 0.10
+##' posthocBySimes(p, R, alpha=alpha)
+##' posthocBySimesRcpp(p, R, alpha=alpha)
+##'
+posthocBySimes <- function(p, select, alpha, verbose=FALSE) {
     m <- length(p)
-    o <- order(p)
-    po <- p[o]
     nR <- length(select)
     tSimes <- alpha*1:nR/m
     pR <- p[select]

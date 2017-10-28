@@ -22,4 +22,3 @@ the pivotal statistic \eqn{s_k} for the balanced threshold family introduced by 
 \description{
 Pivotal statistic for the balanced threshold family of BNR
 }
-

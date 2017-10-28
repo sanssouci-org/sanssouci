@@ -17,4 +17,3 @@ A numeric matrix whose rows are sorted by descending order.
 \description{
 Sorting of the rows of a matrix by descending order
 }
-

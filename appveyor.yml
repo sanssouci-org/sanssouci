@@ -37,7 +37,7 @@ install:
 
 build_script:
   - echo Current directory=%CD%
-  - travis-tool.sh install_r R.utils knitr xtable rmarkdown testthat matrixStats Matrix Rcpp cherry
+  - travis-tool.sh install_r R.utils knitr xtable rmarkdown testthat matrixStats Matrix Rcpp RcppArmadillo rbenchmark cherry
 
 test_script:
   - travis-tool.sh run_tests

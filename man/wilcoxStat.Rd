@@ -24,4 +24,3 @@ Calculation of Wilcoxon sum rank test statistic
 \author{
 Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 }
-

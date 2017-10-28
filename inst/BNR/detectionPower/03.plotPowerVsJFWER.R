@@ -105,7 +105,7 @@ q <- q +  theme_bw() + theme(panel.grid.major = element_line(colour = "grey90"),
                              axis.text=element_text(size=sz),
                              strip.text = element_text(size=sz))
 q <- q + scale_x_continuous(breaks=round(bs, 2), minor_breaks=NULL, limits = range(bs))
-q <- q + scale_y_continuous(breaks=round(rs, 2), minor_breaks=NULL, limits = range(rs))
+q <- q + scale_y_continuous(breaks=round(rs, 2), minor_breaks=NULL, limits = c(0, max(rs)))
 q <- q + scale_colour_manual(values = pal)
 q <- q + annotate("text", x = 0.555, y = 0.14, label = "FDR/FWER", angle=11)
 q <- q + annotate("text", x = 0.555, y = 0.025, label = "HC", angle=22)

@@ -7,5 +7,7 @@
 ^appveyor\.yml$
 appveyor.yml
 
-resData
-fig
+^resData$
+^fig$
+^localTests$
+^docs$
