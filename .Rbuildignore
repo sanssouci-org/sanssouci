@@ -10,3 +10,4 @@ appveyor.yml
 ^resData$
 ^fig$
 ^localTests$
+^docs$
