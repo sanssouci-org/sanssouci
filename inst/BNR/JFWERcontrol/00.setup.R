@@ -6,13 +6,13 @@ sname <- sprintf("%s,%s", sname0, ptag)
 
 deps <- c(0, 0.2, 0.4) ## correlation coefficient
 pi0s <- c(0.8, 0.9, 0.99, 0.999)
-SNRs <- c(0, 1, 2, 3, 4, 5)
+SNRs <- c(0, 1, 2, 3, 4, 5)[c(1, 3, 6)]
 
 alphas <- c(0.25)
 
-m <- 2e3
-B <- 5e3
-nbSimu <- 1e3
+m <- 1e3
+B <- 1e3
+nbSimu <- 1e2
 
 pname <- sprintf("m=%s,B=%s,nbSimu=%s", m, B, nbSimu)
 resPath <- "resData"

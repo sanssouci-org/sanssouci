@@ -6,7 +6,6 @@ require_cherry <- function() {
     }
 }
 
-
 test_cherry <- function() {
     skip("Test not working yet!")
 }

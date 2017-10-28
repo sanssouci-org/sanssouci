@@ -1,4 +1,4 @@
-testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alphas, flavor=c("equi", "Mein2006", "Toeplitz"), kMaxs=m, trace=FALSE) {
+testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alphas, flavor=c("equi", "Mein2006", "Toeplitz", "equi-perm"), kMaxs=m, trace=FALSE) {
     flavor <- match.arg(flavor)
     if (is.character(SNR)) {
         pattern <- "Pareto\\(([0-9]),([0-9]),([0-9]))"
@@ -31,6 +31,11 @@ testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alphas, flavor=c("equi"
         pow <- dep
         parName <- "pow"
         sim <- simulateToeplitz(m, pow, B, pi0, SNR=SNR)
+    } else if (flavor=="equi-perm") {
+        n <- 1e2 ## currently hardcoded (and small for speed reasons).
+        p <- 0.5 ## currently hardcoded.
+        rho <- dep
+        system.time(sim <- simulateEquiByGroupPermutation(m, rho, n, B, pi0, SNR=SNR, p=0.5, w=NULL))
     }
     X0 <- sim$X0
     x <- sim$x
