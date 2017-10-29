@@ -22,7 +22,7 @@ for (ii in 1:nrow(configs)) {
     mpathname <- file.path(path, mfilename)
     if (file.exists(pathname)) {
         next;
-    }    x
+    } 
     
     ## using futures =)
     res <- listenv()

@@ -44,7 +44,7 @@ twoGroupPermutationTest <- function(X, cls, B, seed=NULL){
         set.seed(seed)
     }
     m <- nrow(X)
-    T <- matrix(nrow=m, ncol=B)
+    T <- matrix(nrow=m, ncol=B+1)
     
     ## Compute the observed test stat
     
@@ -65,6 +65,7 @@ twoGroupPermutationTest <- function(X, cls, B, seed=NULL){
         Tb <- rowWelchTests(X, cls_perm)$statistic
         T[, bb] <- Tb
     }
+    T[, B+1] <- T_obs
     
     ## get vector of m permutation p-values
     sw <- sweep(abs(T), MARGIN=1, STATS=abs(T_obs), FUN=">=")
@@ -72,7 +73,7 @@ twoGroupPermutationTest <- function(X, cls, B, seed=NULL){
     
     ## get m x B matrix of pvalues under the null
     ## by sorting null test statistics as proposed by Ge et al (2003)
-    pB <- rowRanks(-abs(T))/B
+    pB <- rowRanks(-abs(T))/(B+1)
     return(list(p=p, p0=pB))
 }
 
