@@ -35,7 +35,7 @@ testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alphas, flavor=c("equi"
         n <- 1e2 ## currently hardcoded (and small for speed reasons).
         p <- 0.5 ## currently hardcoded.
         rho <- dep
-        system.time(sim <- simulateEquiByGroupPermutation(m, rho, n, B, pi0, SNR=SNR, p=0.5, w=NULL))
+        sim <- simulateEquiByGroupPermutation(m, rho, n, B, pi0, SNR=SNR, p=0.5, w=NULL)
     }
     X0 <- sim$X0
     x <- sim$x
