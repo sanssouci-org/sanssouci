@@ -10,9 +10,9 @@ SNRs <- c(0, 1, 2, 3, 4, 5)[c(1, 3, 6)]
 
 alphas <- c(0.25)
 
-m <- 1e3
-B <- 2e3
-nbSimu <- 1e2
+m <- 1e2
+B <- 1e3
+nbSimu <- 20
 
 pname <- sprintf("m=%s,B=%s,nbSimu=%s", m, B, nbSimu)
 resPath <- "resData"

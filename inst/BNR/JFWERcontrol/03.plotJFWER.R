@@ -1,12 +1,19 @@
-filename <- sprintf("%s,%s.rds", sname, pname)
+filename <- sprintf("%s,%s,SMC.rds", sname, pname)
 pathname <- file.path(resPath, filename)
 dat <- readRDS(pathname)
 head(dat)
 
-gat <- tidyr::gather(dat, "criterion", "value", JR, detPow, detPow1, v0, estPow, estPow1, powBH5, powBH50, pow0)
+#gat <- tidyr::gather(dat, "criterion", "value", JR, detPow, detPow1, v0, estPow, estPow1, powBH5, powBH50, pow0)
 
+stratif <- FALSE
 ## some reshaping
-datC <- subset(gat, criterion=="JR" & pi0<0.999)
+if (stratif) {
+    gat <- tidyr::gather(dat, "criterion", "value", "sJR")
+    datC <- subset(gat, criterion=="sJR" & pi0<0.999)
+} else {
+    gat <- tidyr::gather(dat, "criterion", "value", "JR")
+    datC <- subset(gat, criterion=="JR" & pi0<0.999)
+}
 datC$family <- factor(datC$family, 
                       levels=c("kFWER", "Simes"), 
                       labels=c("Balanced", "Linear"))
@@ -26,6 +33,9 @@ date <- Sys.Date()
 figPath <- file.path("fig", sprintf("BNR,%s,%s", ptag, date))
 figPath <- R.utils::Arguments$getWritablePath(figPath)
 pname2 <- gsub("0\\.", "", pname)  ## to avoid '.' in LaTeX file names
+if (stratif) {
+    pname2 <- sprintf("%s,SMC", pname2)
+}
 
 ## plot various statistics vs nominal JFWER
 library("ggplot2")
