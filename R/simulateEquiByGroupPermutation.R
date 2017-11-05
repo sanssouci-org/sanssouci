@@ -63,7 +63,7 @@ simulateEquiByGroupPermutation <- function(m, rho, n, B, pi0, SNR=1, p=0.5, w=NU
     X <- mu+eps
 
     perm <- twoGroupPermutationTest(X, y, B, seed=NULL)
-    list(x = qnorm(1-perm$p),
-         X0 = qnorm(1-perm$p0),
+    list(x = qnorm(1-perm$p),    # map to N(0,1), cf issue #2
+         X0 = qnorm(1-perm$p0),  # map to N(0,1), cf issue #2
          H = H)
 }
