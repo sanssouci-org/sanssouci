@@ -70,7 +70,7 @@ for (ii in 1:nrow(confs)) {
                         labeller=label_bquote(
                             rows= pi[0]==.(pi0),
                             cols= rho==.(rho)))
-    p <- p + scale_y_continuous(limits = c(0, 0.3))
+#    p <- p + scale_y_continuous(limits = c(0, 0.3))
     p <- p + labs(color=sprintf("%s family", fam))
     p <- p + geom_point()
     p <- p + labs(y="JER", x=expression(bar(mu)))
