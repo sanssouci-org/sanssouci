@@ -4,7 +4,7 @@ library("listenv")
 #plan(remote, workers = rep("bernoulli", 100))
 #plan(eager)
 
-plan(multiprocess, workers = 30)
+plan(multiprocess, workers = 3)
 #res <- listenv()
 for (ii in 1:nrow(configs)) {
     pi0 <- configs[ii, "pi0"]
@@ -37,7 +37,7 @@ for (ii in 1:nrow(configs)) {
                 stopifnot(file.exists(pathname))
                 source(pathname); rm(pathname)
                 testStepDown(m, dep, B, pi0, SNR, "constant", alphas, kMaxs=kMaxs, flavor="equi-perm")
-            }
+                }
         }
         ## summarize into JFWER and Power estimates
         mres <- reshape2::melt(as.list(res))  ## how to do this with purrr::map or friends?

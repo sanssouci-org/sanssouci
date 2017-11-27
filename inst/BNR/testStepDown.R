@@ -36,6 +36,10 @@ testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alphas, flavor=c("equi"
         p <- 0.5 ## currently hardcoded.
         rho <- dep
         sim <- simulateEquiByGroupPermutation(m, rho, n, B, pi0, SNR=SNR, p=0.5, w=NULL)
+    } else if (flavor=="equi-sf") {
+        n <- 1e2 ## currently hardcoded (and small for speed reasons).
+        rho <- dep
+        sim <- simulateEquiBySignFlipping(m, rho, n, B, pi0, SNR=SNR, w=NULL)
     }
     X0 <- sim$X0
     x <- sim$x

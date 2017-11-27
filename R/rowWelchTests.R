@@ -4,7 +4,7 @@
 #' 
 #' Other functions to perform t-tests on each row of a matrix include:
 #' \code{\link[genefilter]{fastT}}: this function only calculates the test
-#' statistics and not the corresponding of freedom or p-value; 
+#' statistics and not the corresponding degrees of freedom or p-value; 
 #' \code{\link[genefilter]{rowttests}}: this function calculates the test
 #' statistics, degrees of freedom and associated p-value, but only in the case
 #' of equal group variances (standard t-test and not Welch t-test)
