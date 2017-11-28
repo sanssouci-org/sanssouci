@@ -11,7 +11,7 @@
 #' @param SNR Signal to noise ratio. Either a numeric value (a measure of 
 #'   distance between H0 and H1) or a vector of length \code{m*(1-pi0)}
 #' @param p Probability of success of the outcome variable for flavor 
-#'   "two-sample permutation"
+#'   "perm"
 #' @param w An optional vector of length \code{n}, the underlying factor driving
 #'   equi-correlation
 #' @details
@@ -60,7 +60,7 @@
 #' legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
 #' 
 #' ## sign-flipping
-#' sim <- simulateEquiByGroupTransformation(m, rho, n, B, pi0, SNR=2, flavor="perm")
+#' sim <- simulateEquiByGroupTransformation(m, rho, n, B, pi0, SNR=2, flavor="flip")
 #' scoreMat <- sim$X0
 #' stat <- sim$x
 #' 
@@ -75,25 +75,24 @@ simulateEquiByGroupTransformation <- function(m, rho, n, B, pi0,
                                            p.value=FALSE,
                                            SNR=1, p=0.5, w=NULL) {
     m0 <- round(m*pi0)
-    m1 <- m-m0
+    m1 <- m - m0
     H <- rep(c(0, 1), times=c(m0, m1))
-    H0 <- which(H==0)
-    H1 <- which(H==1)
+    H1 <- which(H == 1)
     
     ## sanity checks
-    if (length(SNR)>1) {
+    if (length(SNR) > 1) {
         stopifnot(length(SNR)==m1)
     }
     flavor <- match.arg(flavor)
-    if (flavor=="perm") {
+    if (flavor == "perm") {
         stopifnot(0 < p && p < 1)        
     }
     ## 1.equi-correlated noise
-    eps <- simulateGaussianEquiCorrelatedNulls(m, n=n, rho=rho, w=w)
+    eps <- simulateGaussianEquiCorrelatedNulls(m, n = n, rho = rho, w = w)
     w <- attr(eps, "w")
     
     ## 2. signal
-    mu <- matrix(0, nrow=nrow(eps), ncol=ncol(eps)) ## m x n
+    mu <- matrix(0, nrow = nrow(eps), ncol = ncol(eps)) ## m x n
     if (flavor == "perm") {
         if (m0 < m) {
             y <- rbinom(n, 1, p)     ## binomial response
@@ -101,17 +100,17 @@ simulateEquiByGroupTransformation <- function(m, rho, n, B, pi0,
             mu[H1, w1] <- SNR*sqrt(2*log(n)/n)
         }
         X <- mu + eps   # data: signal + noise
-        tests <- testByTwoSamplePermutation(X, y, B, p.value=p.value, seed=NULL)
+        tests <- testByTwoSamplePermutation(X, y, B, p.value = p.value, seed=NULL)
     } else if (flavor == "flip") {
         if (m0 < m) {
             mu[H1, ] <- SNR*sqrt(2*log(n)/n)
         }
         X <- mu + eps   # data: signal + noise
-        tests <- testBySignFlipping(X, B, p.value=p.value, seed=NULL)
+        tests <- testBySignFlipping(X, B, p.value = p.value, seed = NULL)
     }
     if (p.value) {      # map to N(0,1), cf issue #2
-        res <- list(x = qnorm(1-tests$p),    
-                    X0 = qnorm(1-tests$p0),
+        res <- list(x = qnorm(1 - tests$p),    
+                    X0 = qnorm(1 - tests$p0),
                     H = H)
     } else {
         res <- list(x = tests$T,

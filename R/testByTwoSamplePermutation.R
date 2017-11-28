@@ -44,7 +44,7 @@ testByTwoSamplePermutation <- function(X, cls, B, p.value=TRUE, seed=NULL){
     if (length(cls) != n) {
         stop("The number of columns of argument 'X' should match the length of argument 'cls'")
     }
-    if (!all(sort(unique(cls))==c(0,1))) {
+    if (!all(sort(unique(cls)) == c(0, 1))) {
         stop("Argument 'cls' should contain (only) 0:s and 1:s")
     }
     if (!is.null(seed)) {
@@ -61,21 +61,21 @@ testByTwoSamplePermutation <- function(X, cls, B, p.value=TRUE, seed=NULL){
     T_obs <- rowWelchTests(X, categ = cls)$statistic
     T[, B+1] <- T_obs
     ## get permutation test statistic
-    for (bb in 1:B){
+    for (bb in 1:B) {
         cls_perm <- sample(cls, length(cls))
         Tb <- rowWelchTests(X, categ = cls_perm)$statistic
         T[, bb] <- Tb
     }
     ## Compute the observed test stat
     
-    res <- list(T=T_obs, T0=T[, -(B+1), drop=FALSE])
+    res <- list(T = T_obs, T0 = T[, -(B+1), drop = FALSE])
     if (p.value) {
         ## get m x (B+1) matrix of pvalues under the null (+ original)
         ## by sorting null test statistics as proposed by Ge et al (2003)
-        pB <- rowRanks(-abs(T))/(B+1)
+        pB <- rowRanks(-abs(T)) / (B+1)
 
         res$p <- pB[, B+1]
-        res$p0 <- pB[, -(B+1), drop=FALSE]
+        res$p0 <- pB[, -(B+1), drop = FALSE]
     }
     return(res)
 }
