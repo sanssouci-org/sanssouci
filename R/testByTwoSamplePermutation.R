@@ -30,7 +30,7 @@
 #' n <- 38
 #' mat <- matrix(rnorm(p*n), ncol=n)
 #' cls <- rep(c(0, 1), times=c(27, n-27))
-#' resPerm <- testByTwoSamplePermutation(X=mat, cls=cls, B=1000, seed=123)
+#' resPerm <- testByTwoSamplePermutation(X=mat, cls=cls, B=1000)
 #' 
 #' alpha <- 0.05
 #' res <- jointFWERControl(resPerm$T0, refFamily="Simes", alpha=alpha, stat=-resPerm$T)
@@ -70,15 +70,11 @@ testByTwoSamplePermutation <- function(X, cls, B, p.value=TRUE, seed=NULL){
     
     res <- list(T=T_obs, T0=T[, -(B+1), drop=FALSE])
     if (p.value) {
-        ## get vector of m permutation p-values
-        sw <- sweep(abs(T), MARGIN=1, STATS=abs(T_obs), FUN=">=")
-        p <- rowMeans(sw)
-        
         ## get m x (B+1) matrix of pvalues under the null (+ original)
         ## by sorting null test statistics as proposed by Ge et al (2003)
         pB <- rowRanks(-abs(T))/(B+1)
 
-        res$p <- p[, B+1]
+        res$p <- pB[, B+1]
         res$p0 <- pB[, -(B+1), drop=FALSE]
     }
     return(res)

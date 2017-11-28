@@ -39,9 +39,10 @@ testBySignFlipping <- function(X, B, p.value=TRUE, seed=NULL){
     m <- nrow(X)
     T <- matrix(nrow=m, ncol=B+1)
     
-    ## Compute the observed test stat
-    T_obs <- rowSums(X)/sqrt(n)
-
+    ## get original test statistics
+    T_obs <- rowWelchTests(X, categ = cls)$statistic
+    T[, B+1] <- T_obs
+    
     ## get permutation test statistic
     for (bb in 1:B){
         eps <- rbinom(n, 1, prob = 0.5)*2-1  ## signs
@@ -52,17 +53,13 @@ testBySignFlipping <- function(X, B, p.value=TRUE, seed=NULL){
     T[, B+1] <- T_obs
     res <- list(T=T_obs, T0=T[, -(B+1), drop=FALSE])
     if (p.value) {
-        ## get vector of m permutation p-values
-        sw <- sweep(abs(T), MARGIN=1, STATS=abs(T_obs), FUN=">=")
-        p <- rowMeans(sw)
-        
         ## get m x B matrix of pvalues under the null
         ## by sorting null test statistics as proposed by Ge et al (2003)
         ## in a permutation context
         pB <- rowRanks(-abs(T))/(B+1)
-
-        res$p <- p
-        res$p0 <- pB
+        
+        res$p <- pB[, B+1]
+        res$p0 <- pB[, -(B+1), drop=FALSE]
     }
     return(res)
 }

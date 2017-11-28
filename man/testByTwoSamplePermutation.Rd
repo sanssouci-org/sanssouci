@@ -39,7 +39,7 @@ p <- 513
 n <- 38
 mat <- matrix(rnorm(p*n), ncol=n)
 cls <- rep(c(0, 1), times=c(27, n-27))
-resPerm <- testByTwoSamplePermutation(X=mat, cls=cls, B=1000, seed=123)
+resPerm <- testByTwoSamplePermutation(X=mat, cls=cls, B=1000)
 
 alpha <- 0.05
 res <- jointFWERControl(resPerm$T0, refFamily="Simes", alpha=alpha, stat=-resPerm$T)
