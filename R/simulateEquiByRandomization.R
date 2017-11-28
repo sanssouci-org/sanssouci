@@ -1,11 +1,11 @@
-#' Simulate test statistics by group transformation
+#' Simulate equi-correlated test statistics by randomization
 #' 
 #' @param m Number of hypotheses
 #' @param rho Level of equi-correlation between pairs of variables
 #' @param n Number of observations
 #' @param B Number of resamplings to estimate the test statistics
 #' @param pi0 Proportion of true null hypotheses
-#' @param flavor A character value, the type of group transformation to be
+#' @param flavor A character value, the type of randomization to be
 #'   performed. Should either be "perm" for two-sample permutation or "flip" for
 #'   sign flipping
 #' @param SNR Signal to noise ratio. Either a numeric value (a measure of 
@@ -49,7 +49,7 @@
 #' B <- 1e3
 #' 
 #' ## two-sample permutation
-#' sim <- simulateEquiByGroupTransformation(m, rho, n, B, pi0, SNR=2, flavor="perm")
+#' sim <- simulateEquiByRandomization(m, rho, n, B, pi0, SNR=2, flavor="perm")
 #' scoreMat <- sim$X0
 #' stat <- sim$x
 #' 
@@ -60,7 +60,7 @@
 #' legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
 #' 
 #' ## sign-flipping
-#' sim <- simulateEquiByGroupTransformation(m, rho, n, B, pi0, SNR=2, flavor="flip")
+#' sim <- simulateEquiByRandomization(m, rho, n, B, pi0, SNR=2, flavor="flip")
 #' scoreMat <- sim$X0
 #' stat <- sim$x
 #' 
@@ -70,7 +70,7 @@
 #' plot(stat, col=colStat, main="Test statistics", pch=pch)
 #' legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
 #' 
-simulateEquiByGroupTransformation <- function(m, rho, n, B, pi0, 
+simulateEquiByRandomization <- function(m, rho, n, B, pi0, 
                                            flavor=c("perm", "flip"),
                                            p.value=FALSE,
                                            SNR=1, p=0.5, w=NULL) {
@@ -93,21 +93,20 @@ simulateEquiByGroupTransformation <- function(m, rho, n, B, pi0,
     
     ## 2. signal
     mu <- matrix(0, nrow = nrow(eps), ncol = ncol(eps)) ## m x n
-    if (flavor == "perm") {
-        if (m0 < m) {
+    if (m0 < m) {
+        signal <- SNR*sqrt(2*log(n)/n)
+        if (flavor == "perm") {
             y <- rbinom(n, 1, p)     ## binomial response
             w1 <- which(y == 1)
-            mu[H1, w1] <- SNR*sqrt(2*log(n)/n)
+            mu[H1, w1] <- signal
+        } else if (flavor == "flip") {
+            mu[H1, ] <- signal
         }
-        X <- mu + eps   # data: signal + noise
-        tests <- testByTwoSamplePermutation(X, y, B, p.value = p.value, seed=NULL)
-    } else if (flavor == "flip") {
-        if (m0 < m) {
-            mu[H1, ] <- SNR*sqrt(2*log(n)/n)
-        }
-        X <- mu + eps   # data: signal + noise
-        tests <- testBySignFlipping(X, B, p.value = p.value, seed = NULL)
     }
+    
+    X <- mu + eps   # data: signal + noise
+    tests <- testByRandomization(X, B, flavor = flavor, y, p.value = p.value)
+
     if (p.value) {      # map to N(0,1), cf issue #2
         res <- list(x = qnorm(1 - tests$p),    
                     X0 = qnorm(1 - tests$p0),

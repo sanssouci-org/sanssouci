@@ -1,4 +1,4 @@
-context("Calculation of permutation p-values")
+context("Calculation of randomization p-values")
 
 p <- 513
 n <- 38
@@ -6,7 +6,8 @@ mat <- matrix(rnorm(p*n), ncol = n)
 
 
 cls <- rep(c(0, 1), times = c(27, n - 27))
-res <- testByTwoSamplePermutation(X = mat, cls = cls, B = 1000)
+res <- testByRandomization(X = mat, B = 1000, flavor = "perm", cls = cls)
+rm(cls)
 
 test_that("Two different ways of getting permutation p-values give identical results", {
     
@@ -18,9 +19,6 @@ test_that("Two different ways of getting permutation p-values give identical res
 
 test_that("Correctness of permutation p-values", {
 
-    cls <- rep(c(0, 1), times = c(27, n-27))
-    res <- testByTwoSamplePermutation(X = mat, cls = cls, B = 1000)
-    
     ## stochastic domination by Uniform distribution
     for (alpha in c(0.01, 0.05, 0.1, 0.2, 0.5)) {
         cs <- colSums(res$p0<=alpha)
@@ -28,7 +26,7 @@ test_that("Correctness of permutation p-values", {
     }    
 })
 
-res <- testBySignFlipping(X = mat, B = 1000)
+res <- testByRandomization(X = mat, B = 1000, flavor = "flip")
 
 test_that("Two different ways of getting sign flipping p-values give identical results", {
     T0 <- cbind(res$T0, res$T)

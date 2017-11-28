@@ -10,7 +10,7 @@ test_that("suffWelchTest gives identical results to welch.test", {
 
     # Ordinary Welch t-test (reasonably fast for 1000 tests)
     wt <- apply(mat, 1, FUN=function(x) {
-        tt <- t.test(x[cls == 0], x[cls == 1])
+        tt <- t.test(x[cls == 1], x[cls == 0])  ## test stat positive if "1 > 0"
         c(tt$p.value, tt$statistic, tt$parameter)
     })
     dwt <- as.data.frame(t(wt))

@@ -37,7 +37,7 @@
 #'   
 #' # compare with ordinary t.test:
 #' pwt <- apply(mat, 1, FUN=function(x) {
-#'    t.test(x[cls==0], x[cls==1])$p.value
+#'    t.test(x[cls==1], x[cls==0])$p.value
 #' })
 #' sum(abs(fwt$p.value-pwt))  ## same results
 #' 
@@ -47,8 +47,8 @@ rowWelchTests <- function(mat, categ=colnames(mat)) {
         stop("Two categories expected!")
     }
     sstats <- getSummaryStats(mat, categ = categ)
-    X <- sstats[[1]]
-    Y <- sstats[[2]]
+    X <- sstats[[2]]
+    Y <- sstats[[1]]
     swt <- suffWelchTest(X[["mean"]], Y[["mean"]],
                            X[["sd"]], Y[["sd"]],
                            X[["n"]], Y[["n"]])
