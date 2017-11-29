@@ -24,7 +24,7 @@ Welch t-tests for each row of a matrix, intended to be speed efficient
 \details{
 Other functions to perform t-tests on each row of a matrix include:
 \code{\link[genefilter]{fastT}}: this function only calculates the test
-statistics and not the corresponding of freedom or p-value; 
+statistics and not the corresponding degrees of freedom or p-value; 
 \code{\link[genefilter]{rowttests}}: this function calculates the test
 statistics, degrees of freedom and associated p-value, but only in the case
 of equal group variances (standard t-test and not Welch t-test)
@@ -40,7 +40,7 @@ str(fwt)
   
 # compare with ordinary t.test:
 pwt <- apply(mat, 1, FUN=function(x) {
-   t.test(x[cls==0], x[cls==1])$p.value
+   t.test(x[cls==1], x[cls==0])$p.value
 })
 sum(abs(fwt$p.value-pwt))  ## same results
 

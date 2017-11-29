@@ -4,7 +4,7 @@ library("listenv")
 #plan(remote, workers = rep("bernoulli", 100))
 #plan(eager)
 
-plan(multiprocess, workers = 100)
+plan(multiprocess, workers = 10)
 #res <- listenv()
 for (ii in 1:nrow(configs)) {
     pi0 <- configs[ii, "pi0"]

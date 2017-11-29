@@ -6,13 +6,14 @@ head(dat)
 #gat <- tidyr::gather(dat, "criterion", "value", JR, detPow, detPow1, v0, estPow, estPow1, powBH5, powBH50, pow0)
 
 for (stratif in c(TRUE, FALSE)) {
+
 ## some reshaping
 if (stratif) {
     gat <- tidyr::gather(dat, "criterion", "value", "sJR")
-    datC <- subset(gat, criterion=="sJR" & pi0<0.999)
+    datC <- subset(gat, criterion=="sJR" & pi0 < 0.999)
 } else {
     gat <- tidyr::gather(dat, "criterion", "value", "JR")
-    datC <- subset(gat, criterion=="JR" & pi0<0.999)
+    datC <- subset(gat, criterion=="JR" & pi0 < 0.999)
 }
 datC$family <- factor(datC$family, 
                       levels=c("kFWER", "Simes"), 

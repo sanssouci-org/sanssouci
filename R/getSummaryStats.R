@@ -26,7 +26,7 @@
 #' 
 getSummaryStats <- function(mat, categ=colnames(mat)) {
     stopifnot(ncol(mat) == length(categ))
-    cats <- unique(categ)
+    cats <- sort(unique(categ))
     res <- list()
     for (cc in seq(along=cats)) {
         ww <- which(categ==cats[cc])
