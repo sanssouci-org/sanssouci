@@ -5,7 +5,7 @@ head(dat)
 
 #gat <- tidyr::gather(dat, "criterion", "value", JR, detPow, detPow1, v0, estPow, estPow1, powBH5, powBH50, pow0)
 
-stratif <- FALSE
+for (stratif in c(TRUE, FALSE)) {
 ## some reshaping
 if (stratif) {
     gat <- tidyr::gather(dat, "criterion", "value", "sJR")
@@ -28,7 +28,7 @@ datC$kMaxC <- kc
 
 datC$ff <- datC$flavor
 
-figName <- sname0
+figName <- sprintf("%s,%s", sname0, simFlavor)
 date <- Sys.Date()
 figPath <- file.path("fig", sprintf("BNR,%s,%s", ptag, date))
 figPath <- R.utils::Arguments$getWritablePath(figPath)
@@ -88,3 +88,4 @@ for (ii in 1:nrow(confs)) {
     dev.off()
 }
 
+}

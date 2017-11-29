@@ -4,7 +4,7 @@ library("listenv")
 #plan(remote, workers = rep("bernoulli", 100))
 #plan(eager)
 
-plan(multiprocess, workers = 30)
+plan(multiprocess, workers = 100)
 #res <- listenv()
 for (ii in 1:nrow(configs)) {
     pi0 <- configs[ii, "pi0"]
@@ -36,7 +36,7 @@ for (ii in 1:nrow(configs)) {
                 pathname <- system.file("BNR/testStepDown.R", package="sansSouci")
                 stopifnot(file.exists(pathname))
                 source(pathname); rm(pathname)
-                testStepDown(m, dep, B, pi0, SNR, "constant", alphas, kMaxs=kMaxs, flavor="equi-perm")
+                testStepDown(m, dep, B, pi0, SNR, "constant", alphas, kMaxs=kMaxs, flavor=simFlavor)
             }
         }
         ## summarize into JFWER and Power estimates
