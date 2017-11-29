@@ -42,9 +42,6 @@ str(fwt)
 pwt <- apply(mat, 1, FUN=function(x) {
    t.test(x[cls==1], x[cls==0])$p.value
 })
-swt <- apply(mat, 1, FUN=function(x) {
-   t.test(x[cls==1], x[cls==0])$statistic
-})
 sum(abs(fwt$p.value-pwt))  ## same results
 
 }

@@ -36,7 +36,6 @@ simulateEqui <- function(m, rho, B, pi0, SNR=1){
     m1 <- m-m0
     H <- rep(c(0, 1), times=c(m0, m1))
     H <- sample(H)
-    H0 <- which(H==0)
     H1 <- which(H==1)
     if (length(SNR)>1) {
         stopifnot(length(SNR)==m1)

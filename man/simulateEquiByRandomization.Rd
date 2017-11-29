@@ -12,7 +12,7 @@ simulateEquiByRandomization(m, rho, n, B, pi0, flavor = c("perm", "flip"),
 
 \item{rho}{Level of equi-correlation between pairs of variables}
 
-\item{n}{Number of observations}
+\item{n}{Number of observations, i.e. sample size}
 
 \item{B}{Number of resamplings to estimate the test statistics}
 
@@ -22,40 +22,40 @@ simulateEquiByRandomization(m, rho, n, B, pi0, flavor = c("perm", "flip"),
 performed. Should either be "perm" for two-sample permutation or "flip" for
 sign flipping}
 
-\item{SNR}{Signal to noise ratio. Either a numeric value (a measure of 
+\item{SNR}{Signal to noise ratio. Either a numeric value (a measure of
 distance between H0 and H1) or a vector of length \code{m*(1-pi0)}}
 
-\item{p}{Probability of success of the outcome variable for flavor 
+\item{p}{Probability of success of the outcome variable for flavor
 "perm"}
 
 \item{w}{An optional vector of length \code{n}, the underlying factor driving
 equi-correlation}
 }
 \value{
-A list with elements \describe{ \item{x}{A vector of length \eqn{m} 
-  test statistics} \item{X0}{An \eqn{m x B} matrix of test statistics under 
-  the null hypothesis} \item{H}{A vector of length \eqn{m}, the status of 
-  each hypothesis: 0 for true null hypothesis, and 1 for true alternative 
-  hypothesis}} The test statistics are \eqn{\sim N(0,1)}, and \eqn{\sim 
+A list with elements \describe{ \item{x}{A vector of length \eqn{m}
+  test statistics} \item{X0}{An \eqn{m x B} matrix of test statistics under
+  the null hypothesis} \item{H}{A vector of length \eqn{m}, the status of
+  each hypothesis: 0 for true null hypothesis, and 1 for true alternative
+  hypothesis}} The test statistics are \eqn{\sim N(0,1)}, and \eqn{\sim
   N(\mu,1)}, with \eqn{\mu>0}
 }
 \description{
 Simulate equi-correlated test statistics by randomization
 }
 \details{
-For flavor "two-sample", we test the null hypothesis: "both groups have the 
-same mean" against the one-sided alternative that the mean is larger in the 
+For flavor "two-sample", we test the null hypothesis: "both groups have the
+same mean" against the one-sided alternative that the mean is larger in the
 second group. We use a Student test statistic, although other statistics such
 as the Mann-Whitney statistic could be used as well. Permuted test statistics
-are calculated by B permutations of the group labels. Corresponding observed 
-and permuted p-values are calculated as the proportion of permutations 
+are calculated by B permutations of the group labels. Corresponding observed
+and permuted p-values are calculated as the proportion of permutations
 (including the identity) for which the permuted test statistic is larger than
 the observed test statistic.
 
-For flavor "flip", we test the null hypothesis: "the mean is 0" against the 
-two-sided alternative that the mean is larger than 0. We use the (rescaled) 
-empirical mean of the observations as a test statistic. Sign-flipped test 
-statistics are calculated by flipping the sign of each observation with 
+For flavor "flip", we test the null hypothesis: "the mean is 0" against the
+two-sided alternative that the mean is larger than 0. We use the (rescaled)
+empirical mean of the observations as a test statistic. Sign-flipped test
+statistics are calculated by flipping the sign of each observation with
 probability 1/2.
 }
 \examples{
