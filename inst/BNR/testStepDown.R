@@ -1,4 +1,4 @@
-testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alphas, flavor=c("equi", "Mein2006", "Toeplitz", "equi-perm", "equi-flip"), kMaxs=m, trace=FALSE) {
+testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alphas, n=1000, flavor=c("equi", "Mein2006", "Toeplitz", "equi-perm", "equi-flip"), kMaxs=m, trace=FALSE) {
     flavor <- match.arg(flavor)
     if (is.character(SNR)) {
         pattern <- "Pareto\\(([0-9]),([0-9]),([0-9]))"
@@ -23,7 +23,6 @@ testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alphas, flavor=c("equi"
         parName <- "rho"
         sim <- simulateEqui(m, rho, B, pi0, SNR=SNR)
     } else if (flavor=="Mein2006") {
-        n <- 1e3 ## currently hardcoded.
         rho <- dep
         sim <- simulateMein2006(m, rho, n, B, pi0, SNR=SNR)
     } else if (flavor=="Toeplitz") {
@@ -32,12 +31,10 @@ testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alphas, flavor=c("equi"
         parName <- "pow"
         sim <- simulateToeplitz(m, pow, B, pi0, SNR=SNR)
     } else if (flavor=="equi-perm") {
-        n <- 1e4 ## currently hardcoded (and small for speed reasons).
         p <- 0.5 ## currently hardcoded.
         rho <- dep
         sim <- simulateEquiByRandomization(m, rho, n, B, pi0, flavor="perm", p.value= FALSE, SNR=SNR, p=p, w=NULL)
     } else if (flavor=="equi-flip") {
-        n <- 1e2 ## currently hardcoded (and small for speed reasons).
         rho <- dep
         sim <- simulateEquiByRandomization(m, rho, n, B, pi0, flavor="flip", p.value= FALSE, SNR=SNR, p=p, w=NULL)
     }

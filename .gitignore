@@ -48,6 +48,8 @@ vignettes/*.pdf
 /resData/
 /fig/
 /localTests/
+/doc/
+/Rout/
 
 ## OS X
 .DS_Store

@@ -35,7 +35,7 @@
 #' mat <- matrix(rnorm(p*n), ncol=n)
 #' cls <- rep(c(0, 1), times=c(27, n-27))
 #' resPerm <- testByRandomization(X=mat, flavor="perm", cls=cls, B=1000)
-#' resFlip <- testByandomization(X=mat, flavor="flip", B=1000)
+#' resFlip <- testByRandomization(X=mat, flavor="flip", B=1000)
 #' 
 #' # show test statistics null distribution
 #' hist(resPerm$p)
@@ -64,7 +64,6 @@ testByRandomization <- function(X, B, flavor=c("perm", "flip"), cls=NULL, p.valu
         set.seed(seed)
     }
     m <- nrow(X)
-    T <- matrix(nrow = m, ncol = B+1)
     
     if (flavor == "perm") {
         ## TODO: (cf issue #3)
@@ -74,6 +73,7 @@ testByRandomization <- function(X, B, flavor=c("perm", "flip"), cls=NULL, p.valu
         ## observed test statistics
         T_obs <- rowWelchTests(X, categ = cls)$statistic
         ## test statistics under H0
+        T <- matrix(nrow = m, ncol = B)
         for (bb in 1:B) {
             cls_perm <- sample(cls, length(cls))
             Tb <- rowWelchTests(X, categ = cls_perm)$statistic
@@ -83,19 +83,15 @@ testByRandomization <- function(X, B, flavor=c("perm", "flip"), cls=NULL, p.valu
         ## observed test statistics
         T_obs <- rowSums(X)/sqrt(n)
         ## test statistics under H0
-        for (bb in 1:B) {
-            eps <- rbinom(n, 1, prob = 0.5)*2 - 1  ## signs
-            eX <- sweep(X, MARGIN = 2, STATS = eps, FUN = `*`)
-            Tb <- rowSums(eX)/sqrt(n)
-            T[, bb] <- Tb
-        }
+        T <- testBySignFlipping(X, B)
     }
-    T[, B+1] <- T_obs
-    res <- list(T = T_obs, T0 = T[, -(B+1), drop = FALSE])
+
+    res <- list(T = T_obs, T0 = T)
     if (p.value) {
         ## get m x (B+1) matrix of pvalues under the null (+ original)
         ## by sorting null test statistics as proposed by Ge et al (2003)
-        pB <- rowRanks(-abs(T)) / (B+1)
+        TT <- cbind(T, T_obs)
+        pB <- rowRanks(-abs(TT)) / (B+1)
 
         res$p <- pB[, B+1]
         res$p0 <- pB[, -(B+1), drop = FALSE]
@@ -103,3 +99,31 @@ testByRandomization <- function(X, B, flavor=c("perm", "flip"), cls=NULL, p.valu
     return(res)
 }
 
+
+testBySignFlippingR <- function(X, B) {
+    m <- nrow(X)
+    n <- ncol(X)
+
+    T <- matrix(nrow = m, ncol = B)
+    for (bb in 1:B) {
+        eps <- rbinom(n, 1, prob = 0.5)*2 - 1  ## signs
+        eX <- sweep(X, MARGIN = 2, STATS = eps, FUN = `*`)
+        Tb <- rowSums(eX)/sqrt(n)
+        T[, bb] <- Tb
+    }
+    T
+}
+
+testByPermutationR <- function(X, cls, B) {
+    m <- nrow(X)
+    n <- ncol(X)
+    stopifnot(n == length(cls))
+    
+    T <- matrix(nrow = m, ncol = B)
+    for (bb in 1:B) {
+        cls_perm <- sample(cls, length(cls))
+        Tb <- rowWelchTests(X, categ = cls_perm)$statistic
+        T[, bb] <- Tb
+    }
+    T
+}

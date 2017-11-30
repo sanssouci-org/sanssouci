@@ -11,3 +11,4 @@ appveyor.yml
 ^fig$
 ^localTests$
 ^docs$
+^Rout$

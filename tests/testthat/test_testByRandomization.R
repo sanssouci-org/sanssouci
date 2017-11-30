@@ -44,3 +44,20 @@ test_that("Correctness of sign-flipping p-values", {
         expect_true(mean(cs/p)<=alpha)  
     }    
 })
+
+test_that("Consistency of Rcpp and R sign-flipping p-values", {
+    m <- 123
+    n <- 38
+    B <- 100
+    
+    X <- matrix(rnorm(m*n), ncol=n)
+
+    set.seed(123)
+    T <- testBySignFlipping(X, B)
+    
+    set.seed(123)
+    TR <- testBySignFlippingR(X, B)
+    max(abs(T-TR))
+})
+
+

@@ -98,7 +98,7 @@ simulateEquiByRandomization <- function(m, rho, n, B, pi0,
             y <- rbinom(n, 1, p)     ## binomial response
             w1 <- which(y == 1)
             n1 <- length(w1)
-            signal <- SNR*sqrt(1/(n-n1) + 1/n1)  ## !! scaling is test-specific !!
+            signal <- SNR*sqrt(1/(n-n1) + 1/n1)  ## ! scaling is test-specific (here T)!
             mu[H1, w1] <- signal
         } else if (flavor == "flip") {
             signal <- SNR/sqrt(n)
@@ -120,3 +120,5 @@ simulateEquiByRandomization <- function(m, rho, n, B, pi0,
     }
     res
 }
+
+
