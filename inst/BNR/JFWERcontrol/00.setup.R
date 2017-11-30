@@ -14,7 +14,7 @@ SNRs <- c(0, 1, 2, 3, 4, 5)
 alphas <- c(0.25)
 
 m <- 1e3
-B <- 1e3
+B <- 1e4
 nbSimu <- 1e3
 
 pname <- sprintf("m=%s,B=%s,nbSimu=%s", m, B, nbSimu)
@@ -22,6 +22,6 @@ resPath <- "resData"
 path <- file.path(resPath, sname, pname)
 path <- R.utils::Arguments$getWritablePath(path)
 
-configs <- expand.grid(pi0=pi0s, dep=deps, SNR=SNRs)
-configs
+configs <- expand.grid(SNR=SNRs, dep=deps, pi0=pi0s)
+#configs <- configs[rev(1:nrow(configs)), ]
 

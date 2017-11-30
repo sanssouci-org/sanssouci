@@ -5,7 +5,8 @@ head(dat)
 
 #gat <- tidyr::gather(dat, "criterion", "value", JR, detPow, detPow1, v0, estPow, estPow1, powBH5, powBH50, pow0)
 
-stratif <- c(FALSE, TRUE)[2]
+for (stratif in c(TRUE, FALSE)) {
+
 ## some reshaping
 if (stratif) {
     gat <- tidyr::gather(dat, "criterion", "value", "sJR")
@@ -88,3 +89,4 @@ for (ii in 1:nrow(confs)) {
     dev.off()
 }
 
+}
