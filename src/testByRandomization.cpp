@@ -5,19 +5,15 @@ using namespace Rcpp;
 arma::mat testBySignFlipping(arma::mat X, double B) {
     int m = X.n_rows;
     int n = X.n_cols;
-    arma::mat T(m, B, arma::fill::zeros);
 
-    arma::vec eps;
-    arma::mat Tb;
-//    RNGScope scope;
+    arma::mat T(m, B, arma::fill::zeros);
+    arma::vec eps, Tb;
     double isq = 1 / sqrt(n);
-    int bb, ii;
+    int bb;
     for (bb=0; bb<B; bb++) {
         eps = Rcpp::rbinom(n, 1, 0.5)*2 - 1;  // signs
-        for (ii=0; ii<m; ii++) {
-            Tb = X.row(ii) * eps;
-            T(ii, bb) = Tb(0) * isq;
-        }
+        Tb = X * eps * isq;
+        T.col(bb) = Tb;
     }
    return(T);
 }
