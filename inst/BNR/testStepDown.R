@@ -32,7 +32,7 @@ testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alphas, flavor=c("equi"
         parName <- "pow"
         sim <- simulateToeplitz(m, pow, B, pi0, SNR=SNR)
     } else if (flavor=="equi-perm") {
-        n <- 1e2 ## currently hardcoded (and small for speed reasons).
+        n <- 1e4 ## currently hardcoded (and small for speed reasons).
         p <- 0.5 ## currently hardcoded.
         rho <- dep
         sim <- simulateEquiByRandomization(m, rho, n, B, pi0, flavor="perm", p.value= FALSE, SNR=SNR, p=p, w=NULL)
@@ -40,6 +40,7 @@ testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alphas, flavor=c("equi"
         n <- 1e2 ## currently hardcoded (and small for speed reasons).
         rho <- dep
         sim <- simulateEquiByRandomization(m, rho, n, B, pi0, flavor="flip", p.value= FALSE, SNR=SNR, p=p, w=NULL)
+    }
     X0 <- sim$X0
     x <- sim$x
     H <- sim$H
