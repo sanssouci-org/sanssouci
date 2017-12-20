@@ -8,11 +8,11 @@ arma::mat testBySignFlipping(arma::mat X, double B) {
 
     arma::mat T(m, B, arma::fill::zeros);
     arma::vec eps, Tb;
-    double isq = 1 / sqrt(n);
+    X = X / sqrt(n);    // scaling
     int bb;
     for (bb=0; bb<B; bb++) {
         eps = Rcpp::rbinom(n, 1, 0.5)*2 - 1;  // signs
-        Tb = X * eps * isq;
+        Tb = X * eps;
         T.col(bb) = Tb;
     }
    return(T);

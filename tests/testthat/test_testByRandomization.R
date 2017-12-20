@@ -57,7 +57,7 @@ test_that("Consistency of Rcpp and R sign-flipping p-values", {
     
     set.seed(123)
     TR <- testBySignFlippingR(X, B)
-    max(abs(T-TR))
+    expect_equal(T, TR)
 })
 
 

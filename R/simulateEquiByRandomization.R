@@ -16,7 +16,7 @@
 #'   equi-correlation
 #' @details
 #'
-#' For flavor "two-sample", we test the null hypothesis: "both groups have the
+#' For flavor "perm", we test the null hypothesis: "both groups have the
 #' same mean" against the one-sided alternative that the mean is larger in the
 #' second group. We use a Student test statistic, although other statistics such
 #' as the Mann-Whitney statistic could be used as well. Permuted test statistics

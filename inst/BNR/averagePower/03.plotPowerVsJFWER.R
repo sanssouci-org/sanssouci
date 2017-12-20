@@ -8,7 +8,7 @@ powerz <-  c("detPow1"="P(S(R,H1)>1", "detPow"="P(S(R,H)>1",
              "powBH5"="Power(BH(0.05))", "powBH50"="Power(BH(0.5))", "pow0"="Power({p <= 0.05})",
              "JR"="JFWER")
 
-powerz <-  c("estPow"="Nm", "powBH5"="BH(0.05)", "powBH50"="BH(0.5)", "pow0"="{p <= 0.05}")
+powerz <-  c("estPow"="(a) R0 = Nm", "powBH5"="(c) R0 = BH(0.05)", "powBH50"="BH(0.5)", "pow0"="(b) R0 = {p <= 0.05}")
 
 gat <- tidyr::gather(dat, "criterion", "value", JR, detPow, detPow1, v0, estPow, estPow1, powBH5, powBH50, pow0)
 gat <- subset(gat, criterion %in% names(powerz))
@@ -81,7 +81,7 @@ for (ii in 1:nrow(confs)) {
     p <-
         p + facet_grid(criterion ~ pi0+SNR,
                         scales="free_y",
-                        labeller=label_bquote(rows=R==.(powerz[[criterion]]),
+                        labeller=label_bquote(rows=.(powerz[[criterion]]),
                                               cols= pi[0]:.(pi0)~-~bar(mu):.(round(SNR, 1))))
     p <- p + scale_x_continuous(breaks=round(alphas, 2), minor_breaks=NULL, limits = range(alphas))
     p <- p + scale_y_continuous(minor_breaks=NULL, limits=c(0,1))
