@@ -1,3 +1,8 @@
+# Version 0.5.0 [2017-12-20]
+
+* Added/updated randomization tests (by permutation or sign-flipping).
+* Completed numerical experiments for BNR paper.
+
 # Version 0.4.12 [2017-10-28]
 
 * Added stratified Monte-Carlo estimation of JER coverage in BNR experiments
