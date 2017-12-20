@@ -97,11 +97,12 @@ jointFWERControl <- function(mat,
         pivStatFUN <- function(mat, kMax, C) {
             SimesPivotalStatistic(mat[C, ], kMax, nrow(mat))
         }
-    } else if (refFamily=="beta") {
-        sk <- betaThresholdFamily(mat, kMax=kMax, Rcpp=Rcpp)
-        pivStatFUN <- function(mat, kMax, C) {
-            betaPivotalStatistic(mat, kMax, C)
-        }
+        ## not implemented yet:
+    # } else if (refFamily=="beta") {
+    #     sk <- betaThresholdFamily(mat, kMax=kMax, Rcpp=Rcpp)
+    #     pivStatFUN <- function(mat, kMax, C) {
+    #         betaPivotalStatistic(mat, kMax, C)
+    #     }
     } else if (refFamily=="kFWER") {
         sk <- kFWERThresholdFamily(mat, kMax=kMax, Rcpp=Rcpp)
         pivStatFUN <- function(mat, kMax, C) {

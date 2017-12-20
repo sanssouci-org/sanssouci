@@ -22,6 +22,9 @@ simulateEquiByRandomization(m, rho, n, B, pi0, flavor = c("perm", "flip"),
 performed. Should either be "perm" for two-sample permutation or "flip" for
 sign flipping}
 
+\item{p.value}{A boolean value: should \eqn{p}-values be calculated (and 
+returned)? Defaults to FALSE}
+
 \item{SNR}{Signal to noise ratio. Either a numeric value (a measure of
 distance between H0 and H1) or a vector of length \code{m*(1-pi0)}}
 
@@ -43,7 +46,7 @@ A list with elements \describe{ \item{x}{A vector of length \eqn{m}
 Simulate equi-correlated test statistics by randomization
 }
 \details{
-For flavor "two-sample", we test the null hypothesis: "both groups have the
+For flavor "perm", we test the null hypothesis: "both groups have the
 same mean" against the one-sided alternative that the mean is larger in the
 second group. We use a Student test statistic, although other statistics such
 as the Mann-Whitney statistic could be used as well. Permuted test statistics

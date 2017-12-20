@@ -6,6 +6,7 @@
 ^\.travis\.yml$
 ^appveyor\.yml$
 appveyor.yml
+^notes.*\.md$
 
 ^resData$
 ^fig$

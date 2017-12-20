@@ -45,7 +45,7 @@ n <- 38
 mat <- matrix(rnorm(p*n), ncol=n)
 cls <- rep(c(0, 1), times=c(27, n-27))
 resPerm <- testByRandomization(X=mat, flavor="perm", cls=cls, B=1000)
-resFlip <- testByandomization(X=mat, flavor="flip", B=1000)
+resFlip <- testByRandomization(X=mat, flavor="flip", B=1000)
 
 # show test statistics null distribution
 hist(resPerm$p)

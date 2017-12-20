@@ -8,6 +8,8 @@
 #' @param flavor A character value, the type of randomization to be
 #'   performed. Should either be "perm" for two-sample permutation or "flip" for
 #'   sign flipping
+#' @param p.value A boolean value: should \eqn{p}-values be calculated (and 
+#'   returned)? Defaults to FALSE
 #' @param SNR Signal to noise ratio. Either a numeric value (a measure of
 #'   distance between H0 and H1) or a vector of length \code{m*(1-pi0)}
 #' @param p Probability of success of the outcome variable for flavor
