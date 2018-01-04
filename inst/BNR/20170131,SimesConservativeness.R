@@ -15,8 +15,10 @@ rhos <- c(0, 0.1, 0.2, 0.4, 0.8)
 alpha <- 0.2
 
 res <- listenv()
-plan(remote, workers = rep("bernoulli", 100))
-reps <- 1000
+## plan(remote, workers = rep("bernoulli", 100))
+plan(sequential)
+
+reps <- 10
 for (rep in seq_len(reps)) {
     res[[rep]] %<-% {
         sapply(rhos, FUN=function(rho) empCov(m, rho, B, alpha=alpha))

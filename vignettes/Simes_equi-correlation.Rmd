@@ -1,0 +1,95 @@
+---
+title: "Conservativeness of the Simes inequality under positive dependence"
+author: "P. Neuvial"
+date: "`r Sys.Date()`"
+output:
+  html_document: default
+  pdf_document: default
+header-includes:
+  - \newcommand{\cH}{}
+  - \renewcommand{\P}{\mathbb{P}}
+bibliography: sansSouci.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## The Simes inequality
+
+Let $\mathbf{q}=(q_i)_{1 \leq i \leq m}$ be a vector of random variables such that:
+
+* for each $i=1 \ldots m$, $q_i \sim \mathcal{U}[0,1]$
+* $\mathbf{q}$ satisfies positive regression dependency on a subset (PRDS)
+
+We refer to @sarkar98probability for a formal definition of this form of positive dependence. Here, we simply note that it holds in particular of Gaussian equi-correlated random variables. 
+
+Then, letting $(q_{(1)}, \ldots q_{(m)} )$ be the corresponding order statistics, we have:
+
+$$ \mathbb{P} \left( \exists i \in \{1, \ldots m\} \::\: q_{(i)} \leq \frac{\alpha i}{m}\right) \leq \alpha $$
+This inequality is due to @simes86improved. It is sharp under independence of the $q_i$ (that is, the above inequality is an equality). How sharp is it under positive dependence?
+
+## Estimating the size of the Simes test
+
+```{r library}
+library("sansSouci")
+```
+
+We write a small function to estimate the size of the Simes test, that is, the level actually achieved by the left-hand side in the above inequality.
+
+```{r size-Simes}
+size <- function(m, rho, n, pi0=1, SNR=NA, kMax=m, alpha=0.05) {
+    sim <- sansSouci::simulateEqui(m, rho, n, pi0=pi0, SNR=SNR)
+    sk <- sansSouci::SimesThresholdFamily(m, kMax=kMax)
+    sansSouci:::empiricalCoverage(sk(alpha), sim$X0)
+}
+```
+
+Our simulation parameters are set as follows:
+
+```{r params}
+m <- 1e3
+n <- 1e2
+rhos <- c(0, 0.1, 0.2, 0.4, 0.8)
+alpha <- 0.2
+reps <- 100
+```
+
+That is:
+
+* `r m` hypotheses
+* `r n` observations
+* equi-correlation level between `r rhos[1]` and `r rhos[length(rhos)]` 
+* target level of the Simes test: `r alpha`
+
+We perform `r reps` replications of the test:
+
+```{r simulations, cache=TRUE}
+res <- list()
+for (rr in seq(along=rhos)) {
+    rho <- rhos[rr]
+    res[[rr]] <- replicate(reps, size(m, rho, n, alpha=alpha))
+}
+mat <- Reduce(cbind, res)
+```
+
+We estimate the size of the test as the average size achieved across replications, and calculate the corresponding standard error.
+
+```{r results-table, results="as.is"}
+means <- colMeans(mat)/alpha
+ses <- matrixStats::colSds(mat)/alpha/sqrt(reps)
+tb <- rbind(means, ses)
+colnames(tb) <- rhos
+rownames(tb) <- c("Achieved level/alpha", "Standard error")
+knitr::kable(tb)
+```
+
+This table illustrates the sharpness of the Simes test under independence ($\rho=0$), and the conservativeness of this test under positive dependence ($\rho>0$). For example, when $\rho=0.4$, the size od the Simes test is less than half the target level.
+
+## Session information
+
+```{r}
+sessionInfo()
+```
+
+## References
