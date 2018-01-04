@@ -33,6 +33,8 @@ This inequality is due to @simes86improved. It is sharp under independence of th
 
 ```{r library}
 library("sansSouci")
+library("matrixStats")
+library("knitr")
 ```
 
 We write a small function to estimate the size of the Simes test, that is, the level actually achieved by the left-hand side in the above inequality.
@@ -63,16 +65,16 @@ That is:
 
 
 ```{r simulations}
-res <- sapply(rhos, size, m, B, alpha=alpha)
-ses <- sqrt(res*(1-res)/B)
+ahat <- sapply(rhos, size, m, B, alpha=alpha)
+ses <- sqrt(ahat*(1-ahat)/B)
 ```
 
-We estimate the size of the test as the average size achieved across replications, and calculate the corresponding standard error.
+We estimate the size of the test as the average size $\hat{\alpha}$ achieved across replications, and  the corresponding standard error as $\sqrt{\hat{\alpha}(1-\hat{\alpha})/B}$.
 
 ```{r results-table, results="as.is"}
-tb <- rbind(res/alpha, ses/alpha)
+tb <- rbind(ahat/alpha, ses/alpha)
 colnames(tb) <- rhos
-rownames(tb) <- c("Achieved level/alpha", "Standard error")
+rownames(tb) <- c("Achieved level/target level", "Standard error")
 knitr::kable(tb, digits = 2)
 ```
 
