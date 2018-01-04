@@ -38,10 +38,10 @@ library("sansSouci")
 We write a small function to estimate the size of the Simes test, that is, the level actually achieved by the left-hand side in the above inequality.
 
 ```{r size-Simes}
-size <- function(m, rho, n, pi0=1, SNR=NA, kMax=m, alpha=0.05) {
-    sim <- sansSouci::simulateEqui(m, rho, n, pi0=pi0, SNR=SNR)
-    sk <- sansSouci::SimesThresholdFamily(m, kMax=kMax)
-    sansSouci:::empiricalCoverage(sk(alpha), sim$X0)
+size <- function(rho, m, B, alpha=0.05) {
+    X0 <- replicate(B, sansSouci::simulateEqui(m, rho, B = 1, pi0 = 1)$X0[, 1])
+    sk <- sansSouci::SimesThresholdFamily(m, kMax = m)
+    sansSouci:::empiricalCoverage(sk(alpha), X0)
 }
 ```
 
@@ -49,39 +49,31 @@ Our simulation parameters are set as follows:
 
 ```{r params}
 m <- 1e3
-n <- 1e2
 rhos <- c(0, 0.1, 0.2, 0.4, 0.8)
 alpha <- 0.2
-reps <- 100
+B <- 10000
 ```
 
 That is:
 
-* `r m` hypotheses
-* `r n` observations
-* equi-correlation level between `r rhos[1]` and `r rhos[length(rhos)]` 
-* target level of the Simes test: `r alpha`
+* $`r m`$ hypotheses
+* equi-correlation level between $`r rhos[1]`$ and $`r rhos[length(rhos)]`$
+* target level of the Simes test: $`r alpha`$
+* $`r B`$ replications are used to estimate the size of the test
 
-We perform `r reps` replications of the test:
 
-```{r simulations, cache=TRUE}
-res <- list()
-for (rr in seq(along=rhos)) {
-    rho <- rhos[rr]
-    res[[rr]] <- replicate(reps, size(m, rho, n, alpha=alpha))
-}
-mat <- Reduce(cbind, res)
+```{r simulations}
+res <- sapply(rhos, size, m, B, alpha=alpha)
+ses <- sqrt(res*(1-res)/B)
 ```
 
 We estimate the size of the test as the average size achieved across replications, and calculate the corresponding standard error.
 
 ```{r results-table, results="as.is"}
-means <- colMeans(mat)/alpha
-ses <- matrixStats::colSds(mat)/alpha/sqrt(reps)
-tb <- rbind(means, ses)
+tb <- rbind(res/alpha, ses/alpha)
 colnames(tb) <- rhos
 rownames(tb) <- c("Achieved level/alpha", "Standard error")
-knitr::kable(tb)
+knitr::kable(tb, digits = 2)
 ```
 
 This table illustrates the sharpness of the Simes test under independence ($\rho=0$), and the conservativeness of this test under positive dependence ($\rho>0$). For example, when $\rho=0.4$, the size od the Simes test is less than half the target level.
