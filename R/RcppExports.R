@@ -79,7 +79,3 @@ testBySignFlipping <- function(X, B) {
     .Call('_sansSouci_testBySignFlipping', PACKAGE = 'sansSouci', X, B)
 }
 
-testByPermutation <- function(X, cls, B) {
-    .Call('_sansSouci_testByPermutation', PACKAGE = 'sansSouci', X, cls, B)
-}
-

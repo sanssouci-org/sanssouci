@@ -19,7 +19,6 @@ arma::mat testBySignFlipping(arma::mat X, double B) {
 }
 
 
-// [[Rcpp::export]]
 arma::mat testByPermutation(arma::mat X, NumericVector cls, double B) {
     int m = X.n_rows;
 //    int n = X.n_cols;

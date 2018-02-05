@@ -12,31 +12,46 @@ testByRandomization(X, B, flavor = c("perm", "flip"), cls = NULL,
 
 \item{B}{A numeric value, the number of permutations to be performed}
 
-\item{flavor}{A character value, the type of randomization to be 
-performed. Should either be "perm" for two-sample permutation or "flip" for
-sign flipping}
+\item{flavor}{A character value, the type of randomization to be performed.
+Should either be "perm" for two-sample permutation or "flip" for sign
+flipping.}
 
 \item{cls}{A vector of length \code{n} class labels in \code{0,1} for flavor
 "perm". Defaults to NULL}
 
-\item{p.value}{A boolean value: should \eqn{p}-values be calculated and 
-returned? Defaults to @TRUE}
+\item{p.value}{A boolean value: should randomization \eqn{p}-values be
+calculated and returned? Defaults to @TRUE}
 
-\item{seed}{An integer (or NULL) value used as a seed for random number 
+\item{seed}{An integer (or NULL) value used as a seed for random number
 generation. If \code{NULL}, no seed is specified}
 }
 \value{
-a list with two or four elements: \describe{ \item{T}{A vector of
-  \eqn{m} test statistics} \item{T0}{A \eqn{m \times B} matrix of permutation
-  test statistics} \item{p}{A vector of \eqn{m} \eqn{p}-values (only if
-  \code{p.value} is @TRUE)} \item{p0}{A \eqn{m \times B} matrix of
-  permutation \eqn{p}-values (ony if \code{p.value} is @TRUE)} }
+a list with elements: \describe{
+
+  \item{T}{A vector of \eqn{m} test statistics}
+
+  \item{T0}{A \eqn{m \times B} matrix of randomized test statistics}
+
+  \item{p}{A vector of \eqn{m} \eqn{p}-values (only if \code{p.value} is
+\code{TRUE} )}
+
+  \item{p0}{A \eqn{m \times B} matrix of randomization \eqn{p}-values (only
+  if \code{p.value} is \code{TRUE} )}
+
+  \item{param.p}{A vector of \eqn{m} parametric \eqn{p}-values (only for flavor
+  "permutation")}
+
+  \item{param.p0}{A \eqn{m \times B} matrix of parametric \eqn{p}-values on permuted data (only
+  for flavor "permutation" )} }
 }
 \description{
 Randomization-based testing for equal means in two groups
 }
 \details{
-The test statistics is Welch's two-sample test for unequal variances
+If \code{flavor == "permutation"}, the test is Welch's two-sample
+  test for unequal variances. The corresponding parametric p-values are
+  returned as elements \code{param.p} (for the original data) and
+  \code{param.p0} (for the permutations).
 }
 \examples{
 
@@ -57,6 +72,6 @@ resF <- jointFWERControl(resFlip$T0, refFamily="Simes", alpha=alpha, stat=resFli
 
 }
 \references{
-Ge, Y., Dudoit, S. and Speed, T.P., 2003. Resampling-based 
+Ge, Y., Dudoit, S. and Speed, T.P., 2003. Resampling-based
   multiple testing for microarray data analysis. _Test_, 12(1), pp.1-77.
 }
