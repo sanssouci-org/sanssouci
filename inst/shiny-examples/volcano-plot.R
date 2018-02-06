@@ -6,6 +6,7 @@ dataSets <- unique(volcano[["dataSet"]])
 volcano[["logp"]] <- -log10(volcano[["p.value"]])
 
 ui <- fluidPage(
+    titlePanel("Post hoc confidence bounds for volcano plots"),
     inputPanel(
         selectInput("dataSet", "Data set", choices = dataSets, selected = "golub"),
         numericInput("alpha", "Target confidence level:", 0.1, min = 0, max = 1)),
@@ -38,13 +39,18 @@ server <- function(input, output, session) {
         d <- event_data("plotly_selected")
         msg <- "Select a set of points"
         if (is.null(d)) {
-            mm <- which(datly[["adjp"]] <= alpha)
+            ## TODO: default selection
+            ## mm <- which(datly[["adjp"]] <= alpha)
         } else {
             mm <- match(d$key, datly[["id"]])
-            Vbar <- posthocBySimes(datly[["p.value"]], mm, alpha)
-            msg <- sprintf("At least %s true positives among %s selected genes (FDP <  %s)", Vbar, nrow(d), round(1-Vbar/nrow(d), 2))
+            if (!all(is.na(mm))) {
+                Vbar <- posthocBySimes(datly[["p.value"]], mm, alpha)
+                msg <- sprintf("At least %s true positives among %s selected genes", Vbar, nrow(d))
+                fdp <- round(1 - Vbar/nrow(d), 2)
+                msg <- sprintf("%s (FDP %s %s)", msg, ifelse(fdp==0, "=", "<="), fdp)
+            }
         }
-        #msg <- paste(msg, str(d), collapse = "\n")
+        # msg <- paste(msg, str(d), collapse = "\n")
         msg
     })
 }
