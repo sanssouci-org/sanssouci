@@ -23,8 +23,7 @@ server <- function(input, output, session) {
         datly <- volc()
         rg <- range(datly$meanDiff)
         rg <- max(abs(rg))*c(-1,1)
-        print(rg)
-        
+
         #Vbar0 <- upperBoundFP(sort(x, decreasing=TRUE), thr)
         plot_ly(datly, type = "scatter", mode = "markers",
                 x = ~meanDiff, y = ~logp, key = ~id, 
