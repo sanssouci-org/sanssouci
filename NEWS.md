@@ -1,3 +1,8 @@
+# Version 0.5.1 [2018-02-07]
+
+* Added data/volcano.rda with p-values and fold changes for 4 public gene expression data sets.
+* Added first draft of a volcano plot shiny app.
+
 # Version 0.5.0 [2017-12-20]
 
 * Added/updated randomization tests (by permutation or sign-flipping).
