@@ -30,3 +30,4 @@ getStats <- function(dataSet) {
 dfList <- lapply(dataSets, getStats)
 volcano <- Reduce(rbind, dfList)
 save(volcano, file = "data/volcano.rda")
+tools::resaveRdaFiles("data/volcano.rda")  ## why isn't this the default in 'save'?
