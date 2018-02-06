@@ -55,14 +55,25 @@ If \code{flavor == "permutation"}, the test is Welch's two-sample
 }
 \examples{
 
-p <- 513
-n <- 38
+p <- 510
+n <- 380
+B <- 1e3
 mat <- matrix(rnorm(p*n), ncol=n)
-cls <- rep(c(0, 1), times=c(27, n-27))
-resPerm <- testByRandomization(X=mat, flavor="perm", cls=cls, B=1000)
-resFlip <- testByRandomization(X=mat, flavor="flip", B=1000)
+cls <- rep(c(0, 1), times=c(n/2, n-n/2))
+resPerm <- testByRandomization(X=mat, flavor="perm", cls=cls, B=B)
+resFlip <- testByRandomization(X=mat, flavor="flip", B=B)
 
-# show test statistics null distribution
+# empirical coverage of Simes thresholds
+alpha <- 0.2
+thr <- SimesThresholdFamily(p)(alpha)
+sansSouci:::empiricalCoverage(thr, resPerm$T0) ## Welch, not Gaussian
+sansSouci:::empiricalCoverage(thr, qnorm(1-resPerm$p0))
+sansSouci:::empiricalCoverage(thr, qnorm(1-resPerm$param.p0))
+
+sansSouci:::empiricalCoverage(thr, resFlip$T0)
+sansSouci:::empiricalCoverage(thr, qnorm(1-resFlip$p0))
+
+# test statistics null distribution
 hist(resPerm$p)
 hist(resFlip$p)
 

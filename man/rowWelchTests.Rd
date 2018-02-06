@@ -17,6 +17,7 @@ A list with class "htest" containing the following components:
   \describe{ \item{statistic}{the value of the t-statistics} 
   \item{parameter}{the degrees of freedom for the t-statistics} 
   \item{p.value}{the p-values for the tests}}
+  \item{fc}{the fold change (ratio of means)}
 }
 \description{
 Welch t-tests for each row of a matrix, intended to be speed efficient

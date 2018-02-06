@@ -18,3 +18,14 @@ The empirical coverage of \code{thr} with respect to \code{mat}.
 \description{
 Empirical coverage of a threshold family
 }
+\examples{
+alpha <- 0.05
+
+# empirical coverage of Simes thresholds for independent Gaussian nulls
+m <- 234
+B <- 1234
+X0 <- replicate(B, rnorm(m))
+thr <- SimesThresholdFamily(m)(alpha)
+sansSouci:::empiricalCoverage(thr, X0)
+
+}

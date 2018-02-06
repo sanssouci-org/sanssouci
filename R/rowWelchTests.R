@@ -18,7 +18,7 @@
 #'   \describe{ \item{statistic}{the value of the t-statistics} 
 #'   \item{parameter}{the degrees of freedom for the t-statistics} 
 #'   \item{p.value}{the p-values for the tests}}
-#'   
+#'   \item{meanDiff}{the mean difference}
 #' @author Pierre Neuvial
 #'   
 #' @references B. L. Welch (1951), On the comparison of several mean values: an
@@ -52,6 +52,7 @@ rowWelchTests <- function(mat, categ=colnames(mat)) {
     swt <- suffWelchTest(X[["mean"]], Y[["mean"]],
                            X[["sd"]], Y[["sd"]],
                            X[["n"]], Y[["n"]])
+    swt[["meanDiff"]] <- Y[["mean"]] - X[["mean"]]
     swt
 }
         
