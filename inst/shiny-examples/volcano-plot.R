@@ -3,13 +3,13 @@ library("sansSouci")  ## devtools::install_github("pneuvial/sanssouci@develop")
 
 data(volcano, package = "sansSouci")
 dataSets <- unique(volcano[["dataSet"]])
-volcano[["logp"]] <- -log10(volcano[["p.value"]])
+volcano[["logp"]] <- log10(volcano[["p.value"]])
 
 ui <- fluidPage(
     titlePanel("Post hoc confidence bounds for volcano plots"),
     inputPanel(
-        selectInput("dataSet", "Data set", choices = dataSets, selected = "golub"),
-        numericInput("alpha", "Target confidence level:", 0.1, min = 0, max = 1)),
+        selectInput("dataSet", "Data set", choices = dataSets, selected = "bourgon"),
+        numericInput("alpha", "Target confidence level:", 0.05, min = 0, max = 1)),
     wellPanel(h3(textOutput("bound")),
               plotlyOutput("plot"))
 )
@@ -27,7 +27,7 @@ server <- function(input, output, session) {
 
         #Vbar0 <- upperBoundFP(sort(x, decreasing=TRUE), thr)
         plot_ly(datly, type = "scatter", mode = "markers",
-                x = ~meanDiff, y = ~logp, key = ~id, 
+                x = ~meanDiff, y = ~ -logp, key = ~id, 
                 text = ~id, hoverinfo = 'text') %>%
             layout(dragmode = "select",
                    xaxis = list(range = rg))

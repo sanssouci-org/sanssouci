@@ -40,7 +40,11 @@
 #'   \item{param.p}{A vector of \eqn{m} parametric \eqn{p}-values (only for flavor
 #'   "permutation")}
 #'
-#'   \item{param.p0}{A \eqn{m \times B} matrix of parametric \eqn{p}-values on permuted data (only
+#'   \item{param.p0}{A \eqn{m \times B} matrix of parametric \eqn{p}-values on permuted data (only for flavor "permutation" )} 
+#'   
+#'   \item{df}{A vector of \eqn{m} degrees of freedom for the observed statistics (only for flavor "permutation")}
+#'
+#'   \item{df0}{A \eqn{m \times B} matrix of degrees of freedom on permuted data (only
 #'   for flavor "permutation" )} }
 #'
 #' @examples
@@ -100,16 +104,21 @@ testByRandomization <- function(X, B, flavor=c("perm", "flip"), cls=NULL, p.valu
         rwt <- rowWelchTests(X, categ = cls)
         T_obs <- rwt$statistic
         p_obs <- rwt$p.value  ## parametric p-value
+        df_obs <- rwt$parameter  ## degrees of freedom of the T statistics
         ## test statistics under H0
         T <- matrix(nrow = m, ncol = B)
         pp <- matrix(nrow = m, ncol = B) ## parametric p-value
+        df <- matrix(nrow = m, ncol = B) 
         for (bb in 1:B) {
             cls_perm <- sample(cls, length(cls))
             rwt <- rowWelchTests(X, categ = cls_perm)
             T[, bb] <- rwt$statistic
             pp[, bb] <- rwt$p.value
+            df[, bb] <- rwt$parameter
         }
-        res <- list(T = T_obs, T0 = T, param.p = p_obs, param.p0 = pp)
+        res <- list(T = T_obs, T0 = T, 
+                    param.p = p_obs, param.p0 = pp,
+                    df = df_obs, df0 = df)
     } else if (flavor == "flip") {
         ## observed test statistics
         T_obs <- rowSums(X)/sqrt(n)

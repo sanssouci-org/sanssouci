@@ -41,7 +41,11 @@ a list with elements: \describe{
   \item{param.p}{A vector of \eqn{m} parametric \eqn{p}-values (only for flavor
   "permutation")}
 
-  \item{param.p0}{A \eqn{m \times B} matrix of parametric \eqn{p}-values on permuted data (only
+  \item{param.p0}{A \eqn{m \times B} matrix of parametric \eqn{p}-values on permuted data (only for flavor "permutation" )} 
+  
+  \item{df}{A vector of \eqn{m} degrees of freedom for the observed statistics (only for flavor "permutation")}
+
+  \item{df0}{A \eqn{m \times B} matrix of degrees of freedom on permuted data (only
   for flavor "permutation" )} }
 }
 \description{

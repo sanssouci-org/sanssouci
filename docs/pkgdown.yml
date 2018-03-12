@@ -1,0 +1,8 @@
+urls:
+  reference: https://pneuvial.github.io/adjclust/reference
+  article: https://pneuvial.github.io/adjclust/articles
+articles:
+  postHocBoundAlgo: postHocBoundAlgo.html
+  stepDownControl: stepDownControl.html
+  two-sample: two-sample.html
+

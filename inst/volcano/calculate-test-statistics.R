@@ -1,4 +1,5 @@
-dataSets <- c("bourgon", "golub", "hedenfalk", "loi")
+dataSets <- c("bourgon", "golub", "hedenfalk", "loi", "rosenwald")
+dataSets <- dataSets[-4] ## Dropping Loi: too weak signal
 
 getStats <- function(dataSet) {
     filename <- sprintf("%s.rds", dataSet)
@@ -23,7 +24,8 @@ getStats <- function(dataSet) {
                  meanDiff = round(mres[, "meanDiff"], 3), 
                  p.value = p,
                  adjp.BH = round(adjp, 3),
-                 row.names = NULL)
+                 row.names = NULL,
+                 stringsAsFactors = FALSE)
     dat
 }
 
