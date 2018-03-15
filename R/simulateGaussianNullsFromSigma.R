@@ -11,7 +11,6 @@
 ##' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 ##' @importFrom Matrix Matrix isSymmetric
 ##' @importFrom stats rnorm
-##' @export
 ##' @examples
 ##'
 ##' library("Matrix")
@@ -21,7 +20,7 @@
 ##' ## Toeplitz, short range
 ##' tcoefs <- toeplitz((1:m)^(-2))
 ##' Sigma <- Matrix(tcoefs, sparse = TRUE)
-##' Y <- simulateGaussianNullsFromSigma(Sigma, n)
+##' Y <- sansSouci:::simulateGaussianNullsFromSigma(Sigma, n)
 ##' str(Y)
 ##'
 ##' SigmaHat <- Y %*% t(Y)/n
@@ -36,7 +35,7 @@
 ##' ## Toeplitz, long range
 ##' tcoefs <- toeplitz((1:m)^(-.1))
 ##' Sigma <- Matrix(tcoefs, sparse = TRUE)
-##' Y <- simulateGaussianNullsFromSigma(Sigma, n)
+##' Y <- sansSouci:::simulateGaussianNullsFromSigma(Sigma, n)
 ##' str(Y)
 ##'
 ##' SigmaHat <- Y %*% t(Y)/n

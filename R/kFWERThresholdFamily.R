@@ -30,7 +30,7 @@
 ##'
 ##' flavor <- c("independent", "equi-correlated", "3-factor model")[2]
 ##' rho <- 0.2
-##' mat <- simulateGaussianNullsFromFactorModel(m, B, flavor=flavor, rho=rho)
+##' mat <- gaussianTestStatistics(m, B, dep = "equi", param = rho)$X0
 ##'
 ##' sk <- kFWERThresholdFamily(mat)
 ##'

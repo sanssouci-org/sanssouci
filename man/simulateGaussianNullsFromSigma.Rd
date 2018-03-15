@@ -28,7 +28,7 @@ n <- 1000
 ## Toeplitz, short range
 tcoefs <- toeplitz((1:m)^(-2))
 Sigma <- Matrix(tcoefs, sparse = TRUE)
-Y <- simulateGaussianNullsFromSigma(Sigma, n)
+Y <- sansSouci:::simulateGaussianNullsFromSigma(Sigma, n)
 str(Y)
 
 SigmaHat <- Y \%*\% t(Y)/n
@@ -43,7 +43,7 @@ max(ss)/min(ss)
 ## Toeplitz, long range
 tcoefs <- toeplitz((1:m)^(-.1))
 Sigma <- Matrix(tcoefs, sparse = TRUE)
-Y <- simulateGaussianNullsFromSigma(Sigma, n)
+Y <- sansSouci:::simulateGaussianNullsFromSigma(Sigma, n)
 str(Y)
 
 SigmaHat <- Y \%*\% t(Y)/n

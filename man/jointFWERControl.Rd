@@ -65,7 +65,7 @@ n <- 100
 pi0 <- 0.5
 B <- 1e3
 
-sim <- simulateEqui(m, rho, B, pi0, SNR=3)
+sim <- gaussianTestStatistics(m, B, pi0 = pi0, SNR = 3)
 X0 <- sim$X0
 x <- sim$x
 

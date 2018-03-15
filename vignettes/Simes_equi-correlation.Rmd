@@ -35,13 +35,14 @@ This inequality is due to @simes86improved. It is sharp under independence of th
 library("sansSouci")
 library("matrixStats")
 library("knitr")
-```
+```de
 
 We write a small function to estimate the size of the Simes test, that is, the level actually achieved by the left-hand side in the above inequality.
 
 ```{r size-Simes}
 size <- function(rho, m, B, alpha=0.05) {
-    X0 <- replicate(B, sansSouci::simulateEqui(m, rho, B = 1, pi0 = 1)$X0[, 1])
+    #X0 <- replicate(B, sansSouci::gaussianTestStatistics(m, B = 1, dep = "equi", param = rho)$X0[, 1])
+    X0 <- gaussianTestStatistics(m, B, dep = "equi", param = rho)$X0
     sk <- sansSouci::SimesThresholdFamily(m, kMax = m)
     sansSouci:::empiricalCoverage(sk(alpha), X0)
 }

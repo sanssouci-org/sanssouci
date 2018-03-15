@@ -11,7 +11,6 @@
 ##' @return A \code{m x n} matrix of simulated observations. The underlying
 ##' factor driving equi-correlation is given as \code{attr(Y, "w")}.
 ##' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
-##' @export
 ##' @examples
 ##'
 ##' m <- 1331
@@ -19,7 +18,7 @@
 ##' ## equi-correlated
 ##' rho <- 0.2
 ##'
-##' Y <- simulateGaussianEquiCorrelatedNulls(m, n, rho)
+##' Y <- sansSouci:::simulateGaussianEquiCorrelatedNulls(m, n, rho)
 ##' ## check equi-correlation:
 ##' covmat <- cov(t(Y))
 ##' diag(covmat) <- NA

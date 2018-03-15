@@ -18,7 +18,6 @@
 ##' hypothesis: 0 for true null hypothesis, and 1 for true alternative
 ##' hypothesis} }
 ##' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
-##' @export
 ##' @importFrom stats rbinom
 ##' @examples
 ##'
@@ -28,7 +27,7 @@
 ##' pi0 <- 0.5
 ##' B <- 1e3
 ##'
-##' sim <- simulateMein2006(m, rho, n, B, pi0, SNR=1)
+##' sim <- sansSouci:::simulateMein2006(m, rho, n, B, pi0, SNR=1)
 ##' scoreMat <- sim$X0
 ##' stat <- sim$x
 ##'

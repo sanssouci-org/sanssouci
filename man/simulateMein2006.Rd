@@ -45,7 +45,7 @@ n <- 100
 pi0 <- 0.5
 B <- 1e3
 
-sim <- simulateMein2006(m, rho, n, B, pi0, SNR=1)
+sim <- sansSouci:::simulateMein2006(m, rho, n, B, pi0, SNR=1)
 scoreMat <- sim$X0
 stat <- sim$x
 

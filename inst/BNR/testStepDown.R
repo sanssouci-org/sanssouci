@@ -21,20 +21,22 @@ testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alphas, n=1000, flavor=
     if (flavor=="equi") {
         rho <- dep
         parName <- "rho"
-        sim <- simulateEqui(m, rho, B, pi0, SNR=SNR)
+        sim <- gaussianTestStatistics(m, B, pi0 = pi0, SNR = SNR, dep = "equi", param = rho)
     } else if (flavor=="Mein2006") {
+        stop("Deprecated flavor: ", flavor)
         rho <- dep
         sim <- simulateMein2006(m, rho, n, B, pi0, SNR=SNR)
     } else if (flavor=="Toeplitz") {
         ## Toeplitz, long range
-        pow <- dep
         parName <- "pow"
-        sim <- simulateToeplitz(m, pow, B, pi0, SNR=SNR)
+        sim <- gaussianTestStatistics(m, B, pi0 = pi0, SNR = SNR, dep = "Toeplitz", param = dep)
     } else if (flavor=="equi-perm") {
+        ## TODO: update with *2* lines of codes: generation of data, and computation of randomized stats
         p <- 0.5 ## currently hardcoded.
         rho <- dep
         sim <- simulateEquiByRandomization(m, rho, n, B, pi0, flavor="perm", p.value= FALSE, SNR=SNR, p=p, w=NULL)
     } else if (flavor=="equi-flip") {
+        ## TODO: update with *2* lines of codes: generation of data, and computation of randomized stats
         rho <- dep
         sim <- simulateEquiByRandomization(m, rho, n, B, pi0, flavor="flip", p.value= FALSE, SNR=SNR, p=p, w=NULL)
     }

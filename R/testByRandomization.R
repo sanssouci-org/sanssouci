@@ -1,4 +1,6 @@
-#' Randomization-based testing for equal means in two groups
+#' Randomization-based testing
+#' 
+#' Randomization-based testing using permutation or sign-flipping 
 #'
 #' @param X a matrix of \code{m} variables by \code{n} observations
 #'
@@ -9,7 +11,7 @@
 #'   flipping.
 #'
 #' @param cls A vector of length \code{n} class labels in \code{0,1} for flavor
-#'   "perm". Defaults to NULL
+#'   "perm". Defaults to colnames(X).
 #'
 #' @param p.value A boolean value: should randomization \eqn{p}-values be
 #'   calculated and returned? Defaults to @TRUE
@@ -17,10 +19,23 @@
 #' @param seed An integer (or NULL) value used as a seed for random number
 #'   generation. If \code{NULL}, no seed is specified
 #'
-#' @details If \code{flavor == "permutation"}, the test is Welch's two-sample
-#'   test for unequal variances. The corresponding parametric p-values are
+#' @details If \code{flavor == "permutation"}, we test the null hypothesis: "both groups have the
+#' same mean" against the one-sided alternative that the mean is larger in the
+#' second group. The test is Welch's two-sample
+#'   test for unequal variances. Permuted test statistics
+#' are calculated by B permutations of the group labels. Corresponding observed
+#' and permuted p-values are calculated as the proportion of permutations
+#' (including the identity) for which the permuted test statistic is larger than
+#' the observed test statistic. The corresponding parametric p-values are
 #'   returned as elements \code{param.p} (for the original data) and
 #'   \code{param.p0} (for the permutations).
+#' 
+#' @details If \code{flavor == "flip"}, we test the null hypothesis: "the mean is 0" against the
+#' two-sided alternative that the mean is larger than 0. We use the (rescaled)
+#' empirical mean of the observations as a test statistic. Sign-flipped test
+#' statistics are calculated by flipping the sign of each observation with
+#' probability 1/2.
+#'
 #'
 #' @references Ge, Y., Dudoit, S. and Speed, T.P., 2003. Resampling-based
 #'   multiple testing for microarray data analysis. _Test_, 12(1), pp.1-77.
@@ -78,7 +93,9 @@
 #' @importFrom matrixStats rowRanks
 #' @export
 #' 
-testByRandomization <- function(X, B, flavor=c("perm", "flip"), cls=NULL, p.value=TRUE, seed=NULL){
+testByRandomization <- function(X, B, flavor = c("perm", "flip"), 
+                                cls = colnames(X), 
+                                p.value = TRUE, seed = NULL){
     ## sanity checks
     n <- ncol(X)
     flavor <- match.arg(flavor)

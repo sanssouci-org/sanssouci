@@ -2,9 +2,9 @@
 % Please edit documentation in R/testByRandomization.R
 \name{testByRandomization}
 \alias{testByRandomization}
-\title{Randomization-based testing for equal means in two groups}
+\title{Randomization-based testing}
 \usage{
-testByRandomization(X, B, flavor = c("perm", "flip"), cls = NULL,
+testByRandomization(X, B, flavor = c("perm", "flip"), cls = colnames(X),
   p.value = TRUE, seed = NULL)
 }
 \arguments{
@@ -17,7 +17,7 @@ Should either be "perm" for two-sample permutation or "flip" for sign
 flipping.}
 
 \item{cls}{A vector of length \code{n} class labels in \code{0,1} for flavor
-"perm". Defaults to NULL}
+"perm". Defaults to colnames(X).}
 
 \item{p.value}{A boolean value: should randomization \eqn{p}-values be
 calculated and returned? Defaults to @TRUE}
@@ -49,13 +49,25 @@ a list with elements: \describe{
   for flavor "permutation" )} }
 }
 \description{
-Randomization-based testing for equal means in two groups
+Randomization-based testing using permutation or sign-flipping
 }
 \details{
-If \code{flavor == "permutation"}, the test is Welch's two-sample
-  test for unequal variances. The corresponding parametric p-values are
+If \code{flavor == "permutation"}, we test the null hypothesis: "both groups have the
+same mean" against the one-sided alternative that the mean is larger in the
+second group. The test is Welch's two-sample
+  test for unequal variances. Permuted test statistics
+are calculated by B permutations of the group labels. Corresponding observed
+and permuted p-values are calculated as the proportion of permutations
+(including the identity) for which the permuted test statistic is larger than
+the observed test statistic. The corresponding parametric p-values are
   returned as elements \code{param.p} (for the original data) and
   \code{param.p0} (for the permutations).
+
+If \code{flavor == "flip"}, we test the null hypothesis: "the mean is 0" against the
+two-sided alternative that the mean is larger than 0. We use the (rescaled)
+empirical mean of the observations as a test statistic. Sign-flipped test
+statistics are calculated by flipping the sign of each observation with
+probability 1/2.
 }
 \examples{
 

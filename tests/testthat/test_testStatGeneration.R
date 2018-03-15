@@ -1,5 +1,4 @@
-context("Generation of test statistics")
-
+context("Generation of test statistics -- low-level functions")
 
 test_that("Simulate equi-correlated null hypotheses", {
     m <- 1331
@@ -9,22 +8,6 @@ test_that("Simulate equi-correlated null hypotheses", {
     Y <- simulateGaussianEquiCorrelatedNulls(m, n, rho)
     expect_equal(nrow(Y), m)
     expect_equal(ncol(Y), n)
-})
-
-test_that("Simulate Gaussian equi-correlated test statistics", {
-    m <- 123
-    rho <- 0.2
-    B <- 100
-    pi0 <- 0.5
-    
-    test <- replicate(10, {
-        sim <- simulateEqui(m, rho, B, pi0, SNR = 2)
-        expect_equal(length(sim$x), m)
-        expect_equal(nrow(sim$X0), m)
-        expect_equal(length(sim$H), m)
-        expect_equal(ncol(sim$X0), B)
-        expect_equal(round(m*pi0), m-sum(sim$H))
-    })
 })
 
 test_that("Simulation of null hypotheses from factor model", {
@@ -85,20 +68,6 @@ test_that("Simulate test statistics as in Meinshausen (2006)", {
     expect_equal(ncol(sim$X0), B)
     expect_equal(round(m*pi0), m-sum(sim$H))
 
-    stat <- sim$x
-    H <- sim$H
-    sa <- tapply(stat, H, mean)
-    expect_gt(sa[2], sa[1])  ## test stat is larger under H1
-})
-
-
-test_that("Simulate Gaussian test statistics with Toeplitz covariance", {
-    m <- 123
-    pow <- -0.5
-    B <- 100
-    pi0 <- 0.5
-
-    sim <- simulateToeplitz(m, pow, B, pi0, SNR=1)
     stat <- sim$x
     H <- sim$H
     sa <- tapply(stat, H, mean)

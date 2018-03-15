@@ -37,10 +37,10 @@ matrix", following the notation of Meinshausen (2006).
 
 m <- 1023
 B <- 1e3
-
+pi0 <- 0.8
 flavor <- c("independent", "equi-correlated", "3-factor model")[2]
 rho <- 0.2
-mat <- simulateGaussianNullsFromFactorModel(m, B, flavor=flavor, rho=rho)
+mat <- gaussianTestStatistics(m, B, dep = "equi", param = rho)$X0
 
 Q <- bisort(mat, Rcpp=TRUE)
 QR <- bisort(mat, Rcpp=FALSE)

@@ -14,16 +14,17 @@ library("sansSouci")
 ```
 
 ## Simulation settings
+
 Parameters:
 ```{r}
 m <- 2e2
-rho <- 0
 n <- 123
 pi0 <- 0.6
 B <- 1e3
+rho <- 0.2
 
 #set.seed(0xBEEF)
-sim <- simulateEqui(m, rho, B, pi0, SNR=3)
+sim <- gaussianTestStatistics(m, B, pi0 = pi0, SNR = 3, dep = "equi", param = rho)
 X0 <- sim$X0
 x <- sim$x
 H0 <- which(sim$H==0)

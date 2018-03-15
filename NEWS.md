@@ -1,3 +1,9 @@
+# Version 0.6.0 [2018-03-15]
+
+* Cleanup: user-level entry point for simulating test statistics is now 'gaussianTestStatistics'. 
+* Cleanup: user-level entry point for simulating observations from one and two-sample problems is now 'gaussianSamples'. 
+* Cleanups in 'inst' scripts.
+
 # Version 0.5.1 [2018-02-07]
 
 * Added data/volcano.rda with p-values and fold changes for 4 public gene expression data sets.

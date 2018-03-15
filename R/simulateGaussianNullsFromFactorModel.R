@@ -12,23 +12,25 @@
 ##' \code{cov} is set to TRUE, the covariance matrix of the model may be
 ##' accessed by \code{attr(Y, "Sigma")}.
 ##' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
-##' @export
 ##' @importFrom Matrix Matrix t
 ##' @examples
 ##'
 ##' m <- 20
 ##'
 ##' ## independent
-##' Y <- simulateGaussianNullsFromFactorModel(m, flavor="independent")
+##' Y <- sansSouci:::simulateGaussianNullsFromFactorModel(m, 
+##'     flavor = "independent")
 ##'   image(Y)
 ##'
 ##' ## equi-correlated
-##' Y <- simulateGaussianNullsFromFactorModel(m, flavor="equi-correlated", rho=0.2, cov=TRUE)
+##' Y <- sansSouci:::simulateGaussianNullsFromFactorModel(m, 
+##'     flavor = "equi-correlated", rho = 0.2, cov = TRUE)
 ##' S <- attr(Y, "Sigma")
 ##' image(S)
 ##'
 ##' ## check equi-correlation:
-##' Y <- simulateGaussianNullsFromFactorModel(m, n=1237, flavor="equi-correlated", rho=0.2)
+##' Y <- sansSouci:::simulateGaussianNullsFromFactorModel(m, 
+##'     n = 1237, flavor = "equi-correlated", rho = 0.2)
 ##' covmat <- cov(t(Y))
 ##' image(covmat)
 ##' diag(covmat) <- NA
@@ -37,7 +39,8 @@
 ##'
 ##' ## 3-factor model
 ##' m <- 4*floor(m/4) ## make sure m/4 is an integer
-##' S3 <- simulateGaussianNullsFromFactorModel(m, flavor="3-factor", rho=0.5)
+##' S3 <- sansSouci:::simulateGaussianNullsFromFactorModel(m, 
+##'     flavor = "3-factor", rho = 0.5)
 ##' image(S3)
 ##'
 simulateGaussianNullsFromFactorModel <- structure(function(

@@ -8,7 +8,7 @@ test_that("Numerical reproducibility of one particular call to 'jointFWERControl
     pi0 <- 0.9
     SNR <- 2
     
-    sim <- simulateEqui(m, rho, B, pi0, SNR=SNR)
+    sim <- gaussianTestStatistics(m, B, pi0 = pi0, SNR = SNR, dep = "equi", param = rho)
     X0 <- sim$X0
     x <- sim$x
     
