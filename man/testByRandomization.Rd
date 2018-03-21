@@ -4,17 +4,12 @@
 \alias{testByRandomization}
 \title{Randomization-based testing}
 \usage{
-testByRandomization(X, B, flavor = c("perm", "flip"), cls = colnames(X),
-  p.value = TRUE, seed = NULL)
+testByRandomization(X, B, cls = colnames(X), p.value = TRUE, seed = NULL)
 }
 \arguments{
 \item{X}{a matrix of \code{m} variables by \code{n} observations}
 
 \item{B}{A numeric value, the number of permutations to be performed}
-
-\item{flavor}{A character value, the type of randomization to be performed.
-Should either be "perm" for two-sample permutation or "flip" for sign
-flipping.}
 
 \item{cls}{A vector of length \code{n} class labels in \code{0,1} for flavor
 "perm". Defaults to colnames(X).}
@@ -33,41 +28,52 @@ a list with elements: \describe{
   \item{T0}{A \eqn{m \times B} matrix of randomized test statistics}
 
   \item{p}{A vector of \eqn{m} \eqn{p}-values (only if \code{p.value} is
-\code{TRUE} )}
+  \code{TRUE} )}
 
   \item{p0}{A \eqn{m \times B} matrix of randomization \eqn{p}-values (only
   if \code{p.value} is \code{TRUE} )}
 
-  \item{param.p}{A vector of \eqn{m} parametric \eqn{p}-values (only for flavor
-  "permutation")}
+  \item{flavor}{A character value, the type of randomization performed:
+  "perm" for permutation-based randomization in two-sample tests, and "flip"
+  for sign-flipping-based randomization in one sample tests. See Details.}
 
-  \item{param.p0}{A \eqn{m \times B} matrix of parametric \eqn{p}-values on permuted data (only for flavor "permutation" )} 
-  
-  \item{df}{A vector of \eqn{m} degrees of freedom for the observed statistics (only for flavor "permutation")}
+  \item{param.p}{A vector of \eqn{m} parametric \eqn{p}-values (only for
+  flavor "perm")}
 
-  \item{df0}{A \eqn{m \times B} matrix of degrees of freedom on permuted data (only
-  for flavor "permutation" )} }
+  \item{param.p0}{A \eqn{m \times B} matrix of parametric \eqn{p}-values on
+  permuted data (only for flavor "perm" )}
+
+  \item{df}{A vector of \eqn{m} degrees of freedom for the observed
+  statistics (only for flavor "perm")}
+
+  \item{df0}{A \eqn{m \times B} matrix of degrees of freedom on permuted data
+  (only for flavor "perm" )}}
 }
 \description{
 Randomization-based testing using permutation or sign-flipping
 }
 \details{
-If \code{flavor == "permutation"}, we test the null hypothesis: "both groups have the
-same mean" against the one-sided alternative that the mean is larger in the
-second group. The test is Welch's two-sample
-  test for unequal variances. Permuted test statistics
-are calculated by B permutations of the group labels. Corresponding observed
-and permuted p-values are calculated as the proportion of permutations
-(including the identity) for which the permuted test statistic is larger than
-the observed test statistic. The corresponding parametric p-values are
-  returned as elements \code{param.p} (for the original data) and
-  \code{param.p0} (for the permutations).
+The type of randomization is determined by the parameter \code{cls}.
+  If \code{cls} does not containt two distinct values (or is \code{NULL}), a
+  one-sample test is performed using randomization (flavor "flip"). If it
+  contains two distinct values, a two-sample test is perfomed using
+  permutations (flavor "perm").
 
-If \code{flavor == "flip"}, we test the null hypothesis: "the mean is 0" against the
-two-sided alternative that the mean is larger than 0. We use the (rescaled)
-empirical mean of the observations as a test statistic. Sign-flipped test
-statistics are calculated by flipping the sign of each observation with
-probability 1/2.
+  For permutation, we test the null hypothesis: "both groups have the same
+  mean" against the one-sided alternative that the mean is larger in the
+  second group. The test is Welch's two-sample test for unequal variances.
+  Permuted test statistics are calculated by B permutations of the group
+  labels. Corresponding observed and permuted p-values are calculated as the
+  proportion of permutations (including the identity) for which the permuted
+  test statistic is larger than the observed test statistic. The
+  corresponding parametric p-values are returned as elements \code{param.p}
+  (for the original data) and \code{param.p0} (for the permutations).
+
+  For sign-flipping, we test the null hypothesis: "the mean is 0" against the
+  two-sided alternative that the mean is larger than 0. We use the (rescaled)
+  empirical mean of the observations as a test statistic. Sign-flipped test
+  statistics are calculated by flipping the sign of each observation with
+  probability 1/2.
 }
 \examples{
 
@@ -76,8 +82,8 @@ n <- 380
 B <- 1e3
 mat <- matrix(rnorm(p*n), ncol=n)
 cls <- rep(c(0, 1), times=c(n/2, n-n/2))
-resPerm <- testByRandomization(X=mat, flavor="perm", cls=cls, B=B)
-resFlip <- testByRandomization(X=mat, flavor="flip", B=B)
+resPerm <- testByRandomization(X=mat, cls=cls, B=B) ## permutation
+resFlip <- testByRandomization(X=mat, B=B)          ## sign-flipping
 
 # empirical coverage of Simes thresholds
 alpha <- 0.2

@@ -14,3 +14,4 @@ appveyor.yml
 ^docs$
 ^Rout$
 ^results$
+^data/.*\.rds$

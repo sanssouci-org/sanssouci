@@ -1,7 +1,8 @@
-# Version 0.6.0 [2018-03-15]
+# Version 0.6.0 [2018-03-21]
 
-* Cleanup: user-level entry point for simulating test statistics is now 'gaussianTestStatistics'. 
-* Cleanup: user-level entry point for simulating observations from one and two-sample problems is now 'gaussianSamples'. 
+* Added function JER_calibration as the main user-level entry point for calibrating JER thresholds. Added corresponding tests.
+* Cleanup: user-level entry point for simulating test statistics is now 'gaussianTestStatistics'. Added corresponding tests.
+* Cleanup: user-level entry point for simulating observations from one and two-sample problems is now 'gaussianSamples'. Added corresponding tests.
 * Cleanups in 'inst' scripts.
 
 # Version 0.5.1 [2018-02-07]

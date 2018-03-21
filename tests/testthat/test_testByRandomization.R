@@ -6,7 +6,8 @@ mat <- matrix(rnorm(p*n), ncol = n)
 
 
 cls <- rep(c(0, 1), times = c(27, n - 27))
-res <- testByRandomization(X = mat, B = 1000, flavor = "perm", cls = cls)
+res <- testByRandomization(X = mat, B = 1000, cls = cls)
+expect_equal(res$flavor, "perm")
 rm(cls)
 
 test_that("Two different ways of getting permutation p-values give identical results", {
@@ -26,7 +27,8 @@ test_that("Correctness of permutation p-values", {
     }    
 })
 
-res <- testByRandomization(X = mat, B = 1000, flavor = "flip")
+res <- testByRandomization(X = mat, B = 1000)
+expect_equal(res$flavor, "flip")
 
 test_that("Two different ways of getting sign flipping p-values give identical results", {
     T0 <- cbind(res$T0, res$T)
