@@ -1,19 +1,16 @@
-##' Upper bound for the number of false discoveries
-##'
-##'
-##'
-##' @param stat ordered test statistics
-##' @param thr JFWER thresholds
-##' @param flavor The algorithm to compute the bound 'BNR2014' and
-##' 'BNR2016' give identical resutls and should be slightly better
-##' than 'Mein2006' (example situation?). Flavor 'BNR2016' has a
-##' linear time complexity, hence it is much faster than 'Mein2006'
-##' and much much faster than 'BNR2014'.
-##' @return An upper bound on the number of false discoveries
-##' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
-##' @export
-
-
+#' Upper bound for the number of false discoveries
+#'
+#' @param stat ordered test statistics
+#' @param thr JFWER thresholds
+#' @param flavor The algorithm to compute the bound 'BNR2014' and
+#' 'BNR2016' give identical results. Both should be slightly better
+#' than 'Mein2006' (example situation?). Flavor 'BNR2016' has a
+#' linear time complexity, hence it is much faster than 'Mein2006'
+#' and much much faster than 'BNR2014'.
+#' @return An upper bound on the number of false discoveries
+#' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
+#' @export
+#' 
 upperBoundFP <- function(stat, thr, flavor=c("BNR2016", "Mein2006", "BNR2014")) {
     m <- length(stat)
     kMax <- length(thr)
