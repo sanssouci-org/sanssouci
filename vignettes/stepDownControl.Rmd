@@ -1,13 +1,15 @@
 ---
-title: "Step-down joint Family-Wise Error Rate control"
+title: "Step-down control joint Family-Wise Error Rate control"
 author: "Pierre Neuvial"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_document
 vignette: >
-  %\VignetteIndexEntry{Step-down joint Family-Wise Error Rate control}
+  %\VignetteIndexEntry{Post hoc bounds via joint Family-Wise Error Rate control}
   %\VignetteEngine{knitr::knitr}
   %\VignetteEncoding{UTF-8}
 ---
+
+This is an advanced vignette which illustrates the possible benefits of step-down JER control over single step JER control.
 
 ```{r}
 library("sansSouci")
@@ -19,7 +21,7 @@ Parameters:
 ```{r}
 m <- 2e2
 n <- 123
-pi0 <- 0.6
+pi0 <- 0.5
 B <- 1e3
 rho <- 0.2
 
@@ -27,21 +29,21 @@ rho <- 0.2
 sim <- gaussianTestStatistics(m, B, pi0 = pi0, SNR = 3, dep = "equi", param = rho)
 X0 <- sim$X0
 x <- sim$x
-H0 <- which(sim$H==0)
-H1 <- which(sim$H==1)
+H0 <- which(sim$H == 0)
+H1 <- which(sim$H == 1)
 ```
 
 Show test statistics
 ```{r, testStat, fig.width=7, fig.height=5}
 pch <- 20
-plot(x, col=1+sim$H, main="Test statistics", pch=pch)
-legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
+plot(x, col = 1 + sim$H, main = "Test statistics", pch=pch)
+legend("topleft", c("H0", "H1"), pch = pch, col = 1:2)
 ```
 
-## Step-down JFWER control
+## Step-down JER control
 ```{r}
 alpha <- 0.1
-res <- jointFWERControl(X0, refFamily="kFWER", alpha=alpha, stat=x)
+res <- jointFWERControl(X0, refFamily = "kFWER", alpha=alpha, stat=x)
 thr <- res$thr
 thrMat <- res$stepsDown$thr
 ```
@@ -50,12 +52,7 @@ Confidence envelopes
 ```{r}
 o <- order(x, decreasing=TRUE)
 xo <- x[o]
-
-Vbar <- upperBoundFP(xo, thr)  ## default is flavor "Roquain2014"
-VbarM <- upperBoundFP(xo, thr, flavor="Mein2006")  ## faster for now
-identical(Vbar, VbarM)  ## Generally TRUE
-
-bounds <- apply(thrMat, 2, function(thr) upperBoundFP(xo, thr, flavor="Mein2006"))
+bounds <- apply(thrMat, 2, function(thr) curveMaxFP(xo, thr))
 ```
 
 True number of false discoveries among first rejections
@@ -63,42 +60,42 @@ True number of false discoveries among first rejections
 V <- cumsum(o %in% H0)
 ```
 
-"Oracle" JFWER thresholds
+"Oracle" JER thresholds
 ```{r}
 X0.Oracle <- X0[-H1, ]
 x.Oracle <- x[-H1]
-res.Oracle <- jointFWERControl(X0.Oracle, refFamily="kFWER", alpha=alpha, stat=x.Oracle)
+res.Oracle <- jointFWERControl(X0.Oracle, refFamily = "kFWER", alpha = alpha, stat = x.Oracle)
 thrO <- c(res.Oracle$thr, rep(-Inf, length(H1)))
-xo.Oracle <- x.Oracle[order(x.Oracle, decreasing=TRUE)]
-VbarO <- upperBoundFP(xo.Oracle, res.Oracle$thr, flavor="Mein2006")
+xo.Oracle <- x.Oracle[order(x.Oracle, decreasing = TRUE)]
+VbarO <- curveMaxFP(xo, thrO)
 ```
 
 Graphically:
-```{r, JFWER_SD, fig.width=7, fig.height=5}
+```{r, JER_SD, fig.width=7, fig.height=5}
 nSteps <- ncol(thrMat)
 cols1 <- seq.int(nSteps)
 ltys1 <- rep(1, nSteps)
-ttag <- paste("m=", m, ", rho=", rho, ", alpha=", alpha, sep="")
-ttl <- paste("Bounds on #FP among rejected hypotheses", ttag, sep="\n")
+ttag <- paste("m=", m, ", rho=", rho, ", alpha=", alpha, sep = "")
+ttl <- paste("Bounds on #FP among rejected hypotheses", ttag, sep = "\n")
 xmax <- min(200, m)
 ymax <- bounds[xmax, 1]
-matplot(bounds, t='s', lty=1, ylab="V", col=cols1,
-        main=ttl, xlim=c(1, xmax), ylim=c(0, ymax))
+matplot(bounds, t = 's', lty = 1, ylab = "V", col = cols1,
+        main = ttl, xlim = c(1, xmax), ylim = c(0, ymax))
 
 cols2 <- c("purple", "pink")
 ltys2 <- rep(1, 2)
-lines(V, col=cols2[1], t="s", lty=ltys2[1])
-lines(VbarO, col=cols2[2], t="s", lty=ltys2[2])
+lines(V, col = cols2[1], t = "s", lty = ltys2[1])
+lines(VbarO, col = cols2[2], t = "s", lty = ltys2[2])
 
-lgd <- c(paste("SD-JFWER(step=", 1:nSteps, ")", sep=""), "True V", "Oracle JFWER")
+lgd <- c(paste("SD-JER(step=", 1:nSteps, ")", sep = ""), "True V", "Oracle JER")
 ltys <- c(ltys1, ltys2)
 cols <- c(cols1, cols2)
-legend("top", lgd, col=cols, lty=ltys)
+legend("top", lgd, col = cols, lty = ltys)
 
 xSc <- x/max(x)*ymax  ## scaled test statistics (for display)
-colStat <- 1+sim$H
-points(xSc[o], col=colStat[o], pch=pch, cex=0.5)
-legend("left", c("H0", "H1"), pch=pch, col=1:2)
+colStat <- 1 + sim$H
+points(xSc[o], col = colStat[o], pch = pch, cex = 0.2)
+legend("left", c("H0", "H1"), pch = pch, col = 1:2)
 ```
 
 ## Session information

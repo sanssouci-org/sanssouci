@@ -10,12 +10,11 @@ test_that("JER calibration", {
     alpha <- 0.2
     B <- 1e3
 
-    cal <- JER_calibration(X, B, alpha, refFamily = "Simes")
+    cal <- calibrateJER(X, B, alpha, refFamily = "Simes")
     expect_length(cal$thr, m)
     expect_length(cal$stat, m)
 
-    cal <- JER_calibration(X, B, alpha, refFamily = "Simes", K = 50)
+    cal <- calibrateJER(X, B, alpha, refFamily = "Simes", K = 50)
     expect_length(cal$thr, 50)
     expect_length(cal$stat, m)
 })
-    

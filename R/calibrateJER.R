@@ -7,39 +7,40 @@
 #'   second sample.
 #' @param B A numeric value, the number of permutations to be performed
 #' @param alpha Target JER level
-#' @param refFamily A character value which can be \describe{ \item{Simes}{The
-#'   classical family of thresholds introduced by Simes (1986):
+#' @param refFamily A character value which can be \describe{
+#'
+#'   \item{Simes}{The classical family of thresholds introduced by Simes (1986):
 #'   \eqn{\alpha*k/m}. This family yields joint FWER control if the test
-#'   statistics are positively dependent (PRDS) under H0.} \item{kFWER}{A family
-#'   \eqn{(t_k)} calibrated so that for each k, \eqn{(t_k)} controls the
-#'   (marginal) k-FWER.}}
+#'   statistics are positively dependent (PRDS) under H0.}
+#'
+#'   \item{kFWER}{A family \eqn{(t_k)} calibrated so that for each k,
+#'   \eqn{(t_k)} controls the (marginal) k-FWER.}}
+#'
 #' @param K For JER control over \code{1:K}, ie joint control of all
 #'   \eqn{k}-FWER, \eqn{k \le K}.
 #' @param verbose A boolean value: should extra info be printed?
-#' @return A list with elements: \describe{ \item{stat}{A numeric vector of
-#'   \code{m} test statistics} \item{thr}{A numeric vector of length \code{K},
-#'   such that the estimated probability that there exists an index \eqn{k}
-#'   between 1 and \eqn{K} such that the \eqn{k}-th maximum of the test
-#'   statistics of is greater than \eqn{thr[k]}, is less than \eqn{\alpha}.}}
+#' @return A list with elements: \describe{
+#'
+#'   \item{stat}{A numeric vector of \code{m} test statistics}
+#'
+#'   \item{thr}{A numeric vector of length \code{K}, such that the estimated
+#'   probability that there exists an index \eqn{k} between 1 and \eqn{K} such
+#'   that the \eqn{k}-th maximum of the test statistics of is greater than
+#'   \eqn{thr[k]}, is less than \eqn{\alpha}}
+#'
+#'   \item{lambda}{A numeric value, the result of the calibration} }
 #'
 #' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 #' @export
 #' @examples
 #'
-#' set.seed(0xBEEF)
-#' m <- 123
-#' rho <- 0.2
-#' n <- 100
-#' pi0 <- 0.5
-#'
-#' sim <- gaussianSamples(m, rho, n, pi0, SNR = 1, prob = 0.5)
+#' sim <- gaussianSamples(m = 123, rho = 0.2, n = 100,
+#'                        pi0 = 0.8, SNR = 1, prob = 0.5)
 #' X <- sim$X
-#'
-#' alpha <- 0.2
-#' B <- 1e3
-#' cal <- JER_calibration(X, B, alpha, refFamily="Simes")
+#' cal <- calibrateJER(X, B = 1e3, alpha = 0.2, refFamily="Simes")
+#' cal$lambda # > alpha (whp) is rho > 0
 
-JER_calibration <- function(X, B, alpha, refFamily = c("Simes", "kFWER"),
+calibrateJER <- function(X, B, alpha, refFamily = c("Simes", "kFWER"),
                             K = nrow(X), verbose=TRUE) {
     ## sanity checks
     m <- nrow(X);
@@ -61,7 +62,7 @@ JER_calibration <- function(X, B, alpha, refFamily = c("Simes", "kFWER"),
         x <- tests$T
     }    
     res <- jointFWERControl(X0, refFamily = refFamily, alpha = alpha, x, kMax = K)
-    calib <- list(stat = x, thr = res$thr) 
+    calib <- list(stat = x, thr = res$thr, lambda = res$lambda) 
     
     return(calib)
 }

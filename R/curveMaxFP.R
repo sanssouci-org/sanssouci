@@ -1,17 +1,39 @@
-#' Upper bound for the number of false discoveries
 #'
-#' @param stat ordered test statistics
-#' @param thr JFWER thresholds
+#' Upper bound for the number of false discoveries among most significant items
+#'
+#' @param stat A vector containing all \eqn{m} test statistics, sorted non-increasingly
+#' @param thr A vector of \eqn{K} JER-controlling thresholds, sorted non-increasingly
 #' @param flavor The algorithm to compute the bound 'BNR2014' and
 #' 'BNR2016' give identical results. Both should be slightly better
 #' than 'Mein2006' (example situation?). Flavor 'BNR2016' has a
 #' linear time complexity, hence it is much faster than 'Mein2006'
 #' and much much faster than 'BNR2014'.
-#' @return An upper bound on the number of false discoveries
+#' @return A vector of size \eqn{m} giving an joint upper confidence bound on
+#'   the number of false discoveries among the \eqn{k} most significant items
+#'   for all \eqn{k \in \{1\ldots m\}}.
 #' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 #' @export
+#' @example
+#' m <- 123
+#' alpha <- 0.2
+#' sim <- gaussianSamples(m = m, rho = 0.2, n = 100, pi0 = 0.5, SNR = 3, prob = 0.5)
+#' cal <- calibrateJER(sim$X, B = 1e3, alpha = alpha, refFamily="Simes")
+#' stat <- cal$stat
+#' o <- order(stat, decreasing = TRUE)
+#' ub <- curveMaxFP(sstat, cal$thr)
+#' plot(1:m, ub, t = 's', col = "purple")
 #' 
-upperBoundFP <- function(stat, thr, flavor=c("BNR2016", "Mein2006", "BNR2014")) {
+#' # compare with true number of false positives
+#' H0 <- which(sim$H == 0)
+#' V <- cumsum(o %in% H0)
+#' lines(1:m, V, col = 2)
+#' 
+#' # compare with Simes bound
+#' thrSimes <- SimesThresholdFamily(m)(alpha)
+#' ubSimes <- curveMaxFP(sstat, thrSimes)
+#' lines(1:m, ubSimes, col = 1)
+
+curveMaxFP <- function(stat, thr, flavor=c("BNR2016", "Mein2006", "BNR2014")) {
     m <- length(stat)
     kMax <- length(thr)
 

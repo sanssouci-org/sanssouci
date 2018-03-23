@@ -33,7 +33,7 @@
 #'     statistic whose quantile of order \eqn{alpha} is \eqn{lambda}.}
 #'     \item{lambda}{JFWER threshold.}
 #'     \item{Vbar}{An upper bound on the number of false discoveries,
-#'     as calculated by \code{upperBoundFP(stat, thr)}.}
+#'     as calculated by \code{curveMaxFP(stat, thr)}.}
 #'     \item{steps}{a list with elements named 'thr', 'pivStat' and
 #'     'lambda' giving the sequence of corresponding vectors/values
 #'     along the steps down.}}
@@ -71,7 +71,7 @@ jointFWERControl <- function(mat,
                              maxStepsDown=100,
                              kMax=nrow(mat),
                              Rcpp=TRUE,
-                             verbose=TRUE) {
+                             verbose=FALSE) {
     ## This function is the main workhorse of the package.
 
     ## sanity checks
@@ -183,7 +183,7 @@ jointFWERControl <- function(mat,
     if (!is.null(stat)) {
         ## upper bound on the number of false positives among first 'natural' rejections
         o <- order(stat, decreasing=TRUE)
-        Vbar <- upperBoundFP(stat[o], thr)
+        Vbar <- curveMaxFP(stat[o], thr)
     } else {
         Vbar <- NULL
     }
@@ -197,8 +197,6 @@ jointFWERControl <- function(mat,
                 lambda=lambda,
                 Vbar=Vbar,
                 stepsDown=stepsDown)
-    ## TODO: also return step at which hyp j is rejected as in Romano-Wolf's programs?
-    ## TODO: also return 'Sbar' (aka 'lowerBoundTP')
     return(res);
 }
 

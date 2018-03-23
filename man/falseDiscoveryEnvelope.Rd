@@ -33,7 +33,9 @@ curve(falseDiscoveryEnvelope(x, thr))
 B <- 1e3
 rho <- 0.3
 flavor <- c("independent", "equi-correlated", "3-factor")[2]
-mat <- gaussianTestStatistics(m, B, dep = "equi", param = rho)$X0
+testStat <- gaussianTestStatistics(m, pi0 = 0.5, SNR = 2, B, dep = "equi", param = rho)
+mat <- testStat$X0
+stat <- testStat$x
 
 res <- jointFWERControl(mat=mat, refFamily="Simes", alpha, maxSteps=100)
 thr <- 1-pnorm(res$thr) ## converting to p-value scale

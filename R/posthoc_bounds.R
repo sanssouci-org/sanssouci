@@ -6,25 +6,22 @@
 #' @export
 #' @examples
 #' 
-#' m <- 200
-#' B <- 1e3
-#' rho <- 0.3
-#' testStat <- gaussianTestStatistics(m, B, pi0 = 0.5, SNR = 2, dep = "equi", param = rho)
-#' mat <- testStat$X0
-#' stat <- testStat$x
-#' cal <- jointFWERControl(mat = mat, refFamily = "Simes", alpha = 0.2)
-#' cal$lambda  ## > alpha if rho > 0
-#' 
+#' m <- 123
+#' sim <- gaussianSamples(m = m, rho = 0.2, n = 100, 
+#'                        pi0 = 0.8, SNR = 3, prob = 0.5)
+#' X <- sim$X
+#' cal <- calibrateJER(X, B = 1e3, alpha = 0.2, refFamily="Simes")
 #' thr <- sort(cal$thr, decreasing = TRUE)
+#' stat <- cal$stat
 #' 
-#' M0 <- FP(stat, thr) ## upper bound on m0...
+#' M0 <- maxFP(stat, thr) ## upper bound on m0...
 #' M0/m
 #' 
 #' sstat <- sort(stat, decreasing=TRUE)
-#' FP(head(sstat), thr)
-#' FP(c(head(sstat), tail(sstat)), thr)
+#' maxFP(head(sstat), thr)
+#' maxFP(c(head(sstat), tail(sstat)), thr)
 #' 
-FP <- function(stat, thr) {
+maxFP <- function(stat, thr) {
     stopifnot(identical(sort(thr, decreasing=TRUE), thr))
     nS <- length(stat)
     K <- length(thr)
@@ -40,11 +37,11 @@ FP <- function(stat, thr) {
 }
 
 
-#' Upper bound for the number of true discoveries in a selection
+#' Lower bound for the number of true discoveries in a selection
 #' 
-#' @describeIn FP
-#' @return An upper bound on the number of true discoveries in the selection
+#' @inheritParams maxFP
+#' @return A Lower bound on the number of true discoveries in the selection
 #' @export
-TP <- function(stat, thr) {
-    length(stat) - TP(stat, thr)
+minTP <- function(stat, thr) {
+    length(stat) - maxFP(stat, thr)
 }

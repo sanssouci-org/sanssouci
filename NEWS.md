@@ -1,8 +1,12 @@
 # Version 0.6.0 [2018-03-21]
 
-* Added function JER_calibration as the main user-level entry point for calibrating JER thresholds. Added corresponding tests.
-* Cleanup: user-level entry point for simulating test statistics is now 'gaussianTestStatistics'. Added corresponding tests.
-* Cleanup: user-level entry point for simulating observations from one and two-sample problems is now 'gaussianSamples'. Added corresponding tests.
+## Several important changes to make the package simpler to use
+
+* Added function maxFP and minTP to calculate post hoc bound among user-defined selections. Renamed function "upperBoundFP" to "curveMaxFP" for internal consistency.
+* Added function calibrateJER as the main user-level entry point for calibrating JER thresholds. 
+* Cleanup: user-level entry point for simulating test statistics is now 'gaussianTestStatistics'.
+* Cleanup: user-level entry point for simulating observations from one and two-sample problems is now 'gaussianSamples'.
+* Added corresponding tests and updated vignettes accordingly.
 * Cleanups in 'inst' scripts.
 
 # Version 0.5.1 [2018-02-07]

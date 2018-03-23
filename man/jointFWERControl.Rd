@@ -48,7 +48,7 @@ A list with elements: \describe{
     statistic whose quantile of order \eqn{alpha} is \eqn{lambda}.}
     \item{lambda}{JFWER threshold.}
     \item{Vbar}{An upper bound on the number of false discoveries,
-    as calculated by \code{upperBoundFP(stat, thr)}.}
+    as calculated by \code{curveMaxFP(stat, thr)}.}
     \item{steps}{a list with elements named 'thr', 'pivStat' and
     'lambda' giving the sequence of corresponding vectors/values
     along the steps down.}}
