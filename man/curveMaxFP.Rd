@@ -42,7 +42,7 @@ lines(1:m, V, col = 2)
 
 # compare with Simes bound
 thrSimes <- SimesThresholdFamily(m)(alpha)
-ubSimes <- curveMaxFP(sstat, thrSimes)
+ubSimes <- curveMaxFP(stat[o], thrSimes)
 lines(1:m, ubSimes, col = 1)
 }
 \author{

@@ -76,3 +76,23 @@ test_that("posthocBySimes is posthocBySimesRcpp for simulated data", {
         }
     })
 })
+
+test_that("posthocBySimes can be reproduced by minTP", {
+    m <- 1e3
+    m1 <- 100
+    alphas <- seq(from = 0, to = 1, by = 0.1)
+    test <- replicate(10, {
+        x <- c(rnorm(m1, mean=4), rnorm(m-m1, mean=0))
+        sx <- sort(x, decreasing = TRUE)
+        p <- 1-pnorm(x)
+        nR <- round(runif(1)*m)
+        R <- sample(nR)
+        for (alpha in alphas) {
+            thrSimes <- SimesThresholdFamily(m)(alpha)
+            ubSimes <- minTP(x[R], thrSimes)
+            expect_equal(posthocBySimes(p, R, alpha = alpha), 
+                         ubSimes)
+        }
+    })
+})
+

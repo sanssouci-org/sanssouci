@@ -30,7 +30,7 @@
 #' 
 #' # compare with Simes bound
 #' thrSimes <- SimesThresholdFamily(m)(alpha)
-#' ubSimes <- curveMaxFP(sstat, thrSimes)
+#' ubSimes <- curveMaxFP(stat[o], thrSimes)
 #' lines(1:m, ubSimes, col = 1)
 
 curveMaxFP <- function(stat, thr, flavor=c("BNR2016", "Mein2006", "BNR2014")) {
