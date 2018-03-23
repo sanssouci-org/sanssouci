@@ -32,7 +32,7 @@ sim <- gaussianSamples(m = m, rho = 0.2, n = 100, pi0 = 0.5, SNR = 3, prob = 0.5
 cal <- calibrateJER(sim$X, B = 1e3, alpha = alpha, refFamily="Simes")
 stat <- cal$stat
 o <- order(stat, decreasing = TRUE)
-ub <- curveMaxFP(sstat, cal$thr)
+ub <- curveMaxFP(stat[o], cal$thr)
 plot(1:m, ub, t = 's', col = "purple")
 
 # compare with true number of false positives

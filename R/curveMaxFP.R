@@ -20,7 +20,7 @@
 #' cal <- calibrateJER(sim$X, B = 1e3, alpha = alpha, refFamily="Simes")
 #' stat <- cal$stat
 #' o <- order(stat, decreasing = TRUE)
-#' ub <- curveMaxFP(sstat, cal$thr)
+#' ub <- curveMaxFP(stat[o], cal$thr)
 #' plot(1:m, ub, t = 's', col = "purple")
 #' 
 #' # compare with true number of false positives
