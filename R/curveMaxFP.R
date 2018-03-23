@@ -13,7 +13,7 @@
 #'   for all \eqn{k \in \{1\ldots m\}}.
 #' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 #' @export
-#' @example
+#' @examples
 #' m <- 123
 #' alpha <- 0.2
 #' sim <- gaussianSamples(m = m, rho = 0.2, n = 100, pi0 = 0.5, SNR = 3, prob = 0.5)

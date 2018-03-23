@@ -5,7 +5,7 @@
 \title{Calibration of joint Family-Wise error rate thresholds}
 \usage{
 jointFWERControl(mat, refFamily = c("Simes", "kFWER"), alpha, stat = NULL,
-  maxStepsDown = 100, kMax = nrow(mat), Rcpp = TRUE, verbose = TRUE)
+  maxStepsDown = 100, kMax = nrow(mat), Rcpp = TRUE, verbose = FALSE)
 }
 \arguments{
 \item{mat}{A \eqn{m} x \eqn{B} matrix of Monte-Carlo samples of
