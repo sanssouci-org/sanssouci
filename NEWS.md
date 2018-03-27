@@ -2,7 +2,8 @@
 
 ## Several important changes to make the package simpler to use
 
-* Added function maxFP and minTP to calculate post hoc bound among user-defined selections. Renamed function "upperBoundFP" to "curveMaxFP" for internal consistency.
+
+* Added function maxFP and minTP to calculate post hoc bound among user-defined selections. Renamed function 'upperBoundFP' to 'curveMaxFP' for internal consistency. Removed functions 'falseDiscoveryEnvelope', 'falseDiscoveryProportionControl' and 'falseDiscoveryProportionEnvelope' which provided correct but conservative bounds. 
 * Added function calibrateJER as the main user-level entry point for calibrating JER thresholds. 
 * Cleanup: user-level entry point for simulating test statistics is now 'gaussianTestStatistics'.
 * Cleanup: user-level entry point for simulating observations from one and two-sample problems is now 'gaussianSamples'.
