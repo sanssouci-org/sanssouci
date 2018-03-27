@@ -56,6 +56,7 @@ colStat <- 1+sim$H
 plot(tests$T, col=colStat, main="Test statistics", pch=pch)
 legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
 
+## one-sample data
 sim <- gaussianSamples(m, rho, n, pi0, SNR=2)
 tests <- testByRandomization(sim$X, B)
 

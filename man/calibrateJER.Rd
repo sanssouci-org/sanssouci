@@ -47,11 +47,46 @@ Calibration of of JER thresholds from one or two-sample tests
 }
 \examples{
 
-sim <- gaussianSamples(m = 123, rho = 0.2, n = 100,
-                       pi0 = 0.8, SNR = 1, prob = 0.5)
+m <- 543
+pi0 <- 0.8
+sim <- gaussianSamples(m = m, rho = 0.2, n = 100,
+                       pi0 = pi0, SNR = 3, prob = 0.5)
 X <- sim$X
 cal <- calibrateJER(X, B = 1e3, alpha = 0.2, refFamily="Simes")
 cal$lambda # > alpha (whp) is rho > 0
+
+# Application 1: confidence envelope
+#   ie upper confidence bound for the number of false positives 
+#   among the k most significant items for all k
+stat <- cal$stat
+o <- order(stat, decreasing = TRUE)
+R <- seq_along(stat)
+Vbar <- curveMaxFP(stat[o], cal$thr)
+
+# True number of false positives among the most significant items:
+H0 <- which(sim$H == 0)
+V <- cumsum(o \%in\% H0)
+
+plot(R, Vbar, t = 's', xlab = "Number of rejections", ylab = "Bound on the number of false positives")
+lines(R, V, t = 's', col = 2)
+legend("topleft", c("True number of FP", "Post hoc upper bound"), col = c(2, 1), lty = rep(1, 2))
+abline(a = 0, b = 1, lty = 2)
+
+# Application 2a: bound on the number of false positives in one or 
+#    more user-defined selections
+
+sel <- stat[o][c(1:10, 35:40)]
+maxFP(sel, cal$thr)
+
+sel <- stat[o][c(30:50)]
+maxFP(sel, cal$thr)
+
+# Application 2b: bound on pi0, the proportion of false positives in H
+
+sel <- stat[o]
+maxFP(sel, cal$thr)/m
+pi0
+
 }
 \author{
 Gilles Blanchard, Pierre Neuvial and Etienne Roquain
