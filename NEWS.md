@@ -9,6 +9,7 @@
 * Added corresponding tests and updated vignettes accordingly.
 * Cleanups in 'inst' scripts.
 * Cleanup: *many* lower-level functions are not exported anymore; their documentation is still available in the form of comments but not as .Rd files. 
+* Some code cleanups (spacing; comments)
 
 # Version 0.5.1 [2018-02-07]
 
