@@ -3,21 +3,21 @@
 using namespace Rcpp;
 // [[Rcpp::depends(RcppArmadillo)]]
 
-//' Empirical coverage of a threshold family
-//'
-//' @param thr A numeric vector of length \code{m}, a threshold family. Should
-//'   be sorted in decreasing order.
-//' @param Z A \code{m} x \code{B} matrix of \code{B} Monte-Carlo
-//'    samples of *ordered* test statistics under the null
-//'    hypothesis. Each column should be sorted in decreasing order.
-//' @return The empirical coverage of \code{thr} according to \code{Z}.
-//'
-//' @details The empirical coverage of \code{thr} according to
-//'   \code{Z} is defined as the empirical probability that there exists \eqn{k}
-//'   in \eqn{1 \dots m} such that \eqn{k}-th max of the joint distribution of
-//'   the test statistics under the null hypothesis exceeds the \eqn{k}-th
-//'   largest value of \code{thr}, that is, \code{thr[k]}.
-//'
+// Empirical coverage of a threshold family
+//
+// @param thr A numeric vector of length \code{m}, a threshold family. Should
+//   be sorted in decreasing order.
+// @param Z A \code{m} x \code{B} matrix of \code{B} Monte-Carlo
+//    samples of *ordered* test statistics under the null
+//    hypothesis. Each column should be sorted in decreasing order.
+// @return The empirical coverage of \code{thr} according to \code{Z}.
+//
+// @details The empirical coverage of \code{thr} according to
+//   \code{Z} is defined as the empirical probability that there exists \eqn{k}
+//   in \eqn{1 \dots m} such that \eqn{k}-th max of the joint distribution of
+//   the test statistics under the null hypothesis exceeds the \eqn{k}-th
+//   largest value of \code{thr}, that is, \code{thr[k]}.
+//
 // [[Rcpp::export]]
 NumericVector empiricalCoverageO(NumericVector thr, arma::mat Z) {
     // Calculate P_n(k-max(thr) > thr(k))

@@ -17,6 +17,7 @@
 #' @details B
 #' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 #' @export
+#' @importFrom Matrix Matrix
 #' @examples
 #'
 #' m <- 123

@@ -3,13 +3,13 @@
 using namespace Rcpp;
 // [[Rcpp::depends(RcppArmadillo)]]
 
-//' Sorting of the rows of a matrix by descending order
-//'
-//' @param X A numeric matrix.
-//' @param Y A numeric matrix.
-//' @return A numeric matrix whose rows are sorted by descending order.
-//'
-//' @export
+// Sorting of the rows of a matrix by descending order
+//
+// @param X A numeric matrix.
+// @param Y A numeric matrix.
+// @return A numeric matrix whose rows are sorted by descending order.
+//
+// @export
 // [[Rcpp::export]]
 Rcpp::NumericVector minPseudoRanks(arma::mat X, arma::mat Y) {
     int B = X.n_cols;

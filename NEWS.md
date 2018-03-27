@@ -1,7 +1,6 @@
 # Version 0.6.0 [2018-03-21]
 
-## Several important changes to make the package simpler to use
-
+## Several important user-level simplifications
 
 * Added function maxFP and minTP to calculate post hoc bound among user-defined selections. Renamed function 'upperBoundFP' to 'curveMaxFP' for internal consistency. Removed functions 'falseDiscoveryEnvelope', 'falseDiscoveryProportionControl' and 'falseDiscoveryProportionEnvelope' which provided correct but conservative bounds. 
 * Added function calibrateJER as the main user-level entry point for calibrating JER thresholds. 
@@ -9,6 +8,7 @@
 * Cleanup: user-level entry point for simulating observations from one and two-sample problems is now 'gaussianSamples'.
 * Added corresponding tests and updated vignettes accordingly.
 * Cleanups in 'inst' scripts.
+* Cleanup: *many* lower-level functions are not exported anymore; their documentation is still available in the form of comments but not as .Rd files. 
 
 # Version 0.5.1 [2018-02-07]
 
