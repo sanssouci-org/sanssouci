@@ -50,7 +50,7 @@ calibrateJER <- function(X, B, alpha, refFamily = c("Simes", "kFWER"),
     
     flavor <- tests$flavor    
     if (flavor == "perm") {
-        ## FIXME: why are the below transformation not done internally in the testByRandomization function??
+        ## FIXME: why are the below transformations not done internally in the testByRandomization function??
         # p-values
         p0 <- tests$param.p0
         p <- tests$param.p
@@ -61,7 +61,7 @@ calibrateJER <- function(X, B, alpha, refFamily = c("Simes", "kFWER"),
         X0 <- tests$T0
         x <- tests$T
     }    
-    res <- jointFWERControl(X0, refFamily = refFamily, alpha = alpha, x, kMax = K)
+    res <- calibrateJER0(X0, refFamily = refFamily, alpha = alpha, x, kMax = K)
     calib <- list(stat = x, thr = res$thr, lambda = res$lambda) 
     
     return(calib)

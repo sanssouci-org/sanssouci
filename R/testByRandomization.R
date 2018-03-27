@@ -71,31 +71,30 @@
 #'
 #' @examples
 #'
-#' p <- 510
-#' n <- 380
+#' m <- 123
+#' rho <- 0.2
+#' n <- 100
+#' pi0 <- 0.5
 #' B <- 1e3
-#' mat <- matrix(rnorm(p*n), ncol=n)
-#' cls <- rep(c(0, 1), times=c(n/2, n-n/2))
-#' resPerm <- testByRandomization(X=mat, cls=cls, B=B) ## permutation
-#' resFlip <- testByRandomization(X=mat, B=B)          ## sign-flipping
 #'
-#' # empirical coverage of Simes thresholds
-#' alpha <- 0.2
-#' thr <- SimesThresholdFamily(p)(alpha)
-#' sansSouci:::empiricalCoverage(thr, resPerm$T0) ## Welch, not Gaussian
-#' sansSouci:::empiricalCoverage(thr, qnorm(1-resPerm$p0))
-#' sansSouci:::empiricalCoverage(thr, qnorm(1-resPerm$param.p0))
+#' ## two-sample data
+#' sim <- gaussianSamples(m, rho, n, pi0, SNR = 2, prob = 0.5)
+#' tests <- testByRandomization(sim$X, B)
 #'
-#' sansSouci:::empiricalCoverage(thr, resFlip$T0)
-#' sansSouci:::empiricalCoverage(thr, qnorm(1-resFlip$p0))
+#' ## show test statistics
+#' pch <- 20
+#' colStat <- 1+sim$H
+#' plot(tests$T, col=colStat, main="Test statistics", pch=pch)
+#' legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
 #'
-#' # test statistics null distribution
-#' hist(resPerm$p)
-#' hist(resFlip$p)
+#' sim <- gaussianSamples(m, rho, n, pi0, SNR=2)
+#' tests <- testByRandomization(sim$X, B)
 #'
-#' alpha <- 0.05
-#' resP <- jointFWERControl(resPerm$T0, refFamily="Simes", alpha=alpha, stat=resPerm$T)
-#' resF <- jointFWERControl(resFlip$T0, refFamily="Simes", alpha=alpha, stat=resFlip$T)
+#' ## show test statistics
+#' pch <- 20
+#' colStat <- 1+sim$H
+#' plot(tests$T, col=colStat, main="Test statistics", pch=pch)
+#' legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
 #'
 #' @importFrom matrixStats rowRanks
 #' @export
@@ -162,7 +161,7 @@ testByRandomization <- function(X, B, cls = colnames(X),
         T <- testBySignFlipping(X, B)
         res <- list(T = T_obs, T0 = T, flavor = flavor)
     }
-
+    
     if (p.value) {
         ## get m x (B+1) matrix of pvalues under the null (+ original)
         ## by sorting null test statistics as proposed by Ge et al (2003)

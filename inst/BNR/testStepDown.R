@@ -1,3 +1,7 @@
+if (packageVersion("sansSouci") < "0.6.0") {
+    stop("Please update package 'sansSouci'")
+}
+
 testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alphas, n=1000, flavor=c("equi", "Mein2006", "Toeplitz", "equi-perm", "equi-flip"), kMaxs=m, trace=FALSE) {
     flavor <- match.arg(flavor)
     if (is.character(SNR)) {
@@ -85,7 +89,7 @@ testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alphas, n=1000, flavor=
                 ## ftag <- sprintf("family=%s", refFam)
                 ftag <- refFam
                 ## Step-down control
-                res <- jointFWERControl(X0, refFamily=refFam, alpha=alpha, stat=x, kMax=kMax, verbose=FALSE)
+                res <- sansSouci:::calibrateJER0(X0, refFamily=refFam, alpha=alpha, stat=x, kMax=kMax, verbose=FALSE)
                 thrMat <- res$stepsDown$thr
                 nSteps <- ncol(thrMat)
                 thr0 <- thrMat[, 1]
@@ -95,12 +99,12 @@ testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alphas, n=1000, flavor=
                 ## comparison with *Oracle step-down* JFWER thresholds (only the step-down is Oracle)
                 xx <- rep(Inf, length(x))
                 xx[H0] <- -Inf
-                resOracle <- jointFWERControl(X0, refFamily=refFam, alpha=alpha, stat=xx, kMax=kMax, verbose=FALSE)
+                resOracle <- sansSouci:::calibrateJER0(X0, refFamily=refFam, alpha=alpha, stat=xx, kMax=kMax, verbose=FALSE)
                 thrO <- resOracle$thr
 
                 ## *Oracle JFWER* thresholds (double Oracle!!!)
                 X0Oracle <- X0[H0, ]
-                resOracleJ <- jointFWERControl(X0Oracle, refFamily=refFam, alpha=alpha,
+                resOracleJ <- sansSouci:::calibrateJER0(X0Oracle, refFamily=refFam, alpha=alpha,
                                                maxStepsDown=0, kMax=kMax, verbose=FALSE)  ## single step
                 thrOJ <- resOracleJ$thr
                 if (m0<kMax) {

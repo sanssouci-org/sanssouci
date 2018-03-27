@@ -1,85 +1,84 @@
-#' Calibration of joint Family-Wise error rate thresholds
-#'
-#' Calibration of a family of thresholds that provide joint FWER control
-#'
-#' @param mat A \eqn{m} x \eqn{B} matrix of Monte-Carlo samples of
-#'     test statistics under the null hypothesis. \describe{
-#'     \item{m}{is the number of tested hypotheses} \item{B}{is the
-#'     number of Monte-Carlo samples}}
-#' @param refFamily A character value which can be \describe{
-#' \item{Simes}{The classical family of thresholds introduced by
-#' Simes (1986): \eqn{\alpha*k/m}. This family yields joint FWER
-#' control if the test statistics are positively dependent (PRDS)
-#' under H0.}
-#' \item{kFWER}{A family \eqn{(t_k)} calibrated so that for each k,
-#' \eqn{(t_k)} controls the (marginal) k-FWER.}}
-#' @param alpha Target joint FWER level.
-#' @param stat A vector of \eqn{m} test statistics. Not used for
-#' single step control, and mandatory for step-down JFWER control. If
-#' not provided, single step control is performed.
-#' @param maxStepsDown Maximum number of steps down to be performed.
-#'     \code{maxSteps=1} corresponds to single step JFWER control.
-#' @param kMax For simultaneous control of (\eqn{k}-FWER for all
-#'     \eqn{k \le k[max]}).
-#' @param Rcpp If \code{TRUE}, some costly operations (sorting) are
-#'     performed in C++.
-#' @param verbose A boolean value: should extra info be printed?
-#' @return A list with elements: \describe{
-#'     \item{thr}{A numeric vector of length \code{m}, such that the
-#'     estimated probability that there exists an index \eqn{k} between 1
-#'     and m such that the k-th maximum of the test statistics of is
-#'     greater than \eqn{thr[k]}, is less than \eqn{\alpha}.}
-#'     \item{pivStat}{A numeric vector of length \code{m}, the values of the pivotal
-#'     statistic whose quantile of order \eqn{alpha} is \eqn{lambda}.}
-#'     \item{lambda}{JFWER threshold.}
-#'     \item{Vbar}{An upper bound on the number of false discoveries,
-#'     as calculated by \code{curveMaxFP(stat, thr)}.}
-#'     \item{steps}{a list with elements named 'thr', 'pivStat' and
-#'     'lambda' giving the sequence of corresponding vectors/values
-#'     along the steps down.}}
-#' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
-#' @export
-#' @examples
-#'
-#' set.seed(0xBEEF)
-#' m <- 123
-#' rho <- 0.2
-#' n <- 100
-#' pi0 <- 0.5
-#' B <- 1e3
-#' 
-#' sim <- gaussianTestStatistics(m, B, pi0 = pi0, SNR = 3)
-#' X0 <- sim$X0
-#' x <- sim$x
-#'
-#' ## Test statistics
-#' pch <- 20
-#' plot(x, col=1+sim$H, main="Test statistics", pch=pch)
-#' legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
-#' 
-#' alpha <- 0.1
-#' res <- jointFWERControl(X0, refFamily="kFWER", alpha=alpha, stat=x)
-#' Vbar <- res$Vbar
-#' ttl <- paste("Upper bound on the number of false positives", "among first k hypotheses", sep="\n")
-#' plot(Vbar, main=ttl, xlab="k", ylab=expression(bar(V(k))))
-#'
+# Calibration of joint Family-Wise error rate thresholds
+#
+# Calibration of of JER thresholds from null test statistics
+#
+# @param mat A \eqn{m} x \eqn{B} matrix of Monte-Carlo samples of
+#     test statistics under the null hypothesis. \describe{
+#     \item{m}{is the number of tested hypotheses} \item{B}{is the
+#     number of Monte-Carlo samples}}
+# @param refFamily A character value which can be \describe{
+# \item{Simes}{The classical family of thresholds introduced by
+# Simes (1986): \eqn{\alpha*k/m}. This family yields joint FWER
+# control if the test statistics are positively dependent (PRDS)
+# under H0.}
+# \item{kFWER}{A family \eqn{(t_k)} calibrated so that for each k,
+# \eqn{(t_k)} controls the (marginal) k-FWER.}}
+# @param alpha Target joint FWER level.
+# @param stat A vector of \eqn{m} test statistics. Not used for
+# single step control, and mandatory for step-down JFWER control. If
+# not provided, single step control is performed.
+# @param maxStepsDown Maximum number of steps down to be performed.
+#     \code{maxSteps=1} corresponds to single step JFWER control.
+# @param kMax For simultaneous control of (\eqn{k}-FWER for all
+#     \eqn{k \le k[max]}).
+# @param Rcpp If \code{TRUE}, some costly operations (sorting) are
+#     performed in C++.
+# @param verbose A boolean value: should extra info be printed?
+# @return A list with elements: \describe{
+#     \item{thr}{A numeric vector of length \code{m}, such that the
+#     estimated probability that there exists an index \eqn{k} between 1
+#     and m such that the k-th maximum of the test statistics of is
+#     greater than \eqn{thr[k]}, is less than \eqn{\alpha}.}
+#     \item{pivStat}{A numeric vector of length \code{m}, the values of the pivotal
+#     statistic whose quantile of order \eqn{alpha} is \eqn{lambda}.}
+#     \item{lambda}{JFWER threshold.}
+#     \item{Vbar}{An upper bound on the number of false discoveries,
+#     as calculated by \code{curveMaxFP(stat, thr)}.}
+#     \item{steps}{a list with elements named 'thr', 'pivStat' and
+#     'lambda' giving the sequence of corresponding vectors/values
+#     along the steps down.}}
+# @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
+# @examples
+#
+# set.seed(0xBEEF)
+# m <- 123
+# rho <- 0.2
+# n <- 100
+# pi0 <- 0.5
+# B <- 1e3
+# 
+# sim <- gaussianTestStatistics(m, B, pi0 = pi0, SNR = 3)
+# X0 <- sim$X0
+# x <- sim$x
+#
+# ## Test statistics
+# pch <- 20
+# plot(x, col=1+sim$H, main="Test statistics", pch=pch)
+# legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
+# 
+# alpha <- 0.1
+# res <- calibrateJER0(X0, refFamily="kFWER", alpha=alpha, stat=x)
+# Vbar <- res$Vbar
+# ttl <- paste("Upper bound on the number of false positives", "among first k hypotheses", sep="\n")
+# plot(Vbar, main=ttl, xlab="k", ylab=expression(bar(V(k))))
+#
 
-jointFWERControl <- function(mat,
-                             refFamily=c("Simes", "kFWER"),
+calibrateJER0 <- function(mat,
+                             refFamily = c("Simes", "kFWER"),
                              alpha,
-                             stat=NULL,
-                             maxStepsDown=100,
-                             kMax=nrow(mat),
-                             Rcpp=TRUE,
-                             verbose=FALSE) {
-    ## This function is the main workhorse of the package.
+                             stat = NULL,
+                             maxStepsDown = 100,
+                             kMax = nrow(mat),
+                             Rcpp = TRUE,
+                             verbose = FALSE) {
+    ## This function is the main internal workhorse of the package.
 
     ## sanity checks
     m <- nrow(mat);
     refFamily <- match.arg(refFamily)
     if (is.null(stat)) {
         ## force single step control
-        if (verbose && (maxStepsDown>0)) {
+        if (verbose && (maxStepsDown > 0)) {
             print("Arguement 'stat' not provided: cannot perform step-down control")
         }
         maxStepsDown <- 0
@@ -88,12 +87,12 @@ jointFWERControl <- function(mat,
     }
     kMax <- min(kMax, m)  ## 'm' can be greater than 'kMax' throughout the step-down process
     if (verbose) {
-        proc <- ifelse(maxStepsDown==0, "Single step", "Step down")
+        proc <- ifelse(maxStepsDown == 0, "Single step", "Step down")
         msg <- sprintf("Joint Family-Wise Error Rate control: %s procedure based on %s family", proc, refFamily)
         print(msg)
     }
-    if (refFamily=="Simes") {
-        sk <- SimesThresholdFamily(m, kMax=kMax)
+    if (refFamily == "Simes") {
+        sk <- SimesThresholdFamily(m, kMax = kMax)
         pivStatFUN <- function(mat, kMax, C) {
             SimesPivotalStatistic(mat[C, ], kMax, nrow(mat))
         }
@@ -103,8 +102,8 @@ jointFWERControl <- function(mat,
     #     pivStatFUN <- function(mat, kMax, C) {
     #         betaPivotalStatistic(mat, kMax, C)
     #     }
-    } else if (refFamily=="kFWER") {
-        sk <- kFWERThresholdFamily(mat, kMax=kMax, Rcpp=Rcpp)
+    } else if (refFamily == "kFWER") {
+        sk <- kFWERThresholdFamily(mat, kMax = kMax, Rcpp = Rcpp)
         pivStatFUN <- function(mat, kMax, C) {
             kFWERPivotalStatistic(mat, kMax, C)
         }
@@ -112,13 +111,13 @@ jointFWERControl <- function(mat,
 
     ## (single-step) joint FWER control
     ## pivStat <-  pivotalStat(mat, m=m, kMax=kMax, FUN=pivStatFUN)
-    pivStat <-  pivStatFUN(mat, kMax=kMax, 1:m)
-    lambda <- stats::quantile(pivStat, alpha, type=1)
+    pivStat <-  pivStatFUN(mat, kMax = kMax, 1:m)
+    lambda <- stats::quantile(pivStat, alpha, type = 1)
     thr <- sk(lambda)
 
     ## storing results
-    thrMat <- matrix(thr, ncol=1)
-    pivMat <- matrix(pivStat, ncol=1)
+    thrMat <- matrix(thr, ncol = 1)
+    pivMat <- matrix(pivStat, ncol = 1)
     lambdas <- lambda
 
     ## step 0
@@ -127,24 +126,24 @@ jointFWERControl <- function(mat,
     if (is.null(stat)) {
         R1 <- integer(0)
     } else {
-        R1 <- which(stat>=thr1)
+        R1 <- which(stat >= thr1)
     }
 
 
     ## force 'convergence' if nb of "FWER rejections" is 0 (nothing to
     ## gain) or m (nothing left to be rejected)
-    converged <- (length(R1)==0L)  | (length(R1)==m)
+    converged <- (length(R1) == 0L)  | (length(R1) == m)
 
-    while (!converged && step<maxStepsDown) {
-        step <- step+1
+    while (!converged && step < maxStepsDown) {
+        step <- step + 1
 
         ## backup
         lambda0 <- lambda
         thr0 <- thr
         R10 <- R1
 
-        stopifnot(length(R1)>0L)
-        stopifnot(length(R1)<m)
+        stopifnot(length(R1) > 0L)
+        stopifnot(length(R1) < m)
 
         mat1 <- mat[-R1, ]
 
@@ -152,11 +151,11 @@ jointFWERControl <- function(mat,
         kMax <- min(kMax, nrow(mat1))
         C <- setdiff(1:m, R1)
         pivStat <-  pivStatFUN(mat, kMax, C)
-        lambda <- stats::quantile(pivStat, alpha, type=1)
+        lambda <- stats::quantile(pivStat, alpha, type = 1)
         thr <- sk(lambda)
 
         thr1 <- thr[1]   ## (1-)FWER threshold
-        R1 <- which(stat>=thr1)
+        R1 <- which(stat >= thr1)
 
         ## convergence reached?
         noNewRejection <- all(R1 %in% R10)
@@ -177,27 +176,26 @@ jointFWERControl <- function(mat,
         pivMat <- cbind(pivMat, pivStat)
         lambdas <- c(lambdas, lambda)
     }
-    if (step==maxStepsDown && maxStepsDown>0) {
+    if (step == maxStepsDown && maxStepsDown > 0) {
         warning("Maximal number of steps down reached without reaching convergence")
     }
     if (!is.null(stat)) {
         ## upper bound on the number of false positives among first 'natural' rejections
-        o <- order(stat, decreasing=TRUE)
+        o <- order(stat, decreasing = TRUE)
         Vbar <- curveMaxFP(stat[o], thr)
     } else {
         Vbar <- NULL
     }
     stepsDown <- list(
-        thr=thrMat,
-        pivStat=pivMat,
-        lambda=lambdas)
+        thr = thrMat,
+        pivStat = pivMat,
+        lambda = lambdas)
 
-    res <- list(thr=thr,
-                pivStat=pivStat,
-                lambda=lambda,
-                Vbar=Vbar,
-                stepsDown=stepsDown)
+    res <- list(thr = thr,
+                pivStat = pivStat,
+                lambda = lambda,
+                Vbar = Vbar,
+                stepsDown = stepsDown)
     return(res);
 }
-
 

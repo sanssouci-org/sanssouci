@@ -2,8 +2,9 @@
 
 ## Several important user-level simplifications
 
+* Added vignette 'jointErrorRateCalibration_simulations.Rmd'.
 * Added function maxFP and minTP to calculate post hoc bound among user-defined selections. Renamed function 'upperBoundFP' to 'curveMaxFP' for internal consistency. Removed functions 'falseDiscoveryEnvelope', 'falseDiscoveryProportionControl' and 'falseDiscoveryProportionEnvelope' which provided correct but conservative bounds. 
-* Added function calibrateJER as the main user-level entry point for calibrating JER thresholds. 
+* Added function 'calibrateJER' as the main user-level entry point for calibrating JER thresholds. Renamed 'jointFWERControl' into 'calibrateJER0', which is not exported anymore. (Fixes #7). 
 * Cleanup: user-level entry point for simulating test statistics is now 'gaussianTestStatistics'.
 * Cleanup: user-level entry point for simulating observations from one and two-sample problems is now 'gaussianSamples'.
 * Added corresponding tests and updated vignettes accordingly.
