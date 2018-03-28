@@ -84,7 +84,7 @@ test_that("posthocBySimes can be reproduced by minTP", {
     test <- replicate(10, {
         x <- c(rnorm(m1, mean=4), rnorm(m-m1, mean=0))
         sx <- sort(x, decreasing = TRUE)
-        p <- 1-pnorm(x)
+        p <- 1 - pnorm(x)
         nR <- round(runif(1)*m)
         R <- sample(nR)
         for (alpha in alphas) {
@@ -92,6 +92,10 @@ test_that("posthocBySimes can be reproduced by minTP", {
             ubSimes <- minTP(x[R], thrSimes)
             expect_equal(posthocBySimes(p, R, alpha = alpha), 
                          ubSimes)
+            # p-value scale
+            ubSimesP <- minTP(1-p[R], 1-alpha*1:m/m)
+            expect_equal(posthocBySimes(p, R, alpha = alpha), 
+                         ubSimesP)
         }
     })
 })
