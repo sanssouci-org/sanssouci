@@ -11,7 +11,7 @@ test_that("Correctness of permutation p-values", {
     rm(cls)
 
     # consistency between parametric and randomization p-values
-    ## expect_gt(cor(res$p, res$rand.p), 0.9)
+    expect_gt(cor(res$p, res$rand.p), 0.9)
     
     # Two different ways of getting permutation p-values
     T0 <- cbind(res$T0, res$T)
