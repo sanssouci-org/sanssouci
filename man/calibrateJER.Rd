@@ -67,7 +67,8 @@ Vbar <- curveMaxFP(stat[o], cal$thr)
 H0 <- which(sim$H == 0)
 V <- cumsum(o \%in\% H0)
 
-plot(R, Vbar, t = 's', xlab = "Number of rejections", ylab = "Bound on the number of false positives")
+plot(R, Vbar, t = 's', xlab = "Number of rejections", 
+                       ylab = "Bound on the number of false positives")
 lines(R, V, t = 's', col = 2)
 legend("topleft", c("True number of FP", "Post hoc upper bound"), col = c(2, 1), lty = rep(1, 2))
 abline(a = 0, b = 1, lty = 2)

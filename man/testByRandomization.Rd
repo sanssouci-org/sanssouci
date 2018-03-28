@@ -4,7 +4,8 @@
 \alias{testByRandomization}
 \title{Randomization-based testing}
 \usage{
-testByRandomization(X, B, cls = colnames(X), p.value = TRUE, seed = NULL)
+testByRandomization(X, B, cls = colnames(X), rand.p.value = FALSE,
+  seed = NULL)
 }
 \arguments{
 \item{X}{a matrix of \code{m} variables by \code{n} observations}
@@ -14,8 +15,8 @@ testByRandomization(X, B, cls = colnames(X), p.value = TRUE, seed = NULL)
 \item{cls}{A vector of length \code{n} class labels in \code{0,1} for flavor
 "perm". Defaults to colnames(X).}
 
-\item{p.value}{A boolean value: should randomization \eqn{p}-values be
-calculated and returned? Defaults to @TRUE}
+\item{rand.p.value}{A boolean value: should randomization \eqn{p}-values be
+calculated and returned? Defaults to @FALSE}
 
 \item{seed}{An integer (or NULL) value used as a seed for random number
 generation. If \code{NULL}, no seed is specified}
@@ -27,21 +28,20 @@ a list with elements: \describe{
 
   \item{T0}{A \eqn{m \times B} matrix of randomized test statistics}
 
-  \item{p}{A vector of \eqn{m} \eqn{p}-values (only if \code{p.value} is
-  \code{TRUE} )}
+  \item{p}{A vector of \eqn{m} parametric \eqn{p}-values}
 
-  \item{p0}{A \eqn{m \times B} matrix of randomization \eqn{p}-values (only
-  if \code{p.value} is \code{TRUE} )}
+  \item{p0}{A \eqn{m \times B} matrix of parametric \eqn{p}-values on
+  randomized data}
 
   \item{flavor}{A character value, the type of randomization performed:
   "perm" for permutation-based randomization in two-sample tests, and "flip"
   for sign-flipping-based randomization in one sample tests. See Details.}
 
-  \item{param.p}{A vector of \eqn{m} parametric \eqn{p}-values (only for
-  flavor "perm")}
+  \item{rand.p}{A vector of \eqn{m} \eqn{p}-values (only if
+  \code{rand.p.value} is \code{TRUE} )}
 
-  \item{param.p0}{A \eqn{m \times B} matrix of parametric \eqn{p}-values on
-  permuted data (only for flavor "perm" )}
+  \item{rand}{A \eqn{m \times B} matrix of randomization \eqn{p}-values
+  (only if \code{rand.p.value} is \code{TRUE} )}
 
   \item{df}{A vector of \eqn{m} degrees of freedom for the observed
   statistics (only for flavor "perm")}
@@ -54,7 +54,7 @@ Randomization-based testing using permutation or sign-flipping
 }
 \details{
 The type of randomization is determined by the parameter \code{cls}.
-  If \code{cls} does not containt two distinct values (or is \code{NULL}), a
+  If \code{cls} does not contain two distinct values (or is \code{NULL}), a
   one-sample test is performed using randomization (flavor "flip"). If it
   contains two distinct values, a two-sample test is perfomed using
   permutations (flavor "perm").
@@ -65,9 +65,7 @@ The type of randomization is determined by the parameter \code{cls}.
   Permuted test statistics are calculated by B permutations of the group
   labels. Corresponding observed and permuted p-values are calculated as the
   proportion of permutations (including the identity) for which the permuted
-  test statistic is larger than the observed test statistic. The
-  corresponding parametric p-values are returned as elements \code{param.p}
-  (for the original data) and \code{param.p0} (for the permutations).
+  test statistic is larger than the observed test statistic.
 
   For sign-flipping, we test the null hypothesis: "the mean is 0" against the
   two-sided alternative that the mean is larger than 0. We use the (rescaled)
@@ -90,7 +88,7 @@ tests <- testByRandomization(sim$X, B)
 ## show test statistics
 pch <- 20
 colStat <- 1+sim$H
-plot(tests$T, col=colStat, main="Test statistics", pch=pch)
+plot(tests$T, col = colStat, main = "Test statistics", pch  =pch)
 legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
 
 sim <- gaussianSamples(m, rho, n, pi0, SNR=2)
@@ -99,8 +97,8 @@ tests <- testByRandomization(sim$X, B)
 ## show test statistics
 pch <- 20
 colStat <- 1+sim$H
-plot(tests$T, col=colStat, main="Test statistics", pch=pch)
-legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
+plot(tests$T, col = colStat, main = "Test statistics", pch = pch)
+legend("topleft", c("H0", "H1"), pch = pch, col = 1:2)
 
 }
 \references{

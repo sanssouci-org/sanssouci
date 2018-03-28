@@ -9,14 +9,14 @@
 #' @param cls A vector of length \code{n} class labels in \code{0,1} for flavor
 #'   "perm". Defaults to colnames(X).
 #'
-#' @param p.value A boolean value: should randomization \eqn{p}-values be
-#'   calculated and returned? Defaults to @TRUE
+#' @param rand.p.value A boolean value: should randomization \eqn{p}-values be
+#'   calculated and returned? Defaults to @FALSE
 #'
 #' @param seed An integer (or NULL) value used as a seed for random number
 #'   generation. If \code{NULL}, no seed is specified
 #'
 #' @details The type of randomization is determined by the parameter \code{cls}.
-#'   If \code{cls} does not containt two distinct values (or is \code{NULL}), a
+#'   If \code{cls} does not contain two distinct values (or is \code{NULL}), a
 #'   one-sample test is performed using randomization (flavor "flip"). If it
 #'   contains two distinct values, a two-sample test is perfomed using
 #'   permutations (flavor "perm").
@@ -27,9 +27,7 @@
 #'   Permuted test statistics are calculated by B permutations of the group
 #'   labels. Corresponding observed and permuted p-values are calculated as the
 #'   proportion of permutations (including the identity) for which the permuted
-#'   test statistic is larger than the observed test statistic. The
-#'   corresponding parametric p-values are returned as elements \code{param.p}
-#'   (for the original data) and \code{param.p0} (for the permutations).
+#'   test statistic is larger than the observed test statistic.
 #'
 #'   For sign-flipping, we test the null hypothesis: "the mean is 0" against the
 #'   two-sided alternative that the mean is larger than 0. We use the (rescaled)
@@ -46,21 +44,20 @@
 #'
 #'   \item{T0}{A \eqn{m \times B} matrix of randomized test statistics}
 #'
-#'   \item{p}{A vector of \eqn{m} \eqn{p}-values (only if \code{p.value} is
-#'   \code{TRUE} )}
+#'   \item{p}{A vector of \eqn{m} parametric \eqn{p}-values}
 #'
-#'   \item{p0}{A \eqn{m \times B} matrix of randomization \eqn{p}-values (only
-#'   if \code{p.value} is \code{TRUE} )}
+#'   \item{p0}{A \eqn{m \times B} matrix of parametric \eqn{p}-values on
+#'   randomized data}
 #'
 #'   \item{flavor}{A character value, the type of randomization performed:
 #'   "perm" for permutation-based randomization in two-sample tests, and "flip"
 #'   for sign-flipping-based randomization in one sample tests. See Details.}
 #'
-#'   \item{param.p}{A vector of \eqn{m} parametric \eqn{p}-values (only for
-#'   flavor "perm")}
+#'   \item{rand.p}{A vector of \eqn{m} \eqn{p}-values (only if
+#'   \code{rand.p.value} is \code{TRUE} )}
 #'
-#'   \item{param.p0}{A \eqn{m \times B} matrix of parametric \eqn{p}-values on
-#'   permuted data (only for flavor "perm" )}
+#'   \item{rand}{A \eqn{m \times B} matrix of randomization \eqn{p}-values
+#'   (only if \code{rand.p.value} is \code{TRUE} )}
 #'
 #'   \item{df}{A vector of \eqn{m} degrees of freedom for the observed
 #'   statistics (only for flavor "perm")}
@@ -84,7 +81,7 @@
 #' ## show test statistics
 #' pch <- 20
 #' colStat <- 1+sim$H
-#' plot(tests$T, col=colStat, main="Test statistics", pch=pch)
+#' plot(tests$T, col = colStat, main = "Test statistics", pch  =pch)
 #' legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
 #'
 #' sim <- gaussianSamples(m, rho, n, pi0, SNR=2)
@@ -93,14 +90,14 @@
 #' ## show test statistics
 #' pch <- 20
 #' colStat <- 1+sim$H
-#' plot(tests$T, col=colStat, main="Test statistics", pch=pch)
-#' legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
+#' plot(tests$T, col = colStat, main = "Test statistics", pch = pch)
+#' legend("topleft", c("H0", "H1"), pch = pch, col = 1:2)
 #'
 #' @importFrom matrixStats rowRanks
 #' @export
 #' 
 testByRandomization <- function(X, B, cls = colnames(X), 
-                                p.value = TRUE, seed = NULL){
+                                rand.p.value = FALSE, seed = NULL){
     ## sanity checks
     n <- ncol(X)
     luc <- length(unique(cls))
@@ -134,47 +131,50 @@ testByRandomization <- function(X, B, cls = colnames(X),
         ## * other statistics ? (difference in empirical means, Mann-Whitney)
         ## * one-sided tests ?
         
-        ## observed test statistics
+        ## observed
         rwt <- rowWelchTests(X, categ = cls)
         T_obs <- rwt$statistic
         p_obs <- rwt$p.value  ## parametric p-value
+        T_obs <- qnorm(1 - p_obs) # back to the scale of on-sided Gaussian test statistics under H0
         df_obs <- rwt$parameter  ## degrees of freedom of the T statistics
-        ## test statistics under H0
-        T <- matrix(nrow = m, ncol = B)
+
+        ## under H0
         pp <- matrix(nrow = m, ncol = B) ## parametric p-value
         df <- matrix(nrow = m, ncol = B) 
         for (bb in 1:B) {
             cls_perm <- sample(cls, length(cls))
             rwt <- rowWelchTests(X, categ = cls_perm)
-            T[, bb] <- rwt$statistic
             pp[, bb] <- rwt$p.value
             df[, bb] <- rwt$parameter
         }
-        res <- list(T = T_obs, T0 = T, 
+        T0 <- qnorm(1 - pp) # back to the scale of one-sided Gaussian test statistics under H0
+        res <- list(T = T_obs, T0 = T0, 
                     flavor = flavor,
-                    param.p = p_obs, param.p0 = pp,
+                    p = p_obs, p0 = pp,
                     df = df_obs, df0 = df)
     } else if (flavor == "flip") {
-        ## observed test statistics
+        ## observed test statistics and p-values
         T_obs <- rowSums(X)/sqrt(n)
+        p_obs <- 2*(1 - pnorm(abs(T_obs)))  ## two-sided...
         ## test statistics under H0
-        T <- testBySignFlipping(X, B)
-        res <- list(T = T_obs, T0 = T, flavor = flavor)
+        T0 <- testBySignFlipping(X, B)
+        p0 <- 2*(1 - pnorm(abs(T0)))  ## two-sided
+        res <- list(T = T_obs, T0 = T0, p = p_obs, p0 = p0, flavor = flavor)
     }
     
-    if (p.value) {
+    if (rand.p.value) {
         ## get m x (B+1) matrix of pvalues under the null (+ original)
         ## by sorting null test statistics as proposed by Ge et al (2003)
-        TT <- cbind(T, T_obs)
+        TT <- cbind(T0, T_obs)
         pB <- rowRanks(-abs(TT)) / (B+1)
         
-        res$p <- pB[, B+1]
-        res$p0 <- pB[, -(B+1), drop = FALSE]
+        res$rand.p <- pB[, B+1]
+        res$rand.p0 <- pB[, -(B+1), drop = FALSE]
     }
     return(res)
 }
 
-
+# not used!
 testBySignFlippingR <- function(X, B) {
     m <- nrow(X)
     n <- ncol(X)
@@ -189,6 +189,7 @@ testBySignFlippingR <- function(X, B) {
     T
 }
 
+# not used!
 testByPermutationR <- function(X, cls, B) {
     m <- nrow(X)
     n <- ncol(X)
