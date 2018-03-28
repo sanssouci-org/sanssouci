@@ -18,25 +18,30 @@ gaussianSamples(m, rho, n, pi0, SNR = 1, prob = 1, w = NULL)
 \item{SNR}{Signal to noise ratio. Either a numeric value (a measure of
 distance between H0 and H1) or a vector of length \code{m*(1-pi0)}}
 
-\item{prob}{A numeric value in (0, 1], the frequency of the population 
-under H1. If \eqn{prob=1} (the default), a data set from a single 
-population is generated.}
+\item{prob}{A numeric value in (0, 1], the frequency of the population under
+H1. If \eqn{prob=1} (the default), a data set from a single population is
+generated.}
 
 \item{w}{An optional vector of length \code{n}, the underlying factor driving
 equi-correlation}
 }
 \value{
-A list with two elements: \describe{
-\item{X}{An \eqn{m x n} matrix of \eqn{m}-dimensional Gaussian observations, where \eqn{m1} rows are under H1, and \eqn{m0} rows are under H0, with \eqn{mO/m = pi0}}
-\item{H}{A vector of length \eqn{m}, the status of each
-hypothesis: 0 for true null hypothesis, and 1 for true alternative
-hypothesis}}.
+A list with two elements: \describe{ \item{X}{An \eqn{m x n} matrix
+  of \eqn{m}-dimensional Gaussian observations, where \eqn{m1} rows are under
+  H1, and \eqn{m0} rows are under H0, with \eqn{m0/m = pi0}} \item{H}{A
+  vector of length \eqn{m}, the status of each hypothesis: 0 for true null
+  hypothesis, and 1 for true alternative hypothesis}}.
 }
 \description{
 Simulate equi-correlated data coming from one or two populations
 }
 \details{
-. If \code{prob = 1}, each of m1 variables under H1 has mean \eqn{SNR/\sqrt(n)}. If \code{0 < p < 1} n0 samples are drawn from a N(0,1) distribution while n1 are drawn from a N(mu, 1) distribution, where \eqn{mu = SNR*sqrt(1/(n0) + 1/n1)}. The argument \code{p} is the probability of a sample to belong to the non-zero-mean population
+If \code{prob = 1}, each of \eqn{m_1} variables under \eqn{H_1} has
+  mean \eqn{SNR/\sqrt(n)}. If \code{0 < p < 1}, then \eqn{n_0} samples are
+  drawn from a \eqn{\mathcal{N}(0,1)} distribution while \eqn{n_1} are drawn
+  from a \eqn{\mathcal{N}(\mu, 1)} distribution, where \eqn{\mu =
+  SNR*\sqrt(1/(n_0) + 1/n_1)}. The argument \code{p} is the probability of a
+  sample to belong to the non-zero-mean population.
 }
 \examples{
 
