@@ -13,26 +13,25 @@ We illustrate the simulation of observations, computation of test statistics by 
 
 ```{r}
 library("sansSouci")
-set.seed(0xBEEF) # for reproducibility
+#set.seed(0xBEEF) # for reproducibility
 ```
 
 Parameters:
 
 ```{r}
-m <- 2e2
-n <- 123
-pi0 <- 0.5
-B <- 1e3
-rho <- 0.2
-SNR <- 3
+m <- 1e3
+n <- 124
+pi0 <- 0.8
+B <- 2e3
+rho <- 0
+SNR <- 0
 
-alpha <- 0.2
+alpha <- 0.5
 ```
 
-We use the function `gaussianSamples` to generate Gaussian equi-correlated samples. We then use the (internal) function `calibrateJER` to perform the calibration.
+We use the function `gaussianSamples` to generate Gaussian equi-correlated samples. We then use the function `calibrateJER` to perform the calibration.
 
 ## Two-sample tests
-
 
 ### Simulation
 
@@ -60,7 +59,7 @@ The output of the calibration is as follows
 str(cal)
 ```
 
-* `stat`: $m$ test statistics calculated by sign-flipping
+* `stat`: $m$ test statistics calculated by permutation
 * `thr` : A JER-controlling family of $K$ (here $K=m$) elements
 * `lambda`: the $\lambda$-calibration parameter
 
@@ -92,39 +91,6 @@ V <- cumsum(o %in% H0)
 plot(R, Vbar, t = 's', xlab = "Number of rejections", ylab = "Bound on the number of false positives")
 lines(R, V, t = 's', col = 2)
 legend("topleft", c("True number of FP", "Post hoc upper bound"), col = c(2, 1), lty = rep(1, 2))
-```
-
-
-
-
-## Complement: checking the empirical coverage
-
-Here, the test statistics are Gaussian, $\rho$-equi-correlated, so they satisfy the PRDS($\mathcal{H}_0$) assumption by Simes' inequality. This implies that the family $\mathfrak{R(\alpha)}$ (aka Simes family) is a JER-controlling family. Remark: we can check this in our sample by estimating the empirical coverage of the Simes family:
-
-```{r}
-tests <- testByRandomization(X, B)
-thr <- SimesThresholdFamily(m)(alpha)
-cov <- sansSouci:::empiricalCoverage(thr, qnorm(tests$p0, lower.tail = TRUE))
-cov 
-cov < alpha
-```
-
-We can also check empirically that performing JER calibration in this setting allows us to exhaust our "JER budget", ie that the empirical coverage of the calibrated family is close to $\alpha$:
-
-```{r}
-thr <- SimesThresholdFamily(m)(cal$lambda)
-sansSouci:::empiricalCoverage(thr, qnorm(tests$p0, lower.tail = TRUE))
-```
-
-Thus, we expect the Simes family to give a more conservative bound than its calibrated version:
-
-```{r}
-thr <- SimesThresholdFamily(m)(alpha)
-VbarS <- curveMaxFP(stat[o], thr)
-plot(R, Vbar, t = 's', xlab = "Number of rejections", ylab = "Bound on the number of false positives")
-lines(R, V, t = 's', col = 2)
-lines(R, VbarS, t = 's', col = 3)
-legend("topleft", c("True number of FP", "Calibrated upper bound", "Simes upper bound"), col = c(2, 1, 3), lty = rep(1, 2))
 ```
 
 

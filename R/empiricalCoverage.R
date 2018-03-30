@@ -4,7 +4,7 @@
 #
 # @param thr A numeric vector of length \code{m}, a threshold family. Should  be sorted in decreasing order.
 # @param mat A \eqn{c} x \eqn{B} matrix of \code{B} Monte-Carlo
-# samples of \code{c} test statistics under the null hypothesis.
+# samples of \code{c} test statistics *under the null hypothesis*.
 # 
 # @examples
 # alpha <- 0.05
