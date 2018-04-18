@@ -12,6 +12,20 @@
 #'   \item{stat0Mat}{An \code{m} x \code{B} matrix of \code{B} realizations of a \code{m}-dimensional vector of test statistics under the null hypothesis of no association between \code{X} and \code{y}.}}
 #' @importFrom matrixStats rowRanks
 #' @export
+#' @examples
+#'
+#' m <- 123
+#' rho <- 0.2
+#' n <- 100
+#' pi0 <- 0.5
+#' B <- 1e2
+#'
+#' ## two-sample data
+#' sim <- gaussianSamples(m, rho, n, pi0, SNR = 2, prob = 0.5)
+#' cls <- rep(0, n)
+#' cls[which(colnames(sim$X)=="1")] <- 1
+#' stats <- wilcoxStat(sim$X, cls, 1)
+#' stats2 <- sapply(1:m, FUN=function(ii) wilcox.test(sim$X[ii, cls==0], sim$X[ii, cls==1])$statistic)
 wilcoxStat <- function(X, y, B = 1000) {
     rks <- rowRanks(X)
     n0 <- sum(y == 0)
