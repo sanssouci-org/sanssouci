@@ -1,6 +1,12 @@
-# makes a complete dydadic tree structure C from a list of leaves method 1 starts from the leaves and groups
-# nodes of a same height 2 by 2 as long as possible method 2 starts from the root and divide nodes in 2 equal
-# nodes as long as possible
+#' Create a complete dyadic tree structure
+#'
+#' @param leaf_list A list of leaves
+#' @param method A numeric value. If \code{method == 1}, start from the leaves
+#'   and group nodes of a same height 2 by 2 as long as possible. If
+#'   \code{method==2}, start from the root and divide nodes in 2 nodes of equal
+#'   size as long as possible
+#' @return A list of lists containing the dyadic structure
+#' 
 dyadic.from.leaf_list <- function(leaf_list, method) {
     leafs <- length(leaf_list)
     if (method == 1) {
@@ -15,9 +21,9 @@ dyadic.from.leaf_list <- function(leaf_list, method) {
             j <- 1
             while (j <= len) {
                 if (j == len) {
-                  new_Ch <- c(new_Ch, Ch[j])
+                    new_Ch <- c(new_Ch, Ch[j])
                 } else {
-                  new_Ch <- c(new_Ch, list(c(Ch[[j]][1], Ch[[j + 1]][2])))
+                    new_Ch <- c(new_Ch, list(c(Ch[[j]][1], Ch[[j + 1]][2])))
                 }
                 j <- j + 2
             }
@@ -34,14 +40,17 @@ dyadic.from.leaf_list <- function(leaf_list, method) {
             Ch <- list()
             len <- length(oldCh)
             for (i in seq_len(len)) {
-                leafs_in_node <- oldCh[[i]][2] - oldCh[[i]][1] + 1
+                oi <- oldCh[[i]]
+                leafs_in_node <- oi[2] - oi[1] + 1
                 if (leafs_in_node > 1) {
-                  cut2 <- ceiling(leafs_in_node/2)
-                  Ch <- c(Ch, list(c(oldCh[[i]][1], oldCh[[i]][1] + cut2 - 1)), list(c(oldCh[[i]][1] + cut2, oldCh[[i]][2])))
-                  if (cut2 > 1) 
-                    continue <- TRUE
+                    cut2 <- ceiling(leafs_in_node/2)
+                    Ch <- c(Ch, 
+                            list(c(oi[1], oi[1] + cut2 - 1)), 
+                            list(c(oi[1] + cut2, oi[2])))
+                    if (cut2 > 1) 
+                        continue <- TRUE
                 } else {
-                  Ch <- c(Ch, oldCh[i])
+                    Ch <- c(Ch, oi)
                 }
             }
             C <- c(C, list(Ch))
@@ -49,7 +58,24 @@ dyadic.from.leaf_list <- function(leaf_list, method) {
     }
     return(C)
 }
-# makes a complete dyadic tree structure and a list of leaves from the desired size s of the leaves
+
+#' Dyadic tree structure from window size
+#'
+#' @inheritParams dyadic.from.leaf_list
+#' @param m An integer value, the number of elements in the structure
+#' @param s An integer value, the number of elements in each leaf
+#' @return A list with two elements:\describe{
+#' \item{leaf_list}{A list of leaves}
+#' \item{C}{A list of lists containing the dyadic structure}
+#' }
+#' @export
+#' @examples
+#' 
+#' m <- 16
+#' dd <- dyadic.from.window.size(m, s = 2, method = 2)
+#' str(dd)
+#' 
+#' 
 dyadic.from.window.size <- function(m, s, method) {
     leafs <- floor(m/s)
     leaf_list <- list()
@@ -65,7 +91,18 @@ dyadic.from.window.size <- function(m, s, method) {
     C <- dyadic.from.leaf_list(leaf_list, method)
     return(list(leaf_list = leaf_list, C = C))
 }
-# makes a complete dyadic tree structure and a list of leaves from the desired maximal height H
+
+#' Dyadic tree structure from height
+#'
+#' @inheritParams dyadic.from.window.size 
+#' @param H An integer value, the desired maximal height of the tree
+#' @export
+#' @examples
+#' 
+#' m <- 6
+#' dd <- dyadic.from.height(m, H = 3, method = 2)
+#' str(dd)
+#' 
 dyadic.from.height <- function(m, H, method) {
     if (m <= 2^(H - 2)) {
         oldH <- H
@@ -76,8 +113,8 @@ dyadic.from.height <- function(m, H, method) {
         leaf_list <- as.list(1:m)
     } else {
         leaf_list <- list()
-        base <- m%/%2^(H - 1)
-        plus1 <- m%%2^(H - 1)
+        base <- m %/% 2^(H - 1)
+        plus1 <- m %% 2^(H - 1)
         for (i in seq_len(plus1)) {
             leaf_list <- c(leaf_list, list(seq_len(base + 1) + (i - 1) * (base + 1)))
         }
@@ -88,12 +125,26 @@ dyadic.from.height <- function(m, H, method) {
     C <- dyadic.from.leaf_list(leaf_list, method)
     return(list(leaf_list = leaf_list, C = C))
 }
-# makes a complete dyadic tree structure and a list of leaves from the maximum achievable height H
+
+#' Dyadic tree structure from maximum achievable height
+#'
+#' @inheritParams dyadic.from.height
+#' @export
+#' @examples
+#' 
+#' m<-1000
+#' dd<-dyadic.from.max.height(m,s=10,method=2)
+#' leaf_list<-dd$leaf_list
+#' 
 dyadic.max.height <- function(m, method) {
     H <- ifelse(m == 1, 1, floor(2 + log2(m - 1)))
     return(dyadic.from.height(m, H, method))
 }
-# computes zeta from an HB test at level lambda
+
+#' Estimate the proportion of true nulls from a Holm-Bonferroni test
+#'
+#' @param pval A vector of eqn{p}-values
+#' @param lambda A numeric value in \eqn{[0,1]}, the target level of the test 
 zeta.HB <- function(pval, lambda) {
     s <- length(pval)
     k <- 0
@@ -109,63 +160,91 @@ zeta.HB <- function(pval, lambda) {
     # res<-list(hatk = k, rej_ind = sort(or[seq_len(k)]) )
     return(s - k)
 }
+
 # computes zeta equals to the size of the set
 zeta.trivial <- function(pval, lambda) {
     return(length(pval))
 }
+
 # computes zeta from the DKWM/Storey method, at level lambda
 zeta.DKWM <- function(pval, lambda) {
     s <- length(pval)
     sorted.pval <- c(0, sort(pval))
     dkwm <- min((sqrt(log(1/lambda)/2)/(2 * (1 - sorted.pval)) + sqrt(log(1/lambda)/(8 * (1 - sorted.pval)^2) + 
-        (s - seq(0, s))/(1 - sorted.pval)))^2)
+                                                                          (s - seq(0, s))/(1 - sorted.pval)))^2)
     return(min(s, floor(dkwm)))
 }
+
 # number of unique regions in a given tree
 nb.elements <- function(C) {
     H <- length(C)
     count <- length(C[[H]])
     if (H > 1) {
         for (h in (H - 1):1) {
-            for (j in 1:length(C[[h]])) {
-                if (C[[h]][[j]][1] < C[[h]][[j]][2]) 
-                  count <- count + 1
+            Ch <- C[[h]]
+            for (j in 1:length(Ch)) {
+                Chj <- Ch[[j]]
+                if (Chj[1] < Chj[2]) 
+                    count <- count + 1
             }
         }
     }
     return(count)
 }
-# computes the tree of the zetas from given tree structure, list of leaves, method to compute the zetas, and
-# level alpha, using the union bound method, that is the method to compute the zetas is applied at level lambda
-# = alpha / number of regions
+
+#' Estimate of the proportion of true nulls in each node of a tree
+#' 
+#' @param C Tree structure
+#' @param leaf_list A list of leaves
+#' @param method A function to compute the estimators
+#' @param alpha A target level
+#' @details The proportion of true nulls in each node is estimated by an union bound on the regions. That is, the provided method is applied at level \code{alpha/nR} where \code{nR} is the number of regions.
+#' @export
+#' @examples
+#' 
+#' m <- 1000 
+#' dd <- dyadic.from.window.size(m, s = 10, method = 2)
+#' leaf_list <- dd$leaf_list
+#' mu <- gen.mu.leaves(m, K1 = 3, d = 1, grouped = FALSE, "const", barmu = 4, leaf_list)
+#' pvalues<-gen.p.values(m, mu, rho = 0)
+#' C <- dd$C 
+#' ZL<-zetas.tree(C, leaf_list, zeta.DKWM, pvalues, alpha = 0.05)
+
 zetas.tree <- function(C, leaf_list, method, pvalues, alpha) {
     H <- length(C)
     K <- nb.elements(C)
     leafs <- length(leaf_list)
     zeta_leafs <- numeric(leafs)
-    for (i in 1:length(C[[H]])) {
-        if (C[[H]][[i]][1] == C[[H]][[i]][2]) {
-            zeta_leafs[C[[H]][[i]][1]] <- method(pvalues[leaf_list[[C[[H]][[i]][1]]]], alpha/K)
+    CH <- C[[H]]
+    for (i in 1:length(CH)) {
+        CHi <- CH[[i]]
+        if (CHi[1] == CHi[2]) {
+            zeta_leafs[CHi[1]] <- method(pvalues[leaf_list[[CHi[1]]]], alpha/K)
         }
     }
     ZL <- list()
     for (h in H:1) {
-        len <- length(C[[h]])
+        Ch <- C[[h]]
+        len <- length(Ch)
         zeta_inter <- numeric(len)
         for (j in 1:len) {
-            if (C[[h]][[j]][1] < C[[h]][[j]][2]) {
-                zeta_inter[j] <- method(pvalues[unlist(leaf_list[C[[h]][[j]][1]:C[[h]][[j]][2]])], alpha/K)
+            Chj <- Ch[[j]]
+            if (Chj[1] < Chj[2]) {
+                pvals <- pvalues[unlist(leaf_list[Chj[1]:Chj[2]])]
+                zeta_inter[j] <- method(pvals, alpha/K)
             } else {
-                zeta_inter[j] <- zeta_leafs[C[[h]][[j]][1]]
+                zeta_inter[j] <- zeta_leafs[Chj[1]]
             }
         }
         ZL[[h]] <- zeta_inter
     }
     return(ZL)
 }
-# computes the tree of the zetas from given tree structure, list of leaves, method to compute the zetas, and
-# level alpha, using the refined method, that is the method which tries to estimate the number of regions with
-# only signal, if any
+
+#' Estimate of the proportion of true nulls in each node of a tree
+#' 
+#' @inheritParams zetas.tree.refined
+#' @details In this refined version, one tries to estimate the number of regions containing only signal
 zetas.tree.refined <- function(C, leaf_list, method, pvalues, alpha) {
     H <- length(C)
     K <- nb.elements(C)
@@ -176,37 +255,47 @@ zetas.tree.refined <- function(C, leaf_list, method, pvalues, alpha) {
     while (continue) {
         usage_K <- new_K
         new_K <- K
-        for (i in 1:length(C[[H]])) {
-            if (C[[H]][[i]][1] == C[[H]][[i]][2]) {
-                zeta_leafs[C[[H]][[i]][1]] <- method(pvalues[leaf_list[[C[[H]][[i]][1]]]], alpha/usage_K)
-                if (zeta_leafs[C[[H]][[i]][1]] == 0) 
-                  new_K <- new_K - 1
+        CH <- C[[H]]
+        for (i in 1:length(CH)) {
+            CHi <- CH[[i]]
+            if (CHi[1] == CHi[2]) {
+                pvals <- pvalues[leaf_list[[CHi[1]]]]
+                zeta_leafs[CHi[1]] <- method(pvals, alpha/usage_K)
+                if (zeta_leafs[CHi[1]] == 0) {
+                    new_K <- new_K - 1
+                }
             }
         }
         ZL <- list()
         for (h in H:1) {
-            len <- length(C[[h]])
+            Ch <- C[[h]]
+            len <- length(Ch)
             zeta_inter <- numeric(len)
             for (j in 1:len) {
-                if (C[[h]][[j]][1] < C[[h]][[j]][2]) {
-                  zeta_inter[j] <- method(pvalues[unlist(leaf_list[C[[h]][[j]][1]:C[[h]][[j]][2]])], alpha/usage_K)
-                  if (zeta_inter[j] == 0) 
-                    new_K <- new_K - 1
+                Chj <- Chj
+                if (Chj[1] < Chj[2]) {
+                    pvals <- pvalues[unlist(leaf_list[Chj[1]:Chj[2]])]
+                    zeta_inter[j] <- method(pvals, alpha/usage_K)
+                    if (zeta_inter[j] == 0) 
+                        new_K <- new_K - 1
                 } else {
-                  zeta_inter[j] <- zeta_leafs[C[[h]][[j]][1]]
+                    zeta_inter[j] <- zeta_leafs[Chj[1]]
                 }
             }
             ZL[[h]] <- zeta_inter
         }
-        if (new_K == usage_K) 
+        if (new_K == usage_K) {
             continue <- FALSE
+        }
     }
     return(ZL)
 }
+
 # boolean: is the set x included in y?
 setinclude <- function(x, y) {
     all(is.element(x, y))
 }
+
 # internal function of tree.from.list computes a 'proto' tree structure from a list of pairs region/zeta
 proto.tree.from.list <- function(listR) {
     lengths <- sapply(listR, function(lll) {
@@ -225,14 +314,15 @@ proto.tree.from.list <- function(listR) {
         lb <- 0
         H <- length(protoCZ)
         for (h in H:1) {
-            if (b1) 
+            if (b1) {
                 break
+            }
             for (l in 1:length(protoCZ[[h]])) {
                 if (setinclude(curr_elem$R, protoCZ[[h]][[l]]$R)) {
-                  b1 <- TRUE
-                  hb <- h
-                  lb <- l
-                  break
+                    b1 <- TRUE
+                    hb <- h
+                    lb <- l
+                    break
                 }
             }
         }
@@ -240,18 +330,18 @@ proto.tree.from.list <- function(listR) {
             if (hb + 1 <= H) {
                 b2 <- TRUE
                 for (p in 1:length(protoCZ[[hb + 1]])) {
-                  for (q in 1:length(protoCZ[[hb]])) {
-                    if (setinclude(protoCZ[[hb + 1]][[p]]$R, protoCZ[[hb]][[q]]$R)) 
-                      break
-                  }
-                  if (q >= lb) {
-                    protoCZ[[hb + 1]] <- append(protoCZ[[hb + 1]], list(curr_elem), p - 1)
-                    b2 <- FALSE
-                    break
-                  }
+                    for (q in 1:length(protoCZ[[hb]])) {
+                        if (setinclude(protoCZ[[hb + 1]][[p]]$R, protoCZ[[hb]][[q]]$R)) 
+                            break
+                    }
+                    if (q >= lb) {
+                        protoCZ[[hb + 1]] <- append(protoCZ[[hb + 1]], list(curr_elem), p - 1)
+                        b2 <- FALSE
+                        break
+                    }
                 }
                 if (b2) 
-                  protoCZ[[hb + 1]] <- c(protoCZ[[hb + 1]], list(curr_elem))
+                    protoCZ[[hb + 1]] <- c(protoCZ[[hb + 1]], list(curr_elem))
             } else {
                 protoCZ <- c(protoCZ, list(list(curr_elem)))
             }
@@ -262,6 +352,7 @@ proto.tree.from.list <- function(listR) {
     }
     return(protoCZ)
 }
+
 # internal function of tree.from.list recursive function designed to compute a list of leaves
 recurLeafs <- function(numvect, trunc) {
     leaf_list <- list()
@@ -315,8 +406,8 @@ tree.from.list <- function(m, listR) {
             curr_elem <- protoCZ[[h]][[j]]$R
             while ((parkourleafs <= leafs) && (start || setinclude(leaf_list[[parkourleafs]], curr_elem))) {
                 if (start && setinclude(leaf_list[[parkourleafs]], curr_elem)) {
-                  leaf_start <- parkourleafs
-                  start <- FALSE
+                    leaf_start <- parkourleafs
+                    start <- FALSE
                 }
                 parkourleafs <- parkourleafs + 1
             }
@@ -325,7 +416,14 @@ tree.from.list <- function(m, listR) {
     }
     return(list(C = C, ZL = ZL, leaf_list = leaf_list))
 }
-# computes V star (S) from a complete tree structure, a complete zeta tree, and a list of leaves
+
+#' Post hoc bound on the number of false positives
+#' 
+#' @param S A subset of hypotheses
+#' @param C Complete tree structure
+#' @param ZL Complete zeta tree
+#' @param leaf_list List of leaves
+#' @return An integer value, upper bound on the number false positives in S
 V.star.all.leafs <- function(S, C, ZL, leaf_list) {
     H <- length(C)
     leafs <- length(leaf_list)
@@ -340,10 +438,13 @@ V.star.all.leafs <- function(S, C, ZL, leaf_list) {
             vec_inter <- numeric(leafs)
             new_id <- numeric(len)
             for (j in 1:len) {
-                intra <- min(min(ZL[[h]][j], length(intersect(S, unlist(leaf_list[C[[h]][[j]][1]:C[[h]][[j]][2]])))), 
-                  sum(Vec[id[which((C[[h]][[j]][1] <= id) & (C[[h]][[j]][2] >= id))]]))
-                vec_inter[C[[h]][[j]][1]] <- intra
-                new_id[j] <- C[[h]][[j]][1]
+                Chj <- C[[h]][[j]]
+                leaves <- unlist(leaf_list[Chj[1]:Chj[2]])
+                len <- length(intersect(S, leaves))
+                ss <- sum(Vec[id[which((Chj[1] <= id) & (Chj[2] >= id))]])
+                intra <- min(ZL[[h]][j], len, ss)
+                vec_inter[Chj[1]] <- intra
+                new_id[j] <- Chj[1]
             }
             Vec <- vec_inter
             id <- new_id
@@ -351,6 +452,7 @@ V.star.all.leafs <- function(S, C, ZL, leaf_list) {
     }
     return(sum(Vec[id]))
 }
+
 # completes an incomplete tree structure
 tree.expand <- function(C, ZL, leaf_list) {
     H <- length(C)
@@ -360,9 +462,10 @@ tree.expand <- function(C, ZL, leaf_list) {
         len <- length(C[[i]])
         j <- 1
         while (j <= len) {
-            if (expected_leaf == C[[i]][[j]][1]) {
+            Cij <- C[[i]][[j]]
+            if (expected_leaf == Cij[1]) {
                 # TOUT VA BIEN suivant
-                expected_leaf <- C[[i]][[j]][2] + 1
+                expected_leaf <- Cij[2] + 1
                 j <- j + 1
             } else {
                 # PROBLÈME résolution
@@ -395,8 +498,8 @@ tree.expand <- function(C, ZL, leaf_list) {
                 ZLH <- c(ZLH, ZL[[H]][j])
             } else {
                 for (k in id_start:id_end) {
-                  CH <- c(CH, list(c(k, k)))
-                  ZLH <- c(ZLH, length(leaf_list[[k]]))
+                    CH <- c(CH, list(c(k, k)))
+                    ZLH <- c(ZLH, length(leaf_list[[k]]))
                 }
             }
         }
@@ -405,8 +508,22 @@ tree.expand <- function(C, ZL, leaf_list) {
     }
     return(list(C = C, ZL = ZL))
 }
-# computes V star (S) from an incomplete tree structure, an incomplete zeta tree, and a list of leaves
+
+#' Post hoc bound on the number of false positives
+#' 
+#' @param S A subset of hypotheses
+#' @param C Complete tree structure
+#' @param ZL Complete zeta tree
+#' @param leaf_list List of leaves
+#' @return An integer value, upper bound on the number false positives in S
+#' @export
+#' @examples
+#' 
 V.star <- function(S, C, ZL, leaf_list) {
     all_leafs <- tree.expand(C, ZL, leaf_list)
-    return(V.star.all.leafs(S, all_leafs$C, all_leafs$ZL, leaf_list))
+    return(V.star.all.leafs(S, 
+                            all_leafs$C, 
+                            all_leafs$ZL, 
+                            leaf_list))
 }
+
