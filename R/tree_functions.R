@@ -71,7 +71,7 @@ dyadic.from.leaf_list <- function(leaf_list, method) {
 #' @export
 #' @examples
 #' 
-#' m <- 16
+#' m <- 13
 #' dd <- dyadic.from.window.size(m, s = 2, method = 2)
 #' str(dd)
 #' 
@@ -430,7 +430,8 @@ V.star.all.leafs <- function(S, C, ZL, leaf_list) {
     Vec <- numeric(leafs)
     id <- seq_len(leafs)
     for (i in 1:leafs) {
-        Vec[i] <- min(ZL[[H]][i], length(intersect(S, leaf_list[[i]])))
+        len <- length(intersect(S, leaf_list[[i]]))
+        Vec[i] <- min(ZL[[H]][i], len)
     }
     if (H > 1) {
         for (h in (H - 1):1) {
@@ -540,7 +541,7 @@ nodeLabel <- function(x) {
 #' 
 #' @examples
 #' 
-#' m <- 16
+#' m <- 17
 #' dd <- dyadic.from.window.size(m, s = 2, method = 2)
 #' dt <- as.data.tree(dd$C)
 #' plot(dt)
@@ -567,9 +568,9 @@ as.data.tree <- function(C) {
         sp <- seq(from = parent[1], to = parent[2])
         for (cc in seq_len(length(children))) {
             child <- children[[cc]]
-            if (length(child) == 1) {
-                child <- rep(child, 2)  # hack
-            }
+            # if (length(child) == 1) {
+            #     child <- rep(child, 2)  # hack (now useless after bug fix)
+            # }
             sc <- seq(from = child[1], to = child[2])
             if (!setinclude(sc, sp)) {
                 ## go to next parent (ok because ordered)
