@@ -27,7 +27,7 @@ Dyadic tree structure from window size
 }
 \examples{
 
-m <- 16
+m <- 13
 dd <- dyadic.from.window.size(m, s = 2, method = 2)
 str(dd)
 
