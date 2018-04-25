@@ -527,3 +527,66 @@ V.star <- function(S, C, ZL, leaf_list) {
                             leaf_list))
 }
 
+nodeLabel <- function(x) {
+    paste(unlist(x), collapse = ":")
+}
+
+#' Convert to data tree
+#' 
+#' @param C Complete tree structure
+#' @return A \code{data.tree::data.tree} object
+#' @export
+#' @importFrom data.tree Node
+#' 
+#' @examples
+#' 
+#' m <- 16
+#' dd <- dyadic.from.window.size(m, s = 2, method = 2)
+#' dt <- as.data.tree(dd$C)
+#' plot(dt)
+#' 
+as.data.tree <- function(C) {
+    H <- length(C)
+    rootName <- nodeLabel(C[[1]])
+    tree <- Node$new(rootName)
+    if (H > 1) {
+        children <- C[[2]]
+        for (cc in 1:length(children)) {
+            child <- children[[cc]]
+            cname <- nodeLabel(child)
+            tree$AddChild(cname)
+        }
+    }
+    childNodes <- tree$children
+    for (hh in (1 + seq_len(H-2))) {
+        parentNodes <- childNodes
+        parents <- children
+        children <- C[[hh+1]]
+        pp <- 1
+        parent <- parents[[pp]]
+        sp <- seq(from = parent[1], to = parent[2])
+        for (cc in seq_len(length(children))) {
+            child <- children[[cc]]
+            if (length(child) == 1) {
+                child <- rep(child, 2)  # hack
+            }
+            sc <- seq(from = child[1], to = child[2])
+            if (!setinclude(sc, sp)) {
+                ## go to next parent (ok because ordered)
+                pp <- pp + 1
+                parent <- parents[[pp]]
+                sp <- seq(from = parent[1], to = parent[2])
+            }
+            if (!setinclude(sc, sp)) {
+                ## sanity check
+                stop("No parent found in ", parents, " for node ", child)
+            }
+            pname <- nodeLabel(parent)
+            cname <- nodeLabel(child)
+            pnode <- parentNodes[[pname]]
+            pnode$AddChild(cname)
+            childNodes[[cname]] <- pnode[[cname]]
+        }
+    }
+    tree
+}
