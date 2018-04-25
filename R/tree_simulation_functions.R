@@ -148,12 +148,13 @@ plotting <- function(C, ZL, leaf_list, method, pvalues, mu, alpha) {
     vequo <- numeric(m)
     for (i in 1:m) {
         vequo[i] <- switch(method, threshold = {
-            min(sapply(1:m, function(k) min(sum(pvalues[o[1:i]] > alpha * k/m) + k - 1, i)))
+            min(sapply(1:i, function(k) min(sum(pvalues[o[1:i]] > alpha * k/m) + k - 1, i)))
         }, add = {
-            min(sapply(1:m, function(k) min(sum(pvalues[omu[1:i]] > alpha * k/m) + k - 1, i)))
+            min(sapply(1:i, function(k) min(sum(pvalues[omu[1:i]] > alpha * k/m) + k - 1, i)))
         })
     }
     lines(1:m, vequo, col = 2)
+    cbind(tree = vecVstar, Simes = vequo)
 }
 
 #' @examples
