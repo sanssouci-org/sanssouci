@@ -40,7 +40,7 @@ dyadic.from.leaf_list <- function(leaf_list, method) {
             Ch <- list()
             len <- length(oldCh)
             for (i in seq_len(len)) {
-                oi <- oldCh[i]
+                oi <- oldCh[[i]]
                 leafs_in_node <- oi[2] - oi[1] + 1
                 if (leafs_in_node > 1) {
                     cut2 <- ceiling(leafs_in_node/2)
@@ -50,7 +50,7 @@ dyadic.from.leaf_list <- function(leaf_list, method) {
                     if (cut2 > 1) 
                         continue <- TRUE
                 } else {
-                    Ch <- c(Ch, oi)
+                    Ch <- c(Ch, oldCh[i])
                 }
             }
             C <- c(C, list(Ch))
