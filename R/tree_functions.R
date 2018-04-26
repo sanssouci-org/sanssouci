@@ -513,8 +513,8 @@ tree.expand <- function(C, ZL, leaf_list) {
 #' Post hoc bound on the number of false positives
 #' 
 #' @param S A subset of hypotheses
-#' @param C Complete tree structure
-#' @param ZL Complete zeta tree
+#' @param C Tree
+#' @param ZL Zeta tree
 #' @param leaf_list List of leaves
 #' @return An integer value, upper bound on the number false positives in S
 #' @export
@@ -541,7 +541,7 @@ nodeLabel <- function(x) {
 #' 
 #' @examples
 #' 
-#' m <- 17
+#' m <- 5
 #' dd <- dyadic.from.window.size(m, s = 2, method = 2)
 #' dt <- as.data.tree(dd$C)
 #' plot(dt)
@@ -557,36 +557,36 @@ as.data.tree <- function(C) {
             cname <- nodeLabel(child)
             tree$AddChild(cname)
         }
-    }
-    childNodes <- tree$children
-    for (hh in (1 + seq_len(H-2))) {
-        parentNodes <- childNodes
-        parents <- children
-        children <- C[[hh+1]]
-        pp <- 1
-        parent <- parents[[pp]]
-        sp <- seq(from = parent[1], to = parent[2])
-        for (cc in seq_len(length(children))) {
-            child <- children[[cc]]
-            # if (length(child) == 1) {
-            #     child <- rep(child, 2)  # hack (now useless after bug fix)
-            # }
-            sc <- seq(from = child[1], to = child[2])
-            if (!setinclude(sc, sp)) {
-                ## go to next parent (ok because ordered)
-                pp <- pp + 1
-                parent <- parents[[pp]]
-                sp <- seq(from = parent[1], to = parent[2])
+        childNodes <- tree$children
+        for (hh in (1 + seq_len(H-2))) {
+            parentNodes <- childNodes
+            parents <- children
+            children <- C[[hh+1]]
+            pp <- 1
+            parent <- parents[[pp]]
+            sp <- seq(from = parent[1], to = parent[2])
+            for (cc in seq_len(length(children))) {
+                child <- children[[cc]]
+                # if (length(child) == 1) {
+                #     child <- rep(child, 2)  # hack (now useless after bug fix)
+                # }
+                sc <- seq(from = child[1], to = child[2])
+                if (!setinclude(sc, sp)) {
+                    ## go to next parent (ok because ordered)
+                    pp <- pp + 1
+                    parent <- parents[[pp]]
+                    sp <- seq(from = parent[1], to = parent[2])
+                }
+                if (!setinclude(sc, sp)) {
+                    ## sanity check
+                    stop("No parent found in ", parents, " for node ", child)
+                }
+                pname <- nodeLabel(parent)
+                cname <- nodeLabel(child)
+                pnode <- parentNodes[[pname]]
+                pnode$AddChild(cname)
+                childNodes[[cname]] <- pnode[[cname]]
             }
-            if (!setinclude(sc, sp)) {
-                ## sanity check
-                stop("No parent found in ", parents, " for node ", child)
-            }
-            pname <- nodeLabel(parent)
-            cname <- nodeLabel(child)
-            pnode <- parentNodes[[pname]]
-            pnode$AddChild(cname)
-            childNodes[[cname]] <- pnode[[cname]]
         }
     }
     tree

@@ -37,11 +37,6 @@ curveMaxFP <- function(stat, thr, flavor=c("BNR2016", "Mein2006", "BNR2014")) {
     m <- length(stat)
     kMax <- length(thr)
 
-    ## sanity checks
-    ##stopifnot(length(stat)==m)
-    stopifnot(identical(sort(thr, decreasing=TRUE), thr))
-    stopifnot(identical(sort(stat, decreasing=TRUE), stat))
-
     flavor <- match.arg(flavor)
     if (flavor=="Mein2006") {
         ## (loose) upper bound on number of FALSE discoveries among first rejections
@@ -63,6 +58,11 @@ curveMaxFP <- function(stat, thr, flavor=c("BNR2016", "Mein2006", "BNR2014")) {
                            min(cand)
                        })
     } else if (flavor=="BNR2016") {    ## Pierre's version
+        ## sanity checks
+        ##stopifnot(length(stat)==m)
+        stopifnot(identical(sort(thr, decreasing=TRUE), thr))
+        stopifnot(identical(sort(stat, decreasing=TRUE), stat))
+        
         K <- rep(kMax, m) ## K[i] = number of k/ T[i] <= s[k]
         Z <- rep(m, kMax) ## Z[k] = number of i/ T[i] >  s[k]
         ## 'K' and 'Z' are initialized to their largest possible value, ie 'm' and 'kMax', respectively
