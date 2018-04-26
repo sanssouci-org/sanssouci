@@ -1,3 +1,7 @@
+library("future")
+plan(multiprocess, workers = 3)
+#plan(multiprocess, workers = 100)
+
 resPath <- "resData/DBNR/confidenceEnvelopes"
 resPath <- R.utils::Arguments$getWritablePath(resPath)
 
@@ -20,20 +24,9 @@ configs <- expand.grid(
     stringsAsFactors = FALSE)
 
 nb <- nrow(configs)
-nb <- 2
 
 for (cc in 1:nb) {
     conf <- configs[cc, ]
-    res <- simu.hulk(m = conf[["m"]], 
-                     s = conf[["s"]], 
-                     K1 = conf[["K1"]], 
-                     d = conf[["d"]], 
-                     barmu = conf[["barmu"]],
-                     grouped = conf[["grouped"]], 
-                     setting = conf[["setting"]])
-    dat <- Reduce(rbind, res)
-    rownames(conf) <- NULL
-    dat <- cbind(dat, conf)
     stag <- paste("m=", conf[["m"]], "_",
                   "s=", conf[["s"]], "_",
                   "K1=", conf[["K1"]], "_",
@@ -42,8 +35,19 @@ for (cc in 1:nb) {
                   "grouped=", conf[["grouped"]], "_",
                   "setting=", conf[["setting"]], sep = "")
     filename <- sprintf("conf_env-%s.rds", stag)
-    pathname <- file.path(resPath, filename)
-    saveRDS(dat, pathname)
+    dummy %<-% {
+        res <- simu.hulk(m = conf[["m"]], 
+                         s = conf[["s"]], 
+                         K1 = conf[["K1"]], 
+                         d = conf[["d"]], 
+                         barmu = conf[["barmu"]],
+                         grouped = conf[["grouped"]], 
+                         setting = conf[["setting"]])
+        dat <- Reduce(rbind, res)
+        rownames(conf) <- NULL
+        dat <- cbind(dat, conf)
+        pathname <- file.path(resPath, filename)
+        saveRDS(dat, pathname)
+        ## dat <- readRDS(pathname)
+    }
 }
-
-
