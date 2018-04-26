@@ -17,7 +17,7 @@ Convert to data tree
 }
 \examples{
 
-m <- 17
+m <- 5
 dd <- dyadic.from.window.size(m, s = 2, method = 2)
 dt <- as.data.tree(dd$C)
 plot(dt)

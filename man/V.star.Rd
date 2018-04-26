@@ -9,9 +9,9 @@ V.star(S, C, ZL, leaf_list)
 \arguments{
 \item{S}{A subset of hypotheses}
 
-\item{C}{Complete tree structure}
+\item{C}{Tree}
 
-\item{ZL}{Complete zeta tree}
+\item{ZL}{Zeta tree}
 
 \item{leaf_list}{List of leaves}
 }
