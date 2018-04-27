@@ -15,7 +15,9 @@ simu.hulk <- function(m,
     # m1 <- sum(mu > 0)
     m1 <-  d*K1*s ## covers the case where barmu==0
     range <- min(2 * m1, m)
-    idxs <- c(1:max(range, ss), seq.int(from=max(range)+1, to = m, length=10))
+    idxs1 <- c(1:max(range, ss))
+    idxs2 <- round(seq(from = max(range) + 1, to = m, length = 10))
+    idxs <- c(idxs1, idxs2)
     
     pvalues <- gen.p.values(m, mu, rho)
     C <- dd$C
