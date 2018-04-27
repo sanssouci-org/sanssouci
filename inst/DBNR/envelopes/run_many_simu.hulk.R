@@ -1,5 +1,5 @@
 library("future")
-plan(multiprocess, workers = 3)
+plan(multiprocess, workers = 100)
 #plan(multiprocess, workers = 100)
 
 resPath <- "resData/DBNR/confidenceEnvelopes"
@@ -24,6 +24,7 @@ configs <- expand.grid(
     stringsAsFactors = FALSE)
 
 nb <- nrow(configs)
+#nb <- 40
 
 for (cc in 1:nb) {
     conf <- configs[cc, ]
@@ -34,7 +35,7 @@ for (cc in 1:nb) {
                   "barmu=", conf[["barmu"]], "_",
                   "grouped=", conf[["grouped"]], "_",
                   "setting=", conf[["setting"]], sep = "")
-    filename <- sprintf("conf_env-%s.rds", stag)
+    filename <- sprintf("conf-env_%s.rds", stag)
     dummy %<-% {
         res <- simu.hulk(m = conf[["m"]], 
                          s = conf[["s"]], 
