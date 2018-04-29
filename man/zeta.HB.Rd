@@ -7,7 +7,7 @@
 zeta.HB(pval, lambda)
 }
 \arguments{
-\item{pval}{A vector of eqn{p}-values}
+\item{pval}{A vector of \eqn{p}-values}
 
 \item{lambda}{A numeric value in \eqn{[0,1]}, the target level of the test}
 }

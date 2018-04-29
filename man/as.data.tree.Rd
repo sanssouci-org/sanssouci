@@ -19,7 +19,10 @@ Convert to data tree
 
 m <- 5
 dd <- dyadic.from.window.size(m, s = 2, method = 2)
-dt <- as.data.tree(dd$C)
-plot(dt)
+if (require("data.tree")) {
+    dt <- sanssouci::as.data.tree(dd$C)
+    plot(dt)
+}
+
 
 }

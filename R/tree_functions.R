@@ -132,19 +132,20 @@ dyadic.from.height <- function(m, H, method) {
 #' @export
 #' @examples
 #' 
-#' m<-1000
-#' dd<-dyadic.from.max.height(m,s=10,method=2)
-#' leaf_list<-dd$leaf_list
+#' m <- 1000
+#' dd <- dyadic.from.max.height(m, method=2)
+#' leaf_list <- dd$leaf_list
 #' 
-dyadic.max.height <- function(m, method) {
+dyadic.from.max.height <- function(m, method) {
     H <- ifelse(m == 1, 1, floor(2 + log2(m - 1)))
     return(dyadic.from.height(m, H, method))
 }
 
 #' Estimate the proportion of true nulls from a Holm-Bonferroni test
 #'
-#' @param pval A vector of eqn{p}-values
+#' @param pval A vector of \eqn{p}-values
 #' @param lambda A numeric value in \eqn{[0,1]}, the target level of the test 
+#' @export
 zeta.HB <- function(pval, lambda) {
     s <- length(pval)
     k <- 0
@@ -161,12 +162,25 @@ zeta.HB <- function(pval, lambda) {
     return(s - k)
 }
 
-# computes zeta equals to the size of the set
+#' Trivial estimate the proportion of true nulls
+#' 
+#' Trivial estimate the proportion of true nulls as the size of the set
+#' 
+#' @param pval A vector of \eqn{p}-values
+#' @param lambda (not used)
+#' @export
 zeta.trivial <- function(pval, lambda) {
     return(length(pval))
 }
 
-# computes zeta from the DKWM/Storey method, at level lambda
+#' 
+#' Estimate the proportion of true nulls from the DKWM/Storey method
+#' 
+#' Trivial estimate the proportion of true nulls as the size of the set
+#'
+#' @param pval A vector of \eqn{p}-values
+#' @param lambda A numeric value in \eqn{[0,1]}, the target level of the test 
+#' @export
 zeta.DKWM <- function(pval, lambda) {
     s <- length(pval)
     sorted.pval <- c(0, sort(pval))
@@ -536,15 +550,18 @@ nodeLabel <- function(x) {
 #' 
 #' @param C Complete tree structure
 #' @return A \code{data.tree::data.tree} object
-#' @export
-#' @importFrom data.tree Node
+#@export
+#@importFrom data.tree Node
 #' 
 #' @examples
 #' 
 #' m <- 5
 #' dd <- dyadic.from.window.size(m, s = 2, method = 2)
-#' dt <- as.data.tree(dd$C)
-#' plot(dt)
+#' if (require("data.tree")) {
+#'     dt <- sanssouci::as.data.tree(dd$C)
+#'     plot(dt)
+#' }
+#' 
 #' 
 as.data.tree <- function(C) {
     H <- length(C)
