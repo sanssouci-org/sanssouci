@@ -32,3 +32,23 @@ test_that("output dimensions are as expected for one-sample tests", {
     tbl <- table(sim$H)
     expect_length(tbl, 2)
 })
+
+
+test_that("one- and two-sample tests are generated as desired", {
+    # one-sample    
+    sim <- gaussianSamples(m, rho, n, pi0, SNR = 1, prob = 0)
+    tbl <- table(colnames(sim$X))
+    expect_length(tbl, 1)
+    expect_equal(names(tbl), "0")
+    
+    # one-sample    
+    sim <- gaussianSamples(m, rho, n, pi0, SNR = 1, prob = 1)
+    tbl <- table(colnames(sim$X))
+    expect_length(tbl, 1)
+    expect_equal(names(tbl), "1")
+    
+    # two-sample    
+    sim <- gaussianSamples(m, rho, n, pi0, SNR = 1, prob = 0.5)
+    tbl <- table(colnames(sim$X))
+    expect_length(tbl, 2)
+})

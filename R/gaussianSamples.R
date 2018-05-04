@@ -74,22 +74,23 @@ gaussianSamples <- function(m, rho, n, pi0, SNR = 1, prob = 1, w = NULL) {
 
     ## 2. signal
     mu <- matrix(0, nrow = nrow(eps), ncol = ncol(eps)) ## m x n
+    colnames(mu) <- rep(0, n)
+    y <- rbinom(n, 1, prob)     ## Bernoulli response (constant if prob in {0,1})
     if (m0 < m) {
         if (prob == 1) {  
             # one-sample data (defined here as a corner case of the two-sample problem)
             signal <- SNR/sqrt(n)
             mu[H1, ] <- signal
-            colnames(mu) <- rep(1, n)
         } else {
             y <- rbinom(n, 1, prob)     ## Bernoulli response
             w1 <- which(y == 1)
             n1 <- length(w1)
             signal <- SNR*sqrt(1/(n-n1) + 1/n1)  ## ! scaling is test-specific (here T)!
             mu[H1, w1] <- signal
-            colnames(mu) <- y
         }
     }
-
+    colnames(mu) <- y
+    
     # data: signal + noise
     X <- mu + eps
     list(X = X, H = H)
