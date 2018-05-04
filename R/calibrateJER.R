@@ -40,7 +40,7 @@
 #'                        pi0 = pi0, SNR = 3, prob = 0.5)
 #' X <- sim$X
 #' cal <- calibrateJER(X, B = 1e3, alpha = 0.2, refFamily="Simes")
-#' cal$lambda # > alpha (whp) is rho > 0
+#' cal$lambda # > alpha (whp) if rho > 0
 #' 
 #' # Application 1: confidence envelope
 #' #   ie upper confidence bound for the number of false positives 
