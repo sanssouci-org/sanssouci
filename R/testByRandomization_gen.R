@@ -106,7 +106,7 @@
 #' @export
 #' 
 testByRandomization_gen <- function(X, B, cls = colnames(X), test = NULL,
-                                rand.p.value = FALSE, seed = NULL, parallel=FALSE,core=NULL){
+                                    rand.p.value = FALSE, seed = NULL, parallel=FALSE,core=NULL){
   
   require(tidyverse) ## sortir
   
@@ -165,7 +165,7 @@ testByRandomization_gen <- function(X, B, cls = colnames(X), test = NULL,
 
         T_obs <- res$statistic
         p_obs <- res$p.value  ## parametric p-value
-        T_obs <- qnorm(1 - p_obs/2) # back to the scale of one-sided Gaussian test statistics under H0
+        T_obs <- qnorm(1 - p_obs) # back to the scale of one-sided Gaussian test statistics under H0
         # df_obs <- res$parameter  ## degrees of freedom of the T statistics
         rm(res)
         
@@ -189,7 +189,7 @@ testByRandomization_gen <- function(X, B, cls = colnames(X), test = NULL,
                 }
             }   
         
-        T0 <- qnorm(1 - pp/2) # back to the scale of one-sided Gaussian test statistics under H0
+        T0 <- qnorm(1 - pp) # back to the scale of one-sided Gaussian test statistics under H0
         res <- list(T = T_obs, T0 = T0, 
                     flavor = flavor,
                     p = p_obs, p0 = pp)
@@ -199,7 +199,7 @@ testByRandomization_gen <- function(X, B, cls = colnames(X), test = NULL,
         rwt <- rowWelchTests(X, categ = cls)
         T_obs <- rwt$statistic
         p_obs <- rwt$p.value  ## parametric p-value
-        T_obs <- qnorm(1 - p_obs/2) # back to the scale of one-sided Gaussian test statistics under H0
+        T_obs <- qnorm(1 - p_obs) # back to the scale of one-sided Gaussian test statistics under H0
         df_obs <- rwt$parameter  ## degrees of freedom of the T statistics
         rm(rwt)
         
@@ -212,7 +212,7 @@ testByRandomization_gen <- function(X, B, cls = colnames(X), test = NULL,
           pp[, bb] <- rwt$p.value
           df[, bb] <- rwt$parameter
         }
-        T0 <- qnorm(1 - pp/2) # back to the scale of one-sided Gaussian test statistics under H0
+        T0 <- qnorm(1 - pp) # back to the scale of one-sided Gaussian test statistics under H0
         res <- list(T = T_obs, T0 = T0, 
                     flavor = flavor,
                     p = p_obs, p0 = pp,

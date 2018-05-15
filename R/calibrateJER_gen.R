@@ -83,7 +83,8 @@
 #' pi0
 #' 
 calibrateJER_gen <- function(X, B, alpha, refFamily = c("Simes", "kFWER"),
-                             K = nrow(X), test=NULL, parallel=FALSE,core=NULL, verbose=TRUE) {
+                             K = nrow(X), test=NULL,
+                             parallel=FALSE,core=NULL, verbose=TRUE) {
   ## sanity checks
   m <- nrow(X);
   refFamily <- match.arg(refFamily)
