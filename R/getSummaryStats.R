@@ -28,7 +28,7 @@ getSummaryStats <- function(mat, categ=colnames(mat)) {
     res <- list()
     for (cc in seq(along=cats)) {
         ww <- which(categ==cats[cc])
-        matc <- mat[, ww]
+        matc <- mat[, ww, drop=FALSE]
         
         sumc <- rowSums(matc)
         sum2c <- rowSums(matc^2)

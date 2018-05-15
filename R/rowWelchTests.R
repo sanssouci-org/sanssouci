@@ -13,7 +13,8 @@
 #'   observations
 #'   
 #' @param categ A vector of \code{ncol(mat)} categories for the observations
-#'   
+#' 
+#' @param alternative A character string specifying the alternative hypothesis. Currently only "two.sided" is implemented
 #' @return A list with class "htest" containing the following components: 
 #'   \describe{ \item{statistic}{the value of the t-statistics} 
 #'   \item{parameter}{the degrees of freedom for the t-statistics} 
@@ -41,7 +42,7 @@
 #' })
 #' sum(abs(fwt$p.value-pwt))  ## same results
 #' 
-rowWelchTests <- function(mat, categ=colnames(mat)) {
+rowWelchTests <- function(mat, categ = colnames(mat), alternative = c("two.sided", "less", "greater")) {
     cats <- unique(categ)
     if (length(cats) != 2) {
         stop("Two categories expected!")
@@ -50,9 +51,9 @@ rowWelchTests <- function(mat, categ=colnames(mat)) {
     X <- sstats[[2]]
     Y <- sstats[[1]]
     swt <- suffWelchTest(X[["mean"]], Y[["mean"]],
-                           X[["sd"]], Y[["sd"]],
-                           X[["n"]], Y[["n"]])
+                         X[["sd"]], Y[["sd"]],
+                         X[["n"]], Y[["n"]],
+                         alternative = alternative)
     swt[["meanDiff"]] <- Y[["mean"]] - X[["mean"]]
     swt
 }
-        
