@@ -174,7 +174,7 @@ testByRandomization_gen <- function(X, B, cls = colnames(X), test = NULL,
         if(parallel){
             library(parallel) ## sortir
             cl <- makeCluster(core)
-            
+
             clusterExport(cl, "cls")
             clusterExport(cl, "X_melt")
             clusterExport(cl, "test.func")
@@ -194,7 +194,7 @@ testByRandomization_gen <- function(X, B, cls = colnames(X), test = NULL,
                     flavor = flavor,
                     p = p_obs, p0 = pp)
         
-      }else{ # apply Welch
+      } else { # apply Welch
         ## observed
         rwt <- rowWelchTests(X, categ = cls)
         T_obs <- rwt$statistic
@@ -218,7 +218,7 @@ testByRandomization_gen <- function(X, B, cls = colnames(X), test = NULL,
                     p = p_obs, p0 = pp,
                     df = df_obs, df0 = df)
         }
-  }else if (flavor == "flip") {
+  } else if (flavor == "flip") {
     ## observed test statistics and p-values
     T_obs <- rowSums(X)/sqrt(n)
     p_obs <- 2*(1 - pnorm(abs(T_obs)))  ## two-sided...
@@ -240,3 +240,9 @@ testByRandomization_gen <- function(X, B, cls = colnames(X), test = NULL,
   return(res)
 }
 
+
+# Function used for permutation with classical statistical test.
+perm_test <-  function(i){
+    cls_perm <- sample(cls, length(cls))
+    X_melt %>% mutate(Var2=cls_perm) %>% group_by(Var1) %>% do(broom::tidy(test.func(value~Var2, data=.))) %>% pull(p.value)
+}
