@@ -1,7 +1,7 @@
 context("post-hoc bounds derived from Simes' inequality")
 
 require_cherry <- function() {
-    if (!require("cherry")) {
+    if (!require("cherry", quietly = TRUE)) {
         skip("Package 'cherry' not available")
     }
 }

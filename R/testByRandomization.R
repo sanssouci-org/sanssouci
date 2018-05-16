@@ -102,6 +102,7 @@
 testByRandomization <- function(X, B, cls = colnames(X), 
                                 alternative = c("two.sided", "less", "greater"),
                                 rand.p.value = FALSE, seed = NULL){
+    alternative <- match.arg(alternative)
     ## sanity checks
     n <- ncol(X)
     luc <- length(unique(cls))
@@ -137,51 +138,51 @@ testByRandomization <- function(X, B, cls = colnames(X),
         
         ## observed
         rwt <- rowWelchTests(X, categ = cls, alternative = alternative)
-        T_obs <- rwt$statistic
-        p_obs <- rwt$p.value  ## parametric p-value
-        T_obs <- qnorm(1 - p_obs) # back to the scale of one-sided Gaussian test statistics under H0
-        df_obs <- rwt$parameter  ## degrees of freedom of the T statistics
+        T <- rwt$statistic
+        p <- rwt$p.value  ## parametric p-value
+        df <- rwt$parameter  ## degrees of freedom of the T statistics
         rm(rwt)
         
         ## under H0
-        pp <- matrix(nrow = m, ncol = B) ## parametric p-value
-        df <- matrix(nrow = m, ncol = B) 
+        T0 <- matrix(nrow = m, ncol = B) ## test statistics under the null
+        p0 <- matrix(nrow = m, ncol = B) ## parametric p-value
+        df0 <- matrix(nrow = m, ncol = B) 
         for (bb in 1:B) {
             cls_perm <- sample(cls, length(cls))
             rwt <- rowWelchTests(X, categ = cls_perm, alternative = alternative)
-            pp[, bb] <- rwt$p.value
-            df[, bb] <- rwt$parameter
+            T0[, bb] <- rwt$statistic
+            p0[, bb] <- rwt$p.value
+            df0[, bb] <- rwt$parameter
         }
-        T0 <- qnorm(1 - pp) # back to the scale of one-sided Gaussian test statistics under H0
-        res <- list(T = T_obs, T0 = T0, 
+        res <- list(T = T, T0 = T0, 
                     flavor = flavor,
-                    p = p_obs, p0 = pp,
-                    df = df_obs, df0 = df)
+                    p = p, p0 = p0,
+                    df = df, df0 = df0)
     } else if (flavor == "flip") {
         ## observed test statistics and p-values
-        T_obs <- rowSums(X)/sqrt(n)
-        p_obs <- switch(alternative, 
-                        "two.sided" = 2*(1 - pnorm(abs(T_obs))),
-                        "greater" = 1 - pnorm(T_obs),
-                        "less" = pnorm(T_obs))
+        T <- rowSums(X)/sqrt(n)
+        p <- switch(alternative, 
+                        "two.sided" = 2*(1 - pnorm(abs(T))),
+                        "greater" = 1 - pnorm(T),
+                        "less" = pnorm(T))
         ## test statistics under H0
         T0 <- testBySignFlipping(X, B)
         p0 <- switch(alternative, 
                      "two.sided" = 2*(1 - pnorm(abs(T0))),
                      "greater" = 1 - pnorm(T0),
                      "less" = pnorm(T0))
-        res <- list(T = T_obs, T0 = T0, p = p_obs, p0 = p0, flavor = flavor)
+        res <- list(T = T, T0 = T0, p = p, p0 = p0, flavor = flavor)
     }
     
     if (rand.p.value) {
-        if (alternative != "two.sided") {
-            warning("one-sided permutation p-values not implemented for tests by sign-flipping; returning two-sided permutation p-values instead")
-        }
         ## get m x (B+1) matrix of pvalues under the null (+ original)
         ## by sorting null test statistics as proposed by Ge et al (2003)
-        TT <- cbind(T0, T_obs)
-        pB <- rowRanks(-abs(TT)) / (B+1)
-        
+        TT <- cbind(T0, T)
+        pB <- switch(alternative, 
+                       "two.sided" = rowRanks(-abs(TT)) / (B+1),
+                       "greater" = rowRanks(-TT) / (B+1),
+                       "less" = rowRanks(TT) / (B+1))
+
         res$rand.p <- pB[, B+1]
         res$rand.p0 <- pB[, -(B+1), drop = FALSE]
     }

@@ -75,16 +75,23 @@
 #' maxFP(sel, cal$thr)/m
 #' pi0
 #' 
-calibrateJER <- function(X, B, alternative = c("two.sided", "less", "greater"), 
-                         alpha, refFamily = c("Simes", "kFWER"),
+calibrateJER <- function(X, B, alpha, 
+                         alternative = c("two.sided", "less", "greater"), 
+                         refFamily = c("Simes", "kFWER"),
                          K = nrow(X), verbose=TRUE) {
+    alternative <- c("two.sided", "less", "greater")
     ## sanity checks
     m <- nrow(X);
     refFamily <- match.arg(refFamily)
 
     tests <- testByRandomization(X, B = B, alternative = alternative)
-    X0 <- tests$T0
-    x <- tests$T
+    
+    # X0 <- tests$T0
+    # x <- tests$T
+    # back to the scale of one-sided Gaussian test statistics under H0
+    X0 <- qnorm(1 - tests$p0) 
+    x <- qnorm(1 - tests$p) 
+
     rm(tests)
     
     res <- calibrateJER0(X0, refFamily = refFamily, alpha = alpha, x, kMax = K)

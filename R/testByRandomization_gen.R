@@ -82,10 +82,10 @@
 #'
 #' ## two-sample data
 #' sim <- gaussianSamples(m, rho, n, pi0, SNR = 2, prob = 0.5)
-#' system.time(testsT <- testByRandomization_gen(sim$X, B, test='t.test'))
+#' #system.time(testsT <- testByRandomization_gen(sim$X, B, test='t.test'))
 #' system.time(tests <- testByRandomization_gen(sim$X, B))
 #' 
-#' system.time(testsW <- testByRandomization_gen(sim$X, B, test='wilcox.test'))
+#' #system.time(testsW <- testByRandomization_gen(sim$X, B, test='wilcox.test'))
 #'
 #' ## show test statistics
 #' pch <- 20
@@ -94,7 +94,7 @@
 #' legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
 #'
 #' sim <- gaussianSamples(m, rho, n, pi0, SNR=2)
-#' tests <- testByRandomization_gen(sim$X, B, test='t.test')
+#' #tests <- testByRandomization_gen(sim$X, B, test='t.test')
 #'
 #' ## show test statistics
 #' pch <- 20
