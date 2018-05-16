@@ -175,13 +175,14 @@ testByRandomization_gen <- function(X, B, cls = colnames(X), test = NULL,
             library(parallel) ## sortir
             cl <- makeCluster(core)
 
-            clusterExport(cl, "cls")
-            clusterExport(cl, "X_melt")
-            clusterExport(cl, "test.func")
+            clusterExport(cl, "cls", envir=environment())
+            clusterExport(cl, "X_melt", envir=environment())
+            clusterExport(cl, "test.func", envir=environment())
             
             pp <-  parLapply(cl, 1:B, perm_test)
             pp <- do.call('cbind',pp)
             stopCluster(cl)
+            
             }else{       
                 for (bb in 1:B) {
                   cls_perm <- sample(cls, length(cls))
@@ -243,6 +244,7 @@ testByRandomization_gen <- function(X, B, cls = colnames(X), test = NULL,
 
 # Function used for permutation with classical statistical test.
 perm_test <-  function(i){
-    cls_perm <- sample(cls, length(cls))
-    X_melt %>% mutate(Var2=cls_perm) %>% group_by(Var1) %>% do(broom::tidy(test.func(value~Var2, data=.))) %>% pull(p.value)
+  # cls <- x$Var2
+  cls_perm <- sample(cls, length(cls))
+  X_melt %>% mutate(Var2=cls_perm) %>% group_by(Var1) %>% do(broom::tidy(test.func(value~Var2, data=.))) %>% pull(p.value)
 }
