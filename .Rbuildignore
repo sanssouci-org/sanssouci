@@ -10,7 +10,7 @@ appveyor.yml
 
 ^resData$
 ^fig$
-^localTests$
+^local$
 ^docs$
 ^Rout$
 ^results$

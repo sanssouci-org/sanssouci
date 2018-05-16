@@ -4,8 +4,8 @@
 \alias{testByRandomization}
 \title{Randomization-based testing}
 \usage{
-testByRandomization(X, B, cls = colnames(X), rand.p.value = FALSE,
-  seed = NULL)
+testByRandomization(X, B, cls = colnames(X), alternative = c("two.sided",
+  "less", "greater"), rand.p.value = FALSE, seed = NULL)
 }
 \arguments{
 \item{X}{a matrix of \code{m} variables by \code{n} observations}
@@ -14,6 +14,9 @@ testByRandomization(X, B, cls = colnames(X), rand.p.value = FALSE,
 
 \item{cls}{A vector of length \code{n} class labels in \code{0,1} for flavor
 "perm". Defaults to colnames(X).}
+
+\item{alternative}{A character string specifying the alternative hypothesis.
+Must be one of "two.sided" (default), "greater" or "less".}
 
 \item{rand.p.value}{A boolean value: should randomization \eqn{p}-values be
 calculated and returned? Defaults to @FALSE}
@@ -40,8 +43,8 @@ a list with elements: \describe{
   \item{rand.p}{A vector of \eqn{m} \eqn{p}-values (only if
   \code{rand.p.value} is \code{TRUE} )}
 
-  \item{rand}{A \eqn{m \times B} matrix of randomization \eqn{p}-values
-  (only if \code{rand.p.value} is \code{TRUE} )}
+  \item{rand}{A \eqn{m \times B} matrix of randomization \eqn{p}-values (only
+  if \code{rand.p.value} is \code{TRUE} )}
 
   \item{df}{A vector of \eqn{m} degrees of freedom for the observed
   statistics (only for flavor "perm")}
@@ -60,18 +63,18 @@ The type of randomization is determined by the parameter \code{cls}.
   permutations (flavor "perm").
 
   For permutation, we test the null hypothesis: "both groups have the same
-  mean" against the one-sided alternative that the mean is larger in the
-  second group. The test is Welch's two-sample test for unequal variances.
-  Permuted test statistics are calculated by B permutations of the group
-  labels. Corresponding observed and permuted p-values are calculated as the
+  mean" against the alternative specified by parameter \code{alternative}.
+  The test is Welch's two-sample test for unequal variances. Permuted test
+  statistics are calculated by B permutations of the group labels.
+  Corresponding observed and permuted p-values are calculated as the
   proportion of permutations (including the identity) for which the permuted
   test statistic is larger than the observed test statistic.
 
   For sign-flipping, we test the null hypothesis: "the mean is 0" against the
-  two-sided alternative that the mean is larger than 0. We use the (rescaled)
-  empirical mean of the observations as a test statistic. Sign-flipped test
-  statistics are calculated by flipping the sign of each observation with
-  probability 1/2.
+  alternative specified by parameter \code{alternative}. We use the
+  (rescaled) empirical mean of the observations as a test statistic.
+  Sign-flipped test statistics are calculated by flipping the sign of each
+  observation with probability 1/2.
 }
 \examples{
 

@@ -4,8 +4,8 @@
 \alias{calibrateJER}
 \title{Calibration of joint Family-Wise Error Rate thresholds}
 \usage{
-calibrateJER(X, B, alpha, refFamily = c("Simes", "kFWER"), K = nrow(X),
-  verbose = TRUE)
+calibrateJER(X, B, alpha, alternative = c("two.sided", "less", "greater"),
+  refFamily = c("Simes", "kFWER"), K = nrow(X), verbose = TRUE)
 }
 \arguments{
 \item{X}{A matrix of \eqn{m} variables (hypotheses) by \eqn{n} observations.
@@ -15,6 +15,9 @@ second sample.}
 \item{B}{A numeric value, the number of permutations to be performed}
 
 \item{alpha}{Target JER level}
+
+\item{alternative}{A character string specifying the alternative hypothesis.
+Must be one of "two.sided" (default), "greater" or "less".}
 
 \item{refFamily}{A character value which can be \describe{
 
@@ -53,7 +56,7 @@ sim <- gaussianSamples(m = m, rho = 0.2, n = 100,
                        pi0 = pi0, SNR = 3, prob = 0.5)
 X <- sim$X
 cal <- calibrateJER(X, B = 1e3, alpha = 0.2, refFamily="Simes")
-cal$lambda # > alpha (whp) if rho > 0
+cal$lambda # > alpha (whp) is rho > 0
 
 # Application 1: confidence envelope
 #   ie upper confidence bound for the number of false positives 

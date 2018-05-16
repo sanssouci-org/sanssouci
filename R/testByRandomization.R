@@ -9,6 +9,9 @@
 #' @param cls A vector of length \code{n} class labels in \code{0,1} for flavor
 #'   "perm". Defaults to colnames(X).
 #'
+#' @param alternative A character string specifying the alternative hypothesis.
+#'   Must be one of "two.sided" (default), "greater" or "less".
+#'
 #' @param rand.p.value A boolean value: should randomization \eqn{p}-values be
 #'   calculated and returned? Defaults to @FALSE
 #'
@@ -22,18 +25,18 @@
 #'   permutations (flavor "perm").
 #'
 #'   For permutation, we test the null hypothesis: "both groups have the same
-#'   mean" against the one-sided alternative that the mean is larger in the
-#'   second group. The test is Welch's two-sample test for unequal variances.
-#'   Permuted test statistics are calculated by B permutations of the group
-#'   labels. Corresponding observed and permuted p-values are calculated as the
+#'   mean" against the alternative specified by parameter \code{alternative}.
+#'   The test is Welch's two-sample test for unequal variances. Permuted test
+#'   statistics are calculated by B permutations of the group labels.
+#'   Corresponding observed and permuted p-values are calculated as the
 #'   proportion of permutations (including the identity) for which the permuted
 #'   test statistic is larger than the observed test statistic.
 #'
 #'   For sign-flipping, we test the null hypothesis: "the mean is 0" against the
-#'   two-sided alternative that the mean is larger than 0. We use the (rescaled)
-#'   empirical mean of the observations as a test statistic. Sign-flipped test
-#'   statistics are calculated by flipping the sign of each observation with
-#'   probability 1/2.
+#'   alternative specified by parameter \code{alternative}. We use the
+#'   (rescaled) empirical mean of the observations as a test statistic.
+#'   Sign-flipped test statistics are calculated by flipping the sign of each
+#'   observation with probability 1/2.
 #'
 #' @references Ge, Y., Dudoit, S. and Speed, T.P., 2003. Resampling-based
 #'   multiple testing for microarray data analysis. _Test_, 12(1), pp.1-77.
@@ -56,8 +59,8 @@
 #'   \item{rand.p}{A vector of \eqn{m} \eqn{p}-values (only if
 #'   \code{rand.p.value} is \code{TRUE} )}
 #'
-#'   \item{rand}{A \eqn{m \times B} matrix of randomization \eqn{p}-values
-#'   (only if \code{rand.p.value} is \code{TRUE} )}
+#'   \item{rand}{A \eqn{m \times B} matrix of randomization \eqn{p}-values (only
+#'   if \code{rand.p.value} is \code{TRUE} )}
 #'
 #'   \item{df}{A vector of \eqn{m} degrees of freedom for the observed
 #'   statistics (only for flavor "perm")}
@@ -97,7 +100,9 @@
 #' @export
 #' 
 testByRandomization <- function(X, B, cls = colnames(X), 
+                                alternative = c("two.sided", "less", "greater"),
                                 rand.p.value = FALSE, seed = NULL){
+    alternative <- match.arg(alternative)
     ## sanity checks
     n <- ncol(X)
     luc <- length(unique(cls))
@@ -132,43 +137,52 @@ testByRandomization <- function(X, B, cls = colnames(X),
         ## * one-sided tests ?
         
         ## observed
-        rwt <- rowWelchTests(X, categ = cls)
-        T_obs <- rwt$statistic
-        p_obs <- rwt$p.value  ## parametric p-value
-        T_obs <- qnorm(1 - p_obs) # back to the scale of one-sided Gaussian test statistics under H0
-        df_obs <- rwt$parameter  ## degrees of freedom of the T statistics
+        rwt <- rowWelchTests(X, categ = cls, alternative = alternative)
+        T <- rwt$statistic
+        p <- rwt$p.value  ## parametric p-value
+        df <- rwt$parameter  ## degrees of freedom of the T statistics
         rm(rwt)
         
         ## under H0
-        pp <- matrix(nrow = m, ncol = B) ## parametric p-value
-        df <- matrix(nrow = m, ncol = B) 
+        T0 <- matrix(nrow = m, ncol = B) ## test statistics under the null
+        p0 <- matrix(nrow = m, ncol = B) ## parametric p-value
+        df0 <- matrix(nrow = m, ncol = B) 
         for (bb in 1:B) {
             cls_perm <- sample(cls, length(cls))
-            rwt <- rowWelchTests(X, categ = cls_perm)
-            pp[, bb] <- rwt$p.value
-            df[, bb] <- rwt$parameter
+            rwt <- rowWelchTests(X, categ = cls_perm, alternative = alternative)
+            T0[, bb] <- rwt$statistic
+            p0[, bb] <- rwt$p.value
+            df0[, bb] <- rwt$parameter
         }
-        T0 <- qnorm(1 - pp) # back to the scale of one-sided Gaussian test statistics under H0
-        res <- list(T = T_obs, T0 = T0, 
+        res <- list(T = T, T0 = T0, 
                     flavor = flavor,
-                    p = p_obs, p0 = pp,
-                    df = df_obs, df0 = df)
+                    p = p, p0 = p0,
+                    df = df, df0 = df0)
     } else if (flavor == "flip") {
         ## observed test statistics and p-values
-        T_obs <- rowSums(X)/sqrt(n)
-        p_obs <- 2*(1 - pnorm(abs(T_obs)))  ## two-sided...
+        T <- rowSums(X)/sqrt(n)
+        p <- switch(alternative, 
+                        "two.sided" = 2*(1 - pnorm(abs(T))),
+                        "greater" = 1 - pnorm(T),
+                        "less" = pnorm(T))
         ## test statistics under H0
         T0 <- testBySignFlipping(X, B)
-        p0 <- 2*(1 - pnorm(abs(T0)))  ## two-sided
-        res <- list(T = T_obs, T0 = T0, p = p_obs, p0 = p0, flavor = flavor)
+        p0 <- switch(alternative, 
+                     "two.sided" = 2*(1 - pnorm(abs(T0))),
+                     "greater" = 1 - pnorm(T0),
+                     "less" = pnorm(T0))
+        res <- list(T = T, T0 = T0, p = p, p0 = p0, flavor = flavor)
     }
     
     if (rand.p.value) {
         ## get m x (B+1) matrix of pvalues under the null (+ original)
         ## by sorting null test statistics as proposed by Ge et al (2003)
-        TT <- cbind(T0, T_obs)
-        pB <- rowRanks(-abs(TT)) / (B+1)
-        
+        TT <- cbind(T0, T)
+        pB <- switch(alternative, 
+                       "two.sided" = rowRanks(-abs(TT)) / (B+1),
+                       "greater" = rowRanks(-TT) / (B+1),
+                       "less" = rowRanks(TT) / (B+1))
+
         res$rand.p <- pB[, B+1]
         res$rand.p0 <- pB[, -(B+1), drop = FALSE]
     }

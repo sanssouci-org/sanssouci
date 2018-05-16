@@ -1,6 +1,6 @@
 context("JER calibration")
 
-test_that("JER calibration", {
+test_that("JER calibration -- vanilla tests", {
     m <- 123
     rho <- 0.2
     n <- 100
@@ -8,7 +8,7 @@ test_that("JER calibration", {
     sim <- gaussianSamples(m, rho, n, pi0, SNR = 1, prob = 0.5)
     X <- sim$X
     alpha <- 0.2
-    B <- 1e3
+    B <- 100
 
     cal <- calibrateJER(X, B, alpha, refFamily = "Simes")
     expect_length(cal$thr, m)

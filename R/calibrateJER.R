@@ -7,6 +7,8 @@
 #'   second sample.
 #' @param B A numeric value, the number of permutations to be performed
 #' @param alpha Target JER level
+#' @param alternative A character string specifying the alternative hypothesis.
+#'   Must be one of "two.sided" (default), "greater" or "less".
 #' @param refFamily A character value which can be \describe{
 #'
 #'   \item{Simes}{The classical family of thresholds introduced by Simes (1986):
@@ -40,7 +42,7 @@
 #'                        pi0 = pi0, SNR = 3, prob = 0.5)
 #' X <- sim$X
 #' cal <- calibrateJER(X, B = 1e3, alpha = 0.2, refFamily="Simes")
-#' cal$lambda # > alpha (whp) if rho > 0
+#' cal$lambda # > alpha (whp) is rho > 0
 #' 
 #' # Application 1: confidence envelope
 #' #   ie upper confidence bound for the number of false positives 
@@ -75,15 +77,23 @@
 #' maxFP(sel, cal$thr)/m
 #' pi0
 #' 
-calibrateJER <- function(X, B, alpha, refFamily = c("Simes", "kFWER"),
-                            K = nrow(X), verbose=TRUE) {
+calibrateJER <- function(X, B, alpha, 
+                         alternative = c("two.sided", "less", "greater"), 
+                         refFamily = c("Simes", "kFWER"),
+                         K = nrow(X), verbose=TRUE) {
+    alternative <- c("two.sided", "less", "greater")
     ## sanity checks
     m <- nrow(X);
     refFamily <- match.arg(refFamily)
 
-    tests <- testByRandomization(X, B = B)
-    X0 <- tests$T0
-    x <- tests$T
+    tests <- testByRandomization(X, B = B, alternative = alternative)
+    
+    # X0 <- tests$T0
+    # x <- tests$T
+    # back to the scale of one-sided Gaussian test statistics under H0
+    X0 <- qnorm(1 - tests$p0) 
+    x <- qnorm(1 - tests$p) 
+
     rm(tests)
     
     res <- calibrateJER0(X0, refFamily = refFamily, alpha = alpha, x, kMax = K)

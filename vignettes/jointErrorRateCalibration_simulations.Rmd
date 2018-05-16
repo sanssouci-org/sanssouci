@@ -1,15 +1,24 @@
 ---
-title: "Joint error rate calibration"
+title: "Joint Error Rate calibration"
 subtitle: "Simulations for one and two-sample tests"
 author: "P. Neuvial"
 date: "2018-03-27"
 output: html_document
+vignette: >
+  %\VignetteEngine{knitr::knitr}
+  %\VignetteIndexEntry{Joint Error Rate calibration}
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-We illustrate the simulation of observations, computation of test statistics by sign-flipping and associated JER calibration in two different instances of the Gaussian equi-correlated model: one- and two-sample tests. We start with two-sample tests because we believe they are used more frequently.
+This vignettes illustrates the following points
+
+* simulation of one- and two-sample Gaussian equi-correlated observations
+* computation of test statistics by randomization
+* calibration of Joint-Family-Wise Error Rate (JER) thresholds
+
+We start with two-sample tests because we believe they are used more frequently.
 
 ```{r}
 library("sansSouci")
@@ -22,11 +31,11 @@ Parameters:
 m <- 1e3
 n <- 124
 pi0 <- 0.8
-B <- 2e3
-rho <- 0
+B <- 1e3
+rho <- 0.2
 SNR <- 0
 
-alpha <- 0.5
+alpha <- 0.25
 ```
 
 We use the function `gaussianSamples` to generate Gaussian equi-correlated samples. We then use the function `calibrateJER` to perform the calibration.

@@ -1,6 +1,7 @@
-# Version 0.6.1 [2018-03-27]
+# Version 0.6.1 [2018-05-16]
 
-* Cleanups in 'testByRandomization': "parametric" p-values are now the default, randomization p-values are not computed by default, permutation test statistics are mapped to the N(0,1) scale under the null.
+* Added support for one-sided tests in 'calibrateJER' and 'testByRandomization' (this feature has been imported from the branch generic-randomization-tests). Added corresponding tests.
+* Cleanups in 'testByRandomization': "parametric" p-values are now the default, randomization p-values are not computed by default. Note that permutation test statistics are not mapped to the one-sided N(0,1) scale under the null (this is done by calibrateJER). 
 
 # Version 0.6.0 [2018-03-26]
 

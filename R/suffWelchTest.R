@@ -31,7 +31,7 @@
 suffWelchTest <- function(mx, my, sx, sy, nx, ny, 
                             alternative = c("two.sided", "less", "greater")) {
     alternative <- match.arg(alternative)
-    if (alternative != "two.sided") stop("altenative", alternative, "not implemented yet!")
+#    if (alternative != "two.sided") stop("altenative", alternative, "not implemented yet!")
     
     ## sanity checks
     p <- length(mx)
@@ -48,7 +48,7 @@ suffWelchTest <- function(mx, my, sx, sy, nx, ny,
     sse2 <- sse^2
     
     ## test statistic
-    stat <- (mx-my)/sqrt(sse)
+    stat <- (mx - my)/sqrt(sse)
     ## names(stat) <- rep("t", length(stat))
     
     ## approximate degrees of freedom (Welch-Satterthwaite)
@@ -56,11 +56,14 @@ suffWelchTest <- function(mx, my, sx, sy, nx, ny,
     ## names(df) <- "df"
     
     ## p-value
-    pval <- 2*(1-pt(abs(stat), df=df))
+    pval <- switch(alternative,
+                   "two.sided" = 2*(1 - pt(abs(stat), df = df)),
+                   "greater" = 1 - pt(stat, df = df),
+                   "less" = pt(stat, df = df))
     
-    res <- list(statistic=stat,
-                parameter=df,
-                p.value=pval)
+    res <- list(statistic = stat,
+                parameter = df,
+                p.value = pval)
     
     class(res) <- "htest"
     res
