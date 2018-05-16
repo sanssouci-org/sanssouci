@@ -75,13 +75,14 @@
 #' maxFP(sel, cal$thr)/m
 #' pi0
 #' 
-calibrateJER <- function(X, B, alpha, refFamily = c("Simes", "kFWER"),
-                            K = nrow(X), verbose=TRUE) {
+calibrateJER <- function(X, B, alternative = c("two.sided", "less", "greater"), 
+                         alpha, refFamily = c("Simes", "kFWER"),
+                         K = nrow(X), verbose=TRUE) {
     ## sanity checks
     m <- nrow(X);
     refFamily <- match.arg(refFamily)
 
-    tests <- testByRandomization(X, B = B)
+    tests <- testByRandomization(X, B = B, alternative = alternative)
     X0 <- tests$T0
     x <- tests$T
     rm(tests)
