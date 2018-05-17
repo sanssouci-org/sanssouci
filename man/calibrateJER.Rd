@@ -16,6 +16,9 @@ second sample.}
 
 \item{alpha}{Target JER level}
 
+\item{alternative}{A character string specifying the alternative hypothesis.
+Must be one of "two.sided" (default), "greater" or "less".}
+
 \item{refFamily}{A character value which can be \describe{
 
   \item{Simes}{The classical family of thresholds introduced by Simes (1986):

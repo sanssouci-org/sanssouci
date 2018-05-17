@@ -7,6 +7,8 @@
 #'   second sample.
 #' @param B A numeric value, the number of permutations to be performed
 #' @param alpha Target JER level
+#' @param alternative A character string specifying the alternative hypothesis.
+#'   Must be one of "two.sided" (default), "greater" or "less".
 #' @param refFamily A character value which can be \describe{
 #'
 #'   \item{Simes}{The classical family of thresholds introduced by Simes (1986):
@@ -79,7 +81,7 @@ calibrateJER <- function(X, B, alpha,
                          alternative = c("two.sided", "less", "greater"), 
                          refFamily = c("Simes", "kFWER"),
                          K = nrow(X), verbose=TRUE) {
-    alternative <- c("two.sided", "less", "greater")
+    alternative <- match.arg(alternative)
     ## sanity checks
     m <- nrow(X);
     refFamily <- match.arg(refFamily)

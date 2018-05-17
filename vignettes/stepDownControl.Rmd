@@ -1,16 +1,14 @@
 ---
-title: "Step-down control joint Family-Wise Error Rate control"
+title: "Step-down joint Family-Wise Error Rate control"
 author: "Pierre Neuvial"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_document
 vignette: >
-  %\VignetteIndexEntry{Post hoc bounds via joint Family-Wise Error Rate control}
   %\VignetteEngine{knitr::knitr}
-  %\VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{Step-down joint Family-Wise Error Rate control}
 ---
 
-This is an advanced vignette which illustrates the notion of Joint Family-Wise Error Rate (JER) control, and the possible benefits of step-down control over single step JER control.  For simplicity (and historical reasons) we chose here to directly simulate the test statistics (and not the underlying observations). The JER calibration is perfomed by assuming known joint distribution of the test statistics under the null hypothesis.
-
+This is an internal vignette which illustrates the notion of Joint Family-Wise Error Rate (JER) control, and the possible benefits of *step-down* control over single step JER control.  For simplicity (and historical reasons) we chose here to directly simulate the test statistics (and not the underlying observations). The JER calibration is perfomed by assuming known joint distribution of the test statistics under the null hypothesis.
 
 ```{r}
 library("sansSouci")
