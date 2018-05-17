@@ -81,7 +81,8 @@ calibrateJER <- function(X, B, alpha,
                          alternative = c("two.sided", "less", "greater"), 
                          refFamily = c("Simes", "kFWER"),
                          K = nrow(X), verbose=TRUE) {
-    alternative <- c("two.sided", "less", "greater")
+    alternative <- match.arg(alternative)
+    
     ## sanity checks
     m <- nrow(X);
     refFamily <- match.arg(refFamily)

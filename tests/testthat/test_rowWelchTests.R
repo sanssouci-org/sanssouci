@@ -1,6 +1,6 @@
 context("Calculation of Welch test statistics and p-values")
 
-test_that("suffWelchTest gives identical results to welch.test", {
+test_that("rowWelchTests gives identical results to welch.test", {
 
     p <- 1e3
     n <- 2e3
@@ -21,7 +21,7 @@ test_that("suffWelchTest gives identical results to welch.test", {
 })
 
 
-test_that("rowWelchTest gives identical results to welch.test", {
+test_that("suffWelchTest gives identical results to welch.test", {
 
     mat <-     
     replicate(10, {
