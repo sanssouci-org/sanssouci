@@ -161,8 +161,11 @@ testByRandomization_gen <- function(X, B, cls = colnames(X), test = NULL,
         
         ## observed
         res <-  X_melt %>% group_by(Var1) %>% do(broom::tidy(test.func(value~Var2, data=.))) 
-        # eq to wilcox.test(X[,which(colnames(X)==0)],X[,which(colnames(X)==1)]) %>% tidy
-
+        # eq. to:
+        # res2 <- numeric(nrow(X))
+        # for (ii in 1:nrow(X)) {
+        #     res2[ii] <- test.func(X[ii,which(colnames(X)==0)],X[ii,which(colnames(X)==1)])$p.value
+        # }
         T_obs <- res$statistic
         p_obs <- res$p.value  ## parametric p-value
         T_obs <- qnorm(1 - p_obs) # back to the scale of one-sided Gaussian test statistics under H0
