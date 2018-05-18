@@ -38,6 +38,7 @@ for (cc in 1:nb) {
             sdatList[[rr]] <- sdat
         }
         dat <- Reduce(rbind, sdatList)
+        
         rownames(conf) <- NULL
         dat <- cbind(dat, conf)
         pathname <- file.path(resPath, filename)
