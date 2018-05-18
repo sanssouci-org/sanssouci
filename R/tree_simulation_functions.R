@@ -48,7 +48,7 @@ gauss_bloc <- function(barmu, len) {
 #' @details If \code{setting == "const"} the signal is constant equal to \eqn{barmu}. If \code{setting == "gauss"} the signal has a Gaussian shape. If \code{setting == "poisson"} the signal has a Poisson shape. 
 #' @export
 #' @examples
-#' m <- 100
+#' m <- 160
 #' s <- 10
 #' K1 <- floor(m/(s * 4))
 #' d <- 1
@@ -56,6 +56,8 @@ gauss_bloc <- function(barmu, len) {
 #' dd <- dyadic.from.window.size(m, s, method = 2)
 #' leaf_list <- dd$leaf_list
 #' muC <- gen.mu.leaves(m = m, K1 = K1, d = d, grouped = FALSE, 
+#'                     setting = "const", barmu = barmu, leaf_list =leaf_list)
+#' muC <- gen.mu.leaves(m = m, K1 = K1, d = d, grouped = TRUE, 
 #'                     setting = "const", barmu = barmu, leaf_list =leaf_list)
 #' muG <- gen.mu.leaves(m = m, K1 = K1, d = d, grouped = FALSE, 
 #'                     setting = "gauss", barmu = barmu, leaf_list =leaf_list)

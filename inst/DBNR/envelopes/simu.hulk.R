@@ -37,16 +37,28 @@ simu.hulk <- function(m,
         oo <- orders[[ord]]
         meth <- configs[cc, "method"]
         tt <- system.time({
-            if (meth == "Simes") {
-                V <- idxs - sapply(idxs, FUN = function(ii) {
+            VSimes <- function(alpha) {
+                idxs - sapply(idxs, FUN = function(ii) {
                     posthocBySimes(pvalues, oo[1:ii], alpha)
                 })
-            } else {
+            }
+            VDBNR <- function(alpha, meth) {
                 ZL <- ZLs[[meth]]
                 C <- Cs[[meth]]
-                V <- sapply(idxs, FUN = function(ii) {
+                sapply(idxs, FUN = function(ii) {
                     V.star(oo[1:ii], C, ZL, leaf_list)
                 })
+            }
+            if (meth == "Simes") {
+                V <- VSimes(alpha)
+            } else if (meth == "hybrid-0.5") {
+                V <- pmin(VSimes(alpha/2), VDBNR(alpha/2, "tree"))
+            } else if (meth == "hybrid-0.9") {
+                V <- pmin(VSimes(alpha*0.9), VDBNR(alpha*0.1, "tree"))
+            } else if (meth == "hybrid-0.1") {
+                V <- pmin(VSimes(alpha*0.1), VDBNR(alpha*0.9, "tree"))
+            } else {
+                V <- VDBNR(alpha/2, meth)
             }
         })
         res <- data.frame(idxs, value = V, method = meth, order = ord)
