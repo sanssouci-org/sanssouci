@@ -28,18 +28,19 @@ for (grouped in unique(configs$grouped)) {
         
         library("magrittr")
         library("dplyr")
-        gdat <- sdat %>% group_by(idxs, method, order, d, barmu) 
+        gdat <- sdat %>% group_by(idxs, method, order, d, barmu, SimesWeight) 
         pdat <- gdat %>% summarise(value = mean(value))
         
         library("ggplot2")
         m1 <-  unique(sdat$s)*unique(sdat$K1)*max(sdat$d)
-        xymax <- 2*m1
+        xymax <- 4/3*m1
         
         ff <- gsub("\\.rds$", ".pdf", filename)
         pathname <- file.path(figPath, ff)
         
         ggplot(pdat, aes(idxs, value, colour = method, linetype = order)) + 
-            geom_line() + facet_grid(d ~ barmu) +
+            #geom_line() + facet_grid(d ~ barmu) +
+            geom_line() + facet_grid(d ~ SimesWeight) +
             xlim(1, xymax) + ylim(0, xymax)
         ggsave(filename = pathname)
         

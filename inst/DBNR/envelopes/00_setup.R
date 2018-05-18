@@ -1,10 +1,10 @@
 ms <- 12800
 ss <- c(10, 20, 50, 100)[4]
-ds <- c(0, 0.5, 0.75, 0.9, 1)
+ds <- c(0, 0.5, 0.75, 0.9, 1)[3:5]
 barmus <- c(2, 3, 4, 5)
-K1s <- c(1, 4, 8, 16)
-groupeds <- c(TRUE, FALSE)
-settings <- c("const", "gauss", "poisson")
+K1s <- c(1, 4, 8, 16)[2:3]
+groupeds <- c(TRUE, FALSE)[1]
+settings <- c("const", "gauss", "poisson")[1]
 
 configs <- expand.grid(
     m = ms,
@@ -17,4 +17,4 @@ configs <- expand.grid(
     stringsAsFactors = FALSE)
 
 
-repl <- 10  ## number of replications
+repl <- 2  ## number of replications

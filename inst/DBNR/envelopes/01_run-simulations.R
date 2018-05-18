@@ -8,12 +8,12 @@ resPath <- R.utils::Arguments$getWritablePath(resPath)
 nb <- nrow(configs)
 #nb <- 40
 #cc <- 220 ## (a nice one)
-# > conf
-# m   s K1   d barmu grouped setting
-# 220 10000 100  8 0.9     4    TRUE   const
 for (cc in 1:nb) {
     print(cc)
     conf <- configs[cc, ]
+    # > conf
+    # m   s K1   d barmu grouped setting
+    # 220 10000 100  8 0.9     4    TRUE   const
     stag <- paste("m=", conf[["m"]], "_",
                   "s=", conf[["s"]], "_",
                   "K1=", conf[["K1"]], "_",
@@ -26,19 +26,19 @@ for (cc in 1:nb) {
         sdatList <- list()
         for (rr in 1:repl) {
             res <- simu.hulk(m = conf[["m"]], 
-                             s = conf[["s"]], 
-                             K1 = conf[["K1"]], 
-                             d = conf[["d"]], 
-                             barmu = conf[["barmu"]],
-                             grouped = conf[["grouped"]], 
-                             setting = conf[["setting"]],
-                             methods = c("tree", "part", "Simes", "hybrid-0.5", "hybrid-0.9", "hybrid-0.1"))
+                         s = conf[["s"]], 
+                         K1 = conf[["K1"]], 
+                         d = conf[["d"]], 
+                         barmu = conf[["barmu"]],
+                         grouped = conf[["grouped"]], 
+                         setting = conf[["setting"]],
+                         methods = c("tree", "part", "Simes"),
+                         SimesWeights = c(0.1, 0.2, 0.5, 0.8, 0.9, 1))
             sdat <- Reduce(rbind, res)
             sdat$replication <- rr
             sdatList[[rr]] <- sdat
         }
         dat <- Reduce(rbind, sdatList)
-        
         rownames(conf) <- NULL
         dat <- cbind(dat, conf)
         pathname <- file.path(resPath, filename)
