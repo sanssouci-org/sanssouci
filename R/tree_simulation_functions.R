@@ -70,7 +70,7 @@ gen.mu.leaves <- function(m, K1, d, grouped, setting, barmu, leaf_list) {
         stop("K1>K,\nwe don't have so many leaves")
     active_leaves <- numeric(K1)
     if (grouped) {
-        active_leaves <- seq(1, K1) + sample(seq(0, K - K1), 1)
+        active_leaves <- seq(1, K1) # + sample(seq(0, K - K1), 1)
     } else {
         active_leaves <- sample(seq(1, K), K1)
     }
