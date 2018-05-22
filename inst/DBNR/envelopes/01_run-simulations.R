@@ -30,7 +30,7 @@ for (cc in 1:nb) {
                          grouped = conf[["grouped"]], 
                          setting = conf[["setting"]],
                          methods = c("tree", "part", "Simes"),
-                         SimesWeights = c(0.1, 0.2, 0.5, 0.8, 0.9, 1))
+                         SimesWeights = c(0.001, 0.01, 0.05, 0.1, 0.5, 1, 5))
         dat <- Reduce(rbind, res)
         rownames(conf) <- NULL
         dat <- cbind(dat, conf)
