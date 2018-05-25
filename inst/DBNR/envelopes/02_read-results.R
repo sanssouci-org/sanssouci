@@ -1,12 +1,15 @@
 resPath <- "resData/DBNR/confidenceEnvelopes"
-resPath <- R.utils::Arguments$getWritablePath(resPath)
+resPath <- R.utils::Arguments$getReadablePath(resPath)
+
+resPath2 <- file.path(resPath, Sys.Date())
+resPath2 <- R.utils::Arguments$getWritablePath(resPath2)
 
 confs <- subset(configs, grouped & setting == "const")
 
-ms <- unique(configs$m)
-ss <- unique(configs$s)
-stopifnot(length(ms)==1)
-stopifnot(length(ss)==1)
+## ms <- unique(configs$m)
+## ss <- unique(configs$s)
+## stopifnot(length(ms)==1)
+## stopifnot(length(ss)==1)
 
 for (grp in unique(configs$grouped)) {
     message("grouped=", grp)
@@ -18,10 +21,10 @@ for (grp in unique(configs$grouped)) {
         for (cc in 1:nrow(confs)) {
             conf <- confs[cc, ]
             stag <- paste(
-#                "m=", conf[["m"]], "_",
-#                "s=", conf[["s"]], "_",
-                "m=", ms, "_",
-                "s=", ss, "_",
+                "m=", conf[["m"]], "_",
+                "s=", conf[["s"]], "_",
+#                "m=", ms, "_",
+#                "s=", ss, "_",
                 "K1=", conf[["K1"]], "_",
                 "d=", conf[["d"]], "_",
                 "barmu=", conf[["barmu"]], "_",
@@ -34,7 +37,7 @@ for (grp in unique(configs$grouped)) {
         dat <- Reduce(rbind, datList)
         print(nrow(dat))
         filename <- sprintf("conf-env_grouped=%s_setting=%s.rds", grp, st)
-        pathname <- file.path(resPath, filename)
+        pathname <- file.path(resPath2, filename)
         saveRDS(dat, pathname)
         rm(pathname)
     }

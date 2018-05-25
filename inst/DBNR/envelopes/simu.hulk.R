@@ -9,7 +9,7 @@ simu.hulk <- function(m,
                       grouped = FALSE, 
                       random.leaves = FALSE, 
                       alpha = 0.05,
-                      SimesWeights = c(0.1, 0.2, 0.5, 0.8, 0.9, 1)) {
+                      SimesWeights = c(0.01, 0.1, 0.5, 1, 5)) {
     dd <- dyadic.from.window.size(m, s, method = 2)
     leaf_list <- dd$leaf_list
     mu <- gen.mu.leaves(m, K1, d, grouped, setting, barmu, leaf_list)
