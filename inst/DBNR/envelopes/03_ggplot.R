@@ -15,7 +15,7 @@ setting <- "const"
 for (grouped in unique(configs$grouped)) {
     for (setting in unique (configs$setting)) {
 
-        filename <- sprintf("hyb-conf-env_grouped=%s_setting=%s.rds", grouped, setting)
+        filename <- sprintf("conf-env-alpha_grouped=%s_setting=%s.rds", grouped, setting)
         pathname <- file.path(resPath, filename)
         dat <- readRDS(pathname)
         rm(pathname)
@@ -39,8 +39,8 @@ for (grouped in unique(configs$grouped)) {
         ff <- gsub("\\.rds$", ".pdf", filename)
         pathname <- file.path(figPath, ff)
 
-        pdat <- subset(pdat, SimesWeight %in% c(0.001, 0.01, 0.1, 1, 5))
-        pdat$alpha <- as.factor(0.05*pdat$SimesWeight)
+        pdat <- subset(pdat, alpha %in% c(0.001, 0.01, 0.1, 0.25, 0.5))
+        pdat$alpha <- as.factor(pdat$alpha)
         ggplot(pdat, aes(idxs, value, colour = method, linetype = alpha)) + 
             geom_line() + facet_grid(d ~ barmu, labeller = label_both) +
             xlim(1, xymax) + ylim(0, xymax) +

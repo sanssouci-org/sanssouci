@@ -16,10 +16,11 @@ simu.hulk <- function(m,
     mu <- gen.mu.leaves(m, K1, d, grouped, setting, barmu, leaf_list)
     # m1 <- sum(mu > 0)
     m1 <-  d*K1*s ## covers the case where barmu==0
-    range <- min(2 * m1, m)
-    range <- min(4/3 * m1, m)
-    idxs1 <- c(1:max(range, ss))
-    idxs2 <- round(seq(from = max(range) + 1, to = m, length = 10))
+    xmax <- min(2 * m1, m)
+    xmax <- min(4/3 * m1, m)
+    #idxs1 <- c(1:max(xmax, s))
+    idxs1 <- 1:xmax
+    idxs2 <- round(seq(from = xmax + 1, to = m, length = 10))
     idxs <- c(idxs1, idxs2)
     
     pvalues <- gen.p.values(m, mu, rho)
