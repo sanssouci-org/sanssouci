@@ -29,7 +29,7 @@ for (grouped in unique(configs$grouped)) {
         
         library("magrittr")
         library("dplyr")
-        gdat <- sdat %>% group_by(idxs, method, d, barmu, SimesWeight) 
+        gdat <- sdat %>% group_by(idxs, method, d, barmu, alpha) 
         pdat <- gdat %>% summarise(value = mean(value))
         
         library("ggplot2")

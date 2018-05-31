@@ -3,11 +3,17 @@ plan(multiprocess, workers = 100)
 #plan(multiprocess, workers = 100)
 
 resPath <- "resData/DBNR/confidenceEnvelopes"
+resPath <- file.path(resPath, Sys.Date())
 resPath <- R.utils::Arguments$getWritablePath(resPath)
 
 nb <- nrow(configs)
 #nb <- 40
 #cc <- 220 ## (a nice one)
+
+alphas <- c(0.001, 0.01, 0.05, 0.2, 0.5)
+alphas <- c(0.001, 0.05, 0.05-0.001)
+alphas <- c(0.0001, 0.001, 0.05, 0.05-0.01, 0.05-0.001)
+
 for (cc in 1:nb) {
     print(cc)
     conf <- configs[cc, ]
@@ -33,7 +39,7 @@ for (cc in 1:nb) {
                          grouped = conf[["grouped"]], 
                          setting = conf[["setting"]],
                          methods = c("tree", "part", "Simes", "Oracle"),
-                         alpha = c(0.001, 0.01, 0.05, 0.2, 0.5))
+                         alpha = alphas)
             sdat <- Reduce(rbind, res)
             sdat$replication <- rr
             sdatList[[rr]] <- sdat
