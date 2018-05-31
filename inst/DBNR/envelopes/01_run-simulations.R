@@ -32,7 +32,7 @@ for (cc in 1:nb) {
                          barmu = conf[["barmu"]],
                          grouped = conf[["grouped"]], 
                          setting = conf[["setting"]],
-                         methods = c("tree", "part", "Simes"),
+                         methods = c("tree", "part", "Simes", "Oracle"),
                          alpha = c(0.001, 0.01, 0.05, 0.2, 0.5))
             sdat <- Reduce(rbind, res)
             sdat$replication <- rr

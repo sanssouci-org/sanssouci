@@ -38,7 +38,7 @@ simu.hulk <- function(m,
         oo <- orders[[ord]]
         meth <- configs[cc, "method"]
         alpha <- configs[cc, "alpha"]
-        print(configs[cc, ])
+        #print(configs[cc, ])
         if (meth == "Oracle") {
             H0 <- which(mu == 0)  ## formally not true when barmu is 0...
             V <- cumsum(oo %in% H0)
