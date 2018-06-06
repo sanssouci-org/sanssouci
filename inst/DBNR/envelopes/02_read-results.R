@@ -1,8 +1,8 @@
 resPath <- "resData/DBNR/confidenceEnvelopes"
-resPath <- file.path(resPath, Sys.Date())
+resPath <- file.path(resPath, "2018-05-31")
 resPath <- R.utils::Arguments$getWritablePath(resPath)
 
-confs <- subset(configs, grouped & setting == "const")
+## confs <- subset(configs, grouped & setting == "const")
 
 ## ms <- unique(configs$m)
 ## ss <- unique(configs$s)
@@ -34,7 +34,7 @@ for (grp in unique(configs$grouped)) {
         }
         dat <- Reduce(rbind, datList)
         print(nrow(dat))
-        filename <- sprintf("conf-env_grouped=%s_setting=%s.rds", grp, st)
+        filename <- sprintf("conf-env-alpha-hybrid_grouped=%s_setting=%s.rds", grp, st)
         pathname <- file.path(resPath, filename)
         saveRDS(dat, pathname)
         rm(pathname)
