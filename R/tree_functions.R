@@ -444,7 +444,8 @@ V.star.all.leafs <- function(S, C, ZL, leaf_list) {
     Vec <- numeric(leafs)
     id <- seq_len(leafs)
     for (i in 1:leafs) {
-        len <- length(intersect(S, leaf_list[[i]]))
+#        len <- length(intersect(S, leaf_list[[i]]))
+        len <- sum(S %in% leaf_list[[i]])
         Vec[i] <- min(ZL[[H]][i], len)
     }
     if (H > 1) {
@@ -455,7 +456,8 @@ V.star.all.leafs <- function(S, C, ZL, leaf_list) {
             for (j in 1:len) {
                 Chj <- C[[h]][[j]]
                 leaves <- unlist(leaf_list[Chj[1]:Chj[2]])
-                len <- length(intersect(S, leaves))
+#                len <- length(intersect(S, leaves))
+                len <- sum(S %in% leaves)
                 ss <- sum(Vec[id[which((Chj[1] <= id) & (Chj[2] >= id))]])
                 intra <- min(ZL[[h]][j], len, ss)
                 vec_inter[Chj[1]] <- intra

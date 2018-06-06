@@ -1,12 +1,15 @@
 library("ggplot2")
 m <- 12800;
-s <- 100;
+s <- 1000;
 K1 <- 8;
 d <- 1;
-barmu <- 3;
 m1 <-  d*K1*s;
+barmu <- 3;
 
-res <- simu.hulk(m = m, s = s, K1 = K1, grouped = TRUE, d = d, barmu = barmu, alphas = c(0.001, 0.01, 0.05)) 
+#Rprof("/tmp/hulk.Rout")
+res <- simu.hulk(m = m, s = s, K1 = K1, grouped = TRUE, setting = "gauss", d = d, barmu = barmu, alphas = c(0.01, 0.05), verbose = TRUE) 
+Rprof(NULL)
+#summaryRprof("/tmp/hulk.Rout")
 
 dat <- Reduce(rbind, res)
 dat$level <- as.factor(dat$alpha)
