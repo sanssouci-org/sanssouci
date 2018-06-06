@@ -8,9 +8,9 @@ simu.hulk <- function(m,
                       rho = 0, 
                       grouped = FALSE, 
                       random.leaves = FALSE, 
-                      alphas = 0.05) {
+                      alphas = 0.05,
+                      verbose = FALSE) {
     methods <- match.arg(methods, several.ok = TRUE)
-    print(methods)
     dd <- dyadic.from.window.size(m, s, method = 2)
     leaf_list <- dd$leaf_list
     mu <- gen.mu.leaves(m, K1, d, grouped, setting, barmu, leaf_list)
@@ -19,11 +19,12 @@ simu.hulk <- function(m,
     xmax <- min(2 * m1, m)
     xmax <- min(4/3 * m1, m)
     #idxs1 <- c(1:max(xmax, s))
-    idxs1 <- 1:xmax
+    idxs1 <- seq(from = 1, to = xmax, length = 10)
     idxs2 <- round(seq(from = xmax + 1, to = m, length = 10))
     idxs <- c(idxs1, idxs2)
     
     pvalues <- gen.p.values(m, mu, rho)
+    hf <- cherry::hommelFast(pvalues)
     C <- dd$C
     Cs <- list(tree = C,
                part = C[length(C)])
@@ -34,18 +35,21 @@ simu.hulk <- function(m,
     configs <- expand.grid(order = names(orders), method = methods, alpha = alphas)
     resList <- list()
     for (cc in 1:nrow(configs)) {
+        if (verbose) print(configs[cc, ])
         ord <- configs[cc, "order"]
         oo <- orders[[ord]]
         meth <- configs[cc, "method"]
         alpha <- configs[cc, "alpha"]
         #print(configs[cc, ])
+        if (verbose) print(meth)
         if (meth == "Oracle") {
             H0 <- which(mu == 0)  ## formally not true when barmu is 0...
             V <- cumsum(oo %in% H0)
             V <- V[idxs]
         } else if (meth == "Simes") {
             V <- idxs - sapply(idxs, FUN = function(ii) {
-                posthocBySimes(pvalues, oo[1:ii], alpha)
+                ##posthocBySimes(pvalues, oo[1:ii], alpha) ## slow!
+                cherry::pickSimes(hf, oo[1:ii], alpha = alpha, silent = TRUE) ## currently faster (for ii>1e4...)
             })
         } else if (meth %in% c("tree", "part")) {
             ZL <- zetas.tree(Cs[[meth]], leaf_list, zeta.DKWM, pvalues, alpha = alpha)
