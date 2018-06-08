@@ -82,6 +82,8 @@ gen.mu.leaves <- function(m, K1, d, grouped, setting, barmu, leaf_list) {
         signal <- sample(length_leaf, m1loc)
         mu[leaf_list[[i]][signal]] <- switch(setting, const = {
             barmu
+        }, rgauss = {
+            rnorm(m1loc, mean = barmu, sd = sqrt(barmu))
         }, gauss = {
             gauss_bloc(barmu, length_leaf)[signal]
         }, poisson = {
