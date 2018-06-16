@@ -116,7 +116,7 @@ gen.p.values <- function(m, mu, rho) {
     stopifnot(m == length(mu)) ## sanity check
     Z <- rnorm(m + 1, 0, 1)
     Y <- sqrt(1 - rho) * Z[seq_len(m)] + sqrt(rho) * Z[m + 1]
-    return(1 - pnorm(Y + mu))
+    return(pnorm(Y + mu, lower.tail = FALSE))
 }
 
 #' Plot confidence envelopes for the number of false positives
