@@ -19,7 +19,7 @@ simu.hulk <- function(m,
     xmax <- min(2 * m1, m)
     xmax <- min(4/3 * m1, m)
     #idxs1 <- c(1:max(xmax, s))
-    idxs1 <- seq(from = 1, to = xmax, length = 10)
+    idxs1 <- round(seq(from = 1, to = xmax, length = 10))
     idxs2 <- round(seq(from = xmax + 1, to = m, length = 10))
     idxs <- c(idxs1, idxs2)
     
