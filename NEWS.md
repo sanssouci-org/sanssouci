@@ -1,3 +1,7 @@
+# Version 0.7.0 [2018-06-18]
+
+* Added "tree" functions (and simulation scripts) from DBNR 2018.
+
 # Version 0.6.1 [2018-03-27]
 
 * Cleanups in 'testByRandomization': "parametric" p-values are now the default, randomization p-values are not computed by default, permutation test statistics are mapped to the N(0,1) scale under the null.

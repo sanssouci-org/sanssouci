@@ -47,6 +47,7 @@ gauss_bloc <- function(barmu, len) {
 #' @return A numeric vector of length \code{m}, the signal values for each hypothesis
 #' @details If \code{setting == "const"} the signal is constant equal to \eqn{barmu}. If \code{setting == "gauss"} the signal has a Gaussian shape. If \code{setting == "poisson"} the signal has a Poisson shape. 
 #' @export
+#' @importFrom stats rpois rnorm
 #' @examples
 #' m <- 160
 #' s <- 10
@@ -121,7 +122,7 @@ gen.p.values <- function(m, mu, rho) {
 
 #' Plot confidence envelopes for the number of false positives
 #' 
-#' @export
+#@export
 #' @examples
 #' m <- 16
 #' s <- 2

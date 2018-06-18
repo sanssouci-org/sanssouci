@@ -2,9 +2,12 @@
 % Please edit documentation in R/tree_functions.R
 \name{zetas.tree}
 \alias{zetas.tree}
+\alias{zetas.tree.refined}
 \title{Estimate of the proportion of true nulls in each node of a tree}
 \usage{
 zetas.tree(C, leaf_list, method, pvalues, alpha)
+
+zetas.tree.refined(C, leaf_list, method, pvalues, alpha)
 }
 \arguments{
 \item{C}{Tree structure}
@@ -20,6 +23,8 @@ Estimate of the proportion of true nulls in each node of a tree
 }
 \details{
 The proportion of true nulls in each node is estimated by an union bound on the regions. That is, the provided method is applied at level \code{alpha/nR} where \code{nR} is the number of regions.
+
+In \code{zetas.tree.refined}, one tries to estimate the number of regions containing only signal.
 }
 \examples{
 

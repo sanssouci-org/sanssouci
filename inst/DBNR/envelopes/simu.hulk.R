@@ -24,7 +24,7 @@ simu.hulk <- function(m,
     idxs <- c(idxs1, idxs2)
     
     pvalues <- gen.p.values(m, mu, rho)
-    hf <- cherry::hommelFast(pvalues)
+    #hf <- cherry::hommelFast(pvalues)
     C <- dd$C
     Cs <- list(tree = C,
                part = C[length(C)])
@@ -48,8 +48,8 @@ simu.hulk <- function(m,
             V <- V[idxs]
         } else if (meth == "Simes") {
             V <- idxs - sapply(idxs, FUN = function(ii) {
-                ##posthocBySimes(pvalues, oo[1:ii], alpha) ## slow!
-                cherry::pickSimes(hf, oo[1:ii], alpha = alpha, silent = TRUE) ## currently faster (for ii>1e4...)
+                posthocBySimes(pvalues, oo[1:ii], alpha) ## slow!
+                ##cherry::pickSimes(hf, oo[1:ii], alpha = alpha, silent = TRUE) ## currently faster (for ii>1e4...) because posthocBySimes not optimized
             })
         } else if (meth %in% c("tree", "part")) {
             ZL <- zetas.tree(Cs[[meth]], leaf_list, zeta.DKWM, pvalues, alpha = alpha)
