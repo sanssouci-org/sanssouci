@@ -16,6 +16,8 @@ zetas.tree.refined(C, leaf_list, method, pvalues, alpha)
 
 \item{method}{A function to compute the estimators}
 
+\item{pvalues}{A vector of \eqn{p}-values}
+
 \item{alpha}{A target level}
 }
 \description{

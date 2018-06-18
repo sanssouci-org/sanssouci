@@ -24,9 +24,6 @@ gen.mu.noleaves <- function(m, pi0, barmu) {
 #' @param barmu A numeric value, the strength of the signal 
 #' @param len An integer value, teh length of the block
 #' @return A numeric vector of length \code{len}, the signal values in the block
-#' @examples
-#' n <- 30 
-#' plot(1:n, gauss_bloc(1, n) , type = 'l')
 gauss_bloc <- function(barmu, len) {
     # this choice of sigma2 is so that the values at the edge of the vector 'out' are = 1/200
     sigma2 <- len^2/(8 * log(200))

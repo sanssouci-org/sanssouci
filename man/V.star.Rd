@@ -21,6 +21,3 @@ An integer value, upper bound on the number false positives in S
 \description{
 Post hoc bound on the number of false positives
 }
-\examples{
-
-}
