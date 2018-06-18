@@ -24,7 +24,6 @@ gen.mu.noleaves <- function(m, pi0, barmu) {
 #' @param barmu A numeric value, the strength of the signal 
 #' @param len An integer value, teh length of the block
 #' @return A numeric vector of length \code{len}, the signal values in the block
-#' @export
 #' @examples
 #' n <- 30 
 #' plot(1:n, gauss_bloc(1, n) , type = 'l')
@@ -101,6 +100,7 @@ gen.mu.leaves <- function(m, K1, d, grouped, setting, barmu, leaf_list) {
 #' @param rho A numeric value in \eqn{[0,1]}, the level of equi-correlation between test statistics
 #' @return A vector of \eqn{m} one-sided \eqn{p}-values
 #' @export
+#' @importFrom stats pnorm
 #' @examples
 #' m <- 100
 #' s <- 10
@@ -120,82 +120,57 @@ gen.p.values <- function(m, mu, rho) {
     return(pnorm(Y + mu, lower.tail = FALSE))
 }
 
-#' Plot confidence envelopes for the number of false positives
-#' 
-#@export
-#' @examples
-#' m <- 16
-#' s <- 2
-#' K1 <- floor(m/(s * 4))
-#' d <- 1
-#' barmu <- 4
-#' dd <- dyadic.from.window.size(m, s, method = 2)
-#' leaf_list <- dd$leaf_list
-#' mu <- gen.mu.leaves(m = m, K1 = K1, d = d, grouped = FALSE, 
-#'                     setting = "const", barmu = barmu, leaf_list =leaf_list)
-#' pvals <- gen.p.values(m = m, mu = mu, rho = 0)
-#' alpha <- 0.1
-#' ZL <- zetas.tree(dd$C, leaf_list, zeta.DKWM, pvals, alpha = alpha)
-#' plotting(C = dd$C, ZL = ZL, leaf_list = leaf_list, method = "threshold", pvalues = pvals, mu = mu, alpha = alpha)
-plotting <- function(C, ZL, leaf_list, method, pvalues, mu, alpha) {
-    m <- length(pvalues)
-    o <- order(pvalues)
-    omu <- order(mu, decreasing = TRUE)
-    vecVstar <- numeric(m)
-    for (i in 1:m) {
-        vecVstar[i] <- switch(method, threshold = {
-            V.star(o[1:i], C, ZL, leaf_list)
-        }, add = {
-            V.star(omu[1:i], C, ZL, leaf_list)
-        })
-    }
-    plot(1:m, vecVstar, type = "l")
-    vequo <- numeric(m)
-    for (i in 1:m) {
-        vequo[i] <- switch(method, threshold = {
-            min(sapply(1:i, function(k) min(sum(pvalues[o[1:i]] > alpha * k/m) + k - 1, i)))
-        }, add = {
-            min(sapply(1:i, function(k) min(sum(pvalues[omu[1:i]] > alpha * k/m) + k - 1, i)))
-        })
-    }
-    lines(1:m, vequo, col = 2)
-    cbind(tree = vecVstar, Simes = vequo)
-}
 
+#' Generate one-sided p-values associated to a given signal with equi-correlated
+#' noise
+#'
+#' @param treeFam A tree-based reference family, see example below
+#' @param ordering A permutation of \code{1, ..., m}, the ordering of the
+#'   \eqn{m} null hypotheses
+#' @return A vector of length \eqn{m}, whose \eqn{k}-th element is a lower
+#'   bound \eqn{V^*(S_k)} on the number of true positives in the set \eqn{S_k}
+#'   of the first \eqn{k} hypotheses according to the specified ordering
+#' @export
 #' @examples
-#' m <- 1000
-#' s <- 10
+#' m <- 500
+#' s <- 50
 #' K1 <- floor(m/(s * 4))
 #' d <- 1
+#' m1 <- s*K1*d
 #' barmu <- 4
 #' dd <- dyadic.from.window.size(m, s, method = 2)
 #' leaf_list <- dd$leaf_list
-#' mu <- gen.mu.leaves(m = m, K1 = K1, d = d, grouped = FALSE, 
-#'                     setting = "const", barmu = barmu, leaf_list =leaf_list)
+#' mu <- gen.mu.leaves(m = m, K1 = K1, d = d,
+#'   grouped = TRUE, setting = "const",
+#'   barmu = barmu, leaf_list =leaf_list)
 #' pvals <- gen.p.values(m = m, mu = mu, rho = 0)
 #' alpha <- 0.1
 #' ZL <- zetas.tree(dd$C, leaf_list, zeta.DKWM, pvals, alpha = alpha)
-#' system.time(plotting(C = dd$C, ZL = ZL, leaf_list = leaf_list, method = "threshold", pvalues = pvals, mu = mu, alpha = alpha))
-#' 
 #' treeFam <- list(tree = dd$C, leaves = leaf_list, zetas = ZL)
+#' # order by p-value (favorable to Simes)
 #' op <- order(pvals)
-#' omu <- order(mu, decreasing = TRUE)
-#' system.time(Vp <- curveVstar_tree(treeFam, op))
-#' lines(Vp, col=3, lty=2)
-#' Vmu <- curveVstar_tree(treeFam, omu)
-#' 
+#' Vp <- curveVstar_tree(treeFam, op)
+#'
 #' # Simes
 #' thrSimes <- SimesThresholdFamily(m)(alpha)
 #' stats <- qnorm(1-pvals)
 #' VpS <- curveMaxFP(stats[op], thrSimes)
-#' VpS2 <- curveMaxFP(stats[op], thrSimes, flavor = "BNR2014")
-#' system.time(VpS3 <- 1:m - sapply(1:m, FUN=function(kk) posthocBySimes(pvals, op[1:kk], alpha)))
-
-#' lines(VpS, col=4, lty=2)
-
+#'
+#' plot(1:m, 1:m-Vp, t = 's',
+#'      xlim = c(0, 2*m1), ylim = c(0, m1))
+#' lines(1:m, 1:m-VpS, t = 's', col = 3)
+#'
+#' # order by 'mu' (favorable to DKWM)
+#' omu <- order(mu, decreasing = TRUE)
+#' Vmu <- curveVstar_tree(treeFam, omu)
+#'
 #' #VmuS <- curveMaxFP(stats[omu], thrSimes) # does not work as stats[omu] can be increasing
-#' system.time(VmuS2 <- curveMaxFP(stats[omu], thrSimes, flavor = "BNR2014"))
-#' system.time(VmuS3 <- 1:m - sapply(1:m, FUN=function(kk) posthocBySimes(pvals, omu[1:kk], alpha)))
+#' #VmuS <- curveMaxFP(stats[omu], thrSimes, flavor = "BNR2014") # works
+#' SmuS <- sapply(1:m, FUN=function(kk) posthocBySimes(pvals, omu[1:kk], alpha))
+#'
+#' plot(1:m, 1:m-Vmu, t = 's',
+#'      xlim = c(0, 2*m1), ylim = c(0, m1))
+#' lines(1:m, SmuS, t = 's', col = 3)
 curveVstar_tree <- function(treeFam, ordering) {
     C <- treeFam$tree
     leaf_list <- treeFam$leaves

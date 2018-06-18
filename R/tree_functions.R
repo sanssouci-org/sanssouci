@@ -1,5 +1,29 @@
 #' Create a complete dyadic tree structure
+#' 
+#' @name dyadic
+#' @details \describe{
+#' \item{\code{dyadic.from.window.size}}{the number of elements in each leaf is set to \code{s}}
+#' \item{\code{dyadic.from.height}}{the total height of tree is set to \code{H}}
+#' \item{\code{dyadic.from.max.size}}{the total height of tree is set to the maximum possible height, ie \code{floor(2 + log2(m - 1))}}
+#' }
+#' @examples
+#' m <- 6
+#' dd <- dyadic.from.window.size(m, s = 2, method = 2)
+#' str(dd)
+#' 
+#' dd <- dyadic.from.height(m, H = 3, method = 2)
+#' str(dd)
+#' 
+#' dd <- dyadic.from.max.height(m, method=2)
+#' str(dd)
 #'
+#' leaf_list <- dd$leaf_list
+
+NULL
+
+
+#' Create a complete dyadic tree structure
+#' 
 #' @param leaf_list A list of leaves
 #' @param method A numeric value. If \code{method == 1}, start from the leaves
 #'   and group nodes of a same height 2 by 2 as long as possible. If
@@ -70,13 +94,7 @@ dyadic.from.leaf_list <- function(leaf_list, method) {
 #' }
 #' @export
 #' @rdname dyadic
-#' @examples
-#' 
-#' m <- 13
-#' dd <- dyadic.from.window.size(m, s = 2, method = 2)
-#' str(dd)
-#' 
-#' 
+
 dyadic.from.window.size <- function(m, s, method) {
     leaves <- floor(m/s)
     leaf_list <- list()
@@ -99,12 +117,7 @@ dyadic.from.window.size <- function(m, s, method) {
 #' @param H An integer value, the desired maximal height of the tree
 #' @export
 #' @rdname dyadic
-#' @examples
-#' 
-#' m <- 6
-#' dd <- dyadic.from.height(m, H = 3, method = 2)
-#' str(dd)
-#' 
+
 dyadic.from.height <- function(m, H, method) {
     if (m <= 2^(H - 2)) {
         oldH <- H
@@ -133,12 +146,7 @@ dyadic.from.height <- function(m, H, method) {
 #' @inheritParams dyadic.from.height
 #' @export
 #' @rdname dyadic
-#' @examples
-#' 
-#' m <- 1000
-#' dd <- dyadic.from.max.height(m, method=2)
-#' leaf_list <- dd$leaf_list
-#' 
+
 dyadic.from.max.height <- function(m, method) {
     H <- ifelse(m == 1, 1, floor(2 + log2(m - 1)))
     return(dyadic.from.height(m, H, method))
@@ -448,12 +456,11 @@ tree.from.list <- function(m, listR) {
 }
 
 
-#' @rdname V.star
 V.star.all.leaves <- function(S, C, ZL, leaf_list) {
     H <- length(C)
     leaves <- length(leaf_list)
-    Vec <- numeric(leaves)
-    id <- seq_len(leaves)
+    Vec <- numeric(length = leaves)
+    id <- seq_len(length.out = leaves)
     for (i in 1:leaves) {
 #        len <- length(intersect(S, leaf_list[[i]]))
         len <- sum(S %in% leaf_list[[i]])
@@ -462,13 +469,14 @@ V.star.all.leaves <- function(S, C, ZL, leaf_list) {
     if (H > 1) {
         for (h in (H - 1):1) {
             len <- length(C[[h]])
-            vec_inter <- numeric(leaves)
+            vec_inter <- numeric(length = leaves)
             new_id <- numeric(len)
             for (j in 1:len) {
                 Chj <- C[[h]][[j]]
-                leaves <- unlist(leaf_list[Chj[1]:Chj[2]])
-#                len <- length(intersect(S, leaves))
-                len <- sum(S %in% leaves)
+                # len <- length(intersect(S, leaves))
+                lvs <- unlist(leaf_list[Chj[1]:Chj[2]])
+                len <- sum(S %in% lvs)
+                rm(lvs)
                 ss <- sum(Vec[id[which((Chj[1] <= id) & (Chj[2] >= id))]])
                 intra <- min(ZL[[h]][j], len, ss)
                 vec_inter[Chj[1]] <- intra
