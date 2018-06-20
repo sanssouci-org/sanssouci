@@ -3,6 +3,7 @@ title: "Confidence envelopes for localized signal"
 author: "G. Durand, G. Blanchard, P. Neuvial, E. Roquain"
 date: "June 20, 2018"
 output:
+  pdf_document: default
   html_document:
     df_print: paged
 bibliography: sansSouci.bib
@@ -182,10 +183,11 @@ pS + xlim(1, xmax) + ylim(0, ymax)
 
 ## Session information
 
-## References
-
 ```{r}
 sessionInfo()
 ```
 
+
+
+## References
 
