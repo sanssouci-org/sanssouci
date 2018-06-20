@@ -1,6 +1,7 @@
 # Version 0.7.0 [2018-06-19]
 
 * Added "tree" functions (and simulation scripts) from DBNR 2018.
+* Added vignette confidenceEnvelopes_localized to illustrate DBNR 2018.
 
 # Version 0.6.1 [2018-03-27]
 
