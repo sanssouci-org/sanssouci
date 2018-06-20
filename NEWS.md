@@ -1,4 +1,8 @@
-# Version 0.6.1 [2018-05-16]
+# Version 0.7.0 [2018-06-19]
+
+* Added "tree" functions (and simulation scripts) from DBNR 2018.
+
+# Version 0.6.1 [2018-03-27]
 
 * Added support for one-sided tests in 'calibrateJER' and 'testByRandomization' (this feature has been imported from the branch generic-randomization-tests). Added corresponding tests.
 * Cleanups in 'testByRandomization': "parametric" p-values are now the default, randomization p-values are not computed by default. Note that permutation test statistics are not mapped to the one-sided N(0,1) scale under the null (this is done by calibrateJER). 
