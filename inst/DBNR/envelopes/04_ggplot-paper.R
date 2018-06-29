@@ -1,3 +1,5 @@
+library("ggplot2")
+
 resPath <- "resData/DBNR/confidenceEnvelopes"
 resPath <- R.utils::Arguments$getReadablePath(resPath)
 
@@ -10,6 +12,10 @@ names(cols) <- lvls
 lblr <- label_bquote(
     rows = r == .(r), 
     cols = bar(mu) == .(barmu))
+
+# plot sizes
+pwidth <- 9.22
+pheight <- 6.40
 
 #filename <- sprintf("conf-env-alpha-hybrid_grouped=%s_setting=%s.rds", grouped, setting)
 #filename <- sprintf("conf-env-alpha_grouped=%s_setting=%s.rds", grouped, setting)
@@ -62,13 +68,14 @@ for (pp in 1:nrow(plotConfigs)) {
         # geom_abline(slope = 1, intercept = 0, col = "lightgray", lty = 2) +
         scale_linetype(name = expression(alpha)) +
         scale_colour_manual(values = cols)
-    ggsave(filename = pathname)
+    ggsave(filename = pathname, width = pwidth, height = pheight)
 }
 
 
 ## 2- influence of alpha -- all in one
 ## now focus on order = p and grouped
-gdat <- subset(dat, s == 100 & K1 == 8 & d > 0.5 & barmu <= 4 & grouped == TRUE) %>%
+gdat <- subset(dat, s == 100 & K1 == 8 & d > 0.5 & barmu <= 4 & 
+                   grouped == TRUE & alpha %in% c(0.05, 1e-3, 1e-4)) %>%
     rename(r = d) %>%
     group_by(idxs, method, r, barmu, alpha, order, setting, grouped) %>% 
     summarise(value = mean(value))
@@ -99,7 +106,7 @@ for (pp in 1:nrow(plotConfigs)) {
         # geom_abline(slope = 1, intercept = 0, col = "lightgray", lty = 2) +
         scale_linetype(name = expression(alpha)) +
         scale_colour_manual(values = cols)
-    ggsave(filename = pathname)
+    ggsave(filename = pathname, width = pwidth, height = pheight)
 }
 
 ## 3- hybrid procedures!
@@ -124,7 +131,7 @@ gdat <- gdat %>% mutate(method = as.character(method))%>%
     summarise(value = mean(value))
 
 plotConfigs <- expand.grid(
-    setting = unique(ggdat$setting),
+    setting = unique(gdat$setting),
     order = unique(gdat$order)
 )
 
@@ -161,5 +168,5 @@ for (pp in 1:nrow(plotConfigs)) {
         geom_abline(slope = 1, intercept = 0, col = "lightgray", lty = 2) +
         scale_linetype(name=expression(alpha)) +
         scale_colour_manual(values = cols)
-    ggsave(filename = pathname)
+    ggsave(filename = pathname, width = pwidth, height = pheight)
 }
