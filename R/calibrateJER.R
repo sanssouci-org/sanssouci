@@ -41,7 +41,7 @@
 #' sim <- gaussianSamples(m = m, rho = 0.2, n = 100,
 #'                        pi0 = pi0, SNR = 3, prob = 0.5)
 #' X <- sim$X
-#' cal <- calibrateJER(X, B = 1e3, alpha = 0.2, refFamily="Simes")
+#' cal <- calibrateJER(X, B = 1e3, categ = colnames(X), refCat = "0", alpha = 0.2, refFamily="Simes", alt="greater")
 #' cal$lambda # > alpha (whp) is rho > 0
 #' 
 #' # Application 1: confidence envelope
@@ -77,8 +77,9 @@
 #' maxFP(sel, cal$thr)/m
 #' pi0
 #' 
-calibrateJER <- function(X, B, alpha, 
+calibrateJER <- function(X, B, alpha,  categ, refCat = levels(as.factor(categ))[1], 
                          alternative = c("two.sided", "less", "greater"), 
+                         rowTestFUN = rowWelchTests,
                          refFamily = c("Simes", "kFWER"),
                          K = nrow(X), verbose=TRUE) {
     alternative <- match.arg(alternative)
@@ -86,7 +87,7 @@ calibrateJER <- function(X, B, alpha,
     m <- nrow(X);
     refFamily <- match.arg(refFamily)
 
-    tests <- testByRandomization(X, B = B, alternative = alternative)
+    tests <- testByRandomization(X, B = B, categ = categ, refCat = refCat, alternative = alternative, rowTestFUN = rowTestFUN)
     
     # X0 <- tests$T0
     # x <- tests$T
@@ -95,8 +96,7 @@ calibrateJER <- function(X, B, alpha,
     x <- qnorm(1 - tests$p) 
 
     rm(tests)
-    
-    res <- calibrateJER0(X0, refFamily = refFamily, alpha = alpha, x, kMax = K)
+    res <- calibrateJER0(X0, refFamily = refFamily, alpha = alpha, stat = x, kMax = K)
     calib <- list(stat = x, thr = res$thr, lambda = res$lambda) 
     
     return(calib)

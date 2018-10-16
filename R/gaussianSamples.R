@@ -89,6 +89,7 @@ gaussianSamples <- function(m, rho, n, pi0, SNR = 1, prob = 1, w = NULL) {
             mu[H1, w1] <- signal
         }
     }
+    # colnames(mu) <- c("case", "control")[y+1]
     colnames(mu) <- y
     
     # data: signal + noise

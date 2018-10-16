@@ -6,8 +6,10 @@
 #'
 #' @param B A numeric value, the number of permutations to be performed
 #'
-#' @param cls A vector of length \code{n} class labels in \code{0,1} for flavor
+#' @param categ A vector of length \code{n} class labels for flavor
 #'   "perm". Defaults to colnames(X).
+#'   
+#' @param refCat A character value, the class label to be used as a reference.
 #'
 #' @param alternative A character string specifying the alternative hypothesis.
 #'   Must be one of "two.sided" (default), "greater" or "less".
@@ -18,8 +20,8 @@
 #' @param seed An integer (or NULL) value used as a seed for random number
 #'   generation. If \code{NULL}, no seed is specified
 #'
-#' @details The type of randomization is determined by the parameter \code{cls}.
-#'   If \code{cls} does not contain two distinct values (or is \code{NULL}), a
+#' @details The type of randomization is determined by the parameter \code{categ}.
+#'   If \code{categ} does not contain two distinct values (or is \code{NULL}), a
 #'   one-sample test is performed using randomization (flavor "flip"). If it
 #'   contains two distinct values, a two-sample test is perfomed using
 #'   permutations (flavor "perm").
@@ -79,7 +81,7 @@
 #'
 #' ## two-sample data
 #' sim <- gaussianSamples(m, rho, n, pi0, SNR = 2, prob = 0.5)
-#' tests <- testByRandomization(sim$X, B)
+#' tests <- testByRandomization(sim$X, B, categ = colnames(sim$X))
 #'
 #' ## show test statistics
 #' pch <- 20
@@ -88,7 +90,7 @@
 #' legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
 #'
 #' sim <- gaussianSamples(m, rho, n, pi0, SNR=2)
-#' tests <- testByRandomization(sim$X, B)
+#' tests <- testByRandomization(sim$X, B, categ = colnames(sim$X))
 #'
 #' ## show test statistics
 #' pch <- 20
@@ -99,31 +101,39 @@
 #' @importFrom matrixStats rowRanks
 #' @export
 #' 
-testByRandomization <- function(X, B, cls = colnames(X), 
+testByRandomization <- function(X, B, categ, refCat = levels(as.factor(categ))[1], 
                                 alternative = c("two.sided", "less", "greater"),
+                                rowTestFUN = rowWelchTests,
                                 rand.p.value = FALSE, seed = NULL){
     alternative <- match.arg(alternative)
     ## sanity checks
     n <- ncol(X)
-    luc <- length(unique(cls))
-    if (luc <= 1) {  
-        # no classes or a single class given: assuming sign flipping 
+    if (missing(categ)) {
         flavor <- "flip"
+        warning("No class labels ('categ') provided: performing one-sample tests by sign-flipping")
     } else {
-        if (length(cls) != n) {
-            stop("The number of columns of argument 'X' should match the length of argument 'cls'")
-        }
-        if (luc == 2) {
-            flavor <- "perm"
-            tbl <- table(cls)
-            if ( !all(names(tbl) == c("0", "1"))) {  # note that numeric values are allowed in cls as they are converted into character by 'table'...
-                stop("Argument 'cls' should contain (only) 0:s and 1:s")
+        categ <- as.factor(categ)
+        cats <- levels(categ)
+        luc <- length(cats)
+        if (luc <= 1) {  
+            # no classes or a single class given: assuming sign flipping 
+            flavor <- "flip"
+        } else {
+            if (length(categ) != n) {
+                stop("The number of columns of argument 'X' should match the length of argument 'categ'")
             }
-            if (min(tbl) < 3) {
-                stop("Argument 'cls' should contain at least 3 elements of each sample")
+            if (luc == 2) {
+                flavor <- "perm"
+                tbl <- table(categ)
+                # if ( !all(names(tbl) == c("0", "1"))) {  # note that numeric values are allowed in categ as they are converted into character by 'table'...
+                #     stop("Argument 'categ' should contain (only) 0:s and 1:s")
+                # }
+                if (min(tbl) < 3) {
+                    stop("Argument 'categ' should contain at least 3 elements of each sample")
+                }
+            } else if (luc > 2) {
+                stop("Tests for more than 2 classes not implemented yet")
             }
-        } else if (luc > 2) {
-            stop("Tests for more than 2 classes not implemented yet")
         }
     }
     if (!is.null(seed)) {
@@ -137,7 +147,8 @@ testByRandomization <- function(X, B, cls = colnames(X),
         ## * one-sided tests ?
         
         ## observed
-        rwt <- rowWelchTests(X, categ = cls, alternative = alternative)
+##        rwt <- rowWelchTests(X, categ = categ, refCat = refCat, alternative = alternative)
+        rwt <- rowTestFUN(X, categ = categ, refCat = refCat, alternative = alternative)
         T <- rwt$statistic
         p <- rwt$p.value  ## parametric p-value
         df <- rwt$parameter  ## degrees of freedom of the T statistics
@@ -148,8 +159,9 @@ testByRandomization <- function(X, B, cls = colnames(X),
         p0 <- matrix(nrow = m, ncol = B) ## parametric p-value
         df0 <- matrix(nrow = m, ncol = B) 
         for (bb in 1:B) {
-            cls_perm <- sample(cls, length(cls))
-            rwt <- rowWelchTests(X, categ = cls_perm, alternative = alternative)
+            categ_perm <- sample(categ, length(categ))
+            ## rwt <- rowWelchTests(X, categ = categ_perm, refCat = refCat, alternative = alternative)
+            rwt <- rowTestFUN(X, categ = categ_perm, refCat = refCat, alternative = alternative)
             T0[, bb] <- rwt$statistic
             p0[, bb] <- rwt$p.value
             df0[, bb] <- rwt$parameter
@@ -205,15 +217,15 @@ testBySignFlippingR <- function(X, B) {
 }
 
 # not used!
-testByPermutationR <- function(X, cls, B) {
+testByPermutationR <- function(X, categ, B) {
     m <- nrow(X)
     n <- ncol(X)
-    stopifnot(n == length(cls))
+    stopifnot(n == length(categ))
     
     T <- matrix(nrow = m, ncol = B)
     for (bb in 1:B) {
-        cls_perm <- sample(cls, length(cls))
-        Tb <- rowWelchTests(X, categ = cls_perm)$statistic
+        categ_perm <- sample(categ, length(categ))
+        Tb <- rowWelchTests(X, categ = categ_perm)$statistic
         T[, bb] <- Tb
     }
     T

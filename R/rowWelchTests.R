@@ -15,7 +15,10 @@
 #' @param categ A vector of \code{ncol(mat)} categories for the observations
 #'
 #' @param alternative A character string specifying the alternative hypothesis.
-#'   Must be one of "two.sided" (default), "greater" or "less".
+#'   Must be one of "two.sided" (default), "greater" or "less". As in
+#'   \code{\link{t.test}}, alternative = "greater" is the alternative that 'x'
+#'   has a larger mean than 'y', where 'x' is the smallest elemnt of
+#'   \code{categ} in lexicographic order.
 #'
 #' @return A list with class "htest" containing the following components:
 #'   \describe{ \item{statistic}{the value of the t-statistics}
@@ -35,28 +38,30 @@
 #' n <- 38
 #' mat <- matrix(rnorm(p*n), ncol=n)
 #' cls <- rep(c(0, 1), times=c(27, n-27))
-#' fwt <- rowWelchTests(mat, categ=cls)
+#' fwt <- rowWelchTests(mat, categ=cls, alternative = "greater")
 #' str(fwt)
 #'
 #' # compare with ordinary t.test:
 #' pwt <- apply(mat, 1, FUN=function(x) {
-#'    t.test(x[cls==1], x[cls==0])$p.value
+#'    t.test(x[cls==0], x[cls==1], alternative = "greater")$p.value
 #' })
 #' sum(abs(fwt$p.value-pwt))  ## same results
 #' 
-rowWelchTests <- function(mat, categ = colnames(mat), 
+rowWelchTests <- function(mat, categ, refCat = levels(as.factor(categ))[1], 
                           alternative = c("two.sided", "less", "greater")) {
-    cats <- unique(categ)
+    alternative <- match.arg(alternative)
+    categ <- as.factor(categ)
+    cats <- levels(categ)
     if (length(cats) != 2) {
         stop("Two categories expected!")
     }
     sstats <- getSummaryStats(mat, categ = categ)
-    X <- sstats[[2]]
-    Y <- sstats[[1]]
+    X <- sstats[[refCat]]
+    Y <- sstats[[setdiff(cats, refCat)]]
     swt <- suffWelchTest(X[["mean"]], Y[["mean"]],
                          X[["sd"]], Y[["sd"]],
                          X[["n"]], Y[["n"]],
                          alternative = alternative)
-    swt[["meanDiff"]] <- Y[["mean"]] - X[["mean"]]
+    swt[["meanDiff"]] <- X[["mean"]] - Y[["mean"]]
     swt
 }
