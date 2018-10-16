@@ -18,3 +18,5 @@ test_that("JER calibration -- vanilla tests", {
     expect_length(cal$thr, 50)
     expect_length(cal$stat, m)
 })
+
+

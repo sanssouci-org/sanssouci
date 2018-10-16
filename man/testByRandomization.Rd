@@ -4,16 +4,19 @@
 \alias{testByRandomization}
 \title{Randomization-based testing}
 \usage{
-testByRandomization(X, B, cls = colnames(X), alternative = c("two.sided",
-  "less", "greater"), rand.p.value = FALSE, seed = NULL)
+testByRandomization(X, B, categ, refCat = levels(as.factor(categ))[1],
+  alternative = c("two.sided", "less", "greater"),
+  rowTestFUN = rowWelchTests, rand.p.value = FALSE, seed = NULL)
 }
 \arguments{
 \item{X}{a matrix of \code{m} variables by \code{n} observations}
 
 \item{B}{A numeric value, the number of permutations to be performed}
 
-\item{cls}{A vector of length \code{n} class labels in \code{0,1} for flavor
+\item{categ}{A vector of length \code{n} class labels for flavor
 "perm". Defaults to colnames(X).}
+
+\item{refCat}{A character value, the class label to be used as a reference.}
 
 \item{alternative}{A character string specifying the alternative hypothesis.
 Must be one of "two.sided" (default), "greater" or "less".}
@@ -56,8 +59,8 @@ a list with elements: \describe{
 Randomization-based testing using permutation or sign-flipping
 }
 \details{
-The type of randomization is determined by the parameter \code{cls}.
-  If \code{cls} does not contain two distinct values (or is \code{NULL}), a
+The type of randomization is determined by the parameter \code{categ}.
+  If \code{categ} does not contain two distinct values (or is \code{NULL}), a
   one-sample test is performed using randomization (flavor "flip"). If it
   contains two distinct values, a two-sample test is perfomed using
   permutations (flavor "perm").
@@ -86,7 +89,7 @@ B <- 1e3
 
 ## two-sample data
 sim <- gaussianSamples(m, rho, n, pi0, SNR = 2, prob = 0.5)
-tests <- testByRandomization(sim$X, B)
+tests <- testByRandomization(sim$X, B, categ = colnames(sim$X))
 
 ## show test statistics
 pch <- 20
@@ -95,7 +98,7 @@ plot(tests$T, col = colStat, main = "Test statistics", pch  =pch)
 legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
 
 sim <- gaussianSamples(m, rho, n, pi0, SNR=2)
-tests <- testByRandomization(sim$X, B)
+tests <- testByRandomization(sim$X, B, categ = colnames(sim$X))
 
 ## show test statistics
 pch <- 20

@@ -4,8 +4,10 @@
 \alias{calibrateJER}
 \title{Calibration of joint Family-Wise Error Rate thresholds}
 \usage{
-calibrateJER(X, B, alpha, alternative = c("two.sided", "less", "greater"),
-  refFamily = c("Simes", "kFWER"), K = nrow(X), verbose = TRUE)
+calibrateJER(X, B, alpha, categ, refCat = levels(as.factor(categ))[1],
+  alternative = c("two.sided", "less", "greater"),
+  rowTestFUN = rowWelchTests, refFamily = c("Simes", "kFWER"),
+  K = nrow(X), verbose = TRUE)
 }
 \arguments{
 \item{X}{A matrix of \eqn{m} variables (hypotheses) by \eqn{n} observations.
@@ -55,7 +57,7 @@ pi0 <- 0.8
 sim <- gaussianSamples(m = m, rho = 0.2, n = 100,
                        pi0 = pi0, SNR = 3, prob = 0.5)
 X <- sim$X
-cal <- calibrateJER(X, B = 1e3, alpha = 0.2, refFamily="Simes")
+cal <- calibrateJER(X, B = 1e3, categ = colnames(X), refCat = "0", alpha = 0.2, refFamily="Simes", alt="greater")
 cal$lambda # > alpha (whp) is rho > 0
 
 # Application 1: confidence envelope
