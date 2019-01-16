@@ -9,5 +9,5 @@ This (beta) software is developed within the [SansSouci project](https://www.mat
 # Installation
 
 ```
-remotes::install_github("HenrikBengtsson/future@develop")
+remotes::install_github("pneuvial/sanssouci@develop")
 ```
