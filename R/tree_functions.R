@@ -503,7 +503,7 @@ tree.expand <- function(C, ZL, leaf_list) {
                 expected_leaf <- Cij[2] + 1
                 j <- j + 1
             } else {
-                # PROBLÈME résolution
+                # PROBLEME resolution
                 C[[i]] <- append(C[[i]], list(c(expected_leaf, expected_leaf)), j - 1)
                 ZL[[i]] <- append(ZL[[i]], length(leaf_list[[expected_leaf]]), j - 1)
                 # suivant
@@ -513,7 +513,7 @@ tree.expand <- function(C, ZL, leaf_list) {
             }
         }
         while (expected_leaf < (leaves + 1)) {
-            # PROBLÈME résolution
+            # PROBLEME resolution
             C[[i]] <- c(C[[i]], list(c(expected_leaf, expected_leaf)))
             ZL[[i]] <- c(ZL[[i]], length(leaf_list[[expected_leaf]]))
             # suivant
