@@ -56,8 +56,10 @@ rowWelchTests <- function(mat, categ, refCat = levels(as.factor(categ))[1],
         stop("Two categories expected!")
     }
     sstats <- getSummaryStats(mat, categ = categ)
-    X <- sstats[[refCat]]
-    Y <- sstats[[setdiff(cats, refCat)]]
+    Y <- sstats[[refCat]]
+    X <- sstats[[setdiff(cats, refCat)]]  ## as per the doc of t.test:
+    ## 'alternative = "greater"' is the alternative that 'x' has a larger  mean
+    ## than 'y'.
     swt <- suffWelchTest(X[["mean"]], Y[["mean"]],
                          X[["sd"]], Y[["sd"]],
                          X[["n"]], Y[["n"]],

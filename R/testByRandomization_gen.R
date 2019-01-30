@@ -158,7 +158,7 @@ testByRandomization_gen <- function(X, B, cls = colnames(X), test = NULL,
         
         X_melt <- reshape2::melt(X)
         cls <- X_melt$Var2
-        
+        # browser()
         ## observed
         res <-  X_melt %>% group_by(Var1) %>% do(broom::tidy(test.func(value~Var2, data=.))) 
         # eq. to:
