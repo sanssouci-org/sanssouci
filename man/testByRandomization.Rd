@@ -4,22 +4,20 @@
 \alias{testByRandomization}
 \title{Randomization-based testing}
 \usage{
-testByRandomization(X, B, categ, refCat = levels(as.factor(categ))[1],
-  alternative = c("two.sided", "less", "greater"),
-  rowTestFUN = rowWelchTests, rand.p.value = FALSE, seed = NULL)
+testByRandomization(X, B, alternative = c("two.sided", "less",
+  "greater"), rowTestFUN = rowWelchTests, rand.p.value = FALSE,
+  seed = NULL)
 }
 \arguments{
 \item{X}{a matrix of \code{m} variables by \code{n} observations}
 
 \item{B}{A numeric value, the number of permutations to be performed}
 
-\item{categ}{A vector of length \code{n} class labels for flavor
-"perm". Defaults to colnames(X).}
-
-\item{refCat}{A character value, the class label to be used as a reference.}
-
 \item{alternative}{A character string specifying the alternative hypothesis.
 Must be one of "two.sided" (default), "greater" or "less".}
+
+\item{rowTestFUN}{A (vectorized) test function. Defaults to
+\code{\link{rowWelchTests}}}
 
 \item{rand.p.value}{A boolean value: should randomization \eqn{p}-values be
 calculated and returned? Defaults to @FALSE}
@@ -59,15 +57,17 @@ a list with elements: \describe{
 Randomization-based testing using permutation or sign-flipping
 }
 \details{
-The type of randomization is determined by the parameter \code{categ}.
-  If \code{categ} does not contain two distinct values (or is \code{NULL}), a
-  one-sample test is performed using randomization (flavor "flip"). If it
-  contains two distinct values, a two-sample test is perfomed using
-  permutations (flavor "perm").
+The type of randomization is determined by the column names of
+  \code{X}. If these column names have exactly two distinct values, the
+  corresponding columns are interpreted as two samples and a two-sample
+  permutation-based test  is performed (flavor "perm"). Otherwise (including
+  if \code{X} does not have column names), a one-sample test is performed
+  using sign-flipping (flavor "flip").
 
   For permutation, we test the null hypothesis: "both groups have the same
-  mean" against the alternative specified by parameter \code{alternative}.
-  The test is Welch's two-sample test for unequal variances. Permuted test
+  mean" against the alternative specified by parameter \code{alternative}. By
+  default, the test is Welch's two-sample test for unequal variances, but
+  other tests may be used via the argument \code{rowTestFUN}.  Permuted test
   statistics are calculated by B permutations of the group labels.
   Corresponding observed and permuted p-values are calculated as the
   proportion of permutations (including the identity) for which the permuted
@@ -89,7 +89,7 @@ B <- 1e3
 
 ## two-sample data
 sim <- gaussianSamples(m, rho, n, pi0, SNR = 2, prob = 0.5)
-tests <- testByRandomization(sim$X, B, categ = colnames(sim$X))
+tests <- testByRandomization(sim$X, B)
 
 ## show test statistics
 pch <- 20
@@ -98,7 +98,7 @@ plot(tests$T, col = colStat, main = "Test statistics", pch  =pch)
 legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
 
 sim <- gaussianSamples(m, rho, n, pi0, SNR=2)
-tests <- testByRandomization(sim$X, B, categ = colnames(sim$X))
+tests <- testByRandomization(sim$X, B)
 
 ## show test statistics
 pch <- 20

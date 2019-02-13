@@ -4,20 +4,20 @@
 \alias{rowWelchTests}
 \title{Welch t-tests for rows of a matrix}
 \usage{
-rowWelchTests(mat, categ, refCat = levels(as.factor(categ))[1],
-  alternative = c("two.sided", "less", "greater"))
+rowWelchTests(mat, categ, alternative = c("two.sided", "less",
+  "greater"))
 }
 \arguments{
 \item{mat}{A numeric matrix whose rows correspond to variables and columns to
 observations}
 
-\item{categ}{A vector of \code{ncol(mat)} categories for the observations}
+\item{categ}{A vector of \code{ncol(mat)} categories in \eqn{'0','1'} for the
+observations}
 
 \item{alternative}{A character string specifying the alternative hypothesis.
 Must be one of "two.sided" (default), "greater" or "less". As in
-\code{\link{t.test}}, alternative = "greater" is the alternative that 'x'
-has a larger mean than 'y', where 'x' is the smallest elemnt of
-\code{categ} in lexicographic order.}
+\code{\link{t.test}}, alternative = "greater" is the alternative that the
+class '1' has a larger mean than the class '0'.}
 }
 \value{
 A list with class "htest" containing the following components:
@@ -48,9 +48,9 @@ str(fwt)
 
 # compare with ordinary t.test:
 pwt <- apply(mat, 1, FUN=function(x) {
-   t.test(x[cls==0], x[cls==1], alternative = "greater")$p.value
+   t.test(x[cls==1], x[cls==0], alternative = "greater")$p.value
 })
-sum(abs(fwt$p.value-pwt))  ## same results
+all(abs(fwt$p.value-pwt) < 1e-10)  ## same results
 
 }
 \references{

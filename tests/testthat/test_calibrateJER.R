@@ -5,7 +5,7 @@ test_that("JER calibration -- vanilla tests", {
     rho <- 0.2
     n <- 100
     pi0 <- 0.5
-    sim <- gaussianSamples(m, rho, n, pi0, SNR = 1, prob = 0.5)
+    sim <- gaussianSamples(m, rho, n, pi0, SNR = 2, prob = 0.5)
     X <- sim$X
     alpha <- 0.2
     B <- 100

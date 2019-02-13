@@ -12,13 +12,13 @@
 #' @param mat A numeric matrix whose rows correspond to variables and columns to
 #'   observations
 #'
-#' @param categ A vector of \code{ncol(mat)} categories for the observations
+#' @param categ A vector of \code{ncol(mat)} categories in \eqn{'0','1'} for the
+#'   observations
 #'
 #' @param alternative A character string specifying the alternative hypothesis.
 #'   Must be one of "two.sided" (default), "greater" or "less". As in
-#'   \code{\link{t.test}}, alternative = "greater" is the alternative that 'x'
-#'   has a larger mean than 'y', where 'x' is the smallest elemnt of
-#'   \code{categ} in lexicographic order.
+#'   \code{\link{t.test}}, alternative = "greater" is the alternative that the
+#'   class '1' has a larger mean than the class '0'.
 #'
 #' @return A list with class "htest" containing the following components:
 #'   \describe{ \item{statistic}{the value of the t-statistics}
@@ -43,21 +43,17 @@
 #'
 #' # compare with ordinary t.test:
 #' pwt <- apply(mat, 1, FUN=function(x) {
-#'    t.test(x[cls==0], x[cls==1], alternative = "greater")$p.value
+#'    t.test(x[cls==1], x[cls==0], alternative = "greater")$p.value
 #' })
-#' sum(abs(fwt$p.value-pwt))  ## same results
+#' all(abs(fwt$p.value-pwt) < 1e-10)  ## same results
 #' 
-rowWelchTests <- function(mat, categ, refCat = levels(as.factor(categ))[1], 
-                          alternative = c("two.sided", "less", "greater")) {
+rowWelchTests <- function(mat, categ, alternative = c("two.sided", "less", "greater")) {
     alternative <- match.arg(alternative)
-    categ <- as.factor(categ)
-    cats <- levels(categ)
-    if (length(cats) != 2) {
-        stop("Two categories expected!")
-    }
+    categCheck(categ, ncol(mat))
+
     sstats <- getSummaryStats(mat, categ = categ)
-    Y <- sstats[[refCat]]
-    X <- sstats[[setdiff(cats, refCat)]]  ## as per the doc of t.test:
+    Y <- sstats[["0"]]
+    X <- sstats[["1"]]  ## as per the doc of t.test:
     ## 'alternative = "greater"' is the alternative that 'x' has a larger  mean
     ## than 'y'.
     swt <- suffWelchTest(X[["mean"]], Y[["mean"]],
@@ -67,3 +63,15 @@ rowWelchTests <- function(mat, categ, refCat = levels(as.factor(categ))[1],
     swt[["meanDiff"]] <- X[["mean"]] - Y[["mean"]]
     swt
 }
+
+
+
+categCheck <- function(categ, n) {
+    stopifnot(length(categ) == n)
+    categ <- as.factor(categ)
+    cats <- levels(categ)
+    if (!identical(cats, c("0", "1"))) {
+        stop("Expected two categories named '0' and '1'!")
+    }
+}
+

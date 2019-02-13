@@ -1,6 +1,6 @@
 #' Calibration of joint Family-Wise Error Rate thresholds
 #'
-#' Calibration of of JER thresholds from one or two-sample tests
+#' Calibration of of JER thresholds using one or two-sample tests
 #'
 #' @param X A matrix of \eqn{m} variables (hypotheses) by \eqn{n} observations.
 #'   The column names of X should be "0" for the first sample and "1" for the
@@ -21,6 +21,7 @@
 #' @param K For JER control over \code{1:K}, ie joint control of all
 #'   \eqn{k}-FWER, \eqn{k \le K}.
 #' @param verbose A boolean value: should extra info be printed?
+#' @details See \code{\link{testByRandomization}} for a description of the tests performed for calibration.
 #' @return A list with elements: \describe{
 #'
 #'   \item{stat}{A numeric vector of \code{m} test statistics}
@@ -41,7 +42,7 @@
 #' sim <- gaussianSamples(m = m, rho = 0.2, n = 100,
 #'                        pi0 = pi0, SNR = 3, prob = 0.5)
 #' X <- sim$X
-#' cal <- calibrateJER(X, B = 1e3, categ = colnames(X), refCat = "0", alpha = 0.2, refFamily="Simes", alt="greater")
+#' cal <- calibrateJER(X, B = 1e3, alpha = 0.2, refFamily="Simes", alt="greater")
 #' cal$lambda # > alpha (whp) if rho > 0
 #' 
 #' # Application 1: confidence envelope
@@ -77,7 +78,7 @@
 #' maxFP(sel, cal$thr)/m
 #' pi0
 #' 
-calibrateJER <- function(X, B, alpha,  categ, refCat = levels(as.factor(categ))[1], 
+calibrateJER <- function(X, B, alpha, 
                          alternative = c("two.sided", "less", "greater"), 
                          rowTestFUN = rowWelchTests,
                          refFamily = c("Simes", "kFWER"),
@@ -87,7 +88,7 @@ calibrateJER <- function(X, B, alpha,  categ, refCat = levels(as.factor(categ))[
     m <- nrow(X);
     refFamily <- match.arg(refFamily)
 
-    tests <- testByRandomization(X, B = B, categ = categ, refCat = refCat, alternative = alternative, rowTestFUN = rowTestFUN)
+    tests <- testByRandomization(X, B = B, alternative = alternative, rowTestFUN = rowTestFUN)
     
     # X0 <- tests$T0
     # x <- tests$T
