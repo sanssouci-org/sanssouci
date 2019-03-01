@@ -6,7 +6,7 @@
 \usage{
 calibrateJER(X, B, alpha, alternative = c("two.sided", "less",
   "greater"), rowTestFUN = rowWelchTests, refFamily = c("Simes",
-  "kFWER"), K = nrow(X), verbose = TRUE)
+  "kFWER"), maxStepsDown = 10L, K = nrow(X), verbose = TRUE)
 }
 \arguments{
 \item{X}{A matrix of \eqn{m} variables (hypotheses) by \eqn{n} observations.
@@ -20,6 +20,9 @@ second sample.}
 \item{alternative}{A character string specifying the alternative hypothesis.
 Must be one of "two.sided" (default), "greater" or "less".}
 
+\item{rowTestFUN}{A (vectorized) test function. Defaults to
+\code{\link{rowWelchTests}}}
+
 \item{refFamily}{A character value which can be \describe{
 
   \item{Simes}{The classical family of thresholds introduced by Simes (1986):
@@ -28,6 +31,8 @@ Must be one of "two.sided" (default), "greater" or "less".}
 
   \item{kFWER}{A family \eqn{(t_k)} calibrated so that for each k,
   \eqn{(t_k)} controls the (marginal) k-FWER.}}}
+
+\item{maxStepsDown}{Maximum number of steps down to be performed.}
 
 \item{K}{For JER control over \code{1:K}, ie joint control of all
 \eqn{k}-FWER, \eqn{k \le K}.}

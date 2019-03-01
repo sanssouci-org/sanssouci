@@ -18,10 +18,12 @@
 #'   
 #' @examples
 #' 
+#' \dontrun{
+#' # not exported
 #' mat <- matrix(rnorm(3051*38), ncol=38)
 #' cls <- rep(c(0, 1), times=c(27, 11))
-#' stats <- getSummaryStats(mat, categ=cls)
-#' 
+#' stats <- getSummaryStats(mat, categ=cls)  !
+#' }
 getSummaryStats <- function(mat, categ) {
     stopifnot(ncol(mat) == length(categ))
     cats <- sort(unique(categ))

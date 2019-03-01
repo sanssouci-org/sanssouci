@@ -9,6 +9,8 @@
 #' @param alpha Target JER level
 #' @param alternative A character string specifying the alternative hypothesis.
 #'   Must be one of "two.sided" (default), "greater" or "less".
+#' @param rowTestFUN A (vectorized) test function. Defaults to
+#'   \code{\link{rowWelchTests}}
 #' @param refFamily A character value which can be \describe{
 #'
 #'   \item{Simes}{The classical family of thresholds introduced by Simes (1986):
@@ -17,7 +19,9 @@
 #'
 #'   \item{kFWER}{A family \eqn{(t_k)} calibrated so that for each k,
 #'   \eqn{(t_k)} controls the (marginal) k-FWER.}}
-#'
+#' @param maxStepsDown Maximum number of steps down to be performed.
+#     \code{maxStepsDown=0} corresponds to single step JFWER control. 
+#     Defaults to 10.
 #' @param K For JER control over \code{1:K}, ie joint control of all
 #'   \eqn{k}-FWER, \eqn{k \le K}.
 #' @param verbose A boolean value: should extra info be printed?
@@ -82,6 +86,7 @@ calibrateJER <- function(X, B, alpha,
                          alternative = c("two.sided", "less", "greater"), 
                          rowTestFUN = rowWelchTests,
                          refFamily = c("Simes", "kFWER"),
+                         maxStepsDown = 10L,
                          K = nrow(X), verbose=TRUE) {
     alternative <- match.arg(alternative)
     ## sanity checks
@@ -97,7 +102,8 @@ calibrateJER <- function(X, B, alpha,
     x <- qnorm(1 - tests$p) 
 
     rm(tests)
-    res <- calibrateJER0(X0, refFamily = refFamily, alpha = alpha, stat = x, kMax = K)
+    res <- calibrateJER0(X0, refFamily = refFamily, alpha = alpha, 
+                         stat = x, maxStepsDown = maxStepsDown, kMax = K)
     calib <- list(stat = x, thr = res$thr, lambda = res$lambda) 
     
     return(calib)

@@ -18,7 +18,8 @@
 # single step control, and mandatory for step-down JFWER control. If
 # not provided, single step control is performed.
 # @param maxStepsDown Maximum number of steps down to be performed.
-#     \code{maxSteps=1} corresponds to single step JFWER control.
+#     \code{maxStepsDown=0} corresponds to single step JFWER control.
+#     Defaults to 10.
 # @param kMax For simultaneous control of (\eqn{k}-FWER for all
 #     \eqn{k \le k[max]}).
 # @param Rcpp If \code{TRUE}, some costly operations (sorting) are
@@ -64,15 +65,15 @@
 #
 
 calibrateJER0 <- function(mat,
-                             refFamily = c("Simes", "kFWER"),
-                             alpha,
-                             stat = NULL,
-                             maxStepsDown = 100,
-                             kMax = nrow(mat),
-                             Rcpp = TRUE,
-                             verbose = FALSE) {
+                          refFamily = c("Simes", "kFWER"),
+                          alpha,
+                          stat = NULL,
+                          maxStepsDown = 10L,
+                          kMax = nrow(mat),
+                          Rcpp = TRUE,
+                          verbose = FALSE) {
     ## This function is the main internal workhorse of the package.
-
+    
     ## sanity checks
     m <- nrow(mat);
     refFamily <- match.arg(refFamily)
@@ -97,29 +98,29 @@ calibrateJER0 <- function(mat,
             SimesPivotalStatistic(mat[C, ], kMax, nrow(mat))
         }
         ## not implemented yet:
-    # } else if (refFamily=="beta") {
-    #     sk <- betaThresholdFamily(mat, kMax=kMax, Rcpp=Rcpp)
-    #     pivStatFUN <- function(mat, kMax, C) {
-    #         betaPivotalStatistic(mat, kMax, C)
-    #     }
+        # } else if (refFamily=="beta") {
+        #     sk <- betaThresholdFamily(mat, kMax=kMax, Rcpp=Rcpp)
+        #     pivStatFUN <- function(mat, kMax, C) {
+        #         betaPivotalStatistic(mat, kMax, C)
+        #     }
     } else if (refFamily == "kFWER") {
         sk <- kFWERThresholdFamily(mat, kMax = kMax, Rcpp = Rcpp)
         pivStatFUN <- function(mat, kMax, C) {
             kFWERPivotalStatistic(mat, kMax, C)
         }
     }
-
+    
     ## (single-step) joint FWER control
     ## pivStat <-  pivotalStat(mat, m=m, kMax=kMax, FUN=pivStatFUN)
     pivStat <-  pivStatFUN(mat, kMax = kMax, 1:m)
     lambda <- stats::quantile(pivStat, alpha, type = 1)
     thr <- sk(lambda)
-
+    
     ## storing results
     thrMat <- matrix(thr, ncol = 1)
     pivMat <- matrix(pivStat, ncol = 1)
     lambdas <- lambda
-
+    
     ## step 0
     step <- 0
     thr1 <- thr[1]   ## (1-)FWER threshold
@@ -128,35 +129,35 @@ calibrateJER0 <- function(mat,
     } else {
         R1 <- which(stat >= thr1)
     }
-
-
+    
+    
     ## force 'convergence' if nb of "FWER rejections" is 0 (nothing to
     ## gain) or m (nothing left to be rejected)
     converged <- (length(R1) == 0L)  | (length(R1) == m)
-
+    
     while (!converged && step < maxStepsDown) {
         step <- step + 1
-
+        
         ## backup
         lambda0 <- lambda
         thr0 <- thr
         R10 <- R1
-
+        
         stopifnot(length(R1) > 0L)
         stopifnot(length(R1) < m)
-
+        
         mat1 <- mat[-R1, ]
-
+        
         ## re-calibration of lambda, *holding sk fixed*
         kMax <- min(kMax, nrow(mat1))
         C <- setdiff(1:m, R1)
         pivStat <-  pivStatFUN(mat, kMax, C)
         lambda <- stats::quantile(pivStat, alpha, type = 1)
         thr <- sk(lambda)
-
+        
         thr1 <- thr[1]   ## (1-)FWER threshold
         R1 <- which(stat >= thr1)
-
+        
         ## convergence reached?
         noNewRejection <- all(R1 %in% R10)
         ## In rare situations R1 is strictly included in R10,
@@ -171,14 +172,15 @@ calibrateJER0 <- function(mat,
             }
             converged <- TRUE ## stop the step-down process
         }
-
+        
         thrMat <- cbind(thrMat, thr)
         pivMat <- cbind(pivMat, pivStat)
         lambdas <- c(lambdas, lambda)
     }
-    if (step == maxStepsDown && maxStepsDown > 0) {
-        warning("Maximal number of steps down reached without reaching convergence")
-    }
+    # shouldn't be a warning
+    # if (step == maxStepsDown && maxStepsDown > 0) {
+    #     warning("Maximal number of steps down reached without reaching convergence")
+    # }
     if (!is.null(stat)) {
         ## upper bound on the number of false positives among first 'natural' rejections
         o <- order(stat, decreasing = TRUE)
@@ -190,7 +192,7 @@ calibrateJER0 <- function(mat,
         thr = thrMat,
         pivStat = pivMat,
         lambda = lambdas)
-
+    
     res <- list(thr = thr,
                 pivStat = pivStat,
                 lambda = lambda,

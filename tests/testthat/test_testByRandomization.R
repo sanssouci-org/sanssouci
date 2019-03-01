@@ -36,7 +36,7 @@ test_that("Correctness of sign-flipping p-values", {
     res <- testByRandomization(X = mat, B = 100, rand.p.value = TRUE)
     expect_equal(res$flavor, "flip")
 
-        # Two different ways of getting sign flipping p-values give identical results"
+    # Two different ways of getting sign flipping p-values give identical results"
     T0 <- cbind(res$T0, res$T)
     sw <- sweep(abs(T0), MARGIN = 1, STATS = abs(res$T), FUN = ">=")
     p <- rowMeans(sw)
