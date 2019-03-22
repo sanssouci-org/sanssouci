@@ -55,10 +55,10 @@ rowWilcoxonTests <- function(mat, categ, alternative = c("two.sided", "less", "g
     alternative <- match.arg(alternative)
     categCheck(categ, ncol(mat))
 
-    rks <- rowRanks(mat)
+    rks <- rowRanks(mat, ties.method = "average")
     ny <- sum(categ == 0)
     nx <- sum(categ == 1)
-    min_stat <- ny*(ny + 1)/2  ## mininmal rank sum
+    min_stat <- nx*(nx + 1)/2  ## mininmal rank sum
 
     wx <- which(categ == 1)
     stat <- rowSums(rks[, wx])
@@ -66,9 +66,10 @@ rowWilcoxonTests <- function(mat, categ, alternative = c("two.sided", "less", "g
     
     ## gaussian approximation for p-values (presence of ties or n > 50)
     ## source: 'stats:::wilcox.test.default'
-    n_ties <- rowTabulates(rks)  ## note: invariant to sampling of y!
-    ties <- rowSums(n_ties^3 - n_ties) # => to be row-ified
-    sigma <- sqrt((ny*nx/12) * ((ny+nx+1) - ties/((ny + nx) * (ny+nx-1))))
+    mode(rks) <- "integer"   # rowTabulates only takes integer values
+    n_ties <- rowTabulates(rks)  
+    ties <- rowSums(n_ties^3 - n_ties) 
+    sigma <- sqrt((nx * ny / 12) * ((ny + nx + 1) - ties/((ny + nx) * (ny + nx - 1))))
     
     z <- stat - ny*nx/2
     CORRECTION <- 0

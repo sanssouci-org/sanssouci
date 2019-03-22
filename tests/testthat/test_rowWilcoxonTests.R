@@ -6,7 +6,8 @@ test_that("rowWilcoxonTests <=> wilcox.test", {
     n <- 100
     ## null distribution
     mat <- matrix(rnorm(p*n), ncol = n)
-    cls <- rep(c(0, 1), times = c(n/2, n-n/2))
+    n0 <- round(n/3)
+    cls <- rep(c(0, 1), times = c(n0, n-n0))
     
     for (alt in c("two.sided", "greater", "less")) {
         fwt <- rowWilcoxonTests(mat = mat, categ = cls, alternative = alt)
