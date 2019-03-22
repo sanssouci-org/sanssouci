@@ -16,8 +16,8 @@ testByRandomization(X, B, alternative = c("two.sided", "less",
 \item{alternative}{A character string specifying the alternative hypothesis.
 Must be one of "two.sided" (default), "greater" or "less".}
 
-\item{rowTestFUN}{A (vectorized) test function. Defaults to
-\code{\link{rowWelchTests}}}
+\item{rowTestFUN}{A (vectorized) test function used in the two-sample case.
+Defaults to \code{\link{rowWelchTests}}}
 
 \item{rand.p.value}{A boolean value: should randomization \eqn{p}-values be
 calculated and returned? Defaults to @FALSE}
@@ -46,12 +46,7 @@ a list with elements: \describe{
 
   \item{rand}{A \eqn{m \times B} matrix of randomization \eqn{p}-values (only
   if \code{rand.p.value} is \code{TRUE} )}
-
-  \item{df}{A vector of \eqn{m} degrees of freedom for the observed
-  statistics (only for flavor "perm")}
-
-  \item{df0}{A \eqn{m \times B} matrix of degrees of freedom on permuted data
-  (only for flavor "perm" )}}
+}
 }
 \description{
 Randomization-based testing using permutation or sign-flipping
@@ -90,20 +85,28 @@ B <- 1e3
 ## two-sample data
 sim <- gaussianSamples(m, rho, n, pi0, SNR = 2, prob = 0.5)
 tests <- testByRandomization(sim$X, B)
+testsW <- testByRandomization(sim$X, B = 10, rowTestFUN = rowWilcoxonTests)
 
 ## show test statistics
 pch <- 20
 colStat <- 1+sim$H
-plot(tests$T, col = colStat, main = "Test statistics", pch  =pch)
+plot(tests$T, col = colStat, main = "T-Test statistics", pch = pch)
 legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
 
+plot(testsW$T, col = colStat, main = "Wilcoxon test statistics", pch = pch)
+legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
+
+# one-sample data:
 sim <- gaussianSamples(m, rho, n, pi0, SNR=2)
-tests <- testByRandomization(sim$X, B)
+tests <- testByRandomization(sim$X, B, alternative = "two.sided")
 
 ## show test statistics
 pch <- 20
 colStat <- 1+sim$H
 plot(tests$T, col = colStat, main = "Test statistics", pch = pch)
+legend("topleft", c("H0", "H1"), pch = pch, col = 1:2)
+
+plot(-log10(tests$p), col = colStat, main = "-log[10](p-value)", pch = pch)
 legend("topleft", c("H0", "H1"), pch = pch, col = 1:2)
 
 }

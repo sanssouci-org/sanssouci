@@ -6,8 +6,8 @@
 #'
 #' @param B A numeric value, the number of permutations to be performed
 #'
-#' @param rowTestFUN A (vectorized) test function. Defaults to
-#'   \code{\link{rowWelchTests}}
+#' @param rowTestFUN A (vectorized) test function used in the two-sample case.
+#'   Defaults to \code{\link{rowWelchTests}}
 #'
 #' @param alternative A character string specifying the alternative hypothesis.
 #'   Must be one of "two.sided" (default), "greater" or "less".
@@ -63,13 +63,7 @@
 #'
 #'   \item{rand}{A \eqn{m \times B} matrix of randomization \eqn{p}-values (only
 #'   if \code{rand.p.value} is \code{TRUE} )}
-#'
-#'   \item{df}{A vector of \eqn{m} degrees of freedom for the observed
-#'   statistics (only for flavor "perm")}
-#'
-#'   \item{df0}{A \eqn{m \times B} matrix of degrees of freedom on permuted data
-#'   (only for flavor "perm" )}}
-#'
+#'}
 #'
 #' @examples
 #'
@@ -82,20 +76,28 @@
 #' ## two-sample data
 #' sim <- gaussianSamples(m, rho, n, pi0, SNR = 2, prob = 0.5)
 #' tests <- testByRandomization(sim$X, B)
+#' testsW <- testByRandomization(sim$X, B = 10, rowTestFUN = rowWilcoxonTests)
 #'
 #' ## show test statistics
 #' pch <- 20
 #' colStat <- 1+sim$H
-#' plot(tests$T, col = colStat, main = "Test statistics", pch  =pch)
+#' plot(tests$T, col = colStat, main = "T-Test statistics", pch = pch)
 #' legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
 #'
+#' plot(testsW$T, col = colStat, main = "Wilcoxon test statistics", pch = pch)
+#' legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
+#' 
+#' # one-sample data:
 #' sim <- gaussianSamples(m, rho, n, pi0, SNR=2)
-#' tests <- testByRandomization(sim$X, B)
+#' tests <- testByRandomization(sim$X, B, alternative = "two.sided")
 #'
 #' ## show test statistics
 #' pch <- 20
 #' colStat <- 1+sim$H
 #' plot(tests$T, col = colStat, main = "Test statistics", pch = pch)
+#' legend("topleft", c("H0", "H1"), pch = pch, col = 1:2)
+#'
+#' plot(-log10(tests$p), col = colStat, main = "-log[10](p-value)", pch = pch)
 #' legend("topleft", c("H0", "H1"), pch = pch, col = 1:2)
 #'
 #' @importFrom matrixStats rowRanks
@@ -142,24 +144,23 @@ testByRandomization <- function(X, B,
         rwt <- rowTestFUN(X, categ = categ, alternative = alternative)
         T <- rwt$statistic
         p <- rwt$p.value  ## parametric p-value
-        df <- rwt$parameter  ## degrees of freedom of the T statistics
+        # df <- rwt$parameter  ## degrees of freedom (for T tests; possibly NULL for other tests)
         rm(rwt)
         
         ## under H0
         T0 <- matrix(nrow = m, ncol = B) ## test statistics under the null
         p0 <- matrix(nrow = m, ncol = B) ## parametric p-value
-        df0 <- matrix(nrow = m, ncol = B) 
+        # df0 <- matrix(nrow = m, ncol = B) 
         for (bb in 1:B) {
             categ_perm <- sample(categ, length(categ))
             rwt <- rowTestFUN(X, categ = categ_perm, alternative = alternative)
             T0[, bb] <- rwt$statistic
             p0[, bb] <- rwt$p.value
-            df0[, bb] <- rwt$parameter
         }
         res <- list(T = T, T0 = T0, 
                     flavor = flavor,
-                    p = p, p0 = p0,
-                    df = df, df0 = df0)
+                    p = p, p0 = p0)
+                    # df = df, df0 = df0)
     } else if (flavor == "flip") {
         ## observed test statistics and p-values
         T <- rowSums(X)/sqrt(n)

@@ -3,6 +3,13 @@ Package: sansSouci
 
 Version 0.6.1-9000
 
+* Added rowWilcoxonTests() for vectorized Wilcoxon rank sum tests, and 
+  corresponding tests. Removed wilcoxStats() which had become redundant, and 
+  simulateMein() which was using it and was not being used. 
+
+* testByRandomization() does not return 'df' and 'df0' anymore as these were
+  unused idiosyncrasies of t-tests (e.g. not relevant for Wilcoxon tests).
+
 * Renamed NEWS.md to NEWS and reformatted for news(package = "sansSouci") to 
   become informative.
 
