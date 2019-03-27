@@ -52,6 +52,7 @@
 #' all(abs(fbt$p.value-pbt[, "p.value"]) < 1e-10)  ## same results
 #' all(abs(fbt$statistic-pbt[, "statistic.number of successes"]) < 1e-10)  ## same results
 #' 
+#' @importFrom stats pbinom dbinom
 rowBinomialTests <- function(mat, categ, alternative = c("two.sided", "less", "greater"), warn = TRUE) {
     alternative <- match.arg(alternative)
     if (alternative == "two.sided" & warn) {

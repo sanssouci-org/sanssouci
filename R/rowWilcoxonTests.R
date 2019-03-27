@@ -88,23 +88,3 @@ rowWilcoxonTests <- function(mat, categ, alternative = c("two.sided", "less", "g
     class(res) <- "htest"
     res
 }
-
-## exact p-values (no ties, n < 50)
-.WilcoxonExactPvalues <- function(STATISTIC, n.x, n.y, alternative) {
-    if (alternative == "two.sided") {
-        p <- numeric(length(STATISTIC))
-        w1 <- which(STATISTIC > (n.x * n.y/2))
-        p[w1] <- pwilcox(STATISTIC[w1] - 1, n.x, n.y, lower.tail = FALSE)
-        w2 <- which(STATISTIC <= (n.x * n.y/2))
-        p[w2] <- pwilcox(STATISTIC[w2], n.x, n.y, lower.tail = TRUE)
-        pmin(2 * p, 1)
-    }
-    else if (alternative == "greater") {
-        p <- pwilcox(STATISTIC - 1, n.x, n.y, lower.tail = FALSE)
-    }
-    else if (alternative == "less") {
-        p <- pwilcox(STATISTIC, n.x, n.y, lower.tail = TRUE)
-    }
-    p
-}
-

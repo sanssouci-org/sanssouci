@@ -1,5 +1,5 @@
 ---
-title: "Confidence envelopes for localized signal"
+title: "Confidence envelopes for spatially structured hypotheses"
 author: "G. Durand, G. Blanchard, P. Neuvial, E. Roquain"
 date: "June 20, 2018"
 output:
@@ -7,6 +7,9 @@ output:
     df_print: paged
   pdf_document: default
 bibliography: sansSouci.bib
+vignette: >
+  %\VignetteEngine{knitr::knitr}
+  %\VignetteIndexEntry{Confidence envelopes for spatially structured hypotheses}
 ---
 
 ```{r setup, include=FALSE}
