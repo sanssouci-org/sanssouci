@@ -18,7 +18,7 @@
 #'
 #' @return A list with class "htest" containing the following components:
 #'   \describe{ \item{statistic}{the value of the statistics} \item{p.value}{the
-#'   p-values for the tests}} \item{meanDiff}{the mean difference}
+#'   p-values for the tests}} 
 #'
 #' @details The p-values are computed using the normal approximation as
 #'   described in the \code{\link{wilcox.test}} function. The exact p-values

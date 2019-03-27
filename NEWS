@@ -3,9 +3,20 @@ Package: sansSouci
 
 Version 0.6.1-9000
 
+* BUG FIX	in rowWilcoxonTests(): ties were not handled the same way	as in
+  wilcox.test() because the default of matrixStats::rowRanks(ties = "max")
+  is not the same as the default of rank(ties = "average"). Now also
+  *rounding* the ranks in order to make use of matrixStats::rowTabulates(),
+  which itself only works with	integer	values.
+   
+* Added rowBinomialTests() for vectorized Binomial tests, and corresponding 
+  tests scripts. Note that two-sided Binomial tests are in fact not vecorized 
+  yet.
+  
 * Added rowWilcoxonTests() for vectorized Wilcoxon rank sum tests, and 
-  corresponding tests. Removed wilcoxStats() which had become redundant, and 
-  simulateMein() which was using it and was not being used. 
+  corresponding tests scripts. Removed wilcoxStats() which had become 
+  redundant, and simulateMein() which was using it and which was not being 
+  used. 
 
 * testByRandomization() does not return 'df' and 'df0' anymore as these were
   unused idiosyncrasies of t-tests (e.g. not relevant for Wilcoxon tests).
