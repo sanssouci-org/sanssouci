@@ -15,3 +15,5 @@ appveyor.yml
 ^Rout$
 ^results$
 ^data/.*\.rds$
+
+TODO.txt

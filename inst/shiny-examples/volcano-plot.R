@@ -1,23 +1,26 @@
-library("plotly")
-library("sansSouci")  ## devtools::install_github("pneuvial/sanssouci@develop")
-
-data(volcano, package = "sansSouci")
-dataSets <- unique(volcano[["dataSet"]])
-volcano[["logp"]] <- log10(volcano[["p.value"]])
-
 ui <- fluidPage(
     titlePanel("Post hoc confidence bounds for volcano plots"),
     inputPanel(
         selectInput("dataSet", "Data set", choices = dataSets, selected = "bourgon"),
         numericInput("alpha", "Target confidence level:", 0.05, min = 0, max = 1)),
-    wellPanel(h3(textOutput("bound")),
-              plotlyOutput("plot"))
+    fluidRow(
+        column(9,
+               wellPanel(h3(textOutput("bound")),
+                         plotlyOutput("plot"))),
+        column(3,
+               wellPanel(h3("selected genes"),
+                         textOutput("brush")),
+               wellPanel(h3("clicked genes"),
+                         textOutput("click"))
+        )
+    )
 )
 
 server <- function(input, output, session) {
     
     volc <- reactive({ 
-        volcano[which(volcano$dataSet == input$dataSet), ]
+        dat <- volcano[which(volcano$dataSet == input$dataSet), ]
+        subset(dat, abs(meanDiff) > 0.2 | logp < -1)
     })
     
     output$plot <- renderPlotly({
@@ -25,12 +28,33 @@ server <- function(input, output, session) {
         rg <- range(datly$meanDiff)
         rg <- max(abs(rg))*c(-1,1)
 
-        #Vbar0 <- upperBoundFP(sort(x, decreasing=TRUE), thr)
-        plot_ly(datly, type = "scatter", mode = "markers",
-                x = ~meanDiff, y = ~ -logp, key = ~id, 
-                text = ~id, hoverinfo = 'text') %>%
+        d <- event_data("plotly_selected")
+        print(d)
+        mm <- match(d$key, datly[["id"]])
+        print(mm)
+        datly$selected <- 0
+        datly$selected[mm] <- 1
+        table(datly$selected)
+        
+        library("ggplot2")
+        p <- ggplot(datly, aes(x = meanDiff, y = -logp, 
+                               colour = factor(selected), key = id))
+        p <- p + geom_point(alpha = 0.2)
+        p <- p + xlim(range(datly$meanDiff))
+        p <- p + ylim(c(0, max(-datly$logp)))
+        ggplotly(p)  %>% 
+            config(displayModeBar = F) %>%
             layout(dragmode = "select",
                    xaxis = list(range = rg))
+    })
+
+    output$brush <- renderText({
+        d <- event_data("plotly_selected")
+        if (is.null(d)) {
+            "Nothing to show here yet. Need a selection."
+        } else {
+            d$key
+        }
     })
     
     output$bound <- renderText({
@@ -53,9 +77,15 @@ server <- function(input, output, session) {
         # msg <- paste(msg, str(d), collapse = "\n")
         msg
     })
+    
+    output$click <- renderPrint({
+        d <- event_data("plotly_click")
+        if (is.null(d)) "Click events appear here (double-click to clear)" else d
+    })
 }
 ## TODO: 
 ## x select data set
 ## * export selected genes
 ## * multiple selection: exists since dec 17 in js, not in R yet
-shinyApp(ui, server)
+## * on click: afficher les termes du GO correspondants
+#shinyApp(ui, server)

@@ -4,19 +4,20 @@
 \alias{testByRandomization}
 \title{Randomization-based testing}
 \usage{
-testByRandomization(X, B, cls = colnames(X), alternative = c("two.sided",
-  "less", "greater"), rand.p.value = FALSE, seed = NULL)
+testByRandomization(X, B, alternative = c("two.sided", "less",
+  "greater"), rowTestFUN = rowWelchTests, rand.p.value = FALSE,
+  seed = NULL)
 }
 \arguments{
 \item{X}{a matrix of \code{m} variables by \code{n} observations}
 
 \item{B}{A numeric value, the number of permutations to be performed}
 
-\item{cls}{A vector of length \code{n} class labels in \code{0,1} for flavor
-"perm". Defaults to colnames(X).}
-
 \item{alternative}{A character string specifying the alternative hypothesis.
 Must be one of "two.sided" (default), "greater" or "less".}
+
+\item{rowTestFUN}{A (vectorized) test function used in the two-sample case.
+Defaults to \code{\link{rowWelchTests}}}
 
 \item{rand.p.value}{A boolean value: should randomization \eqn{p}-values be
 calculated and returned? Defaults to @FALSE}
@@ -45,26 +46,23 @@ a list with elements: \describe{
 
   \item{rand}{A \eqn{m \times B} matrix of randomization \eqn{p}-values (only
   if \code{rand.p.value} is \code{TRUE} )}
-
-  \item{df}{A vector of \eqn{m} degrees of freedom for the observed
-  statistics (only for flavor "perm")}
-
-  \item{df0}{A \eqn{m \times B} matrix of degrees of freedom on permuted data
-  (only for flavor "perm" )}}
+}
 }
 \description{
 Randomization-based testing using permutation or sign-flipping
 }
 \details{
-The type of randomization is determined by the parameter \code{cls}.
-  If \code{cls} does not contain two distinct values (or is \code{NULL}), a
-  one-sample test is performed using randomization (flavor "flip"). If it
-  contains two distinct values, a two-sample test is perfomed using
-  permutations (flavor "perm").
+The type of randomization is determined by the column names of
+  \code{X}. If these column names have exactly two distinct values, the
+  corresponding columns are interpreted as two samples and a two-sample
+  permutation-based test  is performed (flavor "perm"). Otherwise (including
+  if \code{X} does not have column names), a one-sample test is performed
+  using sign-flipping (flavor "flip").
 
   For permutation, we test the null hypothesis: "both groups have the same
-  mean" against the alternative specified by parameter \code{alternative}.
-  The test is Welch's two-sample test for unequal variances. Permuted test
+  mean" against the alternative specified by parameter \code{alternative}. By
+  default, the test is Welch's two-sample test for unequal variances, but
+  other tests may be used via the argument \code{rowTestFUN}.  Permuted test
   statistics are calculated by B permutations of the group labels.
   Corresponding observed and permuted p-values are calculated as the
   proportion of permutations (including the identity) for which the permuted
@@ -87,20 +85,28 @@ B <- 1e3
 ## two-sample data
 sim <- gaussianSamples(m, rho, n, pi0, SNR = 2, prob = 0.5)
 tests <- testByRandomization(sim$X, B)
+testsW <- testByRandomization(sim$X, B = 10, rowTestFUN = rowWilcoxonTests)
 
 ## show test statistics
 pch <- 20
 colStat <- 1+sim$H
-plot(tests$T, col = colStat, main = "Test statistics", pch  =pch)
+plot(tests$T, col = colStat, main = "T-Test statistics", pch = pch)
 legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
 
+plot(testsW$T, col = colStat, main = "Wilcoxon test statistics", pch = pch)
+legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
+
+# one-sample data:
 sim <- gaussianSamples(m, rho, n, pi0, SNR=2)
-tests <- testByRandomization(sim$X, B)
+tests <- testByRandomization(sim$X, B, alternative = "two.sided")
 
 ## show test statistics
 pch <- 20
 colStat <- 1+sim$H
 plot(tests$T, col = colStat, main = "Test statistics", pch = pch)
+legend("topleft", c("H0", "H1"), pch = pch, col = 1:2)
+
+plot(-log10(tests$p), col = colStat, main = "-log[10](p-value)", pch = pch)
 legend("topleft", c("H0", "H1"), pch = pch, col = 1:2)
 
 }

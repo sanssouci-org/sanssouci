@@ -1,6 +1,6 @@
 Package: sansSouci
-Version: 0.7.0
-Date: 2018-06-19
+Version: 0.8.0
+Date: 2019-03-27
 Title: Post hoc inference through JFWER control
 Authors@R: c(person("Benjamin", "Sadacca", role="ctb"),
              person("Gilles", "Blanchard", role="aut"),
@@ -24,4 +24,4 @@ Suggests:
     testthat,
     rbenchmark
 VignetteBuilder: knitr
-RoxygenNote: 6.0.1.9000
+RoxygenNote: 6.1.1

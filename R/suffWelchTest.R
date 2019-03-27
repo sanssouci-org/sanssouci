@@ -1,33 +1,47 @@
 #' Welch test from sufficient statistics
 #'
 #' @param mx A numeric value or vector, the sample average for condition "x"
-#' @param my A numeric value or vector of the same length as 'mx', the sample average for condition "y"
-#' @param sx A numeric value or vector of the same length as 'mx', the standard deviation for condition "x"
-#' @param sy A numeric value or vector of the same length as 'mx', the standard deviation for condition "y"
-#' @param nx A numeric value or vector of the same length as 'mx', the sample size for condition "x"
-#' @param ny A numeric value or vector of the same length as 'mx', the sample size for condition "y"
-#' @param alternative A character string specifying the alternative hypothesis. Currently only "two.sided" is implemented
-#' @return A list with class "htest" containing the following components: \describe{
-#' \item{statistic}{the value of the t-statistic}
-#' \item{parameter}{the degrees of freedom for the t-statistic}
-#' \item{p.value}{the p-value for the test}
-#' }
+#' @param my A numeric value or vector of the same length as 'mx', the sample
+#'   average for condition "y"
+#' @param sx A numeric value or vector of the same length as 'mx', the standard
+#'   deviation for condition "x"
+#' @param sy A numeric value or vector of the same length as 'mx', the standard
+#'   deviation for condition "y"
+#' @param nx A numeric value or vector of the same length as 'mx', the sample
+#'   size for condition "x"
+#' @param ny A numeric value or vector of the same length as 'mx', the sample
+#'   size for condition "y"
+#' @param alternative A character string specifying the alternative hypothesis.
+#'   Currently only "two.sided" is implemented
+#' @return A list with class "htest" containing the following components:
+#'   \describe{ \item{statistic}{the value of the t-statistic}
+#'   \item{parameter}{the degrees of freedom for the t-statistic}
+#'   \item{p.value}{the p-value for the test} }
 #' @author Pierre Neuvial
-#' 
+#'
+#' @details In accordance with the implementation of \code{\link[stats]{t.test}} and friends, we
+#'   follow the rule that 'alternative = "greater"' is the alternative that 'x'
+#'   has a larger  mean than 'y'.
+#'
 #' @export
 #' @importFrom stats pt
 #' @examples
-#' 
+#'
 #' # Reproducing the results of the 't.test' function
-#'  
+#'
 #' x <- rnorm(100)
-#' y <- rnorm(34)
+#' y <- rnorm(34, mean = 1)
 #' target <- t.test(x, y)
 #' swt <- suffWelchTest(mean(x), mean(y), sd(x), sd(y), length(x), length(y))
 #' print(swt$statistic - target$statistic)
 #' print(swt$p.value - target$p.value)
 #' print(swt$parameter-target$parameter)
 #' 
+#' target <- t.test(x, y, alternative = "greater")
+#' swt <- suffWelchTest(mean(x), mean(y), sd(x), sd(y), length(x), length(y), alternative = "greater")
+#' print(swt$statistic - target$statistic)
+#' print(swt$p.value - target$p.value)
+#' print(swt$parameter-target$parameter)
 suffWelchTest <- function(mx, my, sx, sy, nx, ny, 
                             alternative = c("two.sided", "less", "greater")) {
     alternative <- match.arg(alternative)

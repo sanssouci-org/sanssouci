@@ -12,10 +12,13 @@
 #' @param mat A numeric matrix whose rows correspond to variables and columns to
 #'   observations
 #'
-#' @param categ A vector of \code{ncol(mat)} categories for the observations
+#' @param categ A vector of \code{ncol(mat)} categories in \eqn{'0','1'} for the
+#'   observations
 #'
 #' @param alternative A character string specifying the alternative hypothesis.
-#'   Must be one of "two.sided" (default), "greater" or "less".
+#'   Must be one of "two.sided" (default), "greater" or "less". As in
+#'   \code{\link{t.test}}, alternative = "greater" is the alternative that the
+#'   class '1' has a larger mean than the class '0'.
 #'
 #' @return A list with class "htest" containing the following components:
 #'   \describe{ \item{statistic}{the value of the t-statistics}
@@ -35,28 +38,40 @@
 #' n <- 38
 #' mat <- matrix(rnorm(p*n), ncol=n)
 #' cls <- rep(c(0, 1), times=c(27, n-27))
-#' fwt <- rowWelchTests(mat, categ=cls)
+#' fwt <- rowWelchTests(mat, categ=cls, alternative = "greater")
 #' str(fwt)
 #'
 #' # compare with ordinary t.test:
 #' pwt <- apply(mat, 1, FUN=function(x) {
-#'    t.test(x[cls==1], x[cls==0])$p.value
+#'    t.test(x[cls==1], x[cls==0], alternative = "greater")$p.value
 #' })
-#' sum(abs(fwt$p.value-pwt))  ## same results
+#' all(abs(fwt$p.value-pwt) < 1e-10)  ## same results
 #' 
-rowWelchTests <- function(mat, categ = colnames(mat), 
-                          alternative = c("two.sided", "less", "greater")) {
-    cats <- unique(categ)
-    if (length(cats) != 2) {
-        stop("Two categories expected!")
-    }
+rowWelchTests <- function(mat, categ, alternative = c("two.sided", "less", "greater")) {
+    alternative <- match.arg(alternative)
+    categCheck(categ, ncol(mat))
+
     sstats <- getSummaryStats(mat, categ = categ)
-    X <- sstats[[2]]
-    Y <- sstats[[1]]
+    Y <- sstats[["0"]]
+    X <- sstats[["1"]]  ## as per the doc of t.test:
+    ## 'alternative = "greater"' is the alternative that 'x' has a larger  mean
+    ## than 'y'.
     swt <- suffWelchTest(X[["mean"]], Y[["mean"]],
                          X[["sd"]], Y[["sd"]],
                          X[["n"]], Y[["n"]],
                          alternative = alternative)
-    swt[["meanDiff"]] <- Y[["mean"]] - X[["mean"]]
+    swt[["meanDiff"]] <- X[["mean"]] - Y[["mean"]]
     swt
 }
+
+
+
+categCheck <- function(categ, n) {
+    stopifnot(length(categ) == n)
+    categ <- as.factor(categ)
+    cats <- levels(categ)
+    if (!identical(cats, c("0", "1"))) {
+        stop("Expected two categories named '0' and '1'!")
+    }
+}
+

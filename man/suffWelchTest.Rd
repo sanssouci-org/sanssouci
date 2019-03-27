@@ -4,46 +4,61 @@
 \alias{suffWelchTest}
 \title{Welch test from sufficient statistics}
 \usage{
-suffWelchTest(mx, my, sx, sy, nx, ny, alternative = c("two.sided", "less",
-  "greater"))
+suffWelchTest(mx, my, sx, sy, nx, ny, alternative = c("two.sided",
+  "less", "greater"))
 }
 \arguments{
 \item{mx}{A numeric value or vector, the sample average for condition "x"}
 
-\item{my}{A numeric value or vector of the same length as 'mx', the sample average for condition "y"}
+\item{my}{A numeric value or vector of the same length as 'mx', the sample
+average for condition "y"}
 
-\item{sx}{A numeric value or vector of the same length as 'mx', the standard deviation for condition "x"}
+\item{sx}{A numeric value or vector of the same length as 'mx', the standard
+deviation for condition "x"}
 
-\item{sy}{A numeric value or vector of the same length as 'mx', the standard deviation for condition "y"}
+\item{sy}{A numeric value or vector of the same length as 'mx', the standard
+deviation for condition "y"}
 
-\item{nx}{A numeric value or vector of the same length as 'mx', the sample size for condition "x"}
+\item{nx}{A numeric value or vector of the same length as 'mx', the sample
+size for condition "x"}
 
-\item{ny}{A numeric value or vector of the same length as 'mx', the sample size for condition "y"}
+\item{ny}{A numeric value or vector of the same length as 'mx', the sample
+size for condition "y"}
 
-\item{alternative}{A character string specifying the alternative hypothesis. Currently only "two.sided" is implemented}
+\item{alternative}{A character string specifying the alternative hypothesis.
+Currently only "two.sided" is implemented}
 }
 \value{
-A list with class "htest" containing the following components: \describe{
-\item{statistic}{the value of the t-statistic}
-\item{parameter}{the degrees of freedom for the t-statistic}
-\item{p.value}{the p-value for the test}
-}
+A list with class "htest" containing the following components:
+  \describe{ \item{statistic}{the value of the t-statistic}
+  \item{parameter}{the degrees of freedom for the t-statistic}
+  \item{p.value}{the p-value for the test} }
 }
 \description{
 Welch test from sufficient statistics
 }
+\details{
+In accordance with the implementation of \code{\link[stats]{t.test}} and friends, we
+  follow the rule that 'alternative = "greater"' is the alternative that 'x'
+  has a larger  mean than 'y'.
+}
 \examples{
 
 # Reproducing the results of the 't.test' function
- 
+
 x <- rnorm(100)
-y <- rnorm(34)
+y <- rnorm(34, mean = 1)
 target <- t.test(x, y)
 swt <- suffWelchTest(mean(x), mean(y), sd(x), sd(y), length(x), length(y))
 print(swt$statistic - target$statistic)
 print(swt$p.value - target$p.value)
 print(swt$parameter-target$parameter)
 
+target <- t.test(x, y, alternative = "greater")
+swt <- suffWelchTest(mean(x), mean(y), sd(x), sd(y), length(x), length(y), alternative = "greater")
+print(swt$statistic - target$statistic)
+print(swt$p.value - target$p.value)
+print(swt$parameter-target$parameter)
 }
 \author{
 Pierre Neuvial

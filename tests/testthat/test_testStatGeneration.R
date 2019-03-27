@@ -53,23 +53,3 @@ test_that("Simulation of Gaussian null hypotheses from covariance matrix", {
     expect_equal(nrow(Y), m)
     expect_equal(ncol(Y), n)
 })
-
-test_that("Simulate test statistics as in Meinshausen (2006)", {
-    m <- 123
-    rho <- 0.2
-    n <- 100
-    pi0 <- 0.5
-    B <- 1e3
-
-    sim <- simulateMein2006(m, rho, n, B, pi0, SNR=1)
-    expect_equal(length(sim$x), m)
-    expect_equal(nrow(sim$X0), m)
-    expect_equal(length(sim$H), m)
-    expect_equal(ncol(sim$X0), B)
-    expect_equal(round(m*pi0), m-sum(sim$H))
-
-    stat <- sim$x
-    H <- sim$H
-    sa <- tapply(stat, H, mean)
-    expect_gt(sa[2], sa[1])  ## test stat is larger under H1
-})

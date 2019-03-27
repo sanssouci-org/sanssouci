@@ -4,8 +4,9 @@
 \alias{calibrateJER}
 \title{Calibration of joint Family-Wise Error Rate thresholds}
 \usage{
-calibrateJER(X, B, alpha, alternative = c("two.sided", "less", "greater"),
-  refFamily = c("Simes", "kFWER"), K = nrow(X), verbose = TRUE)
+calibrateJER(X, B, alpha, alternative = c("two.sided", "less",
+  "greater"), rowTestFUN = rowWelchTests, refFamily = c("Simes",
+  "kFWER"), maxStepsDown = 10L, K = nrow(X), verbose = TRUE)
 }
 \arguments{
 \item{X}{A matrix of \eqn{m} variables (hypotheses) by \eqn{n} observations.
@@ -19,6 +20,9 @@ second sample.}
 \item{alternative}{A character string specifying the alternative hypothesis.
 Must be one of "two.sided" (default), "greater" or "less".}
 
+\item{rowTestFUN}{A (vectorized) test function. Defaults to
+\code{\link{rowWelchTests}}}
+
 \item{refFamily}{A character value which can be \describe{
 
   \item{Simes}{The classical family of thresholds introduced by Simes (1986):
@@ -27,6 +31,8 @@ Must be one of "two.sided" (default), "greater" or "less".}
 
   \item{kFWER}{A family \eqn{(t_k)} calibrated so that for each k,
   \eqn{(t_k)} controls the (marginal) k-FWER.}}}
+
+\item{maxStepsDown}{Maximum number of steps down to be performed.}
 
 \item{K}{For JER control over \code{1:K}, ie joint control of all
 \eqn{k}-FWER, \eqn{k \le K}.}
@@ -46,7 +52,10 @@ A list with elements: \describe{
   \item{lambda}{A numeric value, the result of the calibration} }
 }
 \description{
-Calibration of of JER thresholds from one or two-sample tests
+Calibration of of JER thresholds using one or two-sample tests
+}
+\details{
+See \code{\link{testByRandomization}} for a description of the tests performed for calibration.
 }
 \examples{
 
@@ -55,8 +64,8 @@ pi0 <- 0.8
 sim <- gaussianSamples(m = m, rho = 0.2, n = 100,
                        pi0 = pi0, SNR = 3, prob = 0.5)
 X <- sim$X
-cal <- calibrateJER(X, B = 1e3, alpha = 0.2, refFamily="Simes")
-cal$lambda # > alpha (whp) is rho > 0
+cal <- calibrateJER(X, B = 1e3, alpha = 0.2, refFamily="Simes", alt="greater")
+cal$lambda # > alpha (whp) if rho > 0
 
 # Application 1: confidence envelope
 #   ie upper confidence bound for the number of false positives 

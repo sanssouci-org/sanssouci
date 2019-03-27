@@ -6,8 +6,8 @@
 #'
 #' @param B A numeric value, the number of permutations to be performed
 #'
-#' @param cls A vector of length \code{n} class labels in \code{0,1} for flavor
-#'   "perm". Defaults to colnames(X).
+#' @param rowTestFUN A (vectorized) test function used in the two-sample case.
+#'   Defaults to \code{\link{rowWelchTests}}
 #'
 #' @param alternative A character string specifying the alternative hypothesis.
 #'   Must be one of "two.sided" (default), "greater" or "less".
@@ -18,15 +18,17 @@
 #' @param seed An integer (or NULL) value used as a seed for random number
 #'   generation. If \code{NULL}, no seed is specified
 #'
-#' @details The type of randomization is determined by the parameter \code{cls}.
-#'   If \code{cls} does not contain two distinct values (or is \code{NULL}), a
-#'   one-sample test is performed using randomization (flavor "flip"). If it
-#'   contains two distinct values, a two-sample test is perfomed using
-#'   permutations (flavor "perm").
+#' @details The type of randomization is determined by the column names of
+#'   \code{X}. If these column names have exactly two distinct values, the
+#'   corresponding columns are interpreted as two samples and a two-sample
+#'   permutation-based test  is performed (flavor "perm"). Otherwise (including
+#'   if \code{X} does not have column names), a one-sample test is performed
+#'   using sign-flipping (flavor "flip").
 #'
 #'   For permutation, we test the null hypothesis: "both groups have the same
-#'   mean" against the alternative specified by parameter \code{alternative}.
-#'   The test is Welch's two-sample test for unequal variances. Permuted test
+#'   mean" against the alternative specified by parameter \code{alternative}. By
+#'   default, the test is Welch's two-sample test for unequal variances, but
+#'   other tests may be used via the argument \code{rowTestFUN}.  Permuted test
 #'   statistics are calculated by B permutations of the group labels.
 #'   Corresponding observed and permuted p-values are calculated as the
 #'   proportion of permutations (including the identity) for which the permuted
@@ -61,13 +63,7 @@
 #'
 #'   \item{rand}{A \eqn{m \times B} matrix of randomization \eqn{p}-values (only
 #'   if \code{rand.p.value} is \code{TRUE} )}
-#'
-#'   \item{df}{A vector of \eqn{m} degrees of freedom for the observed
-#'   statistics (only for flavor "perm")}
-#'
-#'   \item{df0}{A \eqn{m \times B} matrix of degrees of freedom on permuted data
-#'   (only for flavor "perm" )}}
-#'
+#'}
 #'
 #' @examples
 #'
@@ -80,15 +76,20 @@
 #' ## two-sample data
 #' sim <- gaussianSamples(m, rho, n, pi0, SNR = 2, prob = 0.5)
 #' tests <- testByRandomization(sim$X, B)
+#' testsW <- testByRandomization(sim$X, B = 10, rowTestFUN = rowWilcoxonTests)
 #'
 #' ## show test statistics
 #' pch <- 20
 #' colStat <- 1+sim$H
-#' plot(tests$T, col = colStat, main = "Test statistics", pch  =pch)
+#' plot(tests$T, col = colStat, main = "T-Test statistics", pch = pch)
 #' legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
 #'
+#' plot(testsW$T, col = colStat, main = "Wilcoxon test statistics", pch = pch)
+#' legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
+#' 
+#' # one-sample data:
 #' sim <- gaussianSamples(m, rho, n, pi0, SNR=2)
-#' tests <- testByRandomization(sim$X, B)
+#' tests <- testByRandomization(sim$X, B, alternative = "two.sided")
 #'
 #' ## show test statistics
 #' pch <- 20
@@ -96,31 +97,32 @@
 #' plot(tests$T, col = colStat, main = "Test statistics", pch = pch)
 #' legend("topleft", c("H0", "H1"), pch = pch, col = 1:2)
 #'
+#' plot(-log10(tests$p), col = colStat, main = "-log[10](p-value)", pch = pch)
+#' legend("topleft", c("H0", "H1"), pch = pch, col = 1:2)
+#'
 #' @importFrom matrixStats rowRanks
 #' @export
 #' 
-testByRandomization <- function(X, B, cls = colnames(X), 
+testByRandomization <- function(X, B, 
                                 alternative = c("two.sided", "less", "greater"),
+                                rowTestFUN = rowWelchTests,
                                 rand.p.value = FALSE, seed = NULL){
     alternative <- match.arg(alternative)
     ## sanity checks
     n <- ncol(X)
-    luc <- length(unique(cls))
-    if (luc <= 1) {  
-        # no classes or a single class given: assuming sign flipping 
+    categ <- colnames(X)
+    categ <- as.factor(categ)
+    cats <- levels(categ)
+    luc <- length(cats)
+    if (luc <= 1 || luc == n) {  
+        # no classes or a single class or sample names given: assuming sign flipping 
         flavor <- "flip"
     } else {
-        if (length(cls) != n) {
-            stop("The number of columns of argument 'X' should match the length of argument 'cls'")
-        }
         if (luc == 2) {
             flavor <- "perm"
-            tbl <- table(cls)
-            if ( !all(names(tbl) == c("0", "1"))) {  # note that numeric values are allowed in cls as they are converted into character by 'table'...
-                stop("Argument 'cls' should contain (only) 0:s and 1:s")
-            }
+            tbl <- table(categ)
             if (min(tbl) < 3) {
-                stop("Argument 'cls' should contain at least 3 elements of each sample")
+                stop("At least 3 elements of each sample are required for two-sample tests")
             }
         } else if (luc > 2) {
             stop("Tests for more than 2 classes not implemented yet")
@@ -136,35 +138,36 @@ testByRandomization <- function(X, B, cls = colnames(X),
         ## * other statistics ? (difference in empirical means, Mann-Whitney)
         ## * one-sided tests ?
         
+        ## map class labels to 0-1 for simplicity of implementation of rowTestFUN(s)
+        levels(categ) <- c("0", "1") 
         ## observed
-        rwt <- rowWelchTests(X, categ = cls, alternative = alternative)
+        rwt <- rowTestFUN(X, categ = categ, alternative = alternative)
         T <- rwt$statistic
         p <- rwt$p.value  ## parametric p-value
-        df <- rwt$parameter  ## degrees of freedom of the T statistics
+        # df <- rwt$parameter  ## degrees of freedom (for T tests; possibly NULL for other tests)
         rm(rwt)
         
         ## under H0
         T0 <- matrix(nrow = m, ncol = B) ## test statistics under the null
         p0 <- matrix(nrow = m, ncol = B) ## parametric p-value
-        df0 <- matrix(nrow = m, ncol = B) 
+        # df0 <- matrix(nrow = m, ncol = B) 
         for (bb in 1:B) {
-            cls_perm <- sample(cls, length(cls))
-            rwt <- rowWelchTests(X, categ = cls_perm, alternative = alternative)
+            categ_perm <- sample(categ, length(categ))
+            rwt <- rowTestFUN(X, categ = categ_perm, alternative = alternative)
             T0[, bb] <- rwt$statistic
             p0[, bb] <- rwt$p.value
-            df0[, bb] <- rwt$parameter
         }
         res <- list(T = T, T0 = T0, 
                     flavor = flavor,
-                    p = p, p0 = p0,
-                    df = df, df0 = df0)
+                    p = p, p0 = p0)
+                    # df = df, df0 = df0)
     } else if (flavor == "flip") {
         ## observed test statistics and p-values
         T <- rowSums(X)/sqrt(n)
         p <- switch(alternative, 
-                        "two.sided" = 2*(1 - pnorm(abs(T))),
-                        "greater" = 1 - pnorm(T),
-                        "less" = pnorm(T))
+                    "two.sided" = 2*(1 - pnorm(abs(T))),
+                    "greater" = 1 - pnorm(T),
+                    "less" = pnorm(T))
         ## test statistics under H0
         T0 <- testBySignFlipping(X, B)
         p0 <- switch(alternative, 
@@ -179,10 +182,10 @@ testByRandomization <- function(X, B, cls = colnames(X),
         ## by sorting null test statistics as proposed by Ge et al (2003)
         TT <- cbind(T0, T)
         pB <- switch(alternative, 
-                       "two.sided" = rowRanks(-abs(TT)) / (B+1),
-                       "greater" = rowRanks(-TT) / (B+1),
-                       "less" = rowRanks(TT) / (B+1))
-
+                     "two.sided" = rowRanks(-abs(TT)) / (B+1),
+                     "greater" = rowRanks(-TT) / (B+1),
+                     "less" = rowRanks(TT) / (B+1))
+        
         res$rand.p <- pB[, B+1]
         res$rand.p0 <- pB[, -(B+1), drop = FALSE]
     }
@@ -205,15 +208,15 @@ testBySignFlippingR <- function(X, B) {
 }
 
 # not used!
-testByPermutationR <- function(X, cls, B) {
+testByPermutationR <- function(X, categ, B) {
     m <- nrow(X)
     n <- ncol(X)
-    stopifnot(n == length(cls))
+    stopifnot(n == length(categ))
     
     T <- matrix(nrow = m, ncol = B)
     for (bb in 1:B) {
-        cls_perm <- sample(cls, length(cls))
-        Tb <- rowWelchTests(X, categ = cls_perm)$statistic
+        categ_perm <- sample(categ, length(categ))
+        Tb <- rowWelchTests(X, categ = categ_perm)$statistic
         T[, bb] <- Tb
     }
     T

@@ -4,7 +4,7 @@ test_that("Upper bound on the number of false positives", {
     m <- 123
     sim <- gaussianSamples(m = m, rho = 0.2, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
     X <- sim$X
-    cal <- calibrateJER(X, B = 1e3, alpha = 0.2, refFamily="Simes")
+    cal <- calibrateJER(X, B = 1e3, alpha = 0.2,refFamily="Simes")
     thr <- cal$thr
     stat <- cal$stat
     
