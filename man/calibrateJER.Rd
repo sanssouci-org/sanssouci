@@ -6,7 +6,7 @@
 \usage{
 calibrateJER(X, B, alpha, alternative = c("two.sided", "less",
   "greater"), rowTestFUN = rowWelchTests, refFamily = c("Simes",
-  "kFWER"), maxStepsDown = 10L, K = nrow(X), verbose = TRUE)
+  "kFWER", "Beta"), maxStepsDown = 10L, K = nrow(X), verbose = TRUE)
 }
 \arguments{
 \item{X}{A matrix of \eqn{m} variables (hypotheses) by \eqn{n} observations.

@@ -24,11 +24,11 @@
 #' m1 <- 200
 #' p <- 1-pnorm(c(rnorm(m1, mean=4), rnorm(m-m1, mean=0)))
 #' R <- sample(m, 10)
+#' alpha <- 0.10
 #' if (require("cherry")) {
 #'   hom <- hommelFast(p)
-#'   pickSimes(hom, R, silent=TRUE)
+#'   pickSimes(hom, R, silent=TRUE, alpha = alpha)
 #' }
-#' alpha <- 0.10
 #' posthocBySimes(p, R, alpha=alpha)
 #' posthocBySimesRcpp(p, R, alpha=alpha)
 #'
