@@ -63,7 +63,7 @@ curveMaxFP <- function(stat, thr, flavor=c("BNR2016", "Mein2006", "BNR2014")) {
         stopifnot(identical(sort(thr, decreasing=TRUE), thr))
         stopifnot(identical(sort(stat, decreasing=TRUE), stat))
         
-        K <- rep(K, m) ## K[i] = number of k/ T[i] <= s[k]
+        K <- rep(kMax, m) ## K[i] = number of k/ T[i] <= s[k]
         Z <- rep(m, kMax) ## Z[k] = number of i/ T[i] >  s[k]
         ## 'K' and 'Z' are initialized to their largest possible value, 
         ## ie 'm' and 'kMax', respectively

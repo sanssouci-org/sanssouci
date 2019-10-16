@@ -1,6 +1,6 @@
 Package: sansSouci
-Version: 0.8.0
-Date: 2019-03-27
+Version: 0.8.1
+Date: 2019-10-16
 Title: Post hoc inference through JFWER control
 Authors@R: c(person("Benjamin", "Sadacca", role="ctb"),
              person("Gilles", "Blanchard", role="aut"),
