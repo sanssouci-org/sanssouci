@@ -22,7 +22,7 @@ test_that("JER calibration -- vanilla tests", {
 test_that("Direction of (step-down) lambda-calibration vs alternative: independence", {
     alpha <- 0.2
     alts <- c("two.sided", "greater", "less")
-    nb_rep <- 10
+    nb_rep <- 4
     res <- matrix(NA_real_, nrow = nb_rep, ncol = length(alts))
     colnames(res) <- alts
     for (ii in 1:nb_rep) {
@@ -49,13 +49,13 @@ test_that("Direction of (step-down) lambda-calibration vs alternative: independe
 test_that("Direction of (single-step) lambda-calibration vs alternative (Gaussian equi-correlation)", {
     alpha <- 0.2
     alts <- c("two.sided", "greater", "less")
-    nb_rep <- 10
+    nb_rep <- 4
     
     # SNR = 0
     res <- matrix(NA_real_, nrow = nb_rep, ncol = length(alts))
     colnames(res) <- alts
     for (ii in 1:nb_rep) {
-        sim <- gaussianSamples(m = 123, rho = 0.4, n = 100, pi0 = 0.5, 
+        sim <- gaussianSamples(m = 12, rho = 0.4, n = 100, pi0 = 0.5, 
                                SNR = 10, prob = 0.5)
         for (alt in alts) {
             cal <- calibrateJER(X = sim$X, B = 100, alpha = alpha, 
