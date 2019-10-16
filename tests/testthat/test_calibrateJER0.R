@@ -2,8 +2,8 @@ context("Calibration of reference family")
 
 test_that("Numerical reproducibility of one particular call to 'calibrateJER0'", {
     set.seed(0xBEEF)
-    m <- 1000
-    B <- 1000
+    m <- 3210
+    B <- 123
     rho <- 0
     pi0 <- 0.9
     SNR <- 2
