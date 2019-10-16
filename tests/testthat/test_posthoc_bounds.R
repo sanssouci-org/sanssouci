@@ -1,16 +1,16 @@
 context("Upper bound of the number of false positives in a selection")
 
+m <- 123
+sim <- gaussianSamples(m = m, rho = 0.2, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
+X <- sim$X
+thr <- SimesThresholdFamily(m)(alpha = 0.2)
+tests <- rowWelchTests(X, colnames(X))
+stat <- qnorm(1 - tests$p.value) 
+sstat <- sort(stat, decreasing=TRUE)
+
 test_that("Upper bound on the number of false positives", {
-    m <- 123
-    sim <- gaussianSamples(m = m, rho = 0.2, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
-    X <- sim$X
-    cal <- calibrateJER(X, B = 1e3, alpha = 0.2,refFamily="Simes")
-    thr <- cal$thr
-    stat <- cal$stat
+    expect_error(maxFP(stat, rev(thr)))  ## thr is not sorted descendingly
     
-    expect_error(maxmaxFP(stat, rev(thr)))  ## thr is not sorted descendingly
-    
-    sstat <- sort(stat, decreasing=TRUE)
     best <- head(sstat)
     worse <- tail(sstat)
     b1 <- maxFP(best, thr)
@@ -30,14 +30,6 @@ test_that("Upper bound on the number of false positives", {
 })
 
 test_that("curveMaxFP", {
-    m <- 123
-    sim <- gaussianSamples(m = m, rho = 0.2, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
-    X <- sim$X
-    cal <- calibrateJER(X, B = 1e3, alpha = 0.2, refFamily="Simes")
-    thr <- cal$thr
-    stat <- cal$stat
-    sstat <- sort(stat, decreasing=TRUE)
-    
     expect_error(curveMaxFP(sstat, rev(thr)))  ## thr is not sorted descendingly
     expect_error(curveMaxFP(rev(sstat), rev(thr)))  ## stat is not sorted descendingly
     
@@ -51,14 +43,6 @@ test_that("curveMaxFP", {
 })
 
 test_that("flavors of curveMaxFP", {
-    m <- 123
-    sim <- gaussianSamples(m = m, rho = 0.2, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
-    X <- sim$X
-    cal <- calibrateJER(X, B = 1e3, alpha = 0.2, refFamily="Simes")
-    thr <- cal$thr
-    stat <- cal$stat
-    sstat <- sort(stat, decreasing=TRUE)
-    
     ub <- curveMaxFP(sstat, thr)
     ub16 <- curveMaxFP(sstat, thr, flavor = "BNR2014")
     ub14 <- curveMaxFP(sstat, thr, flavor = "BNR2014") 

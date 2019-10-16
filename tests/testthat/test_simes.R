@@ -66,37 +66,34 @@ test_that("posthocBySimes is posthocBySimesRcpp for simulated data", {
     m <- 1e3
     m1 <- 100
     alphas <- seq(from = 0, to = 1, by = 0.1)
-    test <- replicate(10, {
-        p <- 1-pnorm(c(rnorm(m1, mean=4), rnorm(m-m1, mean=0)))
-        nR <- round(runif(1)*m)
-        R <- sample(nR)
-        for (alpha in alphas) {
-            expect_equal(posthocBySimes(p, R, alpha = alpha),
-                         posthocBySimesRcpp(p, R, alpha = alpha))
-        }
-    })
+    p <- 1-pnorm(c(rnorm(m1, mean=4), rnorm(m-m1, mean=0)))
+    nR <- round(runif(1)*m)
+    R <- sample(nR)
+    for (alpha in alphas) {
+        expect_equal(posthocBySimes(p, R, alpha = alpha),
+                     posthocBySimesRcpp(p, R, alpha = alpha))
+    }
 })
 
 test_that("posthocBySimes can be reproduced by minTP", {
     m <- 1e3
     m1 <- 100
     alphas <- seq(from = 0, to = 1, by = 0.1)
-    test <- replicate(10, {
-        x <- c(rnorm(m1, mean=4), rnorm(m-m1, mean=0))
-        sx <- sort(x, decreasing = TRUE)
-        p <- 1 - pnorm(x)
-        nR <- round(runif(1)*m)
-        R <- sample(nR)
-        for (alpha in alphas) {
-            thrSimes <- SimesThresholdFamily(m)(alpha)
-            ubSimes <- minTP(x[R], thrSimes)
-            expect_equal(posthocBySimes(p, R, alpha = alpha), 
-                         ubSimes)
-            # p-value scale
-            ubSimesP <- minTP(1-p[R], 1-alpha*1:m/m)
-            expect_equal(posthocBySimes(p, R, alpha = alpha), 
-                         ubSimesP)
-        }
-    })
+    
+    x <- c(rnorm(m1, mean=4), rnorm(m-m1, mean=0))
+    sx <- sort(x, decreasing = TRUE)
+    p <- 1 - pnorm(x)
+    nR <- round(runif(1)*m)
+    R <- sample(nR)
+    for (alpha in alphas) {
+        thrSimes <- SimesThresholdFamily(m)(alpha)
+        ubSimes <- minTP(x[R], thrSimes)
+        expect_equal(posthocBySimes(p, R, alpha = alpha), 
+                     ubSimes)
+        # p-value scale
+        ubSimesP <- minTP(1-p[R], 1-alpha*1:m/m)
+        expect_equal(posthocBySimes(p, R, alpha = alpha), 
+                     ubSimesP)
+    }
 })
 
