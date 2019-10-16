@@ -3,6 +3,19 @@
 Package: sansSouci
 ==================
 
+Version 0.8.1 [2019-10-16]
+
+* Implemented the "Beta template" via BetaPivotalStatistic() and 
+  BetaThresholdFamily(). The correspondig lambda-calibration is obtained by 
+  calibrateJER(refFamily = "Beta").
+  
+* Added a (crude) vignette showing how to perform lambda-calibration for 
+  two-sample tests of differential gene expression: two-sample.Rmd.
+  
+* posthocBySimes() now incorporates the free lunch mentioned in #12.
+
+SIGNIFICANT CHANGES:
+
 Version 0.8.0 [2019-03-27]
 
 SIGNIFICANT CHANGES:

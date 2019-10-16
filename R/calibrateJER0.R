@@ -65,7 +65,7 @@
 #
 
 calibrateJER0 <- function(mat,
-                          refFamily = c("Simes", "kFWER"),
+                          refFamily = c("Simes", "kFWER", "Beta"),
                           alpha,
                           stat = NULL,
                           maxStepsDown = 10L,
@@ -97,19 +97,18 @@ calibrateJER0 <- function(mat,
         pivStatFUN <- function(mat, kMax, C) {
             SimesPivotalStatistic(mat[C, ], kMax, nrow(mat))
         }
-        ## not implemented yet:
-        # } else if (refFamily=="beta") {
-        #     sk <- betaThresholdFamily(mat, kMax=kMax, Rcpp=Rcpp)
-        #     pivStatFUN <- function(mat, kMax, C) {
-        #         betaPivotalStatistic(mat, kMax, C)
-        #     }
+    } else if (refFamily == "Beta") {
+        sk <- BetaThresholdFamily(m, kMax = kMax)
+        pivStatFUN <- function(mat, kMax, C) {
+            BetaPivotalStatistic(mat[C, ], kMax, nrow(mat))
+        }
     } else if (refFamily == "kFWER") {
         sk <- kFWERThresholdFamily(mat, kMax = kMax, Rcpp = Rcpp)
         pivStatFUN <- function(mat, kMax, C) {
             kFWERPivotalStatistic(mat, kMax, C)
         }
     }
-    
+
     ## (single-step) joint FWER control
     ## pivStat <-  pivotalStat(mat, m=m, kMax=kMax, FUN=pivStatFUN)
     pivStat <-  pivStatFUN(mat, kMax = kMax, 1:m)

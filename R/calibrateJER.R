@@ -85,7 +85,7 @@
 calibrateJER <- function(X, B, alpha, 
                          alternative = c("two.sided", "less", "greater"), 
                          rowTestFUN = rowWelchTests,
-                         refFamily = c("Simes", "kFWER"),
+                         refFamily = c("Simes", "kFWER", "Beta"),
                          maxStepsDown = 10L,
                          K = nrow(X), verbose=TRUE) {
     alternative <- match.arg(alternative)

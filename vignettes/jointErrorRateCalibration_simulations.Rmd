@@ -31,9 +31,9 @@ Parameters:
 m <- 1e3
 n <- 124
 pi0 <- 0.8
-B <- 1e3
-rho <- 0.2
-SNR <- 0
+B <- 1e3+1
+rho <- 0.3
+SNR <- 2
 
 alpha <- 0.25
 ```
@@ -60,19 +60,21 @@ where $\bar{\Phi}$ is the cdf of the $\mathcal{N}(0,1)$ distribution. Note that 
 
 ```{r}
 cal <- calibrateJER(X, B = B, alpha = alpha, refFamily = "Simes")
+#calB <- calibrateJER(X, B = B, alpha = alpha, refFamily = "Beta")
 ```
 
 The output of the calibration is as follows
 
 ```{r}
 str(cal)
+#str(calB)
 ```
 
 * `stat`: $m$ test statistics calculated by permutation
 * `thr` : A JER-controlling family of $K$ (here $K=m$) elements
 * `lambda`: the $\lambda$-calibration parameter
 
-Because we are under positive equi-correlation, we expect $\lambda > \alpha$:
+Because we are under positive equi-correlation, we expect $\lambda > \alpha$ 
 
 ```{r}
 cal$lambda > alpha
