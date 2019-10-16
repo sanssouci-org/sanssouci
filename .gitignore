@@ -45,11 +45,11 @@ vignettes/*.pdf
 
 /inst/doc/
 /png/
-/resData/
 /fig/
 /local/
 /doc/
 /Rout/
+/results/
 
 ## OS X
 .DS_Store

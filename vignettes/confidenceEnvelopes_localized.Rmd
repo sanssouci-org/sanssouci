@@ -1,52 +1,62 @@
 ---
 title: "Confidence envelopes for spatially structured hypotheses"
 author: "G. Durand, G. Blanchard, P. Neuvial, E. Roquain"
-date: "June 20, 2018"
+date: "`r Sys.Date()`"
 output:
+  pdf_document: 
+    keep_tex: true
   html_document:
     df_print: paged
-  pdf_document: default
 bibliography: sansSouci.bib
 vignette: >
-  %\VignetteEngine{knitr::knitr}
   %\VignetteIndexEntry{Confidence envelopes for spatially structured hypotheses}
+  %\VignetteEngine{knitr::knitr}
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-The goal of this vignette is to illustrate the interest of the post hoc bounds on the number of true/false positives proposed in @DBNR for localized signals. More specifically, we reproduce one of the plots of Figure 7 in @DBNR.
+## Introduction
 
-The parameters (whose definition is given below) are set as follows:
+The goal of this vignette is to illustrate the post hoc bounds on the number of true/false positives proposed in @DBNR for localized signals. More specifically, we reproduce one of the plots of Figure 7 in @DBNR using the R package `sansSouci`. We will explicitely quote @DBNR when relevant.
 
-```{r parameters}
+```{r library, message = FALSE}
+library("sansSouci")
+```
+
+## Objective
+
+We consider $m$ null ordered hypotheses partitioned in intervals of size $s$. For simplicity we set the number of intervals to be a power of 2: $m = s 2^q$ for some integer $q$:
+
+```{r param1}
 s <- 100
 q <- 7
 m <- s*2^q
+```
+
+Therefore, we have $m = `r m`$.Our goal is to compare three post hoc bounds. These bounds are obtained by interpolation from a *reference family* where the amount of signal is estimated by probabilistic inequalities, following the general principle laid down by @blanchard:posthoc, and they differ by the choice of the reference family:
+
+- "Simes": the bound derived from the @simes86improved inequality as proposed by @GS2011 and further studied by @blanchard:posthoc. This bound was introduced in a context where the signal is not localized.
+
+- "tree" and "part": two bounds derived from the DKWM inequality (@dvoretzky1956asymptotic, @massart1990tight), as proposed in @DBNR. For the "part" bound, the reference family is the original partition $(P_k)_k$ of the $m$ null hypotheses into $K=2^q$ intervals. For the "tree" bound, the reference family is the perfect binary tree whose leaves are the elements of the original partition.
+
+## Settings
+
+We define the following numerical parameters, which characterize the true/false null hypothesis configuration considered in Section 5 of @DBNR:
+
+```{r param2}
 K1 <- 8
 r <- 0.9
 m1 <-  r*K1*s
 barmu <- 3
 ```
 
+More precisely, quoting @DBNR:
 
-We consider $m$ null ordered hypotheses partitioned in intervals of size $s$. For simplicity we set the number of intervals to be a power of 2: $m = s 2^q$ for some integer $q$. Our goal is to compare three post hoc bounds. These bounds are obtained by interpolation from a *reference family* where the amount of signal is estimated by probabilistic inequalities, following the general principle laid down by @blanchard:posthoc, and they differ by the choice of the reference family:
+> the false null hypotheses are contained in $P_k$ for $1 \leq k \leq K_1$, for some fixed value of $K_1$. The quantity $r$ is defined similarly as in (20), as the fraction of false null hypotheses in those $P_k$, and is set to $r =`r r`$. All of the other partition pieces only contain true null hypotheses. 
 
-- "Simes": the bound derived from the @simes86improved inequality as proposed by @GS2011 and further studied by @blanchard:posthoc. This bound was introduced in a context where the signal is not localized.
-
-- "tree" and "part": two bounds derived from the DKWM inequality (@dvoretzky1956asymptotic, @massart1990tight), as proposed in @DBNR. For the "part" bound, the reference family is the original partition $(P_k)_k$ of the $m$ null hypotheses into $K=2^q$ intervals. For the "tree" bound, the reference family is the perfect binary tree whose leaves are the elements of the original partition.
-
-We quote Section 5 of @DBNR for the definition of the true/false null hypothesis configuration:
-
-> the false null hypotheses are contained in $P_k$ for $1 \leq k \leq K_1$, for some fixed value of $K_1$. The  fraction of false null hypotheses in these $P_k$'s, defined by \eqref{eq:def-r}, is set to [$d =`r r`$]. All of the other $P_k$ in the partition only contain true null hypotheses. Finally,  the true null $p$-values are distributed as i.i.d. $\mathcal{N}(0,1)$, and false null $p$-values are distributed as i.i.d. $\mathcal{N}(\bar{\mu}, 1)$, where [$\bar{\mu}= `r barmu`$].  
-
-
-```{r}
-library("sansSouci")
-```
-
-We start by creating the binary tree structure and generating the signal:
+We start by creating a binary tree structure and generating the signal:
 
 ```{r simulation}
 dd <- dyadic.from.window.size(m, s, method = 2)
@@ -56,25 +66,39 @@ C <- dd$C
 mu <- gen.mu.leaves(m = m, K1 = K1, d = r, grouped = TRUE, setting = "const", barmu = barmu, leaf_list = leaf_list)
 ```
 
-## Confidence envelopes
+This construction is illustrated in the figure below (Figure 11 in @DBNR) in the case where $q=3$. 
 
-We calculate post hoc confidence envelopes with level $\alpha = 0.05$.
+```{r figure-simulation-tree, out.width = '100%', echo = FALSE, fig.cap="Figure 11 in @DBNR"}
+knitr::include_graphics("DBNR_graph-simu.png")
+```
+
+We generate $p$-values according to the simulation setup in @DBNR:
+
+> The true null $p$-values are distributed as i.i.d. $\mathcal{N}(0,1)$, and false null $p$-values are distributed as i.i.d. $\mathcal{N}(\bar{\mu}, 1)$, where [$\bar{\mu}= `r barmu`$].
+
+```{r p-values}
+pvalues <- gen.p.values(m = m, mu = mu, rho = 0)
+```
+
+## Calculate confidence envelopes
+
+The confidence level for post hoc inference is set to $\alpha = 0.05$.
 
 ```{r conf-level}
 alpha <- 0.05
-res <- list()
 ```
 
-```{r}
-pvalues <- gen.p.values(m = m, mu = mu)
+> Below, we will be considering confidence envelopes of the form $(k, \bar{V}(S_k))_{1 \leq k \leq m}$, where $S_k$ is the set of the $k$ smallest $p$-values (regardless of the ordering given by the partition). Note that focusing on such sets is a priori favorable to the Simes bound, for which the elements of the reference family are among the $S_k$.
+
+```{r ordered-p-values}
 ord <- order(pvalues)
 idxs <- c(seq(from = 1, to = 2*m1, length = 30),
           seq(from = 2*m1, to = m, length = 10)[-1])
+res <- list()
 ```
 
-Below, we will be considering confidence envelopes of the form $(k, \bar{V}(S_k))_{1 \leq k \leq m}$, where $S_k$ is the set of the $k$ smallest $p$-values (regardless of the ordering given by the partition). 
 
-### True number of false positives
+### 1- True number of false positives
 
 The true number of false positives will be called "Oracle" bound in the plots below.
 
@@ -85,7 +109,7 @@ V <- V[idxs]
 res[["Oracle"]] <- data.frame(idxs, V, method = "Oracle")
 ```
 
-### Simes-based confidence envelope
+### 2- Simes-based confidence envelope
 
 Here we use the @simes86improved inequality to bound the number of false positives in each node of the tree, as proposed by @GS2011 and further studied by @blanchard:posthoc, both in a context where the signal is not localized. 
 
@@ -96,7 +120,7 @@ V <- idxs - sapply(idxs, FUN = function(ii) {
 res[["Simes"]] <- data.frame(idxs, V, method = "Simes")
 ```
 
-### DKWM-based confidence envelope
+### 3- DKWM-based confidence envelope
 
 Here we use the DKWM inequality (@dvoretzky1956asymptotic, @massart1990tight) to bound the number of false positives in each node of the tree, as suggested in @DBNR.
 
@@ -108,20 +132,18 @@ V <- sapply(idxs, FUN = function(ii) {
 res[["tree"]] <- data.frame(idxs, V, method = "tree")
 ```
 
-```{r}
+```{r part}
 C0 <- C[length(C)]
 ZL <- zetas.tree(C0, leaf_list, zeta.DKWM, pvalues, alpha = alpha)
 V <- sapply(idxs, FUN = function(ii) {
     V.star(ord[1:ii], C0, ZL, leaf_list)
 })
 res[["part"]] <- data.frame(idxs, V, method = "part")
-
 ```
 
+## Plot confidence envelopes
 
-## Confidence envelopes
-
-```{r}
+```{r fig-params}
 library("ggplot2")
 dat <- Reduce(rbind, res)
 lvls <- c("Oracle", "part", "Simes", "tree", "hybrid")
@@ -129,28 +151,23 @@ cols <- RColorBrewer::brewer.pal(length(lvls), "Set1")
 names(cols) <- lvls
 ```
 
-
 ### Upper bound on the number of false positives
 
-
-```{r}
-xymax <- 4/3*m1;
+```{r plot-confidence-envelope}
+xymax <- m1;
 pV <- ggplot(dat, aes(idxs, V, colour = method)) + 
     geom_line() +
     ylab("Upper bound on the number of false positives") +
     xlab("sorted hypotheses") +
     scale_colour_manual(values = cols)
-```
-
-```{r}
 pV
 ```
 
 The "tree" and "part" bounds are sharper than the "Simes" bound as soon as we are considering "large" sets of hypotheses.  The fact that the "tree" and "part" bounds are not as sharp as the "Simes" bound for the first hundred of hypotheses can be explained by our choice of the ordering of the null hypotheses in the sets $S_k$, which as discussed above is favorable to the "Simes" bound.
 
-We zoom in the first `r xymax` null hypotheses (in the order of the $p$-values):
+Zooming on the first `r xymax` null hypotheses (in the order of the $p$-values):
 
-```{r warning=FALSE}
+```{r zoom-plot-confidence-envelope, warning=FALSE}
 pV + xlim(1, xymax) + ylim(0, xymax)
 ```
 
@@ -158,38 +175,34 @@ pV + xlim(1, xymax) + ylim(0, xymax)
 
 The same information can be displayed as a lower bound on the number of true positives, defined for any $S \subset \{1 \dots m\}$ by $|S| - \bar{V}(S)$:
 
-```{r}
+```{r lower-bound}
 dat$S <- dat$idxs - dat$V
 ```
 
-```{r}
-xmax <- 4/3*m1;
+```{r plot-lower-bound}
+xmax <- m1;
 ymax <- max(dat$S);
 pS <- ggplot(dat, aes(idxs, S, colour = method)) + 
     geom_line() +
     ylab("Lower bound on the number of true positives") +
     xlab("sorted hypotheses") +
     scale_colour_manual(values = cols)
-```
-
-```{r}
 pS
 ```
 
 
-We zoom in the first `r xymax` null hypotheses (in the order of the $p$-values) to recover the middle plot in Figure 8 of @DBNR.
+Zooming in the first `r xymax` null hypotheses (in the order of the $p$-values), we recover the middle plot in Figure 12 of @DBNR.
 
-```{r warning=FALSE}
+```{r zoom-plot-lower-bound, warning=FALSE}
 pS + xlim(1, xmax) + ylim(0, ymax)
 ```
 
 
 ## Session information
 
-```{r}
+```{r session-information}
 sessionInfo()
 ```
-
 
 
 ## References

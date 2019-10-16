@@ -19,8 +19,8 @@ partialColSortDescCpp <- function(X, k) {
 
 #' @describeIn posthocBySimes Rcpp version
 #' @export
-posthocBySimesRcpp <- function(p, select, alpha) {
-    .Call('_sansSouci_posthocBySimesRcpp', PACKAGE = 'sansSouci', p, select, alpha)
+posthocBySimes0Rcpp <- function(p, select, alpha) {
+    .Call('_sansSouci_posthocBySimes0Rcpp', PACKAGE = 'sansSouci', p, select, alpha)
 }
 
 rowSortDesc <- function(X) {
