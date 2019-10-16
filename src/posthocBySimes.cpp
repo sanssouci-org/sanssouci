@@ -19,7 +19,7 @@ NumericVector pmin2(NumericVector x, double y) {
 //' @describeIn posthocBySimes Rcpp version
 //' @export
 // [[Rcpp::export]]
-double posthocBySimesRcpp(NumericVector p, NumericVector select, double alpha){
+double posthocBySimes0Rcpp(NumericVector p, NumericVector select, double alpha){
     double m = p.length();
     double nR = select.length();
     
@@ -49,8 +49,8 @@ double posthocBySimesRcpp(NumericVector p, NumericVector select, double alpha){
 
 /*** R
 data(NAEP, package="cherry")
-posthocBySimesRcpp(NAEP, 1:30, 0.05)
-posthocBySimes(NAEP, 1:30, 0.05)
+posthocBySimes0Rcpp(NAEP, 1:30, 0.05)
+posthocBySimes0(NAEP, 1:30, 0.05)
 */
 
 

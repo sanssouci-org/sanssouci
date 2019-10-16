@@ -54,16 +54,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// posthocBySimesRcpp
-double posthocBySimesRcpp(NumericVector p, NumericVector select, double alpha);
-RcppExport SEXP _sansSouci_posthocBySimesRcpp(SEXP pSEXP, SEXP selectSEXP, SEXP alphaSEXP) {
+// posthocBySimes0Rcpp
+double posthocBySimes0Rcpp(NumericVector p, NumericVector select, double alpha);
+RcppExport SEXP _sansSouci_posthocBySimes0Rcpp(SEXP pSEXP, SEXP selectSEXP, SEXP alphaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type p(pSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type select(selectSEXP);
     Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
-    rcpp_result_gen = Rcpp::wrap(posthocBySimesRcpp(p, select, alpha));
+    rcpp_result_gen = Rcpp::wrap(posthocBySimes0Rcpp(p, select, alpha));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -96,7 +96,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_sansSouci_marginalKFWER", (DL_FUNC) &_sansSouci_marginalKFWER, 2},
     {"_sansSouci_minPseudoRanks", (DL_FUNC) &_sansSouci_minPseudoRanks, 2},
     {"_sansSouci_partialColSortDescCpp", (DL_FUNC) &_sansSouci_partialColSortDescCpp, 2},
-    {"_sansSouci_posthocBySimesRcpp", (DL_FUNC) &_sansSouci_posthocBySimesRcpp, 3},
+    {"_sansSouci_posthocBySimes0Rcpp", (DL_FUNC) &_sansSouci_posthocBySimes0Rcpp, 3},
     {"_sansSouci_rowSortDesc", (DL_FUNC) &_sansSouci_rowSortDesc, 1},
     {"_sansSouci_testBySignFlipping", (DL_FUNC) &_sansSouci_testBySignFlipping, 2},
     {NULL, NULL, 0}
