@@ -28,7 +28,7 @@ test_that("Direction of (step-down) lambda-calibration vs alternative: independe
     for (ii in 1:nb_rep) {
         sim <- gaussianSamples(m = 123, rho = 0, n = 100, pi0 = 0.5, SNR = -10, prob = 0.5)
         for (alt in alts) {
-            cal <- calibrateJER(X = sim$X, B = 100, alpha = alpha, 
+            cal <- calibrateJER(X = sim$X, B = 50, alpha = alpha, 
                                 refFamily = "Simes", alternative = alt,
                                 maxStepsDown = 1L,
                                 verbose = TRUE)
@@ -55,10 +55,10 @@ test_that("Direction of (single-step) lambda-calibration vs alternative (Gaussia
     res <- matrix(NA_real_, nrow = nb_rep, ncol = length(alts))
     colnames(res) <- alts
     for (ii in 1:nb_rep) {
-        sim <- gaussianSamples(m = 12, rho = 0.4, n = 100, pi0 = 0.5, 
+        sim <- gaussianSamples(m = 123, rho = 0.4, n = 100, pi0 = 0.5, 
                                SNR = 10, prob = 0.5)
         for (alt in alts) {
-            cal <- calibrateJER(X = sim$X, B = 100, alpha = alpha, 
+            cal <- calibrateJER(X = sim$X, B = 50, alpha = alpha, 
                                 refFamily = "Simes", alternative = alt, 
                                 maxStepsDown = 0L, verbose = TRUE)
             res[ii, alt] <- cal$lambda
