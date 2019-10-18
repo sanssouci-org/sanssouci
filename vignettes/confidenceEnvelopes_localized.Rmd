@@ -19,7 +19,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Introduction
 
-The goal of this vignette is to illustrate the post hoc bounds on the number of true/false positives proposed in @DBNR for localized signals. More specifically, we reproduce one of the plots of Figure 7 in @DBNR using the R package `sansSouci`. We will explicitely quote @DBNR when relevant.
+The goal of this vignette is to illustrate the post hoc bounds on the number of true/false positives proposed in @DBNR for localized signals. More specifically, we reproduce one of the plots of Figure 12 in @DBNR using the R package `sansSouci`. We will explicitly quote @DBNR when relevant.
 
 ```{r library, message = FALSE}
 library("sansSouci")
@@ -39,7 +39,7 @@ Therefore, we have $m = `r m`$.Our goal is to compare three post hoc bounds. The
 
 - "Simes": the bound derived from the @simes86improved inequality as proposed by @GS2011 and further studied by @blanchard:posthoc. This bound was introduced in a context where the signal is not localized.
 
-- "tree" and "part": two bounds derived from the DKWM inequality (@dvoretzky1956asymptotic, @massart1990tight), as proposed in @DBNR. For the "part" bound, the reference family is the original partition $(P_k)_k$ of the $m$ null hypotheses into $K=2^q$ intervals. For the "tree" bound, the reference family is the perfect binary tree whose leaves are the elements of the original partition.
+- "Tree" and "Partition": two bounds derived from the DKWM inequality (@dvoretzky1956asymptotic, @massart1990tight), as proposed in @DBNR. For the "Partition" bound, the reference family is the original partition $(P_k)_k$ of the $m$ null hypotheses into $K=2^q$ intervals. For the "Tree" bound, the reference family is the perfect binary tree whose leaves are the elements of the original partition.
 
 ## Settings
 
@@ -54,7 +54,7 @@ barmu <- 3
 
 More precisely, quoting @DBNR:
 
-> the false null hypotheses are contained in $P_k$ for $1 \leq k \leq K_1$, for some fixed value of $K_1$. The quantity $r$ is defined similarly as in (20), as the fraction of false null hypotheses in those $P_k$, and is set to $r =`r r`$. All of the other partition pieces only contain true null hypotheses. 
+> the false null hypotheses are contained in $P_k$ for $1 \leq k \leq K_1$, for some fixed value of $K_1$. The quantity $r$ is defined similarly as in (20), as the fraction of false null hypotheses in those $P_k$, and is set to $r =`r r`$. All of the other partition pieces only contain true null hypotheses.
 
 We start by creating a binary tree structure and generating the signal:
 
@@ -63,12 +63,13 @@ dd <- dyadic.from.window.size(m, s, method = 2)
 leaf_list <- dd$leaf_list
 C <- dd$C
 
-mu <- gen.mu.leaves(m = m, K1 = K1, d = r, grouped = TRUE, setting = "const", barmu = barmu, leaf_list = leaf_list)
+mu <- gen.mu.leaves(m = m, K1 = K1, d = r, grouped = TRUE, setting = "const", 
+                    barmu = barmu, leaf_list = leaf_list)
 ```
 
-This construction is illustrated in the figure below (Figure 11 in @DBNR) in the case where $q=3$. 
+This construction is illustrated in the figure below (Figure 11 in @DBNR) in the case where $q=3$.
 
-```{r figure-simulation-tree, out.width = '100%', echo = FALSE, fig.cap="Figure 11 in @DBNR"}
+```{r figure-simulation-tree, out.width = '100%', echo = FALSE, fig.cap="Figure 11 in Durand et al (2018)."}
 knitr::include_graphics("DBNR_graph-simu.png")
 ```
 
@@ -88,7 +89,7 @@ The confidence level for post hoc inference is set to $\alpha = 0.05$.
 alpha <- 0.05
 ```
 
-> Below, we will be considering confidence envelopes of the form $(k, \bar{V}(S_k))_{1 \leq k \leq m}$, where $S_k$ is the set of the $k$ smallest $p$-values (regardless of the ordering given by the partition). Note that focusing on such sets is a priori favorable to the Simes bound, for which the elements of the reference family are among the $S_k$.
+> Below, we will be considering confidence envelopes of the form $(k, V(S_k))_{1 \leq k \leq m}$, where $S_k$ is the set of the $k$ smallest $p$-values (regardless of the ordering given by the partition). Note that focusing on such sets is a priori favorable to the Simes bound, for which the elements of the reference family are among the $S_k$.
 
 ```{r ordered-p-values}
 ord <- order(pvalues)
@@ -129,7 +130,7 @@ ZL <- zetas.tree(C, leaf_list, zeta.DKWM, pvalues, alpha = alpha)
 V <- sapply(idxs, FUN = function(ii) {
     V.star(ord[1:ii], C, ZL, leaf_list)
 })
-res[["tree"]] <- data.frame(idxs, V, method = "tree")
+res[["Tree"]] <- data.frame(idxs, V, method = "Tree")
 ```
 
 ```{r part}
@@ -138,7 +139,7 @@ ZL <- zetas.tree(C0, leaf_list, zeta.DKWM, pvalues, alpha = alpha)
 V <- sapply(idxs, FUN = function(ii) {
     V.star(ord[1:ii], C0, ZL, leaf_list)
 })
-res[["part"]] <- data.frame(idxs, V, method = "part")
+res[["Partition"]] <- data.frame(idxs, V, method = "Partition")
 ```
 
 ## Plot confidence envelopes
@@ -146,7 +147,7 @@ res[["part"]] <- data.frame(idxs, V, method = "part")
 ```{r fig-params}
 library("ggplot2")
 dat <- Reduce(rbind, res)
-lvls <- c("Oracle", "part", "Simes", "tree", "hybrid")
+lvls <- c("Oracle", "Partition", "Simes", "Tree", "Hybrid")
 cols <- RColorBrewer::brewer.pal(length(lvls), "Set1")
 names(cols) <- lvls
 ```
@@ -163,7 +164,7 @@ pV <- ggplot(dat, aes(idxs, V, colour = method)) +
 pV
 ```
 
-The "tree" and "part" bounds are sharper than the "Simes" bound as soon as we are considering "large" sets of hypotheses.  The fact that the "tree" and "part" bounds are not as sharp as the "Simes" bound for the first hundred of hypotheses can be explained by our choice of the ordering of the null hypotheses in the sets $S_k$, which as discussed above is favorable to the "Simes" bound.
+The "Tree" and "Partition" bounds are sharper than the "Simes" bound as soon as we are considering "large" sets of hypotheses.  The fact that the "Tree" and "Partition" bounds are not as sharp as the "Simes" bound for the first hundred of hypotheses can be explained by our choice of the ordering of the null hypotheses in the sets $S_k$, which as discussed above is favorable to the "Simes" bound.
 
 Zooming on the first `r xymax` null hypotheses (in the order of the $p$-values):
 
@@ -173,7 +174,7 @@ pV + xlim(1, xymax) + ylim(0, xymax)
 
 ## Lower bound on the number of true positives
 
-The same information can be displayed as a lower bound on the number of true positives, defined for any $S \subset \{1 \dots m\}$ by $|S| - \bar{V}(S)$:
+The same information can be displayed as a lower bound on the number of true positives, defined for any $S \subset \{1 \dots m\}$ by $|S| - V(S)$:
 
 ```{r lower-bound}
 dat$S <- dat$idxs - dat$V
