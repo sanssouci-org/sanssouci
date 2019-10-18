@@ -65,39 +65,39 @@ server <- function(input, output, session) {
     
     d <- event_data("plotly_selected")
     if (is.null(d)) {
-      R <-  which(signal == "H1")
+      S <-  which(signal == "H1")
     } else {
-      R <- as.numeric(d$x)
+      S <- as.numeric(d$x)
     }
     
     # Simes
-    V_Simes <- length(R) - posthocBySimes(pvalues, R, alpha)
+    V_Simes <- length(S) - posthocBySimes(pvalues, S, alpha)
     
     # # Holm-Bonferroni (+tree)    
     # ZL <- zetas.tree(C, leaf_list, zeta.HB, pvalues, alpha = alpha)
-    # V_HB <- V.star(R, C, ZL, leaf_list)
+    # V_HB <- V.star(S, C, ZL, leaf_list)
     # 
     # tree    
     ZL <- zetas.tree(C, leaf_list, zeta.DKWM, pvalues, alpha = alpha)
-    V_tree <- V.star(R, C, ZL, leaf_list)
+    V_tree <- V.star(S, C, ZL, leaf_list)
     
     # partition
     C0 <- C[length(C)]
     ZL <- zetas.tree(C0, leaf_list, zeta.DKWM, pvalues, alpha = alpha)
-    V_part <- V.star(R, C0, ZL, leaf_list)
-    tab <- data.frame("Oracle" = sum(signal[R] == "H1"),
+    V_part <- V.star(S, C0, ZL, leaf_list)
+    tab <- data.frame("Oracle" = sum(signal[S] == "H0"),
                       "Simes" = V_Simes,
                       # "Holm (tree)" = V_HB,
                       "Partition" = V_part,
                       "Tree" = V_tree,
                       check.names = FALSE)  
-    list(R = R, tab = tab)
+    list(S = S, tab = tab)
   })
   
   output$sel <- renderText({
     bounds <- calc_bounds()
-    R <- bounds$R
-    paste("Selection:", paste(range(R), collapse=":"))
+    S <- bounds$S
+    paste("Selection:", paste(range(S), collapse=":"))
   })
   
   output$plot <- renderPlotly({
@@ -112,7 +112,7 @@ server <- function(input, output, session) {
     
     res <- calc_bounds()
     tab <- res$tab
-    R <- res$R
+    S <- res$S
     # ttl <- expression(sprintf("S = %s:%s, V_{Simes}(S) = %s, V[part](S) = %s V[tree](S) = %s",
     #                sig_pos[1],
     #                sig_pos[2],
@@ -129,13 +129,13 @@ server <- function(input, output, session) {
       mlogp = -log(pvalues),
       signal = signal)
 
-    ylim <- range(data$stat[R])
+    ylim <- range(data$stat[S])
     
     p <- ggplot(data, aes(x = x, y = stat, group = signal)) +
       geom_point(aes(shape = signal)) +
       geom_vline(data = reg_dat, aes(xintercept = pos), 
                  color = "lightgray", linetype = "dashed", size = 1) +
-      geom_rect(xmin = min(R), xmax = max(R), 
+      geom_rect(xmin = min(S), xmax = max(S), 
                 ymin = ylim[1], ymax = ylim[2], 
                 # ymin = -10, ymax = 10, 
                 fill = "blue", alpha = 0.2, col = "blue") +
