@@ -6,20 +6,20 @@ library("sansSouci")
 ui <- fluidPage(
   sidebarLayout(
     sidebarPanel(
-      numericInput("m", "Number of items:", 2^3*20, min = 10, max = 1000),
+      numericInput("m", "Number of items", 2^3*20, min = 10, max = 1000),
       numericInput("K", "Number of regions", 8, min = 1 , max = 25),
-      #      numericInput("nbRegsignal", "Number of regions with signal:", 3, min = 1 , max = 10),
+      #      numericInput("nbRegsignal", "Number of regions with signal", 3, min = 1 , max = 10),
       numericRangeInput(
         inputId = "sig_pos", label = "Signal position",
         value = c(1, 40)
       ),
-      numericInput("mu", "Signal strengh:", 2, min = 1 , max = 10),
-      numericInput("alpha", "Target confidence level:", 0.1, min = 0, max = 1),
-      # numericInput("sss", "Random seed:", 1, min = 1, max = 100000),
+      numericInput("mu", "Signal strengh", 2, min = 1 , max = 10),
+      numericInput("alpha", "Target confidence level", 0.1, min = 0, max = 1),
+      # numericInput("sss", "Random seed", 1, min = 1, max = 100000),
     ),
     
     mainPanel(
-      h3("Upper bounds on the number of true nulls in selection:"),
+      h3("Upper bounds on the number of true nulls in selection"),
       tableOutput("bound"),
       plotlyOutput("plot", inline = TRUE),
     )
