@@ -23,7 +23,24 @@ ui <- fluidPage(
       tableOutput("bound"),
       plotlyOutput("plot", inline = TRUE),
     )
-  )
+  ),
+  hr(),
+  
+  h3("Credits"),
+  br(),
+  
+  p(strong("Reference:"), 
+    span("G. Durand, G. Blanchard, P. Neuvial and E. Roquain (2018)."),
+    a(href = "https://hal.archives-ouvertes.fr/hal-01829037v2", "Post hoc false positive control for structured hypotheses."),
+    span("In revision for"),
+    em("Scandinavian Journal of Statistics.")),
+
+  p(strong("Code:"),
+    span("available from the"),
+  a(href = "https://github.com/pneuvial/sanssouci", "R package sansSouci")),
+
+  p(strong("Project page:"), 
+  a("https://www.math.univ-toulouse.fr/~pneuvial/sanssouci"))
 )
 server <- function(input, output, session) {
   
@@ -132,13 +149,13 @@ server <- function(input, output, session) {
     ylim <- range(data$stat[S])
     
     p <- ggplot(data, aes(x = x, y = stat, group = signal)) +
-      geom_point(aes(shape = signal)) +
       geom_vline(data = reg_dat, aes(xintercept = pos), 
                  color = "lightgray", linetype = "dashed", size = 1) +
       geom_rect(xmin = min(S), xmax = max(S), 
                 ymin = ylim[1], ymax = ylim[2], 
                 # ymin = -10, ymax = 10, 
                 fill = "blue", alpha = 0.2, col = "blue") +
+      geom_point(aes(shape = signal)) +
       theme_classic() + 
       scale_shape_manual(values=c(19, 1)) +
       xlab("Position") + 
