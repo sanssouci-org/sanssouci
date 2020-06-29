@@ -4,8 +4,12 @@
 \alias{rowBinomialTests}
 \title{Binomial proportion tests for each row of a matrix}
 \usage{
-rowBinomialTests(mat, categ, alternative = c("two.sided", "less",
-  "greater"), warn = TRUE)
+rowBinomialTests(
+  mat,
+  categ,
+  alternative = c("two.sided", "less", "greater"),
+  warn = TRUE
+)
 }
 \arguments{
 \item{mat}{A numeric matrix whose rows correspond to variables and columns to

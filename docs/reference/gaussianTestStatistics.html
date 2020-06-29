@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SimesThresholdFamily — SimesThresholdFamily • sansSouci</title>
+<title>Simulate Gaussian test statistics — gaussianTestStatistics • sansSouci</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,8 @@
 
 
 
-<meta property="og:title" content="SimesThresholdFamily — SimesThresholdFamily" />
-<meta property="og:description" content="Simes' threshold family" />
+<meta property="og:title" content="Simulate Gaussian test statistics — gaussianTestStatistics" />
+<meta property="og:description" content="Simulate Gaussian test statistics" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -124,49 +124,91 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>SimesThresholdFamily</h1>
+    <h1>Simulate Gaussian test statistics</h1>
     
-    <div class="hidden name"><code>SimesThresholdFamily.Rd</code></div>
+    <div class="hidden name"><code>gaussianTestStatistics.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Simes' threshold family</p>
+    <p>Simulate Gaussian test statistics</p>
     </div>
 
-    <pre class="usage"><span class='fu'>SimesThresholdFamily</span>(<span class='no'>m</span>, <span class='kw'>kMax</span> <span class='kw'>=</span> <span class='no'>m</span>)</pre>
+    <pre class="usage"><span class='fu'>gaussianTestStatistics</span>(<span class='no'>m</span>, <span class='no'>B</span>, <span class='kw'>pi0</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>SNR</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>dep</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"equi"</span>,
+  <span class='st'>"Toeplitz"</span>), <span class='kw'>param</span> <span class='kw'>=</span> <span class='fl'>0</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>m</th>
-      <td><p>The number of hypotheses tested</p></td>
+      <td><p>Number of hypotheses</p></td>
     </tr>
     <tr>
-      <th>kMax</th>
-      <td><p>For simultaneous control of (\(k\)-FWER for all \(k \le
-k[max]\)).</p></td>
+      <th>B</th>
+      <td><p>Number of simulations</p></td>
+    </tr>
+    <tr>
+      <th>pi0</th>
+      <td><p>Proportion of true null hypotheses</p></td>
+    </tr>
+    <tr>
+      <th>SNR</th>
+      <td><p>Signal to noise ratio. Either a numeric value (a measure of
+distance between H0 and H1) or a vector of length <code>m*(1-pi0)</code></p></td>
+    </tr>
+    <tr>
+      <th>dep</th>
+      <td><p>A character value, the type of dependency between test statistics. Can be one of "equi" for equi-correlation, or "Toeplitz". Defaults to "equi".</p></td>
+    </tr>
+    <tr>
+      <th>param</th>
+      <td><p>A numeric value defaulting to <code>0</code>. If <code>dep=="equi"</code>, <code>param</code> is the level of equi-correlation between pairs of variables. If <code>dep=="Toeplitz"</code>, the first row of the Toeplitz matrix will be <code>(1:m)^(param)</code>.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A threshold function (on the scale of test statistics) based on the
-classical family of thresholds introduced by Simes (1986):
-\(\alpha*k/m\). This family yields joint FWER control at level (at most)
-\(\alpha\) if the test statistics are positively dependent (PRDS) under
-H0.</p>
+    <p>A list with elements</p><dl class='dl-horizontal'>
+<dt>x</dt><dd><p>A vector of length \(m\) test statistics</p></dd>
+<dt>X0</dt><dd><p>An \(m x B\) matrix of test statistics under the null
+hypothesis</p></dd>
+<dt>H</dt><dd><p>A vector of length \(m\), the status of each
+hypothesis: 0 for true null hypothesis, and 1 for true alternative
+hypothesis</p></dd> 
+</dl>
+
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>B</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='no'>sk</span> <span class='kw'>&lt;-</span> <span class='fu'>SimesThresholdFamily</span>(<span class='fl'>12</span>)
-<span class='no'>thr</span> <span class='kw'>&lt;-</span> <span class='fu'>sk</span>(<span class='fl'>0.2</span>)</div></pre>
+<span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fl'>123</span>
+<span class='no'>B</span> <span class='kw'>&lt;-</span> <span class='fl'>100</span>
+
+<span class='co'># independent statistics under the full null</span>
+<span class='no'>sim</span> <span class='kw'>&lt;-</span> <span class='fu'>gaussianTestStatistics</span>(<span class='no'>m</span>, <span class='no'>B</span>)
+
+<span class='co'># equi-correlated statistics under the full null</span>
+<span class='no'>sim</span> <span class='kw'>&lt;-</span> <span class='fu'>gaussianTestStatistics</span>(<span class='no'>m</span>, <span class='no'>B</span>, <span class='kw'>dep</span> <span class='kw'>=</span> <span class='st'>"equi"</span>, <span class='kw'>param</span> <span class='kw'>=</span> <span class='fl'>0.2</span>)
+
+<span class='co'># equi-correlated statistics with some signal</span>
+<span class='no'>sim</span> <span class='kw'>&lt;-</span> <span class='fu'>gaussianTestStatistics</span>(<span class='no'>m</span>, <span class='no'>B</span>, <span class='kw'>pi0</span> <span class='kw'>=</span> <span class='fl'>0.8</span>, <span class='kw'>SNR</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>dep</span> <span class='kw'>=</span> <span class='st'>"equi"</span>, <span class='kw'>param</span> <span class='kw'>=</span> <span class='fl'>0.2</span>)
+
+<span class='co'>## show test statistics</span>
+<span class='no'>stat</span> <span class='kw'>&lt;-</span> <span class='no'>sim</span>$<span class='no'>x</span>
+<span class='no'>pch</span> <span class='kw'>&lt;-</span> <span class='fl'>20</span>
+<span class='no'>colStat</span> <span class='kw'>&lt;-</span> <span class='fl'>1</span>+<span class='no'>sim</span>$<span class='no'>H</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='no'>stat</span>, <span class='kw'>col</span><span class='kw'>=</span><span class='no'>colStat</span>, <span class='kw'>main</span><span class='kw'>=</span><span class='st'>"Test statistics"</span>, <span class='kw'>pch</span><span class='kw'>=</span><span class='no'>pch</span>)</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/legend.html'>legend</a></span>(<span class='st'>"topleft"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"H0"</span>, <span class='st'>"H1"</span>), <span class='kw'>pch</span><span class='kw'>=</span><span class='no'>pch</span>, <span class='kw'>col</span><span class='kw'>=</span><span class='fl'>1</span>:<span class='fl'>2</span>)</div><div class='img'><img src='gaussianTestStatistics-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='co'># Toeplitz statistics with some signal</span>
+<span class='no'>sim</span> <span class='kw'>&lt;-</span> <span class='fu'>gaussianTestStatistics</span>(<span class='no'>m</span>, <span class='no'>B</span>, <span class='kw'>pi0</span> <span class='kw'>=</span> <span class='fl'>0.8</span>, <span class='kw'>SNR</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>dep</span> <span class='kw'>=</span> <span class='st'>"Toeplitz"</span>, <span class='kw'>param</span> <span class='kw'>=</span> -<span class='fl'>0.5</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       <li><a href="#value">Value</a></li>
+      <li><a href="#details">Details</a></li>
       <li><a href="#examples">Examples</a></li>
     </ul>
 

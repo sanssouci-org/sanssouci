@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>BetaThresholdFamily — BetaThresholdFamily • sansSouci</title>
+<title>Upper bound for the number of false discoveries among most significant items — curveMaxFP • sansSouci</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,8 @@
 
 
 
-<meta property="og:title" content="BetaThresholdFamily — BetaThresholdFamily" />
-<meta property="og:description" content="Beta threshold family" />
+<meta property="og:title" content="Upper bound for the number of false discoveries among most significant items — curveMaxFP" />
+<meta property="og:description" content="Upper bound for the number of false discoveries among most significant items" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -124,42 +124,68 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>BetaThresholdFamily</h1>
+    <h1>Upper bound for the number of false discoveries among most significant items</h1>
     
-    <div class="hidden name"><code>BetaThresholdFamily.Rd</code></div>
+    <div class="hidden name"><code>curveMaxFP.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Beta threshold family</p>
+    <p>Upper bound for the number of false discoveries among most significant items</p>
     </div>
 
-    <pre class="usage"><span class='fu'>BetaThresholdFamily</span>(<span class='no'>m</span>, <span class='kw'>kMax</span> <span class='kw'>=</span> <span class='no'>m</span>)</pre>
+    <pre class="usage"><span class='fu'>curveMaxFP</span>(<span class='no'>stat</span>, <span class='no'>thr</span>, <span class='kw'>flavor</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"BNR2016"</span>, <span class='st'>"Mein2006"</span>, <span class='st'>"BNR2014"</span>))</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>m</th>
-      <td><p>The number of hypotheses tested</p></td>
+      <th>stat</th>
+      <td><p>A vector containing all \(m\) test statistics, sorted non-increasingly</p></td>
     </tr>
     <tr>
-      <th>kMax</th>
-      <td><p>For simultaneous control of (\(k\)-FWER for all \(k \le 
-k[max]\)).</p></td>
+      <th>thr</th>
+      <td><p>A vector of \(K\) JER-controlling thresholds, sorted non-increasingly</p></td>
+    </tr>
+    <tr>
+      <th>flavor</th>
+      <td><p>The algorithm to compute the bound 'BNR2014' and
+'BNR2016' give identical results. Both should be slightly better
+than 'Mein2006' (example situation?). Flavor 'BNR2016' has a
+linear time complexity, hence it is much faster than 'Mein2006'
+and much much faster than 'BNR2014'.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A threshold function (on the scale of test statistics) which
-  achieves "balanced" joint error rate (JER) control under independence</p>
+    <p>A vector of size \(m\) giving an joint upper confidence bound on
+  the number of false discoveries among the \(k\) most significant items
+  for all \(k \in \{1\ldots m\}\).</p>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fl'>123</span>
+<span class='no'>alpha</span> <span class='kw'>&lt;-</span> <span class='fl'>0.2</span>
+<span class='no'>sim</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gaussianSamples.html'>gaussianSamples</a></span>(<span class='kw'>m</span> <span class='kw'>=</span> <span class='no'>m</span>, <span class='kw'>rho</span> <span class='kw'>=</span> <span class='fl'>0.2</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>pi0</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>SNR</span> <span class='kw'>=</span> <span class='fl'>3</span>, <span class='kw'>prob</span> <span class='kw'>=</span> <span class='fl'>0.5</span>)
+<span class='no'>cal</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='calibrateJER.html'>calibrateJER</a></span>(<span class='no'>sim</span>$<span class='no'>X</span>, <span class='kw'>B</span> <span class='kw'>=</span> <span class='fl'>1e3</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='no'>alpha</span>, <span class='kw'>refFamily</span><span class='kw'>=</span><span class='st'>"Simes"</span>)
+<span class='no'>stat</span> <span class='kw'>&lt;-</span> <span class='no'>cal</span>$<span class='no'>stat</span>
+<span class='no'>o</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span>(<span class='no'>stat</span>, <span class='kw'>decreasing</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+<span class='no'>ub</span> <span class='kw'>&lt;-</span> <span class='fu'>curveMaxFP</span>(<span class='no'>stat</span>[<span class='no'>o</span>], <span class='no'>cal</span>$<span class='no'>thr</span>)
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='fl'>1</span>:<span class='no'>m</span>, <span class='no'>ub</span>, <span class='kw'>t</span> <span class='kw'>=</span> <span class='st'>'s'</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='st'>"purple"</span>)</div><div class='input'>
+<span class='co'># compare with true number of false positives</span>
+<span class='no'>H0</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/which.html'>which</a></span>(<span class='no'>sim</span>$<span class='no'>H</span> <span class='kw'>==</span> <span class='fl'>0</span>)
+<span class='no'>V</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cumsum.html'>cumsum</a></span>(<span class='no'>o</span> <span class='kw'>%in%</span> <span class='no'>H0</span>)
+<span class='fu'><a href='https://rdrr.io/r/graphics/lines.html'>lines</a></span>(<span class='fl'>1</span>:<span class='no'>m</span>, <span class='no'>V</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='fl'>2</span>)</div><div class='input'>
+<span class='co'># compare with Simes bound</span>
+<span class='no'>thrSimes</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='SimesThresholdFamily.html'>SimesThresholdFamily</a></span>(<span class='no'>m</span>)(<span class='no'>alpha</span>)
+<span class='no'>ubSimes</span> <span class='kw'>&lt;-</span> <span class='fu'>curveMaxFP</span>(<span class='no'>stat</span>[<span class='no'>o</span>], <span class='no'>thrSimes</span>)
+<span class='fu'><a href='https://rdrr.io/r/graphics/lines.html'>lines</a></span>(<span class='fl'>1</span>:<span class='no'>m</span>, <span class='no'>ubSimes</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='fl'>1</span>)</div><div class='img'><img src='curveMaxFP-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       <li><a href="#value">Value</a></li>
+      <li><a href="#examples">Examples</a></li>
     </ul>
 
     <h2>Author</h2>

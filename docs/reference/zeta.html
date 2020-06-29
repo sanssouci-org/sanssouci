@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>BetaThresholdFamily — BetaThresholdFamily • sansSouci</title>
+<title>Estimate the number of true null hypotheses among a set of p-values — zeta • sansSouci</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,8 @@
 
 
 
-<meta property="og:title" content="BetaThresholdFamily — BetaThresholdFamily" />
-<meta property="og:description" content="Beta threshold family" />
+<meta property="og:title" content="Estimate the number of true null hypotheses among a set of p-values — zeta" />
+<meta property="og:description" content="Estimate the number of true null hypotheses among a set of p-values" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -124,46 +124,64 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>BetaThresholdFamily</h1>
+    <h1>Estimate the number of true null hypotheses among a set of p-values</h1>
     
-    <div class="hidden name"><code>BetaThresholdFamily.Rd</code></div>
+    <div class="hidden name"><code>zeta.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Beta threshold family</p>
+    <p>Estimate the number of true null hypotheses among a set of p-values</p>
     </div>
 
-    <pre class="usage"><span class='fu'>BetaThresholdFamily</span>(<span class='no'>m</span>, <span class='kw'>kMax</span> <span class='kw'>=</span> <span class='no'>m</span>)</pre>
+    <pre class="usage"><span class='fu'>zeta.HB</span>(<span class='no'>pval</span>, <span class='no'>lambda</span>)
+
+<span class='fu'>zeta.trivial</span>(<span class='no'>pval</span>, <span class='no'>lambda</span>)
+
+<span class='fu'>zeta.DKWM</span>(<span class='no'>pval</span>, <span class='no'>lambda</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>m</th>
-      <td><p>The number of hypotheses tested</p></td>
+      <th>pval</th>
+      <td><p>A vector of \(p\)-values</p></td>
     </tr>
     <tr>
-      <th>kMax</th>
-      <td><p>For simultaneous control of (\(k\)-FWER for all \(k \le 
-k[max]\)).</p></td>
+      <th>lambda</th>
+      <td><p>A numeric value in \([0,1]\), the target level of the test</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A threshold function (on the scale of test statistics) which
-  achieves "balanced" joint error rate (JER) control under independence</p>
+    <p>The numer of true nulls is estimated as follows:</p><dl class='dl-horizontal'>
+<dt><code>zeta.DKWM</code></dt><dd><p>Dvoretzky-Kiefer-Wolfowitz-Massart inequality (related to the Storey estimator of the proportion of true nulls) with parameter <code>lambda</code></p></dd>
+<dt><code>zeta.HB</code></dt><dd><p>Holm-Bonferroni test with parameter <code>lambda</code></p></dd>
+<dt><code>zeta.trivial</code></dt><dd><p>the size of the p-value set (\(lambda\) is not used)</p></dd>
 
+</dl>
+
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>Dvoretzky, A., Kiefer, J., and Wolfowitz, J. (1956). Asymptotic minimax character of the sample distribution function and of the classical multinomial estimator. The Annals of Mathematical Statistics, pages 642-669.</p>
+<p>Holm, S. A simple sequentially rejective multiple test procedure. Scandinavian Journal of Statistics 6 (1979), pp. 65-70.</p>
+<p>Massart, P. (1990). The tight constant in the Dvoretzky-Kiefer-Wolfowitz inequality. The Annals of Probability, pages 1269-1283.</p>
+<p>Storey, J. D. (2002). A direct approach to false discovery rates. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 64(3):479-498.</p>
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>100</span>, <span class='kw'>mean</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>, <span class='fl'>2</span>), <span class='kw'>each</span> <span class='kw'>=</span> <span class='fl'>50</span>)))
+<span class='no'>pval</span> <span class='kw'>&lt;-</span> <span class='fl'>1</span>-<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>pnorm</a></span>(<span class='no'>x</span>)
+<span class='fu'>zeta.trivial</span>(<span class='no'>pval</span>)</div><div class='output co'>#&gt; [1] 100</div><div class='input'><span class='fu'>zeta.HB</span>(<span class='no'>pval</span>, <span class='fl'>0.05</span>)</div><div class='output co'>#&gt; [1] 97</div><div class='input'><span class='fu'>zeta.DKWM</span>(<span class='no'>pval</span>, <span class='fl'>0.05</span>)</div><div class='output co'>#&gt; [1] 66</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       <li><a href="#value">Value</a></li>
+      <li><a href="#references">References</a></li>
+      <li><a href="#examples">Examples</a></li>
     </ul>
 
-    <h2>Author</h2>
-    <p>Gilles Blanchard, Pierre Neuvial and Etienne Roquain</p>
   </div>
 </div>
 

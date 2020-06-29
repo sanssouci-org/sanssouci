@@ -4,14 +4,16 @@
 \name{volcano}
 \alias{volcano}
 \title{Sample data from differential gene expression studies}
-\format{A data frame with 21196 rows and 5 variables:
+\format{
+A data frame with 21196 rows and 5 variables:
 \describe{
   \item{id}{gene or probe set identified}
   \item{dataSet}{name of the study}
   \item{meanDiff}{difference between group means}
   \item{p.value}{two-sample Welch test p-value for the difference between group means}
   \item{adjp.BH}{FDR-adjusted p-values by the BH method}
-}}
+}
+}
 \source{
 The studies are the following: \describe{
 \item{bourgon}{Leukemia study of Chiaretti S, *et al.* (2004, 2005)}

@@ -4,8 +4,15 @@
 \alias{suffWelchTest}
 \title{Welch test from sufficient statistics}
 \usage{
-suffWelchTest(mx, my, sx, sy, nx, ny, alternative = c("two.sided",
-  "less", "greater"))
+suffWelchTest(
+  mx,
+  my,
+  sx,
+  sy,
+  nx,
+  ny,
+  alternative = c("two.sided", "less", "greater")
+)
 }
 \arguments{
 \item{mx}{A numeric value or vector, the sample average for condition "x"}

@@ -1,8 +1,10 @@
-urls:
-  reference: https://pneuvial.github.io/adjclust/reference
-  article: https://pneuvial.github.io/adjclust/articles
+pandoc: 2.3.1
+pkgdown: 1.4.1
+pkgdown_sha: ~
 articles:
-  postHocBoundAlgo: postHocBoundAlgo.html
+  Simes_equi-correlation: Simes_equi-correlation.html
+  confidenceEnvelopes_localized: confidenceEnvelopes_localized.html
+  jointErrorRateCalibration_simulations: jointErrorRateCalibration_simulations.html
   stepDownControl: stepDownControl.html
   two-sample: two-sample.html
 

@@ -4,8 +4,12 @@
 \alias{rowWilcoxonTests}
 \title{Wilcoxon rank sum tests for each row of a matrix}
 \usage{
-rowWilcoxonTests(mat, categ, alternative = c("two.sided", "less",
-  "greater"), correct = TRUE)
+rowWilcoxonTests(
+  mat,
+  categ,
+  alternative = c("two.sided", "less", "greater"),
+  correct = TRUE
+)
 }
 \arguments{
 \item{mat}{A numeric matrix whose rows correspond to variables and columns to

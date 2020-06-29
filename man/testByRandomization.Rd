@@ -4,9 +4,14 @@
 \alias{testByRandomization}
 \title{Randomization-based testing}
 \usage{
-testByRandomization(X, B, alternative = c("two.sided", "less",
-  "greater"), rowTestFUN = rowWelchTests, rand.p.value = FALSE,
-  seed = NULL)
+testByRandomization(
+  X,
+  B,
+  alternative = c("two.sided", "less", "greater"),
+  rowTestFUN = rowWelchTests,
+  rand.p.value = FALSE,
+  seed = NULL
+)
 }
 \arguments{
 \item{X}{a matrix of \code{m} variables by \code{n} observations}

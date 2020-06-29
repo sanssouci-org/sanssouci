@@ -1,7 +1,7 @@
 Package: sansSouci
 Version: 0.8.1
 Date: 2019-10-16
-Title: Post hoc inference through JFWER control
+Title: Post hoc inference via joint error rate control
 Authors@R: c(person("Benjamin", "Sadacca", role="ctb"),
              person("Gilles", "Blanchard", role="aut"),
              person("Guillermo", "Durand", role="aut"),
@@ -25,5 +25,5 @@ Suggests:
     RColorBrewer,
     ggplot2
 VignetteBuilder: knitr
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0
 LazyData: true

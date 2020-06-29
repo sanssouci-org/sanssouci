@@ -4,8 +4,7 @@
 \alias{rowWelchTests}
 \title{Welch t-tests for rows of a matrix}
 \usage{
-rowWelchTests(mat, categ, alternative = c("two.sided", "less",
-  "greater"))
+rowWelchTests(mat, categ, alternative = c("two.sided", "less", "greater"))
 }
 \arguments{
 \item{mat}{A numeric matrix whose rows correspond to variables and columns to

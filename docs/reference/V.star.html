@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>BetaThresholdFamily — BetaThresholdFamily • sansSouci</title>
+<title>Post hoc bound on the number of false positives — V.star • sansSouci</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,8 @@
 
 
 
-<meta property="og:title" content="BetaThresholdFamily — BetaThresholdFamily" />
-<meta property="og:description" content="Beta threshold family" />
+<meta property="og:title" content="Post hoc bound on the number of false positives — V.star" />
+<meta property="og:description" content="Post hoc bound on the number of false positives" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -124,35 +124,41 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>BetaThresholdFamily</h1>
+    <h1>Post hoc bound on the number of false positives</h1>
     
-    <div class="hidden name"><code>BetaThresholdFamily.Rd</code></div>
+    <div class="hidden name"><code>V.star.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Beta threshold family</p>
+    <p>Post hoc bound on the number of false positives</p>
     </div>
 
-    <pre class="usage"><span class='fu'>BetaThresholdFamily</span>(<span class='no'>m</span>, <span class='kw'>kMax</span> <span class='kw'>=</span> <span class='no'>m</span>)</pre>
+    <pre class="usage"><span class='fu'>V.star</span>(<span class='no'>S</span>, <span class='no'>C</span>, <span class='no'>ZL</span>, <span class='no'>leaf_list</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>m</th>
-      <td><p>The number of hypotheses tested</p></td>
+      <th>S</th>
+      <td><p>A subset of hypotheses</p></td>
     </tr>
     <tr>
-      <th>kMax</th>
-      <td><p>For simultaneous control of (\(k\)-FWER for all \(k \le 
-k[max]\)).</p></td>
+      <th>C</th>
+      <td><p>Tree</p></td>
+    </tr>
+    <tr>
+      <th>ZL</th>
+      <td><p>Zeta tree</p></td>
+    </tr>
+    <tr>
+      <th>leaf_list</th>
+      <td><p>List of leaves</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A threshold function (on the scale of test statistics) which
-  achieves "balanced" joint error rate (JER) control under independence</p>
+    <p>An integer value, upper bound on the number false positives in S</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -162,8 +168,6 @@ k[max]\)).</p></td>
       <li><a href="#value">Value</a></li>
     </ul>
 
-    <h2>Author</h2>
-    <p>Gilles Blanchard, Pierre Neuvial and Etienne Roquain</p>
   </div>
 </div>
 

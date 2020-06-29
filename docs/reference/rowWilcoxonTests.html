@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Welch t-tests for rows of a matrix — rowWelchTests • sansSouci</title>
+<title>Wilcoxon rank sum tests for each row of a matrix — rowWilcoxonTests • sansSouci</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,8 @@
 
 
 
-<meta property="og:title" content="Welch t-tests for rows of a matrix — rowWelchTests" />
-<meta property="og:description" content="Welch t-tests for each row of a matrix, intended to be speed efficient" />
+<meta property="og:title" content="Wilcoxon rank sum tests for each row of a matrix — rowWilcoxonTests" />
+<meta property="og:description" content="Vectorized version of two-sample Wilcoxon rank sum tests" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -124,17 +124,17 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Welch t-tests for rows of a matrix</h1>
+    <h1>Wilcoxon rank sum tests for each row of a matrix</h1>
     
-    <div class="hidden name"><code>rowWelchTests.Rd</code></div>
+    <div class="hidden name"><code>rowWilcoxonTests.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Welch t-tests for each row of a matrix, intended to be speed efficient</p>
+    <p>Vectorized version of two-sample Wilcoxon rank sum tests</p>
     </div>
 
-    <pre class="usage"><span class='fu'>rowWelchTests</span>(<span class='no'>mat</span>, <span class='no'>categ</span>, <span class='kw'>alternative</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"two.sided"</span>, <span class='st'>"less"</span>,
-  <span class='st'>"greater"</span>))</pre>
+    <pre class="usage"><span class='fu'>rowWilcoxonTests</span>(<span class='no'>mat</span>, <span class='no'>categ</span>, <span class='kw'>alternative</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"two.sided"</span>, <span class='st'>"less"</span>,
+  <span class='st'>"greater"</span>), <span class='kw'>correct</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -153,52 +153,58 @@ observations</p></td>
       <th>alternative</th>
       <td><p>A character string specifying the alternative hypothesis.
 Must be one of "two.sided" (default), "greater" or "less". As in
-<code><a href='https://rdrr.io/r/stats/t.test.html'>t.test</a></code>, alternative = "greater" is the alternative that the
-class '1' has a larger mean than the class '0'.</p></td>
+<code><a href='https://rdrr.io/r/stats/wilcox.test.html'>wilcox.test</a></code>, alternative = "greater" is the alternative that
+class '1' is shifted to the right of class '0'.</p></td>
+    </tr>
+    <tr>
+      <th>correct</th>
+      <td><p>A logical indicating whether to apply continuity correction in
+the normal approximation for the p-value.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A list with class "htest" containing the following components:</p><dl class='dl-horizontal'>
-<dt>statistic</dt><dd><p>the value of the t-statistics</p></dd>
-  <dt>parameter</dt><dd><p>the degrees of freedom for the t-statistics</p></dd>
-  <dt>p.value</dt><dd><p>the p-values for the tests</p></dd>
-</dl><p></p>
-<dt>meanDiff</dt><dd><p>the mean
-  difference</p></dd>
+<dt>statistic</dt><dd><p>the value of the statistics</p></dd> <dt>p.value</dt><dd><p>the
+  p-values for the tests</p></dd>
+</dl>
+
+<p>A list with elements</p><dl class='dl-horizontal'>
+<dt>stat</dt><dd><p>A vector of <code>m</code>
+  Wilcoxon sum rank test statistics of association between <code>X</code> and
+  <code>y</code>.</p></dd> <dt>stat0Mat</dt><dd><p>An <code>m</code> x <code>B</code> matrix of <code>B</code>
+  realizations of a <code>m</code>-dimensional vector of test statistics under the
+  null hypothesis of no association between <code>X</code> and <code>y</code>.</p></dd>
+</dl>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Other functions to perform t-tests on each row of a matrix include:
-<code><a href='https://rdrr.io/pkg/genefilter/man/rowFtests.html'>fastT</a></code>: this function only calculates the test
-statistics and not the corresponding degrees of freedom or p-value;
-<code><a href='https://rdrr.io/pkg/genefilter/man/rowFtests.html'>rowttests</a></code>: this function calculates the test
-statistics, degrees of freedom and associated p-value, but only in the case
-of equal group variances (standard t-test and not Welch t-test)</p>
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+    <p>The p-values are computed using the normal approximation as
+  described in the <code><a href='https://rdrr.io/r/stats/wilcox.test.html'>wilcox.test</a></code> function. The exact p-values
+  (which can be useful for small samples with no ties) are not implemented
+  (yet).</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <p>B. L. Welch (1951), On the comparison of several mean values: an
-  alternative approach. Biometrika, *38*, 330-336</p>
+    <div class='dont-index'><p>wilcox.test</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fl'>1e3</span>
-<span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>38</span>
-<span class='no'>mat</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='no'>p</span>*<span class='no'>n</span>), <span class='kw'>ncol</span><span class='kw'>=</span><span class='no'>n</span>)
-<span class='no'>cls</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>, <span class='fl'>1</span>), <span class='kw'>times</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>27</span>, <span class='no'>n</span>-<span class='fl'>27</span>))
-<span class='no'>fwt</span> <span class='kw'>&lt;-</span> <span class='fu'>rowWelchTests</span>(<span class='no'>mat</span>, <span class='kw'>categ</span><span class='kw'>=</span><span class='no'>cls</span>, <span class='kw'>alternative</span> <span class='kw'>=</span> <span class='st'>"greater"</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='no'>fwt</span>)</div><div class='output co'>#&gt; List of 4
-#&gt;  $ statistic: num [1:1000] -0.643 -2.181 -3.189 -0.274 -0.489 ...
-#&gt;  $ parameter: num [1:1000] 15.6 18.1 28.9 20.4 14.3 ...
-#&gt;  $ p.value  : num [1:1000] 0.735 0.979 0.998 0.607 0.684 ...
-#&gt;  $ meanDiff : num [1:1000] -0.2575 -0.7231 -0.9037 -0.0789 -0.1612 ...
+<span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fl'>100</span>
+<span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>120</span>
+<span class='no'>mat</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='no'>p</span>*<span class='no'>n</span>), <span class='kw'>ncol</span> <span class='kw'>=</span> <span class='no'>n</span>)
+<span class='no'>cls</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>, <span class='fl'>1</span>), <span class='kw'>times</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>n</span>/<span class='fl'>2</span>, <span class='no'>n</span>/<span class='fl'>2</span>))
+<span class='no'>fwt</span> <span class='kw'>&lt;-</span> <span class='fu'>rowWilcoxonTests</span>(<span class='no'>mat</span>, <span class='kw'>categ</span> <span class='kw'>=</span> <span class='no'>cls</span>, <span class='kw'>alternative</span> <span class='kw'>=</span> <span class='st'>"two.sided"</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='no'>fwt</span>)</div><div class='output co'>#&gt; List of 2
+#&gt;  $ statistic: num [1:100] 1894 1692 1397 2067 1732 ...
+#&gt;  $ p.value  : num [1:100] 0.6236 0.5726 0.0346 0.1619 0.7231 ...
 #&gt;  - attr(*, "class")= chr "htest"</div><div class='input'>
-<span class='co'># compare with ordinary t.test:</span>
-<span class='no'>pwt</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/apply.html'>apply</a></span>(<span class='no'>mat</span>, <span class='fl'>1</span>, <span class='kw'>FUN</span><span class='kw'>=</span><span class='kw'>function</span>(<span class='no'>x</span>) {
-   <span class='fu'><a href='https://rdrr.io/r/stats/t.test.html'>t.test</a></span>(<span class='no'>x</span>[<span class='no'>cls</span><span class='kw'>==</span><span class='fl'>1</span>], <span class='no'>x</span>[<span class='no'>cls</span><span class='kw'>==</span><span class='fl'>0</span>], <span class='kw'>alternative</span> <span class='kw'>=</span> <span class='st'>"greater"</span>)$<span class='no'>p.value</span>
-})
-<span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>abs</a></span>(<span class='no'>fwt</span>$<span class='no'>p.value</span>-<span class='no'>pwt</span>) <span class='kw'>&lt;</span> <span class='fl'>1e-10</span>)  <span class='co'>## same results</span></div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
+<span class='co'># compare with ordinary wilcox.test:</span>
+<span class='no'>pwt</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/t.html'>t</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>sapply</a></span>(<span class='fl'>1</span>:<span class='no'>p</span>, <span class='kw'>FUN</span><span class='kw'>=</span><span class='kw'>function</span>(<span class='no'>ii</span>) {
+  <span class='no'>wt</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/wilcox.test.html'>wilcox.test</a></span>(<span class='no'>mat</span>[<span class='no'>ii</span>, <span class='no'>cls</span><span class='kw'>==</span><span class='fl'>1</span>], <span class='no'>mat</span>[<span class='no'>ii</span>, <span class='no'>cls</span><span class='kw'>==</span><span class='fl'>0</span>], <span class='kw'>alternative</span> <span class='kw'>=</span> <span class='st'>"two.sided"</span>)
+  <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>statistic</span> <span class='kw'>=</span> <span class='no'>wt</span><span class='kw'>[[</span><span class='st'>"statistic"</span>]], <span class='kw'>p.value</span> <span class='kw'>=</span> <span class='no'>wt</span><span class='kw'>[[</span><span class='st'>"p.value"</span>]])
+}))
+<span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>abs</a></span>(<span class='no'>fwt</span>$<span class='no'>p.value</span>-<span class='no'>pwt</span>[, <span class='st'>"p.value"</span>]) <span class='kw'>&lt;</span> <span class='fl'>1e-10</span>)  <span class='co'>## same results</span></div><div class='output co'>#&gt; [1] TRUE</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>abs</a></span>(<span class='no'>fwt</span>$<span class='no'>statistic</span>-<span class='no'>pwt</span>[, <span class='st'>"statistic.W"</span>]) <span class='kw'>&lt;</span> <span class='fl'>1e-10</span>)  <span class='co'>## same results</span></div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -207,12 +213,12 @@ of equal group variances (standard t-test and not Welch t-test)</p>
       <li><a href="#arguments">Arguments</a></li>
       <li><a href="#value">Value</a></li>
       <li><a href="#details">Details</a></li>
-      <li><a href="#references">References</a></li>
+      <li><a href="#see-also">See also</a></li>
       <li><a href="#examples">Examples</a></li>
     </ul>
 
     <h2>Author</h2>
-    <p>Pierre Neuvial</p>
+    <p>Gilles Blanchard, Pierre Neuvial and Etienne Roquain</p>
   </div>
 </div>
 

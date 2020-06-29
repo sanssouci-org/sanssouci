@@ -4,9 +4,10 @@ author: "G. Durand, G. Blanchard, P. Neuvial, E. Roquain"
 date: "`r Sys.Date()`"
 output:
   pdf_document: 
+    citation_package: natbib
     keep_tex: true
   html_document:
-    df_print: paged
+    pdf_print: paged
 bibliography: sansSouci.bib
 vignette: >
   %\VignetteIndexEntry{Confidence envelopes for spatially structured hypotheses}
@@ -69,7 +70,7 @@ mu <- gen.mu.leaves(m = m, K1 = K1, d = r, grouped = TRUE, setting = "const",
 
 This construction is illustrated in the figure below (Figure 11 in @DBNR) in the case where $q=3$.
 
-```{r figure-simulation-tree, out.width = '100%', echo = FALSE, fig.cap="Figure 11 in Durand et al (2018)."}
+```{r figure-simulation-tree, out.width = '100%', echo = FALSE, fig.cap="Figure 11 in Durand et al."}
 knitr::include_graphics("DBNR_graph-simu.png")
 ```
 
@@ -204,7 +205,4 @@ pS + xlim(1, xmax) + ylim(0, ymax)
 ```{r session-information}
 sessionInfo()
 ```
-
-
-## References
 

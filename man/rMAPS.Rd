@@ -4,13 +4,15 @@
 \name{rMAPS}
 \alias{rMAPS}
 \title{Sample rMAPS data}
-\format{An integer matrix with 250 rows and 4642 columns. Each row
+\format{
+An integer matrix with 250 rows and 4642 columns. Each row
   corresponds to a genomic position relative to a splicing event, and each
   column corresponds to an exon. The entries of the matrix correspond to the
   number of matches of a particular DNA motif in the The samples are in two
   groups indicated by the column names of the matrix: 4550 controls ("0") and
   92 inclusion events ("1") corresponding to the status of the exon in a
-  preliminary differential splicing analysis performed by rMATS.}
+  preliminary differential splicing analysis performed by rMATS.
+}
 \usage{
 rMAPS
 }

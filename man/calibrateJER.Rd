@@ -4,9 +4,17 @@
 \alias{calibrateJER}
 \title{Calibration of joint Family-Wise Error Rate thresholds}
 \usage{
-calibrateJER(X, B, alpha, alternative = c("two.sided", "less",
-  "greater"), rowTestFUN = rowWelchTests, refFamily = c("Simes",
-  "kFWER", "Beta"), maxStepsDown = 10L, K = nrow(X), verbose = TRUE)
+calibrateJER(
+  X,
+  B,
+  alpha,
+  alternative = c("two.sided", "less", "greater"),
+  rowTestFUN = rowWelchTests,
+  refFamily = c("Simes", "kFWER", "Beta"),
+  maxStepsDown = 10L,
+  K = nrow(X),
+  verbose = TRUE
+)
 }
 \arguments{
 \item{X}{A matrix of \eqn{m} variables (hypotheses) by \eqn{n} observations.

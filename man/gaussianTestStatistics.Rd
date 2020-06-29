@@ -4,8 +4,14 @@
 \alias{gaussianTestStatistics}
 \title{Simulate Gaussian test statistics}
 \usage{
-gaussianTestStatistics(m, B, pi0 = 1, SNR = 0, dep = c("equi",
-  "Toeplitz"), param = 0)
+gaussianTestStatistics(
+  m,
+  B,
+  pi0 = 1,
+  SNR = 0,
+  dep = c("equi", "Toeplitz"),
+  param = 0
+)
 }
 \arguments{
 \item{m}{Number of hypotheses}
