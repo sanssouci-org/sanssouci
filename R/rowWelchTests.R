@@ -20,7 +20,7 @@
 #'   \code{\link{t.test}}, alternative = "greater" is the alternative that the
 #'   class '1' has a larger mean than the class '0'.
 #'
-#' @return A list with class "htest" containing the following components:
+#' @return A data.frame with containing the following columns:
 #'   \describe{ \item{statistic}{the value of the t-statistics}
 #'   \item{parameter}{the degrees of freedom for the t-statistics}
 #'   \item{p.value}{the p-values for the tests}} \item{meanDiff}{the mean
@@ -60,7 +60,7 @@ rowWelchTests <- function(mat, categ, alternative = c("two.sided", "less", "grea
                          X[["sd"]], Y[["sd"]],
                          X[["n"]], Y[["n"]],
                          alternative = alternative)
-    swt[["meanDiff"]] <- X[["mean"]] - Y[["mean"]]
+    swt$meanDiff <- X[["mean"]] - Y[["mean"]]
     swt
 }
 

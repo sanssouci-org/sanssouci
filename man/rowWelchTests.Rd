@@ -19,7 +19,7 @@ Must be one of "two.sided" (default), "greater" or "less". As in
 class '1' has a larger mean than the class '0'.}
 }
 \value{
-A list with class "htest" containing the following components:
+A data.frame with containing the following columns:
   \describe{ \item{statistic}{the value of the t-statistics}
   \item{parameter}{the degrees of freedom for the t-statistics}
   \item{p.value}{the p-values for the tests}} \item{meanDiff}{the mean

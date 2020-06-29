@@ -27,7 +27,7 @@
 #'
 #' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 #' @seealso wilcox.test
-#' @return A list with elements \describe{ \item{stat}{A vector of \code{m}
+#' @return A data.frame with columns \describe{ \item{stat}{A vector of \code{m}
 #'   Wilcoxon sum rank test statistics of association between \code{X} and
 #'   \code{y}.} \item{stat0Mat}{An \code{m} x \code{B} matrix of \code{B}
 #'   realizations of a \code{m}-dimensional vector of test statistics under the
@@ -83,8 +83,6 @@ rowWilcoxonTests <- function(mat, categ, alternative = c("two.sided", "less", "g
                 greater = pnorm(z, lower.tail = FALSE), 
                 two.sided = 2 * pmin(pnorm(z), pnorm(z, lower.tail = FALSE)))
 
-    res <- list(statistic = stat,
+    data.frame(statistic = stat,
                 p.value = p)
-    class(res) <- "htest"
-    res
 }
