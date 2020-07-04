@@ -3,7 +3,7 @@
 export(SimesThresholdFamily)
 export(V.star)
 export(calibrateJER)
-export(curveMaxFP)
+export(confidenceEnvelope)
 export(curveVstar_tree)
 export(dyadic.from.height)
 export(dyadic.from.max.height)

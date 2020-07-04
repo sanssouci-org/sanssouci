@@ -1,13 +1,13 @@
 ---
-title: "Post hoc inference for two-sample tests"
-author: "P. Neuvial and M. Perrot-Dockès"
+title: "Post hoc inference for differential gene expression studies"
+author: "G. Blanchard, P. Neuvial and E. Roquain"
 date: "`r Sys.Date()`"
 output: 
   html_document: default
   rmarkdown::html_vignette: default
   pdf_document: default
 vignette: >
-  %\VignetteIndexEntry{Post hoc inference for two-sample tests}
+  %\VignetteIndexEntry{Post hoc inference for differntial gene expression studies}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 ---
@@ -19,35 +19,133 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r load-data}
+```{r required-packages}
 library("sansSouci")
-my_url <- url("https://plmbox.math.cnrs.fr/f/755496cc4c154a6dbab0/?dl=1")
-my_con <- gzcon(my_url)
-dat <- readRDS(my_con)
-close(my_con)
-m <- nrow(dat)  ## number of genes
+library("tidyr")
+library("ggplot2")
+library("plotly")
 ```
 
-Perform $\lambda$-calibration:
+## Motivation: a differential gene expression study
 
+We focus on differential gene expression studies in cancerology. These studies aim at identifying genes whose mean expression level differs significantly between two (or more) populations, based on a sample of gene expression measurements from individuals from these populations. Specifically, we consider a data set studied in \cite{bourgon10independent}
+
+```{r read-data}
+# data_url <- url("https://plmbox.math.cnrs.fr/f/755496cc4c154a6dbab0/?dl=1")
+# dat <- readRDS(data_url)
+dat <- readRDS("~/Downloads/bourgon.rds")
+```
+
+This data set which consists of gene expression measurements for  $n = `r ncol(dat)`$ patients with B-cell acute lymphoblastic leukemia (ALL) @chiaretti04gene,@chiaretti05gene. These patients are classified into two subgoups, depending on whether or not they harbor a specific mutation called "BCR/ABL":
+
+```{r colnames}
+table(colnames(dat))
+mut <- "BCR/ABL"
+m <- nrow(dat)
+```
+
+
+The goal of this study is to understand the molecular differences at the gene expression level between the populations of BCR/ABL positive and negative ("NEG") patients. For each patient, we observe a vector of $m = `r m`$ gene expression values. 
+
+The most basic question to ask is: 
+
+> For which genes is there a difference in the mean expression level of the mutated and non-mutated population? 
+
+This question can be addressed by performing one statistical test of no difference between means for each gene, and to define "differentially expressed" genes as those passing some significance threshold. One important concern here is the calibration of the significance threshold.
+
+## Classical differential analysis
+
+We start with a simple Welch test for differential expression for each gene. This can be done e.g. using the `sansSouci::rowWelchTests` function:
+
+```{r row-welch-tests}
+categ <- ifelse(colnames(dat) == "BCR/ABL", 1, 0) # map to 0/1
+dex <- sansSouci::rowWelchTests(dat, categ)
+pval <- dex[["p.value"]]
+dex <- dex[order(pval), ]
+dex$gene_order <- 1:nrow(dex)
+```
+
+
+We plot a histogram of the corresponding $p$-values:
+
+```{r hist}
+hist(pval, probability = TRUE, breaks = 20,
+     xlab = "p-value", main = "p-value distributon")
+```
+
+As expected, the distribution presents a large number of small $p$-values (which include signals, i.e. differentially expressed genes) mixed with uniformly distributed $p$-values (corresponding to non-differentially expressed genes). 
+
+### Multiple testing correction: False Discovery Rate control
+
+The state of the art approach to large-scale multiple testing is to control the False Discovery Rate (FDR), which is the expected proportion of wrongly selected genes (false positives) among all selected genes @benjamini95controlling. The most widely used method to control this risk is the Benjamini-Hochberg (BH) procedure, which has been shown to control the FDR when the hypotheses corresponding to the non-differentially expressed genes are independent @benjamini95controlling or satisfy a specific type of positive dependence called Positive Regression Dependence on the Subset $\mathcal{H}_0$ of truly non-differentially expressed genes @benjamini01control.
+
+```{r bh}
+q <- 0.05
+adjp.BH <- p.adjust(pval, method = "BH")
+nBH <- sum(adjp.BH <= q)
+```
+
+```{r bh-plot}
+my_col <- "#FF000040"
+bh_plot <- ggplot(dex, aes(x = gene_order, y = p.value)) + 
+  geom_line() +
+  xlab("Gene index") + ylab("Sorted p-values") +
+  geom_abline(slope = 1/m, intercept = 0, color = "#00000020", size = 2) +
+  geom_abline(slope = q/m, color = my_col, size = 2) +
+  # geom_segment(aes(x = nBH, y = 0, yend = q*nBH/m, xend = nBH), linetype = "dotted") +
+  # geom_segment(aes(x = 0, y = q*nBH/m, xend = nBH, yend = q*nBH/m), linetype = "dotted") +
+  geom_abline(slope = 0, intercept = q, linetype = "dotted", color = my_col, size = 2) +
+  theme_bw() +
+  theme(axis.text = element_text(size = 14), 
+        axis.title = element_text(size = 18)) + 
+  #geom_text(x = 0, y = q, label = expression(alpha), color = my_col)
+  
+bh_plot + 
+  ggsave(filename = "~/Downloads/BH-plot.png")
+```
+
+```{r}
+dexs <- subset(dex, gene_order <= 500)
+bh_plot <- ggplot(dexs, aes(x = gene_order, y = p.value)) + 
+  geom_line() +
+  xlab("Gene index") + ylab("Sorted p-values") +
+  geom_abline(slope = 1/m, intercept = 0, color = "#00000020", size = 2) +
+  geom_abline(slope = q/m, color = my_col, size = 2) +
+  geom_segment(aes(x = nBH, y = 0, yend = q*nBH/m, xend = nBH), linetype = "dotted", col = my_col) +
+  geom_segment(aes(x = 0, y = q*nBH/m, xend = nBH, yend = q*nBH/m), linetype = "dotted", col = my_col) +
+  theme_bw() +
+  theme(axis.text = element_text(size = 14), 
+        axis.title = element_text(size = 18))
+bh_plot + 
+  ggsave(filename = "~/Downloads/BH-plot_zoom.png")
+
+# qplot(x = 1:k, y = sort(pval)[1:k]) + 
+#   xlab("Gene index") + ylab("Ordered p-value") +
+#   geom_abline(slope = 1/m, intercept = 0, color = "#00000020", size = 2) +
+#   geom_abline(slope = q/m, color = "#FF000040", size = 2) +
+#   geom_segment(aes(x = nBH, y = 0, yend = q*nBH/m, xend = nBH), linetype = "dotted") +
+#   geom_segment(aes(x = 0, y = q*nBH/m, xend = nBH, yend = q*nBH/m), linetype = "dotted") +
+#   ggsave(filename = "~/Downloads/BH-plot_zoom.pdf")
+```
+
+
+Perform $\lambda$-calibration:
 ```{r calibration}
 alpha  <- 0.1
 cal <- calibrateJER(X = dat, B = 100, alpha = alpha)
 ```
 
-```{r Simes}
-sk <- SimesThresholdFamily(m)
-```
-
 
 ```{r calculate-bound}
 ## Order genes by decreasing test statistic
-o <- order(cal$stat, decreasing = TRUE)
-n_genes <- 400
-genes <- 1:n_genes
-FP <- cbind(lambda = curveMaxFP(cal$stat[o[genes]], cal$thr),
-           Simes = curveMaxFP(cal$stat[o[genes]], sk(alpha)))
+res_calib <- confidenceEnvelope(stat = cal$stat, family = "Simes", alpha = cal$lambda, what = "TP")
+res_Simes <- confidenceEnvelope(cal$stat, "Simes", alpha)
 ```
+
+```{r}
+res_calib_tidy <- gather(res_calib, "FP", "TP", "FDP", "TDP", key = "stat", value = "bound")
+```
+
 
 ```{r plot-setup}
 cols <- c("orange", "blue")
