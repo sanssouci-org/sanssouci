@@ -59,7 +59,7 @@ We start with a simple Welch test for differential expression for each gene. Thi
 
 ```{r row-welch-tests}
 categ <- ifelse(colnames(dat) == "BCR/ABL", 1, 0) # map to 0/1
-dex <- sansSouci::rowWelchTests(dat, categ)
+dex <- rowWelchTests(dat, categ)
 pval <- dex[["p.value"]]
 dex <- dex[order(pval), ]
 dex$gene_order <- 1:nrow(dex)
@@ -85,11 +85,13 @@ adjp.BH <- p.adjust(pval, method = "BH")
 nBH <- sum(adjp.BH <= q)
 ```
 
+The application of the BH procedure at level $q = `r q`$ is illustrated in the figures below (all genes are displayed in the first one, second one is a zoom on the top genes):
+
 ```{r bh-plot}
 my_col <- "#FF000040"
 bh_plot <- ggplot(dex, aes(x = gene_order, y = p.value)) + 
   geom_line() +
-  xlab("Gene index") + ylab("Sorted p-values") +
+  xlab("Number of top genes") + ylab("Ordered p-value") +
   geom_abline(slope = 1/m, intercept = 0, color = "#00000020", size = 2) +
   geom_abline(slope = q/m, color = my_col, size = 2) +
   # geom_segment(aes(x = nBH, y = 0, yend = q*nBH/m, xend = nBH), linetype = "dotted") +
@@ -97,103 +99,88 @@ bh_plot <- ggplot(dex, aes(x = gene_order, y = p.value)) +
   geom_abline(slope = 0, intercept = q, linetype = "dotted", color = my_col, size = 2) +
   theme_bw() +
   theme(axis.text = element_text(size = 14), 
-        axis.title = element_text(size = 18)) + 
+        axis.title = element_text(size = 18))  
   #geom_text(x = 0, y = q, label = expression(alpha), color = my_col)
   
 bh_plot + 
-  ggsave(filename = "~/Downloads/BH-plot.png")
+  ggsave(filename = "BH-plot.png", path = "~/Downloads/",
+                  width = 12, height = 8)
 ```
 
-```{r}
-dexs <- subset(dex, gene_order <= 500)
-bh_plot <- ggplot(dexs, aes(x = gene_order, y = p.value)) + 
-  geom_line() +
-  xlab("Gene index") + ylab("Sorted p-values") +
-  geom_abline(slope = 1/m, intercept = 0, color = "#00000020", size = 2) +
-  geom_abline(slope = q/m, color = my_col, size = 2) +
-  geom_segment(aes(x = nBH, y = 0, yend = q*nBH/m, xend = nBH), linetype = "dotted", col = my_col) +
-  geom_segment(aes(x = 0, y = q*nBH/m, xend = nBH, yend = q*nBH/m), linetype = "dotted", col = my_col) +
-  theme_bw() +
-  theme(axis.text = element_text(size = 14), 
-        axis.title = element_text(size = 18))
+```{r bh-plot-zoom}
+xmax <- nBH*2.5
 bh_plot + 
-  ggsave(filename = "~/Downloads/BH-plot_zoom.png")
+  xlim(1, xmax) + ylim(0, dex$p.value[xmax]) +
+  geom_segment(aes(x = nBH, y = 0, yend = q*nBH/m, xend = nBH), linetype = "dotted") +
+  geom_segment(aes(x = 1, y = q*nBH/m, xend = nBH, yend = q*nBH/m), linetype = "dotted", col = 1) +
+  ggsave(filename = "BH-plot_zoom.png", path = "~/Downloads/",
+         width = 12, height = 8)
+```
 
-# qplot(x = 1:k, y = sort(pval)[1:k]) + 
-#   xlab("Gene index") + ylab("Ordered p-value") +
-#   geom_abline(slope = 1/m, intercept = 0, color = "#00000020", size = 2) +
-#   geom_abline(slope = q/m, color = "#FF000040", size = 2) +
-#   geom_segment(aes(x = nBH, y = 0, yend = q*nBH/m, xend = nBH), linetype = "dotted") +
-#   geom_segment(aes(x = 0, y = q*nBH/m, xend = nBH, yend = q*nBH/m), linetype = "dotted") +
-#   ggsave(filename = "~/Downloads/BH-plot_zoom.pdf")
+## Post hoc inference
+
+### Confidence envelopes on "top-$k$" lists
+
+In the absence of prior information on genes, a natural idea is to rank them by decreasing statistical significance, and a natural question to ask is: can we provide a lower confidence envelope on the number (or proportion) of truly differentially expressed genes among the "top $k$" genes, for a user-defined $k$?
+
+We illustrate the use of post-hoc methods to provide this type of information. More specifcally, we build confidence statements on the number of true/false positives within the top $k$ most significant genes in a differential gene expression study, where $k$ may be defined by the user after seing the data, and multiple choices of $k$ are allowed. 
+
+We start by defining a target confidence level:
+
+```{r conf-level}
+alpha <- 0.1
+```
+
+The method of @GS2011 makes it possible to calculate a confidence envelope on the number of true positives among the most significant genes. In the framework of @blanchard:posthoc this bound is obtained from simes86improved inequality, by interpolation:
+
+```{r plot-conf-envelope}
+Kmax <- 200
+conf_env <- confidenceEnvelope(stat = dex$statistic, family = 'Simes(0.2)', what = c("TP", "FDP")) %>% 
+  filter(x <= Kmax)
+p <- ggplot(conf_env, aes(x = x, y = bound)) +
+  geom_line() +
+  facet_grid(stat ~ ., scales = "free_y") +
+  labs(x = "#top genes called significant", y = "")
+ggplotly(p)
+```
+
+```{r TP_BH, echo=FALSE}
+TP_BH <- subset(conf_env, x==nBH & stat == "TP")$bound
 ```
 
 
-Perform $\lambda$-calibration:
+In view of the above plot, we can for example state that with probability larger than `r floor((1-alpha)*100)`, the number of false positives among the `r nBH` genes selected by the BH procedure is larger than `r TP_BH`.
+
+
+However, as discussed in @blanchard:posthoc, this bound has two major limitations, being a consequence of Simes' inequality:
+- It is known to be valid only under certain positive dependence assumptions (PRDS) on the joint $p$-value distribution. Although the PRDS assumption is generally accepted in the case of differential expression studies (which in passing justifies the applicaiton of the BH procedure itself), it has not been formally proved to hold in this case.
+- It is not adaptive to the specific type of dependence at hand for a particular data set.
+
+To bypass these limitations, @blanchard:posthoc have proposed a randomization-based procedure known as $\lambda$-calibration, which yields tighter bounds that are adapted to the dependency observed in the data set at hand. In the case of two-sample tests, this calibration is achieved by permutation of class labels:
+
 ```{r calibration}
-alpha  <- 0.1
-cal <- calibrateJER(X = dat, B = 100, alpha = alpha)
+cal <- calibrateJER(X = dat, B = 100, alpha = alpha, refFamily = "Simes")
+#cal_beta <- calibrateJER(X = dat, B = 100, alpha = alpha, refFamily = "Beta")
 ```
 
 
 ```{r calculate-bound}
-## Order genes by decreasing test statistic
-res_calib <- confidenceEnvelope(stat = cal$stat, family = "Simes", alpha = cal$lambda, what = "TP")
-res_Simes <- confidenceEnvelope(cal$stat, "Simes", alpha)
-```
-
-```{r}
-res_calib_tidy <- gather(res_calib, "FP", "TP", "FDP", "TDP", key = "stat", value = "bound")
-```
-
-
-```{r plot-setup}
-cols <- c("orange", "blue")
-ltys <- c(1, 2)
-labs <- c(expression(lambda-calibration), "Simes")
-mar <- c(4, 5, 0, 0) + 0.1
+famz <- list("Simes" = toFamily("Simes", alpha), 
+                 "Simes + calibration" = cal$thr, 
+                 "Beta" = toFamily("Beta", alpha))
+#                 "Beta + calibration" = cal_beta$thr)
+conf_env <- confidenceEnvelope(stat = cal$stat, family = famz, what = c("TP", "FDP"))
 ```
 
 
-
-```{r, FP}
-par(mar = mar)
-matplot(genes, FP, t = 'l', 
-        xlab = "Number of selected genes",
-        ylab = "Upper bound on the \nnumber of false discoveries",
-        col = cols, 
-        lty = ltys)
-abline(a = 0, b = 1, lty = 3)
-legend("bottomright", labs, col = cols, lty = ltys)
-```
-
-```{r, FDP}
-par(mar = mar)
-FDP <- FP/genes
-matplot(genes, FDP, t = 'l', 
-        xlab = "Number of selected genes",
-        ylab = "Upper bound on the \nproportion of false discoveries",
-        col = cols, 
-        lty = ltys)
-legend("bottomright", labs, col = cols, lty = ltys)
-```
-
-```{r, TP}
-TP <- genes - FP
-matplot(genes, TP, t = 'l', 
-        xlab = "Number of selected genes",
-        ylab = "Lower bound on the \nnumber of true discoveries",
-        col = cols, 
-        lty = ltys)
-legend("bottomright", labs, col = cols, lty = ltys)
-```
-
-## Remarks
-
-Note that the thresholds after $\lambda$-calibration correspond to the Simes thresholds with parameter $\lambda$:
-
-```{r}
-identical(cal$thr, sk(cal$lambda))
+```{r, conf-env-plot}
+env <- ggplot(subset(conf_env, x <= 200), aes(x = x, y = bound, color = family, group = family)) + 
+  geom_line() +
+  facet_grid(stat ~ ., scales = "free_y") +
+  labs(x = "#top genes called significant", y = "")
+# xlab = "Number of selected genes",
+# ylab = "Upper bound on the \nnumber of false discoveries")
+env
 ```
 
 

@@ -5,11 +5,10 @@
 #'
 #' @param stat A vector containing all \eqn{m} test statistics, sorted
 #'   non-increasingly
-#' @param alphas A numeric vector of target confidence level(s)
-#' 
-#' @param family A character vector, the name of the reference families to be
-#'   used. Currently, only the "Simes" (a.k.a. "linear") and "Beta" families 
-#'   are implemented.
+#' @param family A character vector specifying the reference families to be
+#'   used. Should be of the form "refFamily(param)", as output by
+#'   \code{\link{family}}. Currently, 'FamilyName' should be either "Simes" (or
+#'   equivalenlty, "Linear") or "Beta".
 #'   
 #' @param what A character vector, the name of the statistics to be computed,
 #'   among: \describe{
@@ -34,26 +33,26 @@
 #' alpha <- 0.1
 #' sim <- gaussianSamples(m = m, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
 #' cal <- calibrateJER(sim$X, B = 1e3, alpha = alpha, refFamily="Simes")
-#' conf_env <- confidenceEnvelope(cal$stat, refFamily="Simes", alpha = cal$lambda)
-#' plot(1:m, conf_env$FP, t = 's', col = "purple")
+#' fam <- list("Simes" = toFamily("Simes", alpha),
+#'              "Simes + calibration" = toFamily("Simes", cal$lambda))
+#' conf_env <- confidenceEnvelope(cal$stat, family = fam, what = "FP")
 #'
 #' # compare with true number of false positives
 #' o <- order(cal$stat, decreasing = TRUE)
 #' H0 <- which(sim$H == 0)
 #' V <- cumsum(o %in% H0)
-#' lines(1:m, V, col = 2)
+#' oracle <- data.frame(x = 1:m, stat = "FP", bound = V, family = "Oracle")
+#' conf_env <- rbind(conf_env, oracle)
 #'
-#' # compare with Simes bound (ie with no calibration)
-#' conf_env_Simes <- confidenceEnvelope(cal$stat, refFamily="Simes", alpha = alpha)
-#' lines(1:m, conf_env_Simes$FP, col = 1)
+#' library("ggplot2")
+#' ggplot(conf_env, aes(x = x, y = bound, color = family, group = family)) +
+#'   geom_line() + 
+#'   labs(x = "# top genes called significant", y = "")
 
-confidenceEnvelope <- function(stat, family, alpha, what = c("FP", "TP", "FDP", "TDP")) {
-    fam0 <- c("Simes", "Beta")
-    if (!all(family %in% fam0)) {
-        stop("Only the following reference families are currently supported: ", fam0)
-    }
-    if (min(alpha) < 0 || max(alpha) > 1) {
-        stop("Target level 'alpha' should be in [0,1]")
+
+confidenceEnvelope <- function(stat, family, what = c("FP", "TP", "FDP", "TDP")) {
+    if (length(family) == 1) {
+        family <- list(family)
     }
     what0 <- c("FP", "TP", "FDP", "TDP")
     if (!all(what %in% what0)) {
@@ -63,15 +62,30 @@ confidenceEnvelope <- function(stat, family, alpha, what = c("FP", "TP", "FDP", 
     m <- length(stat)
     idxs <- 1:m
     o <- order(stat, decreasing = TRUE)
-    configs <- expand.grid(family = family, alpha = alpha)
     res <- NULL
-    for (kk in 1:nrow(configs)) {
-        fam <- configs[kk, "family"]
-        al <- configs[kk, "alpha"]
-        if (fam == "Simes") {
-            thr <- SimesThresholdFamily(m)(al)
-        } else if (fam == "Beta") {
-            thr <- BetaThresholdFamily(m)(al)
+    for (kk in seq_along(family)) {
+        fam <- family[[kk]]
+        if (class(fam) == "numeric" && length(fam) == m) {
+            famLab <- names(family)[kk]
+            thr <- fam
+        }  else if (class(fam) == "character") {
+            famLab <- fam
+            pf <- fromFamily(fam)
+            param <- pf$param
+            refFamily <- pf$refFamily
+            fam0 <- c("Simes", "Beta")
+            if (!(refFamily %in% fam0)) {
+                stop("Unknown family: ", refFamily, "\n",
+                     "Only the following reference families are currently supported: ", 
+                     paste(fam0, collapse = ", "))
+            }
+            if (refFamily == "Simes") {
+                thr <- SimesThresholdFamily(m)(param)
+            } else if (refFamily == "Beta") {
+                thr <- BetaThresholdFamily(m)(param)
+            }
+        } else {
+            stop("Unknown family: ", fam)
         }
         max_FP <- curveMaxFP(stat[o], thr)
         max_FDP <- max_FP/idxs
@@ -86,8 +100,7 @@ confidenceEnvelope <- function(stat, family, alpha, what = c("FP", "TP", "FDP", 
                              data.frame(x = idxs, stat = ww, bound = bounds[[ww]]))
         }
         res_fam <- cbind(res_fam, 
-                         family = fam,
-                         alpha = al, 
+                         family = famLab,
                          row.names = NULL)
         res <- rbind(res, res_fam)
     }
