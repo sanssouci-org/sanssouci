@@ -6,7 +6,7 @@
 #' @param stat A vector containing all \eqn{m} test statistics, sorted
 #'   non-increasingly
 #' @param family A character vector specifying the reference families to be
-#'   used. Should be of the form "refFamily(param)", as output by
+#'   used. Should be of the form "toFamily(param)", as output by
 #'   \code{\link{family}}. Currently, 'FamilyName' should be either "Simes" (or
 #'   equivalenlty, "Linear") or "Beta".
 #'   
@@ -65,27 +65,25 @@ confidenceEnvelope <- function(stat, family, what = c("FP", "TP", "FDP", "TDP"))
     res <- NULL
     for (kk in seq_along(family)) {
         fam <- family[[kk]]
-        if (class(fam) == "numeric" && length(fam) == m) {
-            famLab <- names(family)[kk]
-            thr <- fam
-        }  else if (class(fam) == "character") {
-            famLab <- fam
-            pf <- fromFamily(fam)
-            param <- pf$param
-            refFamily <- pf$refFamily
-            fam0 <- c("Simes", "Beta")
-            if (!(refFamily %in% fam0)) {
-                stop("Unknown family: ", refFamily, "\n",
-                     "Only the following reference families are currently supported: ", 
-                     paste(fam0, collapse = ", "))
-            }
-            if (refFamily == "Simes") {
-                thr <- SimesThresholdFamily(m)(param)
-            } else if (refFamily == "Beta") {
-                thr <- BetaThresholdFamily(m)(param)
-            }
-        } else {
-            stop("Unknown family: ", fam)
+        stopifnot(class(fam) == "character")
+        # if (class(fam) == "numeric" && length(fam) == m) {
+        #     famLab <- names(family)[kk]
+        #     thr <- fam
+        # }  else if (class(fam) == "character") {
+        famLab <- names(family)[kk]
+        pf <- fromFamily(fam)
+        param <- pf$param
+        refFamily <- pf$refFamily
+        fam0 <- c("Simes", "Beta")
+        if (!(refFamily %in% fam0)) {
+            stop("Unknown family: ", refFamily, "\n",
+                 "Only the following reference families are currently supported: ", 
+                 paste(fam0, collapse = ", "))
+        }
+        if (refFamily == "Simes") {
+            thr <- SimesThresholdFamily(m)(param)
+        } else if (refFamily == "Beta") {
+            thr <- BetaThresholdFamily(m)(param)
         }
         max_FP <- curveMaxFP(stat[o], thr)
         max_FDP <- max_FP/idxs
@@ -144,13 +142,17 @@ confidenceEnvelope <- function(stat, family, what = c("FP", "TP", "FDP", "TDP"))
 curveMaxFP <- function(stat, thr, flavor=c("BNR2016", "Mein2006", "BNR2014")) {
     m <- length(stat)
     kMax <- length(thr)
-
+    if (kMax < m && flavor %in% c("Mein2006", "BNR2016")) {
+        thr <- c(thr, rep(thr[kMax], m-kMax))
+        kMax <- length(thr)
+        stopifnot(kMax==m)
+    }
     flavor <- match.arg(flavor)
     if (flavor=="Mein2006") {
         ## (loose) upper bound on number of FALSE discoveries among first rejections
         R <- 1:m
-        BB <- sapply(stat[R], function(x) sum(x<=thr))     ## Eqn (7) in Meinshausen
-        stopifnot(all(BB<=kMax))  ## sanity check
+        BB <- sapply(stat[R], function(x) sum(x<=thr))     ## Eqn (7) in Meinshausen 
+        ## corresponds to 'K' in 'BNR2016'
 
         ## lower bound on number of TRUE discoveries among first rejections
         Sbar <- pmax(0, cummax(R-BB))
@@ -171,8 +173,8 @@ curveMaxFP <- function(stat, thr, flavor=c("BNR2016", "Mein2006", "BNR2014")) {
         stopifnot(identical(sort(thr, decreasing=TRUE), thr))
         stopifnot(identical(sort(stat, decreasing=TRUE), stat))
         
-        K <- rep(kMax, m) ## K[i] = number of k/ T[i] <= s[k]
-        Z <- rep(m, kMax) ## Z[k] = number of i/ T[i] >  s[k]
+        K <- rep(kMax, m) ## K[i] = number of k/ T[i] <= s[k] = BB in 'Mein2006'
+        Z <- rep(m, kMax) ## Z[k] = number of i/ T[i] >  s[k] = cardinal of R_k
         ## 'K' and 'Z' are initialized to their largest possible value, 
         ## ie 'm' and 'kMax', respectively
         kk <- 1
@@ -189,8 +191,12 @@ curveMaxFP <- function(stat, thr, flavor=c("BNR2016", "Mein2006", "BNR2014")) {
         Vbar <- numeric(m)
         ww <- which(K>0)
         A <- Z - (1:kMax)+1
-        cA <- cummax(A)[K[ww]]
+        cA <- cummax(A)[K[ww]]  # cA[i] = max_{k<K[i]} A[k]
         Vbar[ww] <- pmin(ww-cA, K[ww])
+        # Vbar[ww] <- ww-cA
+        # www <- which(Vbar > K & Vbar < kMax)
+        # www <- which(Vbar > K)
+        # Vbar[www] <- K[www]
     }
     Vbar
 }

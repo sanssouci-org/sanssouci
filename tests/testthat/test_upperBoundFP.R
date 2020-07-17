@@ -1,6 +1,6 @@
 context("Upper bound on the number of false positives")
 
-test_that("curveMaxFP flavors give identical results", {
+test_that("curveMaxFP flavors give identical results for kMax = m", {
               m <- 13
               it <- c(1:2, 6:10, 13, 18:22)
               x <- sort(runif(2*m), decreasing=TRUE)
@@ -38,14 +38,15 @@ test_that("curveMaxFP flavors give identical results with kMax", {
 
               ntests <- 10
               for (tt in 1:ntests) {
-                  m <- 1e3
-                  for (kMax in c(103, 207, 1011)) {
+                  m <- 20
+                  for (kMax in c(13, 27, 91)) {
                       it <- sort(sample(m+kMax, m, replace=FALSE))
                       x <- sort(runif(m+kMax), decreasing=TRUE)
                       T <- x[it]
                       s <- x[-it]
-
-                      expect_equal(curveMaxFP(T, s, flavor="BNR2016"),
+    
+                      expect_equal(curveMaxFP(T, s, flavor="BNR2014"),
+                                   curveMaxFP(T, s, flavor="BNR2016"),
                                    curveMaxFP(T, s, flavor="Mein2006"))
                   }
               }
