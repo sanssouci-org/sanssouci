@@ -149,9 +149,8 @@ gen.p.values <- function(m, mu = rep(0, length(mu)), rho = 0) {
 #' Vp <- curveVstar_tree(treeFam, op)
 #'
 #' # Simes
-#' thrSimes <- SimesThresholdFamily(m)(alpha)
-#' stats <- qnorm(1-pvals)
-#' VpS <- curveMaxFP(stats[op], thrSimes)
+#' ce <- confidenceEnvelope(stats, family = toFamily("Simes", alpha), what = "FP")
+#' VpS <- ce$bound
 #'
 #' plot(1:m, 1:m-Vp, t = 's',
 #'      xlim = c(0, 2*m1), ylim = c(0, m1))
