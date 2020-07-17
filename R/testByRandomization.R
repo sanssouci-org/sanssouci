@@ -165,15 +165,15 @@ testByRandomization <- function(X, B,
         ## observed test statistics and p-values
         T <- rowSums(X)/sqrt(n)
         p <- switch(alternative, 
-                    "two.sided" = 2*(1 - pnorm(abs(T))),
-                    "greater" = 1 - pnorm(T),
-                    "less" = pnorm(T))
+                    "two.sided" = 2*(pnorm(abs(T), lower.tail = FALSE)),
+                    "greater" = pnorm(T, lower.tail = FALSE),
+                    "less" = 1 - pnorm(T, lower.tail = FALSE))
         ## test statistics under H0
         T0 <- testBySignFlipping(X, B)
         p0 <- switch(alternative, 
-                     "two.sided" = 2*(1 - pnorm(abs(T0))),
-                     "greater" = 1 - pnorm(T0),
-                     "less" = pnorm(T0))
+                     "two.sided" = 2*(pnorm(abs(T0), lower.tail = FALSE)),
+                     "greater" = pnorm(T0, lower.tail = FALSE),
+                     "less" = 1 - pnorm(T0, lower.tail = FALSE))
         res <- list(T = T, T0 = T0, p = p, p0 = p0, flavor = flavor)
     }
     
