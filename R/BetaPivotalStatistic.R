@@ -23,7 +23,7 @@ BetaPivotalStatistic <- function(mat, kMax, m) {
     
     ## get matrix 'M' of BNR by (partial) sorting of hypotheses for each sample
     kmaxH0 <- partialColSortDesc(mat, c);
-    pval <- 1 - pnorm(kmaxH0)
+    pval <- pnorm(kmaxH0, lower.tail = FALSE)
     skInv <- matrix(nrow = nrow(pval), ncol = ncol(pval))
     for (kk in 1:kMax) {
         skInv[kk, ] <- pbeta(pval[kk, ], kk, m + 1 - kk)

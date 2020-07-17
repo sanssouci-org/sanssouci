@@ -10,6 +10,6 @@
 #' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 #' @importFrom stats qbeta
 BetaThresholdFamily <- function(m, kMax = m){
-    sk <- function(alpha) qnorm(1-qbeta(alpha, 1:kMax, m+1-1:kMax))
+    sk <- function(alpha) qnorm(qbeta(alpha, 1:kMax, m+1-1:kMax), lower.tail = FALSE)
     return(sk)
 }

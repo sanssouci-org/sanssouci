@@ -24,7 +24,7 @@ SimesPivotalStatistic <- function(mat, kMax, m) {
     
     ## get matrix 'M' of BNR by (partial) sorting of hypotheses for each sample
     kmaxH0 <- partialColSortDesc(mat, c);
-    pval <- 1 - pnorm(kmaxH0)
+    pval <- pnorm(kmaxH0, lower.tail = FALSE)
     skInv <- sweep(pval, MARGIN = 1, STATS = m/1:c, FUN = "*")
     colMins(skInv)
 }

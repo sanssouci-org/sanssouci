@@ -19,6 +19,6 @@
 #' thr <- sk(0.2)
 #'
 SimesThresholdFamily <- function(m, kMax = m){
-    sk <- function(alpha) qnorm(1-min(alpha, 1)*(1:kMax)/m)
+    sk <- function(alpha) qnorm(min(alpha, 1)*(1:kMax)/m, lower.tail = FALSE)
     return(sk)
 }
