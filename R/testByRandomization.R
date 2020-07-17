@@ -167,13 +167,13 @@ testByRandomization <- function(X, B,
         p <- switch(alternative, 
                     "two.sided" = 2*(pnorm(abs(T), lower.tail = FALSE)),
                     "greater" = pnorm(T, lower.tail = FALSE),
-                    "less" = 1 - pnorm(T, lower.tail = FALSE))
+                    "less" = pnorm(T, lower.tail = TRUE))
         ## test statistics under H0
         T0 <- testBySignFlipping(X, B)
         p0 <- switch(alternative, 
                      "two.sided" = 2*(pnorm(abs(T0), lower.tail = FALSE)),
                      "greater" = pnorm(T0, lower.tail = FALSE),
-                     "less" = 1 - pnorm(T0, lower.tail = FALSE))
+                     "less" = pnorm(T0, lower.tail = TRUE))
         res <- list(T = T, T0 = T0, p = p, p0 = p0, flavor = flavor)
     }
     
