@@ -134,7 +134,7 @@ The method of @GS2011 makes it possible to calculate a confidence envelope on th
 ```{r plot-conf-envelope}
 xmax <- 300
 ce_Simes <- confidenceEnvelope(stat = dex$statistic, refFamily = 'Simes', param = alpha) 
-p <- ggplot(subset(ce_Simes, x <= xmax), aes(x = x, y = bound)) +
+ggplot(subset(ce_Simes, x <= xmax), aes(x = x, y = bound)) +
   geom_line() +
   facet_wrap(~ stat, scales = "free_y") + 
   labs(x = "# top genes called significant", y = "Post hoc confidence bounds")
@@ -168,7 +168,7 @@ conf_env <- rbind(ce_Simes,
 
 
 ```{r, conf-env-plot}
-p <- ggplot(subset(conf_env, x <= xmax), 
+ggplot(subset(conf_env, x <= xmax), 
             aes(x = x, y = bound, color = procedure)) +
   geom_line() +
   facet_wrap(~ stat, scales = "free_y") + 
