@@ -35,15 +35,15 @@
 #' }
 #' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 #' @export
-#' @importFrom tidyr pivot_longer
 #' @examples
+#' 
 #' m <- 511
 #' alpha <- 0.1
 #' sim <- gaussianSamples(m = m, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
 #' dat <- sim$X
 #' rwt <- rowWelchTests(dat, categ=colnames(dat), alternative = "greater")
 #' 
-#' ce <- confidenceEnvelope(rwt$statistic, refFamily = "Simes", param = alpha)
+#' ce <- confidenceEnvelope(rwt$statistic, refFamily = "Simes", param = alpha, what = c("TP"))
 #' 
 #'
 #' library("ggplot2")
@@ -89,13 +89,13 @@ confidenceEnvelope <- function(stat, refFamily, param, what = c("TP", "FDP")) {
                          param = param,
                          procedure = proc,
                          row.names = NULL)
-    bounds <- data.frame(FP = max_FP,
-                         TP = idxs - max_FP,
-                         FDP = max_FDP,
-                         TDP = 1 - max_FDP)
-    bounds <- bounds[, what, drop = FALSE]
-    res <- cbind(annot, bounds)
-    pivot_longer(res, cols = names(bounds), names_to = "stat", values_to = "bound")
+    boundsList <- list(
+        FP = cbind(annot, stat = "FP", bound = max_FP),
+        TP = cbind(annot, stat = "TP", bound = idxs - max_FP),
+        FDP = cbind(annot, stat = "FDP", bound = max_FDP),
+        TDP = cbind(annot, stat = "TDP", bound = 1 - max_FDP))
+    boundsList <- boundsList[what]
+    Reduce(rbind, boundsList)
 }
 
 #'

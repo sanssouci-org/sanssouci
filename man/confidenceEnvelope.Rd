@@ -44,13 +44,14 @@ Confidence envelope on the true/false positives among most significant items
   length \eqn{m} indicating whether each null hypothesis is true or false.
 }
 \examples{
+
 m <- 511
 alpha <- 0.1
 sim <- gaussianSamples(m = m, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
 dat <- sim$X
 rwt <- rowWelchTests(dat, categ=colnames(dat), alternative = "greater")
 
-ce <- confidenceEnvelope(rwt$statistic, refFamily = "Simes", param = alpha)
+ce <- confidenceEnvelope(rwt$statistic, refFamily = "Simes", param = alpha, what = c("TP"))
 
 
 library("ggplot2")
