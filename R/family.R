@@ -17,18 +17,9 @@
 #' @export
 #' @examples
 #' 
-#' m <- 123
 #' alpha <- 0.1
-#' sim <- gaussianSamples(m = m, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
-#' cal <- calibrateJER(sim$X, B = 1e3, alpha = alpha, refFamily = "Simes")
 #' fam <- list("Simes" = toFamily("Simes", alpha),
 #'              "Simes + calibration" = toFamily("Simes", cal$lambda))
-#' conf_env <- confidenceEnvelope(cal$stat, fam)
-#' if (require("ggplot2")) {
-#'   ggplot(subset(conf_env, stat == "FP" & x <= 25), 
-#'          aes(x = x, y = bound, color = famLab)) + 
-#'     geom_line() 
-#' }
 toFamily <- function(refFamily, param, digits = 2) {
     prec <- 10^digits
     thr <- floor(param*prec)/prec
