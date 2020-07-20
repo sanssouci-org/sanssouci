@@ -78,7 +78,7 @@ test_that("Direction of calibration for Beta template", {
                            pi0 = pi0, SNR = 0, prob = 0.5)
     X <- sim$X
     alpha <- 0.2
-    cal <- calibrateJER(X, B = 1e2, alpha = alpha, refFamily = "Beta", alternative = "greater")  
+    cal <- calibrateJER(X, B = 5e2, alpha = alpha, refFamily = "Beta", alternative = "greater")  
     expect_gt(alpha, cal$lambda)
     
     Ks <- c(1, 10, 50, m)

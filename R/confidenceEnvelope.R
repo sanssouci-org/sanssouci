@@ -56,6 +56,7 @@ confidenceEnvelope <- function(stat, refFamily, param, what = c("TP", "FDP")) {
     m <- length(stat)
     idxs <- 1:m
     o <- order(stat, decreasing = TRUE)
+    rk <- rank(-stat)
     res <- NULL
     fam0 <- c("Simes", "Beta", "Oracle")
     if (!(refFamily %in% fam0)) {
@@ -85,10 +86,11 @@ confidenceEnvelope <- function(stat, refFamily, param, what = c("TP", "FDP")) {
     }
     max_FDP <- max_FP/idxs
     annot <- data.frame(x = idxs, 
-                         family = refFamily,
-                         param = param,
-                         procedure = proc,
-                         row.names = NULL)
+                        rank = rk,
+                        family = refFamily,
+                        param = param,
+                        procedure = proc,
+                        row.names = NULL)
     boundsList <- list(
         FP = cbind(annot, stat = "FP", bound = max_FP),
         TP = cbind(annot, stat = "TP", bound = idxs - max_FP),

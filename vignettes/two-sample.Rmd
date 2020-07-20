@@ -22,7 +22,6 @@ knitr::opts_chunk$set(
 ```{r required-packages}
 library("sansSouci")
 library("ggplot2")
-library("plotly")
 ```
 
 ## Motivation: a differential gene expression study
@@ -139,7 +138,6 @@ p <- ggplot(subset(ce_Simes, x <= xmax), aes(x = x, y = bound)) +
   geom_line() +
   facet_wrap(~ stat, scales = "free_y") + 
   labs(x = "# top genes called significant", y = "Post hoc confidence bounds")
-ggplotly(p)
 ```
 
 ```{r TP_BH, echo=FALSE}
@@ -175,7 +173,6 @@ p <- ggplot(subset(conf_env, x <= xmax),
   geom_line() +
   facet_wrap(~ stat, scales = "free_y") + 
   labs(x = "# top genes called significant", y = "Post hoc confidence bounds")
-ggplotly(p)
 ```
 
 ## Session information

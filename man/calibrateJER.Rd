@@ -84,7 +84,7 @@ cal$lambda # > alpha (whp) if rho > 0
 #   among the k most significant items for all k
 env <- cal$conf_env
 library("ggplot2")
-ggplot(subset(ce, x <= 200), aes(x = x, y = bound)) +
+ggplot(subset(env, x <= 200), aes(x = x, y = bound)) +
   geom_line() + 
   facet_wrap(~ stat, scales = "free_y") + 
   labs(x = "# top genes called significant", y = "Post hoc confidence bounds")
