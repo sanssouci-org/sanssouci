@@ -69,3 +69,23 @@ test_that("Direction of (single-step) lambda-calibration vs alternative (Gaussia
     expect_gte(q1[["two.sided"]], alpha)
     expect_gte(q1[["greater"]], alpha)
 })
+
+test_that("Direction of calibration for Beta template", {
+    
+    m <- 100
+    pi0 <- 1
+    sim <- gaussianSamples(m = m, rho = 0.3, n = 100,
+                           pi0 = pi0, SNR = 0, prob = 0.5)
+    X <- sim$X
+    alpha <- 0.2
+    cal <- calibrateJER(X, B = 1e2, alpha = alpha, refFamily = "Beta", alternative = "greater")  
+    expect_gt(alpha, cal$lambda)
+    
+    Ks <- c(1, 10, 50, m)
+    lambdas <- numeric(length(Ks))
+    for (kk in seq(along=Ks)) {
+        cal <- calibrateJER(X, B = 1e2, alpha = alpha, refFamily = "Beta", alternative = "greater", K=Ks[kk])  
+        lambdas[kk] <- cal$lambda
+    }
+    expect_identical(order(-lambdas), order(Ks))
+})

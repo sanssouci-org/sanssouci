@@ -17,3 +17,5 @@ appveyor.yml
 ^data/.*\.rds$
 
 TODO.txt
+^doc$
+^Meta$

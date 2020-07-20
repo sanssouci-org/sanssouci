@@ -10,7 +10,7 @@ vignette: >
 
 This is an internal vignette which illustrates the notion of Joint Family-Wise Error Rate (JER) control, and the possible benefits of *step-down* control over single step JER control.  For simplicity (and historical reasons) we chose here to directly simulate the test statistics (and not the underlying observations). The JER calibration is perfomed by assuming known joint distribution of the test statistics under the null hypothesis.
 
-```{r}
+```{r library}
 library("sansSouci")
 ```
 
@@ -18,7 +18,7 @@ library("sansSouci")
 
 Parameters:
 
-```{r}
+```{r params}
 m <- 2e2
 n <- 123
 pi0 <- 0.5
@@ -28,7 +28,7 @@ rho <- 0.2
 
 We use the function `gaussianTestStatistics` to generate Gaussian equi-correlated test statistics directly (without passing by observations and associated tests). We then use the (internal) function `calibrateJER0` to perform the calibration.
 
-```{r}
+```{r simulation}
 #set.seed(0xBEEF)
 sim <- gaussianTestStatistics(m, B, pi0 = pi0, SNR = 3, dep = "equi", param = rho)
 X0 <- sim$X0
@@ -39,7 +39,7 @@ H1 <- which(sim$H == 1)
 
 ## Test statistics
 
-```{r, testStat, fig.width=7, fig.height=5}
+```{r testStat, fig.width=7, fig.height=5}
 pch <- 20
 plot(x, col = 1 + sim$H, main = "Test statistics", pch=pch)
 legend("topleft", c("H0", "H1"), pch = pch, col = 1:2)
@@ -47,7 +47,7 @@ legend("topleft", c("H0", "H1"), pch = pch, col = 1:2)
 
 ## Step-down JER control
 
-```{r}
+```{r JER}
 alpha <- 0.1
 res <- sansSouci:::calibrateJER0(X0, refFamily = "kFWER", alpha=alpha, stat=x)
 thr <- res$thr
@@ -58,7 +58,7 @@ thrMat <- res$stepsDown$thr
 ```{r}
 o <- order(x, decreasing=TRUE)
 xo <- x[o]
-bounds <- apply(thrMat, 2, function(thr) curveMaxFP(xo, thr))
+bounds <- apply(thrMat, 2, function(thr) sansSouci:::curveMaxFP(xo, thr))
 ```
 
 ## True number of false discoveries among first rejections
@@ -73,7 +73,7 @@ x.Oracle <- x[-H1]
 res.Oracle <- sansSouci:::calibrateJER0(X0.Oracle, refFamily = "kFWER", alpha = alpha, stat = x.Oracle)
 thrO <- c(res.Oracle$thr, rep(-Inf, length(H1)))
 xo.Oracle <- x.Oracle[order(x.Oracle, decreasing = TRUE)]
-VbarO <- curveMaxFP(xo, thrO)
+VbarO <- sansSouci:::curveMaxFP(xo, thrO)
 ```
 
 ## Graphical illustration

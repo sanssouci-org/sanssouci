@@ -3,6 +3,15 @@
 Package: sansSouci
 ==================
 
+Version 0.8.2 [2020-07-20]
+
+* Added 'two-sample.Rmd': a vignette for two-sample tests
+* Added 'confidenceEnvelope': a high-level function to calculate confidence envelopes for true/false positives + corresponding tests.
+* 'curveMaxFP' is not exported anymore
+* 'calibrateJER' now outputs confidence envelopes for top-$k$ lists
+* Replaced calls to '1-pnorm(x)' and alikes by 'pnorm(x, lower.tail=FALSE)' as per #14
+* Improved tests
+
 Version 0.8.1 [2019-10-16]
 
 * Added a shiny app to illustrate the bounds of the DBNR paper.

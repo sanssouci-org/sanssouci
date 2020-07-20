@@ -57,7 +57,10 @@ A list with elements: \describe{
   that the \eqn{k}-th maximum of the test statistics of is greater than
   \eqn{thr[k]}, is less than \eqn{\alpha}}
 
-  \item{lambda}{A numeric value, the result of the calibration} }
+  \item{lambda}{A numeric value, the result of the calibration} 
+  
+  \item{FP}{A numeric vector of length \code{m}, a 1-alpha confidence envelope on the number of false positives} 
+  }
 }
 \description{
 Calibration of of JER thresholds using one or two-sample tests
@@ -72,30 +75,35 @@ pi0 <- 0.8
 sim <- gaussianSamples(m = m, rho = 0.2, n = 100,
                        pi0 = pi0, SNR = 3, prob = 0.5)
 X <- sim$X
-cal <- calibrateJER(X, B = 1e3, alpha = 0.2, refFamily="Simes", alt="greater")
+alpha <- 0.2
+cal <- calibrateJER(X, B = 1e3, alpha = alpha, refFamily="Simes", alternative ="greater")
 cal$lambda # > alpha (whp) if rho > 0
 
 # Application 1: confidence envelope
 #   ie upper confidence bound for the number of false positives 
 #   among the k most significant items for all k
-stat <- cal$stat
-o <- order(stat, decreasing = TRUE)
-R <- seq_along(stat)
-Vbar <- curveMaxFP(stat[o], cal$thr)
+env <- cal$conf_env
+library("ggplot2")
+ggplot(subset(ce, x <= 200), aes(x = x, y = bound)) +
+  geom_line() + 
+  facet_wrap(~ stat, scales = "free_y") + 
+  labs(x = "# top genes called significant", y = "Post hoc confidence bounds")
+  
+## Compare to Simes (without calibration) and "Oracle" (ie truth from the simulation settings)
+env_Simes <- confidenceEnvelope(cal$stat, refFamily = "Simes", param = alpha)
+env_Oracle <- confidenceEnvelope(cal$stat, refFamily = "Oracle", param = (sim$H == 0))
+all_env <- rbind(env, env_Simes, env_Oracle)
 
-# True number of false positives among the most significant items:
-H0 <- which(sim$H == 0)
-V <- cumsum(o \%in\% H0)
-
-plot(R, Vbar, t = 's', xlab = "Number of rejections", 
-                       ylab = "Bound on the number of false positives")
-lines(R, V, t = 's', col = 2)
-legend("topleft", c("True number of FP", "Post hoc upper bound"), col = c(2, 1), lty = rep(1, 2))
-abline(a = 0, b = 1, lty = 2)
+library("ggplot2")
+ggplot(subset(all_env, x <= 200), aes(x = x, y = bound, color = procedure, group = procedure)) +
+  geom_line() + 
+  facet_wrap(~ stat, scales = "free_y") + 
+  labs(x = "# top genes called significant", y = "Post hoc confidence bounds")
 
 # Application 2a: bound on the number of false positives in one or 
 #    more user-defined selections
 
+stat <- cal$stat
 sel <- stat[o][c(1:10, 35:40)]
 maxFP(sel, cal$thr)
 

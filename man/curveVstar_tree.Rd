@@ -43,9 +43,9 @@ op <- order(pvals)
 Vp <- curveVstar_tree(treeFam, op)
 
 # Simes
-thrSimes <- SimesThresholdFamily(m)(alpha)
-stats <- qnorm(1-pvals)
-VpS <- curveMaxFP(stats[op], thrSimes)
+stats <- qnorm(pvals, lower.tail = FALSE)
+ce <- confidenceEnvelope(stats, refFamily = "Simes", param = alpha, what = "FP")
+VpS <- ce$bound
 
 plot(1:m, 1:m-Vp, t = 's',
      xlim = c(0, 2*m1), ylim = c(0, m1))

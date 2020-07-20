@@ -5,104 +5,97 @@
 #'
 #' @param stat A vector containing all \eqn{m} test statistics, sorted
 #'   non-increasingly
-#' @param family A character vector specifying the reference families to be
-#'   used. Should be of the form "toFamily(param)", as output by
-#'   \code{\link{family}}. Currently, 'FamilyName' should be either "Simes" (or
-#'   equivalenlty, "Linear") or "Beta".
 #'   
-#' @param what A character vector, the name of the statistics to be computed,
-#'   among: \describe{
+#' @param refFamily A character value, the reference family to be used. Should
+#'   be either "Simes" (or equivalenlty, "Linear"), "Beta", or "Oracle".
+#'   
+#' @param param A numeric value or vector of parameters for the reference family. 
+#' 
+#' @param what A character vector, the names of the post hoc bounds to be
+#'   computed, among:
+#' 
+#' \describe{
 #' \item{FP}{Upper bound on the number of false positives in the 'x' most significant items}
 #' \item{TP}{Lower bound on the number of true positives in the 'x' most significant items}
 #' \item{FDP}{Upper bound on the proportion of false positives in the 'x' most significant items}
 #' \item{TP}{Lower bound on the proportion of true positives in the 'x' most significant items}}
-#'   
+#' Defaults to \code{c("TP", "FDP")}.
+#' 
+#' @details \code{param} should be a numeric value unless \code{refFamily ==
+#'   "Oracle"}. In the latter case, \code{param} should be a boolean vector of
+#'   length \eqn{m} indicating whether each null hypothesis is true or false.
 #'
-#' @return A \code{data.frame} with \eqn{m} rows and 5 columns:\describe{
-#' \item{x}{Number of top items in the selection}
-#' \item{stat}{Name of the statistic, corresponding to argument \code{what}}
+#' @return A \code{matrix} with \eqn{m} rows and 5 columns: \describe{
+#' \item{x}{Number of most significant items selected}
+#' \item{family}{Matches input argument \code{refFamily}}
+#' \item{param}{Matches argument \code{param}}
+#' \item{procedure}{Label for the procedure, typically of the form '<refFamily>(<param>)'}
 #' \item{bound}{Value of the post hoc bound}
-#' \item{family}{Name of the reference family}
-#' \item{alpha}{Target confidence level}
+#' \item{stat}{Type of post hoc bound, as specified by argument \code{bound}}
 #' }
-#' For example, a row with \code{x=10}, \code{stat="TP"}, \code{bound = 4}, \code{family="Simes"}, \code{alpha = 0.1} means that the post hoc bound derived from the Simes reference family at level 0.1 implies that at least 4 the 10 most significant items is are true positives.
 #' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 #' @export
+#' @importFrom tidyr pivot_longer
 #' @examples
-#' m <- 123
+#' m <- 511
 #' alpha <- 0.1
 #' sim <- gaussianSamples(m = m, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
-#' cal <- calibrateJER(sim$X, B = 1e3, alpha = alpha, refFamily="Simes")
-#' fam <- list("Simes" = toFamily("Simes", alpha),
-#'              "Simes + calibration" = toFamily("Simes", cal$lambda))
-#' conf_env <- confidenceEnvelope(cal$stat, family = fam, what = "FP")
-#'
-#' # compare with true number of false positives
-#' o <- order(cal$stat, decreasing = TRUE)
-#' H0 <- which(sim$H == 0)
-#' V <- cumsum(o %in% H0)
-#' oracle <- data.frame(x = 1:m, stat = "FP", bound = V, family = "Oracle")
-#' conf_env <- rbind(conf_env, oracle)
+#' dat <- sim$X
+#' rwt <- rowWelchTests(dat, categ=colnames(dat), alternative = "greater")
+#' 
+#' ce <- confidenceEnvelope(rwt$statistic, refFamily = "Simes", param = alpha)
+#' 
 #'
 #' library("ggplot2")
-#' ggplot(conf_env, aes(x = x, y = bound, color = family, group = family)) +
+#' ggplot(subset(ce, x <= 200), aes(x = x, y = bound)) +
 #'   geom_line() + 
-#'   labs(x = "# top genes called significant", y = "")
+#'   facet_wrap(~ stat, scales = "free_y") + 
+#'   labs(x = "# top genes called significant", y = "Post hoc confidence bounds")
 
-
-confidenceEnvelope <- function(stat, family, what = c("FP", "TP", "FDP", "TDP")) {
-    if (length(family) == 1) {
-        family <- list(family)
-    }
-    what0 <- c("FP", "TP", "FDP", "TDP")
-    if (!all(what %in% what0)) {
-        stop("Only the following statistics are supported: ", what0)
-    }
-    
+confidenceEnvelope <- function(stat, refFamily, param, what = c("TP", "FDP")) {
     m <- length(stat)
     idxs <- 1:m
     o <- order(stat, decreasing = TRUE)
     res <- NULL
-    for (kk in seq_along(family)) {
-        fam <- family[[kk]]
-        stopifnot(class(fam) == "character")
-        # if (class(fam) == "numeric" && length(fam) == m) {
-        #     famLab <- names(family)[kk]
-        #     thr <- fam
-        # }  else if (class(fam) == "character") {
-        famLab <- names(family)[kk]
-        pf <- fromFamily(fam)
-        param <- pf$param
-        refFamily <- pf$refFamily
-        fam0 <- c("Simes", "Beta")
-        if (!(refFamily %in% fam0)) {
-            stop("Unknown family: ", refFamily, "\n",
-                 "Only the following reference families are currently supported: ", 
-                 paste(fam0, collapse = ", "))
-        }
-        if (refFamily == "Simes") {
-            thr <- SimesThresholdFamily(m)(param)
-        } else if (refFamily == "Beta") {
-            thr <- BetaThresholdFamily(m)(param)
-        }
-        max_FP <- curveMaxFP(stat[o], thr)
-        max_FDP <- max_FP/idxs
-        bounds <- list(FP = max_FP,
-                       TP = idxs - max_FP, 
-                       FDP = max_FDP,
-                       TDP = 1 - max_FDP)
-        
-        res_fam <- NULL
-        for (ww in what) {
-            res_fam <- rbind(res_fam, 
-                             data.frame(x = idxs, stat = ww, bound = bounds[[ww]]))
-        }
-        res_fam <- cbind(res_fam, 
-                         family = famLab,
-                         row.names = NULL)
-        res <- rbind(res, res_fam)
+    fam0 <- c("Simes", "Beta", "Oracle")
+    if (!(refFamily %in% fam0)) {
+        stop("Unknown family: ", refFamily, "\n",
+             "Only the following reference families are currently supported: ", 
+             paste(fam0, collapse = ", "))
     }
-    res
+    what0 <- c("FP", "TP", "FDP", "TDP")
+    if (!all(what %in% what0)) {
+        stop("Error in argument 'what': only the following statistics are supported: ", what0)
+    }
+    max_FP <- rep(NA_real_, m)
+    if (refFamily %in% c("Simes", "Linear")) {
+        thr <- SimesThresholdFamily(m)(param)
+        max_FP <- curveMaxFP(stat[o], thr)
+    } else if (refFamily == "Beta") {
+        thr <- BetaThresholdFamily(m)(param)
+        max_FP <- curveMaxFP(stat[o], thr)
+    } else if (refFamily == "Oracle") {
+        stopifnot(length(param) == m)
+        max_FP <- cumsum(o %in% which(param))
+    }
+    proc <- sprintf("%s(%s)", refFamily, param)
+    if (refFamily == "Oracle") {
+        proc <- "Oracle"
+        param <- NA_real_
+    }
+    max_FDP <- max_FP/idxs
+    annot <- data.frame(x = idxs, 
+                         family = refFamily,
+                         param = param,
+                         procedure = proc,
+                         row.names = NULL)
+    bounds <- data.frame(FP = max_FP,
+                         TP = idxs - max_FP,
+                         FDP = max_FDP,
+                         TDP = 1 - max_FDP)
+    bounds <- bounds[, what, drop = FALSE]
+    res <- cbind(annot, bounds)
+    pivot_longer(res, cols = names(bounds), names_to = "stat", values_to = "bound")
 }
 
 #'
@@ -119,25 +112,6 @@ confidenceEnvelope <- function(stat, family, what = c("FP", "TP", "FDP", "TDP"))
 #'   the number of false discoveries among the \eqn{k} most significant items
 #'   for all \eqn{k \in \{1\ldots m\}}.
 #' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
-#' @examples
-#' m <- 123
-#' alpha <- 0.2
-#' sim <- gaussianSamples(m = m, rho = 0.2, n = 100, pi0 = 0.5, SNR = 3, prob = 0.5)
-#' cal <- calibrateJER(sim$X, B = 1e3, alpha = alpha, refFamily="Simes")
-#' stat <- cal$stat
-#' o <- order(stat, decreasing = TRUE)
-#' ub <- curveMaxFP(stat[o], cal$thr)
-#' plot(1:m, ub, t = 's', col = "purple")
-#' 
-#' # compare with true number of false positives
-#' H0 <- which(sim$H == 0)
-#' V <- cumsum(o %in% H0)
-#' lines(1:m, V, col = 2)
-#' 
-#' # compare with Simes bound
-#' thrSimes <- SimesThresholdFamily(m)(alpha)
-#' ubSimes <- curveMaxFP(stat[o], thrSimes)
-#' lines(1:m, ubSimes, col = 1)
 
 curveMaxFP <- function(stat, thr, flavor=c("BNR2016", "Mein2006", "BNR2014")) {
     m <- length(stat)

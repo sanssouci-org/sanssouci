@@ -54,3 +54,5 @@ vignettes/*.pdf
 ## OS X
 .DS_Store
 *~
+doc
+Meta

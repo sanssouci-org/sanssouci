@@ -25,26 +25,6 @@ A vector of size \eqn{m} giving an joint upper confidence bound on
 \description{
 Upper bound for the number of false discoveries among most significant items
 }
-\examples{
-m <- 123
-alpha <- 0.2
-sim <- gaussianSamples(m = m, rho = 0.2, n = 100, pi0 = 0.5, SNR = 3, prob = 0.5)
-cal <- calibrateJER(sim$X, B = 1e3, alpha = alpha, refFamily="Simes")
-stat <- cal$stat
-o <- order(stat, decreasing = TRUE)
-ub <- curveMaxFP(stat[o], cal$thr)
-plot(1:m, ub, t = 's', col = "purple")
-
-# compare with true number of false positives
-H0 <- which(sim$H == 0)
-V <- cumsum(o \%in\% H0)
-lines(1:m, V, col = 2)
-
-# compare with Simes bound
-thrSimes <- SimesThresholdFamily(m)(alpha)
-ubSimes <- curveMaxFP(stat[o], thrSimes)
-lines(1:m, ubSimes, col = 1)
-}
 \author{
 Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 }
