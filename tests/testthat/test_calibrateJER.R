@@ -72,6 +72,7 @@ test_that("Direction of (single-step) lambda-calibration vs alternative (Gaussia
 
 test_that("Direction of calibration for Beta template", {
     
+    set.seed(1)
     m <- 100
     pi0 <- 1
     sim <- gaussianSamples(m = m, rho = 0.3, n = 100,

@@ -116,6 +116,7 @@ confidenceEnvelope <- function(stat, refFamily, param, what = c("TP", "FDP")) {
 #' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 
 curveMaxFP <- function(stat, thr, flavor=c("BNR2016", "Mein2006", "BNR2014")) {
+    flavor <- match.arg(flavor)
     m <- length(stat)
     kMax <- length(thr)
     if (kMax < m && flavor %in% c("Mein2006", "BNR2016")) {
@@ -123,7 +124,6 @@ curveMaxFP <- function(stat, thr, flavor=c("BNR2016", "Mein2006", "BNR2014")) {
         kMax <- length(thr)
         stopifnot(kMax==m)
     }
-    flavor <- match.arg(flavor)
     if (flavor=="Mein2006") {
         ## (loose) upper bound on number of FALSE discoveries among first rejections
         R <- 1:m
