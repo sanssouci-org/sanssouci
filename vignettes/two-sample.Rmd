@@ -151,9 +151,15 @@ However, as discussed in @blanchard20posthoc, this bound has two major limitatio
 To bypass these limitations, @blanchard20posthoc have proposed a randomization-based procedure known as $\lambda$-calibration, which yields tighter bounds that are adapted to the dependency observed in the data set at hand. In the case of two-sample tests, this calibration is achieved by permutation of class labels:
 
 ```{r calibration}
-cal <- calibrateJER(X = dat, B = 100, alpha = alpha, refFamily = "Simes")
-cal_beta <- calibrateJER(X = dat, B = 100, alpha = alpha, refFamily = "Beta", K = 50)
-ce_Beta <- cal_beta$conf_env
+cal <- calibrateJER(X = dat, B = 1000, alpha = alpha, refFamily = "Simes")
+cal_beta <- calibrateJER(X = dat, B = 1000, alpha = alpha, refFamily = "Beta", K = 50)
+```
+
+
+```{r template-labels}
+ce_Simes$Template <- "Simes"
+cal$conf_env$Template <- "Linear"
+cal_beta$conf_env$Template <- "Beta (K=50)"
 ```
 
 
@@ -161,20 +167,20 @@ ce_Beta <- cal_beta$conf_env
 conf_env <- rbind(ce_Simes,
                   cal$conf_env,
                   cal_beta$conf_env)
-
-ce <- confidenceEnvelope(cal_beta$stat, refFamily = "Beta", param = cal_beta$lambda, what = "TP")
 ```
 
 
 ```{r, conf-env-plot}
 cols <- RColorBrewer::brewer.pal(3, "Dark2")
 #cols <- scales::hue_pal(3)
+ylab <- bquote("Post hoc confidence bounds with " ~ alpha == .(alpha))
 ggplot(subset(conf_env, x <= xmax), 
-            aes(x = x, y = bound, color = procedure, linetype = procedure)) +
+            aes(x = x, y = bound, color = Template, linetype = Template)) +
   geom_line() +
   facet_wrap(~ stat, scales = "free_y") + 
-  labs(x = "# top genes called significant", y = "Post hoc confidence bounds") +
+  labs(x = "Number of top genes selected", y = ylab) +
   theme_bw() + 
+  theme(strip.background = element_rect(fill="#00000005")) +
   scale_color_manual(values = cols) 
 ```
 
