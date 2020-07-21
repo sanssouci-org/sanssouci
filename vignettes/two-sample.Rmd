@@ -100,9 +100,7 @@ bh_plot <- ggplot(dex, aes(x = gene_order, y = p.value)) +
         axis.title = element_text(size = 18))  
   #geom_text(x = 0, y = q, label = expression(alpha), color = my_col)
   
-bh_plot + 
-  ggsave(filename = "BH-plot.png", path = "~/Downloads/",
-                  width = 12, height = 8)
+bh_plot
 ```
 
 ```{r bh-plot-zoom}
@@ -111,8 +109,6 @@ bh_plot +
   xlim(1, xmax) + ylim(0, dex$p.value[xmax]) +
   geom_segment(aes(x = nBH, y = 0, yend = q*nBH/m, xend = nBH), linetype = "dotted") +
   geom_segment(aes(x = 1, y = q*nBH/m, xend = nBH, yend = q*nBH/m), linetype = "dotted", col = 1) +
-  ggsave(filename = "BH-plot_zoom.png", path = "~/Downloads/",
-         width = 12, height = 8)
 ```
 
 ## Post hoc inference
