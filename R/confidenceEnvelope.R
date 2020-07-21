@@ -1,8 +1,6 @@
 #'
 #' Confidence envelope on the true/false positives among most significant items
 #'
-#' 
-#'
 #' @param stat A vector containing all \eqn{m} test statistics, sorted
 #'   non-increasingly
 #'   
@@ -102,6 +100,36 @@ confidenceEnvelope <- function(stat, refFamily, param, K = length(stat), what = 
     boundsList <- boundsList[what]
     Reduce(rbind, boundsList)
 }
+
+#' @export
+plotConfidenceEnvelope <- function(conf_env, xmax, cols = NULL) {
+    if (class(conf_env) == "list") {# assume a list of conf. envelopes
+        nms <- names(conf_env)
+        if (!is.null(nms)) {
+            for (kk in seq_along(conf_env)) {
+                conf_env[[kk]]$Template <- nms[kk]
+            }
+        }
+        if (!is.null(cols)) {
+            stopifnot(length(conf_env) == length(cols))
+        } else {
+            cols <- scales::hue_pal()(length(conf_env))
+        }
+        conf_env <- Reduce(rbind, conf_env)
+    }
+    if (!missing(xmax)) {
+        conf_env <- subset(conf_env, x <= xmax) 
+    }
+    ggplot2::ggplot(conf_env, 
+           ggplot2::aes(x = x, y = bound, color = Template, linetype = Template)) +
+        ggplot2::geom_line() +
+        ggplot2::facet_wrap(~ stat, scales = "free_y") + 
+        ggplot2::labs(x = "Number of top genes selected", 
+             y = "Post hoc confidence bounds") +
+        ggplot2::theme_bw() + 
+        ggplot2::theme(strip.background = NULL) +
+        ggplot2::scale_color_manual(values = cols) 
+}    
 
 #'
 #' Upper bound for the number of false discoveries among most significant items

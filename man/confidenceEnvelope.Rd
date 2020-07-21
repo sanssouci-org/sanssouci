@@ -4,7 +4,13 @@
 \alias{confidenceEnvelope}
 \title{Confidence envelope on the true/false positives among most significant items}
 \usage{
-confidenceEnvelope(stat, refFamily, param, what = c("TP", "FDP"))
+confidenceEnvelope(
+  stat,
+  refFamily,
+  param,
+  K = length(stat),
+  what = c("TP", "FDP")
+)
 }
 \arguments{
 \item{stat}{A vector containing all \eqn{m} test statistics, sorted
@@ -14,6 +20,9 @@ non-increasingly}
 be either "Simes" (or equivalenlty, "Linear"), "Beta", or "Oracle".}
 
 \item{param}{A numeric value or vector of parameters for the reference family.}
+
+\item{K}{For JER control over \code{1:K}, ie joint control of all
+\eqn{k}-FWER, \eqn{k \le K}. Defaults to \eqn{m}.}
 
 \item{what}{A character vector, the names of the post hoc bounds to be
   computed, among:

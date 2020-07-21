@@ -3,6 +3,10 @@
 Package: sansSouci
 ==================
 
+Version 0.8.3 [2020-07-21]
+* Added 'plotConfidenceEnvelope' and 'volcanoPlot' (not documented yet)
+* Improved vignette 'two-sample.Rmd'
+
 Version 0.8.2 [2020-07-20]
 
 * Added 'two-sample.Rmd': a vignette for two-sample tests
