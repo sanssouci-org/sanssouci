@@ -108,7 +108,7 @@ xmax <- nBH*2.5
 bh_plot + 
   xlim(1, xmax) + ylim(0, dex$p.value[xmax]) +
   geom_segment(aes(x = nBH, y = 0, yend = q*nBH/m, xend = nBH), linetype = "dotted") +
-  geom_segment(aes(x = 1, y = q*nBH/m, xend = nBH, yend = q*nBH/m), linetype = "dotted", col = 1) +
+  geom_segment(aes(x = 1, y = q*nBH/m, xend = nBH, yend = q*nBH/m), linetype = "dotted", col = 1)
 ```
 
 ## Post hoc inference
