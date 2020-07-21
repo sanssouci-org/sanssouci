@@ -64,7 +64,7 @@ test_that("Direction of (single-step) lambda-calibration vs alternative (Gaussia
             res[ii, alt] <- cal$lambda
         }
     }
-    q1 <- matrixStats::colQuantiles(res, probs = 5)  ## use the median of 10 replications to avoid bad luck
+    q1 <- matrixStats::colQuantiles(res, probs = 0.5)  ## use the median of 10 replications to avoid bad luck
     expect_gte(q1[["less"]], alpha)
     expect_gte(q1[["two.sided"]], alpha)
     expect_gte(q1[["greater"]], alpha)

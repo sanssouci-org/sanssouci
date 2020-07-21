@@ -153,6 +153,7 @@ To bypass these limitations, @blanchard20posthoc have proposed a randomization-b
 ```{r calibration}
 cal <- calibrateJER(X = dat, B = 100, alpha = alpha, refFamily = "Simes")
 cal_beta <- calibrateJER(X = dat, B = 100, alpha = alpha, refFamily = "Beta", K = 50)
+ce_Beta <- cal_beta$conf_env
 ```
 
 
@@ -160,15 +161,21 @@ cal_beta <- calibrateJER(X = dat, B = 100, alpha = alpha, refFamily = "Beta", K 
 conf_env <- rbind(ce_Simes,
                   cal$conf_env,
                   cal_beta$conf_env)
+
+ce <- confidenceEnvelope(cal_beta$stat, refFamily = "Beta", param = cal_beta$lambda, what = "TP")
 ```
 
 
 ```{r, conf-env-plot}
+cols <- RColorBrewer::brewer.pal(3, "Dark2")
+#cols <- scales::hue_pal(3)
 ggplot(subset(conf_env, x <= xmax), 
-            aes(x = x, y = bound, color = procedure)) +
+            aes(x = x, y = bound, color = procedure, linetype = procedure)) +
   geom_line() +
   facet_wrap(~ stat, scales = "free_y") + 
-  labs(x = "# top genes called significant", y = "Post hoc confidence bounds")
+  labs(x = "# top genes called significant", y = "Post hoc confidence bounds") +
+  theme_bw() + 
+  scale_color_manual(values = cols) 
 ```
 
 ## Session information

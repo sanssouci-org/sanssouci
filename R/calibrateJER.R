@@ -114,7 +114,7 @@ calibrateJER <- function(X, B, alpha,
     res <- calibrateJER0(X0, refFamily = refFamily, alpha = alpha, 
                          stat = x, maxStepsDown = maxStepsDown, kMax = K)
     # fam <- toFamily(refFamily, res$lambda)
-    conf_env <- confidenceEnvelope(stat = x, refFamily = refFamily, param = res$lambda)
+    conf_env <- confidenceEnvelope(stat = x, refFamily = refFamily, param = res$lambda, K = K)
     proc <- sprintf("%s + calibration", refFamily)
     if (K < m) {
         proc <- sprintf("%s (K = %s)", proc, K)

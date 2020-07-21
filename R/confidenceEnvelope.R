@@ -11,6 +11,9 @@
 #'   
 #' @param param A numeric value or vector of parameters for the reference family. 
 #' 
+#' @param K For JER control over \code{1:K}, ie joint control of all
+#'   \eqn{k}-FWER, \eqn{k \le K}. Defaults to \eqn{m}.
+#' 
 #' @param what A character vector, the names of the post hoc bounds to be
 #'   computed, among:
 #' 
@@ -52,7 +55,7 @@
 #'   facet_wrap(~ stat, scales = "free_y") + 
 #'   labs(x = "# top genes called significant", y = "Post hoc confidence bounds")
 
-confidenceEnvelope <- function(stat, refFamily, param, what = c("TP", "FDP")) {
+confidenceEnvelope <- function(stat, refFamily, param, K = length(stat), what = c("TP", "FDP")) {
     m <- length(stat)
     idxs <- 1:m
     o <- order(stat, decreasing = TRUE)
@@ -70,10 +73,10 @@ confidenceEnvelope <- function(stat, refFamily, param, what = c("TP", "FDP")) {
     }
     max_FP <- rep(NA_real_, m)
     if (refFamily %in% c("Simes", "Linear")) {
-        thr <- SimesThresholdFamily(m)(param)
+        thr <- SimesThresholdFamily(m, kMax = K)(param)
         max_FP <- curveMaxFP(stat[o], thr)
     } else if (refFamily == "Beta") {
-        thr <- BetaThresholdFamily(m)(param)
+        thr <- BetaThresholdFamily(m, kMax = K)(param)
         max_FP <- curveMaxFP(stat[o], thr)
     } else if (refFamily == "Oracle") {
         stopifnot(length(param) == m)
