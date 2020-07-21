@@ -103,17 +103,16 @@ ggplot(subset(all_env, x <= 200), aes(x = x, y = bound, color = procedure, group
 # Application 2a: bound on the number of false positives in one or 
 #    more user-defined selections
 
-stat <- cal$stat
-sel <- stat[o][c(1:10, 35:40)]
+sstat <- sort(cal$stat, decreasing=TRUE)
+sel <- sstat[c(1:10, 35:40)]
 maxFP(sel, cal$thr)
 
-sel <- stat[o][c(30:50)]
+sel <- sstat[c(30:50)]
 maxFP(sel, cal$thr)
 
 # Application 2b: bound on pi0, the proportion of false positives in H
 
-sel <- stat[o]
-maxFP(sel, cal$thr)/m
+maxFP(sstat, cal$thr)/m
 pi0
 
 }
