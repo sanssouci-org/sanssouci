@@ -101,11 +101,7 @@ confidenceEnvelope <- function(p.values, refFamily, param, K = length(p.values),
 }
 
 #' @export
-#' @importFrom rlang .data  
-## as per https://cran.r-project.org/web/packages/ggplot2/vignettes/ggplot2-in-packages.html 
-## Not working? Yields "Namespace dependency not required: ‘rlang’". 
-## Fixed when the fct is documented?
- 
+
 plotConfidenceEnvelope <- function(conf_env, xmax, cols = NULL) {
     if (class(conf_env) == "list") {# assume a list of conf. envelopes
         nms <- names(conf_env)
@@ -121,12 +117,13 @@ plotConfidenceEnvelope <- function(conf_env, xmax, cols = NULL) {
         }
         conf_env <- Reduce(rbind, conf_env)
     }
+    x <- NULL; rm(x); ## To please R CMD check
     if (!missing(xmax)) {
-        conf_env <- subset(conf_env, .data$x <= xmax) 
+        conf_env <- subset(conf_env, x <= xmax) 
     }
     ggplot2::ggplot(conf_env, 
-                    ggplot2::aes(x = rlang::.data$x, y = .data$bound, 
-                                 color = .data$Template, linetype = .data$Template)) +
+                    ggplot2::aes_string(x = "x", y = "bound", 
+                                 color = "Template", linetype = "Template")) +
         ggplot2::geom_line() +
         ggplot2::facet_wrap(~ stat, scales = "free_y") + 
         ggplot2::labs(x = "Number of top genes selected", 
