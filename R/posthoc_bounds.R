@@ -1,29 +1,29 @@
 #' Upper bound for the number of false discoveries in a selection
 #' 
-#' @param stat A vector of test statistics of the selected items
-#' @param thr A vector of non-increasing \eqn{K} JER-controlling thresholds
-#' @return An upper bound on the number of false discoveries in the selection
+#' @param p.values A vector of p-values for the selected items
+#' @param thr A vector of non-decreasing k-FWER-controlling thresholds
+#' @return A post hoc upper bound on the number of false discoveries in the selection
 #' @export
 #' @examples
 #' 
 #' m <- 123
 #' sim <- gaussianSamples(m = m, rho = 0.2, n = 100, 
-#'                        pi0 = 0.8, SNR = 3, prob = 0.5)
+#'                        pi0 = 0.8, SNR = 2.5, prob = 0.5)
 #' X <- sim$X
 #' cal <- calibrateJER(X, B = 1e3, alpha = 0.2, refFamily="Simes", )
-#' thr <- sort(cal$thr, decreasing = TRUE)
-#' stat <- cal$stat
+#' thr <- sort(cal$thr)
+#' pval <- sort(cal$p.values)
 #' 
-#' M0 <- maxFP(stat, thr) ## upper bound on m0...
+#' M0 <- maxFP(pval, cal$thr) ## upper bound on m0...
 #' M0/m
 #' 
-#' sstat <- sort(stat, decreasing=TRUE)
-#' maxFP(head(sstat), thr)
-#' maxFP(c(head(sstat), tail(sstat)), thr)
+#' maxFP(head(pval), thr)
+#' maxFP(tail(pval), thr)
+#' maxFP(c(head(pval), tail(pval)), thr)
 #' 
-maxFP <- function(stat, thr) {
-    stopifnot(identical(sort(thr, decreasing=TRUE), thr))
-    nS <- length(stat)
+maxFP <- function(p.values, thr) {
+    stopifnot(identical(sort(thr), thr))
+    nS <- length(p.values)
     K <- length(thr)
     
     size <- min(nS, K)
@@ -31,7 +31,7 @@ maxFP <- function(stat, thr) {
     thr <- thr[seqK]  ## k-FWER control for k>nS is useless (will yield bound > nS)
     
     card <- sapply(thr, FUN = function(thr) {
-        sum(stat < thr)
+        sum(p.values > thr)
     })
     min(nS, card + seqK - 1)
 }
@@ -42,6 +42,6 @@ maxFP <- function(stat, thr) {
 #' @inheritParams maxFP
 #' @return A Lower bound on the number of true discoveries in the selection
 #' @export
-minTP <- function(stat, thr) {
-    length(stat) - maxFP(stat, thr)
+minTP <- function(p.values, thr) {
+    length(p.values) - maxFP(p.values, thr)
 }

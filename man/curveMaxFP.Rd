@@ -4,12 +4,12 @@
 \alias{curveMaxFP}
 \title{Upper bound for the number of false discoveries among most significant items}
 \usage{
-curveMaxFP(stat, thr, flavor = c("BNR2016", "Mein2006", "BNR2014"))
+curveMaxFP(p.values, thr, flavor = c("BNR2016", "Mein2006", "BNR2014"))
 }
 \arguments{
-\item{stat}{A vector containing all \eqn{m} test statistics, sorted non-increasingly}
+\item{p.values}{A vector containing all \eqn{m} p-values, sorted non-decreasingly}
 
-\item{thr}{A vector of \eqn{K} JER-controlling thresholds, sorted non-increasingly}
+\item{thr}{A vector of \eqn{K} JER-controlling thresholds, sorted non-decreasingly}
 
 \item{flavor}{The algorithm to compute the bound 'BNR2014' and
 'BNR2016' give identical results. Both should be slightly better

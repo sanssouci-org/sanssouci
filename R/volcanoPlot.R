@@ -1,4 +1,6 @@
 #' @export
+#' @importFrom graphics abline legend rect title
+#' @importFrom stats p.adjust
 volcanoPlot <- function(dat, thr, categ = colnames(dat), 
                         p = 1, q = 1, r = 0,
                         cex = c(0.2, 0.6), 
@@ -15,8 +17,7 @@ volcanoPlot <- function(dat, thr, categ = colnames(dat),
     ## p-values
     pval <- dex[["p.value"]]
     logp <- -log10(pval)
-    stat <- qnorm(pval, lower.tail = FALSE)  ## CAVEAT: not equal to dex[["stat"]] here !!
-    
+
     ## fold changes
     fc <- dex$meanDiff  
     
@@ -31,17 +32,17 @@ volcanoPlot <- function(dat, thr, categ = colnames(dat),
     
     ## post hoc bounds in selections
     n1 <- length(sel1)
-    FP1 <- maxFP(stat[sel1], thr = thr)
+    FP1 <- maxFP(pval[sel1], thr = thr)
     TP1 <- n1 - FP1
     FDP1 <- round(FP1/n1, 2)
     
     n2 <- length(sel2)
-    FP2 <- maxFP(stat[sel2], thr = thr)
+    FP2 <- maxFP(pval[sel2], thr = thr)
     TP2 <- n2 - FP2
     FDP2 <- round(FP2/n2, 2)
     
     n12 <- length(sel12)
-    FP12 <- maxFP(stat[sel12], thr = thr)
+    FP12 <- maxFP(pval[sel12], thr = thr)
     TP12 <- n12 - FP12
     FDP12 <- round(FP12/n12, 2)
     

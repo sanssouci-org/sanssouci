@@ -4,12 +4,12 @@
 \alias{minTP}
 \title{Lower bound for the number of true discoveries in a selection}
 \usage{
-minTP(stat, thr)
+minTP(p.values, thr)
 }
 \arguments{
-\item{stat}{A vector of test statistics of the selected items}
+\item{p.values}{A vector of p-values for the selected items}
 
-\item{thr}{A vector of non-increasing \eqn{K} JER-controlling thresholds}
+\item{thr}{A vector of non-decreasing k-FWER-controlling thresholds}
 }
 \value{
 A Lower bound on the number of true discoveries in the selection

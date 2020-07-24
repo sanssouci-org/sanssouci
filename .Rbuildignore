@@ -16,6 +16,6 @@ appveyor.yml
 ^results$
 ^data/.*\.rds$
 
-TODO.txt
+TODO*.txt
 ^doc$
 ^Meta$

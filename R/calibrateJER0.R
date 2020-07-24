@@ -3,18 +3,20 @@
 # Calibration of of JER thresholds from null test statistics
 #
 # @param mat A \eqn{m} x \eqn{B} matrix of Monte-Carlo samples of
-#     test statistics under the null hypothesis. \describe{
+#     p-values under the null hypothesis. \describe{
 #     \item{m}{is the number of tested hypotheses} \item{B}{is the
 #     number of Monte-Carlo samples}}
 # @param refFamily A character value which can be \describe{
 # \item{Simes}{The classical family of thresholds introduced by
 # Simes (1986): \eqn{\alpha*k/m}. This family yields joint FWER
-# control if the test statistics are positively dependent (PRDS)
+# control if the null hypotheses are positively dependent (PRDS)
 # under H0.}
+# \item{Beta}{A family of thresholds that achieves "balanced" joint 
+#  error rate (JER) control under independence}
 # \item{kFWER}{A family \eqn{(t_k)} calibrated so that for each k,
 # \eqn{(t_k)} controls the (marginal) k-FWER.}}
 # @param alpha Target joint FWER level.
-# @param stat A vector of \eqn{m} test statistics. Not used for
+# @param p.values A vector of \eqn{m} p.values. Not used for
 # single step control, and mandatory for step-down JFWER control. If
 # not provided, single step control is performed.
 # @param maxStepsDown Maximum number of steps down to be performed.
@@ -28,8 +30,8 @@
 # @return A list with elements: \describe{
 #     \item{thr}{A numeric vector of length \code{m}, such that the
 #     estimated probability that there exists an index \eqn{k} between 1
-#     and m such that the k-th maximum of the test statistics of is
-#     greater than \eqn{thr[k]}, is less than \eqn{\alpha}.}
+#     and m such that the k-th minimum of the p-values less than \eqn{thr[k]}, 
+#     is less than \eqn{\alpha}.}
 #     \item{pivStat}{A numeric vector of length \code{m}, the values of the pivotal
 #     statistic whose quantile of order \eqn{alpha} is \eqn{lambda}.}
 #     \item{lambda}{JFWER threshold.}
@@ -51,23 +53,23 @@
 # sim <- gaussianTestStatistics(m, B, pi0 = pi0, SNR = 3)
 # X0 <- sim$X0
 # x <- sim$x
-#
+# 
 # ## Test statistics
 # pch <- 20
 # plot(x, col=1+sim$H, main="Test statistics", pch=pch)
 # legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
 # 
 # alpha <- 0.1
-# res <- calibrateJER0(X0, refFamily="kFWER", alpha=alpha, stat=x)
+# res <- calibrateJER0(pnorm(X0, lower.tail = FALSE), refFamily="Simes", alpha=alpha, p.values=pnorm(x, lower.tail = FALSE))
 # Vbar <- res$Vbar
 # ttl <- paste("Upper bound on the number of false positives", "among first k hypotheses", sep="\n")
 # plot(Vbar, main=ttl, xlab="k", ylab=expression(bar(V(k))))
-#
+
 
 calibrateJER0 <- function(mat,
                           refFamily = c("Simes", "kFWER", "Beta"),
                           alpha,
-                          stat = NULL,
+                          p.values = NULL,
                           maxStepsDown = 10L,
                           kMax = nrow(mat),
                           Rcpp = TRUE,
@@ -77,14 +79,14 @@ calibrateJER0 <- function(mat,
     ## sanity checks
     m <- nrow(mat);
     refFamily <- match.arg(refFamily)
-    if (is.null(stat)) {
+    if (is.null(p.values)) {
         ## force single step control
         if (verbose && (maxStepsDown > 0)) {
-            print("Arguement 'stat' not provided: cannot perform step-down control")
+            print("Arguement 'p.values' not provided: cannot perform step-down control")
         }
         maxStepsDown <- 0
     } else {
-        stopifnot(length(stat)==m)
+        stopifnot(length(p.values)==m)
     }
     kMax <- min(kMax, m)  ## 'm' can be greater than 'kMax' throughout the step-down process
     if (verbose) {
@@ -93,27 +95,26 @@ calibrateJER0 <- function(mat,
         print(msg)
     }
     if (refFamily == "Simes") {
-        sk <- SimesThresholdFamily(m, kMax = kMax)
+        tk <- SimesThresholdFamily(m, kMax = kMax)
         pivStatFUN <- function(mat, kMax, C) {
             SimesPivotalStatistic(mat[C, ], kMax, nrow(mat))
         }
     } else if (refFamily == "Beta") {
-        sk <- BetaThresholdFamily(m, kMax = kMax)
+        tk <- BetaThresholdFamily(m, kMax = kMax)
         pivStatFUN <- function(mat, kMax, C) {
             BetaPivotalStatistic(mat[C, ], kMax, nrow(mat))
         }
     } else if (refFamily == "kFWER") {
-        sk <- kFWERThresholdFamily(mat, kMax = kMax, Rcpp = Rcpp)
+        tk <- kFWERThresholdFamily(mat, kMax = kMax, Rcpp = Rcpp)
         pivStatFUN <- function(mat, kMax, C) {
             kFWERPivotalStatistic(mat, kMax, C)
         }
     }
-
     ## (single-step) joint FWER control
     ## pivStat <-  pivotalStat(mat, m=m, kMax=kMax, FUN=pivStatFUN)
     pivStat <-  pivStatFUN(mat, kMax = kMax, 1:m)
     lambda <- stats::quantile(pivStat, alpha, type = 1)
-    thr <- sk(lambda)
+    thr <- tk(lambda)
     
     ## storing results
     thrMat <- matrix(thr, ncol = 1)
@@ -123,10 +124,10 @@ calibrateJER0 <- function(mat,
     ## step 0
     step <- 0
     thr1 <- thr[1]   ## (1-)FWER threshold
-    if (is.null(stat)) {
+    if (is.null(p.values)) {
         R1 <- integer(0)
     } else {
-        R1 <- which(stat >= thr1)
+        R1 <- which(p.values <= thr1)
     }
     
     
@@ -152,10 +153,10 @@ calibrateJER0 <- function(mat,
         C <- setdiff(1:m, R1)
         pivStat <-  pivStatFUN(mat, kMax, C)
         lambda <- stats::quantile(pivStat, alpha, type = 1)
-        thr <- sk(lambda)
+        thr <- tk(lambda)
         
         thr1 <- thr[1]   ## (1-)FWER threshold
-        R1 <- which(stat >= thr1)
+        R1 <- which(p.values <= thr1)
         
         ## convergence reached?
         noNewRejection <- all(R1 %in% R10)
@@ -180,10 +181,10 @@ calibrateJER0 <- function(mat,
     # if (step == maxStepsDown && maxStepsDown > 0) {
     #     warning("Maximal number of steps down reached without reaching convergence")
     # }
-    if (!is.null(stat)) {
+    if (!is.null(p.values)) {
         ## upper bound on the number of false positives among first 'natural' rejections
-        o <- order(stat, decreasing = TRUE)
-        Vbar <- curveMaxFP(stat[o], thr)
+        o <- order(p.values)
+        Vbar <- curveMaxFP(p.values[o], thr)
     } else {
         Vbar <- NULL
     }

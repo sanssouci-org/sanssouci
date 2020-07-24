@@ -44,21 +44,28 @@ pch <- 20
 plot(x, col = 1 + sim$H, main = "Test statistics", pch=pch)
 legend("topleft", c("H0", "H1"), pch = pch, col = 1:2)
 ```
+## p-values
+
+```{r p-values}
+p0 <- pnorm(X0, lower.tail = FALSE)
+p <- pnorm(x, lower.tail = FALSE)
+plot(sort(p), t = 'l')
+```
 
 ## Step-down JER control
 
 ```{r JER}
 alpha <- 0.1
-res <- sansSouci:::calibrateJER0(X0, refFamily = "kFWER", alpha=alpha, stat=x)
+res <- sansSouci:::calibrateJER0(p0, refFamily = "kFWER", alpha=alpha, p.values = p)
 thr <- res$thr
 thrMat <- res$stepsDown$thr
 ```
 
 ## Confidence envelopes
 ```{r}
-o <- order(x, decreasing=TRUE)
-xo <- x[o]
-bounds <- apply(thrMat, 2, function(thr) sansSouci:::curveMaxFP(xo, thr))
+o <- order(p)
+po <- p[o]
+bounds <- apply(thrMat, 2, function(thr) sansSouci:::curveMaxFP(po, thr))
 ```
 
 ## True number of false discoveries among first rejections
@@ -68,12 +75,12 @@ V <- cumsum(o %in% H0)
 
 ## "Oracle" JER thresholds
 ```{r}
-X0.Oracle <- X0[-H1, ]
-x.Oracle <- x[-H1]
-res.Oracle <- sansSouci:::calibrateJER0(X0.Oracle, refFamily = "kFWER", alpha = alpha, stat = x.Oracle)
-thrO <- c(res.Oracle$thr, rep(-Inf, length(H1)))
-xo.Oracle <- x.Oracle[order(x.Oracle, decreasing = TRUE)]
-VbarO <- sansSouci:::curveMaxFP(xo, thrO)
+p0.Oracle <- p0[-H1, ]
+p.Oracle <- p[-H1]
+res.Oracle <- sansSouci:::calibrateJER0(p0.Oracle, refFamily = "kFWER", alpha = alpha, p.values = p.Oracle)
+thrO <- c(res.Oracle$thr, rep(1, length(H1)))
+po.Oracle <- p.Oracle[order(p.Oracle)]
+VbarO <- sansSouci:::curveMaxFP(po, thrO)
 ```
 
 ## Graphical illustration
@@ -97,11 +104,6 @@ lgd <- c(paste("SD-JER(step=", 1:nSteps, ")", sep = ""), "True V", "Oracle JER")
 ltys <- c(ltys1, ltys2)
 cols <- c(cols1, cols2)
 legend("top", lgd, col = cols, lty = ltys)
-
-xSc <- x/max(x)*ymax  ## scaled test statistics (for display)
-colStat <- 1 + sim$H
-points(xSc[o], col = colStat[o], pch = pch, cex = 0.2)
-legend("left", c("H0", "H1"), pch = pch, col = 1:2)
 ```
 
 ## Session information

@@ -17,6 +17,9 @@
 #'   \eqn{\alpha*k/m}. This family yields joint FWER control if the test
 #'   statistics are positively dependent (PRDS) under H0.}
 #'
+#'    \item{Beta}{A family of thresholds that achieves "balanced" joint error
+#'    rate (JER) control under independence}
+#'
 #'   \item{kFWER}{A family \eqn{(t_k)} calibrated so that for each k,
 #'   \eqn{(t_k)} controls the (marginal) k-FWER.}}
 #' @param maxStepsDown Maximum number of steps down to be performed.
@@ -28,7 +31,8 @@
 #' @details See \code{\link{testByRandomization}} for a description of the tests performed for calibration.
 #' @return A list with elements: \describe{
 #'
-#'   \item{stat}{A numeric vector of \code{m} test statistics}
+#'   \item{p.values}{A numeric vector of \code{m} p-values}
+#'   \item{stat}{A numeric vector of \code{m} test statistics, corresponding to qnorm(p.values, lower.tail = FALSE)}
 #'
 #'   \item{thr}{A numeric vector of length \code{K}, such that the estimated
 #'   probability that there exists an index \eqn{k} between 1 and \eqn{K} such
@@ -50,7 +54,8 @@
 #'                        pi0 = pi0, SNR = 3, prob = 0.5)
 #' X <- sim$X
 #' alpha <- 0.2
-#' cal <- calibrateJER(X, B = 1e3, alpha = alpha, refFamily="Simes", alternative ="greater")
+#' system.time(cal <- calibrateJER(X, B = 1e2, alpha = alpha, 
+#'     refFamily="Simes", alternative ="greater"))
 #' cal$lambda # > alpha (whp) if rho > 0
 #' 
 #' # Application 1: confidence envelope
@@ -64,8 +69,8 @@
 #'   labs(x = "# top genes called significant", y = "Post hoc confidence bounds")
 #'   
 #' ## Compare to Simes (without calibration) and "Oracle" (ie truth from the simulation settings)
-#' env_Simes <- confidenceEnvelope(cal$stat, refFamily = "Simes", param = alpha)
-#' env_Oracle <- confidenceEnvelope(cal$stat, refFamily = "Oracle", param = (sim$H == 0))
+#' env_Simes <- confidenceEnvelope(cal$p.values, refFamily = "Simes", param = alpha)
+#' env_Oracle <- confidenceEnvelope(cal$p.values, refFamily = "Oracle", param = (sim$H == 0))
 #' all_env <- rbind(env, env_Simes, env_Oracle)
 #' 
 #' library("ggplot2")
@@ -77,16 +82,19 @@
 #' # Application 2a: bound on the number of false positives in one or 
 #' #    more user-defined selections
 #' 
-#' sstat <- sort(cal$stat, decreasing=TRUE)
-#' sel <- sstat[c(1:10, 35:40)]
+#' spval <- sort(cal$p.values)
+#' sel <- spval[c(1:10)]
 #' maxFP(sel, cal$thr)
 #' 
-#' sel <- sstat[c(30:50)]
+#' sel <- spval[c(1:10, 35:40)]
+#' maxFP(sel, cal$thr)
+#' 
+#' sel <- spval[c(30:50)]
 #' maxFP(sel, cal$thr)
 #' 
 #' # Application 2b: bound on pi0, the proportion of false positives in H
 #' 
-#' maxFP(sstat, cal$thr)/m
+#' maxFP(spval, cal$thr)/m
 #' pi0
 #' 
 calibrateJER <- function(X, B, alpha, 
@@ -105,23 +113,21 @@ calibrateJER <- function(X, B, alpha,
     # X0 <- tests$T0
     # x <- tests$T
     # back to the scale of one-sided Gaussian test statistics under H0
-    X0 <- qnorm(1 - tests$p0) 
-    x <- qnorm(1 - tests$p)
-    # X0 <- qnorm(tests$p0, lower.tail = FALSE) 
-    # x <- qnorm(tests$p, lower.tail = FALSE) 
-    
+    pval0 <- tests$p0
+    pval <- tests$p
+
     rm(tests)
-    res <- calibrateJER0(X0, refFamily = refFamily, alpha = alpha, 
-                         stat = x, maxStepsDown = maxStepsDown, kMax = K)
+    res <- calibrateJER0(pval0, refFamily = refFamily, alpha = alpha, 
+                         p.values = pval, maxStepsDown = maxStepsDown, kMax = K)
     # fam <- toFamily(refFamily, res$lambda)
-    conf_env <- confidenceEnvelope(stat = x, refFamily = refFamily, param = res$lambda, K = K)
+    conf_env <- confidenceEnvelope(p.values = pval, refFamily = refFamily, param = res$lambda, K = K)
     proc <- sprintf("%s + calibration", refFamily)
     if (K < m) {
         proc <- sprintf("%s (K = %s)", proc, K)
     }
     conf_env$procedure <- proc
     
-    calib <- list(stat = x, thr = res$thr, lambda = res$lambda, conf_env = conf_env) 
+    calib <- list(p.values = pval, thr = res$thr, lambda = res$lambda, conf_env = conf_env) 
     return(calib)
 }
 

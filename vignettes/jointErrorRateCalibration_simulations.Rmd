@@ -69,7 +69,7 @@ The output of the calibration is as follows:
 str(cal)
 ```
 
-* `stat`: $m$ test statistics calculated by permutation
+* `p.values`: $m$ test statistics calculated by permutation
 * `thr` : A JER-controlling family of $K$ (here $K=m$) elements
 * `lambda`: the $\lambda$-calibration parameter
 * `conf_env`: confidence envelopes on the true/false positives (see graphical illustration in the next section)
@@ -91,8 +91,8 @@ head(env)
 We compare it to the true number of false positives among the most significant items, and to the Simes bound without calibration 
 
 ```{r other-conf-env}
-env_Simes <- confidenceEnvelope(cal$stat, refFamily = "Simes", param = alpha)
-env_Oracle <- confidenceEnvelope(cal$stat, refFamily = "Oracle", param = (sim$H == 0))
+env_Simes <- confidenceEnvelope(cal$p.values, refFamily = "Simes", param = alpha)
+env_Oracle <- confidenceEnvelope(cal$p.values, refFamily = "Oracle", param = (sim$H == 0))
 all_env <- rbind(env, env_Simes, env_Oracle)
 ```
 
@@ -127,8 +127,8 @@ Again we expect $\lambda > \alpha$.
 The associated confidence envelopes are displayed below:
 
 ```{r other-conf-env-one-sample}
-env_Simes <- confidenceEnvelope(cal$stat, refFamily = "Simes", param = alpha)
-env_Oracle <- confidenceEnvelope(cal$stat, refFamily = "Oracle", param = (sim$H == 0))
+env_Simes <- confidenceEnvelope(cal$p.values, refFamily = "Simes", param = alpha)
+env_Oracle <- confidenceEnvelope(cal$p.values, refFamily = "Oracle", param = (sim$H == 0))
 all_env <- rbind(env, env_Simes, env_Oracle)
 ```
 
@@ -142,7 +142,7 @@ ggplot(subset(all_env, x <= 200),
 
 ## Session information
 
-```{r sessins-info}
+```{r session-info}
 sessionInfo()
 ```
 

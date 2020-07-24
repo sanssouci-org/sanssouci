@@ -5,16 +5,16 @@
 \title{Confidence envelope on the true/false positives among most significant items}
 \usage{
 confidenceEnvelope(
-  stat,
+  p.values,
   refFamily,
   param,
-  K = length(stat),
+  K = length(p.values),
   what = c("TP", "FDP")
 )
 }
 \arguments{
-\item{stat}{A vector containing all \eqn{m} test statistics, sorted
-non-increasingly}
+\item{p.values}{A vector containing all \eqn{m} p-values, sorted
+increasingly}
 
 \item{refFamily}{A character value, the reference family to be used. Should
 be either "Simes" (or equivalenlty, "Linear"), "Beta", or "Oracle".}
@@ -60,7 +60,7 @@ sim <- gaussianSamples(m = m, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5
 dat <- sim$X
 rwt <- rowWelchTests(dat, categ=colnames(dat), alternative = "greater")
 
-ce <- confidenceEnvelope(rwt$statistic, refFamily = "Simes", param = alpha, what = c("TP"))
+ce <- confidenceEnvelope(rwt$p.value, refFamily = "Simes", param = alpha, what = c("TP"))
 
 
 library("ggplot2")

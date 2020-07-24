@@ -34,7 +34,7 @@ library("ggplot2")
 
 ## Motivation: a differential gene expression study
 
-We focus on differential gene expression studies in cancerology. These studies aim at identifying genes whose mean expression level differs significantly between two (or more) populations, based on a sample of gene expression measurements from individuals from these populations. Specifically, we consider a data set studied in @BHG2010.
+We focus on differential gene expression studies in cancerology. These studies aim at identifying genes whose mean expression level differs significantly between two (or more) populations, based on a sample of gene expression measurements from individuals from these populations. Specifically, we consider a data set studied in @BGH2010.
 
 ```{r read-data}
 data_url <- url("https://plmbox.math.cnrs.fr/f/755496cc4c154a6dbab0/?dl=1")
@@ -135,8 +135,7 @@ The method of @GS2011 makes it possible to calculate a confidence envelope on th
 
 ```{r plot-conf-envelope}
 xmax <- 300
-stat <- qnorm(dex$p.value, lower.tail = FALSE)
-ce_Simes <- confidenceEnvelope(stat = stat, refFamily = 'Simes', param = alpha) 
+ce_Simes <- confidenceEnvelope(dex$p.value, refFamily = 'Simes', param = alpha) 
 ggplot(subset(ce_Simes, x <= xmax), aes(x = x, y = bound)) +
   geom_line() +
   facet_wrap(~ stat, scales = "free_y") + 
@@ -175,7 +174,7 @@ conf_envs <- list("Simes" = ce_Simes,
                   "Linear" = cal$conf_env,
                   "Beta (K=50)" = cal_beta$conf_env)
 cols <- RColorBrewer::brewer.pal(3, "Dark2")
-plotConfidenceEnvelope(conf_env, xmax = 300, cols = cols)
+plotConfidenceEnvelope(conf_envs, xmax = 300, cols = cols)
 ```
 
 ### Volcano plots
@@ -190,8 +189,8 @@ Let us assume that we are interested in genes selected by the BH procedure at le
 
 
 ```{r volcano-plot-Simes}
-thr <- SimesThresholdFamily(m)(alpha)
 ylim <- c(0, 6)
+thr <- SimesThresholdFamily(m)(alpha)
 volcanoPlot(dat, categ = categ, thr = thr, q = q, r = r, ylim = ylim)
 ```
 

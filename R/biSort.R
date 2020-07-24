@@ -5,18 +5,23 @@
 #  The output matrix is sometimes referred to as "the Q matrix", following the
 #  notation of Meinshausen (2006).
 # 
-#  @param mat A \eqn{m} x \eqn{B} matrix of Monte-Carlo samples of test
-#  statistics under the null hypothesis. \describe{ \item{m}{is the number of
+#  @param mat A \eqn{m} x \eqn{B} matrix of Monte-Carlo samples of p-values 
+#  under the null hypothesis. \describe{ \item{m}{is the number of
 #  null hypotheses tested} \item{B}{is the number of Monte-Carlo samples}}
+#  
 #  @param kMax A scalar value between 1 and m that controls the depth of the
 #  partial sorting of each row.
+#  
 #  @param Rcpp If \code{TRUE} (the default), sorting operations are performed
 #  in C++.  Otherwise, the are performed using \code{R}'s \code{base::sort}.
+#  
 #  @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
+#  
 #  @return A matrix of the same dimensions as the \code{mat} and
-#  whose columns, then rows, have been sorted decreasingly.  For
+#  whose columns, then rows, have been sorted increasingly.  For
 #  convenience the matrix where only columns are sorted is returned
 #  as the attribute \code{'kmaxH0'} of \code{Q}.
+#  
 #  @details The output matrix is sometimes referred to as "the Q
 #  matrix", following the notation of Meinshausen (2006).
 #  @examples
@@ -27,7 +32,7 @@
 #  flavor <- c("independent", "equi-correlated", "3-factor model")[2]
 #  rho <- 0.2
 #  mat <- gaussianTestStatistics(m, B, dep = "equi", param = rho)$X0
-# 
+#  pvals <- pnorm(mat, lower.tail = FALSE)
 #  Q <- sansSouci:::bisort(mat, Rcpp=TRUE)
 #  QR <- sansSouci:::bisort(mat, Rcpp=FALSE)
 #  identical(Q,QR)

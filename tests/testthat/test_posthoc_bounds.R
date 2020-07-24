@@ -5,14 +5,13 @@ sim <- gaussianSamples(m = m, rho = 0.2, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5
 X <- sim$X
 thr <- SimesThresholdFamily(m)(alpha = 0.2)
 tests <- rowWelchTests(X, colnames(X))
-stat <- qnorm(1 - tests$p.value) 
-sstat <- sort(stat, decreasing=TRUE)
+pval <- sort(tests$p.value)
 
 test_that("Upper bound on the number of false positives", {
-    expect_error(maxFP(stat, rev(thr)))  ## thr is not sorted descendingly
+    expect_error(maxFP(pval, rev(thr)))  ## thr is not sorted descendingly
     
-    best <- head(sstat)
-    worse <- tail(sstat)
+    best <- head(pval)
+    worse <- tail(pval)
     b1 <- maxFP(best, thr)
     b2 <- maxFP(c(best, worse), thr)
     b3 <- maxFP(worse, thr)
@@ -20,33 +19,33 @@ test_that("Upper bound on the number of false positives", {
     expect_lt(b1, b3)
     expect_lte(b3, b2)
     
-    ub <- curveMaxFP(stat = sstat, thr)
+    ub <- curveMaxFP(p.values = pval, thr)
     expect_equal(ub[length(best)], b1)
     
-    M0 <- maxFP(stat, thr)
-    sM0 <- maxFP(sstat, thr)
+    M0 <- maxFP(pval, thr)
+    sM0 <- maxFP(pval, thr)
     expect_equal(M0, sM0)
     expect_equal(M0, ub[m])
 })
 
 test_that("curveMaxFP", {
-    expect_error(curveMaxFP(sstat, rev(thr)))  ## thr is not sorted descendingly
-    expect_error(curveMaxFP(rev(sstat), rev(thr)))  ## stat is not sorted descendingly
+    expect_error(curveMaxFP(pval, rev(thr)))  
+    expect_error(curveMaxFP(rev(pval), rev(thr)))
     
-    ub <- curveMaxFP(sstat, thr)
+    ub <- curveMaxFP(pval, thr)
     expect_length(ub, m)
     expect_identical(ub, sort(ub))
     for (kk in seq_len(m)) {
-        bk <- maxFP(sstat[seq_len(kk)], thr)
+        bk <- maxFP(pval[seq_len(kk)], thr)
         expect_equal(bk, ub[kk])
     }
 })
 
 test_that("flavors of curveMaxFP", {
-    ub <- curveMaxFP(sstat, thr)
-    ub16 <- curveMaxFP(sstat, thr, flavor = "BNR2014")
-    ub14 <- curveMaxFP(sstat, thr, flavor = "BNR2014") 
-    ub06 <- curveMaxFP(sstat, thr, flavor = "Mein2006") 
+    ub <- curveMaxFP(pval, thr)
+    ub16 <- curveMaxFP(pval, thr, flavor = "BNR2014")
+    ub14 <- curveMaxFP(pval, thr, flavor = "BNR2014") 
+    ub06 <- curveMaxFP(pval, thr, flavor = "Mein2006") 
     expect_identical(ub, ub16)
     expect_identical(ub, ub14)
     expect_identical(ub, ub06)  ## not sure this is always true?

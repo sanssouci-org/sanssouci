@@ -37,6 +37,9 @@ Must be one of "two.sided" (default), "greater" or "less".}
   \eqn{\alpha*k/m}. This family yields joint FWER control if the test
   statistics are positively dependent (PRDS) under H0.}
 
+   \item{Beta}{A family of thresholds that achieves "balanced" joint error
+   rate (JER) control under independence}
+
   \item{kFWER}{A family \eqn{(t_k)} calibrated so that for each k,
   \eqn{(t_k)} controls the (marginal) k-FWER.}}}
 
@@ -50,7 +53,8 @@ Must be one of "two.sided" (default), "greater" or "less".}
 \value{
 A list with elements: \describe{
 
-  \item{stat}{A numeric vector of \code{m} test statistics}
+  \item{p.values}{A numeric vector of \code{m} p-values}
+  \item{stat}{A numeric vector of \code{m} test statistics, corresponding to qnorm(p.values, lower.tail = FALSE)}
 
   \item{thr}{A numeric vector of length \code{K}, such that the estimated
   probability that there exists an index \eqn{k} between 1 and \eqn{K} such
@@ -76,7 +80,8 @@ sim <- gaussianSamples(m = m, rho = 0.2, n = 100,
                        pi0 = pi0, SNR = 3, prob = 0.5)
 X <- sim$X
 alpha <- 0.2
-cal <- calibrateJER(X, B = 1e3, alpha = alpha, refFamily="Simes", alternative ="greater")
+system.time(cal <- calibrateJER(X, B = 1e2, alpha = alpha, 
+    refFamily="Simes", alternative ="greater"))
 cal$lambda # > alpha (whp) if rho > 0
 
 # Application 1: confidence envelope
@@ -90,8 +95,8 @@ ggplot(subset(env, x <= 200), aes(x = x, y = bound)) +
   labs(x = "# top genes called significant", y = "Post hoc confidence bounds")
   
 ## Compare to Simes (without calibration) and "Oracle" (ie truth from the simulation settings)
-env_Simes <- confidenceEnvelope(cal$stat, refFamily = "Simes", param = alpha)
-env_Oracle <- confidenceEnvelope(cal$stat, refFamily = "Oracle", param = (sim$H == 0))
+env_Simes <- confidenceEnvelope(cal$p.values, refFamily = "Simes", param = alpha)
+env_Oracle <- confidenceEnvelope(cal$p.values, refFamily = "Oracle", param = (sim$H == 0))
 all_env <- rbind(env, env_Simes, env_Oracle)
 
 library("ggplot2")
@@ -103,16 +108,19 @@ ggplot(subset(all_env, x <= 200), aes(x = x, y = bound, color = procedure, group
 # Application 2a: bound on the number of false positives in one or 
 #    more user-defined selections
 
-sstat <- sort(cal$stat, decreasing=TRUE)
-sel <- sstat[c(1:10, 35:40)]
+spval <- sort(cal$p.values)
+sel <- spval[c(1:10)]
 maxFP(sel, cal$thr)
 
-sel <- sstat[c(30:50)]
+sel <- spval[c(1:10, 35:40)]
+maxFP(sel, cal$thr)
+
+sel <- spval[c(30:50)]
 maxFP(sel, cal$thr)
 
 # Application 2b: bound on pi0, the proportion of false positives in H
 
-maxFP(sstat, cal$thr)/m
+maxFP(spval, cal$thr)/m
 pi0
 
 }

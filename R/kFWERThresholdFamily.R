@@ -31,10 +31,10 @@
 # flavor <- c("independent", "equi-correlated", "3-factor model")[2]
 # rho <- 0.2
 # mat <- gaussianTestStatistics(m, B, dep = "equi", param = rho)$X0
+# pval <- pnorm(mat, lower.tail = FALSE)
+# tk <- kFWERThresholdFamily(pval)
 #
-# sk <- kFWERThresholdFamily(mat)
-#
-# thr <- sk(0.2)
+# thr <- tk(0.2)
 #
 # @export
 #
@@ -42,8 +42,8 @@ kFWERThresholdFamily <- function(mat,
                                  kMax=nrow(mat),
                                  Rcpp=TRUE,
                                  verbose=FALSE) {
-    Q <- bisort(mat, kMax=kMax, Rcpp=Rcpp)
-    sk <- function(alpha) thresholdFamily(alpha, Q)
-    attr(sk, 'Q') <- Q
-    return(sk)
+    Q <- -bisort(-mat, kMax=kMax, Rcpp=Rcpp)
+    tk <- function(alpha) thresholdFamily(alpha, Q)
+    attr(tk, 'Q') <- Q
+    return(tk)
 }

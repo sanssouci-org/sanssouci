@@ -111,13 +111,8 @@ test_that("posthocBySimes0 can be reproduced by minTP", {
     R <- sample(nR)
     for (alpha in alphas) {
         thrSimes <- SimesThresholdFamily(m)(alpha)
-        ubSimes <- minTP(x[R], thrSimes)
+        ubSimes <- minTP(p[R], thrSimes)
         expect_equal(posthocBySimes0(p, R, alpha = alpha), 
                      ubSimes)
-        # p-value scale
-        ubSimesP <- minTP(1-p[R], 1-alpha*1:m/m)
-        expect_equal(posthocBySimes0(p, R, alpha = alpha), 
-                     ubSimesP)
     }
 })
-

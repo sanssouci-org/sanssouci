@@ -1,8 +1,8 @@
 #'
 #' Confidence envelope on the true/false positives among most significant items
 #'
-#' @param stat A vector containing all \eqn{m} test statistics, sorted
-#'   non-increasingly
+#' @param p.values A vector containing all \eqn{m} p-values, sorted
+#'   increasingly
 #'   
 #' @param refFamily A character value, the reference family to be used. Should
 #'   be either "Simes" (or equivalenlty, "Linear"), "Beta", or "Oracle".
@@ -44,7 +44,7 @@
 #' dat <- sim$X
 #' rwt <- rowWelchTests(dat, categ=colnames(dat), alternative = "greater")
 #' 
-#' ce <- confidenceEnvelope(rwt$statistic, refFamily = "Simes", param = alpha, what = c("TP"))
+#' ce <- confidenceEnvelope(rwt$p.value, refFamily = "Simes", param = alpha, what = c("TP"))
 #' 
 #'
 #' library("ggplot2")
@@ -53,12 +53,11 @@
 #'   facet_wrap(~ stat, scales = "free_y") + 
 #'   labs(x = "# top genes called significant", y = "Post hoc confidence bounds")
 
-confidenceEnvelope <- function(stat, refFamily, param, K = length(stat), what = c("TP", "FDP")) {
-    m <- length(stat)
+confidenceEnvelope <- function(p.values, refFamily, param, K = length(p.values), what = c("TP", "FDP")) {
+    m <- length(p.values)
     idxs <- 1:m
-    o <- order(stat, decreasing = TRUE)
-    rk <- rank(-stat)
-    res <- NULL
+    o <- order(p.values)
+    rk <- rank(p.values)
     fam0 <- c("Simes", "Beta", "Oracle")
     if (!(refFamily %in% fam0)) {
         stop("Unknown family: ", refFamily, "\n",
@@ -72,10 +71,10 @@ confidenceEnvelope <- function(stat, refFamily, param, K = length(stat), what = 
     max_FP <- rep(NA_real_, m)
     if (refFamily %in% c("Simes", "Linear")) {
         thr <- SimesThresholdFamily(m, kMax = K)(param)
-        max_FP <- curveMaxFP(stat[o], thr)
+        max_FP <- curveMaxFP(p.values[o], thr)
     } else if (refFamily == "Beta") {
         thr <- BetaThresholdFamily(m, kMax = K)(param)
-        max_FP <- curveMaxFP(stat[o], thr)
+        max_FP <- curveMaxFP(p.values[o], thr)
     } else if (refFamily == "Oracle") {
         stopifnot(length(param) == m)
         max_FP <- cumsum(o %in% which(param))
@@ -102,6 +101,11 @@ confidenceEnvelope <- function(stat, refFamily, param, K = length(stat), what = 
 }
 
 #' @export
+#' @importFrom rlang .data  
+## as per https://cran.r-project.org/web/packages/ggplot2/vignettes/ggplot2-in-packages.html 
+## Not working? Yields "Namespace dependency not required: ‘rlang’". 
+## Fixed when the fct is documented?
+ 
 plotConfidenceEnvelope <- function(conf_env, xmax, cols = NULL) {
     if (class(conf_env) == "list") {# assume a list of conf. envelopes
         nms <- names(conf_env)
@@ -118,14 +122,15 @@ plotConfidenceEnvelope <- function(conf_env, xmax, cols = NULL) {
         conf_env <- Reduce(rbind, conf_env)
     }
     if (!missing(xmax)) {
-        conf_env <- subset(conf_env, x <= xmax) 
+        conf_env <- subset(conf_env, .data$x <= xmax) 
     }
     ggplot2::ggplot(conf_env, 
-           ggplot2::aes(x = x, y = bound, color = Template, linetype = Template)) +
+                    ggplot2::aes(x = rlang::.data$x, y = .data$bound, 
+                                 color = .data$Template, linetype = .data$Template)) +
         ggplot2::geom_line() +
         ggplot2::facet_wrap(~ stat, scales = "free_y") + 
         ggplot2::labs(x = "Number of top genes selected", 
-             y = "Post hoc confidence bounds") +
+                      y = "Post hoc confidence bounds") +
         ggplot2::theme_bw() + 
         ggplot2::theme(strip.background = NULL) +
         ggplot2::scale_color_manual(values = cols) 
@@ -134,8 +139,8 @@ plotConfidenceEnvelope <- function(conf_env, xmax, cols = NULL) {
 #'
 #' Upper bound for the number of false discoveries among most significant items
 #'
-#' @param stat A vector containing all \eqn{m} test statistics, sorted non-increasingly
-#' @param thr A vector of \eqn{K} JER-controlling thresholds, sorted non-increasingly
+#' @param p.values A vector containing all \eqn{m} p-values, sorted non-decreasingly
+#' @param thr A vector of \eqn{K} JER-controlling thresholds, sorted non-decreasingly
 #' @param flavor The algorithm to compute the bound 'BNR2014' and
 #' 'BNR2016' give identical results. Both should be slightly better
 #' than 'Mein2006' (example situation?). Flavor 'BNR2016' has a
@@ -146,9 +151,9 @@ plotConfidenceEnvelope <- function(conf_env, xmax, cols = NULL) {
 #'   for all \eqn{k \in \{1\ldots m\}}.
 #' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 
-curveMaxFP <- function(stat, thr, flavor=c("BNR2016", "Mein2006", "BNR2014")) {
+curveMaxFP <- function(p.values, thr, flavor=c("BNR2016", "Mein2006", "BNR2014")) {
     flavor <- match.arg(flavor)
-    m <- length(stat)
+    m <- length(p.values)
     kMax <- length(thr)
     if (kMax < m && flavor %in% c("Mein2006", "BNR2016")) {
         thr <- c(thr, rep(thr[kMax], m-kMax))
@@ -158,27 +163,27 @@ curveMaxFP <- function(stat, thr, flavor=c("BNR2016", "Mein2006", "BNR2014")) {
     if (flavor=="Mein2006") {
         ## (loose) upper bound on number of FALSE discoveries among first rejections
         R <- 1:m
-        BB <- sapply(stat[R], function(x) sum(x<=thr))     ## Eqn (7) in Meinshausen 
+        BB <- sapply(p.values[R], function(x) sum(x>thr))     ## Eqn (7) in Meinshausen 
         ## corresponds to 'K' in 'BNR2016'
-
+        
         ## lower bound on number of TRUE discoveries among first rejections
         Sbar <- pmax(0, cummax(R-BB))
-
+        
         ## (tighter) upper bound on number of FALSE discoveries among first rejections
         Vbar <- R-Sbar[R]
     } else if (flavor=="BNR2014") {    ## Etienne's version
         bound <- function(kk, ii) {
-            (kk-1) + sum(stat[1:ii] <= thr[kk])
+            (kk-1) + sum(p.values[1:ii] > thr[kk])
         }
         Vbar <- sapply(1:m, function(ii) {
-                           cand <- sapply(1:kMax, bound, ii)
-                           min(cand)
-                       })
+            cand <- sapply(1:kMax, bound, ii)
+            min(cand)
+        })
     } else if (flavor=="BNR2016") {    ## Pierre's version
         ## sanity checks
         ##stopifnot(length(stat)==m)
-        stopifnot(identical(sort(thr, decreasing=TRUE), thr))
-        stopifnot(identical(sort(stat, decreasing=TRUE), stat))
+        stopifnot(identical(sort(thr), thr))
+        stopifnot(identical(sort(p.values), p.values))
         
         K <- rep(kMax, m) ## K[i] = number of k/ T[i] <= s[k] = BB in 'Mein2006'
         Z <- rep(m, kMax) ## Z[k] = number of i/ T[i] >  s[k] = cardinal of R_k
@@ -187,7 +192,7 @@ curveMaxFP <- function(stat, thr, flavor=c("BNR2016", "Mein2006", "BNR2014")) {
         kk <- 1
         ii <- 1
         while ((kk <= kMax) && (ii <= m)) {
-            if (thr[kk]<=stat[ii]) {
+            if (thr[kk] >= p.values[ii]) {
                 K[ii] <- kk-1
                 ii <- ii+1
             } else {

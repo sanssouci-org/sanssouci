@@ -20,7 +20,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Introduction
 
-The goal of this vignette is to illustrate the post hoc bounds on the number of true/false positives proposed in @DBNR for localized signals. More specifically, we reproduce one of the plots of Figure 12 in @DBNR using the R package `sansSouci`. We will explicitly quote @DBNR when relevant.
+The goal of this vignette is to illustrate the post hoc bounds on the number of true/false positives proposed in @durand20post-hoc for localized signals. More specifically, we reproduce one of the plots of Figure 12 in @durand20post-hoc using the R package `sansSouci`. We will explicitly quote @durand20post-hoc when relevant.
 
 ```{r library, message = FALSE}
 library("sansSouci")
@@ -36,15 +36,15 @@ q <- 7
 m <- s*2^q
 ```
 
-Therefore, we have $m = `r m`$.Our goal is to compare three post hoc bounds. These bounds are obtained by interpolation from a *reference family* where the amount of signal is estimated by probabilistic inequalities, following the general principle laid down by @blanchard:posthoc, and they differ by the choice of the reference family:
+Therefore, we have $m = `r m`$.Our goal is to compare three post hoc bounds. These bounds are obtained by interpolation from a *reference family* where the amount of signal is estimated by probabilistic inequalities, following the general principle laid down by @blanchard20post-hoc, and they differ by the choice of the reference family:
 
-- "Simes": the bound derived from the @simes86improved inequality as proposed by @GS2011 and further studied by @blanchard:posthoc. This bound was introduced in a context where the signal is not localized.
+- "Simes": the bound derived from the @simes86improved inequality as proposed by @GS2011 and further studied by @blanchard20post-hoc. This bound was introduced in a context where the signal is not localized.
 
-- "Tree" and "Partition": two bounds derived from the DKWM inequality (@dvoretzky1956asymptotic, @massart1990tight), as proposed in @DBNR. For the "Partition" bound, the reference family is the original partition $(P_k)_k$ of the $m$ null hypotheses into $K=2^q$ intervals. For the "Tree" bound, the reference family is the perfect binary tree whose leaves are the elements of the original partition.
+- "Tree" and "Partition": two bounds derived from the DKWM inequality (@dvoretzky1956asymptotic, @massart1990tight), as proposed in @durand20post-hoc. For the "Partition" bound, the reference family is the original partition $(P_k)_k$ of the $m$ null hypotheses into $K=2^q$ intervals. For the "Tree" bound, the reference family is the perfect binary tree whose leaves are the elements of the original partition.
 
 ## Settings
 
-We define the following numerical parameters, which characterize the true/false null hypothesis configuration considered in Section 5 of @DBNR:
+We define the following numerical parameters, which characterize the true/false null hypothesis configuration considered in Section 5 of @durand20post-hoc:
 
 ```{r param2}
 K1 <- 8
@@ -53,7 +53,7 @@ m1 <-  r*K1*s
 barmu <- 3
 ```
 
-More precisely, quoting @DBNR:
+More precisely, quoting @durand20post-hoc:
 
 > the false null hypotheses are contained in $P_k$ for $1 \leq k \leq K_1$, for some fixed value of $K_1$. The quantity $r$ is defined similarly as in (20), as the fraction of false null hypotheses in those $P_k$, and is set to $r =`r r`$. All of the other partition pieces only contain true null hypotheses.
 
@@ -68,13 +68,13 @@ mu <- gen.mu.leaves(m = m, K1 = K1, d = r, grouped = TRUE, setting = "const",
                     barmu = barmu, leaf_list = leaf_list)
 ```
 
-This construction is illustrated in the figure below (Figure 11 in @DBNR) in the case where $q=3$.
+This construction is illustrated in the figure below (Figure 11 in @durand20post-hoc) in the case where $q=3$.
 
 ```{r figure-simulation-tree, out.width = '100%', echo = FALSE, fig.cap="Figure 11 in Durand et al."}
 knitr::include_graphics("DBNR_graph-simu.png")
 ```
 
-We generate $p$-values according to the simulation setup in @DBNR:
+We generate $p$-values according to the simulation setup in @durand20post-hoc:
 
 > The true null $p$-values are distributed as i.i.d. $\mathcal{N}(0,1)$, and false null $p$-values are distributed as i.i.d. $\mathcal{N}(\bar{\mu}, 1)$, where [$\bar{\mu}= `r barmu`$].
 
@@ -113,7 +113,7 @@ res[["Oracle"]] <- data.frame(idxs, V, method = "Oracle")
 
 ### 2- Simes-based confidence envelope
 
-Here we use the @simes86improved inequality to bound the number of false positives in each node of the tree, as proposed by @GS2011 and further studied by @blanchard:posthoc, both in a context where the signal is not localized. 
+Here we use the @simes86improved inequality to bound the number of false positives in each node of the tree, as proposed by @GS2011 and further studied by @blanchard20post-hoc, both in a context where the signal is not localized. 
 
 ```{r simes}
 V <- idxs - sapply(idxs, FUN = function(ii) {
@@ -124,7 +124,7 @@ res[["Simes"]] <- data.frame(idxs, V, method = "Simes")
 
 ### 3- DKWM-based confidence envelope
 
-Here we use the DKWM inequality (@dvoretzky1956asymptotic, @massart1990tight) to bound the number of false positives in each node of the tree, as suggested in @DBNR.
+Here we use the DKWM inequality (@dvoretzky1956asymptotic, @massart1990tight) to bound the number of false positives in each node of the tree, as suggested in @durand20post-hoc.
 
 ```{r tree}
 ZL <- zetas.tree(C, leaf_list, zeta.DKWM, pvalues, alpha = alpha)
@@ -193,7 +193,7 @@ pS
 ```
 
 
-Zooming in the first `r xymax` null hypotheses (in the order of the $p$-values), we recover the middle plot in Figure 12 of @DBNR.
+Zooming in the first `r xymax` null hypotheses (in the order of the $p$-values), we recover the middle plot in Figure 12 of @durand20post-hoc.
 
 ```{r zoom-plot-lower-bound, warning=FALSE}
 pS + xlim(1, xmax) + ylim(0, ymax)

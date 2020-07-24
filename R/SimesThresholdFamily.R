@@ -12,13 +12,12 @@
 #' H0.
 #' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 #' @export
-#' @importFrom stats qnorm
 #' @examples
 #'
 #' sk <- SimesThresholdFamily(12)
 #' thr <- sk(0.2)
 #'
 SimesThresholdFamily <- function(m, kMax = m){
-    sk <- function(alpha) qnorm(min(alpha, 1)*(1:kMax)/m, lower.tail = FALSE)
-    return(sk)
+    tk <- function(alpha) min(alpha, 1)*(1:kMax)/m
+    return(tk)
 }
