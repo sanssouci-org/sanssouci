@@ -50,34 +50,26 @@
 #'
 #' m <- 543
 #' pi0 <- 0.8
-#' sim <- gaussianSamples(m = m, rho = 0.2, n = 100,
+#' sim <- gaussianSamples(m = m, rho = 0.4, n = 100,
 #'                        pi0 = pi0, SNR = 3, prob = 0.5)
 #' X <- sim$X
 #' alpha <- 0.2
-#' system.time(cal <- calibrateJER(X, B = 1e2, alpha = alpha, 
-#'     refFamily="Simes", alternative ="greater"))
+#' cal <- calibrateJER(X, B = 1e2, alpha = alpha, refFamily="Simes")
 #' cal$lambda # > alpha (whp) if rho > 0
 #' 
 #' # Application 1: confidence envelope
 #' #   ie upper confidence bound for the number of false positives 
 #' #   among the k most significant items for all k
 #' env <- cal$conf_env
-#' library("ggplot2")
-#' ggplot(subset(env, x <= 200), aes(x = x, y = bound)) +
-#'   geom_line() + 
-#'   facet_wrap(~ stat, scales = "free_y") + 
-#'   labs(x = "# top genes called significant", y = "Post hoc confidence bounds")
+#' plotConfidenceEnvelope(env, xmax = 200)
 #'   
 #' ## Compare to Simes (without calibration) and "Oracle" (ie truth from the simulation settings)
 #' env_Simes <- confidenceEnvelope(cal$p.values, refFamily = "Simes", param = alpha)
 #' env_Oracle <- confidenceEnvelope(cal$p.values, refFamily = "Oracle", param = (sim$H == 0))
-#' all_env <- rbind(env, env_Simes, env_Oracle)
-#' 
-#' library("ggplot2")
-#' ggplot(subset(all_env, x <= 200), aes(x = x, y = bound, color = procedure, group = procedure)) +
-#'   geom_line() + 
-#'   facet_wrap(~ stat, scales = "free_y") + 
-#'   labs(x = "# top genes called significant", y = "Post hoc confidence bounds")
+#' all_env <- list("Simes + calibration" = env, 
+#'                 "Simes"= env_Simes, 
+#'                 "Oracle" = env_Oracle)
+#' plotConfidenceEnvelope(all_env, xmax = 200)
 #' 
 #' # Application 2a: bound on the number of false positives in one or 
 #' #    more user-defined selections
@@ -109,10 +101,6 @@ calibrateJER <- function(X, B, alpha,
     refFamily <- match.arg(refFamily)
 
     tests <- testByRandomization(X, B = B, alternative = alternative, rowTestFUN = rowTestFUN)
-    
-    # X0 <- tests$T0
-    # x <- tests$T
-    # back to the scale of one-sided Gaussian test statistics under H0
     pval0 <- tests$p0
     pval <- tests$p
 

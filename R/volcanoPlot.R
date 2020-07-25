@@ -1,6 +1,45 @@
+#' Volcano plot
+#' 
+#' Volcano plot for differential expression studies
+#' 
+#' @param dat A numeric matrix whose rows correspond to variables and columns to
+#'   observations
+
+#' @param thr A numeric vector of length K, a JER controlling family
+#' 
+#' @param categ A vector of \code{ncol(mat)} categories in \eqn{'0','1'} for the
+#'   observations
+
+#' @param p A numeric value, the p-value threshold under which genes are selected
+#' @param q A numeric value, the q-value (or FDR-adjusted p-value) threshold under which genes are selected
+#' @param r A numeric value, the absolute fold change above which genes are selected
+#' @param cex A numeric vector of length 2, the relative magnification factor for unselected (\code{cex[1]}) and unselected (\code{cex[2]}) genes. 
+#' 
+#' @param col A vector of length 3, 
+#' @param pch An integer or single character string specifying the plotting character, see \code{\link{par}}
+#' @param ylim A numeric vector of length 2, the \eqn{y} limits of the plot
+#'
+#' @details A Welch T-test of differential expression between the two categories
+#'   defined by \code{categ} are applied for each gene using the
+#'   \code{\link{rowWelchTests}} function, which also outputs the "fold change"
+#'   (mean difference in log scale) between the two categories.
+#'   
 #' @export
 #' @importFrom graphics abline legend rect title
 #' @importFrom stats p.adjust
+#' 
+#' @examples
+#' m <- 500
+#' pi0 <- 0.5
+#' m1 <- m-m*pi0
+#' sim <- gaussianSamples(m = m, rho = 0.4, n = 100,
+#'                        pi0 = pi0, SNR = runif(m1)*6-3, prob = 0.5)
+#' X <- sim$X
+#' alpha <- 0.2
+#' cal <- calibrateJER(X, B = 1e2, alpha = alpha, refFamily="Simes")
+#' volcanoPlot(X, categ = colnames(X), thr = cal$thr, p = 3, r = r, ylim = c(0, 6))
+
+
 volcanoPlot <- function(dat, thr, categ = colnames(dat), 
                         p = 1, q = 1, r = 0,
                         cex = c(0.2, 0.6), 

@@ -26,7 +26,7 @@
 #'   "Oracle"}. In the latter case, \code{param} should be a boolean vector of
 #'   length \eqn{m} indicating whether each null hypothesis is true or false.
 #'
-#' @return A \code{matrix} with \eqn{m} rows and 5 columns: \describe{
+#' @return A \code{data.frame} with \eqn{m} rows and 5 columns: \describe{
 #' \item{x}{Number of most significant items selected}
 #' \item{family}{Matches input argument \code{refFamily}}
 #' \item{param}{Matches argument \code{param}}
@@ -38,21 +38,15 @@
 #' @export
 #' @examples
 #' 
-#' m <- 511
-#' alpha <- 0.1
-#' sim <- gaussianSamples(m = m, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
-#' dat <- sim$X
-#' rwt <- rowWelchTests(dat, categ=colnames(dat), alternative = "greater")
+#' # Generate Gaussian data and perform multiple tests
+#' sim <- gaussianSamples(m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
+#' rwt <- rowWelchTests(sim$X, categ=colnames(sim$X), alternative = "greater")
 #' 
-#' ce <- confidenceEnvelope(rwt$p.value, refFamily = "Simes", param = alpha, what = c("TP"))
+#' # calculate, print, and plot confidence envelope
+#' ce <- confidenceEnvelope(rwt$p.value, refFamily = "Simes", param = 0.1)
+#' head(ce)
+#' plotConfidenceEnvelope(ce, xmax = 200) 
 #' 
-#'
-#' library("ggplot2")
-#' ggplot(subset(ce, x <= 200), aes(x = x, y = bound)) +
-#'   geom_line() + 
-#'   facet_wrap(~ stat, scales = "free_y") + 
-#'   labs(x = "# top genes called significant", y = "Post hoc confidence bounds")
-
 confidenceEnvelope <- function(p.values, refFamily, param, K = length(p.values), what = c("TP", "FDP")) {
     m <- length(p.values)
     idxs <- 1:m
@@ -100,10 +94,44 @@ confidenceEnvelope <- function(p.values, refFamily, param, K = length(p.values),
     Reduce(rbind, boundsList)
 }
 
+#' Plot confidence envelope
+#' 
+#' @param conf_env A data.frame or a list of data.frames as output by 
+#'   \code{\link{confidenceEnvelope}}
+#'
+#' @param xmax Right limit of the plot
+#' @param cols A vector of colors of the same length as `conf_env`
+#'
 #' @export
+#' @examples
+#' 
+#' # Generate Gaussian data and perform multiple tests
+#' sim <- gaussianSamples(m = 502, rho = 0.3, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
+#' dat <- sim$X
+#' rwt <- rowWelchTests(dat, categ=colnames(dat), alternative = "greater")
+#' 
+#' # calculate and plot confidence envelope
+#' alpha <- 0.1
+#' ce <- confidenceEnvelope(rwt$p.value, refFamily = "Simes", param = alpha)
+#' plotConfidenceEnvelope(ce, xmax = 200) 
+#' 
+#' # calculate and plot several confidence envelopes
+#' B <- 100
+#' cal <- calibrateJER(X = dat, B = B, alpha = alpha, refFamily = "Simes")
+#' cal_beta <- calibrateJER(X = dat, B = B, alpha = alpha, refFamily = "Beta", K = 20)
+#' cec <- confidenceEnvelope(rwt$p.value, refFamily = "Simes", param = cal$lambda)
 
+#' all_env <- list("Simes" = ce, 
+#'                 "Simes + calibration"= cal$conf_env, 
+#'                 "Beta + calibration" = cal_beta$conf_env)
+#' plotConfidenceEnvelope(all_env, xmax = 200)
+#' 
 plotConfidenceEnvelope <- function(conf_env, xmax, cols = NULL) {
-    if (class(conf_env) == "list") {# assume a list of conf. envelopes
+    nb_env <- 1
+    if (class(conf_env) == "data.frame") {    # (assume) a single conf. envelope
+        ## do nothing!
+    } else if (class(conf_env) == "list") {          # (assume) a list of conf. envelopes
+        nb_env <- length(conf_env)
         nms <- names(conf_env)
         if (!is.null(nms)) {
             for (kk in seq_along(conf_env)) {
@@ -116,15 +144,18 @@ plotConfidenceEnvelope <- function(conf_env, xmax, cols = NULL) {
             cols <- scales::hue_pal()(length(conf_env))
         }
         conf_env <- Reduce(rbind, conf_env)
-    }
-    x <- NULL; rm(x); ## To please R CMD check
+        x <- NULL; rm(x); ## To please R CMD check
+    } 
     if (!missing(xmax)) {
         conf_env <- subset(conf_env, x <= xmax) 
+    }    
+    
+    p <- ggplot2::ggplot(conf_env, 
+                         ggplot2::aes_string(x = "x", y = "bound"))
+    if (nb_env > 1) {
+        p <- p + ggplot2::aes_string(color = "Template", linetype = "Template")
     }
-    ggplot2::ggplot(conf_env, 
-                    ggplot2::aes_string(x = "x", y = "bound", 
-                                 color = "Template", linetype = "Template")) +
-        ggplot2::geom_line() +
+    p + ggplot2::geom_line() +
         ggplot2::facet_wrap(~ stat, scales = "free_y") + 
         ggplot2::labs(x = "Number of top genes selected", 
                       y = "Post hoc confidence bounds") +
