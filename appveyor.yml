@@ -28,15 +28,19 @@ environment:
   # USE_RTOOLS: true
   # R_REMOTES_STANDALONE: true
 
-  matrix:
-  - R_VERSION: devel
-    R_ARCH: x64
+# /PN@2020-08-18
+# comment the matrix env matrix definition because utf8 package is unavailable as of 2020-08-18
+# making it impossible (for me) to test against r-devel
+#   matrix:
+#   - R_VERSION: devel
+#     R_ARCH: x64
 
-  - R_VERSION: devel
-    R_ARCH: i386
+#   - R_VERSION: devel
+#     R_ARCH: i386
 
-  - R_VERSION: release
-    R_ARCH: x64
+#   - R_VERSION: release
+#     R_ARCH: x64
+# PN@2020-08-18/
 
 # Adapt as necessary starting from here
 
