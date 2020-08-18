@@ -169,7 +169,7 @@ testByRandomization <- function(X, B,
                     "greater" = pnorm(T, lower.tail = FALSE),
                     "less" = pnorm(T, lower.tail = TRUE))
         ## test statistics under H0
-        T0 <- testBySignFlipping(X, B)
+        T0 <- testBySignFlippingR(X, B)
         p0 <- switch(alternative, 
                      "two.sided" = 2*(pnorm(abs(T0), lower.tail = FALSE)),
                      "greater" = pnorm(T0, lower.tail = FALSE),
@@ -190,4 +190,20 @@ testByRandomization <- function(X, B,
         res$rand.p0 <- pB[, -(B+1), drop = FALSE]
     }
     return(res)
+}
+
+
+
+testBySignFlippingR <- function(X, B) {
+    m <- nrow(X)
+    n <- ncol(X)
+    
+    T <- matrix(nrow = m, ncol = B)
+    for (bb in 1:B) {
+        eps <- rbinom(n, 1, prob = 0.5)*2 - 1  ## signs
+        eX <- sweep(X, MARGIN = 2, STATS = eps, FUN = `*`)
+        Tb <- rowSums(eX)/sqrt(n)
+        T[, bb] <- Tb
+    }
+    T
 }

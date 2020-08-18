@@ -175,7 +175,7 @@ conf_envs <- list("Simes" = ce_Simes,
                   "Linear" = cal$conf_env,
                   "Beta (K=50)" = cal_beta$conf_env)
 cols <- RColorBrewer::brewer.pal(3, "Dark2")
-plotConfidenceEnvelope(conf_env, xmax = 300, cols = cols)
+plotConfidenceEnvelope(conf_envs, xmax = 300, cols = cols)
 ```
 
 ### Volcano plots
