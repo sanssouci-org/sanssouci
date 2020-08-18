@@ -78,6 +78,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// testBySignFlipping
+arma::mat testBySignFlipping(arma::mat X, double B);
+RcppExport SEXP _sansSouci_testBySignFlipping(SEXP XSEXP, SEXP BSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< double >::type B(BSEXP);
+    rcpp_result_gen = Rcpp::wrap(testBySignFlipping(X, B));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_sansSouci_empiricalCoverageO", (DL_FUNC) &_sansSouci_empiricalCoverageO, 2},
@@ -86,6 +98,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_sansSouci_partialColSortDescCpp", (DL_FUNC) &_sansSouci_partialColSortDescCpp, 2},
     {"_sansSouci_posthocBySimes0Rcpp", (DL_FUNC) &_sansSouci_posthocBySimes0Rcpp, 3},
     {"_sansSouci_rowSortDesc", (DL_FUNC) &_sansSouci_rowSortDesc, 1},
+    {"_sansSouci_testBySignFlipping", (DL_FUNC) &_sansSouci_testBySignFlipping, 2},
     {NULL, NULL, 0}
 };
 

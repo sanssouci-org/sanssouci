@@ -56,7 +56,7 @@ test_that("Correctness of sign-flipping p-values", {
 })
 
 test_that("Consistency of Rcpp and R sign-flipping p-values", {
-    testthat::skip("Rcpp version of testBySignFlipping not implemented anymore/yet")
+    #testthat::skip("Rcpp version of testBySignFlipping not implemented anymore/yet")
     m <- 123
     n <- 38
     B <- 10

@@ -169,7 +169,7 @@ testByRandomization <- function(X, B,
                     "greater" = pnorm(T, lower.tail = FALSE),
                     "less" = pnorm(T, lower.tail = TRUE))
         ## test statistics under H0
-        T0 <- testBySignFlippingR(X, B)
+        T0 <- testBySignFlipping(X, B)
         p0 <- switch(alternative, 
                      "two.sided" = 2*(pnorm(abs(T0), lower.tail = FALSE)),
                      "greater" = pnorm(T0, lower.tail = FALSE),
@@ -191,8 +191,6 @@ testByRandomization <- function(X, B,
     }
     return(res)
 }
-
-
 
 testBySignFlippingR <- function(X, B) {
     m <- nrow(X)
