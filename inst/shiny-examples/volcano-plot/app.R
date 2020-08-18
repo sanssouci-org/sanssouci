@@ -1,7 +1,7 @@
 ui <- fluidPage(
     titlePanel("Post hoc confidence bounds for volcano plots"),
     inputPanel(
-        selectInput("dataSet", "Data set", choices = dataSets, selected = "bourgon"),
+        selectInput("dataSet", "Data set", choices = dataSets, selected = "chiaretti"),
         numericInput("alpha", "Target confidence level:", 0.05, min = 0, max = 1)),
     fluidRow(
         column(9,
