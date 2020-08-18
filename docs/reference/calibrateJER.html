@@ -10,23 +10,27 @@
 
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -37,7 +41,6 @@
 
 <meta property="og:title" content="Calibration of joint Family-Wise Error Rate thresholds — calibrateJER" />
 <meta property="og:description" content="Calibration of of JER thresholds using one or two-sample tests" />
-<meta name="twitter:card" content="summary" />
 
 
 
@@ -55,7 +58,7 @@
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -69,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.4</span>
       </span>
     </div>
 
@@ -104,7 +107,7 @@
       <a href="../articles/stepDownControl.html">Step-down joint Family-Wise Error Rate control</a>
     </li>
     <li>
-      <a href="../articles/two-sample.html">Post hoc inference for two-sample tests</a>
+      <a href="../articles/two-sample.html">Post hoc inference for differential gene expression studies</a>
     </li>
   </ul>
 </li>
@@ -133,9 +136,17 @@
     <p>Calibration of of JER thresholds using one or two-sample tests</p>
     </div>
 
-    <pre class="usage"><span class='fu'>calibrateJER</span>(<span class='no'>X</span>, <span class='no'>B</span>, <span class='no'>alpha</span>, <span class='kw'>alternative</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"two.sided"</span>, <span class='st'>"less"</span>,
-  <span class='st'>"greater"</span>), <span class='kw'>rowTestFUN</span> <span class='kw'>=</span> <span class='no'>rowWelchTests</span>, <span class='kw'>refFamily</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Simes"</span>,
-  <span class='st'>"kFWER"</span>, <span class='st'>"Beta"</span>), <span class='kw'>maxStepsDown</span> <span class='kw'>=</span> <span class='fl'>10L</span>, <span class='kw'>K</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='no'>X</span>), <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>calibrateJER</span>(
+  <span class='no'>X</span>,
+  <span class='no'>B</span>,
+  <span class='no'>alpha</span>,
+  <span class='kw'>alternative</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"two.sided"</span>, <span class='st'>"less"</span>, <span class='st'>"greater"</span>),
+  <span class='kw'>rowTestFUN</span> <span class='kw'>=</span> <span class='no'>rowWelchTests</span>,
+  <span class='kw'>refFamily</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Simes"</span>, <span class='st'>"kFWER"</span>, <span class='st'>"Beta"</span>),
+  <span class='kw'>maxStepsDown</span> <span class='kw'>=</span> <span class='fl'>10L</span>,
+  <span class='kw'>K</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='no'>X</span>),
+  <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -166,11 +177,14 @@ Must be one of "two.sided" (default), "greater" or "less".</p></td>
     </tr>
     <tr>
       <th>refFamily</th>
-      <td><p>A character value which can be</p><dl class='dl-horizontal'>
+      <td><p>A character value which can be</p><dl'>
 
   <dt>Simes</dt><dd><p>The classical family of thresholds introduced by Simes (1986):
   \(\alpha*k/m\). This family yields joint FWER control if the test
   statistics are positively dependent (PRDS) under H0.</p></dd>
+
+   <dt>Beta</dt><dd><p>A family of thresholds that achieves "balanced" joint error
+   rate (JER) control under independence</p></dd>
 
   <dt>kFWER</dt><dd><p>A family \((t_k)\) calibrated so that for each k,
   \((t_k)\) controls the (marginal) k-FWER.</p></dd>
@@ -193,9 +207,10 @@ Must be one of "two.sided" (default), "greater" or "less".</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A list with elements:</p><dl class='dl-horizontal'>
+    <p>A list with elements:</p><dl'>
 
-  <dt>stat</dt><dd><p>A numeric vector of <code>m</code> test statistics</p></dd>
+  <dt>p.values</dt><dd><p>A numeric vector of <code>m</code> p-values</p></dd>
+  <dt>stat</dt><dd><p>A numeric vector of <code>m</code> test statistics, corresponding to qnorm(p.values, lower.tail = FALSE)</p></dd>
 
   <dt>thr</dt><dd><p>A numeric vector of length <code>K</code>, such that the estimated
   probability that there exists an index \(k\) between 1 and \(K\) such
@@ -203,6 +218,9 @@ Must be one of "two.sided" (default), "greater" or "less".</p></td>
   \(thr[k]\), is less than \(\alpha\)</p></dd>
 
   <dt>lambda</dt><dd><p>A numeric value, the result of the calibration</p></dd> 
+  
+  <dt>FP</dt><dd><p>A numeric vector of length <code>m</code>, a 1-alpha confidence envelope on the number of false positives</p></dd> 
+  
 </dl>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
@@ -213,50 +231,44 @@ Must be one of "two.sided" (default), "greater" or "less".</p></td>
     <pre class="examples"><div class='input'>
 <span class='no'>m</span> <span class='kw'>&lt;-</span> <span class='fl'>543</span>
 <span class='no'>pi0</span> <span class='kw'>&lt;-</span> <span class='fl'>0.8</span>
-<span class='no'>sim</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gaussianSamples.html'>gaussianSamples</a></span>(<span class='kw'>m</span> <span class='kw'>=</span> <span class='no'>m</span>, <span class='kw'>rho</span> <span class='kw'>=</span> <span class='fl'>0.2</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>100</span>,
+<span class='no'>sim</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gaussianSamples.html'>gaussianSamples</a></span>(<span class='kw'>m</span> <span class='kw'>=</span> <span class='no'>m</span>, <span class='kw'>rho</span> <span class='kw'>=</span> <span class='fl'>0.4</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>100</span>,
                        <span class='kw'>pi0</span> <span class='kw'>=</span> <span class='no'>pi0</span>, <span class='kw'>SNR</span> <span class='kw'>=</span> <span class='fl'>3</span>, <span class='kw'>prob</span> <span class='kw'>=</span> <span class='fl'>0.5</span>)
 <span class='no'>X</span> <span class='kw'>&lt;-</span> <span class='no'>sim</span>$<span class='no'>X</span>
-<span class='no'>cal</span> <span class='kw'>&lt;-</span> <span class='fu'>calibrateJER</span>(<span class='no'>X</span>, <span class='kw'>B</span> <span class='kw'>=</span> <span class='fl'>1e3</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.2</span>, <span class='kw'>refFamily</span><span class='kw'>=</span><span class='st'>"Simes"</span>, <span class='kw'>alt</span><span class='kw'>=</span><span class='st'>"greater"</span>)
+<span class='no'>alpha</span> <span class='kw'>&lt;-</span> <span class='fl'>0.2</span>
+<span class='no'>cal</span> <span class='kw'>&lt;-</span> <span class='fu'>calibrateJER</span>(<span class='no'>X</span>, <span class='kw'>B</span> <span class='kw'>=</span> <span class='fl'>1e2</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='no'>alpha</span>, <span class='kw'>refFamily</span><span class='kw'>=</span><span class='st'>"Simes"</span>)
 <span class='no'>cal</span>$<span class='no'>lambda</span> <span class='co'># &gt; alpha (whp) if rho &gt; 0</span></div><div class='output co'>#&gt;       20% 
-#&gt; 0.3042881 </div><div class='input'>
+#&gt; 0.4347918 </div><div class='input'>
 <span class='co'># Application 1: confidence envelope</span>
 <span class='co'>#   ie upper confidence bound for the number of false positives </span>
 <span class='co'>#   among the k most significant items for all k</span>
-<span class='no'>stat</span> <span class='kw'>&lt;-</span> <span class='no'>cal</span>$<span class='no'>stat</span>
-<span class='no'>o</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span>(<span class='no'>stat</span>, <span class='kw'>decreasing</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-<span class='no'>R</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq_along</a></span>(<span class='no'>stat</span>)
-<span class='no'>Vbar</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='curveMaxFP.html'>curveMaxFP</a></span>(<span class='no'>stat</span>[<span class='no'>o</span>], <span class='no'>cal</span>$<span class='no'>thr</span>)
-
-<span class='co'># True number of false positives among the most significant items:</span>
-<span class='no'>H0</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/which.html'>which</a></span>(<span class='no'>sim</span>$<span class='no'>H</span> <span class='kw'>==</span> <span class='fl'>0</span>)
-<span class='no'>V</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cumsum.html'>cumsum</a></span>(<span class='no'>o</span> <span class='kw'>%in%</span> <span class='no'>H0</span>)
-
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.html'>plot</a></span>(<span class='no'>R</span>, <span class='no'>Vbar</span>, <span class='kw'>t</span> <span class='kw'>=</span> <span class='st'>'s'</span>, <span class='kw'>xlab</span> <span class='kw'>=</span> <span class='st'>"Number of rejections"</span>,
-                       <span class='kw'>ylab</span> <span class='kw'>=</span> <span class='st'>"Bound on the number of false positives"</span>)</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/lines.html'>lines</a></span>(<span class='no'>R</span>, <span class='no'>V</span>, <span class='kw'>t</span> <span class='kw'>=</span> <span class='st'>'s'</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='fl'>2</span>)</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/legend.html'>legend</a></span>(<span class='st'>"topleft"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"True number of FP"</span>, <span class='st'>"Post hoc upper bound"</span>), <span class='kw'>col</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>, <span class='fl'>1</span>), <span class='kw'>lty</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>))</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/abline.html'>abline</a></span>(<span class='kw'>a</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>b</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>lty</span> <span class='kw'>=</span> <span class='fl'>2</span>)</div><div class='img'><img src='calibrateJER-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='no'>env</span> <span class='kw'>&lt;-</span> <span class='no'>cal</span>$<span class='no'>conf_env</span>
+<span class='fu'><a href='plotConfidenceEnvelope.html'>plotConfidenceEnvelope</a></span>(<span class='no'>env</span>, <span class='kw'>xmax</span> <span class='kw'>=</span> <span class='fl'>200</span>)</div><div class='img'><img src='calibrateJER-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='co'>## Compare to Simes (without calibration) and "Oracle" (ie truth from the simulation settings)</span>
+<span class='no'>env_Simes</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='confidenceEnvelope.html'>confidenceEnvelope</a></span>(<span class='no'>cal</span>$<span class='no'>p.values</span>, <span class='kw'>refFamily</span> <span class='kw'>=</span> <span class='st'>"Simes"</span>, <span class='kw'>param</span> <span class='kw'>=</span> <span class='no'>alpha</span>)
+<span class='no'>env_Oracle</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='confidenceEnvelope.html'>confidenceEnvelope</a></span>(<span class='no'>cal</span>$<span class='no'>p.values</span>, <span class='kw'>refFamily</span> <span class='kw'>=</span> <span class='st'>"Oracle"</span>, <span class='kw'>param</span> <span class='kw'>=</span> (<span class='no'>sim</span>$<span class='no'>H</span> <span class='kw'>==</span> <span class='fl'>0</span>))
+<span class='no'>all_env</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='st'>"Simes + calibration"</span> <span class='kw'>=</span> <span class='no'>env</span>,
+                <span class='st'>"Simes"</span><span class='kw'>=</span> <span class='no'>env_Simes</span>,
+                <span class='st'>"Oracle"</span> <span class='kw'>=</span> <span class='no'>env_Oracle</span>)
+<span class='fu'><a href='plotConfidenceEnvelope.html'>plotConfidenceEnvelope</a></span>(<span class='no'>all_env</span>, <span class='kw'>xmax</span> <span class='kw'>=</span> <span class='fl'>200</span>)</div><div class='img'><img src='calibrateJER-2.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'># Application 2a: bound on the number of false positives in one or </span>
 <span class='co'>#    more user-defined selections</span>
 
-<span class='no'>sel</span> <span class='kw'>&lt;-</span> <span class='no'>stat</span>[<span class='no'>o</span>][<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>:<span class='fl'>10</span>, <span class='fl'>35</span>:<span class='fl'>40</span>)]
-<span class='fu'><a href='maxFP.html'>maxFP</a></span>(<span class='no'>sel</span>, <span class='no'>cal</span>$<span class='no'>thr</span>)</div><div class='output co'>#&gt; [1] 2</div><div class='input'>
-<span class='no'>sel</span> <span class='kw'>&lt;-</span> <span class='no'>stat</span>[<span class='no'>o</span>][<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>30</span>:<span class='fl'>50</span>)]
-<span class='fu'><a href='maxFP.html'>maxFP</a></span>(<span class='no'>sel</span>, <span class='no'>cal</span>$<span class='no'>thr</span>)</div><div class='output co'>#&gt; [1] 3</div><div class='input'>
+<span class='no'>spval</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sort.html'>sort</a></span>(<span class='no'>cal</span>$<span class='no'>p.values</span>)
+<span class='no'>sel</span> <span class='kw'>&lt;-</span> <span class='no'>spval</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>:<span class='fl'>10</span>)]
+<span class='fu'><a href='maxFP.html'>maxFP</a></span>(<span class='no'>sel</span>, <span class='no'>cal</span>$<span class='no'>thr</span>)</div><div class='output co'>#&gt; [1] 0</div><div class='input'>
+<span class='no'>sel</span> <span class='kw'>&lt;-</span> <span class='no'>spval</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>:<span class='fl'>10</span>, <span class='fl'>35</span>:<span class='fl'>40</span>)]
+<span class='fu'><a href='maxFP.html'>maxFP</a></span>(<span class='no'>sel</span>, <span class='no'>cal</span>$<span class='no'>thr</span>)</div><div class='output co'>#&gt; [1] 5</div><div class='input'>
+<span class='no'>sel</span> <span class='kw'>&lt;-</span> <span class='no'>spval</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>30</span>:<span class='fl'>50</span>)]
+<span class='fu'><a href='maxFP.html'>maxFP</a></span>(<span class='no'>sel</span>, <span class='no'>cal</span>$<span class='no'>thr</span>)</div><div class='output co'>#&gt; [1] 7</div><div class='input'>
 <span class='co'># Application 2b: bound on pi0, the proportion of false positives in H</span>
 
-<span class='no'>sel</span> <span class='kw'>&lt;-</span> <span class='no'>stat</span>[<span class='no'>o</span>]
-<span class='fu'><a href='maxFP.html'>maxFP</a></span>(<span class='no'>sel</span>, <span class='no'>cal</span>$<span class='no'>thr</span>)/<span class='no'>m</span></div><div class='output co'>#&gt; [1] 0.8710866</div><div class='input'><span class='no'>pi0</span></div><div class='output co'>#&gt; [1] 0.8</div><div class='input'>
+<span class='fu'><a href='maxFP.html'>maxFP</a></span>(<span class='no'>spval</span>, <span class='no'>cal</span>$<span class='no'>thr</span>)/<span class='no'>m</span></div><div class='output co'>#&gt; [1] 0.8876611</div><div class='input'><span class='no'>pi0</span></div><div class='output co'>#&gt; [1] 0.8</div><div class='input'>
 </div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
-      <li><a href="#details">Details</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
-    <h2>Author</h2>
-    <p>Gilles Blanchard, Pierre Neuvial and Etienne Roquain</p>
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -267,7 +279,7 @@ Must be one of "two.sided" (default), "greater" or "less".</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>
