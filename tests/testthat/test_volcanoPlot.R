@@ -1,3 +1,5 @@
+context("Volcano plots")
+
 test_that("Vanilla test for 'volcanoPlot'", {
     m <- 500
     pi0 <- 0.5
