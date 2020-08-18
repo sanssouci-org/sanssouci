@@ -2,9 +2,9 @@
 #' 
 #' @name dyadic
 #' @details \describe{
-#' \item{\code{dyadic.from.window.size}}{the number of elements in each leaf is set to \code{s}}
-#' \item{\code{dyadic.from.height}}{the total height of tree is set to \code{H}}
-#' \item{\code{dyadic.from.max.size}}{the total height of tree is set to the maximum possible height, ie \code{floor(2 + log2(m - 1))}}
+#' \item{\code{dyadic.from.window.size}}{Dyadic tree structure from window size: the number of elements in each leaf is set to \code{s}}
+#' \item{\code{dyadic.from.height}}{Dyadic tree structure from height: the total height of tree is set to \code{H}}
+#' \item{\code{dyadic.from.max.size}}{Dyadic tree structure from maximum achievable height: the total height of tree is set to the maximum possible height, ie \code{floor(2 + log2(m - 1))}}
 #' }
 #' @examples
 #' m <- 6
@@ -83,8 +83,6 @@ dyadic.from.leaf_list <- function(leaf_list, method) {
     return(C)
 }
 
-#' Dyadic tree structure from window size
-#'
 #' @inheritParams dyadic.from.leaf_list
 #' @param m An integer value, the number of elements in the structure
 #' @param s An integer value, the number of elements in each leaf
@@ -111,8 +109,6 @@ dyadic.from.window.size <- function(m, s, method) {
     return(list(leaf_list = leaf_list, C = C))
 }
 
-#' Dyadic tree structure from height
-#'
 #' @inheritParams dyadic.from.window.size 
 #' @param H An integer value, the desired maximal height of the tree
 #' @export
@@ -141,8 +137,6 @@ dyadic.from.height <- function(m, H, method) {
     return(list(leaf_list = leaf_list, C = C))
 }
 
-#' Dyadic tree structure from maximum achievable height
-#'
 #' @inheritParams dyadic.from.height
 #' @export
 #' @rdname dyadic

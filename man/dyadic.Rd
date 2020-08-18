@@ -33,18 +33,12 @@ A list with two elements:\describe{
 }
 \description{
 Create a complete dyadic tree structure
-
-Dyadic tree structure from window size
-
-Dyadic tree structure from height
-
-Dyadic tree structure from maximum achievable height
 }
 \details{
 \describe{
-\item{\code{dyadic.from.window.size}}{the number of elements in each leaf is set to \code{s}}
-\item{\code{dyadic.from.height}}{the total height of tree is set to \code{H}}
-\item{\code{dyadic.from.max.size}}{the total height of tree is set to the maximum possible height, ie \code{floor(2 + log2(m - 1))}}
+\item{\code{dyadic.from.window.size}}{Dyadic tree structure from window size: the number of elements in each leaf is set to \code{s}}
+\item{\code{dyadic.from.height}}{Dyadic tree structure from height: the total height of tree is set to \code{H}}
+\item{\code{dyadic.from.max.size}}{Dyadic tree structure from maximum achievable height: the total height of tree is set to the maximum possible height, ie \code{floor(2 + log2(m - 1))}}
 }
 }
 \examples{
