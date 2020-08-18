@@ -12,11 +12,11 @@ test_that("JER calibration -- vanilla tests", {
 
     cal <- calibrateJER(X, B, alpha, refFamily = "Simes")
     expect_length(cal$thr, m)
-    expect_length(cal$stat, m)
+    expect_length(cal$p.values, m)
 
     cal <- calibrateJER(X, B, alpha, refFamily = "Simes", K = 50)
     expect_length(cal$thr, 50)
-    expect_length(cal$stat, m)
+    expect_length(cal$p.values, m)
 })
 
 test_that("Direction of (step-down) lambda-calibration vs alternative: independence", {

@@ -13,7 +13,7 @@ BetaThresholdFamily(m, kMax = m)
 k[max]}).}
 }
 \value{
-A threshold function (on the scale of test statistics) which
+A threshold function (on the scale of p-values) which
   achieves "balanced" joint error rate (JER) control under independence
 }
 \description{

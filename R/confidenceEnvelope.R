@@ -1,8 +1,8 @@
 #'
 #' Confidence envelope on the true/false positives among most significant items
 #'
-#' @param stat A vector containing all \eqn{m} test statistics, sorted
-#'   non-increasingly
+#' @param p.values A vector containing all \eqn{m} p-values, sorted
+#'   increasingly
 #'   
 #' @param refFamily A character value, the reference family to be used. Should
 #'   be either "Simes" (or equivalenlty, "Linear"), "Beta", or "Oracle".
@@ -26,7 +26,7 @@
 #'   "Oracle"}. In the latter case, \code{param} should be a boolean vector of
 #'   length \eqn{m} indicating whether each null hypothesis is true or false.
 #'
-#' @return A \code{matrix} with \eqn{m} rows and 5 columns: \describe{
+#' @return A \code{data.frame} with \eqn{m} rows and 5 columns: \describe{
 #' \item{x}{Number of most significant items selected}
 #' \item{family}{Matches input argument \code{refFamily}}
 #' \item{param}{Matches argument \code{param}}
@@ -38,27 +38,20 @@
 #' @export
 #' @examples
 #' 
-#' m <- 511
-#' alpha <- 0.1
-#' sim <- gaussianSamples(m = m, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
-#' dat <- sim$X
-#' rwt <- rowWelchTests(dat, categ=colnames(dat), alternative = "greater")
+#' # Generate Gaussian data and perform multiple tests
+#' sim <- gaussianSamples(m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
+#' rwt <- rowWelchTests(sim$X, categ=colnames(sim$X), alternative = "greater")
 #' 
-#' ce <- confidenceEnvelope(rwt$statistic, refFamily = "Simes", param = alpha, what = c("TP"))
+#' # calculate, print, and plot confidence envelope
+#' ce <- confidenceEnvelope(rwt$p.value, refFamily = "Simes", param = 0.1)
+#' head(ce)
+#' plotConfidenceEnvelope(ce, xmax = 200) 
 #' 
-#'
-#' library("ggplot2")
-#' ggplot(subset(ce, x <= 200), aes(x = x, y = bound)) +
-#'   geom_line() + 
-#'   facet_wrap(~ stat, scales = "free_y") + 
-#'   labs(x = "# top genes called significant", y = "Post hoc confidence bounds")
-
-confidenceEnvelope <- function(stat, refFamily, param, K = length(stat), what = c("TP", "FDP")) {
-    m <- length(stat)
+confidenceEnvelope <- function(p.values, refFamily, param, K = length(p.values), what = c("TP", "FDP")) {
+    m <- length(p.values)
     idxs <- 1:m
-    o <- order(stat, decreasing = TRUE)
-    rk <- rank(-stat)
-    res <- NULL
+    o <- order(p.values)
+    rk <- rank(p.values)
     fam0 <- c("Simes", "Beta", "Oracle")
     if (!(refFamily %in% fam0)) {
         stop("Unknown family: ", refFamily, "\n",
@@ -72,10 +65,10 @@ confidenceEnvelope <- function(stat, refFamily, param, K = length(stat), what = 
     max_FP <- rep(NA_real_, m)
     if (refFamily %in% c("Simes", "Linear")) {
         thr <- SimesThresholdFamily(m, kMax = K)(param)
-        max_FP <- curveMaxFP(stat[o], thr)
+        max_FP <- curveMaxFP(p.values[o], thr)
     } else if (refFamily == "Beta") {
         thr <- BetaThresholdFamily(m, kMax = K)(param)
-        max_FP <- curveMaxFP(stat[o], thr)
+        max_FP <- curveMaxFP(p.values[o], thr)
     } else if (refFamily == "Oracle") {
         stopifnot(length(param) == m)
         max_FP <- cumsum(o %in% which(param))
@@ -101,9 +94,44 @@ confidenceEnvelope <- function(stat, refFamily, param, K = length(stat), what = 
     Reduce(rbind, boundsList)
 }
 
+#' Plot confidence envelope
+#' 
+#' @param conf_env A data.frame or a list of data.frames as output by 
+#'   \code{\link{confidenceEnvelope}}
+#'
+#' @param xmax Right limit of the plot
+#' @param cols A vector of colors of the same length as `conf_env`
+#'
 #' @export
+#' @examples
+#' 
+#' # Generate Gaussian data and perform multiple tests
+#' sim <- gaussianSamples(m = 502, rho = 0.3, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
+#' dat <- sim$X
+#' rwt <- rowWelchTests(dat, categ=colnames(dat), alternative = "greater")
+#' 
+#' # calculate and plot confidence envelope
+#' alpha <- 0.1
+#' ce <- confidenceEnvelope(rwt$p.value, refFamily = "Simes", param = alpha)
+#' plotConfidenceEnvelope(ce, xmax = 200) 
+#' 
+#' # calculate and plot several confidence envelopes
+#' B <- 100
+#' cal <- calibrateJER(X = dat, B = B, alpha = alpha, refFamily = "Simes")
+#' cal_beta <- calibrateJER(X = dat, B = B, alpha = alpha, refFamily = "Beta", K = 20)
+#' cec <- confidenceEnvelope(rwt$p.value, refFamily = "Simes", param = cal$lambda)
+
+#' all_env <- list("Simes" = ce, 
+#'                 "Simes + calibration"= cal$conf_env, 
+#'                 "Beta + calibration" = cal_beta$conf_env)
+#' plotConfidenceEnvelope(all_env, xmax = 200)
+#' 
 plotConfidenceEnvelope <- function(conf_env, xmax, cols = NULL) {
-    if (class(conf_env) == "list") {# assume a list of conf. envelopes
+    nb_env <- 1
+    if (class(conf_env) == "data.frame") {    # (assume) a single conf. envelope
+        ## do nothing!
+    } else if (class(conf_env) == "list") {          # (assume) a list of conf. envelopes
+        nb_env <- length(conf_env)
         nms <- names(conf_env)
         if (!is.null(nms)) {
             for (kk in seq_along(conf_env)) {
@@ -116,16 +144,21 @@ plotConfidenceEnvelope <- function(conf_env, xmax, cols = NULL) {
             cols <- scales::hue_pal()(length(conf_env))
         }
         conf_env <- Reduce(rbind, conf_env)
-    }
+        x <- NULL; rm(x); ## To please R CMD check
+    } 
     if (!missing(xmax)) {
         conf_env <- subset(conf_env, x <= xmax) 
+    }    
+    
+    p <- ggplot2::ggplot(conf_env, 
+                         ggplot2::aes_string(x = "x", y = "bound"))
+    if (nb_env > 1) {
+        p <- p + ggplot2::aes_string(color = "Template", linetype = "Template")
     }
-    ggplot2::ggplot(conf_env, 
-           ggplot2::aes(x = x, y = bound, color = Template, linetype = Template)) +
-        ggplot2::geom_line() +
+    p + ggplot2::geom_line() +
         ggplot2::facet_wrap(~ stat, scales = "free_y") + 
         ggplot2::labs(x = "Number of top genes selected", 
-             y = "Post hoc confidence bounds") +
+                      y = "Post hoc confidence bounds") +
         ggplot2::theme_bw() + 
         ggplot2::theme(strip.background = NULL) +
         ggplot2::scale_color_manual(values = cols) 
@@ -134,8 +167,8 @@ plotConfidenceEnvelope <- function(conf_env, xmax, cols = NULL) {
 #'
 #' Upper bound for the number of false discoveries among most significant items
 #'
-#' @param stat A vector containing all \eqn{m} test statistics, sorted non-increasingly
-#' @param thr A vector of \eqn{K} JER-controlling thresholds, sorted non-increasingly
+#' @param p.values A vector containing all \eqn{m} p-values, sorted non-decreasingly
+#' @param thr A vector of \eqn{K} JER-controlling thresholds, sorted non-decreasingly
 #' @param flavor The algorithm to compute the bound 'BNR2014' and
 #' 'BNR2016' give identical results. Both should be slightly better
 #' than 'Mein2006' (example situation?). Flavor 'BNR2016' has a
@@ -146,9 +179,9 @@ plotConfidenceEnvelope <- function(conf_env, xmax, cols = NULL) {
 #'   for all \eqn{k \in \{1\ldots m\}}.
 #' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 
-curveMaxFP <- function(stat, thr, flavor=c("BNR2016", "Mein2006", "BNR2014")) {
+curveMaxFP <- function(p.values, thr, flavor=c("BNR2016", "Mein2006", "BNR2014")) {
     flavor <- match.arg(flavor)
-    m <- length(stat)
+    m <- length(p.values)
     kMax <- length(thr)
     if (kMax < m && flavor %in% c("Mein2006", "BNR2016")) {
         thr <- c(thr, rep(thr[kMax], m-kMax))
@@ -158,27 +191,27 @@ curveMaxFP <- function(stat, thr, flavor=c("BNR2016", "Mein2006", "BNR2014")) {
     if (flavor=="Mein2006") {
         ## (loose) upper bound on number of FALSE discoveries among first rejections
         R <- 1:m
-        BB <- sapply(stat[R], function(x) sum(x<=thr))     ## Eqn (7) in Meinshausen 
+        BB <- sapply(p.values[R], function(x) sum(x>thr))     ## Eqn (7) in Meinshausen 
         ## corresponds to 'K' in 'BNR2016'
-
+        
         ## lower bound on number of TRUE discoveries among first rejections
         Sbar <- pmax(0, cummax(R-BB))
-
+        
         ## (tighter) upper bound on number of FALSE discoveries among first rejections
         Vbar <- R-Sbar[R]
     } else if (flavor=="BNR2014") {    ## Etienne's version
         bound <- function(kk, ii) {
-            (kk-1) + sum(stat[1:ii] <= thr[kk])
+            (kk-1) + sum(p.values[1:ii] > thr[kk])
         }
         Vbar <- sapply(1:m, function(ii) {
-                           cand <- sapply(1:kMax, bound, ii)
-                           min(cand)
-                       })
+            cand <- sapply(1:kMax, bound, ii)
+            min(cand)
+        })
     } else if (flavor=="BNR2016") {    ## Pierre's version
         ## sanity checks
         ##stopifnot(length(stat)==m)
-        stopifnot(identical(sort(thr, decreasing=TRUE), thr))
-        stopifnot(identical(sort(stat, decreasing=TRUE), stat))
+        stopifnot(identical(sort(thr), thr))
+        stopifnot(identical(sort(p.values), p.values))
         
         K <- rep(kMax, m) ## K[i] = number of k/ T[i] <= s[k] = BB in 'Mein2006'
         Z <- rep(m, kMax) ## Z[k] = number of i/ T[i] >  s[k] = cardinal of R_k
@@ -187,7 +220,7 @@ curveMaxFP <- function(stat, thr, flavor=c("BNR2016", "Mein2006", "BNR2014")) {
         kk <- 1
         ii <- 1
         while ((kk <= kMax) && (ii <= m)) {
-            if (thr[kk]<=stat[ii]) {
+            if (thr[kk] >= p.values[ii]) {
                 K[ii] <- kk-1
                 ii <- ii+1
             } else {

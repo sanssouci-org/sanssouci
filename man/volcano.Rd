@@ -16,7 +16,7 @@ A data frame with 21196 rows and 5 variables:
 }
 \source{
 The studies are the following: \describe{
-\item{bourgon}{Leukemia study of Chiaretti S, *et al.* (2004, 2005)}
+\item{chiaretti}{Leukemia study of Chiaretti S, *et al.* (2004, 2005)}
 \item{golub}{Leukemia study of Golub *et al.* (1999): 3051 genes and 38 tumor mRNA samples. Processed from \code{\link[multtest]{golub}}}
 \item{hedenfalk}{Breast cancer study of Hedenfalk *et al.* (2001): 3226 genes and 5 samples. The two groups are BRCA1- and BRCA2-mutated patients.}
 \item{rosenwald}{Diffuse large B-cell lymphoma of Alizadeh, A. A. *et al.* (2000). Processed from \code{\link[DLBCL]{exprLym}}}

@@ -24,7 +24,7 @@
 #' m <- 1e3
 #' m1 <- 200
 #' p <- 1-pnorm(c(rnorm(m1, mean=4), rnorm(m-m1, mean=0)))
-#' R <- sample(m, 10)
+#' R <- union(1:10, sample(m, 10))
 #' alpha <- 0.10
 #' if (require("cherry")) {
 #'   hom <- hommelFast(p)

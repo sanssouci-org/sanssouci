@@ -5,16 +5,16 @@
 \title{Confidence envelope on the true/false positives among most significant items}
 \usage{
 confidenceEnvelope(
-  stat,
+  p.values,
   refFamily,
   param,
-  K = length(stat),
+  K = length(p.values),
   what = c("TP", "FDP")
 )
 }
 \arguments{
-\item{stat}{A vector containing all \eqn{m} test statistics, sorted
-non-increasingly}
+\item{p.values}{A vector containing all \eqn{m} p-values, sorted
+increasingly}
 
 \item{refFamily}{A character value, the reference family to be used. Should
 be either "Simes" (or equivalenlty, "Linear"), "Beta", or "Oracle".}
@@ -35,7 +35,7 @@ be either "Simes" (or equivalenlty, "Linear"), "Beta", or "Oracle".}
 Defaults to \code{c("TP", "FDP")}.}
 }
 \value{
-A \code{matrix} with \eqn{m} rows and 5 columns: \describe{
+A \code{data.frame} with \eqn{m} rows and 5 columns: \describe{
 \item{x}{Number of most significant items selected}
 \item{family}{Matches input argument \code{refFamily}}
 \item{param}{Matches argument \code{param}}
@@ -54,20 +54,15 @@ Confidence envelope on the true/false positives among most significant items
 }
 \examples{
 
-m <- 511
-alpha <- 0.1
-sim <- gaussianSamples(m = m, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
-dat <- sim$X
-rwt <- rowWelchTests(dat, categ=colnames(dat), alternative = "greater")
+# Generate Gaussian data and perform multiple tests
+sim <- gaussianSamples(m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
+rwt <- rowWelchTests(sim$X, categ=colnames(sim$X), alternative = "greater")
 
-ce <- confidenceEnvelope(rwt$statistic, refFamily = "Simes", param = alpha, what = c("TP"))
+# calculate, print, and plot confidence envelope
+ce <- confidenceEnvelope(rwt$p.value, refFamily = "Simes", param = 0.1)
+head(ce)
+plotConfidenceEnvelope(ce, xmax = 200) 
 
-
-library("ggplot2")
-ggplot(subset(ce, x <= 200), aes(x = x, y = bound)) +
-  geom_line() + 
-  facet_wrap(~ stat, scales = "free_y") + 
-  labs(x = "# top genes called significant", y = "Post hoc confidence bounds")
 }
 \author{
 Gilles Blanchard, Pierre Neuvial and Etienne Roquain

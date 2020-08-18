@@ -23,7 +23,8 @@ Suggests:
     cherry,
     testthat,
     RColorBrewer,
-    ggplot2
+    ggplot2,
+    scales
 VignetteBuilder: knitr
 RoxygenNote: 7.1.1
 LazyData: true
