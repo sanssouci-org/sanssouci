@@ -15,7 +15,7 @@
 #' @param r A numeric value, the absolute fold change above which genes are selected
 #' @param cex A numeric vector of length 2, the relative magnification factor for unselected (\code{cex[1]}) and unselected (\code{cex[2]}) genes. 
 #' 
-#' @param col A vector of length 3, 
+#' @param col A vector of length 3
 #' @param pch An integer or single character string specifying the plotting character, see \code{\link{par}}
 #' @param ylim A numeric vector of length 2, the \eqn{y} limits of the plot
 #'
@@ -37,7 +37,7 @@
 #' X <- sim$X
 #' alpha <- 0.2
 #' cal <- calibrateJER(X, B = 1e2, alpha = alpha, refFamily="Simes")
-#' volcanoPlot(X, categ = colnames(X), thr = cal$thr, p = 3, r = r, ylim = c(0, 6))
+#' volcanoPlot(X, categ = colnames(X), thr = cal$thr, p = 3, r = 0.3, ylim = c(0, 6))
 
 
 volcanoPlot <- function(dat, thr, categ = colnames(dat), 
@@ -107,10 +107,10 @@ volcanoPlot <- function(dat, thr, categ = colnames(dat),
     abline(h = bh, col = "gray")
     abline(v = c(-1, 1)*r, col = "gray")
     txt <- c(sprintf("%s genes\nTP > %s\nFDP < %s", n2, TP2, FDP2))
-    legend("topleft", txt, border = "white", bty = "n", text.col = col[2])
+    legend("topleft", txt, border = "white", bty = "n", text.col = 1)
     
     txt <- c(sprintf("%s genes\nTP > %s\nFDP < %s", n1, TP1, FDP1))
-    legend("topright", txt, border = "white", bty = "n", text.col = col[2])
+    legend("topright", txt, border = "white", bty = "n", text.col = 1)
     
     txt <- c(sprintf("%s genes selected\nAt least %s true positives (FDP < %s)", 
                      n12, TP12, FDP12))
