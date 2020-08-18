@@ -191,33 +191,3 @@ testByRandomization <- function(X, B,
     }
     return(res)
 }
-
-# not used!
-testBySignFlippingR <- function(X, B) {
-    m <- nrow(X)
-    n <- ncol(X)
-    
-    T <- matrix(nrow = m, ncol = B)
-    for (bb in 1:B) {
-        eps <- rbinom(n, 1, prob = 0.5)*2 - 1  ## signs
-        eX <- sweep(X, MARGIN = 2, STATS = eps, FUN = `*`)
-        Tb <- rowSums(eX)/sqrt(n)
-        T[, bb] <- Tb
-    }
-    T
-}
-
-# not used!
-testByPermutationR <- function(X, categ, B) {
-    m <- nrow(X)
-    n <- ncol(X)
-    stopifnot(n == length(categ))
-    
-    T <- matrix(nrow = m, ncol = B)
-    for (bb in 1:B) {
-        categ_perm <- sample(categ, length(categ))
-        Tb <- rowWelchTests(X, categ = categ_perm)$statistic
-        T[, bb] <- Tb
-    }
-    T
-}

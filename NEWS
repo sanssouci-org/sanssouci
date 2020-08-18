@@ -3,6 +3,9 @@
 Package: sansSouci
 ==================
 
+Version 0.8.4 [2020-08-18]
+* Removed testByRandomisation.cpp and functions 'testByNnnR' (unused) to address #17.
+
 Version 0.8.3 [2020-07-21]
 * Added 'plotConfidenceEnvelope' and 'volcanoPlot' (not documented yet)
 * Improved vignette 'two-sample.Rmd'
