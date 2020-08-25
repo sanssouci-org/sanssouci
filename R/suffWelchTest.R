@@ -13,7 +13,7 @@
 #'   size for condition "y"
 #' @param alternative A character string specifying the alternative hypothesis.
 #'   Currently only "two.sided" is implemented
-#' @return A data.frame with the following columns:
+#' @return A list with elements:
 #'   \describe{ \item{statistic}{the value of the t-statistic}
 #'   \item{parameter}{the degrees of freedom for the t-statistic}
 #'   \item{p.value}{the p-value for the test} }
@@ -75,7 +75,7 @@ suffWelchTest <- function(mx, my, sx, sy, nx, ny,
                    "greater" = 1 - pt(stat, df = df),
                    "less" = pt(stat, df = df))
     
-    data.frame(statistic = stat,
+    list(statistic = stat,
                 parameter = df,
                 p.value = pval)
 }

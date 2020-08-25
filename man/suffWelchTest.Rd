@@ -36,7 +36,7 @@ size for condition "y"}
 Currently only "two.sided" is implemented}
 }
 \value{
-A data.frame with the following columns:
+A list with elements:
   \describe{ \item{statistic}{the value of the t-statistic}
   \item{parameter}{the degrees of freedom for the t-statistic}
   \item{p.value}{the p-value for the test} }
