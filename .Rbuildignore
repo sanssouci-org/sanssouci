@@ -19,3 +19,4 @@ appveyor.yml
 TODO*.txt
 ^doc$
 ^Meta$
+^\.github$
