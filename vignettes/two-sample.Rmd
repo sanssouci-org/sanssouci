@@ -35,9 +35,9 @@ library("ggplot2")
 We focus on differential gene expression studies in cancerology. These studies aim at identifying genes whose mean expression level differs significantly between two (or more) populations, based on a sample of gene expression measurements from individuals from these populations. Specifically, we consider a data set studied in @BGH2010.
 
 ```{r read-data}
-data_url <- url("https://plmbox.math.cnrs.fr/f/755496cc4c154a6dbab0/?dl=1")
-dat <- readRDS(data_url)
-#dat <- readRDS("~/Downloads/bourgon.rds")
+#data_url <- url("https://plmbox.math.cnrs.fr/f/755496cc4c154a6dbab0/?dl=1")
+#dat <- readRDS(data_url)
+dat <- readRDS("~/Downloads/bourgon.rds")
 ```
 
 This data set which consists of gene expression measurements for  $n = `r ncol(dat)`$ patients with B-cell acute lymphoblastic leukemia (ALL) @CLGV+2005. These patients are classified into two subgoups, depending on whether or not they harbor a specific mutation called "BCR/ABL":
@@ -63,7 +63,7 @@ We start with a simple Welch test for differential expression for each gene. Thi
 
 ```{r row-welch-tests}
 categ <- ifelse(colnames(dat) == "BCR/ABL", 1, 0) # map to 0/1
-dex <- rowWelchTests(dat, categ)
+dex <- data.frame(rowWelchTests(dat, categ))
 pval <- dex[["p.value"]]
 ```
 
