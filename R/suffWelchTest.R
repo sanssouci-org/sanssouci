@@ -55,7 +55,7 @@ suffWelchTest <- function(mx, my, sx, sy, nx, ny,
     stopifnot(length(nx) %in% c(1, p))
     stopifnot(length(ny) %in% c(1, p))
 
-    sse.x <- sx^2/nx
+    sse.x <- sx^2/nx  ## sc <- sqrt((sum2c - sumc^2/nc)/(nc-1))
     sse.y <- sy^2/ny
     
     sse <- sse.x + sse.y
