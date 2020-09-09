@@ -33,8 +33,9 @@
 #' m <- 500
 #' pi0 <- 0.5
 #' m1 <- m-m*pi0
+#' SNR <- 5*(runif(m1)-0.5)
 #' sim <- gaussianSamples(m = m, rho = 0.2, n = 100,
-#'                        pi0 = pi0, SNR = 5*(runif(m1)-0.5), prob = 0.5)
+#'                        pi0 = pi0, SNR = SNR, prob = 0.5)
 #' X <- sim$X
 #' alpha <- 0.2
 #' cal <- calibrateJER(X, B = 1e2, alpha = alpha, refFamily="Simes")
@@ -51,7 +52,7 @@ volcanoPlot <- function(dat, thr, categ = colnames(dat),
                         col = c("#33333333", "#FF0000", "#FF666633"),
                         pch = 19, ylim = NULL) {
     if (p <1 && q < 1) {
-        warning("Filtering both on p-values and BH-adjusted p-values: only one filter will be active")
+        warning("Filtering both on p-values and BH-adjusted p-values")
     }
     m <- nrow(dat)
     
@@ -66,29 +67,33 @@ volcanoPlot <- function(dat, thr, categ = colnames(dat),
     fc <- dex$meanDiff  
     
     adjp <- p.adjust(pval, method = "BH")  ## adjusted p-values
-    y_sel <- (adjp <= q) & (pval <= p)     ## selected by BH at level q or p-value
-    y_thr <- min(logp[y_sel])                 ## threshold on the p-value scale
+    y_sel <- which((adjp <= q) &           ## selected by q-value
+                       (pval <= p))        ##          or p-value
+    y_thr <- Inf
+    if (length(y_sel) > 0) {
+        y_thr <- min(logp[y_sel])              ## threshold on the log(p-value) scale
+    }
     
     ## gene selections
-    sel1 <- which(logp >= y_thr & fc >= r & pval <= p)
-    sel2 <- which(logp >= y_thr & fc <= -r & pval <= p)
-    sel12 <- union(sel1, sel2)
+    sel1 <- which(logp >= y_thr & fc >= r)
+    sel2 <- which(logp >= y_thr & fc <= -r)
+    sel12 <- sort(union(sel1, sel2))
     
     ## post hoc bounds in selections
     n1 <- length(sel1)
     FP1 <- maxFP(pval[sel1], thr = thr)
     TP1 <- n1 - FP1
-    FDP1 <- round(FP1/n1, 2)
+    FDP1 <- round(FP1/max(n1, 1), 2)
     
     n2 <- length(sel2)
     FP2 <- maxFP(pval[sel2], thr = thr)
     TP2 <- n2 - FP2
-    FDP2 <- round(FP2/n2, 2)
+    FDP2 <- round(FP2/max(n2, 1), 2)
     
     n12 <- length(sel12)
     FP12 <- maxFP(pval[sel12], thr = thr)
     TP12 <- n12 - FP12
-    FDP12 <- round(FP12/n12, 2)
+    FDP12 <- round(FP12/max(n12, 1), 2)
     
     ## graphical parameters
     cols <- rep(col[1], m)
@@ -111,13 +116,13 @@ volcanoPlot <- function(dat, thr, categ = colnames(dat),
          col = col[3], border = NA, lwd = 2)
     abline(h = y_thr, col = "gray")
     abline(v = c(-1, 1)*r, col = "gray")
-    txt <- c(sprintf("%s genes\nTP > %s\nFDP < %s", n2, TP2, FDP2))
+    txt <- c(sprintf("%s genes\nTP ≥ %s\nFDP ≤ %s", n2, TP2, FDP2))
     legend("topleft", txt, border = "white", bty = "n", text.col = 1)
     
-    txt <- c(sprintf("%s genes\nTP > %s\nFDP < %s", n1, TP1, FDP1))
+    txt <- c(sprintf("%s genes\nTP ≥ %s\nFDP ≤ %s", n1, TP1, FDP1))
     legend("topright", txt, border = "white", bty = "n", text.col = 1)
     
-    txt <- c(sprintf("%s genes selected\nAt least %s true positives (FDP < %s)", 
+    txt <- c(sprintf("%s genes selected\nAt least %s true positives (FDP ≤ %s)", 
                      n12, TP12, FDP12))
     title(txt)
     invisible(sel12)

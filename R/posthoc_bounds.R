@@ -26,8 +26,12 @@ maxFP <- function(p.values, thr) {
     nS <- length(p.values)
     K <- length(thr)
     
+    
     size <- min(nS, K)
-    seqK <- 1:size
+    if (size == 0) {
+        return(0)
+    }
+    seqK <- seq(from = 1, to = size, by = 1)
     thr <- thr[seqK]  ## k-FWER control for k>nS is useless (will yield bound > nS)
     
     card <- sapply(thr, FUN = function(thr) {

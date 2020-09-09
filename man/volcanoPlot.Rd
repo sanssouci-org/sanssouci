@@ -56,8 +56,9 @@ A Welch T-test of differential expression between the two categories
 m <- 500
 pi0 <- 0.5
 m1 <- m-m*pi0
+SNR <- 5*(runif(m1)-0.5)
 sim <- gaussianSamples(m = m, rho = 0.2, n = 100,
-                       pi0 = pi0, SNR = 5*(runif(m1)-0.5), prob = 0.5)
+                       pi0 = pi0, SNR = SNR, prob = 0.5)
 X <- sim$X
 alpha <- 0.2
 cal <- calibrateJER(X, B = 1e2, alpha = alpha, refFamily="Simes")
