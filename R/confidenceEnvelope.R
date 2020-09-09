@@ -157,7 +157,7 @@ plotConfidenceEnvelope <- function(conf_env, xmax, cols = NULL) {
     }
     p + ggplot2::geom_line() +
         ggplot2::facet_wrap(~ stat, scales = "free_y") + 
-        ggplot2::labs(x = "Number of top genes selected", 
+        ggplot2::labs(x = "Number of top features selected", 
                       y = "Post hoc confidence bounds") +
         ggplot2::theme_bw() + 
         ggplot2::theme(strip.background = NULL) +
