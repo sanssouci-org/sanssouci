@@ -40,6 +40,9 @@ observations}
 
 \item{ylim}{A numeric vector of length 2, the \eqn{y} limits of the plot}
 }
+\value{
+The indices of selected genes (returned invisibly)
+}
 \description{
 Volcano plot for differential expression studies
 }
@@ -53,10 +56,15 @@ A Welch T-test of differential expression between the two categories
 m <- 500
 pi0 <- 0.5
 m1 <- m-m*pi0
-sim <- gaussianSamples(m = m, rho = 0.4, n = 100,
-                       pi0 = pi0, SNR = runif(m1)*6-3, prob = 0.5)
+sim <- gaussianSamples(m = m, rho = 0.2, n = 100,
+                       pi0 = pi0, SNR = 5*(runif(m1)-0.5), prob = 0.5)
 X <- sim$X
 alpha <- 0.2
 cal <- calibrateJER(X, B = 1e2, alpha = alpha, refFamily="Simes")
-volcanoPlot(X, categ = colnames(X), thr = cal$thr, p = 3, r = 0.3, ylim = c(0, 6))
+sel <- volcanoPlot(X, categ = colnames(X), thr = cal$thr, q = 0.2, r = 0.2, ylim = c(0, 6))
+
+# Compare bound to reality
+TP <- sum(sim$H[sel])
+FP <- sum(1-sim$H[sel])
+FDP <- FP/length(sel)
 }

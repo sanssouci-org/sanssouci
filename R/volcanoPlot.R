@@ -23,7 +23,8 @@
 #'   defined by \code{categ} are applied for each gene using the
 #'   \code{\link{rowWelchTests}} function, which also outputs the "fold change"
 #'   (mean difference in log scale) between the two categories.
-#'   
+#' @return The indices of selected genes (returned invisibly)
+#' 
 #' @export
 #' @importFrom graphics abline legend rect title
 #' @importFrom stats p.adjust
@@ -32,13 +33,17 @@
 #' m <- 500
 #' pi0 <- 0.5
 #' m1 <- m-m*pi0
-#' sim <- gaussianSamples(m = m, rho = 0.4, n = 100,
-#'                        pi0 = pi0, SNR = runif(m1)*6-3, prob = 0.5)
+#' sim <- gaussianSamples(m = m, rho = 0.2, n = 100,
+#'                        pi0 = pi0, SNR = 5*(runif(m1)-0.5), prob = 0.5)
 #' X <- sim$X
 #' alpha <- 0.2
 #' cal <- calibrateJER(X, B = 1e2, alpha = alpha, refFamily="Simes")
-#' volcanoPlot(X, categ = colnames(X), thr = cal$thr, p = 3, r = 0.3, ylim = c(0, 6))
-
+#' sel <- volcanoPlot(X, categ = colnames(X), thr = cal$thr, q = 0.2, r = 0.2, ylim = c(0, 6))
+#' 
+#' # Compare bound to reality
+#' TP <- sum(sim$H[sel])
+#' FP <- sum(1-sim$H[sel])
+#' FDP <- FP/length(sel)
 
 volcanoPlot <- function(dat, thr, categ = colnames(dat), 
                         p = 1, q = 1, r = 0,
@@ -46,7 +51,7 @@ volcanoPlot <- function(dat, thr, categ = colnames(dat),
                         col = c("#33333333", "#FF0000", "#FF666633"),
                         pch = 19, ylim = NULL) {
     if (p <1 && q < 1) {
-        warning("Filtering both on p-values and BH-adjusted p-values")
+        warning("Filtering both on p-values and BH-adjusted p-values: only one filter will be active")
     }
     m <- nrow(dat)
     
@@ -61,12 +66,12 @@ volcanoPlot <- function(dat, thr, categ = colnames(dat),
     fc <- dex$meanDiff  
     
     adjp <- p.adjust(pval, method = "BH")  ## adjusted p-values
-    bhsel <- (adjp <= q)                   ## selected by BH at level q
-    bh <- min(logp[bhsel])                 ## threshold on the p-value scale
+    y_sel <- (adjp <= q) & (pval <= p)     ## selected by BH at level q or p-value
+    y_thr <- min(logp[y_sel])                 ## threshold on the p-value scale
     
     ## gene selections
-    sel1 <- which(logp >= bh & fc >= r)
-    sel2 <- which(logp >= bh & fc <= -r)
+    sel1 <- which(logp >= y_thr & fc >= r & pval <= p)
+    sel2 <- which(logp >= y_thr & fc <= -r & pval <= p)
     sel12 <- union(sel1, sel2)
     
     ## post hoc bounds in selections
@@ -100,11 +105,11 @@ volcanoPlot <- function(dat, thr, categ = colnames(dat),
     }
     plot(fc, logp, pch = pch, cex = cexs, col = cols, 
          xlab = xlab, ylab = ylab, ylim = ylim)
-    rect(xleft = -infty, ybottom = bh, xright = -r, ytop = infty, 
+    rect(xleft = -infty, ybottom = y_thr, xright = -r, ytop = infty, 
          col = col[3], border = NA, lwd = 2)
-    rect(xleft = r, ybottom = bh, xright = infty, ytop = infty, 
+    rect(xleft = r, ybottom = y_thr, xright = infty, ytop = infty, 
          col = col[3], border = NA, lwd = 2)
-    abline(h = bh, col = "gray")
+    abline(h = y_thr, col = "gray")
     abline(v = c(-1, 1)*r, col = "gray")
     txt <- c(sprintf("%s genes\nTP > %s\nFDP < %s", n2, TP2, FDP2))
     legend("topleft", txt, border = "white", bty = "n", text.col = 1)
@@ -115,4 +120,5 @@ volcanoPlot <- function(dat, thr, categ = colnames(dat),
     txt <- c(sprintf("%s genes selected\nAt least %s true positives (FDP < %s)", 
                      n12, TP12, FDP12))
     title(txt)
+    invisible(sel12)
 }
