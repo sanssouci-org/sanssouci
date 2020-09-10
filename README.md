@@ -13,4 +13,3 @@ This (beta) software is developed within the [SansSouci project](https://www.mat
 ```
 remotes::install_github("pneuvial/sanssouci@develop")
 ```
->>>>>>> develop
