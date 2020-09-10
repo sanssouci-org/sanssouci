@@ -5,7 +5,7 @@
 \title{Volcano plot}
 \usage{
 volcanoPlot(
-  dat,
+  X,
   categ,
   thr,
   p = 1,
@@ -18,10 +18,9 @@ volcanoPlot(
 )
 }
 \arguments{
-\item{dat}{A numeric matrix whose rows correspond to variables and columns to
-observations}
+\item{X}{A matrix of \eqn{m} variables (hypotheses) by \eqn{n} observations}
 
-\item{categ}{A numeric vector of \code{ncol(mat)} categories in \eqn{0, 1} for the
+\item{categ}{A numeric vector of \code{n} categories in \eqn{0, 1} for the
 observations}
 
 \item{thr}{A numeric vector of length K, a JER controlling family}
@@ -60,9 +59,10 @@ SNR <- 5*(runif(m1)-0.5)
 sim <- gaussianSamples(m = m, rho = 0.2, n = 100,
                        pi0 = pi0, SNR = SNR, prob = 0.5)
 X <- sim$X
+categ <- sim$categ
 alpha <- 0.2
-cal <- calibrateJER(X, B = 1e2, alpha = alpha, refFamily="Simes")
-sel <- volcanoPlot(X, categ = colnames(X), thr = cal$thr, q = 0.2, r = 0.2, ylim = c(0, 6))
+cal <- calibrateJER(X = X, categ = categ, B = 1e2, alpha = alpha, refFamily="Simes")
+sel <- volcanoPlot(X = X, categ = categ, thr = cal$thr, q = 0.2, r = 0.2, ylim = c(0, 6))
 
 # Compare bound to reality
 TP <- sum(sim$H[sel])

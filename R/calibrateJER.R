@@ -54,8 +54,9 @@
 #' sim <- gaussianSamples(m = m, rho = 0.4, n = 100,
 #'                        pi0 = pi0, SNR = 3, prob = 0.5)
 #' X <- sim$X
+#' categ <- sim$categ
 #' alpha <- 0.1
-#' cal <- calibrateJER(X, B = 1e2, alpha = alpha, refFamily="Simes")
+#' cal <- calibrateJER(X, categ, B = 1e2, alpha = alpha, refFamily="Simes")
 #' cal$lambda # > alpha (whp) if rho > 0
 #' 
 #' # Application 1: confidence envelope

@@ -79,8 +79,10 @@
 #'
 #' ## two-sample data
 #' sim <- gaussianSamples(m, rho, n, pi0, SNR = 2, prob = 0.5)
-#' tests <- testByRandomization(sim$X, B)
-#' testsW <- testByRandomization(sim$X, B = 10, rowTestFUN = rowWilcoxonTests)
+#' X <- sim$X
+#' categ <-sim$categ
+#' tests <- testByRandomization(X = X, categ = categ, B)
+#' testsW <- testByRandomization(X = X, categ = categ, B = 10, rowTestFUN = rowWilcoxonTests)
 #'
 #' ## show test statistics
 #' pch <- 20
@@ -93,7 +95,7 @@
 #' 
 #' # one-sample data:
 #' sim <- gaussianSamples(m, rho, n, pi0, SNR=2)
-#' tests <- testByRandomization(sim$X, B, alternative = "two.sided")
+#' tests <- testByRandomization(X = sim$X, categ = sim$categ, B, alternative = "two.sided")
 #'
 #' ## show test statistics
 #' pch <- 20

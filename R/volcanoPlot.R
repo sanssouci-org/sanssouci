@@ -2,10 +2,9 @@
 #' 
 #' Volcano plot for differential expression studies
 #' 
-#' @param dat A numeric matrix whose rows correspond to variables and columns to
-#'   observations
+#' @param X A matrix of \eqn{m} variables (hypotheses) by \eqn{n} observations
 
-#' @param categ A numeric vector of \code{ncol(mat)} categories in \eqn{0, 1} for the
+#' @param categ A numeric vector of \code{n} categories in \eqn{0, 1} for the
 #'   observations
 
 #' @param thr A numeric vector of length K, a JER controlling family
@@ -37,16 +36,17 @@
 #' sim <- gaussianSamples(m = m, rho = 0.2, n = 100,
 #'                        pi0 = pi0, SNR = SNR, prob = 0.5)
 #' X <- sim$X
+#' categ <- sim$categ
 #' alpha <- 0.2
-#' cal <- calibrateJER(X, B = 1e2, alpha = alpha, refFamily="Simes")
-#' sel <- volcanoPlot(X, categ = colnames(X), thr = cal$thr, q = 0.2, r = 0.2, ylim = c(0, 6))
+#' cal <- calibrateJER(X = X, categ = categ, B = 1e2, alpha = alpha, refFamily="Simes")
+#' sel <- volcanoPlot(X = X, categ = categ, thr = cal$thr, q = 0.2, r = 0.2, ylim = c(0, 6))
 #' 
 #' # Compare bound to reality
 #' TP <- sum(sim$H[sel])
 #' FP <- sum(1-sim$H[sel])
 #' FDP <- FP/length(sel)
 
-volcanoPlot <- function(dat, categ, thr,
+volcanoPlot <- function(X, categ, thr,
                         p = 1, q = 1, r = 0,
                         cex = c(0.2, 0.6), 
                         col = c("#33333333", "#FF0000", "#FF666633"),
@@ -54,10 +54,10 @@ volcanoPlot <- function(dat, categ, thr,
     if (p <1 && q < 1) {
         warning("Filtering both on p-values and BH-adjusted p-values")
     }
-    m <- nrow(dat)
+    m <- nrow(X)
     
     ## Student/Welch tests
-    dex <- rowWelchTests(dat, categ)
+    dex <- rowWelchTests(X, categ)
 
     ## p-values
     pval <- dex[["p.value"]]

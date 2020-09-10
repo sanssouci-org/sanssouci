@@ -45,7 +45,7 @@
 #'
 #' ## two-sample data
 #' sim <- gaussianSamples(m, rho, n, pi0, SNR = 2, prob = 0.5)
-#' tests <- testByRandomization(sim$X, sim$categ, B)
+#' tests <- testByRandomization(sim$X, sim$categ, B = B)
 #'
 #' ## show test statistics
 #' pch <- 20
@@ -55,7 +55,7 @@
 #'
 #' ## one-sample data
 #' sim <- gaussianSamples(m, rho, n, pi0, SNR=2)
-#' tests <- testByRandomization(sim$X, B)
+#' tests <- testByRandomization(sim$X, B = B)
 #'
 #' ## show test statistics
 #' pch <- 20
@@ -80,7 +80,6 @@ gaussianSamples <- function(m, rho, n, pi0, SNR = 1, prob = 1, w = NULL) {
 
     ## 2. signal
     mu <- matrix(0, nrow = nrow(eps), ncol = ncol(eps)) ## m x n
-    colnames(mu) <- rep(0, n)
     y <- rbinom(n, 1, prob)     ## Bernoulli response (constant if prob in {0,1})
     if (m0 < m) {
         if (prob == 1) {  

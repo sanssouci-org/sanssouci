@@ -42,7 +42,7 @@ p <- 1e3
 n <- 38
 mat <- matrix(rnorm(p*n), ncol=n)
 cls <- rep(c(0, 1), times=c(27, n-27))
-fwt <- rowWelchTests(mat, categ=cls, alternative = "greater")
+fwt <- rowWelchTests(mat, cls, alternative = "greater")
 str(fwt)
 
 # compare with ordinary t.test:

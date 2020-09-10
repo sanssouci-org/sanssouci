@@ -22,7 +22,8 @@ Plot confidence envelope
 # Generate Gaussian data and perform multiple tests
 sim <- gaussianSamples(m = 502, rho = 0.3, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
 dat <- sim$X
-rwt <- rowWelchTests(dat, categ=colnames(dat), alternative = "greater")
+categ <- sim$categ
+rwt <- rowWelchTests(dat, categ, alternative = "greater")
 
 # calculate and plot confidence envelope
 alpha <- 0.1
@@ -31,8 +32,8 @@ plotConfidenceEnvelope(ce, xmax = 200)
 
 # calculate and plot several confidence envelopes
 B <- 100
-cal <- calibrateJER(X = dat, B = B, alpha = alpha, refFamily = "Simes")
-cal_beta <- calibrateJER(X = dat, B = B, alpha = alpha, refFamily = "Beta", K = 20)
+cal <- calibrateJER(X = dat, categ = categ, B = B, alpha = alpha, refFamily = "Simes")
+cal_beta <- calibrateJER(X = dat, categ = categ, B = B, alpha = alpha, refFamily = "Beta", K = 20)
 cec <- confidenceEnvelope(rwt$p.value, refFamily = "Simes", param = cal$lambda)
 all_env <- list("Simes" = ce, 
                 "Simes + calibration"= cal$conf_env, 

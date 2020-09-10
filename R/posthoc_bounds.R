@@ -10,7 +10,7 @@
 #' sim <- gaussianSamples(m = m, rho = 0.2, n = 100, 
 #'                        pi0 = 0.8, SNR = 2.5, prob = 0.5)
 #' X <- sim$X
-#' cal <- calibrateJER(X, B = 1e3, alpha = 0.2, refFamily="Simes", )
+#' cal <- calibrateJER(X, sim$categ, B = 1e3, alpha = 0.2, refFamily="Simes", )
 #' thr <- sort(cal$thr)
 #' pval <- sort(cal$p.values)
 #' 

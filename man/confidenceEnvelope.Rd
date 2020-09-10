@@ -56,7 +56,7 @@ Confidence envelope on the true/false positives among most significant items
 
 # Generate Gaussian data and perform multiple tests
 sim <- gaussianSamples(m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
-rwt <- rowWelchTests(sim$X, categ=colnames(sim$X), alternative = "greater")
+rwt <- rowWelchTests(sim$X, sim$categ, alternative = "greater")
 
 # calculate, print, and plot confidence envelope
 ce <- confidenceEnvelope(rwt$p.value, refFamily = "Simes", param = 0.1)
