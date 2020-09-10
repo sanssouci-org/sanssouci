@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.5</span>
       </span>
     </div>
 
@@ -109,6 +109,9 @@
     <li>
       <a href="../articles/two-sample.html">Post hoc inference for differential gene expression studies</a>
     </li>
+    <li>
+      <a href="../articles/two-sample_golub.html">Post hoc inference for differential gene expression studies</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -138,6 +141,7 @@
 
     <pre class="usage"><span class='fu'>calibrateJER</span>(
   <span class='no'>X</span>,
+  <span class='no'>categ</span>,
   <span class='no'>B</span>,
   <span class='no'>alpha</span>,
   <span class='kw'>alternative</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"two.sided"</span>, <span class='st'>"less"</span>, <span class='st'>"greater"</span>),
@@ -153,9 +157,13 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>X</th>
-      <td><p>A matrix of \(m\) variables (hypotheses) by \(n\) observations.
-The column names of X should be "0" for the first sample and "1" for the
-second sample.</p></td>
+      <td><p>A matrix of \(m\) variables (hypotheses) by \(n\) observations</p></td>
+    </tr>
+    <tr>
+      <th>categ</th>
+      <td><p>An optional numeric vector of \(n\) values in \(0, 1\)
+specifying the column indices of the first and second samples. If not
+provided, a one-sample test is performed.</p></td>
     </tr>
     <tr>
       <th>B</th>
@@ -234,10 +242,11 @@ Must be one of "two.sided" (default), "greater" or "less".</p></td>
 <span class='no'>sim</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gaussianSamples.html'>gaussianSamples</a></span>(<span class='kw'>m</span> <span class='kw'>=</span> <span class='no'>m</span>, <span class='kw'>rho</span> <span class='kw'>=</span> <span class='fl'>0.4</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>100</span>,
                        <span class='kw'>pi0</span> <span class='kw'>=</span> <span class='no'>pi0</span>, <span class='kw'>SNR</span> <span class='kw'>=</span> <span class='fl'>3</span>, <span class='kw'>prob</span> <span class='kw'>=</span> <span class='fl'>0.5</span>)
 <span class='no'>X</span> <span class='kw'>&lt;-</span> <span class='no'>sim</span>$<span class='no'>X</span>
-<span class='no'>alpha</span> <span class='kw'>&lt;-</span> <span class='fl'>0.2</span>
-<span class='no'>cal</span> <span class='kw'>&lt;-</span> <span class='fu'>calibrateJER</span>(<span class='no'>X</span>, <span class='kw'>B</span> <span class='kw'>=</span> <span class='fl'>1e2</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='no'>alpha</span>, <span class='kw'>refFamily</span><span class='kw'>=</span><span class='st'>"Simes"</span>)
-<span class='no'>cal</span>$<span class='no'>lambda</span> <span class='co'># &gt; alpha (whp) if rho &gt; 0</span></div><div class='output co'>#&gt;       20% 
-#&gt; 0.4347918 </div><div class='input'>
+<span class='no'>categ</span> <span class='kw'>&lt;-</span> <span class='no'>sim</span>$<span class='no'>categ</span>
+<span class='no'>alpha</span> <span class='kw'>&lt;-</span> <span class='fl'>0.1</span>
+<span class='no'>cal</span> <span class='kw'>&lt;-</span> <span class='fu'>calibrateJER</span>(<span class='no'>X</span>, <span class='no'>categ</span>, <span class='kw'>B</span> <span class='kw'>=</span> <span class='fl'>1e2</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='no'>alpha</span>, <span class='kw'>refFamily</span><span class='kw'>=</span><span class='st'>"Simes"</span>)
+<span class='no'>cal</span>$<span class='no'>lambda</span> <span class='co'># &gt; alpha (whp) if rho &gt; 0</span></div><div class='output co'>#&gt;      10% 
+#&gt; 0.229451 </div><div class='input'>
 <span class='co'># Application 1: confidence envelope</span>
 <span class='co'>#   ie upper confidence bound for the number of false positives </span>
 <span class='co'>#   among the k most significant items for all k</span>
@@ -257,12 +266,12 @@ Must be one of "two.sided" (default), "greater" or "less".</p></td>
 <span class='no'>sel</span> <span class='kw'>&lt;-</span> <span class='no'>spval</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>:<span class='fl'>10</span>)]
 <span class='fu'><a href='maxFP.html'>maxFP</a></span>(<span class='no'>sel</span>, <span class='no'>cal</span>$<span class='no'>thr</span>)</div><div class='output co'>#&gt; [1] 0</div><div class='input'>
 <span class='no'>sel</span> <span class='kw'>&lt;-</span> <span class='no'>spval</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>:<span class='fl'>10</span>, <span class='fl'>35</span>:<span class='fl'>40</span>)]
-<span class='fu'><a href='maxFP.html'>maxFP</a></span>(<span class='no'>sel</span>, <span class='no'>cal</span>$<span class='no'>thr</span>)</div><div class='output co'>#&gt; [1] 5</div><div class='input'>
+<span class='fu'><a href='maxFP.html'>maxFP</a></span>(<span class='no'>sel</span>, <span class='no'>cal</span>$<span class='no'>thr</span>)</div><div class='output co'>#&gt; [1] 6</div><div class='input'>
 <span class='no'>sel</span> <span class='kw'>&lt;-</span> <span class='no'>spval</span>[<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>30</span>:<span class='fl'>50</span>)]
-<span class='fu'><a href='maxFP.html'>maxFP</a></span>(<span class='no'>sel</span>, <span class='no'>cal</span>$<span class='no'>thr</span>)</div><div class='output co'>#&gt; [1] 7</div><div class='input'>
+<span class='fu'><a href='maxFP.html'>maxFP</a></span>(<span class='no'>sel</span>, <span class='no'>cal</span>$<span class='no'>thr</span>)</div><div class='output co'>#&gt; [1] 13</div><div class='input'>
 <span class='co'># Application 2b: bound on pi0, the proportion of false positives in H</span>
 
-<span class='fu'><a href='maxFP.html'>maxFP</a></span>(<span class='no'>spval</span>, <span class='no'>cal</span>$<span class='no'>thr</span>)/<span class='no'>m</span></div><div class='output co'>#&gt; [1] 0.8876611</div><div class='input'><span class='no'>pi0</span></div><div class='output co'>#&gt; [1] 0.8</div><div class='input'>
+<span class='fu'><a href='maxFP.html'>maxFP</a></span>(<span class='no'>spval</span>, <span class='no'>cal</span>$<span class='no'>thr</span>)/<span class='no'>m</span></div><div class='output co'>#&gt; [1] 0.9189687</div><div class='input'><span class='no'>pi0</span></div><div class='output co'>#&gt; [1] 0.8</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -275,7 +284,7 @@ Must be one of "two.sided" (default), "greater" or "less".</p></td>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Gilles Blanchard, Guillermo Durand, Pierre Neuvial, Etienne Roquain.</p>
+  <p>Developed by Gilles Blanchard, Guillermo Durand, <a href='https://www.math.univ-toulouse.fr/~pneuvial/'>Pierre Neuvial</a>, <a href='https://etienneroquain-81.webself.net/'>Etienne Roquain</a>.</p>
 </div>
 
 <div class="pkgdown">

@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.5</span>
       </span>
     </div>
 
@@ -108,6 +108,9 @@
     </li>
     <li>
       <a href="../articles/two-sample.html">Post hoc inference for differential gene expression studies</a>
+    </li>
+    <li>
+      <a href="../articles/two-sample_golub.html">Post hoc inference for differential gene expression studies</a>
     </li>
   </ul>
 </li>
@@ -177,12 +180,17 @@ equi-correlation</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A list with two elements:</p><dl'>
-<dt>X</dt><dd><p>An \(m x n\) matrix
-  of \(m\)-dimensional Gaussian observations, where \(m1\) rows are under
-  H1, and \(m0\) rows are under H0, with \(m0/m = pi0\)</p></dd> <dt>H</dt><dd><p>A
-  vector of length \(m\), the status of each hypothesis: 0 for true null
-  hypothesis, and 1 for true alternative hypothesis</p></dd>
+    <p>A list with three elements:</p><dl'>
+
+  <dt>X</dt><dd><p>An \(m x n\) matrix of \(m\)-dimensional Gaussian observations,
+  where \(m1\) rows are under H1, and \(m0\) rows are under H0, with
+  \(m0/m = pi0\)</p></dd>
+  
+  <dt>categ</dt><dd><p>A numeric vector of length \(n\) matching each observation
+  to a sample (in 0 or 1)</p></dd>
+  
+  <dt>H</dt><dd><p>A vector of length \(m\), the status of each hypothesis: 0 for
+  true null hypothesis, and 1 for true alternative hypothesis</p></dd>
 </dl><p>.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
@@ -203,7 +211,7 @@ equi-correlation</p></td>
 
 <span class='co'>## two-sample data</span>
 <span class='no'>sim</span> <span class='kw'>&lt;-</span> <span class='fu'>gaussianSamples</span>(<span class='no'>m</span>, <span class='no'>rho</span>, <span class='no'>n</span>, <span class='no'>pi0</span>, <span class='kw'>SNR</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>prob</span> <span class='kw'>=</span> <span class='fl'>0.5</span>)
-<span class='no'>tests</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='testByRandomization.html'>testByRandomization</a></span>(<span class='no'>sim</span>$<span class='no'>X</span>, <span class='no'>B</span>)
+<span class='no'>tests</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='testByRandomization.html'>testByRandomization</a></span>(<span class='no'>sim</span>$<span class='no'>X</span>, <span class='no'>sim</span>$<span class='no'>categ</span>, <span class='kw'>B</span> <span class='kw'>=</span> <span class='no'>B</span>)
 
 <span class='co'>## show test statistics</span>
 <span class='no'>pch</span> <span class='kw'>&lt;-</span> <span class='fl'>20</span>
@@ -211,7 +219,7 @@ equi-correlation</p></td>
 <span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>tests</span>$<span class='no'>T</span>, <span class='kw'>col</span><span class='kw'>=</span><span class='no'>colStat</span>, <span class='kw'>main</span><span class='kw'>=</span><span class='st'>"Test statistics"</span>, <span class='kw'>pch</span><span class='kw'>=</span><span class='no'>pch</span>)</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/legend.html'>legend</a></span>(<span class='st'>"topleft"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"H0"</span>, <span class='st'>"H1"</span>), <span class='kw'>pch</span><span class='kw'>=</span><span class='no'>pch</span>, <span class='kw'>col</span><span class='kw'>=</span><span class='fl'>1</span>:<span class='fl'>2</span>)</div><div class='img'><img src='gaussianSamples-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## one-sample data</span>
 <span class='no'>sim</span> <span class='kw'>&lt;-</span> <span class='fu'>gaussianSamples</span>(<span class='no'>m</span>, <span class='no'>rho</span>, <span class='no'>n</span>, <span class='no'>pi0</span>, <span class='kw'>SNR</span><span class='kw'>=</span><span class='fl'>2</span>)
-<span class='no'>tests</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='testByRandomization.html'>testByRandomization</a></span>(<span class='no'>sim</span>$<span class='no'>X</span>, <span class='no'>B</span>)
+<span class='no'>tests</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='testByRandomization.html'>testByRandomization</a></span>(<span class='no'>sim</span>$<span class='no'>X</span>, <span class='kw'>B</span> <span class='kw'>=</span> <span class='no'>B</span>)
 
 <span class='co'>## show test statistics</span>
 <span class='no'>pch</span> <span class='kw'>&lt;-</span> <span class='fl'>20</span>
@@ -229,7 +237,7 @@ equi-correlation</p></td>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Gilles Blanchard, Guillermo Durand, Pierre Neuvial, Etienne Roquain.</p>
+  <p>Developed by Gilles Blanchard, Guillermo Durand, <a href='https://www.math.univ-toulouse.fr/~pneuvial/'>Pierre Neuvial</a>, <a href='https://etienneroquain-81.webself.net/'>Etienne Roquain</a>.</p>
 </div>
 
 <div class="pkgdown">

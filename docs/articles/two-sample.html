@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.5</span>
       </span>
     </div>
 
@@ -68,6 +68,9 @@
     <li>
       <a href="../articles/two-sample.html">Post hoc inference for differential gene expression studies</a>
     </li>
+    <li>
+      <a href="../articles/two-sample_golub.html">Post hoc inference for differential gene expression studies</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -87,7 +90,7 @@
       <h1 data-toc-skip>Post hoc inference for differential gene expression studies</h1>
                         <h4 class="author">G. Blanchard, P. Neuvial and E. Roquain</h4>
             
-            <h4 class="date">2020-08-19</h4>
+            <h4 class="date">2020-09-10</h4>
       
       
       <div class="hidden name"><code>two-sample.Rmd</code></div>
@@ -112,9 +115,13 @@
 <h2 class="hasAnchor">
 <a href="#motivation-a-differential-gene-expression-study" class="anchor"></a>Motivation: a differential gene expression study</h2>
 <p>We focus on differential gene expression studies in cancerology. These studies aim at identifying genes whose mean expression level differs significantly between two (or more) populations, based on a sample of gene expression measurements from individuals from these populations. Specifically, we consider a data set studied in <span class="citation">Bourgon, Gentleman, and Huber (2010)</span>.</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="no">data_url</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>(<span class="st">"https://plmbox.math.cnrs.fr/f/755496cc4c154a6dbab0/?dl=1"</span>)
-<span class="no">dat</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="no">data_url</span>)
-<span class="co">#dat &lt;- readRDS("~/Downloads/bourgon.rds")</span></pre></body></html></div>
+<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="no">filename</span> <span class="kw">&lt;-</span> <span class="st">"~/Downloads/bourgon.rds"</span>
+<span class="kw">if</span> (<span class="fu"><a href="https://rdrr.io/r/base/files.html">file.exists</a></span>(<span class="no">filename</span>)) {
+  <span class="no">dat</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="no">filename</span>)
+} <span class="kw">else</span> {
+  <span class="no">data_url</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/connections.html">url</a></span>(<span class="st">"https://plmbox.math.cnrs.fr/f/755496cc4c154a6dbab0/?dl=1"</span>)
+  <span class="no">dat</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html">readRDS</a></span>(<span class="no">data_url</span>)
+}</pre></body></html></div>
 <p>This data set which consists of gene expression measurements for <span class="math inline">\(n = 79\)</span> patients with B-cell acute lymphoblastic leukemia (ALL) <span class="citation">Chiaretti et al. (2005)</span>. These patients are classified into two subgoups, depending on whether or not they harbor a specific mutation called “BCR/ABL”:</p>
 <div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(<span class="no">dat</span>))
 <span class="co">#&gt; </span>
@@ -134,7 +141,7 @@
 <a href="#classical-differential-analysis" class="anchor"></a>Classical differential analysis</h2>
 <p>We start with a simple Welch test for differential expression for each gene. This can be done e.g. using the <code><a href="../reference/rowWelchTests.html">sansSouci::rowWelchTests</a></code> function:</p>
 <div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">categ</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(<span class="no">dat</span>) <span class="kw">==</span> <span class="st">"BCR/ABL"</span>, <span class="fl">1</span>, <span class="fl">0</span>) <span class="co"># map to 0/1</span>
-<span class="no">dex</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/rowWelchTests.html">rowWelchTests</a></span>(<span class="no">dat</span>, <span class="no">categ</span>)
+<span class="no">dex</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="fu"><a href="../reference/rowWelchTests.html">rowWelchTests</a></span>(<span class="no">dat</span>, <span class="no">categ</span>))
 <span class="no">pval</span> <span class="kw">&lt;-</span> <span class="no">dex</span><span class="kw">[[</span><span class="st">"p.value"</span>]]</pre></body></html></div>
 <p>We plot a histogram of the corresponding <span class="math inline">\(p\)</span>-values:</p>
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html">hist</a></span>(<span class="no">pval</span>, <span class="kw">probability</span> <span class="kw">=</span> <span class="fl">TRUE</span>, <span class="kw">breaks</span> <span class="kw">=</span> <span class="fl">20</span>,
@@ -198,15 +205,15 @@
 <a href="#adapting-to-unknown-dependence-yields-tighter-confidence-bounds" class="anchor"></a>Adapting to unknown dependence yields tighter confidence bounds</h3>
 <p>However, as discussed in <span class="citation">Blanchard, Neuvial, and Roquain (2020)</span>, this bound has two major limitations, being a consequence of Simes’ inequality: - It is known to be valid only under certain positive dependence assumptions (PRDS) on the joint <span class="math inline">\(p\)</span>-value distribution. Although the PRDS assumption is generally accepted in the case of differential expression studies (which in passing justifies the applicaiton of the BH procedure itself), it has not been formally proved to hold in this case. - It is not adaptive to the specific type of dependence at hand for a particular data set.</p>
 <p>To bypass these limitations, <span class="citation">Blanchard, Neuvial, and Roquain (2020)</span> have proposed a randomization-based procedure known as <span class="math inline">\(\lambda\)</span>-calibration, which yields tighter bounds that are adapted to the dependency observed in the data set at hand. In the case of two-sample tests, this calibration is achieved by permutation of class labels:</p>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="no">cal</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/calibrateJER.html">calibrateJER</a></span>(<span class="kw">X</span> <span class="kw">=</span> <span class="no">dat</span>, <span class="kw">B</span> <span class="kw">=</span> <span class="fl">100</span>, <span class="kw">alpha</span> <span class="kw">=</span> <span class="no">alpha</span>, <span class="kw">refFamily</span> <span class="kw">=</span> <span class="st">"Simes"</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="no">cal</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/calibrateJER.html">calibrateJER</a></span>(<span class="kw">X</span> <span class="kw">=</span> <span class="no">dat</span>, <span class="no">categ</span>, <span class="kw">B</span> <span class="kw">=</span> <span class="fl">100</span>, <span class="kw">alpha</span> <span class="kw">=</span> <span class="no">alpha</span>, <span class="kw">refFamily</span> <span class="kw">=</span> <span class="st">"Simes"</span>)</pre></body></html></div>
 <p>An alternative to the Simes reference family is the Beta reference family:</p>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">cal_beta</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/calibrateJER.html">calibrateJER</a></span>(<span class="kw">X</span> <span class="kw">=</span> <span class="no">dat</span>, <span class="kw">B</span> <span class="kw">=</span> <span class="fl">100</span>, <span class="kw">alpha</span> <span class="kw">=</span> <span class="no">alpha</span>, <span class="kw">refFamily</span> <span class="kw">=</span> <span class="st">"Beta"</span>, <span class="kw">K</span> <span class="kw">=</span> <span class="fl">50</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">cal_beta</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/calibrateJER.html">calibrateJER</a></span>(<span class="kw">X</span> <span class="kw">=</span> <span class="no">dat</span>, <span class="no">categ</span>, <span class="kw">B</span> <span class="kw">=</span> <span class="fl">100</span>, <span class="kw">alpha</span> <span class="kw">=</span> <span class="no">alpha</span>, <span class="kw">refFamily</span> <span class="kw">=</span> <span class="st">"Beta"</span>, <span class="kw">K</span> <span class="kw">=</span> <span class="fl">50</span>)</pre></body></html></div>
 <p>The obtained confidence envelopes can be compared graphically to the above Simes envelope:</p>
 <div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="no">conf_envs</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="st">"Simes"</span> <span class="kw">=</span> <span class="no">ce_Simes</span>,
                   <span class="st">"Linear"</span> <span class="kw">=</span> <span class="no">cal</span>$<span class="no">conf_env</span>,
                   <span class="st">"Beta (K=50)"</span> <span class="kw">=</span> <span class="no">cal_beta</span>$<span class="no">conf_env</span>)
 <span class="no">cols</span> <span class="kw">&lt;-</span> <span class="kw pkg">RColorBrewer</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html">brewer.pal</a></span>(<span class="fl">3</span>, <span class="st">"Dark2"</span>)
-<span class="fu"><a href="../reference/plotConfidenceEnvelope.html">plotConfidenceEnvelope</a></span>(<span class="no">conf_envs</span>, <span class="kw">xmax</span> <span class="kw">=</span> <span class="fl">300</span>, <span class="kw">cols</span> <span class="kw">=</span> <span class="no">cols</span>)</pre></body></html></div>
+<span class="fu"><a href="../reference/plotConfidenceEnvelope.html">plotConfidenceEnvelope</a></span>(<span class="no">conf_envs</span>, <span class="kw">xmax</span> <span class="kw">=</span> <span class="fl">2000</span>, <span class="kw">cols</span> <span class="kw">=</span> <span class="no">cols</span>)</pre></body></html></div>
 <p><img src="two-sample_files/figure-html/conf-env-plot-1.png" width="700"></p>
 </div>
 <div id="volcano-plots" class="section level3">
@@ -248,20 +255,20 @@
 <span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; other attached packages:</span>
-<span class="co">#&gt; [1] ggplot2_3.3.2   sansSouci_0.8.4</span>
+<span class="co">#&gt; [1] ggplot2_3.3.2   sansSouci_0.8.5</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; loaded via a namespace (and not attached):</span>
 <span class="co">#&gt;  [1] Rcpp_1.0.5         RColorBrewer_1.1-2 compiler_4.0.2     pillar_1.4.6      </span>
 <span class="co">#&gt;  [5] tools_4.0.2        digest_0.6.25      evaluate_0.14      memoise_1.1.0     </span>
 <span class="co">#&gt;  [9] lifecycle_0.2.0    tibble_3.0.3       gtable_0.3.0       lattice_0.20-41   </span>
 <span class="co">#&gt; [13] pkgconfig_2.0.3    rlang_0.4.7        Matrix_1.2-18      rstudioapi_0.11   </span>
-<span class="co">#&gt; [17] yaml_2.2.1         pkgdown_1.5.1      xfun_0.15          withr_2.2.0       </span>
-<span class="co">#&gt; [21] stringr_1.4.0      dplyr_1.0.0        knitr_1.29         generics_0.0.2    </span>
-<span class="co">#&gt; [25] desc_1.2.0         fs_1.4.2           vctrs_0.3.2        tidyselect_1.1.0  </span>
-<span class="co">#&gt; [29] rprojroot_1.3-2    grid_4.0.2         glue_1.4.1         R6_2.4.1          </span>
+<span class="co">#&gt; [17] yaml_2.2.1         pkgdown_1.5.1      xfun_0.16          withr_2.2.0       </span>
+<span class="co">#&gt; [21] stringr_1.4.0      dplyr_1.0.2        knitr_1.29         generics_0.0.2    </span>
+<span class="co">#&gt; [25] desc_1.2.0         fs_1.5.0           vctrs_0.3.2        tidyselect_1.1.0  </span>
+<span class="co">#&gt; [29] rprojroot_1.3-2    grid_4.0.2         glue_1.4.2         R6_2.4.1          </span>
 <span class="co">#&gt; [33] rmarkdown_2.3      farver_2.0.3       purrr_0.3.4        magrittr_1.5      </span>
-<span class="co">#&gt; [37] backports_1.1.8    scales_1.1.1       matrixStats_0.56.0 htmltools_0.5.0   </span>
-<span class="co">#&gt; [41] ellipsis_0.3.1     MASS_7.3-51.6      assertthat_0.2.1   colorspace_1.4-1  </span>
+<span class="co">#&gt; [37] backports_1.1.9    scales_1.1.1       matrixStats_0.56.0 htmltools_0.5.0   </span>
+<span class="co">#&gt; [41] ellipsis_0.3.1     MASS_7.3-52        assertthat_0.2.1   colorspace_1.4-1  </span>
 <span class="co">#&gt; [45] labeling_0.3       stringi_1.4.6      munsell_0.5.0      crayon_1.3.4</span></pre></body></html></div>
 </div>
 <div id="references" class="section level2 unnumbered">
@@ -307,7 +314,7 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Gilles Blanchard, Guillermo Durand, Pierre Neuvial, Etienne Roquain.</p>
+  <p>Developed by Gilles Blanchard, Guillermo Durand, <a href="https://www.math.univ-toulouse.fr/~pneuvial/">Pierre Neuvial</a>, <a href="https://etienneroquain-81.webself.net/">Etienne Roquain</a>.</p>
 </div>
 
 <div class="pkgdown">

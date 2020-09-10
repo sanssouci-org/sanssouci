@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.5</span>
       </span>
     </div>
 
@@ -109,6 +109,9 @@
     <li>
       <a href="../articles/two-sample.html">Post hoc inference for differential gene expression studies</a>
     </li>
+    <li>
+      <a href="../articles/two-sample_golub.html">Post hoc inference for differential gene expression studies</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -138,6 +141,7 @@
 
     <pre class="usage"><span class='fu'>testByRandomization</span>(
   <span class='no'>X</span>,
+  <span class='no'>categ</span>,
   <span class='no'>B</span>,
   <span class='kw'>alternative</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"two.sided"</span>, <span class='st'>"less"</span>, <span class='st'>"greater"</span>),
   <span class='kw'>rowTestFUN</span> <span class='kw'>=</span> <span class='no'>rowWelchTests</span>,
@@ -151,6 +155,12 @@
     <tr>
       <th>X</th>
       <td><p>a matrix of <code>m</code> variables by <code>n</code> observations</p></td>
+    </tr>
+    <tr>
+      <th>categ</th>
+      <td><p>An optional numeric vector of \(n\) values in \(0, 1\)
+specifying the column indices of the first and second samples. If not
+provided, a one-sample test is performed.</p></td>
     </tr>
     <tr>
       <th>B</th>
@@ -239,8 +249,10 @@ generation. If <code>NULL</code>, no seed is specified</p></td>
 
 <span class='co'>## two-sample data</span>
 <span class='no'>sim</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gaussianSamples.html'>gaussianSamples</a></span>(<span class='no'>m</span>, <span class='no'>rho</span>, <span class='no'>n</span>, <span class='no'>pi0</span>, <span class='kw'>SNR</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>prob</span> <span class='kw'>=</span> <span class='fl'>0.5</span>)
-<span class='no'>tests</span> <span class='kw'>&lt;-</span> <span class='fu'>testByRandomization</span>(<span class='no'>sim</span>$<span class='no'>X</span>, <span class='no'>B</span>)
-<span class='no'>testsW</span> <span class='kw'>&lt;-</span> <span class='fu'>testByRandomization</span>(<span class='no'>sim</span>$<span class='no'>X</span>, <span class='kw'>B</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>rowTestFUN</span> <span class='kw'>=</span> <span class='no'>rowWilcoxonTests</span>)
+<span class='no'>X</span> <span class='kw'>&lt;-</span> <span class='no'>sim</span>$<span class='no'>X</span>
+<span class='no'>categ</span> <span class='kw'>&lt;-</span><span class='no'>sim</span>$<span class='no'>categ</span>
+<span class='no'>tests</span> <span class='kw'>&lt;-</span> <span class='fu'>testByRandomization</span>(<span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>X</span>, <span class='kw'>categ</span> <span class='kw'>=</span> <span class='no'>categ</span>, <span class='no'>B</span>)
+<span class='no'>testsW</span> <span class='kw'>&lt;-</span> <span class='fu'>testByRandomization</span>(<span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>X</span>, <span class='kw'>categ</span> <span class='kw'>=</span> <span class='no'>categ</span>, <span class='kw'>B</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>rowTestFUN</span> <span class='kw'>=</span> <span class='no'>rowWilcoxonTests</span>)
 
 <span class='co'>## show test statistics</span>
 <span class='no'>pch</span> <span class='kw'>&lt;-</span> <span class='fl'>20</span>
@@ -249,7 +261,7 @@ generation. If <code>NULL</code>, no seed is specified</p></td>
 <span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>testsW</span>$<span class='no'>T</span>, <span class='kw'>col</span> <span class='kw'>=</span> <span class='no'>colStat</span>, <span class='kw'>main</span> <span class='kw'>=</span> <span class='st'>"Wilcoxon test statistics"</span>, <span class='kw'>pch</span> <span class='kw'>=</span> <span class='no'>pch</span>)</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/legend.html'>legend</a></span>(<span class='st'>"topleft"</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"H0"</span>, <span class='st'>"H1"</span>), <span class='kw'>pch</span><span class='kw'>=</span><span class='no'>pch</span>, <span class='kw'>col</span><span class='kw'>=</span><span class='fl'>1</span>:<span class='fl'>2</span>)</div><div class='img'><img src='testByRandomization-2.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'># one-sample data:</span>
 <span class='no'>sim</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gaussianSamples.html'>gaussianSamples</a></span>(<span class='no'>m</span>, <span class='no'>rho</span>, <span class='no'>n</span>, <span class='no'>pi0</span>, <span class='kw'>SNR</span><span class='kw'>=</span><span class='fl'>2</span>)
-<span class='no'>tests</span> <span class='kw'>&lt;-</span> <span class='fu'>testByRandomization</span>(<span class='no'>sim</span>$<span class='no'>X</span>, <span class='no'>B</span>, <span class='kw'>alternative</span> <span class='kw'>=</span> <span class='st'>"two.sided"</span>)
+<span class='no'>tests</span> <span class='kw'>&lt;-</span> <span class='fu'>testByRandomization</span>(<span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>sim</span>$<span class='no'>X</span>, <span class='kw'>categ</span> <span class='kw'>=</span> <span class='no'>sim</span>$<span class='no'>categ</span>, <span class='no'>B</span>, <span class='kw'>alternative</span> <span class='kw'>=</span> <span class='st'>"two.sided"</span>)
 
 <span class='co'>## show test statistics</span>
 <span class='no'>pch</span> <span class='kw'>&lt;-</span> <span class='fl'>20</span>
@@ -268,7 +280,7 @@ generation. If <code>NULL</code>, no seed is specified</p></td>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Gilles Blanchard, Guillermo Durand, Pierre Neuvial, Etienne Roquain.</p>
+  <p>Developed by Gilles Blanchard, Guillermo Durand, <a href='https://www.math.univ-toulouse.fr/~pneuvial/'>Pierre Neuvial</a>, <a href='https://etienneroquain-81.webself.net/'>Etienne Roquain</a>.</p>
 </div>
 
 <div class="pkgdown">

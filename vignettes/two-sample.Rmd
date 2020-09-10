@@ -2,10 +2,7 @@
 title: "Post hoc inference for differential gene expression studies"
 author: "G. Blanchard, P. Neuvial and E. Roquain"
 date: "`r Sys.Date()`"
-output: 
-  html_document: default
-  rmarkdown::html_vignette: default
-  pdf_document: default
+output: rmarkdown::html_vignette
 bibliography: sansSouci.bib
 vignette: >
   %\VignetteIndexEntry{Post hoc inference for differential gene expression studies}

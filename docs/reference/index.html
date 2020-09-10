@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.5</span>
       </span>
     </div>
 
@@ -108,6 +108,9 @@
     <li>
       <a href="../articles/two-sample.html">Post hoc inference for differential gene expression studies</a>
     </li>
+    <li>
+      <a href="../articles/two-sample_golub.html">Post hoc inference for differential gene expression studies</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -140,8 +143,8 @@
     <tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
+          <h2 id="section-main-functions" class="hasAnchor"><a href="#section-main-functions" class="anchor"></a>Main functions</h2>
+          <p class="section-desc"><p>Functions to perform post hoc inference for one- and two sample tests as described in the BNR (2020) paper</p></p>
         </th>
       </tr>
       
@@ -150,24 +153,6 @@
       
       
       <tr>
-        
-        <td>
-          <p><code><a href="BetaThresholdFamily.html">BetaThresholdFamily()</a></code> </p>
-        </td>
-        <td><p>BetaThresholdFamily</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="SimesThresholdFamily.html">SimesThresholdFamily()</a></code> </p>
-        </td>
-        <td><p>SimesThresholdFamily</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="V.star.html">V.star()</a></code> </p>
-        </td>
-        <td><p>Post hoc bound on the number of false positives</p></td>
-      </tr><tr>
         
         <td>
           <p><code><a href="calibrateJER.html">calibrateJER()</a></code> </p>
@@ -182,70 +167,9 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="curveMaxFP.html">curveMaxFP()</a></code> </p>
+          <p><code><a href="volcanoPlot.html">volcanoPlot()</a></code> </p>
         </td>
-        <td><p>Upper bound for the number of false discoveries among most significant items</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="curveVstar_tree.html">curveVstar_tree()</a></code> </p>
-        </td>
-        <td><p>Generate one-sided p-values associated to a given signal with equi-correlated
-noise</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dyadic.html">dyadic.from.window.size()</a></code> <code><a href="dyadic.html">dyadic.from.height()</a></code> <code><a href="dyadic.html">dyadic.from.max.height()</a></code> </p>
-        </td>
-        <td><p>Create a complete dyadic tree structure</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dyadic.from.leaf_list.html">dyadic.from.leaf_list()</a></code> </p>
-        </td>
-        <td><p>Create a complete dyadic tree structure</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="gauss_bloc.html">gauss_bloc()</a></code> </p>
-        </td>
-        <td><p>Generate a block of signal of Gaussian shape</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="gaussianSamples.html">gaussianSamples()</a></code> </p>
-        </td>
-        <td><p>Simulate equi-correlated data</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="gaussianTestStatistics.html">gaussianTestStatistics()</a></code> </p>
-        </td>
-        <td><p>Simulate Gaussian test statistics</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="gen.mu.leaves.html">gen.mu.leaves()</a></code> </p>
-        </td>
-        <td><p>Generate the signal in the leaves of the tree</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="gen.mu.noleaves.html">gen.mu.noleaves()</a></code> </p>
-        </td>
-        <td><p>Generate an unstructured signal</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="gen.p.values.html">gen.p.values()</a></code> </p>
-        </td>
-        <td><p>Generate one-sided p-values associated to a given signal with equi-correlated noise</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="getSummaryStats.html">getSummaryStats()</a></code> </p>
-        </td>
-        <td><p>Convert a matrix of observations into summary statistics</p></td>
+        <td><p>Volcano plot</p></td>
       </tr><tr>
         
         <td>
@@ -261,63 +185,28 @@ noise</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="plotConfidenceEnvelope.html">plotConfidenceEnvelope()</a></code> </p>
+          <p><code><a href="curveMaxFP.html">curveMaxFP()</a></code> </p>
         </td>
-        <td><p>Plot confidence envelope</p></td>
-      </tr><tr>
+        <td><p>Upper bound for the number of false discoveries among most significant items</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-specific-functions-for-structured-hypotheses" class="hasAnchor"><a href="#section-specific-functions-for-structured-hypotheses" class="anchor"></a>Specific functions for structured hypotheses</h2>
+          <p class="section-desc"><p>Functions to perform post hoc inference for structured hypotheses as described in the Durand et al. (2020) paper</p></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
         
         <td>
-          <p><code><a href="posthocBySimes.html">posthocBySimes0Rcpp()</a></code> <code><a href="posthocBySimes.html">posthocBySimes()</a></code> </p>
+          <p><code><a href="V.star.html">V.star()</a></code> </p>
         </td>
-        <td><p>post hoc bound obtained from Simes' inequality</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="rowBinomialTests.html">rowBinomialTests()</a></code> </p>
-        </td>
-        <td><p>Binomial proportion tests for each row of a matrix</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="rowWelchTests.html">rowWelchTests()</a></code> </p>
-        </td>
-        <td><p>Welch t-tests for rows of a matrix</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="rowWilcoxonTests.html">rowWilcoxonTests()</a></code> </p>
-        </td>
-        <td><p>Wilcoxon rank sum tests for each row of a matrix</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="suffWelchTest.html">suffWelchTest()</a></code> </p>
-        </td>
-        <td><p>Welch test from sufficient statistics</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="testByRandomization.html">testByRandomization()</a></code> </p>
-        </td>
-        <td><p>Randomization-based testing</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="volcano.html">volcano</a></code> </p>
-        </td>
-        <td><p>Sample data from differential gene expression studies</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="volcanoPlot.html">volcanoPlot()</a></code> </p>
-        </td>
-        <td><p>Volcano plot</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="zeta.html">zeta.HB()</a></code> <code><a href="zeta.html">zeta.trivial()</a></code> <code><a href="zeta.html">zeta.DKWM()</a></code> </p>
-        </td>
-        <td><p>Estimate the number of true null hypotheses among a set of p-values</p></td>
+        <td><p>Post hoc bound on the number of false positives</p></td>
       </tr><tr>
         
         <td>
@@ -339,7 +228,7 @@ noise</p></td>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Gilles Blanchard, Guillermo Durand, Pierre Neuvial, Etienne Roquain.</p>
+  <p>Developed by Gilles Blanchard, Guillermo Durand, <a href='https://www.math.univ-toulouse.fr/~pneuvial/'>Pierre Neuvial</a>, <a href='https://etienneroquain-81.webself.net/'>Etienne Roquain</a>.</p>
 </div>
 
 <div class="pkgdown">

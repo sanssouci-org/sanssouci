@@ -40,10 +40,7 @@
 
 
 <meta property="og:title" content="Create a complete dyadic tree structure — dyadic" />
-<meta property="og:description" content="Create a complete dyadic tree structure
-Dyadic tree structure from window size
-Dyadic tree structure from height
-Dyadic tree structure from maximum achievable height" />
+<meta property="og:description" content="Create a complete dyadic tree structure" />
 
 
 
@@ -75,7 +72,7 @@ Dyadic tree structure from maximum achievable height" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.5</span>
       </span>
     </div>
 
@@ -112,6 +109,9 @@ Dyadic tree structure from maximum achievable height" />
     <li>
       <a href="../articles/two-sample.html">Post hoc inference for differential gene expression studies</a>
     </li>
+    <li>
+      <a href="../articles/two-sample_golub.html">Post hoc inference for differential gene expression studies</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -137,9 +137,6 @@ Dyadic tree structure from maximum achievable height" />
 
     <div class="ref-description">
     <p>Create a complete dyadic tree structure</p>
-<p>Dyadic tree structure from window size</p>
-<p>Dyadic tree structure from height</p>
-<p>Dyadic tree structure from maximum achievable height</p>
     </div>
 
     <pre class="usage"><span class='fu'>dyadic.from.window.size</span>(<span class='no'>m</span>, <span class='no'>s</span>, <span class='no'>method</span>)
@@ -184,9 +181,9 @@ size as long as possible</p></td>
 
     
 <dl'>
-<dt><code>dyadic.from.window.size</code></dt><dd><p>the number of elements in each leaf is set to <code>s</code></p></dd>
-<dt><code>dyadic.from.height</code></dt><dd><p>the total height of tree is set to <code>H</code></p></dd>
-<dt><code>dyadic.from.max.size</code></dt><dd><p>the total height of tree is set to the maximum possible height, ie <code><a href='https://rdrr.io/r/base/Round.html'>floor(2 + log2(m - 1))</a></code></p></dd>
+<dt><code>dyadic.from.window.size</code></dt><dd><p>Dyadic tree structure from window size: the number of elements in each leaf is set to <code>s</code></p></dd>
+<dt><code>dyadic.from.height</code></dt><dd><p>Dyadic tree structure from height: the total height of tree is set to <code>H</code></p></dd>
+<dt><code>dyadic.from.max.size</code></dt><dd><p>Dyadic tree structure from maximum achievable height: the total height of tree is set to the maximum possible height, ie <code><a href='https://rdrr.io/r/base/Round.html'>floor(2 + log2(m - 1))</a></code></p></dd>
 
 </dl>
 
@@ -266,7 +263,7 @@ size as long as possible</p></td>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Gilles Blanchard, Guillermo Durand, Pierre Neuvial, Etienne Roquain.</p>
+  <p>Developed by Gilles Blanchard, Guillermo Durand, <a href='https://www.math.univ-toulouse.fr/~pneuvial/'>Pierre Neuvial</a>, <a href='https://etienneroquain-81.webself.net/'>Etienne Roquain</a>.</p>
 </div>
 
 <div class="pkgdown">

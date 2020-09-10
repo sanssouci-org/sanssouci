@@ -7,5 +7,9 @@ articles:
   jointErrorRateCalibration_simulations: jointErrorRateCalibration_simulations.html
   stepDownControl: stepDownControl.html
   two-sample: two-sample.html
-last_built: 2020-08-18T22:08Z
+  two-sample_golub: two-sample_golub.html
+last_built: 2020-09-10T09:32Z
+urls:
+  reference: https://pneuvial.github.io/sanssouci/reference
+  article: https://pneuvial.github.io/sanssouci/articles
 

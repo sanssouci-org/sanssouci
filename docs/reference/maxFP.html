@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.5</span>
       </span>
     </div>
 
@@ -108,6 +108,9 @@
     </li>
     <li>
       <a href="../articles/two-sample.html">Post hoc inference for differential gene expression studies</a>
+    </li>
+    <li>
+      <a href="../articles/two-sample_golub.html">Post hoc inference for differential gene expression studies</a>
     </li>
   </ul>
 </li>
@@ -161,7 +164,7 @@
 <span class='no'>sim</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='gaussianSamples.html'>gaussianSamples</a></span>(<span class='kw'>m</span> <span class='kw'>=</span> <span class='no'>m</span>, <span class='kw'>rho</span> <span class='kw'>=</span> <span class='fl'>0.2</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>100</span>,
                        <span class='kw'>pi0</span> <span class='kw'>=</span> <span class='fl'>0.8</span>, <span class='kw'>SNR</span> <span class='kw'>=</span> <span class='fl'>2.5</span>, <span class='kw'>prob</span> <span class='kw'>=</span> <span class='fl'>0.5</span>)
 <span class='no'>X</span> <span class='kw'>&lt;-</span> <span class='no'>sim</span>$<span class='no'>X</span>
-<span class='no'>cal</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='calibrateJER.html'>calibrateJER</a></span>(<span class='no'>X</span>, <span class='kw'>B</span> <span class='kw'>=</span> <span class='fl'>1e3</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.2</span>, <span class='kw'>refFamily</span><span class='kw'>=</span><span class='st'>"Simes"</span>, )
+<span class='no'>cal</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='calibrateJER.html'>calibrateJER</a></span>(<span class='no'>X</span>, <span class='no'>sim</span>$<span class='no'>categ</span>, <span class='kw'>B</span> <span class='kw'>=</span> <span class='fl'>1e3</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.2</span>, <span class='kw'>refFamily</span><span class='kw'>=</span><span class='st'>"Simes"</span>, )
 <span class='no'>thr</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sort.html'>sort</a></span>(<span class='no'>cal</span>$<span class='no'>thr</span>)
 <span class='no'>pval</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sort.html'>sort</a></span>(<span class='no'>cal</span>$<span class='no'>p.values</span>)
 
@@ -180,7 +183,7 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by Gilles Blanchard, Guillermo Durand, Pierre Neuvial, Etienne Roquain.</p>
+  <p>Developed by Gilles Blanchard, Guillermo Durand, <a href='https://www.math.univ-toulouse.fr/~pneuvial/'>Pierre Neuvial</a>, <a href='https://etienneroquain-81.webself.net/'>Etienne Roquain</a>.</p>
 </div>
 
 <div class="pkgdown">

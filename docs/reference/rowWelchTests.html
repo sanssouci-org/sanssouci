@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.5</span>
       </span>
     </div>
 
@@ -108,6 +108,9 @@
     </li>
     <li>
       <a href="../articles/two-sample.html">Post hoc inference for differential gene expression studies</a>
+    </li>
+    <li>
+      <a href="../articles/two-sample_golub.html">Post hoc inference for differential gene expression studies</a>
     </li>
   </ul>
 </li>
@@ -148,15 +151,15 @@ observations</p></td>
     </tr>
     <tr>
       <th>categ</th>
-      <td><p>A vector of <code><a href='https://rdrr.io/r/base/nrow.html'>ncol(mat)</a></code> categories in \('0','1'\) for the
+      <td><p>A numeric vector of <code><a href='https://rdrr.io/r/base/nrow.html'>ncol(mat)</a></code> categories in \(0, 1\) for the
 observations</p></td>
     </tr>
     <tr>
       <th>alternative</th>
       <td><p>A character string specifying the alternative hypothesis.
 Must be one of "two.sided" (default), "greater" or "less". As in
-<code><a href='https://rdrr.io/r/stats/t.test.html'>t.test</a></code>, alternative = "greater" is the alternative that the
-class '1' has a larger mean than the class '0'.</p></td>
+<code><a href='https://rdrr.io/r/stats/t.test.html'>t.test</a></code>, alternative = "greater" is the alternative that
+class 1 has a larger mean than class 0.</p></td>
     </tr>
     </table>
 
@@ -189,12 +192,12 @@ of equal group variances (standard t-test and not Welch t-test)</p>
 <span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>38</span>
 <span class='no'>mat</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='no'>p</span>*<span class='no'>n</span>), <span class='kw'>ncol</span><span class='kw'>=</span><span class='no'>n</span>)
 <span class='no'>cls</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>, <span class='fl'>1</span>), <span class='kw'>times</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>27</span>, <span class='no'>n</span>-<span class='fl'>27</span>))
-<span class='no'>fwt</span> <span class='kw'>&lt;-</span> <span class='fu'>rowWelchTests</span>(<span class='no'>mat</span>, <span class='kw'>categ</span><span class='kw'>=</span><span class='no'>cls</span>, <span class='kw'>alternative</span> <span class='kw'>=</span> <span class='st'>"greater"</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='no'>fwt</span>)</div><div class='output co'>#&gt; 'data.frame':	1000 obs. of  4 variables:
-#&gt;  $ statistic: num  1.1429 -1.6283 -0.0639 0.4768 -0.9417 ...
-#&gt;  $ parameter: num  16.6 33 25.2 17.9 16.2 ...
-#&gt;  $ p.value  : num  0.135 0.944 0.525 0.32 0.82 ...
-#&gt;  $ meanDiff : num  0.3664 -0.4551 -0.0194 0.1886 -0.3804 ...</div><div class='input'>
+<span class='no'>fwt</span> <span class='kw'>&lt;-</span> <span class='fu'>rowWelchTests</span>(<span class='no'>mat</span>, <span class='no'>cls</span>, <span class='kw'>alternative</span> <span class='kw'>=</span> <span class='st'>"greater"</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='no'>fwt</span>)</div><div class='output co'>#&gt; List of 4
+#&gt;  $ statistic: num [1:1000] 1.1429 -1.6283 -0.0639 0.4768 -0.9417 ...
+#&gt;  $ parameter: num [1:1000] 16.6 33 25.2 17.9 16.2 ...
+#&gt;  $ p.value  : num [1:1000] 0.135 0.944 0.525 0.32 0.82 ...
+#&gt;  $ meanDiff : num [1:1000] 0.3664 -0.4551 -0.0194 0.1886 -0.3804 ...</div><div class='input'>
 <span class='co'># compare with ordinary t.test:</span>
 <span class='no'>pwt</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/apply.html'>apply</a></span>(<span class='no'>mat</span>, <span class='fl'>1</span>, <span class='kw'>FUN</span><span class='kw'>=</span><span class='kw'>function</span>(<span class='no'>x</span>) {
    <span class='fu'><a href='https://rdrr.io/r/stats/t.test.html'>t.test</a></span>(<span class='no'>x</span>[<span class='no'>cls</span><span class='kw'>==</span><span class='fl'>1</span>], <span class='no'>x</span>[<span class='no'>cls</span><span class='kw'>==</span><span class='fl'>0</span>], <span class='kw'>alternative</span> <span class='kw'>=</span> <span class='st'>"greater"</span>)$<span class='no'>p.value</span>
@@ -212,7 +215,7 @@ of equal group variances (standard t-test and not Welch t-test)</p>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Gilles Blanchard, Guillermo Durand, Pierre Neuvial, Etienne Roquain.</p>
+  <p>Developed by Gilles Blanchard, Guillermo Durand, <a href='https://www.math.univ-toulouse.fr/~pneuvial/'>Pierre Neuvial</a>, <a href='https://etienneroquain-81.webself.net/'>Etienne Roquain</a>.</p>
 </div>
 
 <div class="pkgdown">

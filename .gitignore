@@ -56,3 +56,5 @@ vignettes/*.pdf
 *~
 doc
 Meta
+docs
+inst/doc
