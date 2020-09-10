@@ -5,7 +5,7 @@
  
 # Post hoc inference via multiple testing
 
-This (beta) software is developed within the [SansSouci project](https://www.math.univ-toulouse.fr/~pneuvial/SansSouci
+This (beta) software is developed within the [SansSouci project](https://www.math.univ-toulouse.fr/~pneuvial/sanssouci
 ).
 
 # Installation
