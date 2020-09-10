@@ -50,11 +50,9 @@ vignettes/*.pdf
 /doc/
 /Rout/
 /results/
+/docs
 
 ## OS X
 .DS_Store
 *~
-doc
 Meta
-docs
-inst/doc
