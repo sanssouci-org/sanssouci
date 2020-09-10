@@ -1,6 +1,6 @@
 Package: sansSouci
-Version: 0.8.4
-Date: 2020-08-18
+Version: 0.8.5
+Date: 2020-09-10
 Title: Post Hoc Inference Via Joint Error Rate Control
 Authors@R: c(person("Benjamin", "Sadacca", role="ctb"),
              person("Gilles", "Blanchard", role="aut"),

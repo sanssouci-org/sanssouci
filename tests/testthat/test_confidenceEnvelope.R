@@ -5,7 +5,7 @@ test_that("Consistency of output of 'confidenceEnvelope'", {
     m <- 123
     alpha <- 0.1
     sim <- gaussianSamples(m = m, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
-    dex <- rowWelchTests(sim$X, categ = colnames(sim$X))
+    dex <- rowWelchTests(sim$X, sim$categ)
     conf_env <- confidenceEnvelope(dex$p.value, refFamily = "Simes", param = alpha, what = c("FP", "TP", "FDP", "TDP"))
     
     ## FP and TP
@@ -37,7 +37,7 @@ test_that("Ordering of confidence envelopes with/without calibration", {
     m <- 123
     alpha <- 0.1
     sim <- gaussianSamples(m = m, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
-    cal <- calibrateJER(sim$X, B = 1e3, alpha = alpha, refFamily = "Simes")    
+    cal <- calibrateJER(sim$X, sim$categ, B = 1e3, alpha = alpha, refFamily = "Simes")    
     conf_env <- confidenceEnvelope(cal$p.value, "Simes", param = alpha)
     TP_Simes <- subset(cal$conf_env, stat == "TP")$bound
     TP <- subset(conf_env, stat == "TP" )$bound
@@ -47,7 +47,7 @@ test_that("Ordering of confidence envelopes with/without calibration", {
 
 test_that("Vanilla test for 'plotConfidenceEnvelope'", {
     sim <- gaussianSamples(m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
-    rwt <- rowWelchTests(sim$X, categ=colnames(sim$X), alternative = "greater")
+    rwt <- rowWelchTests(sim$X, categ = sim$categ, alternative = "greater")
     
     ce <- confidenceEnvelope(rwt$p.value, refFamily = "Simes", param = 0.1)
     p <- plotConfidenceEnvelope(ce, xmax = 200)

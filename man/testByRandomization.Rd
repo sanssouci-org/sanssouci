@@ -6,6 +6,7 @@
 \usage{
 testByRandomization(
   X,
+  categ,
   B,
   alternative = c("two.sided", "less", "greater"),
   rowTestFUN = rowWelchTests,
@@ -15,6 +16,10 @@ testByRandomization(
 }
 \arguments{
 \item{X}{a matrix of \code{m} variables by \code{n} observations}
+
+\item{categ}{An optional numeric vector of \eqn{n} values in \eqn{0, 1}
+specifying the column indices of the first and second samples. If not
+provided, a one-sample test is performed.}
 
 \item{B}{A numeric value, the number of permutations to be performed}
 

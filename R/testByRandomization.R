@@ -4,6 +4,10 @@
 #'
 #' @param X a matrix of \code{m} variables by \code{n} observations
 #'
+#' @param categ An optional numeric vector of \eqn{n} values in \eqn{0, 1}
+#'   specifying the column indices of the first and second samples. If not
+#'   provided, a one-sample test is performed.
+#'   
 #' @param B A numeric value, the number of permutations to be performed
 #'
 #' @param rowTestFUN A (vectorized) test function used in the two-sample case.
@@ -103,28 +107,24 @@
 #' @importFrom matrixStats rowRanks
 #' @export
 #' 
-testByRandomization <- function(X, B, 
+testByRandomization <- function(X, categ, B, 
                                 alternative = c("two.sided", "less", "greater"),
                                 rowTestFUN = rowWelchTests,
                                 rand.p.value = FALSE, seed = NULL){
     alternative <- match.arg(alternative)
     ## sanity checks
     n <- ncol(X)
-    categ <- colnames(X)
-    categ <- as.factor(categ)
-    cats <- levels(categ)
-    luc <- length(cats)
-    if (luc <= 1 || luc == n) {  
-        # no classes or a single class or sample names given: assuming sign flipping 
+    if (missing(categ) || (length(unique(categ))==1)) {
         flavor <- "flip"
     } else {
-        if (luc == 2) {
+        if (length(unique(categ)) == 2) {
+            stopifnot(all(categ %in% c(0,1)))
             flavor <- "perm"
             tbl <- table(categ)
             if (min(tbl) < 3) {
-                stop("At least 3 elements of each sample are required for two-sample tests")
+                stop("At least 3 observations from each sample are required for two-sample tests")
             }
-        } else if (luc > 2) {
+        } else {
             stop("Tests for more than 2 classes not implemented yet")
         }
     }

@@ -13,11 +13,17 @@
 #'   generated.
 #' @param w An optional vector of length \code{n}, the underlying factor driving
 #'   equi-correlation
-#' @return A list with two elements: \describe{ \item{X}{An \eqn{m x n} matrix
-#'   of \eqn{m}-dimensional Gaussian observations, where \eqn{m1} rows are under
-#'   H1, and \eqn{m0} rows are under H0, with \eqn{m0/m = pi0}} \item{H}{A
-#'   vector of length \eqn{m}, the status of each hypothesis: 0 for true null
-#'   hypothesis, and 1 for true alternative hypothesis}}.
+#' @return A list with three elements: \describe{ 
+#' 
+#'   \item{X}{An \eqn{m x n} matrix of \eqn{m}-dimensional Gaussian observations,
+#'   where \eqn{m1} rows are under H1, and \eqn{m0} rows are under H0, with
+#'   \eqn{m0/m = pi0}}
+#'   
+#'   \item{categ}{A numeric vector of length \eqn{n} matching each observation
+#'   to a sample (in 0 or 1)}
+#'   
+#'   \item{H}{A vector of length \eqn{m}, the status of each hypothesis: 0 for
+#'   true null hypothesis, and 1 for true alternative hypothesis}}.
 #' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 #'
 #' @details If \code{prob = 1}, each of \eqn{m_1} variables under \eqn{H_1} has
@@ -39,7 +45,7 @@
 #'
 #' ## two-sample data
 #' sim <- gaussianSamples(m, rho, n, pi0, SNR = 2, prob = 0.5)
-#' tests <- testByRandomization(sim$X, B)
+#' tests <- testByRandomization(sim$X, sim$categ, B)
 #'
 #' ## show test statistics
 #' pch <- 20
@@ -89,12 +95,10 @@ gaussianSamples <- function(m, rho, n, pi0, SNR = 1, prob = 1, w = NULL) {
             mu[H1, w1] <- signal
         }
     }
-    # colnames(mu) <- c("case", "control")[y+1]
-    colnames(mu) <- y
-    
+
     # data: signal + noise
     X <- mu + eps
-    list(X = X, H = H)
+    list(X = X, categ = y, H = H)
 }
 
 

@@ -2,9 +2,10 @@
 #'
 #' Calibration of of JER thresholds using one or two-sample tests
 #'
-#' @param X A matrix of \eqn{m} variables (hypotheses) by \eqn{n} observations.
-#'   The column names of X should be "0" for the first sample and "1" for the
-#'   second sample.
+#' @param X A matrix of \eqn{m} variables (hypotheses) by \eqn{n} observations
+#' @param categ An optional numeric vector of \eqn{n} values in \eqn{0, 1}
+#'   specifying the column indices of the first and second samples. If not
+#'   provided, a one-sample test is performed.
 #' @param B A numeric value, the number of permutations to be performed
 #' @param alpha Target JER level
 #' @param alternative A character string specifying the alternative hypothesis.
@@ -89,7 +90,7 @@
 #' maxFP(spval, cal$thr)/m
 #' pi0
 #' 
-calibrateJER <- function(X, B, alpha, 
+calibrateJER <- function(X, categ, B, alpha, 
                          alternative = c("two.sided", "less", "greater"), 
                          rowTestFUN = rowWelchTests,
                          refFamily = c("Simes", "kFWER", "Beta"),
@@ -97,10 +98,14 @@ calibrateJER <- function(X, B, alpha,
                          K = nrow(X), verbose=TRUE) {
     alternative <- match.arg(alternative)
     ## sanity checks
-    m <- nrow(X);
+    n <- ncol(X)
+    m <- nrow(X)
+    rownames(X) <- NULL ## make it explicit that rownames are not considered
+    stopifnot(length(categ) == n)
+    stopifnot(all(categ %in% c(0,1)))
     refFamily <- match.arg(refFamily)
-
-    tests <- testByRandomization(X, B = B, alternative = alternative, rowTestFUN = rowTestFUN)
+    
+    tests <- testByRandomization(X, categ = categ, B = B, alternative = alternative, rowTestFUN = rowTestFUN)
     pval0 <- tests$p0
     pval <- tests$p
 

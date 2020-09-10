@@ -4,10 +4,9 @@ m <- 513
 n <- 38
 mat <- matrix(rnorm(m*n), ncol = n)
 categ <- rep(c(0, 1), times = c(27, n - 27))
-colnames(mat) <- categ
 
 test_that("Correctness of permutation p-values", {
-    res <- testByRandomization(X = mat, B = 100, rand.p.value = TRUE)
+    res <- testByRandomization(X = mat, categ, B = 100, rand.p.value = TRUE)
     expect_equal(res$flavor, "perm")
 
     # consistency between parametric and randomization p-values
@@ -77,26 +76,24 @@ test_that("Consistency of randomization p-values with different alternatives", {
         
         ## permutation
         categ <- rep(c(0, 1), times = c(27, n - 27))
-        colnames(mat) <- categ
-        two.sided <- testByRandomization(X = mat, B = B, alternative = "two.sided")
-        greater <- testByRandomization(X = mat, B = B, alternative = "greater")
-        less <- testByRandomization(X = mat, B = B, alternative = "less")
+        two.sided <- testByRandomization(X = mat, categ, B = B, alternative = "two.sided")
+        greater <- testByRandomization(X = mat, categ, B = B, alternative = "greater")
+        less <- testByRandomization(X = mat, categ, B = B, alternative = "less")
         expect_equal(two.sided$p, 2*pmin(greater$p, less$p))
 
         ## swapping the class labels        
         categInv <- 1 - categ
-        colnames(mat) <- categInv
-        two.sidedInv <- testByRandomization(X = mat, B = B, alternative = "two.sided")
-        greaterInv <- testByRandomization(X = mat, B = B, alternative = "greater")
-        lessInv <- testByRandomization(X = mat, B = B, alternative = "less")
+        two.sidedInv <- testByRandomization(X = mat, categInv, B = B, alternative = "two.sided")
+        greaterInv <- testByRandomization(X = mat, categInv, B = B, alternative = "greater")
+        lessInv <- testByRandomization(X = mat, categInv, B = B, alternative = "less")
         expect_equal(two.sidedInv$p, two.sided$p)
         expect_equal(greaterInv$p, less$p)
         expect_equal(lessInv$p, greater$p)
         
         ## randomization
-        two.sided <- testByRandomization(X = mat, B = B, alternative = "two.sided")
-        greater <- testByRandomization(X = mat, B = B, alternative = "greater")
-        less <- testByRandomization(X = mat, B = B, alternative = "less")
+        two.sided <- testByRandomization(X = mat, categInv, B = B, alternative = "two.sided")
+        greater <- testByRandomization(X = mat, categInv, B = B, alternative = "greater")
+        less <- testByRandomization(X = mat, categInv, B = B, alternative = "less")
         expect_equal(two.sided$p, 2*pmin(greater$p, less$p))
     }
 })

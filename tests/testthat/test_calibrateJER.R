@@ -7,14 +7,15 @@ test_that("JER calibration -- vanilla tests", {
     pi0 <- 0.5
     sim <- gaussianSamples(m, rho, n, pi0, SNR = 2, prob = 0.5)
     X <- sim$X
+    categ <- sim$categ
     alpha <- 0.2
     B <- 100
 
-    cal <- calibrateJER(X, B, alpha, refFamily = "Simes")
+    cal <- calibrateJER(X, categ, B, alpha, refFamily = "Simes")
     expect_length(cal$thr, m)
     expect_length(cal$p.values, m)
 
-    cal <- calibrateJER(X, B, alpha, refFamily = "Simes", K = 50)
+    cal <- calibrateJER(X, categ, B, alpha, refFamily = "Simes", K = 50)
     expect_length(cal$thr, 50)
     expect_length(cal$p.values, m)
 })
@@ -28,7 +29,7 @@ test_that("Direction of (step-down) lambda-calibration vs alternative: independe
     for (ii in 1:nb_rep) {
         sim <- gaussianSamples(m = 123, rho = 0, n = 100, pi0 = 0.5, SNR = -10, prob = 0.5)
         for (alt in alts) {
-            cal <- calibrateJER(X = sim$X, B = 50, alpha = alpha, 
+            cal <- calibrateJER(X = sim$X, categ = sim$categ, B = 50, alpha = alpha, 
                                 refFamily = "Simes", alternative = alt,
                                 maxStepsDown = 1L,
                                 verbose = TRUE)
@@ -58,7 +59,7 @@ test_that("Direction of (single-step) lambda-calibration vs alternative (Gaussia
         sim <- gaussianSamples(m = 123, rho = 0.4, n = 100, pi0 = 0.5, 
                                SNR = 10, prob = 0.5)
         for (alt in alts) {
-            cal <- calibrateJER(X = sim$X, B = 50, alpha = alpha, 
+            cal <- calibrateJER(X = sim$X, categ=sim$categ, B = 50, alpha = alpha, 
                                 refFamily = "Simes", alternative = alt, 
                                 maxStepsDown = 0L, verbose = TRUE)
             res[ii, alt] <- cal$lambda
@@ -78,14 +79,15 @@ test_that("Direction of calibration for Beta template", {
     sim <- gaussianSamples(m = m, rho = 0.3, n = 100,
                            pi0 = pi0, SNR = 0, prob = 0.5)
     X <- sim$X
+    categ <- sim$categ
     alpha <- 0.2
-    cal <- calibrateJER(X, B = 5e2, alpha = alpha, refFamily = "Beta", alternative = "greater")  
+    cal <- calibrateJER(X, categ, B = 5e2, alpha = alpha, refFamily = "Beta", alternative = "greater")  
     expect_gt(alpha, cal$lambda)
     
     Ks <- c(1, 10, 50, m)
     lambdas <- numeric(length(Ks))
     for (kk in seq(along=Ks)) {
-        cal <- calibrateJER(X, B = 1e2, alpha = alpha, refFamily = "Beta", alternative = "greater", K=Ks[kk])  
+        cal <- calibrateJER(X, categ, B = 1e2, alpha = alpha, refFamily = "Beta", alternative = "greater", K=Ks[kk])  
         lambdas[kk] <- cal$lambda
     }
     expect_identical(order(-lambdas), order(Ks))

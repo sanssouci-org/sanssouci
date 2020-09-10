@@ -5,11 +5,11 @@
 #' @param dat A numeric matrix whose rows correspond to variables and columns to
 #'   observations
 
-#' @param thr A numeric vector of length K, a JER controlling family
-#' 
-#' @param categ A vector of \code{ncol(mat)} categories in \eqn{'0','1'} for the
+#' @param categ A numeric vector of \code{ncol(mat)} categories in \eqn{0, 1} for the
 #'   observations
 
+#' @param thr A numeric vector of length K, a JER controlling family
+#' 
 #' @param p A numeric value, the p-value threshold under which genes are selected
 #' @param q A numeric value, the q-value (or FDR-adjusted p-value) threshold under which genes are selected
 #' @param r A numeric value, the absolute fold change above which genes are selected
@@ -46,7 +46,7 @@
 #' FP <- sum(1-sim$H[sel])
 #' FDP <- FP/length(sel)
 
-volcanoPlot <- function(dat, thr, categ = colnames(dat), 
+volcanoPlot <- function(dat, categ, thr,
                         p = 1, q = 1, r = 0,
                         cex = c(0.2, 0.6), 
                         col = c("#33333333", "#FF0000", "#FF666633"),

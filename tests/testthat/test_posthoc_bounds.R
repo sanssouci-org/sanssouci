@@ -3,8 +3,9 @@ context("Upper bound of the number of false positives in a selection")
 m <- 123
 sim <- gaussianSamples(m = m, rho = 0.2, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
 X <- sim$X
+categ <- sim$categ
 thr <- SimesThresholdFamily(m)(alpha = 0.2)
-tests <- rowWelchTests(X, colnames(X))
+tests <- rowWelchTests(X, categ)
 pval <- sort(tests$p.value)
 
 test_that("Upper bound on the number of false positives", {

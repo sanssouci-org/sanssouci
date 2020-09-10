@@ -15,13 +15,13 @@ rowBinomialTests(
 \item{mat}{A numeric matrix whose rows correspond to variables and columns to
 observations}
 
-\item{categ}{A vector of \code{ncol(mat)} categories in \eqn{'0','1'} for the
+\item{categ}{A numeric vector of \code{ncol(mat)} categories in \eqn{0,1} for the
 observations}
 
 \item{alternative}{A character string specifying the alternative hypothesis.
 Must be one of "two.sided" (default), "greater" or "less". As in
 \code{\link{binom.test}}, alternative = "greater" is the alternative that
-class '1' is shifted to the right of class '0'.}
+class 1 is shifted to the right of class 0.}
 
 \item{warn}{A boolean value indicating whether to issue a warning if
 \code{alternative=="two-sided"}. Defaults to \code{TRUE}.}

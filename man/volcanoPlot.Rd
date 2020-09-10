@@ -6,8 +6,8 @@
 \usage{
 volcanoPlot(
   dat,
+  categ,
   thr,
-  categ = colnames(dat),
   p = 1,
   q = 1,
   r = 0,
@@ -21,10 +21,10 @@ volcanoPlot(
 \item{dat}{A numeric matrix whose rows correspond to variables and columns to
 observations}
 
-\item{thr}{A numeric vector of length K, a JER controlling family}
-
-\item{categ}{A vector of \code{ncol(mat)} categories in \eqn{'0','1'} for the
+\item{categ}{A numeric vector of \code{ncol(mat)} categories in \eqn{0, 1} for the
 observations}
+
+\item{thr}{A numeric vector of length K, a JER controlling family}
 
 \item{p}{A numeric value, the p-value threshold under which genes are selected}
 

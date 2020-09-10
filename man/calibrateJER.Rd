@@ -6,6 +6,7 @@
 \usage{
 calibrateJER(
   X,
+  categ,
   B,
   alpha,
   alternative = c("two.sided", "less", "greater"),
@@ -17,9 +18,11 @@ calibrateJER(
 )
 }
 \arguments{
-\item{X}{A matrix of \eqn{m} variables (hypotheses) by \eqn{n} observations.
-The column names of X should be "0" for the first sample and "1" for the
-second sample.}
+\item{X}{A matrix of \eqn{m} variables (hypotheses) by \eqn{n} observations}
+
+\item{categ}{An optional numeric vector of \eqn{n} values in \eqn{0, 1}
+specifying the column indices of the first and second samples. If not
+provided, a one-sample test is performed.}
 
 \item{B}{A numeric value, the number of permutations to be performed}
 

@@ -32,7 +32,7 @@ Parameters:
 m <- 1e3
 n <- 124
 pi0 <- 0.8
-B <- 1e3+1
+B <- 500
 rho <- 0.3
 SNR <- 2
 
@@ -49,6 +49,8 @@ We use the function `gaussianSamples` to generate Gaussian equi-correlated sampl
 sim <- gaussianSamples(m, rho, n, pi0, SNR = SNR, prob = 0.5)
 str(sim)
 X <- sim$X
+categ <- sim$categ
+table(categ)
 ```
 
 We perform JER calibration using the linear (Simes) template $\mathfrak{R(\lambda)}=(R_1(\lambda),$ $\ldots,R_K(\lambda)$, where for $1 \leq k \leq K$
@@ -60,7 +62,7 @@ where $\bar{\Phi}$ is the cdf of the $\mathcal{N}(0,1)$ distribution. Note that 
 ### Calibration
 
 ```{r calibration}
-cal <- calibrateJER(X, B = B, alpha = alpha, refFamily = "Simes")
+cal <- calibrateJER(X, categ, B = B, alpha = alpha, refFamily = "Simes")
 ```
 
 The output of the calibration is as follows:
@@ -107,16 +109,17 @@ ggplot(subset(all_env, x <= 200),
 
 ## One sample tests
 
-The code is identical, except for the line to generate the observations (where we do not specify a probability of belonging to one of the two populations using the `prob` argument):
+The code is identical, except for the line to generate the observations (where we do not specify a probability of belonging to one of the two populations using the `prob` argument); moreover it is not necessary to specify a vector of categories 'categ' in 'calibrateJER'.
 
 ```{r, sim-one-sampla}
 sim <- gaussianSamples(m, rho, n, pi0, SNR = SNR)
 str(sim)
 X <- sim$X
+categ <- sim$categ
 ```
 
 ```{r cal-one-sample}
-cal <- calibrateJER(X, B = B, alpha = alpha, refFamily = "Simes")
+cal <- calibrateJER(X, categ, B = B, alpha = alpha, refFamily = "Simes")
 str(cal)
 ```
 

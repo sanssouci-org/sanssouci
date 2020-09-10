@@ -5,13 +5,13 @@
 #' @param mat A numeric matrix whose rows correspond to variables and columns to
 #'   observations
 #'
-#' @param categ A vector of \code{ncol(mat)} categories in \eqn{'0','1'} for the
+#' @param categ A numeric vector of \code{ncol(mat)} categories in \eqn{0, 1} for the
 #'   observations
 #'
 #' @param alternative A character string specifying the alternative hypothesis.
 #'   Must be one of "two.sided" (default), "greater" or "less". As in
 #'   \code{\link{wilcox.test}}, alternative = "greater" is the alternative that
-#'   class '1' is shifted to the right of class '0'.
+#'   class 1 is shifted to the right of class 0.
 #'
 #' @param correct A logical indicating whether to apply continuity correction in
 #'   the normal approximation for the p-value.

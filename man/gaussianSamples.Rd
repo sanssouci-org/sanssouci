@@ -26,11 +26,17 @@ generated.}
 equi-correlation}
 }
 \value{
-A list with two elements: \describe{ \item{X}{An \eqn{m x n} matrix
-  of \eqn{m}-dimensional Gaussian observations, where \eqn{m1} rows are under
-  H1, and \eqn{m0} rows are under H0, with \eqn{m0/m = pi0}} \item{H}{A
-  vector of length \eqn{m}, the status of each hypothesis: 0 for true null
-  hypothesis, and 1 for true alternative hypothesis}}.
+A list with three elements: \describe{ 
+
+  \item{X}{An \eqn{m x n} matrix of \eqn{m}-dimensional Gaussian observations,
+  where \eqn{m1} rows are under H1, and \eqn{m0} rows are under H0, with
+  \eqn{m0/m = pi0}}
+  
+  \item{categ}{A numeric vector of length \eqn{n} matching each observation
+  to a sample (in 0 or 1)}
+  
+  \item{H}{A vector of length \eqn{m}, the status of each hypothesis: 0 for
+  true null hypothesis, and 1 for true alternative hypothesis}}.
 }
 \description{
 Simulate equi-correlated data coming from one or two populations
@@ -53,7 +59,7 @@ B <- 1e3
 
 ## two-sample data
 sim <- gaussianSamples(m, rho, n, pi0, SNR = 2, prob = 0.5)
-tests <- testByRandomization(sim$X, B)
+tests <- testByRandomization(sim$X, sim$categ, B)
 
 ## show test statistics
 pch <- 20

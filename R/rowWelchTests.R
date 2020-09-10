@@ -12,13 +12,13 @@
 #' @param mat A numeric matrix whose rows correspond to variables and columns to
 #'   observations
 #'
-#' @param categ A vector of \code{ncol(mat)} categories in \eqn{'0','1'} for the
+#' @param categ A numeric vector of \code{ncol(mat)} categories in \eqn{0, 1} for the
 #'   observations
 #'
 #' @param alternative A character string specifying the alternative hypothesis.
 #'   Must be one of "two.sided" (default), "greater" or "less". As in
-#'   \code{\link{t.test}}, alternative = "greater" is the alternative that the
-#'   class '1' has a larger mean than the class '0'.
+#'   \code{\link{t.test}}, alternative = "greater" is the alternative that
+#'   class 1 has a larger mean than class 0.
 #'
 #' @return A data.frame with containing the following columns:
 #'   \describe{ \item{statistic}{the value of the t-statistics}

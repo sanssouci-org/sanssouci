@@ -8,7 +8,7 @@ output:
   pdf_document: default
 bibliography: sansSouci.bib
 vignette: >
-  %\VignetteIndexEntry{Post hoc inference for differntial gene expression studies}
+  %\VignetteIndexEntry{Post hoc inference for differential gene expression studies}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 ---
@@ -159,13 +159,13 @@ However, as discussed in @blanchard20post-hoc, this bound has two major limitati
 To bypass these limitations, @blanchard20post-hoc have proposed a randomization-based procedure known as $\lambda$-calibration, which yields tighter bounds that are adapted to the dependency observed in the data set at hand. In the case of two-sample tests, this calibration is achieved by permutation of class labels:
 
 ```{r calibration}
-cal <- calibrateJER(X = dat, B = 100, alpha = alpha, refFamily = "Simes")
+cal <- calibrateJER(X = dat, categ, B = 100, alpha = alpha, refFamily = "Simes")
 ```
 
 An alternative to the Simes reference family is the Beta reference family:
 
 ```{r calibration-beta}
-cal_beta <- calibrateJER(X = dat, B = 100, alpha = alpha, refFamily = "Beta", K = 50)
+cal_beta <- calibrateJER(X = dat, categ, B = 100, alpha = alpha, refFamily = "Beta", K = 50)
 ```
 
 
@@ -176,7 +176,7 @@ conf_envs <- list("Simes" = ce_Simes,
                   "Linear" = cal$conf_env,
                   "Beta (K=50)" = cal_beta$conf_env)
 cols <- RColorBrewer::brewer.pal(3, "Dark2")
-plotConfidenceEnvelope(conf_envs, xmax = 300, cols = cols)
+plotConfidenceEnvelope(conf_envs, xmax = 2000, cols = cols)
 ```
 
 ### Volcano plots
