@@ -1,0 +1,151 @@
+---
+title: "Joint Error Rate calibration"
+subtitle: "Simulations for one and two-sample tests"
+author: "P. Neuvial"
+date: "2018-03-27"
+output: html_document
+vignette: >
+  %\VignetteEngine{knitr::knitr}
+  %\VignetteIndexEntry{Joint Error Rate calibration}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+This vignettes illustrates the following points
+
+* simulation of one- and two-sample Gaussian equi-correlated observations
+* computation of test statistics by randomization
+* calibration of Joint-Family-Wise Error Rate (JER) thresholds
+
+We start with two-sample tests because we believe they are used more frequently.
+
+```{r library}
+library("sansSouci")
+#set.seed(0xBEEF) # for reproducibility
+library("ggplot2")
+```
+
+Parameters:
+
+```{r params}
+m <- 1e3
+n <- 124
+pi0 <- 0.8
+B <- 500
+rho <- 0.3
+SNR <- 2
+
+alpha <- 0.25
+```
+
+We use the function `gaussianSamples` to generate Gaussian equi-correlated samples. We then use the function `calibrateJER` to perform the calibration.
+
+## Two-sample tests
+
+### Simulation
+
+```{r simulation}
+sim <- gaussianSamples(m, rho, n, pi0, SNR = SNR, prob = 0.5)
+str(sim)
+X <- sim$X
+categ <- sim$categ
+table(categ)
+```
+
+We perform JER calibration using the linear (Simes) template $\mathfrak{R(\lambda)}=(R_1(\lambda),$ $\ldots,R_K(\lambda)$, where for $1 \leq k \leq K$
+
+$$R_k(\lambda) = \left\{i\in \{1, \dots , m\}\::\: \bar{\Phi}(Z_i) >  \frac{\lambda k}{m} \right\}\,$$
+
+where $\bar{\Phi}$ is the cdf of the $\mathcal{N}(0,1)$ distribution. Note that $p_i = \bar{\Phi}(Z_i)$ is the one-sided $p$-value associated to the test statistics $Z_i$.
+
+### Calibration
+
+```{r calibration}
+cal <- calibrateJER(X, categ, B = B, alpha = alpha, refFamily = "Simes")
+```
+
+The output of the calibration is as follows:
+
+```{r cal-output}
+str(cal)
+```
+
+* `p.values`: $m$ test statistics calculated by permutation
+* `thr` : A JER-controlling family of $K$ (here $K=m$) elements
+* `lambda`: the $\lambda$-calibration parameter
+* `conf_env`: confidence envelopes on the true/false positives (see graphical illustration in the next section)
+
+Because we are under positive equi-correlation, we expect $\lambda > \alpha$ for the Simes family. 
+```{r cal-Simes}
+cal$lambda > alpha
+```
+
+### Post hoc confidence bounds
+
+The `calibrateJER` function outputs post hoc confidence envelopes:
+
+```{r confidence-bounds}
+env <- cal$conf_env
+head(env)
+```
+
+We compare it to the true number of false positives among the most significant items, and to the Simes bound without calibration 
+
+```{r other-conf-env}
+env_Simes <- confidenceEnvelope(cal$p.values, refFamily = "Simes", param = alpha)
+env_Oracle <- confidenceEnvelope(cal$p.values, refFamily = "Oracle", param = (sim$H == 0))
+all_env <- rbind(env, env_Simes, env_Oracle)
+```
+
+```{r plot-conf-env}
+ggplot(subset(all_env, x <= 200), 
+       aes(x = x, y = bound, color = procedure, group = procedure)) +
+    geom_line() + 
+    facet_wrap(~ stat, scales = "free_y") + 
+    labs(x = "# top genes called significant", y = "Post hoc confidence bounds")
+```
+
+
+## One sample tests
+
+The code is identical, except for the line to generate the observations (where we do not specify a probability of belonging to one of the two populations using the `prob` argument); moreover it is not necessary to specify a vector of categories 'categ' in 'calibrateJER'.
+
+```{r, sim-one-sampla}
+sim <- gaussianSamples(m, rho, n, pi0, SNR = SNR)
+str(sim)
+X <- sim$X
+categ <- sim$categ
+```
+
+```{r cal-one-sample}
+cal <- calibrateJER(X, categ, B = B, alpha = alpha, refFamily = "Simes")
+str(cal)
+```
+
+Again we expect $\lambda > \alpha$.
+
+### Confidence envelopes
+
+The associated confidence envelopes are displayed below:
+
+```{r other-conf-env-one-sample}
+env_Simes <- confidenceEnvelope(cal$p.values, refFamily = "Simes", param = alpha)
+env_Oracle <- confidenceEnvelope(cal$p.values, refFamily = "Oracle", param = (sim$H == 0))
+all_env <- rbind(env, env_Simes, env_Oracle)
+```
+
+```{r plot-conf-env-one-sample}
+ggplot(subset(all_env, x <= 200), 
+       aes(x = x, y = bound, color = procedure, group = procedure)) +
+    geom_line() + 
+    facet_wrap(~ stat, scales = "free_y") + 
+    labs(x = "# top genes called significant", y = "Post hoc confidence bounds")
+```
+
+## Session information
+
+```{r session-info}
+sessionInfo()
+```
+

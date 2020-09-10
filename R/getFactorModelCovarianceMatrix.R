@@ -1,26 +1,16 @@
-##' getFactorModelCovarianceMatrix
-##'
-##' calculate the covariance matrix of a factor model
-##'
-##'
-##' @param m Number of tests
-##' @param h A vector of \code{k} singular values associated to each factor
-##' @param P A \code{m x k} matrix of factor loadings
-##' @param rho \code{1-rho} is the standard deviation of the noise
-##' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
-##' @importFrom Matrix Matrix
-##' @export
-getFactorModelCovarianceMatrix <- function(
-### calculate the covariance matrix of a factor model
-                                           m,
-### Number of tests
-                                           h=numeric(0),
-### A vector of \code{k} singular values associated to each factor
-                                           P=Matrix(nrow=m, ncol=length(h)),
-### A \code{m x k} matrix of factor loadings
-                                           rho=0
-### \code{1-rho} is the standard deviation of the noise
-                                           ) {
+# getFactorModelCovarianceMatrix
+#
+# calculate the covariance matrix of a factor model
+#
+#
+# @param m Number of tests
+# @param h A vector of \code{k} singular values associated to each factor
+# @param P A \code{m x k} matrix of factor loadings
+# @param rho \code{1-rho} is the standard deviation of the noise
+# @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
+#' @importFrom Matrix Matrix
+getFactorModelCovarianceMatrix <- function(m, h = numeric(0), 
+                                           P = Matrix(nrow=m, ncol=length(h)), rho = 0) {
   k <- length(h)
   ## sanity checks
   stopifnot(nrow(P)==m)
@@ -40,10 +30,10 @@ getFactorModelCovarianceMatrix <- function(
 }
 
 ############################################################################
-## HISTORY:
-## 2014-03-03
-## o BUG FIX in the independent case ('P' was not recognized as a matrix).
-## 2013-03-20
-## o Created from Etienne's code.
+# HISTORY:
+# 2014-03-03
+# o BUG FIX in the independent case ('P' was not recognized as a matrix).
+# 2013-03-20
+# o Created from Etienne's code.
 ############################################################################
 

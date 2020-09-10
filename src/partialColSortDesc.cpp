@@ -3,11 +3,11 @@
 using namespace Rcpp;
 // [[Rcpp::depends(RcppArmadillo)]]
 
-//' partial sorting of the columns of a matrix by descending order
-//'
-//' @param X A numeric matrix
-//' @param k An integer value between 1 and \code{nrow(mat)}
-//' @export
+// partial sorting of the columns of a matrix by descending order
+//
+// @param X A numeric matrix
+// @param k An integer value between 1 and \code{nrow(mat)}
+// @export
 // [[Rcpp::export]]
 arma::mat partialColSortDescCpp(arma::mat X, int k) {
 // partial sorting by column in descending order

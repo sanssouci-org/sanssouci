@@ -42,11 +42,19 @@ vignettes/*.pdf
 .Rhistory
 .RData
 .Ruserdata
-inst/doc
 
-png
-
+/inst/doc/
+/png/
+/fig/
+/local/
+/doc/
+/Rout/
+/results/
 
 ## OS X
 .DS_Store
 *~
+doc
+Meta
+docs
+inst/doc

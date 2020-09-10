@@ -1,4 +1,8 @@
-testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alphas, flavor=c("equi", "Mein2006", "Toeplitz"), kMaxs=m, trace=FALSE) {
+if (packageVersion("sansSouci") < "0.6.0") {
+    stop("Please update package 'sansSouci'")
+}
+
+testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alphas, n=1000, flavor=c("equi", "Mein2006", "Toeplitz", "equi-perm", "equi-flip"), kMaxs=m, trace=FALSE) {
     flavor <- match.arg(flavor)
     if (is.character(SNR)) {
         pattern <- "Pareto\\(([0-9]),([0-9]),([0-9]))"
@@ -21,16 +25,24 @@ testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alphas, flavor=c("equi"
     if (flavor=="equi") {
         rho <- dep
         parName <- "rho"
-        sim <- simulateEqui(m, rho, B, pi0, SNR=SNR)
+        sim <- gaussianTestStatistics(m, B, pi0 = pi0, SNR = SNR, dep = "equi", param = rho)
     } else if (flavor=="Mein2006") {
-        n <- 1e3 ## currently hardcoded.
+        stop("Deprecated flavor: ", flavor)
         rho <- dep
         sim <- simulateMein2006(m, rho, n, B, pi0, SNR=SNR)
     } else if (flavor=="Toeplitz") {
         ## Toeplitz, long range
-        pow <- dep
         parName <- "pow"
-        sim <- simulateToeplitz(m, pow, B, pi0, SNR=SNR)
+        sim <- gaussianTestStatistics(m, B, pi0 = pi0, SNR = SNR, dep = "Toeplitz", param = dep)
+    } else if (flavor=="equi-perm") {
+        ## TODO: update with *2* lines of codes: generation of data, and computation of randomized stats
+        p <- 0.5 ## currently hardcoded.
+        rho <- dep
+        sim <- simulateEquiByRandomization(m, rho, n, B, pi0, flavor="perm", p.value= FALSE, SNR=SNR, p=p, w=NULL)
+    } else if (flavor=="equi-flip") {
+        ## TODO: update with *2* lines of codes: generation of data, and computation of randomized stats
+        rho <- dep
+        sim <- simulateEquiByRandomization(m, rho, n, B, pi0, flavor="flip", p.value= FALSE, SNR=SNR, p=p, w=NULL)
     }
     X0 <- sim$X0
     x <- sim$x
@@ -77,7 +89,7 @@ testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alphas, flavor=c("equi"
                 ## ftag <- sprintf("family=%s", refFam)
                 ftag <- refFam
                 ## Step-down control
-                res <- jointFWERControl(X0, refFamily=refFam, alpha=alpha, stat=x, kMax=kMax, verbose=FALSE)
+                res <- sansSouci:::calibrateJER0(X0, refFamily=refFam, alpha=alpha, stat=x, kMax=kMax, verbose=FALSE)
                 thrMat <- res$stepsDown$thr
                 nSteps <- ncol(thrMat)
                 thr0 <- thrMat[, 1]
@@ -87,12 +99,12 @@ testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alphas, flavor=c("equi"
                 ## comparison with *Oracle step-down* JFWER thresholds (only the step-down is Oracle)
                 xx <- rep(Inf, length(x))
                 xx[H0] <- -Inf
-                resOracle <- jointFWERControl(X0, refFamily=refFam, alpha=alpha, stat=xx, kMax=kMax, verbose=FALSE)
+                resOracle <- sansSouci:::calibrateJER0(X0, refFamily=refFam, alpha=alpha, stat=xx, kMax=kMax, verbose=FALSE)
                 thrO <- resOracle$thr
 
                 ## *Oracle JFWER* thresholds (double Oracle!!!)
                 X0Oracle <- X0[H0, ]
-                resOracleJ <- jointFWERControl(X0Oracle, refFamily=refFam, alpha=alpha,
+                resOracleJ <- sansSouci:::calibrateJER0(X0Oracle, refFamily=refFam, alpha=alpha,
                                                maxStepsDown=0, kMax=kMax, verbose=FALSE)  ## single step
                 thrOJ <- resOracleJ$thr
                 if (m0<kMax) {

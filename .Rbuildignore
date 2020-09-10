@@ -6,6 +6,19 @@
 ^\.travis\.yml$
 ^appveyor\.yml$
 appveyor.yml
+^notes.*\.md$
 
-resData
-fig
+^resData$
+^fig$
+^local$
+^docs$
+^Rout$
+^results$
+^data/.*\.rds$
+
+TODO*.txt
+^doc$
+^Meta$
+^\.github$
+^_pkgdown\.yml$
+^pkgdown$
