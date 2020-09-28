@@ -2,37 +2,48 @@
 title: "Post hoc inference for differential gene expression studies"
 author: "G. Blanchard, P. Neuvial and E. Roquain"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette:
+    number_sections: yes
+    toc: yes
+  pdf_document: default
 bibliography: sansSouci.bib
-vignette: >
-  %\VignetteIndexEntry{Post hoc inference for differential gene expression studies}
-  %\VignetteEncoding{UTF-8}
-  %\VignetteEngine{knitr::rmarkdown}
+vignette: |
+  %\VignetteIndexEntry{Post hoc inference for differential gene expression studies} %\VignetteEncoding{UTF-8} %\VignetteEngine{knitr::rmarkdown}
 ---
   
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
 collapse = TRUE,
-comment = "#>"
+comment = "#>",
+fig.width=8,
+fig.height=6
 )
 ```
 
-This vignette reproduces two figures from Section 8 in @BNR:chap. It demonstrates how the [`sansSouci`](https://github.com/pneuvial/sanssouci) package may be used to obtain post hoc confidence bounds on false positives in the case of differential gene expression analysis. More precisely, after showing the output of a classical differential analysis based on False Discovery Rate control, we focus on two applications of post hoc methods:
+This vignette reproduces figures from Section 8 in the book chapter: @BNR:chap. It demonstrates how the [`sansSouci`](https://github.com/pneuvial/sanssouci) package may be used to obtain post hoc confidence bounds on false positives in the case of differential gene expression analysis. After showing the output of a classical differential analysis based on False Discovery Rate control we illustrate the application of basic post-hoc bounds derived from probabilistic inequalities.  Then , we focus on two applications of post hoc methods:
 
 - confidence envelopes for the true or false positives
 - statistical inference on volcano plots
+
+The methods described in this vignette are described in detail in the book chapter @BNR:chap and in the paper @blanchard20post-hoc.
 
 ```{r required-packages}
 library("sansSouci")
 library("ggplot2")
 ```
 
-## Motivation: a differential gene expression study
+Set RNG seed for numerical reproducibility of the results:
+```{r set-seed}
+set.seed(20200924)
+```
+
+# Motivation: a differential gene expression study
 
 We focus on differential gene expression studies in cancerology. These studies aim at identifying genes whose mean expression level differs significantly between two (or more) populations, based on a sample of gene expression measurements from individuals from these populations. Specifically, we consider a data set studied in @BGH2010.
 
 ```{r read-data}
-filename <- "~/Downloads/bourgon.rds"
+filename <- "~/Downloads/chiaretti_leukemia.rds"
 if (file.exists(filename)) {
   dat <- readRDS(filename)
 } else {
@@ -56,18 +67,15 @@ The most basic question to ask is:
 
 > For which genes is there a difference in the mean expression level of the mutated and non-mutated population? 
 
-This question can be addressed by performing one statistical test of no difference between means for each gene, and to define "differentially expressed" genes as those passing some significance threshold. One important concern here is the calibration of the significance threshold.
+This question can be addressed by performing one statistical test of no difference between means for each gene, and to define "differentially expressed" genes as those passing some significance threshold. 
 
-## Classical differential analysis
-
-We start with a simple Welch test for differential expression for each gene. This can be done e.g. using the `sansSouci::rowWelchTests` function:
+Below, the Welch test for differential expression is applied to each gene. This can be done e.g. using the `sansSouci::rowWelchTests` function:
 
 ```{r row-welch-tests}
 categ <- ifelse(colnames(dat) == "BCR/ABL", 1, 0) # map to 0/1
 dex <- data.frame(rowWelchTests(dat, categ))
 pval <- dex[["p.value"]]
 ```
-
 
 We plot a histogram of the corresponding $p$-values:
 
@@ -78,9 +86,9 @@ hist(pval, probability = TRUE, breaks = 20,
 
 As expected, the distribution presents a large number of small $p$-values (which include signals, i.e. differentially expressed genes) mixed with uniformly distributed $p$-values (corresponding to non-differentially expressed genes). 
 
-### Multiple testing correction: False Discovery Rate control 
+## Multiple testing correction: False Discovery Rate control 
 
-The state of the art approach to large-scale multiple testing is to control the False Discovery Rate (FDR), which is the expected proportion of wrongly selected genes (false positives) among all selected genes @benjamini95controlling. The most widely used method to control this risk is the Benjamini-Hochberg (BH) procedure, which has been shown to control the FDR when the hypotheses corresponding to the non-differentially expressed genes are independent @benjamini95controlling or satisfy a specific type of positive dependence called Positive Regression Dependence on the Subset $\mathcal{H}_0$ of truly non-differentially expressed genes @benjamini01control.
+The state of the art approach to large-scale multiple testing is to control the False Discovery Rate (FDR), which is the expected proportion of wrongly selected genes (false positives) among all selected genes @benjamini95controlling. The most widely used method to control this risk is the Benjamini-Hochberg (BH) procedure, which has been shown to control the FDR when the hypotheses corresponding to the non-differentially expressed genes are independent @benjamini95controlling or satisfy a specific type of positive dependence called Positive Regression Dependence on the Subset (PRDS) $\mathcal{H}_0$ of truly non-differentially expressed genes @benjamini01control.
 
 ```{r bh}
 q <- 0.05
@@ -92,10 +100,10 @@ The application of the BH procedure at level $q = `r q`$ is illustrated in the f
 
 ```{r bh-plot}
 my_col <- "#FF000040"
-dex <- dex[order(pval), ]  ## order genes by increasing p-values
-dex$gene_order <- 1:nrow(dex)
+dexo <- dex[order(pval), ]  ## order genes by increasing p-values
+dexo$gene_order <- 1:nrow(dex)
 
-bh_plot <- ggplot(dex, aes(x = gene_order, y = p.value)) + 
+bh_plot <- ggplot(dexo, aes(x = gene_order, y = p.value)) + 
   geom_line() +
   xlab("Number of top genes") + ylab("Ordered p-value") +
   geom_abline(slope = 1/m, intercept = 0, color = "#00000020", size = 2) +
@@ -113,45 +121,69 @@ bh_plot
 
 ```{r bh-plot-zoom}
 xmax <- nBH*2.5
+ymax <- dexo$p.value[xmax]
 bh_plot + 
-  xlim(1, xmax) + ylim(0, dex$p.value[xmax]) +
+  xlim(1, xmax) + ylim(0, ymax) +
   geom_segment(aes(x = nBH, y = 0, yend = q*nBH/m, xend = nBH), linetype = "dotted") +
   geom_segment(aes(x = 1, y = q*nBH/m, xend = nBH, yend = q*nBH/m), linetype = "dotted", col = 1)
 ```
 
-## Confidence envelopes on "top-$k$" lists
+## Basic posthoc bounds
 
-In the absence of prior information on genes, a natural idea is to rank them by decreasing statistical significance, and a natural question to ask is: 
+Post hoc inference makes it possible to build confidence statements on the number of true/false positives within any set $S$ of genes: $S$ may be selected after seing the data (e.g., $S$ may be the set of rejections by the BH prcedure), and multiple choices of $S$ are allowed. Post hoc inference has popularized by @GS2011. 
 
-> Can we provide a lower confidence envelope on the number (or proportion) of truly differentially expressed genes among the "top $k$" genes, for a user-defined $k$?
 
-We illustrate the use of post-hoc methods to provide this type of information. More specifcally, we build confidence statements on the number of true/false positives within the top $k$ most significant genes in a differential gene expression study, where $k$ may be defined by the user after seing the data, and multiple choices of $k$ are allowed. 
-
-We start by defining a target confidence level:
-
-```{r conf-level}
+```{r basic-bounds-setup}
 alpha <- 0.1
+pvalo <- dexo$p.value
 ```
 
-The method of @GS2011 makes it possible to calculate a confidence envelope on the number of true positives among the most significant genes. In the framework of @blanchard20post-hoc this bound is obtained from simes86improved inequality, by interpolation:
+### $k_0$-Bonferroni bound
 
-```{r plot-conf-envelope}
-xmax <- 300
-ce_Simes <- confidenceEnvelope(dex$p.value, refFamily = 'Simes', param = alpha)
-plotConfidenceEnvelope(ce_Simes, xmax = xmax)
+For a fixed $k_0$, the generalized Bonferroni procedure consisting in rejecting the hypotheses in $R_{k_0} = \{i: p_i \leq \alpha k_0/m\}$ controls the $k_0$-Family-Wise Error Rate: it ensures that with probability larger than $1-\alpha$, the number of false positives in $R_{k_0}$ is not larger than $k_0-1$. As noted in  @BNR:chap, this leads to the post hoc bound: 
+
+$$V(S)=\sum_{i\in S} 1_{\{p_i \geq \alpha k_0 /|S|\}} + k_0-1$$
+
+As an application we calculate the bound associated to $k_0=100$ for $\alpha = `r alpha`$:
+
+```{r k0-bonf}
+k0 <- 100
+S <- 1:nBH
+FP_k0 <- sum(pvalo[S] >= alpha*k0/m) + k0 - 1
+FP_k0/nBH
 ```
 
-```{r TP_BH, echo=FALSE}
-TP_BH <- subset(ce_Simes, x==nBH & stat == "TP")$bound
+This implies that with probability larger than `r 1-alpha` the false discovery proportion among the genes selected by the BH procedure at level $q= `r q`$ is upper bounded by `r ceiling(FP_k0/nBH*100)/100`.
+
+### Simes bound
+
+A more refined post hoc bound has been proposed by @GS2011 under the PRDS assumption. In the framework of @BNR:chap this bound is a direct consequence of the @simes86improved inequality. It can be applied to the `r nBH` rejections of the BH procedure as follows:
+
+```{r}
+#posthocBySimes(pvalo, 1:nBH, alpha = alpha)
+thr_Simes <- SimesThresholdFamily(m)(alpha)
+FP_Simes <-maxFP(pvalo[1:nBH], thr_Simes)
+FP_Simes/nBH
 ```
 
-In view of the above plot, we can for example state that with probability larger than `r floor((1-alpha)*100)`, the number of false positives among the `r nBH` genes selected by the BH procedure is larger than `r TP_BH`.
+The Simes bound implies that with probability larger than `r 1-alpha`, the false discovery proportion among the genes selected by the BH procedure at level $q= `r q`$ is upper bounded by `r ceiling(FP_Simes/nBH*100)/100`. The Simes bound is sharper than the $k_0$-Bonferroni bound because it is obtained from a *joint* control of all $k$-FWER for all $k=1,, \dots, m$.
 
-### Adapting to unknown dependence yields tighter confidence bounds
 
-However, as discussed in @blanchard20post-hoc, this bound has two major limitations, being a consequence of Simes' inequality:
-- It is known to be valid only under certain positive dependence assumptions (PRDS) on the joint $p$-value distribution. Although the PRDS assumption is generally accepted in the case of differential expression studies (which in passing justifies the applicaiton of the BH procedure itself), it has not been formally proved to hold in this case.
-- It is not adaptive to the specific type of dependence at hand for a particular data set.
+```{r k0-bonf-fam, eval=FALSE, echo=FALSE}
+# Sanity check (one-element reference family)
+thr0 <- rep(0, m)
+thr0[k0:m] <- thr_Simes[k0]
+FP_k0 + minTP(pvalo[1:nBH], thr0) == nBH
+```
+
+
+# Tighter confidence bounds by adaptation to unknown dependence 
+
+As discussed in @blanchard20post-hoc, the above-described bound has two major limitations, being a consequence of the Simes inequality:
+
+- It is known to be valid only under certain positive dependence assumptions (PRDS) on the joint $p$-value distribution. Although the PRDS assumption is generally accepted in the case of differential expression studies (which justifies the application of the BH procedure itself), it has not been formally proved to hold in this case.
+
+- It is not *adaptive* to the specific type of dependence at hand for a particular data set.
 
 To bypass these limitations, @blanchard20post-hoc have proposed a randomization-based procedure known as $\lambda$-calibration, which yields tighter bounds that are adapted to the dependency observed in the data set at hand. In the case of two-sample tests, this calibration is achieved by permutation of class labels:
 
@@ -159,14 +191,58 @@ To bypass these limitations, @blanchard20post-hoc have proposed a randomization-
 cal <- calibrateJER(X = dat, categ, B = 100, alpha = alpha, refFamily = "Simes")
 ```
 
+
+
 An alternative to the Simes reference family is the Beta reference family:
 
 ```{r calibration-beta}
 cal_beta <- calibrateJER(X = dat, categ, B = 100, alpha = alpha, refFamily = "Beta", K = 50)
 ```
 
+```{r calibration-BH}
+FP_SimesCal <-maxFP(pvalo[1:nBH], cal$thr)
+FP_SimesCal/nBH
+FP_BetaCal <-maxFP(pvalo[1:nBH], cal_beta$thr)
+FP_BetaCal/nBH
+```
 
-The obtained confidence envelopes can be compared graphically to the above Simes envelope:
+The FDP bound obtained by these bounds is much tighter than the $k_0$-Bonferroni and Simes bounds:
+
+```{r}
+bounds <- c("k0-Bonferroni" = FP_k0, 
+         "Simes" = FP_Simes,
+         "Simes + calibration" = FP_SimesCal,
+         "Beta + calibration" = FP_BetaCal)
+tab <- data.frame("Method" = names(bounds), 
+                  "bound on True Positives >=" = nBH - bounds, 
+                  "bound on False Discovery Proportion <=" = ceiling(bounds/nBH*100)/100,
+                  check.names = FALSE, row.names = NULL)
+knitr::kable(tab)
+```
+
+In the next two sections we illustrate the use of these improved bounds in order to build
+
+- confidence envelopes for the true or false positives
+- confidence statements for volcano plots
+
+# Confidence envelopes on "top-$k$" lists
+
+In the absence of prior information on genes, a natural idea is to rank them by decreasing statistical significance, and a natural question to ask is: 
+
+> Can we provide a lower confidence envelope on the number (or proportion) of truly differentially expressed genes among the "top $k$" genes, for a user-defined $k$?
+
+We illustrate the use of post-hoc methods to provide this type of information. More specifcally, we build confidence statements on the number of true/false positives within the top $k$ most significant genes in a differential gene expression study, where $k$ may be defined by the user after seing the data, and multiple choices of $k$ are allowed. 
+
+The method of @GS2011 makes it possible to calculate a confidence envelope on the number of true positives among the most significant genes. This is obtained as follows via the `sansSouci` package:
+
+```{r plot-conf-envelope}
+xmax <- 300
+ce_Simes <- confidenceEnvelope(dex$p.value, refFamily = 'Simes', param = alpha)
+p <- plotConfidenceEnvelope(ce_Simes, xmax = xmax)
+p + geom_vline(xintercept = nBH, color = "red", linetype = "dotted") 
+```
+
+The confidence envelopes obtained by calibration of the Simes and Beta families can be compared graphically to the Simes envelope:
 
 ```{r, conf-env-plot}
 conf_envs <- list("Simes" = ce_Simes,
@@ -176,41 +252,49 @@ cols <- RColorBrewer::brewer.pal(3, "Dark2")
 plotConfidenceEnvelope(conf_envs, xmax = 300, cols = cols)
 ```
 
-### Volcano plots
+Both calibrated envelopes outperform the Simes envelope in this example. 
 
-```{r volcano-params}
+# Volcano plots
+
+```{r volcano-setup}
+thrs <- list("Simes" = thr_Simes,
+             "Simes + calibration" = cal$thr,
+             "Beta + calibration"= cal_beta$thr)
 q <- 0.05
 r <-  0.3
-alpha <- 0.1
 ```
 
-Let us assume that we are interested in genes selected by the BH procedure at level $q = `r q`$ and whose fold change is larger than $r = `r r`$ in absolute value. This corresponds to two sets of genes, with positive/negative fold change, which can be represented in the following plot:
+Let us assume that we are interested in genes selected by the BH procedure at level $q = `r q`$ and whose fold change is larger than $r = `r r`$ in absolute value.  The "fold change" is defined as the difference between the expression means of the two groups compared; it is an estimate of the effect size of a gene. This double selection corresponds to two sets of genes, with positive/negative fold change, which can be represented in the following plot:
 
 
 ```{r volcano-plot-Simes}
 ylim <- c(0, 6)
-thr <- SimesThresholdFamily(m)(alpha)
+thr <- thrs[["Simes"]]
 volcanoPlot(dat, categ = categ, thr = thr, q = q, r = r, ylim = ylim)
 ```
 
 This type of plot is called a "volcano plot" @CC2003. Post hoc inference makes it possible to obtain statistical guarantees on selections such as the ones represented in the above figure. 
 
+The substantial gain in power offered by the above-described calibration is illustrated as follows for the Simes reference family:
+
 ```{r volcano-plot-Simes-calibrated}
-thr <- cal$thr
+thr <- thrs[["Simes + calibration"]]
 volcanoPlot(dat, categ = categ, thr = thr, q = q, r = r, ylim = ylim)
 ```
+
+and for the Beta reference family.
 
 ```{r volcano-plot-Beta-calibrated}
-thr <- cal_beta$thr
+thr <- thrs[["Beta + calibration"]]
 volcanoPlot(dat, categ = categ, thr = thr, q = q, r = r, ylim = ylim)
 ```
 
-## Session information
+# Session information
 
 ```{r}
 sessionInfo()
 ```
 
-## References
+# References
 
 
