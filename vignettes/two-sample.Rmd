@@ -93,6 +93,7 @@ The state of the art approach to large-scale multiple testing is to control the 
 ```{r bh}
 q <- 0.05
 adjp.BH <- p.adjust(pval, method = "BH")
+dex$adjp <- adjp.BH
 nBH <- sum(adjp.BH <= q)
 ```
 
@@ -166,7 +167,7 @@ FP_Simes <-maxFP(pvalo[1:nBH], thr_Simes)
 FP_Simes/nBH
 ```
 
-The Simes bound implies that with probability larger than `r 1-alpha`, the false discovery proportion among the genes selected by the BH procedure at level $q= `r q`$ is upper bounded by `r ceiling(FP_Simes/nBH*100)/100`. The Simes bound is sharper than the $k_0$-Bonferroni bound because it is obtained from a *joint* control of all $k$-FWER for all $k=1,, \dots, m$.
+The Simes bound implies that with probability larger than `r 1-alpha`, the false discovery proportion among the genes selected by the BH procedure at level $q= `r q`$ is upper bounded by `r ceiling(FP_Simes/nBH*100)/100`. The Simes bound is sharper than the $k_0$-Bonferroni bound because it is obtained from a *joint* control of all $k$-FWER for all $k=1, \dots, m$.
 
 
 ```{r k0-bonf-fam, eval=FALSE, echo=FALSE}
@@ -187,16 +188,16 @@ As discussed in @blanchard20post-hoc, the above-described bound has two major li
 
 To bypass these limitations, @blanchard20post-hoc have proposed a randomization-based procedure known as $\lambda$-calibration, which yields tighter bounds that are adapted to the dependency observed in the data set at hand. In the case of two-sample tests, this calibration is achieved by permutation of class labels:
 
-```{r calibration}
-cal <- calibrateJER(X = dat, categ, B = 100, alpha = alpha, refFamily = "Simes")
+```{r calibration, cache=TRUE}
+cal <- calibrateJER(X = dat, categ, B = 1000, alpha = alpha, refFamily = "Simes")
 ```
-
 
 
 An alternative to the Simes reference family is the Beta reference family:
 
-```{r calibration-beta}
-cal_beta <- calibrateJER(X = dat, categ, B = 100, alpha = alpha, refFamily = "Beta", K = 50)
+```{r calibration-beta, cache=TRUE}
+K <- 50
+cal_beta <- calibrateJER(X = dat, categ, B = 1000, alpha = alpha, refFamily = "Beta", K = K)
 ```
 
 ```{r calibration-BH}
@@ -208,7 +209,7 @@ FP_BetaCal/nBH
 
 The FDP bound obtained by these bounds is much tighter than the $k_0$-Bonferroni and Simes bounds:
 
-```{r}
+```{r tighter-bounds}
 bounds <- c("k0-Bonferroni" = FP_k0, 
          "Simes" = FP_Simes,
          "Simes + calibration" = FP_SimesCal,
@@ -239,7 +240,7 @@ The method of @GS2011 makes it possible to calculate a confidence envelope on th
 xmax <- 300
 ce_Simes <- confidenceEnvelope(dex$p.value, refFamily = 'Simes', param = alpha)
 p <- plotConfidenceEnvelope(ce_Simes, xmax = xmax)
-p + geom_vline(xintercept = nBH, color = "red", linetype = "dotted") 
+p + geom_vline(xintercept = nBH, color = "gray", linetype = "dotted") 
 ```
 
 The confidence envelopes obtained by calibration of the Simes and Beta families can be compared graphically to the Simes envelope:
@@ -247,9 +248,11 @@ The confidence envelopes obtained by calibration of the Simes and Beta families 
 ```{r, conf-env-plot}
 conf_envs <- list("Simes" = ce_Simes,
                   "Linear" = cal$conf_env,
-                  "Beta (K=50)" = cal_beta$conf_env)
+                  "Beta" = cal_beta$conf_env)
+names(conf_envs)[3] <- sprintf("Beta (K=%s)", K)
 cols <- RColorBrewer::brewer.pal(3, "Dark2")
-plotConfidenceEnvelope(conf_envs, xmax = 300, cols = cols)
+p <- plotConfidenceEnvelope(conf_envs, xmax = 300, cols = cols)
+p + geom_vline(xintercept = nBH, color = "gray", linetype = "dotted") 
 ```
 
 Both calibrated envelopes outperform the Simes envelope in this example. 
@@ -258,8 +261,9 @@ Both calibrated envelopes outperform the Simes envelope in this example.
 
 ```{r volcano-setup}
 thrs <- list("Simes" = thr_Simes,
-             "Simes + calibration" = cal$thr,
-             "Beta + calibration"= cal_beta$thr)
+             "Lines" = cal$thr,
+             "Beta"= cal_beta$thr)
+names(thrs) <- names(conf_envs)
 q <- 0.05
 r <-  0.3
 ```
@@ -270,7 +274,7 @@ Let us assume that we are interested in genes selected by the BH procedure at le
 ```{r volcano-plot-Simes}
 ylim <- c(0, 6)
 thr <- thrs[["Simes"]]
-volcanoPlot(dat, categ = categ, thr = thr, q = q, r = r, ylim = ylim)
+vo <- volcanoPlot(dat, categ = categ, thr = thr, q = q, r = r, ylim = ylim)
 ```
 
 This type of plot is called a "volcano plot" @CC2003. Post hoc inference makes it possible to obtain statistical guarantees on selections such as the ones represented in the above figure. 
@@ -278,15 +282,34 @@ This type of plot is called a "volcano plot" @CC2003. Post hoc inference makes i
 The substantial gain in power offered by the above-described calibration is illustrated as follows for the Simes reference family:
 
 ```{r volcano-plot-Simes-calibrated}
-thr <- thrs[["Simes + calibration"]]
+thr <- thrs[["Linear"]]
 volcanoPlot(dat, categ = categ, thr = thr, q = q, r = r, ylim = ylim)
 ```
 
 and for the Beta reference family.
 
 ```{r volcano-plot-Beta-calibrated}
-thr <- thrs[["Beta + calibration"]]
+thr <- thrs[[sprintf("Beta(K=%s)", K)]]
 volcanoPlot(dat, categ = categ, thr = thr, q = q, r = r, ylim = ylim)
+```
+
+The comparison between these bounds may be summarized by the following Table:
+
+```{r compare-volcano-bounds}
+all_bounds <- function(pvals, thrs) {
+  c(n = length(pvals), sapply(thrs, function(thr) minTP(pvals, thr)))
+}
+pval_pos <- subset(dexo, meanDiff >= r & adjp <= q)$p.value
+pval_neg <- subset(dexo, meanDiff <= -r & adjp <= q)$p.value
+pval_all <- c(pval_pos, pval_neg)
+tab <- rbind(all_bounds(pval_pos, thrs), 
+             all_bounds(pval_neg, thrs),
+             all_bounds(pval_all, thrs))
+tab <- cbind(c("BH-adjusted p.value < q and fold change > r",
+               "BH-adjusted p.value < q and fold change < -r",
+               "BH-adjusted p.value < q and |fold change| > r"), 
+             tab)
+knitr::kable(tab, caption = "Post hoc bounds on the number of true positives in user-defined gene selections")
 ```
 
 # Session information
