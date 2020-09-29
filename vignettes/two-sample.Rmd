@@ -95,6 +95,7 @@ q <- 0.05
 adjp.BH <- p.adjust(pval, method = "BH")
 dex$adjp <- adjp.BH
 nBH <- sum(adjp.BH <= q)
+nBH
 ```
 
 The application of the BH procedure at level $q = `r q`$ is illustrated in the figures below (all genes are displayed in the first one, second one is a zoom on the top genes):
@@ -186,10 +187,10 @@ As discussed in @blanchard20post-hoc, the above-described bound has two major li
 
 - It is not *adaptive* to the specific type of dependence at hand for a particular data set.
 
-To bypass these limitations, @blanchard20post-hoc have proposed a randomization-based procedure known as $\lambda$-calibration, which yields tighter bounds that are adapted to the dependency observed in the data set at hand. In the case of two-sample tests, this calibration is achieved by permutation of class labels:
+To bypass these limitations, @blanchard20post-hoc have proposed a randomization-based procedure known as $\lambda$-calibration, which yields tighter bounds that are adapted to the dependency observed in the data set at hand^[A related approach has been proposed by @HSG2019, but no implementation is currently available for this approach.]. In the case of two-sample tests, this calibration can be achieved by permutation of class labels:
 
 ```{r calibration, cache=TRUE}
-cal <- calibrateJER(X = dat, categ, B = 1000, alpha = alpha, refFamily = "Simes")
+cal <- calibrateJER(X = dat, categ, B = 100, alpha = alpha, refFamily = "Simes")
 ```
 
 
@@ -197,13 +198,13 @@ An alternative to the Simes reference family is the Beta reference family:
 
 ```{r calibration-beta, cache=TRUE}
 K <- 50
-cal_beta <- calibrateJER(X = dat, categ, B = 1000, alpha = alpha, refFamily = "Beta", K = K)
+cal_beta <- calibrateJER(X = dat, categ, B = 100, alpha = alpha, refFamily = "Beta", K = K)
 ```
 
 ```{r calibration-BH}
-FP_SimesCal <-maxFP(pvalo[1:nBH], cal$thr)
+FP_SimesCal <- maxFP(pvalo[1:nBH], cal$thr)
 FP_SimesCal/nBH
-FP_BetaCal <-maxFP(pvalo[1:nBH], cal_beta$thr)
+FP_BetaCal <- maxFP(pvalo[1:nBH], cal_beta$thr)
 FP_BetaCal/nBH
 ```
 
@@ -215,8 +216,8 @@ bounds <- c("k0-Bonferroni" = FP_k0,
          "Simes + calibration" = FP_SimesCal,
          "Beta + calibration" = FP_BetaCal)
 tab <- data.frame("Method" = names(bounds), 
-                  "bound on True Positives >=" = nBH - bounds, 
-                  "bound on False Discovery Proportion <=" = ceiling(bounds/nBH*100)/100,
+                  "Lower bound on True Positives" = nBH - bounds, 
+                  "Upper bound on False Discovery Proportion" = ceiling(bounds/nBH*100)/100,
                   check.names = FALSE, row.names = NULL)
 knitr::kable(tab)
 ```
@@ -230,7 +231,7 @@ In the next two sections we illustrate the use of these improved bounds in order
 
 In the absence of prior information on genes, a natural idea is to rank them by decreasing statistical significance, and a natural question to ask is: 
 
-> Can we provide a lower confidence envelope on the number (or proportion) of truly differentially expressed genes among the "top $k$" genes, for a user-defined $k$?
+> Can we provide a lower confidence envelope on the number (or proportion) of truly differentially expressed genes among the most significant genes?
 
 We illustrate the use of post-hoc methods to provide this type of information. More specifcally, we build confidence statements on the number of true/false positives within the top $k$ most significant genes in a differential gene expression study, where $k$ may be defined by the user after seing the data, and multiple choices of $k$ are allowed. 
 
