@@ -33,8 +33,9 @@
 #' @return A list with elements: \describe{
 #'
 #'   \item{p.values}{A numeric vector of \code{m} p-values}
-#'   \item{stat}{A numeric vector of \code{m} test statistics, corresponding to qnorm(p.values, lower.tail = FALSE)}
-#'
+#'   \item{pivStat}{A numeric vector of length \code{m}, the values of the pivotal
+#'          statistic whose quantile of order \eqn{alpha} is \eqn{lambda}.}
+
 #'   \item{thr}{A numeric vector of length \code{K}, such that the estimated
 #'   probability that there exists an index \eqn{k} between 1 and \eqn{K} such
 #'   that the \eqn{k}-th maximum of the test statistics of is greater than
@@ -121,7 +122,7 @@ calibrateJER <- function(X, categ, B, alpha,
     }
     conf_env$procedure <- proc
     
-    calib <- list(p.values = pval, thr = res$thr, lambda = res$lambda, conf_env = conf_env) 
+    calib <- list(p.values = pval, pivStat = res$pivStat, thr = res$thr, lambda = res$lambda, conf_env = conf_env) 
     return(calib)
 }
 

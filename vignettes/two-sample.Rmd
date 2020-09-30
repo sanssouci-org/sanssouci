@@ -21,19 +21,20 @@ fig.height=6
 )
 ```
 
-This vignette reproduces figures from Section 8 in the book chapter: @BNR:chap. It demonstrates how the [`sansSouci`](https://github.com/pneuvial/sanssouci) package may be used to obtain post hoc confidence bounds on false positives in the case of differential gene expression analysis. After showing the output of a classical differential analysis based on False Discovery Rate control we illustrate the application of basic post-hoc bounds derived from probabilistic inequalities.  Then , we focus on two applications of post hoc methods:
+This vignette reproduces figures from Section 9 in the book chapter: @BNR:chap. It demonstrates how the [`sansSouci`](https://github.com/pneuvial/sanssouci) package may be used to obtain post hoc confidence bounds on false positives in the case of differential gene expression analysis. After showing the output of a classical differential analysis based on False Discovery Rate control we illustrate the application of basic post-hoc bounds derived from probabilistic inequalities. 
+Then, we introduce more powerful post hoc methods (introduced by @blanchard20post-hoc) that yield tighter bounds by adapting to unknown dependence by randomization. Finally we demonstrate the use of these methods on two applications of post hoc methods:
 
 - confidence envelopes for the true or false positives
 - statistical inference on volcano plots
 
 The methods described in this vignette are described in detail in the book chapter @BNR:chap and in the paper @blanchard20post-hoc.
 
-```{r required-packages}
-library("sansSouci")
+```{r required-packages, message=FALSE}
+library("sansSouci") ## remotes::install_github("pneuvial/sanssouci@develop")
 library("ggplot2")
 ```
 
-Set RNG seed for numerical reproducibility of the results:
+Set the seed of the random number generator for numerical reproducibility of the results:
 ```{r set-seed}
 set.seed(20200924)
 ```
@@ -43,13 +44,10 @@ set.seed(20200924)
 We focus on differential gene expression studies in cancerology. These studies aim at identifying genes whose mean expression level differs significantly between two (or more) populations, based on a sample of gene expression measurements from individuals from these populations. Specifically, we consider a data set studied in @BGH2010.
 
 ```{r read-data}
-filename <- "~/Downloads/chiaretti_leukemia.rds"
-if (file.exists(filename)) {
-  dat <- readRDS(filename)
-} else {
-  data_url <- url("https://plmbox.math.cnrs.fr/f/755496cc4c154a6dbab0/?dl=1")
-  dat <- readRDS(data_url)
-}
+# filename <- "~/Downloads/chiaretti_leukemia.rds"
+# dat <- readRDS(filename)
+data_url <- url("https://plmbox.math.cnrs.fr/f/755496cc4c154a6dbab0/?dl=1")
+dat <- readRDS(data_url)
 ```
 
 This data set which consists of gene expression measurements for  $n = `r ncol(dat)`$ patients with B-cell acute lymphoblastic leukemia (ALL) @CLGV+2005. These patients are classified into two subgoups, depending on whether or not they harbor a specific mutation called "BCR/ABL":
@@ -164,7 +162,8 @@ A more refined post hoc bound has been proposed by @GS2011 under the PRDS assump
 ```{r}
 #posthocBySimes(pvalo, 1:nBH, alpha = alpha)
 thr_Simes <- SimesThresholdFamily(m)(alpha)
-FP_Simes <-maxFP(pvalo[1:nBH], thr_Simes)
+FP_Simes <- maxFP(pvalo[1:nBH], thr_Simes)
+FP_Simes
 FP_Simes/nBH
 ```
 
@@ -190,7 +189,7 @@ As discussed in @blanchard20post-hoc, the above-described bound has two major li
 To bypass these limitations, @blanchard20post-hoc have proposed a randomization-based procedure known as $\lambda$-calibration, which yields tighter bounds that are adapted to the dependency observed in the data set at hand^[A related approach has been proposed by @HSG2019, but no implementation is currently available for this approach.]. In the case of two-sample tests, this calibration can be achieved by permutation of class labels:
 
 ```{r calibration, cache=TRUE}
-cal <- calibrateJER(X = dat, categ, B = 100, alpha = alpha, refFamily = "Simes")
+cal <- calibrateJER(X = dat, categ, B = 1000, alpha = alpha, refFamily = "Simes")
 ```
 
 
@@ -198,7 +197,7 @@ An alternative to the Simes reference family is the Beta reference family:
 
 ```{r calibration-beta, cache=TRUE}
 K <- 50
-cal_beta <- calibrateJER(X = dat, categ, B = 100, alpha = alpha, refFamily = "Beta", K = K)
+cal_beta <- calibrateJER(X = dat, categ, B = 1000, alpha = alpha, refFamily = "Beta", K = K)
 ```
 
 ```{r calibration-BH}
@@ -213,8 +212,10 @@ The FDP bound obtained by these bounds is much tighter than the $k_0$-Bonferroni
 ```{r tighter-bounds}
 bounds <- c("k0-Bonferroni" = FP_k0, 
          "Simes" = FP_Simes,
-         "Simes + calibration" = FP_SimesCal,
-         "Beta + calibration" = FP_BetaCal)
+         "Linear" = FP_SimesCal,
+         "Beta" = FP_BetaCal)
+names(bounds)[4] <- sprintf("Beta (K=%s)", K)
+
 tab <- data.frame("Method" = names(bounds), 
                   "Lower bound on True Positives" = nBH - bounds, 
                   "Upper bound on False Discovery Proportion" = ceiling(bounds/nBH*100)/100,
@@ -241,7 +242,8 @@ The method of @GS2011 makes it possible to calculate a confidence envelope on th
 xmax <- 300
 ce_Simes <- confidenceEnvelope(dex$p.value, refFamily = 'Simes', param = alpha)
 p <- plotConfidenceEnvelope(ce_Simes, xmax = xmax)
-p + geom_vline(xintercept = nBH, color = "gray", linetype = "dotted") 
+p + geom_vline(xintercept = nBH, color = "gray", linetype = "dotted") +
+  geom_line(size=1.5)
 ```
 
 The confidence envelopes obtained by calibration of the Simes and Beta families can be compared graphically to the Simes envelope:
@@ -253,7 +255,8 @@ conf_envs <- list("Simes" = ce_Simes,
 names(conf_envs)[3] <- sprintf("Beta (K=%s)", K)
 cols <- RColorBrewer::brewer.pal(3, "Dark2")
 p <- plotConfidenceEnvelope(conf_envs, xmax = 300, cols = cols)
-p + geom_vline(xintercept = nBH, color = "gray", linetype = "dotted") 
+p + geom_vline(xintercept = nBH, color = "gray", linetype = "dotted") +
+  geom_line(size=1.5)
 ```
 
 Both calibrated envelopes outperform the Simes envelope in this example. 
