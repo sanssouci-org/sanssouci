@@ -17,13 +17,14 @@ Imports:
     Rcpp (>= 0.12.3)
 LinkingTo: Rcpp, RcppArmadillo
 Suggests:
+    cherry,
+    ggplot2,
     knitr,
     rmarkdown,
-    cherry,
-    testthat,
     RColorBrewer,
-    ggplot2,
-    scales
+    sansSouci.data
+    scales,
+    testthat
 VignetteBuilder: knitr
 RoxygenNote: 7.1.1
 LazyData: true

@@ -1,12 +1,12 @@
 ---
-title: "Post hoc inference for differential gene expression studies"
-author: "G. Blanchard, P. Neuvial and E. Roquain"
+title: "Permutation-based post hoc inference for differential gene expression studies"
+author: "Gilles Blanchard, Pierre Neuvial and Etienne Roquain"
 date: "`r Sys.Date()`"
 output:
+  pdf_document: default
   rmarkdown::html_vignette:
     number_sections: yes
     toc: yes
-  pdf_document: default
 bibliography: sansSouci.bib
 vignette: |
   %\VignetteIndexEntry{Post hoc inference for differential gene expression studies} %\VignetteEncoding{UTF-8} %\VignetteEngine{knitr::rmarkdown}
@@ -43,14 +43,13 @@ set.seed(20200924)
 
 We focus on differential gene expression studies in cancerology. These studies aim at identifying genes whose mean expression level differs significantly between two (or more) populations, based on a sample of gene expression measurements from individuals from these populations. Specifically, we consider a data set studied in @BGH2010.
 
-```{r read-data}
-# filename <- "~/Downloads/chiaretti_leukemia.rds"
-# dat <- readRDS(filename)
-data_url <- url("https://plmbox.math.cnrs.fr/f/755496cc4c154a6dbab0/?dl=1")
-dat <- readRDS(data_url)
+```{r load-data}
+data(expr_ALL, package = "sansSouci.data")
+dat <- expr_ALL
+rm(expr_ALL)
 ```
 
-This data set which consists of gene expression measurements for  $n = `r ncol(dat)`$ patients with B-cell acute lymphoblastic leukemia (ALL) @CLGV+2005. These patients are classified into two subgoups, depending on whether or not they harbor a specific mutation called "BCR/ABL":
+This data set consists of gene expression measurements for  $n = `r ncol(dat)`$ patients with B-cell acute lymphoblastic leukemia (ALL) @CLGV+2005. These patients are classified into two subgoups, depending on whether or not they harbor a specific mutation called "BCR/ABL":
 
 ```{r colnames}
 table(colnames(dat))
@@ -99,14 +98,14 @@ nBH
 The application of the BH procedure at level $q = `r q`$ is illustrated in the figures below (all genes are displayed in the first one, second one is a zoom on the top genes):
 
 ```{r bh-plot}
-my_col <- "#FF000040"
+my_col <- "#FF000080"
 dexo <- dex[order(pval), ]  ## order genes by increasing p-values
-dexo$gene_order <- 1:nrow(dex)
+dexo[["gene_order"]] <- 1:nrow(dex)
 
 bh_plot <- ggplot(dexo, aes(x = gene_order, y = p.value)) + 
   geom_line() +
   xlab("Number of top genes") + ylab("Ordered p-value") +
-  geom_abline(slope = 1/m, intercept = 0, color = "#00000020", size = 2) +
+  geom_abline(slope = 1/m, intercept = 0, linetype = 2, size = 1) +
   geom_abline(slope = q/m, color = my_col, size = 2) +
   # geom_segment(aes(x = nBH, y = 0, yend = q*nBH/m, xend = nBH), linetype = "dotted") +
   # geom_segment(aes(x = 0, y = q*nBH/m, xend = nBH, yend = q*nBH/m), linetype = "dotted") +
@@ -189,15 +188,16 @@ As discussed in @blanchard20post-hoc, the above-described bound has two major li
 To bypass these limitations, @blanchard20post-hoc have proposed a randomization-based procedure known as $\lambda$-calibration, which yields tighter bounds that are adapted to the dependency observed in the data set at hand^[A related approach has been proposed by @HSG2019, but no implementation is currently available for this approach.]. In the case of two-sample tests, this calibration can be achieved by permutation of class labels:
 
 ```{r calibration, cache=TRUE}
-cal <- calibrateJER(X = dat, categ, B = 1000, alpha = alpha, refFamily = "Simes")
+B <- 1000
+cal <- calibrateJER(X = dat, categ, B = B, alpha = alpha, refFamily = "Simes")
 ```
 
 
-An alternative to the Simes reference family is the Beta reference family:
+An alternative to the Simes/Linear reference family is the Beta reference family:
 
 ```{r calibration-beta, cache=TRUE}
 K <- 50
-cal_beta <- calibrateJER(X = dat, categ, B = 1000, alpha = alpha, refFamily = "Beta", K = K)
+cal_beta <- calibrateJER(X = dat, categ, B = B, alpha = alpha, refFamily = "Beta", K = K)
 ```
 
 ```{r calibration-BH}
@@ -242,7 +242,7 @@ The method of @GS2011 makes it possible to calculate a confidence envelope on th
 xmax <- 300
 ce_Simes <- confidenceEnvelope(dex$p.value, refFamily = 'Simes', param = alpha)
 p <- plotConfidenceEnvelope(ce_Simes, xmax = xmax)
-p + geom_vline(xintercept = nBH, color = "gray", linetype = "dotted") +
+p + geom_vline(xintercept = nBH, color = "gray", linetype = "dotted", size = 1.5) +
   geom_line(size=1.5)
 ```
 
@@ -253,10 +253,10 @@ conf_envs <- list("Simes" = ce_Simes,
                   "Linear" = cal$conf_env,
                   "Beta" = cal_beta$conf_env)
 names(conf_envs)[3] <- sprintf("Beta (K=%s)", K)
-cols <- RColorBrewer::brewer.pal(3, "Dark2")
+cols <- RColorBrewer::brewer.pal(length(conf_envs), "Dark2")
 p <- plotConfidenceEnvelope(conf_envs, xmax = 300, cols = cols)
-p + geom_vline(xintercept = nBH, color = "gray", linetype = "dotted") +
-  geom_line(size=1.5)
+p + geom_vline(xintercept = nBH, color = "gray", linetype = "dotted", size = 1.5) +
+  geom_line(size = 1.5)
 ```
 
 Both calibrated envelopes outperform the Simes envelope in this example. 
@@ -293,7 +293,7 @@ volcanoPlot(dat, categ = categ, thr = thr, q = q, r = r, ylim = ylim)
 and for the Beta reference family.
 
 ```{r volcano-plot-Beta-calibrated}
-thr <- thrs[[sprintf("Beta(K=%s)", K)]]
+thr <- thrs[[sprintf("Beta (K=%s)", K)]]
 volcanoPlot(dat, categ = categ, thr = thr, q = q, r = r, ylim = ylim)
 ```
 
@@ -301,7 +301,7 @@ The comparison between these bounds may be summarized by the following Table:
 
 ```{r compare-volcano-bounds}
 all_bounds <- function(pvals, thrs) {
-  c(n = length(pvals), sapply(thrs, function(thr) minTP(pvals, thr)))
+  c("|S|" = length(pvals), sapply(thrs, function(thr) minTP(pvals, thr)))
 }
 pval_pos <- subset(dexo, meanDiff >= r & adjp <= q)$p.value
 pval_neg <- subset(dexo, meanDiff <= -r & adjp <= q)$p.value
@@ -313,7 +313,8 @@ tab <- cbind(c("BH-adjusted p.value < q and fold change > r",
                "BH-adjusted p.value < q and fold change < -r",
                "BH-adjusted p.value < q and |fold change| > r"), 
              tab)
-knitr::kable(tab, caption = "Post hoc bounds on the number of true positives in user-defined gene selections")
+cap <- "Post hoc bounds on true positives in user-defined gene selections"
+knitr::kable(tab, caption = cap)
 ```
 
 # Session information
