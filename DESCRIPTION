@@ -1,6 +1,6 @@
 Package: sansSouci
-Version: 0.8.5
-Date: 2020-09-10
+Version: 0.8.6
+Date: 2020-10-06
 Title: Post Hoc Inference Via Joint Error Rate Control
 Authors@R: c(person("Benjamin", "Sadacca", role="ctb"),
              person("Gilles", "Blanchard", role="aut"),
@@ -22,7 +22,7 @@ Suggests:
     knitr,
     rmarkdown,
     RColorBrewer,
-    sansSouci.data
+    sansSouci.data,
     scales,
     testthat
 VignetteBuilder: knitr

@@ -3,10 +3,10 @@ title: "Permutation-based post hoc inference for differential gene expression st
 author: "Gilles Blanchard, Pierre Neuvial and Etienne Roquain"
 date: "`r Sys.Date()`"
 output:
-  pdf_document: default
   rmarkdown::html_vignette:
     number_sections: yes
     toc: yes
+  pdf_document: default
 bibliography: sansSouci.bib
 vignette: |
   %\VignetteIndexEntry{Post hoc inference for differential gene expression studies} %\VignetteEncoding{UTF-8} %\VignetteEngine{knitr::rmarkdown}

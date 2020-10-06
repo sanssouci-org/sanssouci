@@ -15,6 +15,7 @@ appveyor.yml
 ^Rout$
 ^results$
 ^data/.*\.rds$
+^nilearn_cache/
 
 TODO*.txt
 ^doc$
