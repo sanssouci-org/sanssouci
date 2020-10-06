@@ -103,7 +103,7 @@ volcanoPlot <- function(X, categ, thr,
     cexs[sel12] <- cex[2]
 
     xlab <- "Fold change (log scale)"
-    ylab <- expression("p-value (-log[10] scale)")
+    ylab <- bquote("p-value (-" ~ log[10] ~ "scale)")
     infty <- 100
     if (is.null(ylim)) {
         ylim <- c(0, max(logp))
@@ -116,16 +116,15 @@ volcanoPlot <- function(X, categ, thr,
          col = col[3], border = NA, lwd = 2)
     abline(h = y_thr, col = "gray")
     abline(v = c(-1, 1)*r, col = "gray")
-    lte <- "\u2264"
-    gte <- "\u2265"
-    txt <- c(sprintf("%s genes\nTP %s %s\nFDP %s %s", n2, gte, TP2, lte, FDP2))
-    legend("topleft", txt, border = "white", bty = "n", text.col = 1)
+    bq <- bquote(atop(.(n1) ~ "genes", 
+                      "TP"  >= .(TP1) ~ ";  FDP" <= .(FDP1)))
+    legend("topright", legend = bq, border = "white", bty = "n", text.col = 1)
+    bq <- bquote(atop(.(n2) ~ "genes", 
+                       "TP"  >= .(TP2) ~ "; FDP" <= .(FDP2)))
+    legend("topleft", legend = bq, border = "white", bty = "n", text.col = 1)
     
-    txt <- c(sprintf("%s genes\nTP %s %s\nFDP %s %s", n1, gte, TP1, lte, FDP1))
-    legend("topright", txt, border = "white", bty = "n", text.col = 1)
-    
-    txt <- c(sprintf("%s genes selected\nAt least %s true positives (FDP %s %s)", 
-                     n12, TP12, lte, FDP12))
-    title(txt)
+    bq <- bquote(atop(.(n12) ~ "genes selected", 
+                      "At least" ~ .(TP12) ~ "true positives (FDP" <= .(FDP12) ~")"))
+    title(bq)
     invisible(sel12)
 }

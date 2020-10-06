@@ -57,8 +57,8 @@ Must be one of "two.sided" (default), "greater" or "less".}
 A list with elements: \describe{
 
   \item{p.values}{A numeric vector of \code{m} p-values}
-  \item{stat}{A numeric vector of \code{m} test statistics, corresponding to qnorm(p.values, lower.tail = FALSE)}
-
+  \item{pivStat}{A numeric vector of length \code{m}, the values of the pivotal
+         statistic whose quantile of order \eqn{alpha} is \eqn{lambda}.}
   \item{thr}{A numeric vector of length \code{K}, such that the estimated
   probability that there exists an index \eqn{k} between 1 and \eqn{K} such
   that the \eqn{k}-th maximum of the test statistics of is greater than
