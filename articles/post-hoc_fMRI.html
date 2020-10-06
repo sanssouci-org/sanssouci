@@ -147,7 +147,7 @@
 <div id="post-hoc-inference-by-the-simes-inequality" class="section level1">
 <h1 class="hasAnchor">
 <a href="#post-hoc-inference-by-the-simes-inequality" class="anchor"></a>Post hoc inference by the Simes inequality</h1>
-<p>We start by calculating the basic Simes bound introduced by Goeman and Solari (2011). This bounds has already been used for fMRI data, see <span class="citation">Rosenblatt et al. (2018)</span>. In that paper, post hoc inference (by the Simes inequality) is referred to as “All-resolutions inference” (ARI).</p>
+<p>We start by calculating the Simes bound introduced by <span class="citation">Goeman and Solari (2011)</span>. This bound has already been applied to fMRI data, see <span class="citation">Rosenblatt et al. (2018)</span>. In that paper, post hoc inference (by the Simes inequality) is referred to as “All-resolutions inference” (ARI).</p>
 <div class="sourceCode" id="cb6"><pre class="downlit">
 <span class="va">alpha</span> <span class="op">&lt;-</span> <span class="fl">0.1</span></pre></div>
 <p>We set the target confidence level to <span class="math inline">\(\alpha = 0.1\)</span>. The Simes bound may be obtained with the function ‘curveSimes’ of the R package ‘cherry’. Here, we use the ‘sansSouci’ package, as follows:</p>
@@ -222,11 +222,11 @@
 <p>In this particular case some signal is revealed by the post hoc bound for 0 newtorks for permutation-based approaches:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit">
 <span class="va">ww</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">bounds</span><span class="op">$</span><span class="va">Linear</span><span class="op">&gt;</span><span class="fl">0</span><span class="op">)</span>
-<span class="va">cap</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"Lower bounds on the numer of true positives in %s brain regions."</span>,
+<span class="va">cap</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"Lower bounds on the number of true positives in %s brain regions."</span>,
                <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">ww</span><span class="op">)</span><span class="op">)</span>
 <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="va">bounds</span><span class="op">[</span><span class="va">ww</span>, <span class="op">]</span>, caption <span class="op">=</span> <span class="va">cap</span><span class="op">)</span></pre></div>
 <table class="table">
-<caption>Lower bounds on the numer of true positives in 3 brain regions.</caption>
+<caption>Lower bounds on the number of true positives in 3 brain regions.</caption>
 <thead><tr class="header">
 <th align="left"></th>
 <th align="left">network</th>
@@ -312,6 +312,9 @@
 </div>
 <div id="ref-genovese2002thresholding">
 <p>Genovese, Christopher R, Nicole A Lazar, and Thomas Nichols. 2002. “Thresholding of Statistical Maps in Functional Neuroimaging Using the False Discovery Rate.” <em>Neuroimage</em> 15 (4): 870–78.</p>
+</div>
+<div id="ref-GS2011">
+<p>Goeman, Jelle J, and Aldo Solari. 2011. “Multiple Testing for Exploratory Research.” <em>Statistical Science</em> 26 (4): 584–97.</p>
 </div>
 <div id="ref-HSG2019">
 <p>Hemerik, Jesse, Aldo Solari, and Jelle J Goeman. 2019. “Permutation-Based Simultaneous Confidence Bounds for the False Discovery Proportion.” <em>Biometrika</em> 106 (3): 635–49.</p>

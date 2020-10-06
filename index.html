@@ -88,15 +88,25 @@
   <div class="contents col-md-9">
 
 
-<div id="post-hoc-inference-via-multiple-testing" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#post-hoc-inference-via-multiple-testing" class="anchor"></a>Post hoc inference via multiple testing</h1></div>
-<p>This (beta) software is developed within the <a href="https://www.math.univ-toulouse.fr/~pneuvial/sanssouci">SansSouci project</a>.</p>
-</div>
+<p>The goal of sansSouci is to perform <em>post hoc inference</em>: in a multiple testing context, sansSouci provides statistical guarantees on possibly user-defined and/or data-driven sets of hypotheses.</p>
 <div id="installation" class="section level1">
+<div class="page-header"><h1 class="hasAnchor">
+<a href="#installation" class="anchor"></a>Installation</h1></div>
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"pneuvial/sanssouci@develop"</span><span class="op">)</span></pre></div>
+</div>
+<div id="example-use-cases-in-genomics-and-neuroimaging" class="section level1">
 <h1 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h1>
-<pre><code><a href="https://remotes.r-lib.org/reference/install_github.html">remotes::install_github("pneuvial/sanssouci@develop")</a></code></pre>
+<a href="#example-use-cases-in-genomics-and-neuroimaging" class="anchor"></a>Example use cases in genomics and neuroimaging</h1>
+<p>Typical use cases covered by sansSouci are:</p>
+<ul>
+<li>
+<a href="https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html">differential gene expression studies</a> in genomics</li>
+<li>
+<a href="https://pneuvial.github.io/sanssouci/articles/post-hoc_fMRI.html">fMRI studies</a> in neuroimaging.</li>
+</ul>
+<p>In both cases, permutation-based post hoc inference typically outperforms classical post hoc bounds based on probabilistic inequalities.</p>
+<p>sansSouci is developed within the <a href="https://www.math.univ-toulouse.fr/~pneuvial/sanssouci">SansSouci project</a>.</p>
 </div>
 
   </div>
