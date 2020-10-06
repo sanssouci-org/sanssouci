@@ -5,6 +5,7 @@ Package: sansSouci
 
 Version 0.8.6 [2020-10-06]
 
+* Add fMRI vignette (using the sansSouci.data package)
 * Use the sansSouci.data package in differential expression vignette
 
 Version 0.8.5 [2020-09-10]

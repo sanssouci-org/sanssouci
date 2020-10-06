@@ -1,0 +1,194 @@
+---
+title: "Permutation-based post hoc inference for fMRI studies"
+author: "Alexandre Blain and Pierre Neuvial"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    number_sections: yes
+    toc: yes
+  pdf_document: default
+  html_document:
+    number_sections: yes
+    toc: yes
+    toc_depth: 1
+bibliography: sansSouci.bib
+vignette: |
+  %\VignetteIndexEntry{Permutation-based post hoc inference for fMRI studies} 
+  %\VignetteEncoding{UTF-8} 
+  %\VignetteEngine{knitr::rmarkdown}
+---
+
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+collapse = TRUE,
+comment = "#>",
+fig.width=8,
+fig.height=6
+)
+```
+
+
+This vignette shows how to use the [`sansSouci`](https://github.com/pneuvial/sanssouci) package to perform permutation-based post hoc inference for fMRI data. We focus on a motor task (left versus right click) from the Localizer data set by @orfanos2017brainomics. The data set is included in the [`sansSouci.data`](https://github.com/pneuvial/sanssouci.data) package. It has been obtained using the Python module [nilearn](http://nilearn.github.io/), see @abraham2014machine-learning.
+
+# Setup
+
+We first make sure that the required R packages are installed and loaded.
+
+```{r install-r-packages, results='hide', message=FALSE}
+require("ggplot2") || install.packages("ggplot2")
+require("sansSouci") || remotes::install_github("pneuvial/sanssouci@develop")
+require("sansSouci.data") || remotes::install_github("pneuvial/sanssouci.data")
+```
+
+
+```{r load-r-packages, results='hide', message=FALSE}
+library("ggplot2")
+library("sansSouci")
+```
+
+We set the seed of the random number generator for numerical reproducibility of the results:
+```{r set-seed}
+set.seed(20200924)
+```
+
+
+# Loading and preprocessing the data
+
+```{r load-data}
+data(fMRI_localizer, package = "sansSouci.data")
+dat <- fMRI_localizer
+rm(fMRI_localizer)
+```
+
+The samples are classified into two subgoups, These subgroups correspond to two different motor tasks the subjects were asked to perform, "left click" vs "right click":
+
+```{r colnames}
+m <- nrow(dat)
+categ <- colnames(dat)
+knitr::kable(table(categ))
+```
+
+# Post hoc inference by the Simes inequality
+
+We start by calculating the basic Simes bound introduced by Goeman and Solari (2011). This bounds has already been used for fMRI data, see @rosenblatt2018ari. In that paper, post hoc inference (by the Simes inequality) is referred to as "All-resolutions inference" (ARI).
+
+```{r set-alpha}
+alpha <- 0.1
+```
+
+We set the target confidence level to $\alpha = `r alpha`$. The Simes bound may be obtained with the function 'curveSimes' of the R package 'cherry'. Here, we use the 'sansSouci' package, as follows:
+
+
+```{r simes-bound}
+categ <- ifelse(colnames(dat) == "left", 0, 1) # map to 0/1
+dex <- data.frame(rowWelchTests(dat, categ))
+rwt <- rowWelchTests(dat, categ=categ)
+pvals <- rwt$p.value
+ce_Simes <- confidenceEnvelope(pvals, refFamily = "Simes", param = alpha)
+```
+
+Disregarding (for now) the voxel locations in the brain, we plot confidence bounds on $p$-value level sets (corresponding to maps obtained by thresholding at a given test statistic):
+
+```{r plot-conf-bounds-Simes}
+xmax <- 8*max(subset(ce_Simes, stat == "TP")$bound)
+plotConfidenceEnvelope(ce_Simes, xmax = xmax) +
+  ggtitle("Post hoc confidence envelopes: Simes/ARI")
+```
+
+# Tighter confidence bounds by adaptation to unknown dependence 
+
+As discussed in @blanchard20post-hoc, the above-described bound is known to be valid only under certain positive dependence assumptions (PRDS) on the joint $p$-value distribution. Although the PRDS assumption is widely accepted for fMRI studies (see @genovese2002thresholding, @nichols2003controlling), we argue (and demonstrate below) that this assumption yields overly conservative post hoc bounds. Indeed, the Simes bound is by construction not *adaptive* to the specific type of dependence at hand for a particular data set.
+
+
+To bypass these limitations, @blanchard20post-hoc have proposed a randomization-based procedure known as $\lambda$-calibration, which yields tighter bounds that are adapted to the dependency observed in the data set at hand. We note that a related approach has been proposed by @HSG2019. In the case of two-sample tests, this calibration can be achieved by permutation of class labels, which is readily available via the `calibrateJER` function of the sansSouci package:
+
+
+```{r post-hoc-calibration, cache=TRUE}
+B <- 1000
+cal <- calibrateJER(X = dat, categ, B = B, alpha = alpha, refFamily = "Simes")
+```
+
+An alternative to the Simes/Linear reference family is the Beta reference family:
+
+```{r post-hoc-calibration-beta, cache=TRUE}
+K <- 500
+cal_beta <- calibrateJER(X = dat, categ, B = B, alpha = alpha, refFamily = "Beta", K = K)
+```
+
+
+```{r plot-conf-bounds}
+conf_envs <- list("Simes/ARI" = ce_Simes, 
+                "Linear"= cal$conf_env,
+                "Beta"= cal_beta$conf_env)
+names(conf_envs)[3] <- sprintf("Beta (K=%s)", K)
+
+
+cols <- RColorBrewer::brewer.pal(length(conf_envs), "Dark2")
+plotConfidenceEnvelope(conf_envs, xmax = xmax, cols = cols)
+```
+
+In this example, ARI is outperformed by permutation-based approaches, which are able to adapt to unknown dependency: for the same target risk level ($\alpha = `r alpha`$), both permutation-based bounds are much less conservative than the classical Simes/ARI bound. 
+
+# Post hoc bounds on regions from brain atlases
+
+The goal in this section is to calculate post hoc bound on user-defined brain regions. One definition of such regions is given by the [Havard-Oxford brain atlas](), which is available in the sansSouci.data package. 
+are given from the nilearn package in the form of brain atlases:
+
+```{r load-atlas}
+data(brainAtlas, package = "sansSouci.data")
+```
+
+This atlas is made of `r nrow(brainAtlas)` *areas*. We will compare the post hoc bounds obtained above:
+
+```{r thr}
+thrs <- list("Simes/ARI" = SimesThresholdFamily(nrow(dat))(alpha),
+             "Linear" = cal$thr,
+             "Beta" = cal_beta$thr)
+names(thrs)[3] <- sprintf("Beta (K=%s)", K)
+
+```
+
+For convenience we define a function to calculate these post hoc bounds for all networks from the chosen atlas.
+
+```{r get-posthoc-bounds}
+getPosthocBounds <- function(reg, pvals, thrList) {
+  nreg <- nrow(reg)
+  FP <- matrix(NA, ncol = length(thrList), nrow = nreg)
+  colnames(FP) <- names(thrList)
+  R <- numeric(nreg)
+  for (rr in 1:nreg) {
+    wpos <- which(reg[rr, ]>0)
+    pvalsRR <- pvals[wpos]  ## collapse all into one big region (good idea?)
+    for (kk in seq(along = thrList)) {
+      FP[rr, kk] <- maxFP(pvalsRR, thrList[[kk]])
+    }
+    R[rr] <- length(pvalsRR)
+  }
+  data.frame(network = rownames(reg), size = R, R - FP, check.names = FALSE)
+}
+```
+
+
+```{r posthoc-bounds-atlas}
+bounds <- getPosthocBounds(brainAtlas, pvals, thrs)
+```
+
+In this particular case some signal is revealed by the post hoc bound for `r sum(bounds$TP.Linear != 0)` newtorks for permutation-based approaches:
+
+```{r posthoc-bounds-atlas-table}
+ww <- which(bounds$Linear>0)
+cap <- sprintf("Lower bounds on the numer of true positives in %s brain regions.",
+               length(ww))
+knitr::kable(bounds[ww, ], caption = cap)
+```
+
+Here again, ARI is outperformed by permutation-based approaches which are able to adapt to unknown dependency: for the same target risk level ($\alpha = `r alpha`$), both permutation-based bounds are much less conservative than the classical Simes/ARI bound.
+
+# Session information
+
+```{r session-info}
+sessionInfo()
+```
+
+# References
