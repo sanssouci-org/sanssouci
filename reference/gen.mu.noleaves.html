@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.6</span>
       </span>
     </div>
 
@@ -104,10 +104,13 @@
       <a href="../articles/jointErrorRateCalibration_simulations.html">Joint Error Rate calibration</a>
     </li>
     <li>
-      <a href="../articles/stepDownControl.html">Step-down joint Family-Wise Error Rate control</a>
+      <a href="../articles/post-hoc_differential-expression.html">Permutation-based post hoc inference for differential gene expression studies</a>
     </li>
     <li>
-      <a href="../articles/two-sample.html">Post hoc inference for differential gene expression studies</a>
+      <a href="../articles/post-hoc_fMRI.html">Permutation-based post hoc inference for fMRI studies</a>
+    </li>
+    <li>
+      <a href="../articles/stepDownControl.html">Step-down joint Family-Wise Error Rate control</a>
     </li>
   </ul>
 </li>
@@ -136,7 +139,7 @@
     <p>Generate an unstructured signal</p>
     </div>
 
-    <pre class="usage"><span class='fu'>gen.mu.noleaves</span>(<span class='kw'>m</span>, <span class='kw'>pi0</span>, <span class='kw'>barmu</span>)</pre>
+    <pre class="usage"><span class='fu'>gen.mu.noleaves</span><span class='op'>(</span><span class='va'>m</span>, <span class='va'>pi0</span>, <span class='va'>barmu</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -160,11 +163,11 @@
     <p>A numeric vector of length <code>m</code>, the signal values for each hypothesis</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fl'>100</span>
-<span class='kw'>pi0</span> <span class='op'>&lt;-</span> <span class='fl'>0.7</span>
-<span class='kw'>barmu</span> <span class='op'>&lt;-</span> <span class='fl'>4</span>
-<span class='kw'>mu</span> <span class='op'>&lt;-</span> <span class='fu'>gen.mu.noleaves</span>(m = <span class='kw'>m</span>, pi0 = <span class='kw'>pi0</span>, barmu = <span class='kw'>barmu</span>) 
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='kw'>mu</span>)
+    <pre class="examples"><div class='input'><span class='va'>m</span> <span class='op'>&lt;-</span> <span class='fl'>100</span>
+<span class='va'>pi0</span> <span class='op'>&lt;-</span> <span class='fl'>0.7</span>
+<span class='va'>barmu</span> <span class='op'>&lt;-</span> <span class='fl'>4</span>
+<span class='va'>mu</span> <span class='op'>&lt;-</span> <span class='fu'>gen.mu.noleaves</span><span class='op'>(</span>m <span class='op'>=</span> <span class='va'>m</span>, pi0 <span class='op'>=</span> <span class='va'>pi0</span>, barmu <span class='op'>=</span> <span class='va'>barmu</span><span class='op'>)</span> 
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>mu</span><span class='op'>)</span>
 </div><div class='img'><img src='gen.mu.noleaves-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -181,7 +184,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

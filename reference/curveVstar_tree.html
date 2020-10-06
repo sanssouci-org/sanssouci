@@ -75,7 +75,7 @@ noise" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.6</span>
       </span>
     </div>
 
@@ -107,10 +107,13 @@ noise" />
       <a href="../articles/jointErrorRateCalibration_simulations.html">Joint Error Rate calibration</a>
     </li>
     <li>
-      <a href="../articles/stepDownControl.html">Step-down joint Family-Wise Error Rate control</a>
+      <a href="../articles/post-hoc_differential-expression.html">Permutation-based post hoc inference for differential gene expression studies</a>
     </li>
     <li>
-      <a href="../articles/two-sample.html">Post hoc inference for differential gene expression studies</a>
+      <a href="../articles/post-hoc_fMRI.html">Permutation-based post hoc inference for fMRI studies</a>
+    </li>
+    <li>
+      <a href="../articles/stepDownControl.html">Step-down joint Family-Wise Error Rate control</a>
     </li>
   </ul>
 </li>
@@ -141,7 +144,7 @@ noise</h1>
 noise</p>
     </div>
 
-    <pre class="usage"><span class='fu'>curveVstar_tree</span>(<span class='kw'>treeFam</span>, <span class='kw'>ordering</span>)</pre>
+    <pre class="usage"><span class='fu'>curveVstar_tree</span><span class='op'>(</span><span class='va'>treeFam</span>, <span class='va'>ordering</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -164,44 +167,44 @@ noise</p>
   of the first \(k\) hypotheses according to the specified ordering</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fl'>500</span>
-<span class='kw'>s</span> <span class='op'>&lt;-</span> <span class='fl'>50</span>
-<span class='kw'>K1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>floor</a></span>(<span class='kw'>m</span><span class='op'>/</span>(<span class='kw'>s</span> <span class='op'>*</span> <span class='fl'>4</span>))
-<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>
-<span class='kw'>m1</span> <span class='op'>&lt;-</span> <span class='kw'>s</span><span class='op'>*</span><span class='kw'>K1</span><span class='op'>*</span><span class='kw'>d</span>
-<span class='kw'>barmu</span> <span class='op'>&lt;-</span> <span class='fl'>4</span>
-<span class='kw'>dd</span> <span class='op'>&lt;-</span> <span class='fu'><a href='dyadic.html'>dyadic.from.window.size</a></span>(<span class='kw'>m</span>, <span class='kw'>s</span>, method = <span class='fl'>2</span>)
-<span class='kw'>leaf_list</span> <span class='op'>&lt;-</span> <span class='kw'>dd</span><span class='op'>$</span><span class='kw'>leaf_list</span>
-<span class='kw'>mu</span> <span class='op'>&lt;-</span> <span class='fu'><a href='gen.mu.leaves.html'>gen.mu.leaves</a></span>(m = <span class='kw'>m</span>, K1 = <span class='kw'>K1</span>, d = <span class='kw'>d</span>,
-  grouped = <span class='fl'>TRUE</span>, setting = <span class='st'>"const"</span>,
-  barmu = <span class='kw'>barmu</span>, leaf_list =<span class='kw'>leaf_list</span>)
-<span class='kw'>pvals</span> <span class='op'>&lt;-</span> <span class='fu'><a href='gen.p.values.html'>gen.p.values</a></span>(m = <span class='kw'>m</span>, mu = <span class='kw'>mu</span>, rho = <span class='fl'>0</span>)
-<span class='kw'>alpha</span> <span class='op'>&lt;-</span> <span class='fl'>0.1</span>
-<span class='kw'>ZL</span> <span class='op'>&lt;-</span> <span class='fu'><a href='zetas.tree.html'>zetas.tree</a></span>(<span class='kw'>dd</span><span class='op'>$</span><span class='kw'>C</span>, <span class='kw'>leaf_list</span>, <span class='kw'>zeta.DKWM</span>, <span class='kw'>pvals</span>, alpha = <span class='kw'>alpha</span>)
-<span class='kw'>treeFam</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(tree = <span class='kw'>dd</span><span class='op'>$</span><span class='kw'>C</span>, leaves = <span class='kw'>leaf_list</span>, zetas = <span class='kw'>ZL</span>)
+    <pre class="examples"><div class='input'><span class='va'>m</span> <span class='op'>&lt;-</span> <span class='fl'>500</span>
+<span class='va'>s</span> <span class='op'>&lt;-</span> <span class='fl'>50</span>
+<span class='va'>K1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>floor</a></span><span class='op'>(</span><span class='va'>m</span><span class='op'>/</span><span class='op'>(</span><span class='va'>s</span> <span class='op'>*</span> <span class='fl'>4</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>d</span> <span class='op'>&lt;-</span> <span class='fl'>1</span>
+<span class='va'>m1</span> <span class='op'>&lt;-</span> <span class='va'>s</span><span class='op'>*</span><span class='va'>K1</span><span class='op'>*</span><span class='va'>d</span>
+<span class='va'>barmu</span> <span class='op'>&lt;-</span> <span class='fl'>4</span>
+<span class='va'>dd</span> <span class='op'>&lt;-</span> <span class='fu'><a href='dyadic.html'>dyadic.from.window.size</a></span><span class='op'>(</span><span class='va'>m</span>, <span class='va'>s</span>, method <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
+<span class='va'>leaf_list</span> <span class='op'>&lt;-</span> <span class='va'>dd</span><span class='op'>$</span><span class='va'>leaf_list</span>
+<span class='va'>mu</span> <span class='op'>&lt;-</span> <span class='fu'><a href='gen.mu.leaves.html'>gen.mu.leaves</a></span><span class='op'>(</span>m <span class='op'>=</span> <span class='va'>m</span>, K1 <span class='op'>=</span> <span class='va'>K1</span>, d <span class='op'>=</span> <span class='va'>d</span>,
+  grouped <span class='op'>=</span> <span class='cn'>TRUE</span>, setting <span class='op'>=</span> <span class='st'>"const"</span>,
+  barmu <span class='op'>=</span> <span class='va'>barmu</span>, leaf_list <span class='op'>=</span><span class='va'>leaf_list</span><span class='op'>)</span>
+<span class='va'>pvals</span> <span class='op'>&lt;-</span> <span class='fu'><a href='gen.p.values.html'>gen.p.values</a></span><span class='op'>(</span>m <span class='op'>=</span> <span class='va'>m</span>, mu <span class='op'>=</span> <span class='va'>mu</span>, rho <span class='op'>=</span> <span class='fl'>0</span><span class='op'>)</span>
+<span class='va'>alpha</span> <span class='op'>&lt;-</span> <span class='fl'>0.1</span>
+<span class='va'>ZL</span> <span class='op'>&lt;-</span> <span class='fu'><a href='zetas.tree.html'>zetas.tree</a></span><span class='op'>(</span><span class='va'>dd</span><span class='op'>$</span><span class='va'>C</span>, <span class='va'>leaf_list</span>, <span class='va'>zeta.DKWM</span>, <span class='va'>pvals</span>, alpha <span class='op'>=</span> <span class='va'>alpha</span><span class='op'>)</span>
+<span class='va'>treeFam</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>tree <span class='op'>=</span> <span class='va'>dd</span><span class='op'>$</span><span class='va'>C</span>, leaves <span class='op'>=</span> <span class='va'>leaf_list</span>, zetas <span class='op'>=</span> <span class='va'>ZL</span><span class='op'>)</span>
 <span class='co'># order by p-value (favorable to Simes)</span>
-<span class='kw'>op</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span>(<span class='kw'>pvals</span>)
-<span class='kw'>Vp</span> <span class='op'>&lt;-</span> <span class='fu'>curveVstar_tree</span>(<span class='kw'>treeFam</span>, <span class='kw'>op</span>)
+<span class='va'>op</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span><span class='op'>(</span><span class='va'>pvals</span><span class='op'>)</span>
+<span class='va'>Vp</span> <span class='op'>&lt;-</span> <span class='fu'>curveVstar_tree</span><span class='op'>(</span><span class='va'>treeFam</span>, <span class='va'>op</span><span class='op'>)</span>
 
 <span class='co'># Simes</span>
-<span class='kw'>ce</span> <span class='op'>&lt;-</span> <span class='fu'><a href='confidenceEnvelope.html'>confidenceEnvelope</a></span>(<span class='kw'>pvals</span>, refFamily = <span class='st'>"Simes"</span>, param = <span class='kw'>alpha</span>, what = <span class='st'>"FP"</span>)
-<span class='kw'>VpS</span> <span class='op'>&lt;-</span> <span class='kw'>ce</span><span class='op'>$</span><span class='kw'>bound</span>
+<span class='va'>ce</span> <span class='op'>&lt;-</span> <span class='fu'><a href='confidenceEnvelope.html'>confidenceEnvelope</a></span><span class='op'>(</span><span class='va'>pvals</span>, refFamily <span class='op'>=</span> <span class='st'>"Simes"</span>, param <span class='op'>=</span> <span class='va'>alpha</span>, what <span class='op'>=</span> <span class='st'>"FP"</span><span class='op'>)</span>
+<span class='va'>VpS</span> <span class='op'>&lt;-</span> <span class='va'>ce</span><span class='op'>$</span><span class='va'>bound</span>
 
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='kw'>m</span>, <span class='fl'>1</span><span class='op'>:</span><span class='kw'>m</span><span class='op'>-</span><span class='kw'>Vp</span>, t = <span class='st'>'s'</span>,
-     xlim = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>, <span class='fl'>2</span><span class='op'>*</span><span class='kw'>m1</span>), ylim = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>, <span class='kw'>m1</span>))
-</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/lines.html'>lines</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='kw'>m</span>, <span class='fl'>1</span><span class='op'>:</span><span class='kw'>m</span><span class='op'>-</span><span class='kw'>VpS</span>, t = <span class='st'>'s'</span>, col = <span class='fl'>3</span>)
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='va'>m</span>, <span class='fl'>1</span><span class='op'>:</span><span class='va'>m</span><span class='op'>-</span><span class='va'>Vp</span>, t <span class='op'>=</span> <span class='st'>'s'</span>,
+     xlim <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>2</span><span class='op'>*</span><span class='va'>m1</span><span class='op'>)</span>, ylim <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='va'>m1</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/lines.html'>lines</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='va'>m</span>, <span class='fl'>1</span><span class='op'>:</span><span class='va'>m</span><span class='op'>-</span><span class='va'>VpS</span>, t <span class='op'>=</span> <span class='st'>'s'</span>, col <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>
 </div><div class='img'><img src='curveVstar_tree-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'># order by 'mu' (favorable to DKWM)</span>
-<span class='kw'>omu</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span>(<span class='kw'>mu</span>, decreasing = <span class='fl'>TRUE</span>)
-<span class='kw'>Vmu</span> <span class='op'>&lt;-</span> <span class='fu'>curveVstar_tree</span>(<span class='kw'>treeFam</span>, <span class='kw'>omu</span>)
-<span class='kw'>thrSimes</span> <span class='op'>&lt;-</span> <span class='fu'><a href='SimesThresholdFamily.html'>SimesThresholdFamily</a></span>(<span class='kw'>m</span>)(<span class='kw'>alpha</span>)
+<span class='va'>omu</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/order.html'>order</a></span><span class='op'>(</span><span class='va'>mu</span>, decreasing <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='va'>Vmu</span> <span class='op'>&lt;-</span> <span class='fu'>curveVstar_tree</span><span class='op'>(</span><span class='va'>treeFam</span>, <span class='va'>omu</span><span class='op'>)</span>
+<span class='va'>thrSimes</span> <span class='op'>&lt;-</span> <span class='fu'><a href='SimesThresholdFamily.html'>SimesThresholdFamily</a></span><span class='op'>(</span><span class='va'>m</span><span class='op'>)</span><span class='op'>(</span><span class='va'>alpha</span><span class='op'>)</span>
 <span class='co'>#VmuS &lt;- curveMaxFP(pvals[omu], thrSimes) # does not work as pvals[omu] can be non-increasing ??</span>
 <span class='co'>#VmuS &lt;- curveMaxFP(pvals[omu], thrSimes, flavor = "BNR2014") # works but is slow!</span>
-<span class='kw'>SmuS</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>sapply</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='kw'>m</span>, FUN=<span class='fu'>function</span>(<span class='kw'>kk</span>) <span class='fu'><a href='posthocBySimes0Rcpp.html'>posthocBySimes</a></span>(<span class='kw'>pvals</span>, <span class='kw'>omu</span>[<span class='fl'>1</span><span class='op'>:</span><span class='kw'>kk</span>], <span class='kw'>alpha</span>))
+<span class='va'>SmuS</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>sapply</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='va'>m</span>, FUN<span class='op'>=</span><span class='kw'>function</span><span class='op'>(</span><span class='va'>kk</span><span class='op'>)</span> <span class='fu'><a href='posthocBySimes0Rcpp.html'>posthocBySimes</a></span><span class='op'>(</span><span class='va'>pvals</span>, <span class='va'>omu</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='va'>kk</span><span class='op'>]</span>, <span class='va'>alpha</span><span class='op'>)</span><span class='op'>)</span>
 
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='kw'>m</span>, <span class='fl'>1</span><span class='op'>:</span><span class='kw'>m</span><span class='op'>-</span><span class='kw'>Vmu</span>, t = <span class='st'>'s'</span>,
-     xlim = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>, <span class='fl'>2</span><span class='op'>*</span><span class='kw'>m1</span>), ylim = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>, <span class='kw'>m1</span>))
-</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/lines.html'>lines</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='kw'>m</span>, <span class='kw'>SmuS</span>, t = <span class='st'>'s'</span>, col = <span class='fl'>3</span>)
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='va'>m</span>, <span class='fl'>1</span><span class='op'>:</span><span class='va'>m</span><span class='op'>-</span><span class='va'>Vmu</span>, t <span class='op'>=</span> <span class='st'>'s'</span>,
+     xlim <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>2</span><span class='op'>*</span><span class='va'>m1</span><span class='op'>)</span>, ylim <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='va'>m1</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/lines.html'>lines</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='va'>m</span>, <span class='va'>SmuS</span>, t <span class='op'>=</span> <span class='st'>'s'</span>, col <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>
 </div><div class='img'><img src='curveVstar_tree-2.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -218,7 +221,7 @@ noise</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

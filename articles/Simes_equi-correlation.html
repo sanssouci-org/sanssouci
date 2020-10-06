@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.6</span>
       </span>
     </div>
 
@@ -63,10 +63,13 @@
       <a href="../articles/jointErrorRateCalibration_simulations.html">Joint Error Rate calibration</a>
     </li>
     <li>
-      <a href="../articles/stepDownControl.html">Step-down joint Family-Wise Error Rate control</a>
+      <a href="../articles/post-hoc_differential-expression.html">Permutation-based post hoc inference for differential gene expression studies</a>
     </li>
     <li>
-      <a href="../articles/two-sample.html">Post hoc inference for differential gene expression studies</a>
+      <a href="../articles/post-hoc_fMRI.html">Permutation-based post hoc inference for fMRI studies</a>
+    </li>
+    <li>
+      <a href="../articles/stepDownControl.html">Step-down joint Family-Wise Error Rate control</a>
     </li>
   </ul>
 </li>
@@ -87,7 +90,7 @@
       <h1 data-toc-skip>Conservativeness of the Simes inequality under positive dependence</h1>
                         <h4 class="author">P. Neuvial</h4>
             
-            <h4 class="date">2020-09-10</h4>
+            <h4 class="date">2020-10-06</h4>
       
       
       <div class="hidden name"><code>Simes_equi-correlation.Rmd</code></div>
@@ -114,33 +117,29 @@
 <h2 class="hasAnchor">
 <a href="#estimating-the-size-of-the-simes-test" class="anchor"></a>Estimating the size of the Simes test</h2>
 <div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"sansSouci"</span>)
-</pre></div>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st">"sansSouci"</span><span class="op">)</span></pre></div>
 <pre><code>## 
 ## Attaching package: 'sansSouci'</code></pre>
 <pre><code>## The following object is masked from 'package:datasets':
 ## 
 ##     volcano</code></pre>
 <div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st"><a href="https://github.com/HenrikBengtsson/matrixStats">"matrixStats"</a></span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st"><a href="https://yihui.org/knitr">"knitr"</a></span>)
-</pre></div>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/HenrikBengtsson/matrixStats">"matrixStats"</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://yihui.org/knitr/">"knitr"</a></span><span class="op">)</span></pre></div>
 <p>We write a small function to estimate the size of the Simes test, that is, the level actually achieved by the left-hand side in the above inequality.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="kw">size</span> <span class="op">&lt;-</span> <span class="fu">function</span>(<span class="kw">rho</span>, <span class="kw">m</span>, <span class="kw">B</span>, <span class="kw">alpha</span>=<span class="fl">0.05</span>) {
-    <span class="kw">X0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gaussianTestStatistics.html">gaussianTestStatistics</a></span>(<span class="kw">m</span>, <span class="kw">B</span>, dep = <span class="st">"equi"</span>, param = <span class="kw">rho</span>)<span class="op">$</span><span class="kw">X0</span>
-    <span class="kw">p0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">pnorm</a></span>(<span class="kw">X0</span>, lower.tail = <span class="fl">FALSE</span>)
-    <span class="kw">sk</span> <span class="op">&lt;-</span> <span class="kw">sansSouci</span>::<span class="fu"><a href="../reference/SimesThresholdFamily.html">SimesThresholdFamily</a></span>(<span class="kw">m</span>, kMax = <span class="kw">m</span>)
-    <span class="kw">sansSouci</span>:::<span class="fu">empiricalCoverage</span>(<span class="fu">sk</span>(<span class="kw">alpha</span>), <span class="kw">X0</span>)
-}
-</pre></div>
+<span class="va">size</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">rho</span>, <span class="va">m</span>, <span class="va">B</span>, <span class="va">alpha</span><span class="op">=</span><span class="fl">0.05</span><span class="op">)</span> <span class="op">{</span>
+    <span class="va">X0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gaussianTestStatistics.html">gaussianTestStatistics</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">B</span>, dep <span class="op">=</span> <span class="st">"equi"</span>, param <span class="op">=</span> <span class="va">rho</span><span class="op">)</span><span class="op">$</span><span class="va">X0</span>
+    <span class="va">p0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">pnorm</a></span><span class="op">(</span><span class="va">X0</span>, lower.tail <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+    <span class="va">sk</span> <span class="op">&lt;-</span> <span class="fu">sansSouci</span><span class="fu">::</span><span class="fu"><a href="../reference/SimesThresholdFamily.html">SimesThresholdFamily</a></span><span class="op">(</span><span class="va">m</span>, kMax <span class="op">=</span> <span class="va">m</span><span class="op">)</span>
+    <span class="fu">sansSouci</span><span class="fu">:::</span><span class="fu">empiricalCoverage</span><span class="op">(</span><span class="fu">sk</span><span class="op">(</span><span class="va">alpha</span><span class="op">)</span>, <span class="va">X0</span><span class="op">)</span>
+<span class="op">}</span></pre></div>
 <p>Our simulation parameters are set as follows:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="kw">m</span> <span class="op">&lt;-</span> <span class="fl">1e3</span>
-<span class="kw">rhos</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.4</span>, <span class="fl">0.8</span>)
-<span class="kw">alpha</span> <span class="op">&lt;-</span> <span class="fl">0.2</span>
-<span class="kw">B</span> <span class="op">&lt;-</span> <span class="fl">10000</span>
-</pre></div>
+<span class="va">m</span> <span class="op">&lt;-</span> <span class="fl">1e3</span>
+<span class="va">rhos</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.4</span>, <span class="fl">0.8</span><span class="op">)</span>
+<span class="va">alpha</span> <span class="op">&lt;-</span> <span class="fl">0.2</span>
+<span class="va">B</span> <span class="op">&lt;-</span> <span class="fl">10000</span></pre></div>
 <p>That is:</p>
 <ul>
 <li>
@@ -153,16 +152,14 @@
 <span class="math inline">\(10^{4}\)</span> replications are used to estimate the size of the test</li>
 </ul>
 <div class="sourceCode" id="cb7"><pre class="downlit">
-<span class="kw">ahat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span>(<span class="kw">rhos</span>, <span class="kw">size</span>, <span class="kw">m</span>, <span class="kw">B</span>, alpha=<span class="kw">alpha</span>)
-<span class="kw">ses</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span>(<span class="kw">ahat</span><span class="op">*</span>(<span class="fl">1</span><span class="op">-</span><span class="kw">ahat</span>)<span class="op">/</span><span class="kw">B</span>)
-</pre></div>
+<span class="va">ahat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">rhos</span>, <span class="va">size</span>, <span class="va">m</span>, <span class="va">B</span>, alpha<span class="op">=</span><span class="va">alpha</span><span class="op">)</span>
+<span class="va">ses</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="va">ahat</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">ahat</span><span class="op">)</span><span class="op">/</span><span class="va">B</span><span class="op">)</span></pre></div>
 <p>We estimate the size of the test as the average size <span class="math inline">\(\hat{\alpha}\)</span> achieved across replications, and the corresponding standard error as <span class="math inline">\(\sqrt{\hat{\alpha}(1-\hat{\alpha})/B}\)</span>.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="kw">tb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span>(<span class="kw">ahat</span><span class="op">/</span><span class="kw">alpha</span>, <span class="kw">ses</span><span class="op">/</span><span class="kw">alpha</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(<span class="kw">tb</span>) <span class="op">&lt;-</span> <span class="kw">rhos</span>
-<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span>(<span class="kw">tb</span>) <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Achieved level/target level"</span>, <span class="st">"Standard error"</span>)
-<span class="kw">knitr</span>::<span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>(<span class="kw">tb</span>, digits = <span class="fl">2</span>)
-</pre></div>
+<span class="va">tb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">ahat</span><span class="op">/</span><span class="va">alpha</span>, <span class="va">ses</span><span class="op">/</span><span class="va">alpha</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">tb</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">rhos</span>
+<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">tb</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Achieved level/target level"</span>, <span class="st">"Standard error"</span><span class="op">)</span>
+<span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="va">tb</span>, digits <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left"></th>
@@ -197,11 +194,10 @@
 <h2 class="hasAnchor">
 <a href="#session-information" class="anchor"></a>Session information</h2>
 <div class="sourceCode" id="cb9"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span>()
-</pre></div>
+<span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></pre></div>
 <pre><code>## R version 4.0.2 (2020-06-22)
 ## Platform: x86_64-apple-darwin17.0 (64-bit)
-## Running under: macOS Catalina 10.15.6
+## Running under: macOS Catalina 10.15.7
 ## 
 ## Matrix products: default
 ## BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
@@ -214,17 +210,17 @@
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] knitr_1.29         matrixStats_0.56.0 sansSouci_0.8.5   
+## [1] knitr_1.30         matrixStats_0.57.0 sansSouci_0.8.6   
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_1.0.5        cpp11_0.2.1       magrittr_1.5      lattice_0.20-41  
-##  [5] R6_2.4.1          ragg_0.3.1        rlang_0.4.7       highr_0.8        
-##  [9] stringr_1.4.0     tools_4.0.2       grid_4.0.2        xfun_0.17        
-## [13] htmltools_0.5.0   systemfonts_0.3.1 yaml_2.2.1        assertthat_0.2.1 
-## [17] rprojroot_1.3-2   digest_0.6.25     pkgdown_1.6.0     crayon_1.3.4     
+##  [1] Rcpp_1.0.5        magrittr_1.5      lattice_0.20-41   R6_2.4.1         
+##  [5] ragg_0.4.0        rlang_0.4.7       highr_0.8         stringr_1.4.0    
+##  [9] tools_4.0.2       grid_4.0.2        xfun_0.18         htmltools_0.5.0  
+## [13] systemfonts_0.3.2 yaml_2.2.1        assertthat_0.2.1  rprojroot_1.3-2  
+## [17] digest_0.6.25     pkgdown_1.6.1     crayon_1.3.4      textshaping_0.1.1
 ## [21] Matrix_1.2-18     fs_1.5.0          memoise_1.1.0     evaluate_0.14    
-## [25] rmarkdown_2.3     stringi_1.5.3     compiler_4.0.2    desc_1.2.0       
-## [29] backports_1.1.9</code></pre>
+## [25] rmarkdown_2.4     stringi_1.5.3     compiler_4.0.2    desc_1.2.0       
+## [29] backports_1.1.10</code></pre>
 </div>
 <div id="references" class="section level2 unnumbered">
 <h2 class="hasAnchor">
@@ -255,7 +251,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

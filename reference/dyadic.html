@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.6</span>
       </span>
     </div>
 
@@ -104,10 +104,13 @@
       <a href="../articles/jointErrorRateCalibration_simulations.html">Joint Error Rate calibration</a>
     </li>
     <li>
-      <a href="../articles/stepDownControl.html">Step-down joint Family-Wise Error Rate control</a>
+      <a href="../articles/post-hoc_differential-expression.html">Permutation-based post hoc inference for differential gene expression studies</a>
     </li>
     <li>
-      <a href="../articles/two-sample.html">Post hoc inference for differential gene expression studies</a>
+      <a href="../articles/post-hoc_fMRI.html">Permutation-based post hoc inference for fMRI studies</a>
+    </li>
+    <li>
+      <a href="../articles/stepDownControl.html">Step-down joint Family-Wise Error Rate control</a>
     </li>
   </ul>
 </li>
@@ -136,11 +139,11 @@
     <p>Create a complete dyadic tree structure</p>
     </div>
 
-    <pre class="usage"><span class='fu'>dyadic.from.window.size</span>(<span class='kw'>m</span>, <span class='kw'>s</span>, <span class='kw'>method</span>)
+    <pre class="usage"><span class='fu'>dyadic.from.window.size</span><span class='op'>(</span><span class='va'>m</span>, <span class='va'>s</span>, <span class='va'>method</span><span class='op'>)</span>
 
-<span class='fu'>dyadic.from.height</span>(<span class='kw'>m</span>, <span class='kw'>H</span>, <span class='kw'>method</span>)
+<span class='fu'>dyadic.from.height</span><span class='op'>(</span><span class='va'>m</span>, <span class='va'>H</span>, <span class='va'>method</span><span class='op'>)</span>
 
-<span class='fu'>dyadic.from.max.height</span>(<span class='kw'>m</span>, <span class='kw'>method</span>)</pre>
+<span class='fu'>dyadic.from.max.height</span><span class='op'>(</span><span class='va'>m</span>, <span class='va'>method</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -186,9 +189,9 @@ size as long as possible</p></td>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fl'>6</span>
-<span class='kw'>dd</span> <span class='op'>&lt;-</span> <span class='fu'>dyadic.from.window.size</span>(<span class='kw'>m</span>, s = <span class='fl'>2</span>, method = <span class='fl'>2</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='kw'>dd</span>)
+    <pre class="examples"><div class='input'><span class='va'>m</span> <span class='op'>&lt;-</span> <span class='fl'>6</span>
+<span class='va'>dd</span> <span class='op'>&lt;-</span> <span class='fu'>dyadic.from.window.size</span><span class='op'>(</span><span class='va'>m</span>, s <span class='op'>=</span> <span class='fl'>2</span>, method <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>dd</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; List of 2
 #&gt;  $ leaf_list:List of 3
 #&gt;   ..$ : num [1:2] 1 2
@@ -204,8 +207,8 @@ size as long as possible</p></td>
 #&gt;   .. ..$ : num [1:2] 1 1
 #&gt;   .. ..$ : num [1:2] 2 2
 #&gt;   .. ..$ : num [1:2] 3 3</div><div class='input'>
-<span class='kw'>dd</span> <span class='op'>&lt;-</span> <span class='fu'>dyadic.from.height</span>(<span class='kw'>m</span>, H = <span class='fl'>3</span>, method = <span class='fl'>2</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='kw'>dd</span>)
+<span class='va'>dd</span> <span class='op'>&lt;-</span> <span class='fu'>dyadic.from.height</span><span class='op'>(</span><span class='va'>m</span>, H <span class='op'>=</span> <span class='fl'>3</span>, method <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>dd</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; List of 2
 #&gt;  $ leaf_list:List of 4
 #&gt;   ..$ : num [1:2] 1 2
@@ -223,8 +226,8 @@ size as long as possible</p></td>
 #&gt;   .. ..$ : num [1:2] 2 2
 #&gt;   .. ..$ : num [1:2] 3 3
 #&gt;   .. ..$ : num [1:2] 4 4</div><div class='input'>
-<span class='kw'>dd</span> <span class='op'>&lt;-</span> <span class='fu'>dyadic.from.max.height</span>(<span class='kw'>m</span>, method=<span class='fl'>2</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span>(<span class='kw'>dd</span>)
+<span class='va'>dd</span> <span class='op'>&lt;-</span> <span class='fu'>dyadic.from.max.height</span><span class='op'>(</span><span class='va'>m</span>, method<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>dd</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; List of 2
 #&gt;  $ leaf_list:List of 6
 #&gt;   ..$ : int 1
@@ -251,7 +254,7 @@ size as long as possible</p></td>
 #&gt;   .. ..$ : num [1:2] 4 4
 #&gt;   .. ..$ : num [1:2] 5 5
 #&gt;   .. ..$ : num [1:2] 6 6</div><div class='input'>
-<span class='kw'>leaf_list</span> <span class='op'>&lt;-</span> <span class='kw'>dd</span><span class='op'>$</span><span class='kw'>leaf_list</span>
+<span class='va'>leaf_list</span> <span class='op'>&lt;-</span> <span class='va'>dd</span><span class='op'>$</span><span class='va'>leaf_list</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -268,7 +271,7 @@ size as long as possible</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

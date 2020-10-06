@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.6</span>
       </span>
     </div>
 
@@ -104,10 +104,13 @@
       <a href="../articles/jointErrorRateCalibration_simulations.html">Joint Error Rate calibration</a>
     </li>
     <li>
-      <a href="../articles/stepDownControl.html">Step-down joint Family-Wise Error Rate control</a>
+      <a href="../articles/post-hoc_differential-expression.html">Permutation-based post hoc inference for differential gene expression studies</a>
     </li>
     <li>
-      <a href="../articles/two-sample.html">Post hoc inference for differential gene expression studies</a>
+      <a href="../articles/post-hoc_fMRI.html">Permutation-based post hoc inference for fMRI studies</a>
+    </li>
+    <li>
+      <a href="../articles/stepDownControl.html">Step-down joint Family-Wise Error Rate control</a>
     </li>
   </ul>
 </li>
@@ -136,9 +139,9 @@
     <p>Estimate of the proportion of true nulls in each node of a tree</p>
     </div>
 
-    <pre class="usage"><span class='fu'>zetas.tree</span>(<span class='kw'>C</span>, <span class='kw'>leaf_list</span>, <span class='kw'>method</span>, <span class='kw'>pvalues</span>, <span class='kw'>alpha</span>)
+    <pre class="usage"><span class='fu'>zetas.tree</span><span class='op'>(</span><span class='va'>C</span>, <span class='va'>leaf_list</span>, <span class='va'>method</span>, <span class='va'>pvalues</span>, <span class='va'>alpha</span><span class='op'>)</span>
 
-<span class='fu'>zetas.tree.refined</span>(<span class='kw'>C</span>, <span class='kw'>leaf_list</span>, <span class='kw'>method</span>, <span class='kw'>pvalues</span>, <span class='kw'>alpha</span>)</pre>
+<span class='fu'>zetas.tree.refined</span><span class='op'>(</span><span class='va'>C</span>, <span class='va'>leaf_list</span>, <span class='va'>method</span>, <span class='va'>pvalues</span>, <span class='va'>alpha</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -172,13 +175,13 @@
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='kw'>m</span> <span class='op'>&lt;-</span> <span class='fl'>1000</span> 
-<span class='kw'>dd</span> <span class='op'>&lt;-</span> <span class='fu'><a href='dyadic.html'>dyadic.from.window.size</a></span>(<span class='kw'>m</span>, s = <span class='fl'>10</span>, method = <span class='fl'>2</span>)
-<span class='kw'>leaf_list</span> <span class='op'>&lt;-</span> <span class='kw'>dd</span><span class='op'>$</span><span class='kw'>leaf_list</span>
-<span class='kw'>mu</span> <span class='op'>&lt;-</span> <span class='fu'><a href='gen.mu.leaves.html'>gen.mu.leaves</a></span>(<span class='kw'>m</span>, K1 = <span class='fl'>3</span>, d = <span class='fl'>1</span>, grouped = <span class='fl'>FALSE</span>, <span class='st'>"const"</span>, barmu = <span class='fl'>4</span>, <span class='kw'>leaf_list</span>)
-<span class='kw'>pvalues</span><span class='op'>&lt;-</span><span class='fu'><a href='gen.p.values.html'>gen.p.values</a></span>(<span class='kw'>m</span>, <span class='kw'>mu</span>, rho = <span class='fl'>0</span>)
-<span class='kw'>C</span> <span class='op'>&lt;-</span> <span class='kw'>dd</span><span class='op'>$</span><span class='kw'>C</span> 
-<span class='kw'>ZL</span><span class='op'>&lt;-</span><span class='fu'>zetas.tree</span>(<span class='kw'>C</span>, <span class='kw'>leaf_list</span>, <span class='kw'>zeta.DKWM</span>, <span class='kw'>pvalues</span>, alpha = <span class='fl'>0.05</span>)
+<span class='va'>m</span> <span class='op'>&lt;-</span> <span class='fl'>1000</span> 
+<span class='va'>dd</span> <span class='op'>&lt;-</span> <span class='fu'><a href='dyadic.html'>dyadic.from.window.size</a></span><span class='op'>(</span><span class='va'>m</span>, s <span class='op'>=</span> <span class='fl'>10</span>, method <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
+<span class='va'>leaf_list</span> <span class='op'>&lt;-</span> <span class='va'>dd</span><span class='op'>$</span><span class='va'>leaf_list</span>
+<span class='va'>mu</span> <span class='op'>&lt;-</span> <span class='fu'><a href='gen.mu.leaves.html'>gen.mu.leaves</a></span><span class='op'>(</span><span class='va'>m</span>, K1 <span class='op'>=</span> <span class='fl'>3</span>, d <span class='op'>=</span> <span class='fl'>1</span>, grouped <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='st'>"const"</span>, barmu <span class='op'>=</span> <span class='fl'>4</span>, <span class='va'>leaf_list</span><span class='op'>)</span>
+<span class='va'>pvalues</span><span class='op'>&lt;-</span><span class='fu'><a href='gen.p.values.html'>gen.p.values</a></span><span class='op'>(</span><span class='va'>m</span>, <span class='va'>mu</span>, rho <span class='op'>=</span> <span class='fl'>0</span><span class='op'>)</span>
+<span class='va'>C</span> <span class='op'>&lt;-</span> <span class='va'>dd</span><span class='op'>$</span><span class='va'>C</span> 
+<span class='va'>ZL</span><span class='op'>&lt;-</span><span class='fu'>zetas.tree</span><span class='op'>(</span><span class='va'>C</span>, <span class='va'>leaf_list</span>, <span class='va'>zeta.DKWM</span>, <span class='va'>pvalues</span>, alpha <span class='op'>=</span> <span class='fl'>0.05</span><span class='op'>)</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -195,7 +198,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

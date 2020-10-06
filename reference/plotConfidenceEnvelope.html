@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.6</span>
       </span>
     </div>
 
@@ -104,10 +104,13 @@
       <a href="../articles/jointErrorRateCalibration_simulations.html">Joint Error Rate calibration</a>
     </li>
     <li>
-      <a href="../articles/stepDownControl.html">Step-down joint Family-Wise Error Rate control</a>
+      <a href="../articles/post-hoc_differential-expression.html">Permutation-based post hoc inference for differential gene expression studies</a>
     </li>
     <li>
-      <a href="../articles/two-sample.html">Post hoc inference for differential gene expression studies</a>
+      <a href="../articles/post-hoc_fMRI.html">Permutation-based post hoc inference for fMRI studies</a>
+    </li>
+    <li>
+      <a href="../articles/stepDownControl.html">Step-down joint Family-Wise Error Rate control</a>
     </li>
   </ul>
 </li>
@@ -136,7 +139,7 @@
     <p>Plot confidence envelope</p>
     </div>
 
-    <pre class="usage"><span class='fu'>plotConfidenceEnvelope</span>(<span class='kw'>conf_env</span>, <span class='kw'>xmax</span>, cols = <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>plotConfidenceEnvelope</span><span class='op'>(</span><span class='va'>conf_env</span>, <span class='va'>xmax</span>, cols <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -160,25 +163,25 @@
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'># Generate Gaussian data and perform multiple tests</span>
-<span class='kw'>sim</span> <span class='op'>&lt;-</span> <span class='fu'><a href='gaussianSamples.html'>gaussianSamples</a></span>(m = <span class='fl'>502</span>, rho = <span class='fl'>0.3</span>, n = <span class='fl'>100</span>, pi0 = <span class='fl'>0.8</span>, SNR = <span class='fl'>3</span>, prob = <span class='fl'>0.5</span>)
-<span class='kw'>dat</span> <span class='op'>&lt;-</span> <span class='kw'>sim</span><span class='op'>$</span><span class='kw'>X</span>
-<span class='kw'>categ</span> <span class='op'>&lt;-</span> <span class='kw'>sim</span><span class='op'>$</span><span class='kw'>categ</span>
-<span class='kw'>rwt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='rowWelchTests.html'>rowWelchTests</a></span>(<span class='kw'>dat</span>, <span class='kw'>categ</span>, alternative = <span class='st'>"greater"</span>)
+<span class='va'>sim</span> <span class='op'>&lt;-</span> <span class='fu'><a href='gaussianSamples.html'>gaussianSamples</a></span><span class='op'>(</span>m <span class='op'>=</span> <span class='fl'>502</span>, rho <span class='op'>=</span> <span class='fl'>0.3</span>, n <span class='op'>=</span> <span class='fl'>100</span>, pi0 <span class='op'>=</span> <span class='fl'>0.8</span>, SNR <span class='op'>=</span> <span class='fl'>3</span>, prob <span class='op'>=</span> <span class='fl'>0.5</span><span class='op'>)</span>
+<span class='va'>dat</span> <span class='op'>&lt;-</span> <span class='va'>sim</span><span class='op'>$</span><span class='va'>X</span>
+<span class='va'>categ</span> <span class='op'>&lt;-</span> <span class='va'>sim</span><span class='op'>$</span><span class='va'>categ</span>
+<span class='va'>rwt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='rowWelchTests.html'>rowWelchTests</a></span><span class='op'>(</span><span class='va'>dat</span>, <span class='va'>categ</span>, alternative <span class='op'>=</span> <span class='st'>"greater"</span><span class='op'>)</span>
 
 <span class='co'># calculate and plot confidence envelope</span>
-<span class='kw'>alpha</span> <span class='op'>&lt;-</span> <span class='fl'>0.1</span>
-<span class='kw'>ce</span> <span class='op'>&lt;-</span> <span class='fu'><a href='confidenceEnvelope.html'>confidenceEnvelope</a></span>(<span class='kw'>rwt</span><span class='op'>$</span><span class='kw'>p.value</span>, refFamily = <span class='st'>"Simes"</span>, param = <span class='kw'>alpha</span>)
-<span class='fu'>plotConfidenceEnvelope</span>(<span class='kw'>ce</span>, xmax = <span class='fl'>200</span>) 
+<span class='va'>alpha</span> <span class='op'>&lt;-</span> <span class='fl'>0.1</span>
+<span class='va'>ce</span> <span class='op'>&lt;-</span> <span class='fu'><a href='confidenceEnvelope.html'>confidenceEnvelope</a></span><span class='op'>(</span><span class='va'>rwt</span><span class='op'>$</span><span class='va'>p.value</span>, refFamily <span class='op'>=</span> <span class='st'>"Simes"</span>, param <span class='op'>=</span> <span class='va'>alpha</span><span class='op'>)</span>
+<span class='fu'>plotConfidenceEnvelope</span><span class='op'>(</span><span class='va'>ce</span>, xmax <span class='op'>=</span> <span class='fl'>200</span><span class='op'>)</span> 
 </div><div class='img'><img src='plotConfidenceEnvelope-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'># calculate and plot several confidence envelopes</span>
-<span class='kw'>B</span> <span class='op'>&lt;-</span> <span class='fl'>100</span>
-<span class='kw'>cal</span> <span class='op'>&lt;-</span> <span class='fu'><a href='calibrateJER.html'>calibrateJER</a></span>(X = <span class='kw'>dat</span>, categ = <span class='kw'>categ</span>, B = <span class='kw'>B</span>, alpha = <span class='kw'>alpha</span>, refFamily = <span class='st'>"Simes"</span>)
-<span class='kw'>cal_beta</span> <span class='op'>&lt;-</span> <span class='fu'><a href='calibrateJER.html'>calibrateJER</a></span>(X = <span class='kw'>dat</span>, categ = <span class='kw'>categ</span>, B = <span class='kw'>B</span>, alpha = <span class='kw'>alpha</span>, refFamily = <span class='st'>"Beta"</span>, K = <span class='fl'>20</span>)
-<span class='kw'>cec</span> <span class='op'>&lt;-</span> <span class='fu'><a href='confidenceEnvelope.html'>confidenceEnvelope</a></span>(<span class='kw'>rwt</span><span class='op'>$</span><span class='kw'>p.value</span>, refFamily = <span class='st'>"Simes"</span>, param = <span class='kw'>cal</span><span class='op'>$</span><span class='kw'>lambda</span>)
-<span class='kw'>all_env</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='st'>"Simes"</span> = <span class='kw'>ce</span>, 
-                <span class='st'>"Simes + calibration"</span>= <span class='kw'>cal</span><span class='op'>$</span><span class='kw'>conf_env</span>, 
-                <span class='st'>"Beta + calibration"</span> = <span class='kw'>cal_beta</span><span class='op'>$</span><span class='kw'>conf_env</span>)
-<span class='fu'>plotConfidenceEnvelope</span>(<span class='kw'>all_env</span>, xmax = <span class='fl'>200</span>)
+<span class='va'>B</span> <span class='op'>&lt;-</span> <span class='fl'>100</span>
+<span class='va'>cal</span> <span class='op'>&lt;-</span> <span class='fu'><a href='calibrateJER.html'>calibrateJER</a></span><span class='op'>(</span>X <span class='op'>=</span> <span class='va'>dat</span>, categ <span class='op'>=</span> <span class='va'>categ</span>, B <span class='op'>=</span> <span class='va'>B</span>, alpha <span class='op'>=</span> <span class='va'>alpha</span>, refFamily <span class='op'>=</span> <span class='st'>"Simes"</span><span class='op'>)</span>
+<span class='va'>cal_beta</span> <span class='op'>&lt;-</span> <span class='fu'><a href='calibrateJER.html'>calibrateJER</a></span><span class='op'>(</span>X <span class='op'>=</span> <span class='va'>dat</span>, categ <span class='op'>=</span> <span class='va'>categ</span>, B <span class='op'>=</span> <span class='va'>B</span>, alpha <span class='op'>=</span> <span class='va'>alpha</span>, refFamily <span class='op'>=</span> <span class='st'>"Beta"</span>, K <span class='op'>=</span> <span class='fl'>20</span><span class='op'>)</span>
+<span class='va'>cec</span> <span class='op'>&lt;-</span> <span class='fu'><a href='confidenceEnvelope.html'>confidenceEnvelope</a></span><span class='op'>(</span><span class='va'>rwt</span><span class='op'>$</span><span class='va'>p.value</span>, refFamily <span class='op'>=</span> <span class='st'>"Simes"</span>, param <span class='op'>=</span> <span class='va'>cal</span><span class='op'>$</span><span class='va'>lambda</span><span class='op'>)</span>
+<span class='va'>all_env</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"Simes"</span> <span class='op'>=</span> <span class='va'>ce</span>, 
+                <span class='st'>"Simes + calibration"</span><span class='op'>=</span> <span class='va'>cal</span><span class='op'>$</span><span class='va'>conf_env</span>, 
+                <span class='st'>"Beta + calibration"</span> <span class='op'>=</span> <span class='va'>cal_beta</span><span class='op'>$</span><span class='va'>conf_env</span><span class='op'>)</span>
+<span class='fu'>plotConfidenceEnvelope</span><span class='op'>(</span><span class='va'>all_env</span>, xmax <span class='op'>=</span> <span class='fl'>200</span><span class='op'>)</span>
 </div><div class='img'><img src='plotConfidenceEnvelope-2.png' alt='' width='700' height='433' /></div><div class='input'>
 </div></pre>
   </div>
@@ -196,7 +199,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
