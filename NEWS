@@ -3,6 +3,10 @@
 Package: sansSouci
 ==================
 
+Version 0.8.6 [2020-10-06]
+
+* Use the sansSouci.data package in differential expression vignette
+
 Version 0.8.5 [2020-09-10]
 * 'calibrateJER' and 'testByRandomization' gained argument 'categ' so that the mapping between observations and samples (in the two-sample test case) is explicit
 * Some improvements in 'plotConfidenceEnvelopes'

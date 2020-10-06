@@ -9,7 +9,9 @@ output:
   pdf_document: default
 bibliography: sansSouci.bib
 vignette: |
-  %\VignetteIndexEntry{Post hoc inference for differential gene expression studies} %\VignetteEncoding{UTF-8} %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Post hoc inference for differential gene expression studies}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
 ---
   
 ```{r setup, include = FALSE}
@@ -187,7 +189,7 @@ As discussed in @blanchard20post-hoc, the above-described bound has two major li
 
 To bypass these limitations, @blanchard20post-hoc have proposed a randomization-based procedure known as $\lambda$-calibration, which yields tighter bounds that are adapted to the dependency observed in the data set at hand^[A related approach has been proposed by @HSG2019, but no implementation is currently available for this approach.]. In the case of two-sample tests, this calibration can be achieved by permutation of class labels:
 
-```{r calibration, cache=TRUE}
+```{r calibration}
 B <- 1000
 cal <- calibrateJER(X = dat, categ, B = B, alpha = alpha, refFamily = "Simes")
 ```
@@ -195,7 +197,7 @@ cal <- calibrateJER(X = dat, categ, B = B, alpha = alpha, refFamily = "Simes")
 
 An alternative to the Simes/Linear reference family is the Beta reference family:
 
-```{r calibration-beta, cache=TRUE}
+```{r calibration-beta}
 K <- 50
 cal_beta <- calibrateJER(X = dat, categ, B = B, alpha = alpha, refFamily = "Beta", K = K)
 ```
