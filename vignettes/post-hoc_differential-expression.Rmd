@@ -131,7 +131,7 @@ bh_plot +
 
 ## Basic posthoc bounds
 
-Post hoc inference makes it possible to build confidence statements on the number of true/false positives within any set $S$ of genes: $S$ may be selected after seing the data (e.g., $S$ may be the set of rejections by the BH prcedure), and multiple choices of $S$ are allowed. Post hoc inference has popularized by @GS2011. 
+Post hoc inference makes it possible to build confidence statements on the number of true/false positives within any set $S$ of genes: $S$ may be selected after seing the data (e.g., $S$ may be the set of rejections by the BH prcedure), and multiple choices of $S$ are allowed. Post hoc inference has been popularized by @GS2011. 
 
 
 ```{r basic-bounds-setup}

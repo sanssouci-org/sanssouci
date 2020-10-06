@@ -71,7 +71,7 @@ knitr::kable(table(categ))
 
 # Post hoc inference by the Simes inequality
 
-We start by calculating the basic Simes bound introduced by Goeman and Solari (2011). This bounds has already been used for fMRI data, see @rosenblatt2018ari. In that paper, post hoc inference (by the Simes inequality) is referred to as "All-resolutions inference" (ARI).
+We start by calculating the Simes bound introduced by @GS2011. This bound has already been applied to fMRI data, see @rosenblatt2018ari. In that paper, post hoc inference (by the Simes inequality) is referred to as "All-resolutions inference" (ARI).
 
 ```{r set-alpha}
 alpha <- 0.1
