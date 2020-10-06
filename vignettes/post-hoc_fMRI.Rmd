@@ -3,10 +3,10 @@ title: "Permutation-based post hoc inference for fMRI studies"
 author: "Alexandre Blain and Pierre Neuvial"
 date: "`r Sys.Date()`"
 output:
+  pdf_document: default
   rmarkdown::html_vignette:
     number_sections: yes
     toc: yes
-  pdf_document: default
   html_document:
     number_sections: yes
     toc: yes
@@ -178,7 +178,7 @@ In this particular case some signal is revealed by the post hoc bound for `r sum
 
 ```{r posthoc-bounds-atlas-table}
 ww <- which(bounds$Linear>0)
-cap <- sprintf("Lower bounds on the numer of true positives in %s brain regions.",
+cap <- sprintf("Lower bounds on the number of true positives in %s brain regions.",
                length(ww))
 knitr::kable(bounds[ww, ], caption = cap)
 ```
