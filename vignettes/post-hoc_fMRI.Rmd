@@ -174,7 +174,7 @@ getPosthocBounds <- function(reg, pvals, thrList) {
 bounds <- getPosthocBounds(brainAtlas, pvals, thrs)
 ```
 
-In this particular case some signal is revealed by the post hoc bound for `r sum(bounds$TP.Linear != 0)` newtorks for permutation-based approaches:
+In this particular case some signal is revealed by the post hoc bound for `r sum(bounds$Linear != 0)` networks for permutation-based approaches:
 
 ```{r posthoc-bounds-atlas-table}
 ww <- which(bounds$Linear>0)
