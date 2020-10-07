@@ -18,7 +18,6 @@ vignette: |
   %\VignetteEngine{knitr::rmarkdown}
 ---
 
-
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
 collapse = TRUE,
@@ -125,31 +124,30 @@ names(conf_envs)[3] <- sprintf("Beta (K=%s)", K)
 
 
 cols <- RColorBrewer::brewer.pal(length(conf_envs), "Dark2")
-plotConfidenceEnvelope(conf_envs, xmax = xmax, cols = cols)
+p <- plotConfidenceEnvelope(conf_envs, xmax = xmax, cols = cols)
+p + geom_line(size=1.5)
 ```
 
 In this example, ARI is outperformed by permutation-based approaches, which are able to adapt to unknown dependency: for the same target risk level ($\alpha = `r alpha`$), both permutation-based bounds are much less conservative than the classical Simes/ARI bound. 
 
-# Post hoc bounds on regions from brain atlases
+# Post hoc bounds on brain atlas areas
 
-The goal in this section is to calculate post hoc bound on user-defined brain regions. One definition of such regions is given by the [Havard-Oxford brain atlas](), which is available in the sansSouci.data package. 
-are given from the nilearn package in the form of brain atlases:
+The goal in this section is to calculate post hoc bound on user-defined brain regions. One definition of such regions is given by the [Harvard-Oxford brain atlas](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/Atlases), which is available from the sansSouci.data package. 
 
 ```{r load-atlas}
 data(brainAtlas, package = "sansSouci.data")
 ```
 
-This atlas is made of `r nrow(brainAtlas)` *areas*. We will compare the post hoc bounds obtained above:
+This atlas is made of `r nrow(brainAtlas)` areas. For each of these areas, we will calculate the three post hoc bounds obtained above. Note that by construction of post hoc bounds, these 48 bounds are valid simultaneously (in particular, no further multiple testing correction is required at this stage). 
 
 ```{r thr}
 thrs <- list("Simes/ARI" = SimesThresholdFamily(nrow(dat))(alpha),
              "Linear" = cal$thr,
              "Beta" = cal_beta$thr)
 names(thrs)[3] <- sprintf("Beta (K=%s)", K)
-
 ```
 
-For convenience we define a function to calculate these post hoc bounds for all networks from the chosen atlas.
+For convenience we define a function to calculate these post hoc bounds for all areas from the chosen atlas:
 
 ```{r get-posthoc-bounds}
 getPosthocBounds <- function(reg, pvals, thrList) {
@@ -165,7 +163,7 @@ getPosthocBounds <- function(reg, pvals, thrList) {
     }
     R[rr] <- length(pvalsRR)
   }
-  data.frame(network = rownames(reg), size = R, R - FP, check.names = FALSE)
+  data.frame(area = rownames(reg), size = R, R - FP, check.names = FALSE)
 }
 ```
 
@@ -174,10 +172,10 @@ getPosthocBounds <- function(reg, pvals, thrList) {
 bounds <- getPosthocBounds(brainAtlas, pvals, thrs)
 ```
 
-In this particular case some signal is revealed by the post hoc bound for `r sum(bounds$Linear != 0)` networks for permutation-based approaches:
+In this particular case, some signal is revealed by the post hoc bound for `r sum(rowSums(bounds[, 4:5])>0)` areas for permutation-based approaches:
 
 ```{r posthoc-bounds-atlas-table}
-ww <- which(bounds$Linear>0)
+ww <- which(rowSums(bounds[, 4:5])>0)
 cap <- sprintf("Lower bounds on the number of true positives in %s brain regions.",
                length(ww))
 knitr::kable(bounds[ww, ], caption = cap)
@@ -190,5 +188,17 @@ Here again, ARI is outperformed by permutation-based approaches which are able t
 ```{r session-info}
 sessionInfo()
 ```
+
+# Reproducibility
+
+To re-create this vignette from its source, use: 
+
+```{r reproducibility, eval = FALSE}
+rmarkdown::render("post-hoc_fMRI.Rmd", output_format = "pdf_document")
+# To keep intermediate files, add option 'clean = FALSE'
+rmarkdown::render("post-hoc_fMRI.Rmd", output_format = "html_document")
+```
+
+
 
 # References

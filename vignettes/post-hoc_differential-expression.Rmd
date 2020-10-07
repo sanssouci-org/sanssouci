@@ -331,6 +331,16 @@ knitr::kable(tab, caption = cap)
 sessionInfo()
 ```
 
+# Reproducibility
+
+To re-create this vignette from its source, use: 
+
+```{r reproducibility, eval = FALSE}
+rmarkdown::render("post-hoc_differential-expression.Rmd", output_format = "pdf_document")
+# To keep intermediate files, add option 'clean = FALSE'
+rmarkdown::render("post-hoc_differential-expression.Rmd", output_format = "html_document")
+```
+
 # References
 
 
