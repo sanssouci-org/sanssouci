@@ -5,17 +5,24 @@
  
 The goal of sansSouci is to perform *post hoc inference*: in a multiple testing context, sansSouci provides statistical guarantees on possibly user-defined and/or data-driven sets of hypotheses. 
 
-Typical use cases covered by sansSouci are:
+## Typical use cases in genomics and neuromaging
 
 - [differential gene expression studies](https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html) in genomics
 - [fMRI studies](https://pneuvial.github.io/sanssouci/articles/post-hoc_fMRI.html) in neuroimaging. 
 
-In both cases, permutation-based post hoc inference typically outperforms classical post hoc bounds based on probabilistic inequalities.
+In both cases, permutation-based post hoc inference typically outperforms classical post hoc bounds based on probabilistic inequalities. The illustrations below are taken from the vignette [differential gene expression studies](https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html).
 
-sansSouci is developed within the [SansSouci project](https://www.math.univ-toulouse.fr/~pneuvial/sanssouci).
+## Confidence envelopes for "top-k" feature lists
+
+![Confidence envelopes](man/figures/confidence-envelopes_leukemia.png)
+
+## Volcano plots
+![Volcano plot](man/figures/volcano-plot_leukemia_linear.png)
 
 # Installation
 
 ```r
 remotes::install_github("pneuvial/sanssouci@develop")
 ```
+
+sansSouci is developed within the [SansSouci project](https://www.math.univ-toulouse.fr/~pneuvial/sanssouci).
