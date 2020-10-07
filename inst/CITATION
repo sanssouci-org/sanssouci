@@ -6,7 +6,7 @@ vers <- paste("R package version", meta$Version)
 title <- meta$Title
 citEntry(entry="Manual",
          title = title,
-         author   = personList(as.person("Bnejamin Sadacca"),
+         author   = personList(as.person("Benjamin Sadacca"),
                                as.person("Gilles Blanchard"),
                                as.person("Guillermo Durand"),
                                as.person("Pierre Neuvial"),
