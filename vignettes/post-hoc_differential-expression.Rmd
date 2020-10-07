@@ -9,7 +9,7 @@ output:
   pdf_document: default
 bibliography: sansSouci.bib
 vignette: |
-  %\VignetteIndexEntry{Post hoc inference for differential gene expression studies}
+  %\VignetteIndexEntry{Permutation-based post hoc inference for differential gene expression studies}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 ---
@@ -31,9 +31,16 @@ Then, we introduce more powerful post hoc methods (introduced by @blanchard20pos
 
 The methods described in this vignette are described in detail in the book chapter @BNR:chap and in the paper @blanchard20post-hoc.
 
-```{r required-packages, message=FALSE}
-library("sansSouci") ## remotes::install_github("pneuvial/sanssouci@develop")
+```{r install-r-packages, results='hide', message=FALSE}
+require("ggplot2") || install.packages("ggplot2")
+require("sansSouci") || remotes::install_github("pneuvial/sanssouci@develop")
+require("sansSouci.data") || remotes::install_github("pneuvial/sanssouci.data")
+```
+
+
+```{r load-r-packages, results='hide', message=FALSE}
 library("ggplot2")
+library("sansSouci")
 ```
 
 Set the seed of the random number generator for numerical reproducibility of the results:
@@ -55,7 +62,6 @@ This data set consists of gene expression measurements for  $n = `r ncol(dat)`$ 
 
 ```{r colnames}
 table(colnames(dat))
-mut <- "BCR/ABL"
 m <- nrow(dat)
 ```
 

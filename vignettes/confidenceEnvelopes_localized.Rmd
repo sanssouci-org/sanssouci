@@ -3,11 +3,10 @@ title: "Confidence envelopes for spatially structured hypotheses"
 author: "G. Durand, G. Blanchard, P. Neuvial, E. Roquain"
 date: "`r Sys.Date()`"
 output:
+  html_document:
   pdf_document: 
     citation_package: natbib
     keep_tex: true
-  html_document:
-    pdf_print: paged
 bibliography: sansSouci.bib
 vignette: >
   %\VignetteIndexEntry{Confidence envelopes for spatially structured hypotheses}

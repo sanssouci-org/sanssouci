@@ -3,10 +3,10 @@ title: "Permutation-based post hoc inference for fMRI studies"
 author: "Alexandre Blain and Pierre Neuvial"
 date: "`r Sys.Date()`"
 output:
-  pdf_document: default
   rmarkdown::html_vignette:
     number_sections: yes
     toc: yes
+  pdf_document: default
   html_document:
     number_sections: yes
     toc: yes
