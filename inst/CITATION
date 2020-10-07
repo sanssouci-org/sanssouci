@@ -1,0 +1,52 @@
+citHeader("To cite sansSouci in publications, please use the following references:")
+
+
+year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date, perl = TRUE)
+vers <- paste("R package version", meta$Version)
+title <- meta$Title
+citEntry(entry="Manual",
+         title = title,
+         author   = personList(as.person("Bnejamin Sadacca"),
+                               as.person("Gilles Blanchard"),
+                               as.person("Guillermo Durand"),
+                               as.person("Pierre Neuvial"),
+                               as.person("Etienne Roquain")),
+         year = year,
+         note = vers,
+	 url =  "https://github.com/pneuvial/sanssouci",
+
+         textVersion =
+         paste("Benjamin Sadacca, Gilles Blanchard, Guillermo Durand, Pierre Neuvial and Etienne Roquain (",
+               year,
+               "). sansSouci: ",
+               title,
+               vers, ". https://github.com/pneuvial/sanssouci", sep=""))
+
+
+citEntry(
+  entry    = "Article",
+  title    = "Post Hoc Confidence Bounds on False Positives Using Reference Families",
+  author   = personList(as.person("Gilles Blanchard"),
+                             as.person("Pierre Neuvial"),
+                             as.person("Etienne Roquain")),
+  journal  = "Annals of Statistics",
+  year     = 2020,
+  volume   = 48,
+  number   = 3,
+  pages    = "1281--1303",
+  url      = "https://projecteuclid.org/euclid.aos/1594972818",
+  textVersion = "Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc confidence bounds on false positives using reference families. Annals of Statistics, 48(3), 1281-1303."
+  )
+
+citEntry(
+  entry    = "Article",
+  title    = "Post hoc false positive control for structured hypotheses",
+  author   = personList(as.person("Guillermo Durand"),
+                        as.person("Gilles Blanchard"),
+                        as.person("Pierre Neuvial"),
+                        as.person("Etienne Roquain")),
+  journal  = "Scandinavian Journal of Statistics",
+  year     = 2020,
+  url      = "https://projecteuclid.org/euclid.aos/1594972818",
+  textVersion = "Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics."
+  )
