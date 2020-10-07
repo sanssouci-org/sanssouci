@@ -1,3 +1,5 @@
+# sansSouci
+
 <!-- badges: start -->
   [![R build status](https://github.com/pneuvial/sanssouci/workflows/R-CMD-check/badge.svg)](https://github.com/pneuvial/sanssouci/actions)
 [![Coverage Status](https://codecov.io/gh/pneuvial/sanssouci/branch/develop/graph/badge.svg)](https://codecov.io/github/pneuvial/sanssouci/branch/develop)
@@ -5,7 +7,14 @@
  
 The goal of sansSouci is to perform *post hoc inference*: in a multiple testing context, sansSouci provides statistical guarantees on possibly user-defined and/or data-driven sets of hypotheses. 
 
-## Typical use cases in genomics and neuromaging
+# Installation
+
+```r
+# install.packages("remotes")
+remotes::install_github("pneuvial/sanssouci@develop")
+```
+
+# Typical use cases in genomics and neuromaging
 
 - [differential gene expression studies](https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html) in genomics
 - [fMRI studies](https://pneuvial.github.io/sanssouci/articles/post-hoc_fMRI.html) in neuroimaging. 
@@ -17,12 +26,7 @@ In both cases, permutation-based post hoc inference typically outperforms classi
 ![Confidence envelopes](man/figures/confidence-envelopes_leukemia.png)
 
 ## Volcano plots
+
 ![Volcano plot](man/figures/volcano-plot_leukemia_linear.png)
-
-# Installation
-
-```r
-remotes::install_github("pneuvial/sanssouci@develop")
-```
 
 sansSouci is developed within the [SansSouci project](https://www.math.univ-toulouse.fr/~pneuvial/sanssouci).
