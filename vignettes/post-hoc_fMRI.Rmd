@@ -191,7 +191,7 @@ sessionInfo()
 
 # Reproducibility
 
-To re-create this vignette from its source, use: 
+To re-build this vignette from its source, use: 
 
 ```{r reproducibility, eval = FALSE}
 rmarkdown::render("post-hoc_fMRI.Rmd", output_format = "pdf_document")

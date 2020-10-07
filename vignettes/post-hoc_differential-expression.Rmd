@@ -195,7 +195,7 @@ As discussed in @blanchard20post-hoc, the above-described bound has two major li
 
 To bypass these limitations, @blanchard20post-hoc have proposed a randomization-based procedure known as $\lambda$-calibration, which yields tighter bounds that are adapted to the dependency observed in the data set at hand^[A related approach has been proposed by @HSG2019, but no implementation is currently available for this approach.]. In the case of two-sample tests, this calibration can be achieved by permutation of class labels:
 
-```{r calibration}
+```{r calibration, cache=TRUE}
 B <- 1000
 cal <- calibrateJER(X = dat, categ, B = B, alpha = alpha, refFamily = "Simes")
 ```
@@ -203,7 +203,7 @@ cal <- calibrateJER(X = dat, categ, B = B, alpha = alpha, refFamily = "Simes")
 
 An alternative to the Simes/Linear reference family is the Beta reference family:
 
-```{r calibration-beta}
+```{r calibration-beta, cache=TRUE}
 K <- 50
 cal_beta <- calibrateJER(X = dat, categ, B = B, alpha = alpha, refFamily = "Beta", K = K)
 ```
@@ -333,7 +333,7 @@ sessionInfo()
 
 # Reproducibility
 
-To re-create this vignette from its source, use: 
+To re-build this vignette from its source, use: 
 
 ```{r reproducibility, eval = FALSE}
 rmarkdown::render("post-hoc_differential-expression.Rmd", output_format = "pdf_document")
