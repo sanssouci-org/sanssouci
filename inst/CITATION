@@ -19,7 +19,7 @@ citEntry(entry="Manual",
          paste("Pierre Neuvial, Benjamin Sadacca, Gilles Blanchard, Guillermo Durand and Etienne Roquain (",
                year,
                "). sansSouci: ",
-               title,
+               title, ". ",
                vers, ". https://github.com/pneuvial/sanssouci", sep=""))
 
 
