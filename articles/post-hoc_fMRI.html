@@ -74,7 +74,14 @@
   </ul>
 </li>
       </ul>
-<ul class="nav navbar-nav navbar-right"></ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="https://github.com/pneuvial/sanssouci/">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
 <!--/.nav-collapse -->
   </div>
@@ -92,7 +99,7 @@
             
             <h4 class="date">2020-10-07</h4>
       
-      
+      <small class="dont-index">Source: <a href="https://github.com/pneuvial/sanssouci/blob/master/vignettes/post-hoc_fMRI.Rmd"><code>vignettes/post-hoc_fMRI.Rmd</code></a></small>
       <div class="hidden name"><code>post-hoc_fMRI.Rmd</code></div>
 
     </div>
@@ -106,11 +113,11 @@
 <p>We first make sure that the required R packages are installed and loaded.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit">
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st"><a href="http://ggplot2.tidyverse.org">"ggplot2"</a></span><span class="op">)</span> <span class="op">||</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"ggplot2"</span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st">"sansSouci"</span><span class="op">)</span> <span class="op">||</span> <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"pneuvial/sanssouci@develop"</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st"><a href="https://github.com/pneuvial/sanssouci">"sansSouci"</a></span><span class="op">)</span> <span class="op">||</span> <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"pneuvial/sanssouci@develop"</span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="st"><a href="https://github.com/pneuvial/sanssouci.data">"sansSouci.data"</a></span><span class="op">)</span> <span class="op">||</span> <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"pneuvial/sanssouci.data"</span><span class="op">)</span></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit">
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="http://ggplot2.tidyverse.org">"ggplot2"</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st">"sansSouci"</span><span class="op">)</span></pre></div>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/pneuvial/sanssouci">"sansSouci"</a></span><span class="op">)</span></pre></div>
 <p>We set the seed of the random number generator for numerical reproducibility of the results:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">20200924</span><span class="op">)</span></pre></div>
@@ -219,7 +226,7 @@
 <span class="op">}</span></pre></div>
 <div class="sourceCode" id="cb15"><pre class="downlit">
 <span class="va">bounds</span> <span class="op">&lt;-</span> <span class="fu">getPosthocBounds</span><span class="op">(</span><span class="va">brainAtlas</span>, <span class="va">pvals</span>, <span class="va">thrs</span><span class="op">)</span></pre></div>
-<p>In this particular case some signal is revealed by the post hoc bound for 0 newtorks for permutation-based approaches:</p>
+<p>In this particular case some signal is revealed by the post hoc bound for 3 networks for permutation-based approaches:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit">
 <span class="va">ww</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">bounds</span><span class="op">$</span><span class="va">Linear</span><span class="op">&gt;</span><span class="fl">0</span><span class="op">)</span>
 <span class="va">cap</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html">sprintf</a></span><span class="op">(</span><span class="st">"Lower bounds on the number of true positives in %s brain regions."</span>,

@@ -74,7 +74,14 @@
   </ul>
 </li>
       </ul>
-<ul class="nav navbar-nav navbar-right"></ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="https://github.com/pneuvial/sanssouci/">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
 <!--/.nav-collapse -->
   </div>
@@ -93,7 +100,7 @@
             
             <h4 class="date">2018-03-27</h4>
       
-      
+      <small class="dont-index">Source: <a href="https://github.com/pneuvial/sanssouci/blob/master/vignettes/jointErrorRateCalibration_simulations.Rmd"><code>vignettes/jointErrorRateCalibration_simulations.Rmd</code></a></small>
       <div class="hidden name"><code>jointErrorRateCalibration_simulations.Rmd</code></div>
 
     </div>
@@ -108,7 +115,7 @@
 </ul>
 <p>We start with two-sample tests because we believe they are used more frequently.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st">"sansSouci"</span><span class="op">)</span></pre></div>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/pneuvial/sanssouci">"sansSouci"</a></span><span class="op">)</span></pre></div>
 <pre><code>## 
 ## Attaching package: 'sansSouci'</code></pre>
 <pre><code>## The following object is masked from 'package:datasets':
@@ -138,9 +145,9 @@
 <span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gaussianSamples.html">gaussianSamples</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">rho</span>, <span class="va">n</span>, <span class="va">pi0</span>, SNR <span class="op">=</span> <span class="va">SNR</span>, prob <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">sim</span><span class="op">)</span></pre></div>
 <pre><code>## List of 3
-##  $ X    : num [1:1000, 1:124] 0.999 -0.488 -1.645 -0.573 0.243 ...
-##   ..- attr(*, "w")= num [1:124] -0.227 -1.536 -0.825 -1.617 0.286 ...
-##  $ categ: int [1:124] 1 0 0 1 1 1 1 1 1 1 ...
+##  $ X    : num [1:1000, 1:124] -0.00273 -0.80933 -2.18363 1.48195 -0.26909 ...
+##   ..- attr(*, "w")= num [1:124] -0.845 0.203 -0.115 0.802 0.454 ...
+##  $ categ: int [1:124] 0 1 1 0 0 0 1 1 0 1 ...
 ##  $ H    : num [1:1000] 0 0 0 0 0 0 0 0 0 0 ...</code></pre>
 <div class="sourceCode" id="cb8"><pre class="downlit">
 <span class="va">X</span> <span class="op">&lt;-</span> <span class="va">sim</span><span class="op">$</span><span class="va">X</span>
@@ -148,7 +155,7 @@
 <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">categ</span><span class="op">)</span></pre></div>
 <pre><code>## categ
 ##  0  1 
-## 69 55</code></pre>
+## 63 61</code></pre>
 <p>We perform JER calibration using the linear (Simes) template <span class="math inline">\(\mathfrak{R(\lambda)}=(R_1(\lambda),\)</span> <span class="math inline">\(\ldots,R_K(\lambda)\)</span>, where for <span class="math inline">\(1 \leq k \leq K\)</span></p>
 <p><span class="math display">\[R_k(\lambda) = \left\{i\in \{1, \dots , m\}\::\: \bar{\Phi}(Z_i) &gt;  \frac{\lambda k}{m} \right\}\,\]</span></p>
 <p>where <span class="math inline">\(\bar{\Phi}\)</span> is the cdf of the <span class="math inline">\(\mathcal{N}(0,1)\)</span> distribution. Note that <span class="math inline">\(p_i = \bar{\Phi}(Z_i)\)</span> is the one-sided <span class="math inline">\(p\)</span>-value associated to the test statistics <span class="math inline">\(Z_i\)</span>.</p>
@@ -162,16 +169,16 @@
 <div class="sourceCode" id="cb11"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">cal</span><span class="op">)</span></pre></div>
 <pre><code>## List of 5
-##  $ p.values: num [1:1000] 0.842 0.684 0.545 0.398 0.496 ...
-##  $ pivStat : num [1:500] 0.42 1.001 1.001 1.006 0.911 ...
-##  $ thr     : num [1:1000] 0.000416 0.000831 0.001247 0.001663 0.002079 ...
-##  $ lambda  : Named num 0.416
+##  $ p.values: num [1:1000] 0.173 0.481 0.804 0.333 0.791 ...
+##  $ pivStat : num [1:500] 0.00729 0.18749 0.30875 0.80615 0.00206 ...
+##  $ thr     : num [1:1000] 0.000444 0.000888 0.001331 0.001775 0.002219 ...
+##  $ lambda  : Named num 0.444
 ##   ..- attr(*, "names")= chr "25%"
 ##  $ conf_env:'data.frame':    2000 obs. of  7 variables:
 ##   ..$ x        : int [1:2000] 1 2 3 4 5 6 7 8 9 10 ...
-##   ..$ rank     : num [1:2000] 869 745 606 477 557 517 489 778 364 744 ...
+##   ..$ rank     : num [1:2000] 241 527 822 385 808 753 276 501 203 985 ...
 ##   ..$ family   : chr [1:2000] "Simes" "Simes" "Simes" "Simes" ...
-##   ..$ param    : num [1:2000] 0.416 0.416 0.416 0.416 0.416 ...
+##   ..$ param    : num [1:2000] 0.444 0.444 0.444 0.444 0.444 ...
 ##   ..$ procedure: chr [1:2000] "Simes + calibration" "Simes + calibration" "Simes + calibration" "Simes + calibration" ...
 ##   ..$ stat     : chr [1:2000] "TP" "TP" "TP" "TP" ...
 ##   ..$ bound    : num [1:2000] 1 2 3 4 5 6 7 8 9 10 ...</code></pre>
@@ -199,12 +206,12 @@
 <span class="va">env</span> <span class="op">&lt;-</span> <span class="va">cal</span><span class="op">$</span><span class="va">conf_env</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">env</span><span class="op">)</span></pre></div>
 <pre><code>##   x rank family     param           procedure stat bound
-## 1 1  869  Simes 0.4157285 Simes + calibration   TP     1
-## 2 2  745  Simes 0.4157285 Simes + calibration   TP     2
-## 3 3  606  Simes 0.4157285 Simes + calibration   TP     3
-## 4 4  477  Simes 0.4157285 Simes + calibration   TP     4
-## 5 5  557  Simes 0.4157285 Simes + calibration   TP     5
-## 6 6  517  Simes 0.4157285 Simes + calibration   TP     6</code></pre>
+## 1 1  241  Simes 0.4437699 Simes + calibration   TP     1
+## 2 2  527  Simes 0.4437699 Simes + calibration   TP     2
+## 3 3  822  Simes 0.4437699 Simes + calibration   TP     3
+## 4 4  385  Simes 0.4437699 Simes + calibration   TP     4
+## 5 5  808  Simes 0.4437699 Simes + calibration   TP     5
+## 6 6  753  Simes 0.4437699 Simes + calibration   TP     6</code></pre>
 <p>We compare it to the true number of false positives among the most significant items, and to the Simes bound without calibration</p>
 <div class="sourceCode" id="cb17"><pre class="downlit">
 <span class="va">env_Simes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/confidenceEnvelope.html">confidenceEnvelope</a></span><span class="op">(</span><span class="va">cal</span><span class="op">$</span><span class="va">p.values</span>, refFamily <span class="op">=</span> <span class="st">"Simes"</span>, param <span class="op">=</span> <span class="va">alpha</span><span class="op">)</span>
@@ -227,8 +234,8 @@
 <span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gaussianSamples.html">gaussianSamples</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">rho</span>, <span class="va">n</span>, <span class="va">pi0</span>, SNR <span class="op">=</span> <span class="va">SNR</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">sim</span><span class="op">)</span></pre></div>
 <pre><code>## List of 3
-##  $ X    : num [1:1000, 1:124] -1.7976 -1.6169 0.0713 -0.8415 -1.581 ...
-##   ..- attr(*, "w")= num [1:124] -2.037 -0.115 1.379 0.446 0.54 ...
+##  $ X    : num [1:1000, 1:124] -1.546 -0.48 -1.503 -0.489 -2.653 ...
+##   ..- attr(*, "w")= num [1:124] -1.226 -0.838 2.056 1.53 -1.791 ...
 ##  $ categ: int [1:124] 1 1 1 1 1 1 1 1 1 1 ...
 ##  $ H    : num [1:1000] 0 0 0 0 0 0 0 0 0 0 ...</code></pre>
 <div class="sourceCode" id="cb21"><pre class="downlit">
@@ -238,19 +245,19 @@
 <span class="va">cal</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calibrateJER.html">calibrateJER</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">categ</span>, B <span class="op">=</span> <span class="va">B</span>, alpha <span class="op">=</span> <span class="va">alpha</span>, refFamily <span class="op">=</span> <span class="st">"Simes"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">cal</span><span class="op">)</span></pre></div>
 <pre><code>## List of 5
-##  $ p.values: num [1:1000] 0.639 0.66 0.898 0.799 0.621 ...
-##  $ pivStat : num [1:500] 0.0753 1.0098 0.9824 0.1618 1.0085 ...
-##  $ thr     : num [1:1000] 0.000463 0.000927 0.00139 0.001853 0.002317 ...
-##  $ lambda  : Named num 0.463
+##  $ p.values: num [1:1000] 0.735 0.941 0.43 0.241 0.857 ...
+##  $ pivStat : num [1:500] 0.921 0.998 0.981 0.994 0.112 ...
+##  $ thr     : num [1:1000] 0.000475 0.00095 0.001425 0.0019 0.002375 ...
+##  $ lambda  : Named num 0.475
 ##   ..- attr(*, "names")= chr "25%"
 ##  $ conf_env:'data.frame':    2000 obs. of  7 variables:
 ##   ..$ x        : int [1:2000] 1 2 3 4 5 6 7 8 9 10 ...
-##   ..$ rank     : num [1:2000] 671 683 914 812 656 615 755 634 482 709 ...
+##   ..$ rank     : num [1:2000] 735 944 440 280 855 575 493 688 833 99 ...
 ##   ..$ family   : chr [1:2000] "Simes" "Simes" "Simes" "Simes" ...
-##   ..$ param    : num [1:2000] 0.463 0.463 0.463 0.463 0.463 ...
+##   ..$ param    : num [1:2000] 0.475 0.475 0.475 0.475 0.475 ...
 ##   ..$ procedure: chr [1:2000] "Simes + calibration" "Simes + calibration" "Simes + calibration" "Simes + calibration" ...
 ##   ..$ stat     : chr [1:2000] "TP" "TP" "TP" "TP" ...
-##   ..$ bound    : num [1:2000] 1 2 3 4 5 6 7 8 9 10 ...</code></pre>
+##   ..$ bound    : num [1:2000] 1 2 3 4 5 6 7 7 8 9 ...</code></pre>
 <p>Again we expect <span class="math inline">\(\lambda &gt; \alpha\)</span>.</p>
 <div id="confidence-envelopes" class="section level3">
 <h3 class="hasAnchor">
