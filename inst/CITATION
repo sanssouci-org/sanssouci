@@ -5,18 +5,18 @@ year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date, perl = TRUE)
 vers <- paste("R package version", meta$Version)
 title <- meta$Title
 citEntry(entry="Manual",
-         title = title,
-         author   = personList(as.person("Benjamin Sadacca"),
+         title = paste("sansSouci:", title),
+         author   = personList(as.person("Pierre Neuvial"),
+                               as.person("Benjamin Sadacca"),
                                as.person("Gilles Blanchard"),
                                as.person("Guillermo Durand"),
-                               as.person("Pierre Neuvial"),
                                as.person("Etienne Roquain")),
          year = year,
          note = vers,
 	 url =  "https://github.com/pneuvial/sanssouci",
 
          textVersion =
-         paste("Benjamin Sadacca, Gilles Blanchard, Guillermo Durand, Pierre Neuvial and Etienne Roquain (",
+         paste("Pierre Neuvial, Benjamin Sadacca, Gilles Blanchard, Guillermo Durand and Etienne Roquain (",
                year,
                "). sansSouci: ",
                title,
