@@ -29,4 +29,4 @@ In both cases, permutation-based post hoc inference typically outperforms classi
 
 ![Volcano plot](man/figures/volcano-plot_leukemia_linear.png)
 
-sansSouci is developed within the [SansSouci project](https://www.math.univ-toulouse.fr/~pneuvial/sanssouci).
+This package is developed within the [SansSouci project](https://www.math.univ-toulouse.fr/~pneuvial/sanssouci).
