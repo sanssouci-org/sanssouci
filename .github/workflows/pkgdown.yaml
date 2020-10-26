@@ -33,7 +33,6 @@ jobs:
       - name: Install dependencies
         run: |
           remotes::install_deps(dependencies = TRUE)
-          remotes::install_github("pneuvial/sansSouci.data")
           install.packages("pkgdown")
         shell: Rscript {0}
 
