@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.8.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.0</span>
       </span>
     </div>
 
@@ -91,7 +91,8 @@
 
       
 
-      </header><script src="jointErrorRateCalibration_simulations_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="jointErrorRateCalibration_simulations_files/accessible-code-block-0.0.1/empty-anchor.js"></script><link href="jointErrorRateCalibration_simulations_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
+<script src="jointErrorRateCalibration_simulations_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Joint Error Rate calibration</h1>
@@ -145,9 +146,9 @@
 <span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gaussianSamples.html">gaussianSamples</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">rho</span>, <span class="va">n</span>, <span class="va">pi0</span>, SNR <span class="op">=</span> <span class="va">SNR</span>, prob <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">sim</span><span class="op">)</span></pre></div>
 <pre><code>## List of 3
-##  $ X    : num [1:1000, 1:124] -0.558 -0.47 -1.682 -0.305 -0.638 ...
-##   ..- attr(*, "w")= num [1:124] -0.8247 -0.5774 2.2561 -0.3755 -0.0749 ...
-##  $ categ: int [1:124] 1 0 0 0 1 1 1 0 1 0 ...
+##  $ X    : num [1:1000, 1:124] 1.498 -0.696 0.303 0.67 0.796 ...
+##   ..- attr(*, "w")= num [1:124] 1.147 -0.188 -0.107 1.056 -0.114 ...
+##  $ categ: int [1:124] 1 0 1 0 1 0 1 0 1 1 ...
 ##  $ H    : num [1:1000] 0 0 0 0 0 0 0 0 0 0 ...</code></pre>
 <div class="sourceCode" id="cb8"><pre class="downlit">
 <span class="va">X</span> <span class="op">&lt;-</span> <span class="va">sim</span><span class="op">$</span><span class="va">X</span>
@@ -155,7 +156,7 @@
 <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">categ</span><span class="op">)</span></pre></div>
 <pre><code>## categ
 ##  0  1 
-## 61 63</code></pre>
+## 69 55</code></pre>
 <p>We perform JER calibration using the linear (Simes) template <span class="math inline">\(\mathfrak{R(\lambda)}=(R_1(\lambda),\)</span> <span class="math inline">\(\ldots,R_K(\lambda)\)</span>, where for <span class="math inline">\(1 \leq k \leq K\)</span></p>
 <p><span class="math display">\[R_k(\lambda) = \left\{i\in \{1, \dots , m\}\::\: \bar{\Phi}(Z_i) &gt;  \frac{\lambda k}{m} \right\}\,\]</span></p>
 <p>where <span class="math inline">\(\bar{\Phi}\)</span> is the cdf of the <span class="math inline">\(\mathcal{N}(0,1)\)</span> distribution. Note that <span class="math inline">\(p_i = \bar{\Phi}(Z_i)\)</span> is the one-sided <span class="math inline">\(p\)</span>-value associated to the test statistics <span class="math inline">\(Z_i\)</span>.</p>
@@ -169,19 +170,19 @@
 <div class="sourceCode" id="cb11"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">cal</span><span class="op">)</span></pre></div>
 <pre><code>## List of 5
-##  $ p.values: num [1:1000] 0.514 0.372 0.826 0.956 0.96 ...
-##  $ pivStat : num [1:500] 0.997 0.556 0.991 0.918 0.747 ...
-##  $ thr     : num [1:1000] 0.000413 0.000826 0.001239 0.001653 0.002066 ...
-##  $ lambda  : Named num 0.413
+##  $ p.values: num [1:1000] 0.784 0.459 0.238 0.362 0.132 ...
+##  $ pivStat : num [1:500] 0.187 1.004 0.154 1.004 0.998 ...
+##  $ thr     : num [1:1000] 0.000492 0.000985 0.001477 0.00197 0.002462 ...
+##  $ lambda  : Named num 0.492
 ##   ..- attr(*, "names")= chr "25%"
 ##  $ conf_env:'data.frame':    2000 obs. of  7 variables:
 ##   ..$ x        : int [1:2000] 1 2 3 4 5 6 7 8 9 10 ...
-##   ..$ rank     : num [1:2000] 561 441 830 957 960 278 569 261 258 24 ...
+##   ..$ rank     : num [1:2000] 790 492 285 396 204 614 902 716 899 946 ...
 ##   ..$ family   : chr [1:2000] "Simes" "Simes" "Simes" "Simes" ...
-##   ..$ param    : num [1:2000] 0.413 0.413 0.413 0.413 0.413 ...
+##   ..$ param    : num [1:2000] 0.492 0.492 0.492 0.492 0.492 ...
 ##   ..$ procedure: chr [1:2000] "Simes + calibration" "Simes + calibration" "Simes + calibration" "Simes + calibration" ...
 ##   ..$ stat     : chr [1:2000] "TP" "TP" "TP" "TP" ...
-##   ..$ bound    : num [1:2000] 0 0 0 1 2 3 3 4 4 4 ...</code></pre>
+##   ..$ bound    : num [1:2000] 1 2 3 4 4 5 6 7 8 8 ...</code></pre>
 <ul>
 <li>
 <code>p.values</code>: <span class="math inline">\(m\)</span> test statistics calculated by permutation</li>
@@ -206,12 +207,12 @@
 <span class="va">env</span> <span class="op">&lt;-</span> <span class="va">cal</span><span class="op">$</span><span class="va">conf_env</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">env</span><span class="op">)</span></pre></div>
 <pre><code>##   x rank family     param           procedure stat bound
-## 1 1  561  Simes 0.4131576 Simes + calibration   TP     0
-## 2 2  441  Simes 0.4131576 Simes + calibration   TP     0
-## 3 3  830  Simes 0.4131576 Simes + calibration   TP     0
-## 4 4  957  Simes 0.4131576 Simes + calibration   TP     1
-## 5 5  960  Simes 0.4131576 Simes + calibration   TP     2
-## 6 6  278  Simes 0.4131576 Simes + calibration   TP     3</code></pre>
+## 1 1  790  Simes 0.4924273 Simes + calibration   TP     1
+## 2 2  492  Simes 0.4924273 Simes + calibration   TP     2
+## 3 3  285  Simes 0.4924273 Simes + calibration   TP     3
+## 4 4  396  Simes 0.4924273 Simes + calibration   TP     4
+## 5 5  204  Simes 0.4924273 Simes + calibration   TP     4
+## 6 6  614  Simes 0.4924273 Simes + calibration   TP     5</code></pre>
 <p>We compare it to the true number of false positives among the most significant items, and to the Simes bound without calibration</p>
 <div class="sourceCode" id="cb17"><pre class="downlit">
 <span class="va">env_Simes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/confidenceEnvelope.html">confidenceEnvelope</a></span><span class="op">(</span><span class="va">cal</span><span class="op">$</span><span class="va">p.values</span>, refFamily <span class="op">=</span> <span class="st">"Simes"</span>, param <span class="op">=</span> <span class="va">alpha</span><span class="op">)</span>
@@ -234,8 +235,8 @@
 <span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gaussianSamples.html">gaussianSamples</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">rho</span>, <span class="va">n</span>, <span class="va">pi0</span>, SNR <span class="op">=</span> <span class="va">SNR</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">sim</span><span class="op">)</span></pre></div>
 <pre><code>## List of 3
-##  $ X    : num [1:1000, 1:124] 1.2228 -0.7045 0.2525 -0.8745 -0.0967 ...
-##   ..- attr(*, "w")= num [1:124] 0.224 -0.328 -0.659 2.284 -0.235 ...
+##  $ X    : num [1:1000, 1:124] 0.163 -1.624 0.336 -0.491 0.313 ...
+##   ..- attr(*, "w")= num [1:124] -1.712 0.16 -2.506 0.22 -0.501 ...
 ##  $ categ: int [1:124] 1 1 1 1 1 1 1 1 1 1 ...
 ##  $ H    : num [1:1000] 0 0 0 0 0 0 0 0 0 0 ...</code></pre>
 <div class="sourceCode" id="cb21"><pre class="downlit">
@@ -245,19 +246,19 @@
 <span class="va">cal</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calibrateJER.html">calibrateJER</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">categ</span>, B <span class="op">=</span> <span class="va">B</span>, alpha <span class="op">=</span> <span class="va">alpha</span>, refFamily <span class="op">=</span> <span class="st">"Simes"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">cal</span><span class="op">)</span></pre></div>
 <pre><code>## List of 5
-##  $ p.values: num [1:1000] 0.247 0.242 0.47 0.384 0.828 ...
-##  $ pivStat : num [1:500] 0.9979 0.9991 0.9255 1.0001 0.0391 ...
-##  $ thr     : num [1:1000] 0.00033 0.000659 0.000989 0.001319 0.001648 ...
-##  $ lambda  : Named num 0.33
+##  $ p.values: num [1:1000] 0.473 0.689 0.906 0.155 0.993 ...
+##  $ pivStat : num [1:500] 0.999 1.007 1.008 0.622 0.999 ...
+##  $ thr     : num [1:1000] 0.000473 0.000947 0.00142 0.001893 0.002366 ...
+##  $ lambda  : Named num 0.473
 ##   ..- attr(*, "names")= chr "25%"
 ##  $ conf_env:'data.frame':    2000 obs. of  7 variables:
 ##   ..$ x        : int [1:2000] 1 2 3 4 5 6 7 8 9 10 ...
-##   ..$ rank     : num [1:2000] 305 297 529 450 847 509 255 57 538 687 ...
+##   ..$ rank     : num [1:2000] 500 689 902 225 995 266 610 712 547 510 ...
 ##   ..$ family   : chr [1:2000] "Simes" "Simes" "Simes" "Simes" ...
-##   ..$ param    : num [1:2000] 0.33 0.33 0.33 0.33 0.33 ...
+##   ..$ param    : num [1:2000] 0.473 0.473 0.473 0.473 0.473 ...
 ##   ..$ procedure: chr [1:2000] "Simes + calibration" "Simes + calibration" "Simes + calibration" "Simes + calibration" ...
 ##   ..$ stat     : chr [1:2000] "TP" "TP" "TP" "TP" ...
-##   ..$ bound    : num [1:2000] 1 1 2 3 3 3 4 4 4 5 ...</code></pre>
+##   ..$ bound    : num [1:2000] 1 2 3 4 5 6 7 8 8 9 ...</code></pre>
 <p>Again we expect <span class="math inline">\(\lambda &gt; \alpha\)</span>.</p>
 <div id="confidence-envelopes" class="section level3">
 <h3 class="hasAnchor">
@@ -281,7 +282,7 @@
 <a href="#session-information" class="anchor"></a>Session information</h2>
 <div class="sourceCode" id="cb26"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></pre></div>
-<pre><code>## R version 4.0.2 (2020-06-22)
+<pre><code>## R version 4.0.3 (2020-10-10)
 ## Platform: x86_64-apple-darwin17.0 (64-bit)
 ## Running under: macOS Catalina 10.15.7
 ## 
@@ -296,19 +297,19 @@
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] ggplot2_3.3.2   sansSouci_0.8.6
+## [1] ggplot2_3.3.2   sansSouci_0.9.0
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_1.0.5         compiler_4.0.2     pillar_1.4.6       tools_4.0.2       
-##  [5] digest_0.6.25      evaluate_0.14      memoise_1.1.0      lifecycle_0.2.0   
-##  [9] tibble_3.0.3       gtable_0.3.0       lattice_0.20-41    pkgconfig_2.0.3   
-## [13] rlang_0.4.7        Matrix_1.2-18      yaml_2.2.1         pkgdown_1.6.1     
+##  [1] Rcpp_1.0.5         compiler_4.0.3     pillar_1.4.6       tools_4.0.3       
+##  [5] digest_0.6.27      evaluate_0.14      memoise_1.1.0      lifecycle_0.2.0   
+##  [9] tibble_3.0.4       gtable_0.3.0       lattice_0.20-41    pkgconfig_2.0.3   
+## [13] rlang_0.4.8        Matrix_1.2-18      yaml_2.2.1         pkgdown_1.6.1     
 ## [17] xfun_0.18          withr_2.3.0        stringr_1.4.0      knitr_1.30        
 ## [21] desc_1.2.0         fs_1.5.0           vctrs_0.3.4        systemfonts_0.3.2 
-## [25] rprojroot_1.3-2    grid_4.0.2         glue_1.4.2         R6_2.4.1          
-## [29] textshaping_0.1.1  rmarkdown_2.4      farver_2.0.3       magrittr_1.5      
+## [25] rprojroot_1.3-2    grid_4.0.3         glue_1.4.2         R6_2.4.1          
+## [29] textshaping_0.1.2  rmarkdown_2.5      farver_2.0.3       magrittr_1.5      
 ## [33] backports_1.1.10   scales_1.1.1       matrixStats_0.57.0 htmltools_0.5.0   
-## [37] ellipsis_0.3.1     assertthat_0.2.1   colorspace_1.4-1   labeling_0.3      
+## [37] ellipsis_0.3.1     assertthat_0.2.1   colorspace_1.4-1   labeling_0.4.2    
 ## [41] ragg_0.4.0         stringi_1.5.3      munsell_0.5.0      crayon_1.3.4</code></pre>
 </div>
   </div>
