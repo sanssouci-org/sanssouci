@@ -1,0 +1,95 @@
+VolcanoPlotNico <- function (X, categ, thr, p = 1, q = 1, r = 0, cex = c(0.2, 0.6), 
+          col = c("#33333333", "#FF0000", "#FF666633"), pch = 19, ylim = NULL) 
+{
+  library(sansSouci)
+  library(ggplot2)
+  if (p < 1 && q < 1) {
+    warning("Filtering both on p-values and BH-adjusted p-values")
+  }
+  m <- nrow(X)
+  dex <- rowWelchTests(X, categ)
+  
+  # dex$log.pvalue <- -log10(dex$p.value)
+  # dex$adj.pvalue <- p.adjust(dex$p.value, method = "BH")
+  
+  pval <- dex[["p.value"]]
+  logp <- -log10(pval)
+  fc <- dex$meanDiff
+  adjp <- p.adjust(pval, method = "BH")
+  y_sel <- which((adjp <= q) & (pval <= p))
+  y_thr <- Inf
+  if (length(y_sel) > 0) {
+    y_thr <- min(logp[y_sel])
+  }
+  sel1 <- which(logp >= y_thr & fc >= r)
+  sel2 <- which(logp >= y_thr & fc <= -r)
+  sel12 <- sort(union(sel1, sel2))
+  n1 <- length(sel1)
+  FP1 <- maxFP(pval[sel1], thr = thr)
+  TP1 <- n1 - FP1
+  FDP1 <- round(FP1/max(n1, 1), 2)
+  n2 <- length(sel2)
+  FP2 <- maxFP(pval[sel2], thr = thr)
+  TP2 <- n2 - FP2
+  FDP2 <- round(FP2/max(n2, 1), 2)
+  n12 <- length(sel12)
+  FP12 <- maxFP(pval[sel12], thr = thr)
+  TP12 <- n12 - FP12
+  FDP12 <- round(FP12/max(n12, 1), 2)
+  cols <- rep(col[1], m)
+  cols[c(sel1, sel2)] <- col[2]
+  cexs <- rep(cex[1], m)
+  cexs[sel12] <- cex[2]
+  xlab <- "Fold change (log scale)"
+  ylab <- "p-value (-log[10] scale)"
+  infty <- 100
+  if (is.null(ylim)) {
+    ylim <- c(0, max(logp))
+  }
+  lte <- "≤"
+  gte <- "≥"
+  title <- paste(c(sprintf("%s genes selected\nAt least %s true positives (FDP %s %s)",
+                     n12, TP12, lte, FDP12)))
+  txtLeft <- paste(c(sprintf("%s genes\nTP %s %s\nFDP %s %s", n2, gte,
+                   TP2, lte, FDP2)))
+  txtRight <- paste(c(sprintf("%s genes\nTP %s %s\nFDP %s %s", n1, gte,
+                   TP1, lte, FDP1)))
+  
+  ggplot(data= data.frame(pvalue=logp, fc=fc, color=cols, size=cexs, stringsAsFactors=TRUE), 
+         aes(x=fc, y=logp, color=as.factor(color), size = as.factor(size))) + 
+    geom_point()  + 
+    geom_vline(xintercept = c(-1,1)*r, colour = "grey") +
+    geom_hline(yintercept = y_thr, colour = "grey") +
+    scale_color_manual(values=col[1:2]) + 
+    theme(legend.position='none') + 
+    labs(x = xlab, y=ylab, title=title) +
+    scale_size_manual(values=c(0.2,1.5)) + 
+    geom_rect(aes(xmin = r, xmax = Inf, ymin = y_thr, ymax = Inf), fill = col[3], alpha = 0.002, color = NA) +
+    geom_rect(aes(xmin = -r, xmax = -Inf, ymin = y_thr, ymax = Inf), fill="pink", color = NA, alpha = 0.01) + 
+    annotate(x=min(fc)+0.1, y=max(logp)-1, "text", label = txtLeft) + 
+    annotate(x=max(fc)-0.1, y=max(logp)-1, "text", label = txtRight)
+  
+    
+    
+  
+  # plot(fc, logp, pch = pch, cex = cexs, col = cols, xlab = xlab, 
+  #      ylab = ylab, ylim = ylim)
+  # rect(xleft = -infty, ybottom = y_thr, xright = -r, ytop = infty,
+  #      col = col[3], border = NA, lwd = 2)
+  # rect(xleft = r, ybottom = y_thr, xright = infty, ytop = infty,
+  #      col = col[3], border = NA, lwd = 2)
+  # abline(h = y_thr, col = "gray")
+  # abline(v = c(-1, 1) * r, col = "gray")
+  # lte <- "≤"
+  # gte <- "≥"
+  # txt <- c(sprintf("%s genes\nTP %s %s\nFDP %s %s", n2, gte,
+  #                  TP2, lte, FDP2))
+  # legend("topleft", txt, border = "white", bty = "n", text.col = 1)
+  # txt <- c(sprintf("%s genes\nTP %s %s\nFDP %s %s", n1, gte,
+  #                  TP1, lte, FDP1))
+  # legend("topright", txt, border = "white", bty = "n", text.col = 1)
+  # txt <- c(sprintf("%s genes selected\nAt least %s true positives (FDP %s %s)",
+  #                  n12, TP12, lte, FDP12))
+  # title(txt)
+  # invisible(sel12)
+}
