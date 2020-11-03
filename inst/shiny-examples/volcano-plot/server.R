@@ -15,8 +15,9 @@ shinyServer(function(input, output) {
     
     options(shiny.maxRequestSize=1024^3)
     
-    data <- reactive (
-        # eventReactive(input$buttonValidateAlpha, 
+    data <- 
+        reactive (
+        # eventReactive(input$buttonData,
         {
             data <- list()
             if(input$checkboxDemo){
@@ -44,17 +45,33 @@ shinyServer(function(input, output) {
             return(data)
         }
     )
-    output$test <- renderPrint({input$checkboxDemo})
+    output$inputK <- renderUI({
+        numericInput("valueK", label="K - il est calculé qu'une fois que les données sont validées", value = nrow(data()$matrix), max=nrow(data()$matrix))
+    })
+    
     output$datatable <- renderTable({head(data()$matrix)})
     
-    alpha <- reactive(
-        # eventReactive(
-        # input$buttonValidateAlpha,
-        {
-            req(input$sliderAlpha)
-        })
+    alpha <- eventReactive(input$buttonValidate, {
+        req(input$sliderAlpha)
+    })
+    numB <-eventReactive(input$buttonValidate, {
+        req(input$numB)
+    })
+    refFamily <- eventReactive(input$buttonValidate,{
+        req(input$refFamily)
+    })
+    alternative <- eventReactive(input$buttonValidate, {
+        req(input$alternative)
+    })
+    numK <- eventReactive(input$buttonValidate, {
+        req(input$valueK)
+    })
     cal <- reactive({
-        calibrateJER(data()$matrix, categ = data()$categ, B = 1e2, alpha = alpha(), refFamily="Simes")
+        calibrateJER(data()$matrix, categ = data()$categ, 
+                     B = numB(), alpha = alpha(), 
+                     refFamily=refFamily(), alternative = alternative(), 
+                     K = numK()
+        )
     })
     
     df <- reactive({
@@ -69,12 +86,6 @@ shinyServer(function(input, output) {
     
     
     
-    # volcanoplotReactive <- eventReactive(input$buttonVolcano, {
-    #     req(input$sliderAdjPvalue)
-    #     req(input$sliderFoldChange)
-    #     VolcanoPlotNico(data()$matrix, thr = cal()$thr, categ = data()$categ, q=req(input$sliderAdjPvalue), r=req(input$sliderFoldChange))
-    #     
-    # })
     
     
     vertical <- reactive({event_data("plotly_relayout", source='A')})
