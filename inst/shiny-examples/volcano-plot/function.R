@@ -8,9 +8,7 @@ VolcanoPlotNico <- function (X, categ, thr, p = 1, q = 1, r = 0, cex = c(0.2, 0.
   }
   m <- nrow(X)
   dex <- rowWelchTests(X, categ)
-  
-  # dex$log.pvalue <- -log10(dex$p.value)
-  # dex$adj.pvalue <- p.adjust(dex$p.value, method = "BH")
+
   
   pval <- dex[["p.value"]]
   logp <- -log10(pval)
@@ -69,29 +67,6 @@ VolcanoPlotNico <- function (X, categ, thr, p = 1, q = 1, r = 0, cex = c(0.2, 0.
     annotate(x=min(fc)+0.1, y=max(logp)-1, "text", label = txtLeft) + 
     annotate(x=max(fc)-0.1, y=max(logp)-1, "text", label = txtRight)
   
-    
-    
-  
-  # plot(fc, logp, pch = pch, cex = cexs, col = cols, xlab = xlab, 
-  #      ylab = ylab, ylim = ylim)
-  # rect(xleft = -infty, ybottom = y_thr, xright = -r, ytop = infty,
-  #      col = col[3], border = NA, lwd = 2)
-  # rect(xleft = r, ybottom = y_thr, xright = infty, ytop = infty,
-  #      col = col[3], border = NA, lwd = 2)
-  # abline(h = y_thr, col = "gray")
-  # abline(v = c(-1, 1) * r, col = "gray")
-  # lte <- "≤"
-  # gte <- "≥"
-  # txt <- c(sprintf("%s genes\nTP %s %s\nFDP %s %s", n2, gte,
-  #                  TP2, lte, FDP2))
-  # legend("topleft", txt, border = "white", bty = "n", text.col = 1)
-  # txt <- c(sprintf("%s genes\nTP %s %s\nFDP %s %s", n1, gte,
-  #                  TP1, lte, FDP1))
-  # legend("topright", txt, border = "white", bty = "n", text.col = 1)
-  # txt <- c(sprintf("%s genes selected\nAt least %s true positives (FDP %s %s)",
-  #                  n12, TP12, lte, FDP12))
-  # title(txt)
-  # invisible(sel12)
 }
 
 calcBounds <- function(listPval, selection, thr){

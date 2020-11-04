@@ -2,8 +2,8 @@ library(shiny)
 library(plotly)
 library(sansSouci)
 library(sansSouci.data)
-# data(expr_ALL, package = "sansSouci.data")
-# data(expr_ALL_annotation, package = "sansSouci.data")
+data(expr_ALL, package = "sansSouci.data")
+data(expr_ALL_annotation, package = "sansSouci.data")
 
 shinyServer(function(input, output) {
     
@@ -127,8 +127,8 @@ shinyServer(function(input, output) {
     })
     
     output$thresholdTxt <- renderText({
-        paste(c(sprintf("Foldchange:  right %s left %s . P_values %s", 
-                        round(xint(), digits = 3), round(xint2(), digits = 3), round(10^(-yint()), digits = 3)
+        paste(c(sprintf("Foldchange: \n right: %s \nleft: %s \n P_values: %s", 
+                        round(xint(), digits = 3), round(xint2(), digits = 3),  formatC(10^(-yint()), format = "e", digits = 3)
         )))
     })
     
@@ -241,7 +241,7 @@ shinyServer(function(input, output) {
                                   showlegend = FALSE,
                                   color = 'grey'), 
                     name = 'unselected',
-                    type='scatter', source='A'
+                    type='scatter', mode = "markers", source='A'
                     # , height = 600
             )%>%
                 add_markers(x = selected_points()$x, y = selected_points()$y,

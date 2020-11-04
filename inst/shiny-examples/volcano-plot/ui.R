@@ -18,7 +18,6 @@ shinyUI(fluidPage(
                              fileInput("fileData",label = "Input data"), 
                              fileInput("fileCateg", label = "Input categ")
             ), 
-            # actionButton("buttonData", "data validation"),
             sliderInput("sliderAlpha", label = "alpha", min = 0, 
                         max = 1, value = 0.05, step = 0.01),
             numericInput("numB", label = "Number of permutation", value = 100), 
@@ -38,7 +37,6 @@ shinyUI(fluidPage(
         # Show a plot of the generated distribution
         mainPanel(
             checkboxInput("symetric", label = "Symetric foldchange thresold", value = TRUE),
-            # tableOutput("datatable"), 
             tableOutput("tableBounds"),
             plotlyOutput("volcanoplot", height = "600px"), 
             fluidRow(
