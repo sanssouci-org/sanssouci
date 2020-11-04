@@ -6,10 +6,10 @@ library(htmlwidgets)
 
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(
-
+    
     # Application title
     titlePanel("Post hoc confidence bounds for volcano plots"),
-
+    
     # Sidebar with a slider input for number of bins
     sidebarLayout(
         sidebarPanel(
@@ -34,16 +34,17 @@ shinyUI(fluidPage(
             tags$p("Chosen threshold values :"), 
             textOutput("thresholdTxt")
         ),
-
+        
         # Show a plot of the generated distribution
         mainPanel(
             checkboxInput("symetric", label = "Symetric foldchange thresold", value = TRUE),
-            tableOutput("tableBounds"),
             # tableOutput("datatable"), 
-            plotlyOutput("volcanoplot")
-            # textOutput("text1"), 
-            # textOutput("text2"), 
-            # textOutput("text12")
+            tableOutput("tableBounds"),
+            plotlyOutput("volcanoplot", height = "600px"), 
+            fluidRow(
+                actionButton("resetCSV", "Reset Selections"), 
+                downloadButton("downloadData", "Download binary csv of user selection")
+            )
         )
     )
 ))

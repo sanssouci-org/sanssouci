@@ -93,3 +93,11 @@ VolcanoPlotNico <- function (X, categ, thr, p = 1, q = 1, r = 0, cex = c(0.2, 0.
   # title(txt)
   # invisible(sel12)
 }
+
+calcBounds <- function(listPval, selection, thr){
+  n <- length(selection)
+  FP <- maxFP(listPval[selection], thr = thr)
+  TP <- n - FP
+  FDP <- round(FP/max(n, 1), 2)
+  return(list(n=n, FP=FP, TP=TP, FDP=FDP))
+}

@@ -2,14 +2,15 @@ library(shiny)
 library(plotly)
 library(sansSouci)
 library(sansSouci.data)
-data(expr_ALL, package = "sansSouci.data")
-data(expr_ALL_annotation, package = "sansSouci.data")
+# data(expr_ALL, package = "sansSouci.data")
+# data(expr_ALL_annotation, package = "sansSouci.data")
 
 shinyServer(function(input, output) {
     
     library(sansSouci)
     library(ggplot2)
     library(plotly)
+    library(dplyr)
     
     source("function.R")
     
@@ -17,34 +18,34 @@ shinyServer(function(input, output) {
     
     data <- 
         reactive (
-        # eventReactive(input$buttonData,
-        {
-            data <- list()
-            if(input$checkboxDemo){
-                # data_url <- url("https://plmbox.math.cnrs.fr/f/755496cc4c154a6dbab0/?dl=1")
-                # data$matrix <- read(data_url)
-                # data(expr_ALL, package = "sansSouci.data")
-                data$matrix <- expr_ALL
-                
-                
-                categ <- colnames(data$matrix)
-                data$categ <- rep(0, length(categ))
-                data$categ[which(categ == "NEG")] <- 1
-                
-                data$annotation <- expr_ALL_annotation[c('affy_hg_u95av2','hgnc_symbol')]
-                
-            } else {
-                req(input$fileData)
-                file <- req(input$fileData)
-                data$matrix <- readRDS(file$datapath)
-                
-                req(input$fileCateg)
-                fileCateg <- req(input$fileCateg)
-                data$categ <- readRDS(fileCateg$datapath)
+            # eventReactive(input$buttonData,
+            {
+                data <- list()
+                if(input$checkboxDemo){
+                    # data_url <- url("https://plmbox.math.cnrs.fr/f/755496cc4c154a6dbab0/?dl=1")
+                    # data$matrix <- read(data_url)
+                    # data(expr_ALL, package = "sansSouci.data")
+                    data$matrix <- expr_ALL
+                    
+                    
+                    categ <- colnames(data$matrix)
+                    data$categ <- rep(0, length(categ))
+                    data$categ[which(categ == "NEG")] <- 1
+                    
+                    data$annotation <- expr_ALL_annotation[c('affy_hg_u95av2','hgnc_symbol')]
+                    
+                } else {
+                    req(input$fileData)
+                    file <- req(input$fileData)
+                    data$matrix <- readRDS(file$datapath)
+                    
+                    req(input$fileCateg)
+                    fileCateg <- req(input$fileCateg)
+                    data$categ <- readRDS(fileCateg$datapath)
+                }
+                return(data)
             }
-            return(data)
-        }
-    )
+        )
     output$inputK <- renderUI({
         numericInput("valueK", label="K - il est calculé qu'une fois que les données sont validées", value = nrow(data()$matrix), max=nrow(data()$matrix))
     })
@@ -167,36 +168,46 @@ shinyServer(function(input, output) {
              y = df()$logp[selectedGenes()$sel12])
     })
     
-    output$tableBounds <- renderTable({
-        req(TP_FDP())
-        tab <- data.frame(`Selection`=c("Upper Right", "Upper Left", "Both parts"), 
-                          "Number of genes"=c(TP_FDP()$n1, TP_FDP()$n2, TP_FDP()$n12),
-                          `Lower bound on true positives`=as.integer(c(TP_FDP()$TP1, TP_FDP()$TP2, TP_FDP()$TP12)), 
-                          `Upper bound on false discovery proportion` = c(TP_FDP()$FDP1, TP_FDP()$FDP2, TP_FDP()$FDP12))
-        return(tab)
+    tableResult <- reactiveVal( data.frame(Selection=c("Upper Right", "Upper Left", "Both parts"))) #Initialization
+    observeEvent(TP_FDP(),{ #When threshold change
+        
+        bottomTable <- tableResult() %>% 
+            filter(Selection != "Upper Right") %>% 
+            filter(Selection != "Both parts") %>% 
+            filter(Selection!="Upper Left")
+        upperTable <- data.frame(`Selection`=c("Upper Right", "Upper Left", "Both parts"), 
+                               "Number of genes"=c(TP_FDP()$n1, TP_FDP()$n2, TP_FDP()$n12),
+                               `Lower bound on TP`=as.integer(c(TP_FDP()$TP1, TP_FDP()$TP2, TP_FDP()$TP12)), 
+                               `Upper bound on FDP` = c(TP_FDP()$FDP1, TP_FDP()$FDP2, TP_FDP()$FDP12))
+        newValue <- rbind(upperTable, bottomTable)
+        tableResult(newValue)
+    })
+    observeEvent(d(),{ #When user select a new group of points
+        req(calcBoudSelection())
+        n <- dim(tableResult())[1]-2
+        newValue <- rbind(tableResult(), c(paste("User selection",n), 
+                                           calcBoudSelection()$n, 
+                                           calcBoudSelection()$TP,
+                                           calcBoudSelection()$FDP))
+        tableResult(newValue)
+    })
+    observeEvent(input$resetCSV, { # to clean printed table
+        newValue <- data.frame(`Selection`=c("Upper Right", "Upper Left", "Both parts"), 
+                               "Number of genes"=c(TP_FDP()$n1, TP_FDP()$n2, TP_FDP()$n12),
+                               `Lower bound on TP`=as.integer(c(TP_FDP()$TP1, TP_FDP()$TP2, TP_FDP()$TP12)), 
+                               `Upper bound on FDP` = c(TP_FDP()$FDP1, TP_FDP()$FDP2, TP_FDP()$FDP12))
+        tableResult(newValue)
     })
     
-    # output$text1 <- renderText({
-    #     req(TP_FDP())
-    #     lte <- "≤"
-    #     gte <- "≥"
-    #     paste(c(sprintf("Up Right: %s genes\nTP %s %s\nFDP %s %s", req(TP_FDP()$n1), gte,
-    #                     req(TP_FDP()$TP1), lte, req(TP_FDP()$FDP1))))
-    # })
-    # output$text12 <- renderText({
-    #     req(TP_FDP())
-    #     lte <- "≤"
-    #     gte <- "≥"
-    #     paste(c(sprintf("Both parts: %s genes selected\nAt least %s true positives (FDP %s %s)",
-    #                     req(TP_FDP()$n12), req(TP_FDP()$TP12), lte, req(TP_FDP()$FDP12))))
-    # })
-    # output$text2 <- renderText({
-    #     req(TP_FDP())
-    #     lte <- "≤"
-    #     gte <- "≥"
-    #     paste(c(sprintf("Up Left: %s genes\nTP %s %s\nFDP %s %s", req(TP_FDP()$n2), gte,
-    #                     req(TP_FDP()$TP2), lte, req(TP_FDP()$FDP2))))
-    # })
+    
+    
+    output$tableBounds <- renderTable({
+        req(TP_FDP())
+        
+        tableResult()
+        
+    })
+    
     
     annotation <- reactive({ 
         A <- tibble::rownames_to_column(data.frame(df()), "VALUE")
@@ -230,12 +241,14 @@ shinyServer(function(input, output) {
                                   showlegend = FALSE,
                                   color = 'grey'), 
                     name = 'unselected',
-                    type='scatter', source='A')%>%
+                    type='scatter', source='A'
+                    # , height = 600
+            )%>%
                 add_markers(x = selected_points()$x, y = selected_points()$y,
                             marker = list(
                                 color = "red",
                                 size = 6
-                            ), 
+                            ),
                             name="selected") %>%
                 layout(
                     showlegend = FALSE,
@@ -274,17 +287,9 @@ shinyServer(function(input, output) {
                             y1 = 1,
                             yref = "paper"
                         )
-                        # , 
-                        # list(type = "rect",
-                        #      fillcolor = "red", line = list(color = "red"), opacity = 0.2,
-                        #      x0 = min(df()$fc)-0.5, x1 = xint2(), xref = "x",
-                        #      y0 = yint(), y1 = max(df()$logp)+0.5 , yref = "y"), 
-                        # list(type = "rect",
-                        #      fillcolor = "red", line = list(color = "red"), opacity = 0.2,
-                        #      x0 = xint(), x1 = max(df()$fc)+0.5, xref = "x",
-                        #      y0 = yint(), y1 = max(df()$logp)+0.5 , yref = "y")
-                    )
-                ) %>% add_annotations(
+                    ), 
+                    dragmode = "select" ) %>%
+                add_annotations(
                     x= 0,
                     y= 1,
                     xref = "paper",
@@ -312,10 +317,44 @@ shinyServer(function(input, output) {
                         });
                     }
                 ") %>%
-                
-                
+                event_register("plotly_selecting") %>%
                 config(editable = TRUE)
         })
     })
+    
+    d <- reactive({ event_data("plotly_selected")})
+    
+    manuelSelected <- reactive({
+        req(d())
+        d()[['pointNumber']][which(d()[['curveNumber']]==0)]+1
+    })
+    
+    tableCSV <- reactiveVal(data.frame(row.names = rownames(expr_ALL)))
+    observeEvent(input$resetCSV,{
+        tableCSV(data.frame(row.names = rownames(expr_ALL)))
+    })
+    observeEvent(d(), { 
+        vecteur <- rep(0, dim(data()$matrix)[1])
+        vecteur[manuelSelected()] <- 1
+        nameCol <- colnames(tableCSV())
+        df <- cbind(tableCSV(), selection2=vecteur)
+        colnames(df) <- c(nameCol, paste("User selection", length(nameCol)+1))
+        tableCSV(df)
+    })
+    
+    
+    calcBoudSelection <- reactive({ #calculate bounds of selected genes 
+        req(manuelSelected())
+        calcBounds(df()$pval, selection=manuelSelected(), thr=cal()$thr)
+    })
+    
+    output$downloadData <- downloadHandler( #download csv of user selection
+        filename = function() {
+            paste("SelectionList", Sys.Date(), ".csv", sep="")
+        },
+        content = function(file) {
+            write.csv(tableCSV(), file)
+        }
+    )
     
 })
