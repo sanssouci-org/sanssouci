@@ -209,6 +209,18 @@ shinyServer(function(input, output) {
     })
     
     
+    lineAdjp <- reactive({ # value for 
+        listLog <- c()
+        for (i in c(0.5,0.25,0.1,0.05,0.025,0.01,0.001,0.0001)){
+            min05 <- names(which.min(abs(adjp-i)))
+            y05 <- logp[min05]
+            listLog <- c(listLog, y05)
+            print(y05)
+        }
+        return(listLog)
+    })
+
+    
     annotation <- reactive({ 
         A <- tibble::rownames_to_column(data.frame(df()), "VALUE")
         
@@ -221,14 +233,49 @@ shinyServer(function(input, output) {
         return(B)
     })
     
-    output$volcanoplot <- renderPlotly({
-        
-        lte <- "≤"
-        gte <- "≥"
+    yaxis <- reactive({
         f <- list(
             size = 14,
             color = "#000000"
         )
+        
+        yaxis <- switch(input$choiceYaxis, 
+                        "pval"= list(
+                            title = "p-value (-log[10] scale)", 
+                            titlefont = f
+                        ),
+                        "adjPval"=list(
+                            title = "Adjusted p_value (-log[10] scale)", 
+                            titlefont = f,
+                            autotick = FALSE,
+                            tickmode = "array",
+                            tickvals = lineAdjp(),
+                            ticktext = c(0.5,0.25,0.1,0.05,0.025,0.01,0.001,0.0001)
+                        ),
+                        "thr"=list(
+                            title = "Calibration thr (-log[10] scale)", 
+                            titlefont = f, 
+                            autotick = FALSE,
+                            tickmode = "array",
+                            tickvals = -log10(cal()$thr)[1:10],
+                            ticktext = as.character(1:10)
+                        )
+        )
+        return(yaxis)
+    })
+    
+    
+    output$volcanoplot <- renderPlotly({
+        
+        f <- list(
+            size = 14,
+            color = "#000000"
+        )
+        lte <- "≤"
+        gte <- "≥"
+        
+        
+       
         col = c("#33333333", "#FF0000", "#FF666633")
         cols <- rep(col[1], length(df()$fc))
         cols[c(selectedGenes()$sel1, selectedGenes()$sel2)] <- col[2]
@@ -238,7 +285,7 @@ shinyServer(function(input, output) {
             plot_ly(data.frame(x = df()$fc, y=df()$logp), 
                     x = ~x, y = ~y, 
                     marker = list(size = 2,
-                                  showlegend = FALSE,
+                                  # showlegend = FALSE,
                                   color = 'grey'), 
                     name = 'unselected',
                     type='scatter', mode = "markers", source='A'
@@ -250,10 +297,22 @@ shinyServer(function(input, output) {
                                 size = 6
                             ),
                             name="selected") %>%
+                # add_segments(x = min(df()$fc), xend = max(df()$fc), 
+                #              y = lineAdjp()$logp0.10, yend = lineAdjp()$logp0.10, 
+                #              name="Adjusted pvalues = 0.1", legendgroup = "Adjusted pvalues",
+                #              opacity=0.3)%>%
+                # add_segments(x = min(df()$fc), xend = max(df()$fc),
+                #              y = lineAdjp()$logp0.05, yend = lineAdjp()$logp0.05, 
+                #              name="Adjusted pvalues = 0.05", legendgroup = "Adjusted pvalues",
+                #              opacity=0.3)%>%
+                # add_segments(x = min(df()$fc), xend = max(df()$fc), 
+                #              y = lineAdjp()$logp0.01, yend = lineAdjp()$logp0.01, 
+                #              name="Adjusted pvalues = 0.01", legendgroup = "Adjusted pvalues",
+                #              opacity=0.3)%>%
                 layout(
-                    showlegend = FALSE,
+                    # showlegend = FALSE,
                     xaxis = list(title = "Fold change (log scale)", titlefont = f),
-                    yaxis = list(title = "p-value (-log[10] scale)", titlefont = f), 
+                    yaxis = yaxis(), 
                     title = "Volcano plot",
                     # title = paste(c(sprintf("%s genes selected\nAt least %s true positives (FDP %s %s)",
                     #                         req(TP_FDP()$n12), req(TP_FDP()$TP12), lte, req(TP_FDP()$FDP12)))),
@@ -287,6 +346,34 @@ shinyServer(function(input, output) {
                             y1 = 1,
                             yref = "paper"
                         )
+                        # ,
+                        # list(
+                        #     type = "line",
+                        #     line = list(color = "grey"),
+                        #     x0 = 0,
+                        #     x1 = 1,
+                        #     y0 = lineAdjp()$logp0.10,
+                        #     y1 = lineAdjp()$logp0.10,
+                        #     xref = "paper"
+                        # ),
+                        # list(
+                        #     type = "line",
+                        #     line = list(color = "grey"),
+                        #     x0 = 0,
+                        #     x1 = 1,
+                        #     y0 = lineAdjp()$logp0.05,
+                        #     y1 = lineAdjp()$logp0.05,
+                        #     xref = "paper"
+                        # ),
+                        # list(
+                        #     type = "line",
+                        #     line = list(color = "grey"),
+                        #     x0 = 0,
+                        #     x1 = 1,
+                        #     y0 = lineAdjp()$logp0.01,
+                        #     y1 = lineAdjp()$logp0.01,
+                        #     xref = "paper"
+                        # )
                     ), 
                     dragmode = "select" ) %>%
                 add_annotations(

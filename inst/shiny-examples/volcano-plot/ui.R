@@ -42,8 +42,15 @@ shinyUI(fluidPage(
         
         # Show a plot of the generated distribution
         mainPanel(
-            checkboxInput("symetric", label = "Symetric foldchange thresold", value = TRUE),
-            
+            splitLayout(
+                checkboxInput("symetric", label = "Symetric foldchange thresold", value = TRUE),
+                radioButtons("choiceYaxis", label = "Y axis", 
+                             choices = list("P values"="pval", 
+                                            "Adjusted p values"="adjPval",
+                                            "Calibration threshold"="thr"), 
+                             selected="pval"
+                )
+            ),
             plotlyOutput("volcanoplot", height = "600px"), 
             fluidRow(
                 actionButton("resetCSV", "Reset Selections"), 
