@@ -176,9 +176,9 @@ shinyServer(function(input, output) {
             filter(Selection != "Both parts") %>% 
             filter(Selection!="Upper Left")
         upperTable <- data.frame(`Selection`=c("Upper Right", "Upper Left", "Both parts"), 
-                               "Number of genes"=c(TP_FDP()$n1, TP_FDP()$n2, TP_FDP()$n12),
-                               `Lower bound on TP`=as.integer(c(TP_FDP()$TP1, TP_FDP()$TP2, TP_FDP()$TP12)), 
-                               `Upper bound on FDP` = c(TP_FDP()$FDP1, TP_FDP()$FDP2, TP_FDP()$FDP12))
+                               "Nb of genes"=c(TP_FDP()$n1, TP_FDP()$n2, TP_FDP()$n12),
+                               "TP≥"=as.integer(c(TP_FDP()$TP1, TP_FDP()$TP2, TP_FDP()$TP12)), 
+                               "FDP≤" = c(TP_FDP()$FDP1, TP_FDP()$FDP2, TP_FDP()$FDP12))
         newValue <- rbind(upperTable, bottomTable)
         tableResult(newValue)
     })
@@ -193,9 +193,9 @@ shinyServer(function(input, output) {
     })
     observeEvent(input$resetCSV, { # to clean printed table
         newValue <- data.frame(`Selection`=c("Upper Right", "Upper Left", "Both parts"), 
-                               "Number of genes"=c(TP_FDP()$n1, TP_FDP()$n2, TP_FDP()$n12),
-                               `Lower bound on TP`=as.integer(c(TP_FDP()$TP1, TP_FDP()$TP2, TP_FDP()$TP12)), 
-                               `Upper bound on FDP` = c(TP_FDP()$FDP1, TP_FDP()$FDP2, TP_FDP()$FDP12))
+                               "Nb of genes"=c(TP_FDP()$n1, TP_FDP()$n2, TP_FDP()$n12),
+                               "TP≥"=as.integer(c(TP_FDP()$TP1, TP_FDP()$TP2, TP_FDP()$TP12)), 
+                               "FDP≤" = c(TP_FDP()$FDP1, TP_FDP()$FDP2, TP_FDP()$FDP12))
         tableResult(newValue)
     })
     
