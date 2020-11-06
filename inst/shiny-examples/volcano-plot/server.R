@@ -258,7 +258,7 @@ shinyServer(function(input, output) {
                             autotick = FALSE,
                             tickmode = "array",
                             tickvals = -log10(cal()$thr)[1:10],
-                            ticktext = as.character(1:10)
+                            ticktext = as.character(1:10-1)
                         )
         )
         return(yaxis)
