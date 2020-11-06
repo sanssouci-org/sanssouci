@@ -212,8 +212,8 @@ shinyServer(function(input, output) {
     lineAdjp <- reactive({ # value for 
         listLog <- c()
         for (i in c(0.5,0.25,0.1,0.05,0.025,0.01,0.001,0.0001)){
-            min05 <- names(which.min(abs(adjp-i)))
-            y05 <- logp[min05]
+            min05 <- names(which.min(abs(df()$adjp-i)))
+            y05 <- df()$logp[min05]
             listLog <- c(listLog, y05)
             print(y05)
         }
