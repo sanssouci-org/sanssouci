@@ -53,5 +53,3 @@ posthocBySimes0Rcpp(NAEP, 1:30, 0.05)
 posthocBySimes0(NAEP, 1:30, 0.05)
 */
 
-
-

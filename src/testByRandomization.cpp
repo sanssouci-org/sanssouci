@@ -58,5 +58,4 @@ max(abs(T-TR))
 # set.seed(123)
 # TR <- testByPermutationR(X, cls, B)
 # max(abs(T-TR))
-
 */
