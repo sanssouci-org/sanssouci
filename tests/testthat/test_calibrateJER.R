@@ -108,18 +108,21 @@ test_that("JER calibration and get_pivotal_stat* yield identical pivotal statist
                          maxStepsDown = 0, alpha = 1))
     
     set.seed(0xBEEF)
-    Rprof("/tmp/pivStat_slow.Rout")
+    
+    tf_slow <- tempfile()
+    Rprof(tf_slow)
     pivStat_slow <- get_pivotal_stat_slow(X, categ, B)
     Rprof(NULL)
-    summaryRprof("/tmp/pivStat_slow.Rout")
+    summaryRprof(tf_slow)
     
     expect_equal(cal0$pivStat, pivStat_slow)
     
     set.seed(0xBEEF)
-    Rprof("/tmp/pivStat.Rout")
+    tf <- tempfile()
+    Rprof(tf)
     pivStat <- get_pivotal_stat(X, categ, B)
     Rprof(NULL)
-    summaryRprof("/tmp/pivStat.Rout")
+    summaryRprof(tf)
     
     expect_equal(cal0$pivStat, pivStat)
 })
@@ -132,27 +135,29 @@ test_that("get_pivotal_stat and get_one_pivotal_stat* yield identical results", 
     B <- 1000
     
     set.seed(0xBEEF)
-    Rprof("/tmp/pivStat.Rout")
+    tf <- tempfile()
+    Rprof(tf)
     system.time(pivStat <- get_pivotal_stat(X, categ, B))
     Rprof(NULL)
-    summaryRprof("/tmp/pivStat.Rout")
+    summaryRprof(tf)
     
     set.seed(0xBEEF)
-    Rprof("/tmp/pivStat1_slow.Rout")
+    tf_slow <- tempfile(fileext = ".Rout")
+    Rprof(tf_slow)
     pivStat1_slow <- replicate(B, 
                           get_one_pivotal_stat_slow(X, sample(categ)))
     Rprof(NULL)
-    summaryRprof("/tmp/pivStat1_slow.Rout")
+    summaryRprof(tf_slow)
 
     set.seed(0xBEEF)
-    Rprof("/tmp/pivStat1.Rout")
+    tf_slow <- tempfile()
+    Rprof(tf_slow)
     pivStat1 <- replicate(B,
                          get_one_pivotal_stat(X, sample(categ)))
     Rprof(NULL)
-    summaryRprof("/tmp/pivStat1.Rout")
-
-    expect_equal(pivStat, pivStat1_slow)  
+    summaryRprof(tf_slow)
     
+    expect_equal(pivStat, pivStat1_slow)  
     
     m <- 130
     n <- 45
