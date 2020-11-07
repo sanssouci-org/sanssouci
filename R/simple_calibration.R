@@ -2,6 +2,11 @@ t_inv_linear <- function(y, k, m) {
     y * m / k;
 }
 
+#' @describeIn get_pivotal_stat Get pivotal statistic (slow version)
+#' @param testFUN A function with the same I/O as \code{t.test}
+#' 
+#' @importFrom stats t.test
+#' @seealso \code{\link[stats]{t.test}}
 #' @examples
 #'
 #' set.seed(0xBEEF)
@@ -10,7 +15,8 @@ t_inv_linear <- function(y, k, m) {
 #' X <- matrix(rnorm(m*n), ncol = n, nrow = m)
 #' categ <- rbinom(n, 1, 0.4)
 #' B <- 6
-#' pivStat <- get_pivotal_stat_slow(X, categ, B)
+#' pivStat <- sansSouci:::get_pivotal_stat_slow(X, categ, B)
+#' 
 get_pivotal_stat_slow <- function(X, categ, B, 
                                testFUN = t.test,
                                t_inv = t_inv_linear,
@@ -44,7 +50,21 @@ get_pivotal_stat_slow <- function(X, categ, B,
 }
 
 
-#' pivStat <- get_pivotal_stat(X, categ, B)
+#' Get pivotal statistic
+#' 
+#' @param X A matrix of \eqn{m} variables (hypotheses) by \eqn{n} observations
+#' @param categ An optional numeric vector of \eqn{n} values in \eqn{0, 1}
+#'   specifying the column indices of the first and second samples. If not
+#'   provided, a one-sample test is performed.
+#' @param B A numeric value, the number of permutations to be performed
+#' @param rowTestFUN a testing function with the same I/O as \code{rowWelchTests}
+#' @param t_inv A function with the same I/O as \code{t_inv_linear}
+#' @param K For JER control over \code{1:K}, ie joint control of all
+#'   \eqn{k}-FWER, \eqn{k \le K}. Defaults to \eqn{m}.
+#' 
+#' @examples
+#' 
+#' pivStat <- sansSouci:::get_pivotal_stat(X, categ, B)
 get_pivotal_stat <- function(X, categ, B, 
                                   rowTestFUN = rowWelchTests,
                                   t_inv = t_inv_linear,
@@ -72,6 +92,8 @@ get_pivotal_stat <- function(X, categ, B,
     matrixStats::colMins(tkInv)
 }
 
+#' @describeIn get_pivotal_stat Get one pivotal statistic (slow version)
+#' @param testFUN A function with the same I/O as \code{t.test}
 #' @examples
 #'
 #' set.seed(0xBEEF)
@@ -79,9 +101,9 @@ get_pivotal_stat <- function(X, categ, B,
 #' n <- 45
 #' X <- matrix(rnorm(m*n), ncol = n, nrow = m)
 #' categ <- rbinom(n, 1, 0.4)
-#' pivStat <- get_one_pivotal_stat(X, categ)
+#' pivStat <- sansSouci:::get_one_pivotal_stat(X, categ)
 #' B <- 10
-#' pivStat <- replicate(B, get_one_pivotal_stat_slow(X, sample(categ)))
+#' pivStat <- replicate(B, sansSouci:::get_one_pivotal_stat_slow(X, sample(categ)))
 get_one_pivotal_stat_slow <- function(X, categ, 
                                  testFUN = t.test,
                                  t_inv = t_inv_linear,
@@ -110,6 +132,8 @@ get_one_pivotal_stat_slow <- function(X, categ,
     min(tkInv)
 }
 
+#' @describeIn get_pivotal_stat Get one pivotal statistic
+#' @param testFUN A function with the same I/O as \code{t.test}
 #' @examples
 #'
 #' set.seed(0xBEEF)
@@ -117,9 +141,9 @@ get_one_pivotal_stat_slow <- function(X, categ,
 #' n <- 45
 #' X <- matrix(rnorm(m*n), ncol = n, nrow = m)
 #' categ <- rbinom(n, 1, 0.4)
-#' pivStat <- get_one_pivotal_stat(X, categ)
+#' pivStat <- sansSouci:::get_one_pivotal_stat(X, categ)
 #' B <- 10
-#' pivStat <- replicate(B, get_one_pivotal_stat(X, sample(categ)))
+#' pivStat <- replicate(B, sansSouci:::get_one_pivotal_stat(X, sample(categ)))
 get_one_pivotal_stat <- function(X, categ, 
                                  rowTestFUN = rowWelchTests,
                                  t_inv = t_inv_linear,

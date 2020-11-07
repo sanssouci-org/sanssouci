@@ -27,7 +27,7 @@
 #' @export
 #' @importFrom graphics abline legend rect title
 #' @importFrom stats p.adjust
-#' @seealso Volcano plot shiny app at \link{https://pneuvial.shinyapps.io/volcano-plot/}
+#' @seealso Volcano plot shiny app at \url{https://pneuvial.shinyapps.io/volcano-plot/}
 #' 
 #' @examples
 #' m <- 500
