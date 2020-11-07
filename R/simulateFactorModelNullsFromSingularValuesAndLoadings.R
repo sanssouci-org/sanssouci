@@ -48,7 +48,7 @@
 # sim3
 #
 simulateFactorModelNullsFromSingularValuesAndLoadings <- function(
-    m, h = numeric(0), P = Matrix(nrow = m, ncol = length(h)), rho = 0) {
+    m, h = numeric(0), P = Matrix(0, nrow = m, ncol = length(h)), rho = 0) {
     k <- length(h)
     ## sanity checks
     stopifnot(nrow(P) == m)

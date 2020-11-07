@@ -102,16 +102,14 @@ test_that("posthocBySimes0 is posthocBySimes0Rcpp for simulated data", {
 test_that("posthocBySimes is posthocBySimes0Rcpp for simulated data an no signal", {
     m <- 1e3
     m1 <- 100
-    alphas <- seq(from = 0, to = 1, by = 0.1)
+    alpha <- 0.01
     p <- 1-pnorm(c(rnorm(m1, mean=0), rnorm(m-m1, mean=0)))
     nR <- round(runif(1)*m)
     R <- sample(nR)
-    for (alpha in alphas) {
-        expect_equal(posthocBySimes(p, R, alpha = alpha),
-                     posthocBySimes0Rcpp(p, R, alpha = alpha))
-        expect_equal(posthocBySimes(p, R, alpha = alpha, Rcpp = TRUE),
-                     posthocBySimes0Rcpp(p, R, alpha = alpha))
-    }
+    expect_equal(posthocBySimes(p, R, alpha = alpha),
+                 posthocBySimes0Rcpp(p, R, alpha = alpha))
+    expect_equal(posthocBySimes(p, R, alpha = alpha, Rcpp = TRUE),
+                 posthocBySimes0Rcpp(p, R, alpha = alpha))
 })
 
 test_that("posthocBySimes0 can be reproduced by minTP", {

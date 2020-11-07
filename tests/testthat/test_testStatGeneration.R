@@ -17,6 +17,9 @@ test_that("Simulation of null hypotheses from factor model", {
     expect_equal(length(sim0$Y), m)
     S0 <- getFactorModelCovarianceMatrix(m)
     expect_identical(S0, diag(m))
+    
+    expect_error(simulateFactorModelNullsFromSingularValuesAndLoadings(m, c(0,1)),
+                 "t(P) %*% P should be orthonormal")
 
     ## equi-correlated
     rho <- 0.2

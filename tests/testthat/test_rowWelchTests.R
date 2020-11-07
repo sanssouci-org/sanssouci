@@ -84,3 +84,9 @@ test_that("suffWelchTest gives identical results to welch.test", {
         expect_equivalent(swt$parameter, target$parameter)
     })
 })
+
+
+test_that("Sanity checks of 'categCheck' throw errors when expected to", {
+    expect_error(categCheck(c(1,2), 2), 
+                            "Expected two categories named '0' and '1'!")
+})
