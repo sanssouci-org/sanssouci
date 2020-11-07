@@ -92,3 +92,82 @@ test_that("Direction of calibration for Beta template", {
     }
     expect_identical(order(-lambdas), order(Ks))
 })
+
+
+test_that("JER calibration and get_pivotal_stat* yield identical pivotal statistics", {
+    m <- 130
+    n <- 45
+    X <- matrix(rnorm(m*n), ncol = n, nrow = m)
+    categ <- rbinom(n, 1, 0.4)
+    B <- 100
+
+    ## reference: 'calibrateJER' 
+    ## (without step down and with dummy alpha)
+    set.seed(0xBEEF)
+    system.time(cal0 <- calibrateJER(X, categ, B, 
+                         maxStepsDown = 0, alpha = 1))
+    
+    set.seed(0xBEEF)
+    Rprof("/tmp/pivStat_slow.Rout")
+    pivStat_slow <- get_pivotal_stat_slow(X, categ, B)
+    Rprof(NULL)
+    summaryRprof("/tmp/pivStat_slow.Rout")
+    
+    expect_equal(cal0$pivStat, pivStat_slow)
+    
+    set.seed(0xBEEF)
+    Rprof("/tmp/pivStat.Rout")
+    pivStat <- get_pivotal_stat(X, categ, B)
+    Rprof(NULL)
+    summaryRprof("/tmp/pivStat.Rout")
+    
+    expect_equal(cal0$pivStat, pivStat)
+})
+
+test_that("get_pivotal_stat and get_one_pivotal_stat* yield identical results", {
+    m <- 130
+    n <- 45
+    X <- matrix(rnorm(m*n), ncol = n, nrow = m)
+    categ <- rbinom(n, 1, 0.4)
+    B <- 1000
+    
+    set.seed(0xBEEF)
+    Rprof("/tmp/pivStat.Rout")
+    system.time(pivStat <- get_pivotal_stat(X, categ, B))
+    Rprof(NULL)
+    summaryRprof("/tmp/pivStat.Rout")
+    
+    set.seed(0xBEEF)
+    Rprof("/tmp/pivStat1_slow.Rout")
+    pivStat1_slow <- replicate(B, 
+                          get_one_pivotal_stat_slow(X, sample(categ)))
+    Rprof(NULL)
+    summaryRprof("/tmp/pivStat1_slow.Rout")
+
+    set.seed(0xBEEF)
+    Rprof("/tmp/pivStat1.Rout")
+    pivStat1 <- replicate(B,
+                         get_one_pivotal_stat(X, sample(categ)))
+    Rprof(NULL)
+    summaryRprof("/tmp/pivStat1.Rout")
+
+    expect_equal(pivStat, pivStat1_slow)  
+    
+    
+    m <- 130
+    n <- 45
+    X <- matrix(rnorm(m*n), ncol = n, nrow = m)
+    categ <- rbinom(n, 1, 0.4)
+    B <- 100
+    
+    ## reference: 'calibrateJER'
+    ## (without step down and with dummy alpha)
+    set.seed(0xBEEF)
+    cal0 <- calibrateJER(X, categ, B, maxStepsDown = 0, alpha = 1)
+    
+    ## proposal:
+    set.seed(0xBEEF)
+    pivStat <- replicate(B, get_one_pivotal_stat_slow(X, sample(categ)))
+    
+    max(abs(cal0$pivStat-pivStat))
+})

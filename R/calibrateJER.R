@@ -27,13 +27,13 @@
 #     \code{maxStepsDown=0} corresponds to single step JFWER control. 
 #     Defaults to 10.
 #' @param K For JER control over \code{1:K}, ie joint control of all
-#'   \eqn{k}-FWER, \eqn{k \le K}.
+#'   \eqn{k}-FWER, \eqn{k \le K}. Defaults to \eqn{m}.
 #' @param verbose A boolean value: should extra info be printed?
 #' @details See \code{\link{testByRandomization}} for a description of the tests performed for calibration.
 #' @return A list with elements: \describe{
 #'
 #'   \item{p.values}{A numeric vector of \code{m} p-values}
-#'   \item{pivStat}{A numeric vector of length \code{m}, the values of the pivotal
+#'   \item{pivStat}{A numeric vector of length \code{B}, the values of the pivotal
 #'          statistic whose quantile of order \eqn{alpha} is \eqn{lambda}.}
 
 #'   \item{thr}{A numeric vector of length \code{K}, such that the estimated
@@ -125,7 +125,3 @@ calibrateJER <- function(X, categ, B, alpha,
     calib <- list(p.values = pval, pivStat = res$pivStat, thr = res$thr, lambda = res$lambda, conf_env = conf_env) 
     return(calib)
 }
-
-
-
-    

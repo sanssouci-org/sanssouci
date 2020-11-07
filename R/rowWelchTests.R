@@ -37,13 +37,13 @@
 #' p <- 1e3
 #' n <- 38
 #' mat <- matrix(rnorm(p*n), ncol=n)
-#' cls <- rep(c(0, 1), times=c(27, n-27))
-#' fwt <- rowWelchTests(mat, cls, alternative = "greater")
+#' categ <- rep(c(0, 1), times=c(27, n-27))
+#' fwt <- rowWelchTests(mat, categ, alternative = "greater")
 #' str(fwt)
 #'
 #' # compare with ordinary t.test:
 #' pwt <- apply(mat, 1, FUN=function(x) {
-#'    t.test(x[cls==1], x[cls==0], alternative = "greater")$p.value
+#'    t.test(x[categ==1], x[categ==0], alternative = "greater")$p.value
 #' })
 #' all(abs(fwt$p.value-pwt) < 1e-10)  ## same results
 #' 
