@@ -47,13 +47,16 @@ shinyServer(function(input, output) {
             }
         )
     output$inputK <- renderUI({
-        numericInput("valueK", label="K - il est calculé qu'une fois que les données sont validées", value = nrow(data()$matrix), max=nrow(data()$matrix))
+        numericInput("valueK", 
+                     label = "K (size of reference family)", 
+                     value = nrow(data()$matrix), 
+                     max = nrow(data()$matrix))
     })
     
     output$datatable <- renderTable({head(data()$matrix)})
     
     alpha <- eventReactive(input$buttonValidate, {
-        req(input$sliderAlpha)
+        req(1 - input$sliderConfLevel/100)
     })
     numB <-eventReactive(input$buttonValidate, {
         req(input$numB)
@@ -176,9 +179,10 @@ shinyServer(function(input, output) {
             filter(Selection != "Both parts") %>% 
             filter(Selection!="Upper Left")
         upperTable <- data.frame(`Selection`=c("Upper Right", "Upper Left", "Both parts"), 
-                               "Nb of genes"=c(TP_FDP()$n1, TP_FDP()$n2, TP_FDP()$n12),
+                               "# genes"=c(TP_FDP()$n1, TP_FDP()$n2, TP_FDP()$n12),
                                "TP≥"=as.integer(c(TP_FDP()$TP1, TP_FDP()$TP2, TP_FDP()$TP12)), 
-                               "FDP≤" = c(TP_FDP()$FDP1, TP_FDP()$FDP2, TP_FDP()$FDP12))
+                               "FDP≤" = c(TP_FDP()$FDP1, TP_FDP()$FDP2, TP_FDP()$FDP12),
+                               check.names = FALSE)
         newValue <- rbind(upperTable, bottomTable)
         tableResult(newValue)
     })
@@ -245,7 +249,7 @@ shinyServer(function(input, output) {
                             titlefont = f
                         ),
                         "adjPval"=list(
-                            title = "Adjusted p_value (-log[10] scale)", 
+                            title = "Adjusted p-value (-log[10] scale)", 
                             titlefont = f,
                             autotick = FALSE,
                             tickmode = "array",
@@ -253,7 +257,7 @@ shinyServer(function(input, output) {
                             ticktext = c(0.5,0.25,0.1,0.05,0.025,0.01,0.001,0.0001)
                         ),
                         "thr"=list(
-                            title = "Calibration thr (-log[10] scale)", 
+                            title = "Calib. thr (-log[10] scale)", 
                             titlefont = f, 
                             autotick = FALSE,
                             tickmode = "array",
