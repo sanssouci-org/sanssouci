@@ -99,7 +99,7 @@ test_that("JER calibration and get_pivotal_stat* yield identical pivotal statist
     n <- 45
     X <- matrix(rnorm(m*n), ncol = n, nrow = m)
     categ <- rbinom(n, 1, 0.4)
-    B <- 100
+    B <- 10
 
     ## reference: 'calibrateJER' 
     ## (without step down and with dummy alpha)
@@ -132,7 +132,7 @@ test_that("get_pivotal_stat and get_one_pivotal_stat* yield identical results", 
     n <- 45
     X <- matrix(rnorm(m*n), ncol = n, nrow = m)
     categ <- rbinom(n, 1, 0.4)
-    B <- 1000
+    B <- 10
     
     set.seed(0xBEEF)
     tf <- tempfile()
@@ -163,7 +163,7 @@ test_that("get_pivotal_stat and get_one_pivotal_stat* yield identical results", 
     n <- 45
     X <- matrix(rnorm(m*n), ncol = n, nrow = m)
     categ <- rbinom(n, 1, 0.4)
-    B <- 100
+    B <- 10
     
     ## reference: 'calibrateJER'
     ## (without step down and with dummy alpha)
