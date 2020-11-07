@@ -16,8 +16,8 @@ remotes::install_github("pneuvial/sanssouci@develop")
 
 # Typical use cases in genomics and neuromaging
 
-- [differential gene expression studies](https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html) in genomics
-- [fMRI studies](https://pneuvial.github.io/sanssouci/articles/post-hoc_fMRI.html) in neuroimaging. 
+- Differential gene expression studies in genomics: see  [differential expression vignette](https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html) and run [volcano plot shiny app](https://pneuvial.shinyapps.io/volcano-plot/)
+- fMRI studies in neuroimaging: see [fMRI vignette](https://pneuvial.github.io/sanssouci/articles/post-hoc_fMRI.html). 
 
 In both cases, permutation-based post hoc inference typically outperforms classical post hoc bounds based on probabilistic inequalities. The illustrations below are taken from the vignette [differential gene expression studies](https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html).
 
@@ -26,6 +26,8 @@ In both cases, permutation-based post hoc inference typically outperforms classi
 ![Confidence envelopes](man/figures/confidence-envelopes_leukemia.png)
 
 ## Volcano plots
+
+Run [volcano plot shiny app](https://pneuvial.shinyapps.io/volcano-plot/)
 
 ![Volcano plot](man/figures/volcano-plot_leukemia_linear.png)
 

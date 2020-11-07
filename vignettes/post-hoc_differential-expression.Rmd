@@ -29,7 +29,7 @@ Then, we introduce more powerful post hoc methods (introduced by @blanchard20pos
 - confidence envelopes for the true or false positives
 - statistical inference on volcano plots
 
-The methods described in this vignette are described in detail in the book chapter @BNR:chap and in the paper @blanchard20post-hoc.
+The methods described in this vignette are described in detail in the book chapter @BNR:chap and in the paper @blanchard20post-hoc. A shiny application for volcano plots is also available from https://pneuvial.shinyapps.io/volcano-plot/.
 
 ```{r install-r-packages, results='hide', message=FALSE}
 require("ggplot2") || install.packages("ggplot2")
@@ -270,6 +270,8 @@ p + geom_vline(xintercept = nBH, color = "gray", linetype = "dotted", size = 1.5
 Both calibrated envelopes outperform the Simes envelope in this example. 
 
 # Volcano plots
+
+For an interactive volcano plot, see the [volcano plot shiny application](https://pneuvial.shinyapps.io/volcano-plot/).
 
 ```{r volcano-setup}
 thrs <- list("Simes" = thr_Simes,

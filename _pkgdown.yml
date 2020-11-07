@@ -37,6 +37,11 @@ reference:
   - gen.p.values
   - zeta
 
+home:
+  links:
+  - text: Run volcano plot shiny app
+    href: https://pneuvial.shinyapps.io/volcano-plot/
+
 authors:
   Gilles Blanchard:
   Guillermo Durand:

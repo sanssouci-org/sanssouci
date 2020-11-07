@@ -49,7 +49,7 @@ Must be one of "two.sided" (default), "greater" or "less".}
 \item{maxStepsDown}{Maximum number of steps down to be performed.}
 
 \item{K}{For JER control over \code{1:K}, ie joint control of all
-\eqn{k}-FWER, \eqn{k \le K}.}
+\eqn{k}-FWER, \eqn{k \le K}. Defaults to \eqn{m}.}
 
 \item{verbose}{A boolean value: should extra info be printed?}
 }
@@ -57,7 +57,7 @@ Must be one of "two.sided" (default), "greater" or "less".}
 A list with elements: \describe{
 
   \item{p.values}{A numeric vector of \code{m} p-values}
-  \item{pivStat}{A numeric vector of length \code{m}, the values of the pivotal
+  \item{pivStat}{A numeric vector of length \code{B}, the values of the pivotal
          statistic whose quantile of order \eqn{alpha} is \eqn{lambda}.}
   \item{thr}{A numeric vector of length \code{K}, such that the estimated
   probability that there exists an index \eqn{k} between 1 and \eqn{K} such

@@ -66,8 +66,8 @@ shinyUI(fluidPage(
       a("sansSouci.", href = "https://pneuvial.github.io/sanssouci/"),
       "It implements permutation-based post hoc inference bounds for differential gene expression analysis, see dedicated ",
       a("vignette.", href = "https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html"), 
-      "The source code for this app is currently available from ",
-      a("this url.", href = "https://github.com/pneuvial/sanssouci/tree/volcano-plot-app/inst/shiny-examples/volcano-plot"), 
+      "The source code for this app is available from ",
+      a("this url.", href = "https://github.com/pneuvial/sanssouci/tree/develop/inst/shiny-examples/volcano-plot"), 
       "For any question, please file an",
       a("issue.", href = "https://github.com/pneuvial/sanssouci/issues"))
 )))

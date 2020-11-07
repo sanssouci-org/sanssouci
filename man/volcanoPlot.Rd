@@ -69,3 +69,6 @@ TP <- sum(sim$H[sel])
 FP <- sum(1-sim$H[sel])
 FDP <- FP/length(sel)
 }
+\seealso{
+Volcano plot shiny app at \link{https://pneuvial.shinyapps.io/volcano-plot/}
+}
