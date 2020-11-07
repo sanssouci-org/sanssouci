@@ -1,8 +1,6 @@
 VolcanoPlotNico <- function (X, categ, thr, p = 1, q = 1, r = 0, cex = c(0.2, 0.6), 
           col = c("#33333333", "#FF0000", "#FF666633"), pch = 19, ylim = NULL) 
 {
-  library(sansSouci)
-  library(ggplot2)
   if (p < 1 && q < 1) {
     warning("Filtering both on p-values and BH-adjusted p-values")
   }

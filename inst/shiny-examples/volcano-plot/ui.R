@@ -1,9 +1,3 @@
-library(shiny)
-library(plotly)
-library(sansSouci)
-library(sansSouci.data)
-library(htmlwidgets)
-
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(
     tags$head(
@@ -55,7 +49,7 @@ shinyUI(fluidPage(
                 checkboxInput("symetric", 
                               label = "Symetric foldchange threshold", 
                               value = TRUE)),
-            plotlyOutput("volcanoplot", height = "600px"), 
+            plotly::plotlyOutput("volcanoplot", height = "600px"), 
             fluidRow(
                 actionButton("resetCSV", "Reset Selections"), 
                 downloadButton("downloadData", "Download binary csv of user selection")
@@ -66,11 +60,14 @@ shinyUI(fluidPage(
       a("shiny", href = "https://shiny.rstudio.com"),
       "application is developed by",
       "Nicolas Enjalbert-Courrech", 
+      "and",
+      a("Pierre Neuvial", href = "https://www.math.univ-toulouse.fr/~pneuvial/"),
       "for the R package ",
       a("sansSouci.", href = "https://pneuvial.github.io/sanssouci/"),
       "It implements permutation-based post hoc inference bounds for differential gene expression analysis, see dedicated ",
       a("vignette.", href = "https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html"), 
       "The source code for this app is currently available from ",
-      a("this url", href = "https://github.com/pneuvial/sanssouci/tree/volcano-plot-app/inst/shiny-examples/volcano-plot"),
-      "."))
-))
+      a("this url.", href = "https://github.com/pneuvial/sanssouci/tree/volcano-plot-app/inst/shiny-examples/volcano-plot"), 
+      "For any question, please file an",
+      a("issue.", href = "https://github.com/pneuvial/sanssouci/issues"))
+)))

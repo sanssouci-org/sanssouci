@@ -2,15 +2,14 @@ library(shiny)
 library(plotly)
 library(sansSouci)
 library(sansSouci.data)
+library(ggplot2)
+library(dplyr)
+library(htmlwidgets)
+
 data(expr_ALL, package = "sansSouci.data")
 data(expr_ALL_annotation, package = "sansSouci.data")
 
 shinyServer(function(input, output) {
-    
-    library(sansSouci)
-    library(ggplot2)
-    library(plotly)
-    library(dplyr)
     
     source("function.R")
     
