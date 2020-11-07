@@ -12,6 +12,7 @@ vignette: |
   %\VignetteIndexEntry{Permutation-based post hoc inference for differential gene expression studies}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteDepends{sansSouci.data}
 ---
   
 ```{r setup, include = FALSE}
@@ -31,7 +32,7 @@ Then, we introduce more powerful post hoc methods (introduced by @blanchard20pos
 
 The methods described in this vignette are described in detail in the book chapter @BNR:chap and in the paper @blanchard20post-hoc. A shiny application for volcano plots is also available from https://pneuvial.shinyapps.io/volcano-plot/.
 
-```{r install-r-packages, results='hide', message=FALSE}
+```{r install-r-packages, results='hide', message=FALSE, eval=FALSE}
 require("ggplot2") || install.packages("ggplot2")
 require("sansSouci") || remotes::install_github("pneuvial/sanssouci@develop")
 require("sansSouci.data") || remotes::install_github("pneuvial/sanssouci.data")

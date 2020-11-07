@@ -16,6 +16,7 @@ vignette: |
   %\VignetteIndexEntry{Permutation-based post hoc inference for fMRI studies} 
   %\VignetteEncoding{UTF-8} 
   %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteDepends{sansSouci.data}
 ---
 
 ```{r setup, include = FALSE}
@@ -34,7 +35,7 @@ This vignette shows how to use the [`sansSouci`](https://github.com/pneuvial/san
 
 We first make sure that the required R packages are installed and loaded.
 
-```{r install-r-packages, results='hide', message=FALSE}
+```{r install-r-packages, results='hide', message=FALSE, eval=FALSE}
 require("ggplot2") || install.packages("ggplot2")
 require("sansSouci") || remotes::install_github("pneuvial/sanssouci@develop")
 require("sansSouci.data") || remotes::install_github("pneuvial/sanssouci.data")
