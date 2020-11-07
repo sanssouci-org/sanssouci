@@ -24,6 +24,18 @@ citEntry(entry="Manual",
 
 
 citEntry(
+  entry    = "Misc",
+  title    = "On agnostic post hoc approaches to false positive control",
+  author   = personList(as.person("Gilles Blanchard"),
+                             as.person("Pierre Neuvial"),
+                             as.person("Etienne Roquain")),
+  year     = 2020,
+  url      = "https://hal.archives-ouvertes.fr/hal-02320543",
+  note     = "Book chapter in revision for Handbook of Multiple Comparisons",
+  textVersion = "Blanchard, G., Neuvial, P., & Roquain, E. (2020). On agnostic post hoc approaches to false positive control. Book chapter in revision for Handbook of Multiple Comparisons."
+  )
+
+citEntry(
   entry    = "Article",
   title    = "Post Hoc Confidence Bounds on False Positives Using Reference Families",
   author   = personList(as.person("Gilles Blanchard"),
