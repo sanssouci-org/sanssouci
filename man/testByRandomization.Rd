@@ -10,8 +10,7 @@ testByRandomization(
   B,
   alternative = c("two.sided", "less", "greater"),
   rowTestFUN = rowWelchTests,
-  rand.p.value = FALSE,
-  seed = NULL
+  rand.p.value = FALSE
 )
 }
 \arguments{
@@ -31,9 +30,6 @@ Defaults to \code{\link{rowWelchTests}}}
 
 \item{rand.p.value}{A boolean value: should randomization \eqn{p}-values be
 calculated and returned? Defaults to @FALSE}
-
-\item{seed}{An integer (or NULL) value used as a seed for random number
-generation. If \code{NULL}, no seed is specified}
 }
 \value{
 a list with elements: \describe{

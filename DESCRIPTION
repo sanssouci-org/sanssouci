@@ -25,7 +25,8 @@ Suggests:
     RColorBrewer,
     sansSouci.data,
     scales,
-    testthat
+    testthat,
+    covr
 VignetteBuilder: knitr
 RoxygenNote: 7.1.1
 LazyData: true

@@ -97,3 +97,16 @@ test_that("Consistency of randomization p-values with different alternatives", {
         expect_equal(two.sided$p, 2*pmin(greater$p, less$p))
     }
 })
+
+test_that("Correctness of sanity checks", {
+    m <- 5
+    n <- 20
+    mat <- matrix(rnorm(m*n), ncol = n)
+    categ <- rep(c(0, 1), times = c(2, n - 2))
+    expect_error(testByRandomization(mat, categ, B = 1), 
+                 "At least 3 observations from each sample are required for two-sample tests")
+    categ[1] <- 12
+    expect_error(testByRandomization(mat, categ, B = 1), 
+                 "Tests for more than 2 classes not implemented yet")
+    
+})

@@ -19,9 +19,6 @@
 #' @param rand.p.value A boolean value: should randomization \eqn{p}-values be
 #'   calculated and returned? Defaults to @FALSE
 #'
-#' @param seed An integer (or NULL) value used as a seed for random number
-#'   generation. If \code{NULL}, no seed is specified
-#'
 #' @details The type of randomization is determined by the column names of
 #'   \code{X}. If these column names have exactly two distinct values, the
 #'   corresponding columns are interpreted as two samples and a two-sample
@@ -112,7 +109,7 @@
 testByRandomization <- function(X, categ, B, 
                                 alternative = c("two.sided", "less", "greater"),
                                 rowTestFUN = rowWelchTests,
-                                rand.p.value = FALSE, seed = NULL){
+                                rand.p.value = FALSE){
     alternative <- match.arg(alternative)
     ## sanity checks
     n <- ncol(X)
@@ -129,9 +126,6 @@ testByRandomization <- function(X, categ, B,
         } else {
             stop("Tests for more than 2 classes not implemented yet")
         }
-    }
-    if (!is.null(seed)) {
-        set.seed(seed)
     }
     m <- nrow(X)
     
