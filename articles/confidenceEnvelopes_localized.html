@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.1</span>
       </span>
     </div>
 
@@ -98,7 +98,7 @@
       <h1 data-toc-skip>Confidence envelopes for spatially structured hypotheses</h1>
                         <h4 class="author">G. Durand, G. Blanchard, P. Neuvial, E. Roquain</h4>
             
-            <h4 class="date">2020-10-26</h4>
+            <h4 class="date">2020-11-07</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/pneuvial/sanssouci/blob/master/vignettes/confidenceEnvelopes_localized.Rmd"><code>vignettes/confidenceEnvelopes_localized.Rmd</code></a></small>
       <div class="hidden name"><code>confidenceEnvelopes_localized.Rmd</code></div>
@@ -111,17 +111,17 @@
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h2>
 <p>The goal of this vignette is to illustrate the post hoc bounds on the number of true/false positives proposed in <span class="citation">Durand et al. (2020)</span> for localized signals. More specifically, we reproduce one of the plots of Figure 12 in <span class="citation">Durand et al. (2020)</span> using the R package <code>sansSouci</code>. We will explicitly quote <span class="citation">Durand et al. (2020)</span> when relevant.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/pneuvial/sanssouci">"sansSouci"</a></span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/pneuvial/sanssouci">"sansSouci"</a></span><span class="op">)</span></code></pre></div>
 </div>
 <div id="objective" class="section level2">
 <h2 class="hasAnchor">
 <a href="#objective" class="anchor"></a>Objective</h2>
 <p>We consider <span class="math inline">\(m\)</span> null ordered hypotheses partitioned in intervals of size <span class="math inline">\(s\)</span>. For simplicity we set the number of intervals to be a power of 2: <span class="math inline">\(m = s 2^q\)</span> for some integer <span class="math inline">\(q\)</span>:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="va">s</span> <span class="op">&lt;-</span> <span class="fl">100</span>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">s</span> <span class="op">&lt;-</span> <span class="fl">100</span>
 <span class="va">q</span> <span class="op">&lt;-</span> <span class="fl">7</span>
-<span class="va">m</span> <span class="op">&lt;-</span> <span class="va">s</span><span class="op">*</span><span class="fl">2</span><span class="op">^</span><span class="va">q</span></pre></div>
+<span class="va">m</span> <span class="op">&lt;-</span> <span class="va">s</span><span class="op">*</span><span class="fl">2</span><span class="op">^</span><span class="va">q</span></code></pre></div>
 <p>Therefore, we have <span class="math inline">\(m = 1.28\times 10^{4}\)</span>.Our goal is to compare three post hoc bounds. These bounds are obtained by interpolation from a <em>reference family</em> where the amount of signal is estimated by probabilistic inequalities, following the general principle laid down by <span class="citation">Blanchard, Neuvial, and Roquain (2020)</span>, and they differ by the choice of the reference family:</p>
 <ul>
 <li><p>“Simes”: the bound derived from the <span class="citation">Simes (1986)</span> inequality as proposed by <span class="citation">Goeman and Solari (2011)</span> and further studied by <span class="citation">Blanchard, Neuvial, and Roquain (2020)</span>. This bound was introduced in a context where the signal is not localized.</p></li>
@@ -132,23 +132,23 @@
 <h2 class="hasAnchor">
 <a href="#settings" class="anchor"></a>Settings</h2>
 <p>We define the following numerical parameters, which characterize the true/false null hypothesis configuration considered in Section 5 of <span class="citation">Durand et al. (2020)</span>:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="va">K1</span> <span class="op">&lt;-</span> <span class="fl">8</span>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">K1</span> <span class="op">&lt;-</span> <span class="fl">8</span>
 <span class="va">r</span> <span class="op">&lt;-</span> <span class="fl">0.9</span>
 <span class="va">m1</span> <span class="op">&lt;-</span>  <span class="va">r</span><span class="op">*</span><span class="va">K1</span><span class="op">*</span><span class="va">s</span>
-<span class="va">barmu</span> <span class="op">&lt;-</span> <span class="fl">3</span></pre></div>
+<span class="va">barmu</span> <span class="op">&lt;-</span> <span class="fl">3</span></code></pre></div>
 <p>More precisely, quoting <span class="citation">Durand et al. (2020)</span>:</p>
 <blockquote>
 <p>the false null hypotheses are contained in <span class="math inline">\(P_k\)</span> for <span class="math inline">\(1 \leq k \leq K_1\)</span>, for some fixed value of <span class="math inline">\(K_1\)</span>. The quantity <span class="math inline">\(r\)</span> is defined similarly as in (20), as the fraction of false null hypotheses in those <span class="math inline">\(P_k\)</span>, and is set to <span class="math inline">\(r =0.9\)</span>. All of the other partition pieces only contain true null hypotheses.</p>
 </blockquote>
 <p>We start by creating a binary tree structure and generating the signal:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dyadic.html">dyadic.from.window.size</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">s</span>, method <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dyadic.html">dyadic.from.window.size</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">s</span>, method <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
 <span class="va">leaf_list</span> <span class="op">&lt;-</span> <span class="va">dd</span><span class="op">$</span><span class="va">leaf_list</span>
 <span class="va">C</span> <span class="op">&lt;-</span> <span class="va">dd</span><span class="op">$</span><span class="va">C</span>
 
 <span class="va">mu</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gen.mu.leaves.html">gen.mu.leaves</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m</span>, K1 <span class="op">=</span> <span class="va">K1</span>, d <span class="op">=</span> <span class="va">r</span>, grouped <span class="op">=</span> <span class="cn">TRUE</span>, setting <span class="op">=</span> <span class="st">"const"</span>, 
-                    barmu <span class="op">=</span> <span class="va">barmu</span>, leaf_list <span class="op">=</span> <span class="va">leaf_list</span><span class="op">)</span></pre></div>
+                    barmu <span class="op">=</span> <span class="va">barmu</span>, leaf_list <span class="op">=</span> <span class="va">leaf_list</span><span class="op">)</span></code></pre></div>
 <p>This construction is illustrated in the figure below (Figure 11 in <span class="citation">Durand et al. (2020)</span>) in the case where <span class="math inline">\(q=3\)</span>.</p>
 <div class="figure">
 <img src="DBNR_graph-simu.png" alt="Figure 11 in Durand et al." width="100%"><p class="caption">
@@ -159,87 +159,87 @@ Figure 11 in Durand et al.
 <blockquote>
 <p>The true null <span class="math inline">\(p\)</span>-values are distributed as i.i.d. <span class="math inline">\(\mathcal{N}(0,1)\)</span>, and false null <span class="math inline">\(p\)</span>-values are distributed as i.i.d. <span class="math inline">\(\mathcal{N}(\bar{\mu}, 1)\)</span>, where [<span class="math inline">\(\bar{\mu}= 3\)</span>].</p>
 </blockquote>
-<div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="va">pvalues</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gen.p.values.html">gen.p.values</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m</span>, mu <span class="op">=</span> <span class="va">mu</span>, rho <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">pvalues</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gen.p.values.html">gen.p.values</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m</span>, mu <span class="op">=</span> <span class="va">mu</span>, rho <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="calculate-confidence-envelopes" class="section level2">
 <h2 class="hasAnchor">
 <a href="#calculate-confidence-envelopes" class="anchor"></a>Calculate confidence envelopes</h2>
 <p>The confidence level for post hoc inference is set to <span class="math inline">\(\alpha = 0.05\)</span>.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="va">alpha</span> <span class="op">&lt;-</span> <span class="fl">0.05</span></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">alpha</span> <span class="op">&lt;-</span> <span class="fl">0.05</span></code></pre></div>
 <blockquote>
 <p>Below, we will be considering confidence envelopes of the form <span class="math inline">\((k, V(S_k))_{1 \leq k \leq m}\)</span>, where <span class="math inline">\(S_k\)</span> is the set of the <span class="math inline">\(k\)</span> smallest <span class="math inline">\(p\)</span>-values (regardless of the ordering given by the partition). Note that focusing on such sets is a priori favorable to the Simes bound, for which the elements of the reference family are among the <span class="math inline">\(S_k\)</span>.</p>
 </blockquote>
-<div class="sourceCode" id="cb7"><pre class="downlit">
-<span class="va">ord</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/order.html">order</a></span><span class="op">(</span><span class="va">pvalues</span><span class="op">)</span>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">ord</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/order.html">order</a></span><span class="op">(</span><span class="va">pvalues</span><span class="op">)</span>
 <span class="va">idxs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fl">1</span>, to <span class="op">=</span> <span class="fl">2</span><span class="op">*</span><span class="va">m1</span>, length <span class="op">=</span> <span class="fl">30</span><span class="op">)</span>,
           <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span>from <span class="op">=</span> <span class="fl">2</span><span class="op">*</span><span class="va">m1</span>, to <span class="op">=</span> <span class="va">m</span>, length <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span>
-<span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span></pre></div>
+<span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <div id="true-number-of-false-positives" class="section level3">
 <h3 class="hasAnchor">
 <a href="#true-number-of-false-positives" class="anchor"></a>1- True number of false positives</h3>
 <p>The true number of false positives will be called “Oracle” bound in the plots below.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="va">H0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">mu</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">H0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">mu</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span>
 <span class="va">V</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cumsum.html">cumsum</a></span><span class="op">(</span><span class="va">ord</span> <span class="op">%in%</span> <span class="va">H0</span><span class="op">)</span>
 <span class="va">V</span> <span class="op">&lt;-</span> <span class="va">V</span><span class="op">[</span><span class="va">idxs</span><span class="op">]</span>
-<span class="va">res</span><span class="op">[[</span><span class="st">"Oracle"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="va">idxs</span>, <span class="va">V</span>, method <span class="op">=</span> <span class="st">"Oracle"</span><span class="op">)</span></pre></div>
+<span class="va">res</span><span class="op">[[</span><span class="st">"Oracle"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="va">idxs</span>, <span class="va">V</span>, method <span class="op">=</span> <span class="st">"Oracle"</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="simes-based-confidence-envelope" class="section level3">
 <h3 class="hasAnchor">
 <a href="#simes-based-confidence-envelope" class="anchor"></a>2- Simes-based confidence envelope</h3>
 <p>Here we use the <span class="citation">Simes (1986)</span> inequality to bound the number of false positives in each node of the tree, as proposed by <span class="citation">Goeman and Solari (2011)</span> and further studied by <span class="citation">Blanchard, Neuvial, and Roquain (2020)</span>, both in a context where the signal is not localized.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit">
-<span class="va">V</span> <span class="op">&lt;-</span> <span class="va">idxs</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">idxs</span>, FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">ii</span><span class="op">)</span> <span class="op">{</span>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">V</span> <span class="op">&lt;-</span> <span class="va">idxs</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">idxs</span>, FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">ii</span><span class="op">)</span> <span class="op">{</span>
     <span class="fu"><a href="../reference/posthocBySimes0Rcpp.html">posthocBySimes</a></span><span class="op">(</span><span class="va">pvalues</span>, <span class="va">ord</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="va">ii</span><span class="op">]</span>, <span class="va">alpha</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
-<span class="va">res</span><span class="op">[[</span><span class="st">"Simes"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="va">idxs</span>, <span class="va">V</span>, method <span class="op">=</span> <span class="st">"Simes"</span><span class="op">)</span></pre></div>
+<span class="va">res</span><span class="op">[[</span><span class="st">"Simes"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="va">idxs</span>, <span class="va">V</span>, method <span class="op">=</span> <span class="st">"Simes"</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="dkwm-based-confidence-envelope" class="section level3">
 <h3 class="hasAnchor">
 <a href="#dkwm-based-confidence-envelope" class="anchor"></a>3- DKWM-based confidence envelope</h3>
 <p>Here we use the DKWM inequality (<span class="citation">Dvoretzky, Kiefer, and Wolfowitz (1956)</span>, <span class="citation">Massart (1990)</span>) to bound the number of false positives in each node of the tree, as suggested in <span class="citation">Durand et al. (2020)</span>.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit">
-<span class="va">ZL</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/zetas.tree.html">zetas.tree</a></span><span class="op">(</span><span class="va">C</span>, <span class="va">leaf_list</span>, <span class="va">zeta.DKWM</span>, <span class="va">pvalues</span>, alpha <span class="op">=</span> <span class="va">alpha</span><span class="op">)</span>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">ZL</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/zetas.tree.html">zetas.tree</a></span><span class="op">(</span><span class="va">C</span>, <span class="va">leaf_list</span>, <span class="va">zeta.DKWM</span>, <span class="va">pvalues</span>, alpha <span class="op">=</span> <span class="va">alpha</span><span class="op">)</span>
 <span class="va">V</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">idxs</span>, FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">ii</span><span class="op">)</span> <span class="op">{</span>
     <span class="fu"><a href="../reference/V.star.html">V.star</a></span><span class="op">(</span><span class="va">ord</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="va">ii</span><span class="op">]</span>, <span class="va">C</span>, <span class="va">ZL</span>, <span class="va">leaf_list</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
-<span class="va">res</span><span class="op">[[</span><span class="st">"Tree"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="va">idxs</span>, <span class="va">V</span>, method <span class="op">=</span> <span class="st">"Tree"</span><span class="op">)</span></pre></div>
-<div class="sourceCode" id="cb11"><pre class="downlit">
-<span class="va">C0</span> <span class="op">&lt;-</span> <span class="va">C</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">C</span><span class="op">)</span><span class="op">]</span>
+<span class="va">res</span><span class="op">[[</span><span class="st">"Tree"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="va">idxs</span>, <span class="va">V</span>, method <span class="op">=</span> <span class="st">"Tree"</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">C0</span> <span class="op">&lt;-</span> <span class="va">C</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">C</span><span class="op">)</span><span class="op">]</span>
 <span class="va">ZL</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/zetas.tree.html">zetas.tree</a></span><span class="op">(</span><span class="va">C0</span>, <span class="va">leaf_list</span>, <span class="va">zeta.DKWM</span>, <span class="va">pvalues</span>, alpha <span class="op">=</span> <span class="va">alpha</span><span class="op">)</span>
 <span class="va">V</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">idxs</span>, FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">ii</span><span class="op">)</span> <span class="op">{</span>
     <span class="fu"><a href="../reference/V.star.html">V.star</a></span><span class="op">(</span><span class="va">ord</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="va">ii</span><span class="op">]</span>, <span class="va">C0</span>, <span class="va">ZL</span>, <span class="va">leaf_list</span><span class="op">)</span>
 <span class="op">}</span><span class="op">)</span>
-<span class="va">res</span><span class="op">[[</span><span class="st">"Partition"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="va">idxs</span>, <span class="va">V</span>, method <span class="op">=</span> <span class="st">"Partition"</span><span class="op">)</span></pre></div>
+<span class="va">res</span><span class="op">[[</span><span class="st">"Partition"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="va">idxs</span>, <span class="va">V</span>, method <span class="op">=</span> <span class="st">"Partition"</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
 <div id="plot-confidence-envelopes" class="section level2">
 <h2 class="hasAnchor">
 <a href="#plot-confidence-envelopes" class="anchor"></a>Plot confidence envelopes</h2>
-<div class="sourceCode" id="cb12"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="http://ggplot2.tidyverse.org">"ggplot2"</a></span><span class="op">)</span>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="http://ggplot2.tidyverse.org">"ggplot2"</a></span><span class="op">)</span>
 <span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/funprog.html">Reduce</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">res</span><span class="op">)</span>
 <span class="va">lvls</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Oracle"</span>, <span class="st">"Partition"</span>, <span class="st">"Simes"</span>, <span class="st">"Tree"</span>, <span class="st">"Hybrid"</span><span class="op">)</span>
 <span class="va">cols</span> <span class="op">&lt;-</span> <span class="fu">RColorBrewer</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html">brewer.pal</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">lvls</span><span class="op">)</span>, <span class="st">"Set1"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">cols</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">lvls</span></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">cols</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">lvls</span></code></pre></div>
 <div id="upper-bound-on-the-number-of-false-positives" class="section level3">
 <h3 class="hasAnchor">
 <a href="#upper-bound-on-the-number-of-false-positives" class="anchor"></a>Upper bound on the number of false positives</h3>
-<div class="sourceCode" id="cb13"><pre class="downlit">
-<span class="va">xymax</span> <span class="op">&lt;-</span> <span class="va">m1</span>;
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">xymax</span> <span class="op">&lt;-</span> <span class="va">m1</span>;
 <span class="va">pV</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">dat</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">idxs</span>, <span class="va">V</span>, colour <span class="op">=</span> <span class="va">method</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span><span class="op">(</span><span class="st">"Upper bound on the number of false positives"</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span><span class="op">(</span><span class="st">"sorted hypotheses"</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_colour_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">cols</span><span class="op">)</span>
-<span class="va">pV</span></pre></div>
+<span class="va">pV</span></code></pre></div>
 <p><img src="confidenceEnvelopes_localized_files/figure-html/plot-confidence-envelope-1.png" width="700"></p>
 <p>The “Tree” and “Partition” bounds are sharper than the “Simes” bound as soon as we are considering “large” sets of hypotheses. The fact that the “Tree” and “Partition” bounds are not as sharp as the “Simes” bound for the first hundred of hypotheses can be explained by our choice of the ordering of the null hypotheses in the sets <span class="math inline">\(S_k\)</span>, which as discussed above is favorable to the “Simes” bound.</p>
 <p>Zooming on the first 720 null hypotheses (in the order of the <span class="math inline">\(p\)</span>-values):</p>
-<div class="sourceCode" id="cb14"><pre class="downlit">
-<span class="va">pV</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">xlim</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">xymax</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">ylim</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">xymax</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">pV</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">xlim</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">xymax</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">ylim</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">xymax</span><span class="op">)</span></code></pre></div>
 <p><img src="confidenceEnvelopes_localized_files/figure-html/zoom-plot-confidence-envelope-1.png" width="700"></p>
 </div>
 </div>
@@ -247,28 +247,28 @@ Figure 11 in Durand et al.
 <h2 class="hasAnchor">
 <a href="#lower-bound-on-the-number-of-true-positives" class="anchor"></a>Lower bound on the number of true positives</h2>
 <p>The same information can be displayed as a lower bound on the number of true positives, defined for any <span class="math inline">\(S \subset \{1 \dots m\}\)</span> by <span class="math inline">\(|S| - V(S)\)</span>:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit">
-<span class="va">dat</span><span class="op">$</span><span class="va">S</span> <span class="op">&lt;-</span> <span class="va">dat</span><span class="op">$</span><span class="va">idxs</span> <span class="op">-</span> <span class="va">dat</span><span class="op">$</span><span class="va">V</span></pre></div>
-<div class="sourceCode" id="cb16"><pre class="downlit">
-<span class="va">xmax</span> <span class="op">&lt;-</span> <span class="va">m1</span>;
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">dat</span><span class="op">$</span><span class="va">S</span> <span class="op">&lt;-</span> <span class="va">dat</span><span class="op">$</span><span class="va">idxs</span> <span class="op">-</span> <span class="va">dat</span><span class="op">$</span><span class="va">V</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">xmax</span> <span class="op">&lt;-</span> <span class="va">m1</span>;
 <span class="va">ymax</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">S</span><span class="op">)</span>;
 <span class="va">pS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">dat</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span><span class="va">idxs</span>, <span class="va">S</span>, colour <span class="op">=</span> <span class="va">method</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span><span class="op">(</span><span class="st">"Lower bound on the number of true positives"</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span><span class="op">(</span><span class="st">"sorted hypotheses"</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_colour_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="va">cols</span><span class="op">)</span>
-<span class="va">pS</span></pre></div>
+<span class="va">pS</span></code></pre></div>
 <p><img src="confidenceEnvelopes_localized_files/figure-html/plot-lower-bound-1.png" width="700"></p>
 <p>Zooming in the first 720 null hypotheses (in the order of the <span class="math inline">\(p\)</span>-values), we recover the middle plot in Figure 12 of <span class="citation">Durand et al. (2020)</span>.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit">
-<span class="va">pS</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">xlim</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">xmax</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">ylim</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">ymax</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">pS</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">xlim</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">xmax</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">ylim</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">ymax</span><span class="op">)</span></code></pre></div>
 <p><img src="confidenceEnvelopes_localized_files/figure-html/zoom-plot-lower-bound-1.png" width="700"></p>
 </div>
 <div id="session-information" class="section level2">
 <h2 class="hasAnchor">
 <a href="#session-information" class="anchor"></a>Session information</h2>
-<div class="sourceCode" id="cb18"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code>## R version 4.0.3 (2020-10-10)
 ## Platform: x86_64-apple-darwin17.0 (64-bit)
 ## Running under: macOS Catalina 10.15.7
@@ -284,18 +284,18 @@ Figure 11 in Durand et al.
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] ggplot2_3.3.2   sansSouci_0.9.0
+## [1] ggplot2_3.3.2   sansSouci_0.9.1
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] Rcpp_1.0.5         RColorBrewer_1.1-2 compiler_4.0.3     pillar_1.4.6      
 ##  [5] highr_0.8          tools_4.0.3        digest_0.6.27      evaluate_0.14     
 ##  [9] memoise_1.1.0      lifecycle_0.2.0    tibble_3.0.4       gtable_0.3.0      
 ## [13] lattice_0.20-41    pkgconfig_2.0.3    rlang_0.4.8        Matrix_1.2-18     
-## [17] yaml_2.2.1         pkgdown_1.6.1      xfun_0.18          withr_2.3.0       
+## [17] yaml_2.2.1         pkgdown_1.6.1      xfun_0.19          withr_2.3.0       
 ## [21] stringr_1.4.0      knitr_1.30         vctrs_0.3.4        desc_1.2.0        
 ## [25] fs_1.5.0           systemfonts_0.3.2  rprojroot_1.3-2    grid_4.0.3        
-## [29] glue_1.4.2         R6_2.4.1           textshaping_0.1.2  rmarkdown_2.5     
-## [33] farver_2.0.3       magrittr_1.5       backports_1.1.10   scales_1.1.1      
+## [29] glue_1.4.2         R6_2.5.0           textshaping_0.1.2  rmarkdown_2.5     
+## [33] farver_2.0.3       magrittr_1.5       backports_1.2.0    scales_1.1.1      
 ## [37] matrixStats_0.57.0 htmltools_0.5.0    ellipsis_0.3.1     assertthat_0.2.1  
 ## [41] colorspace_1.4-1   labeling_0.4.2     ragg_0.4.0         stringi_1.5.3     
 ## [45] munsell_0.5.0      crayon_1.3.4</code></pre>

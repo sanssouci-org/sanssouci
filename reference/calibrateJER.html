@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.1</span>
       </span>
     </div>
 
@@ -210,7 +210,7 @@ Must be one of "two.sided" (default), "greater" or "less".</p></td>
     <tr>
       <th>K</th>
       <td><p>For JER control over <code>1:K</code>, ie joint control of all
-\(k\)-FWER, \(k \le K\).</p></td>
+\(k\)-FWER, \(k \le K\). Defaults to \(m\).</p></td>
     </tr>
     <tr>
       <th>verbose</th>
@@ -223,7 +223,7 @@ Must be one of "two.sided" (default), "greater" or "less".</p></td>
     <p>A list with elements:</p><dl>
 
   <dt>p.values</dt><dd><p>A numeric vector of <code>m</code> p-values</p></dd>
-  <dt>pivStat</dt><dd><p>A numeric vector of length <code>m</code>, the values of the pivotal
+  <dt>pivStat</dt><dd><p>A numeric vector of length <code>B</code>, the values of the pivotal
          statistic whose quantile of order \(alpha\) is \(lambda\).</p></dd>
   <dt>thr</dt><dd><p>A numeric vector of length <code>K</code>, such that the estimated
   probability that there exists an index \(k\) between 1 and \(K\) such
