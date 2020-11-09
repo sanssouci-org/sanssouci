@@ -9,7 +9,7 @@ library(htmlwidgets)
 data(expr_ALL, package = "sansSouci.data")
 data(expr_ALL_annotation, package = "sansSouci.data")
 
-shinyServer(function(input, output) {
+shinyServer(function(input, output, session) {
     
     source("function.R")
     
@@ -178,10 +178,10 @@ shinyServer(function(input, output) {
             filter(Selection != "Both parts") %>% 
             filter(Selection!="Upper Left")
         upperTable <- data.frame(`Selection`=c("Upper Right", "Upper Left", "Both parts"), 
-                               "# genes"=c(TP_FDP()$n1, TP_FDP()$n2, TP_FDP()$n12),
-                               "TP≥"=as.integer(c(TP_FDP()$TP1, TP_FDP()$TP2, TP_FDP()$TP12)), 
-                               "FDP≤" = c(TP_FDP()$FDP1, TP_FDP()$FDP2, TP_FDP()$FDP12),
-                               check.names = FALSE)
+                                 "# genes"=c(TP_FDP()$n1, TP_FDP()$n2, TP_FDP()$n12),
+                                 "TP≥"=as.integer(c(TP_FDP()$TP1, TP_FDP()$TP2, TP_FDP()$TP12)), 
+                                 "FDP≤" = c(TP_FDP()$FDP1, TP_FDP()$FDP2, TP_FDP()$FDP12),
+                                 check.names = FALSE)
         newValue <- rbind(upperTable, bottomTable)
         tableResult(newValue)
     })
@@ -196,7 +196,14 @@ shinyServer(function(input, output) {
     })
     observeEvent(input$resetCSV, { # to clean printed table
         newValue <- data.frame(`Selection`=c("Upper Right", "Upper Left", "Both parts"), 
-                               "Nb of genes"=c(TP_FDP()$n1, TP_FDP()$n2, TP_FDP()$n12),
+                               "# genes"=c(TP_FDP()$n1, TP_FDP()$n2, TP_FDP()$n12),
+                               "TP≥"=as.integer(c(TP_FDP()$TP1, TP_FDP()$TP2, TP_FDP()$TP12)), 
+                               "FDP≤" = c(TP_FDP()$FDP1, TP_FDP()$FDP2, TP_FDP()$FDP12))
+        tableResult(newValue)
+    })
+    observeEvent(data(), { # to clean printed table
+        newValue <- data.frame(`Selection`=c("Upper Right", "Upper Left", "Both parts"), 
+                               "# genes"=c(TP_FDP()$n1, TP_FDP()$n2, TP_FDP()$n12),
                                "TP≥"=as.integer(c(TP_FDP()$TP1, TP_FDP()$TP2, TP_FDP()$TP12)), 
                                "FDP≤" = c(TP_FDP()$FDP1, TP_FDP()$FDP2, TP_FDP()$FDP12))
         tableResult(newValue)
@@ -216,13 +223,14 @@ shinyServer(function(input, output) {
         listLog <- c()
         for (i in c(0.5,0.25,0.1,0.05,0.025,0.01,0.001,0.0001)){
             min05 <- names(which.min(abs(df()$adjp-i)))
-            y05 <- df()$logp[min05]
+            y05 <- df()$logp[[min05]]
             listLog <- c(listLog, y05)
-            print(y05)
         }
         return(listLog)
     })
-
+    
+    output$lineAdjp <- renderPrint({list(lineAdjp(), class(lineAdjp()))})
+    
     
     annotation <- reactive({ 
         A <- tibble::rownames_to_column(data.frame(df()), "VALUE")
@@ -278,10 +286,7 @@ shinyServer(function(input, output) {
         gte <- "≥"
         
         
-       
-        col = c("#33333333", "#FF0000", "#FF666633")
-        cols <- rep(col[1], length(df()$fc))
-        cols[c(selectedGenes()$sel1, selectedGenes()$sel2)] <- col[2]
+        
         
         withProgress( message = "Please wait", { 
             
@@ -300,25 +305,11 @@ shinyServer(function(input, output) {
                                 size = 6
                             ),
                             name="selected") %>%
-                # add_segments(x = min(df()$fc), xend = max(df()$fc), 
-                #              y = lineAdjp()$logp0.10, yend = lineAdjp()$logp0.10, 
-                #              name="Adjusted pvalues = 0.1", legendgroup = "Adjusted pvalues",
-                #              opacity=0.3)%>%
-                # add_segments(x = min(df()$fc), xend = max(df()$fc),
-                #              y = lineAdjp()$logp0.05, yend = lineAdjp()$logp0.05, 
-                #              name="Adjusted pvalues = 0.05", legendgroup = "Adjusted pvalues",
-                #              opacity=0.3)%>%
-                # add_segments(x = min(df()$fc), xend = max(df()$fc), 
-                #              y = lineAdjp()$logp0.01, yend = lineAdjp()$logp0.01, 
-                #              name="Adjusted pvalues = 0.01", legendgroup = "Adjusted pvalues",
-                #              opacity=0.3)%>%
                 layout(
                     # showlegend = FALSE,
                     xaxis = list(title = "Fold change (log scale)", titlefont = f),
-                    yaxis = yaxis(), 
+                    yaxis = isolate(yaxis()),
                     title = "Volcano plot",
-                    # title = paste(c(sprintf("%s genes selected\nAt least %s true positives (FDP %s %s)",
-                    #                         req(TP_FDP()$n12), req(TP_FDP()$TP12), lte, req(TP_FDP()$FDP12)))),
                     shapes = list(
                         list(
                             type = "line",
@@ -349,35 +340,7 @@ shinyServer(function(input, output) {
                             y1 = 1,
                             yref = "paper"
                         )
-                        # ,
-                        # list(
-                        #     type = "line",
-                        #     line = list(color = "grey"),
-                        #     x0 = 0,
-                        #     x1 = 1,
-                        #     y0 = lineAdjp()$logp0.10,
-                        #     y1 = lineAdjp()$logp0.10,
-                        #     xref = "paper"
-                        # ),
-                        # list(
-                        #     type = "line",
-                        #     line = list(color = "grey"),
-                        #     x0 = 0,
-                        #     x1 = 1,
-                        #     y0 = lineAdjp()$logp0.05,
-                        #     y1 = lineAdjp()$logp0.05,
-                        #     xref = "paper"
-                        # ),
-                        # list(
-                        #     type = "line",
-                        #     line = list(color = "grey"),
-                        #     x0 = 0,
-                        #     x1 = 1,
-                        #     y0 = lineAdjp()$logp0.01,
-                        #     y1 = lineAdjp()$logp0.01,
-                        #     xref = "paper"
-                        # )
-                    ), 
+                    ),
                     dragmode = "select" ) %>%
                 add_annotations(
                     x= 0,
@@ -400,15 +363,16 @@ shinyServer(function(input, output) {
                     text = annotation()[['hgnc_symbol']],
                     customdata = paste0("https://www.genecards.org/cgi-bin/carddisp.pl?gene=", annotation()[['hgnc_symbol']]))%>%
                 onRender("
-                    function(el) {
-                        el.on('plotly_click', function(d) {
-                            var url = d.points[0].customdata;
-                            window.open(url);
-                        });
-                    }
-                ") %>%
+                  function(el) {
+                      el.on('plotly_click', function(d) {
+                          var url = d.points[0].customdata;
+                          window.open(url);
+                      });
+                  }
+              ") %>%
                 event_register("plotly_selecting") %>%
-                config(editable = TRUE)
+                config(editable = TRUE)%>%
+                toWebGL()
         })
     })
     
@@ -446,5 +410,14 @@ shinyServer(function(input, output) {
             write.csv(tableCSV(), file)
         }
     )
+    
+    
+    
+    observeEvent(input$choiceYaxis, {
+        plotlyProxy("volcanoplot", session) %>%
+            plotlyProxyInvoke("relayout", list(yaxis = yaxis()))
+        
+        
+    })
     
 })
