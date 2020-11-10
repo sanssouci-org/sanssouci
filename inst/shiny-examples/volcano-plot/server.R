@@ -59,7 +59,8 @@ shinyServer(function(input, output, session) {
     output$inputK <- renderUI({
         numericInput("valueK", 
                      label = "K (size of reference family)", 
-                     value = nrow(data()$matrix), 
+                     value = nrow(data()$matrix),
+                     min = 1,
                      max = nrow(data()$matrix))
     })
     

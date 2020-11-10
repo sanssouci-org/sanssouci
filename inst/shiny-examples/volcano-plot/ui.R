@@ -32,7 +32,7 @@ shinyUI(fluidPage(
                                    "Less"="less", 
                                    "Greater"="greater"),
                     selected = "two.sided"),
-        numericInput("numB", label = "Number of permutations", value = 100)
+        numericInput("numB", label = "Number of permutations", value = 100, min=2)
       ),
       splitLayout(
         selectInput("refFamily", label = "Reference family", 

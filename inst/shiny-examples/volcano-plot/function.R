@@ -143,7 +143,7 @@ defaultBiologicalFunc <- function(expr_ALl, expr_ALL_annotation){
   matrixFunc[Func2, "Func2"] <- 1  
   
   Func3 = (df %>% filter(abs(fc)>1.4))$nameGene
-  matrixFunc[Func2, "Func3"] <- 1
+  matrixFunc[Func3, "Func3"] <- 1
   
   Func4 = (df %>% filter(logp > 5))$nameGene
   matrixFunc[Func4, "Func4"] <- 1
