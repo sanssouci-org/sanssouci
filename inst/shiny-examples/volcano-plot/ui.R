@@ -18,6 +18,12 @@ shinyUI(fluidPage(
                          fileInput("fileCateg", label = "Input condition vector")
                        )
       ), 
+      conditionalPanel(condition = "!input.checkboxDemo",
+                       splitLayout(
+                         fileInput("fileAnnotation", label = "Input gene annotation"), 
+                         fileInput("fileGroup", label = "Matrix of biological function")
+                       )
+      ), 
       sliderInput("sliderConfLevel", label = "Confidence level", min = 0, 
                   max = 100, value = 90, post = " %"),
       splitLayout(

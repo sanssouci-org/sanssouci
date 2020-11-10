@@ -74,3 +74,67 @@ calcBounds <- function(listPval, selection, thr){
   FDP <- round(FP/max(n, 1), 2)
   return(list(n=n, FP=FP, TP=TP, FDP=FDP))
 }
+
+
+defaultBiologicalFunc <- function(expr_ALl, expr_ALL_annotation){
+  library(sansSouci)
+  
+  X = expr_ALL
+  categ = colnames(X)
+  categ <- rep(0, length(categ))
+  categ[colnames(X)=="NEG"] <- 1
+  cal <- calibrateJER(X, categ = categ,  B = 1e2, alpha = 0.05)
+  thr = cal$thr
+  dex <- rowWelchTests(X, categ)
+  pval <- dex[["p.value"]]
+  logp <- -log10(pval)
+  fc <- dex$meanDiff
+  adjp <- p.adjust(pval, method = "BH")
+  df = data.frame(pval, logp, fc, adjp)
+  
+  library(dplyr)
+  
+  A <- tibble::rownames_to_column(df, "Id")
+  
+  B = expr_ALL_annotation[c('affy_hg_u95av2','hgnc_symbol')]
+  B
+  
+  B <- dplyr::left_join(A,B, by=c("Id"="affy_hg_u95av2"))[c('Id','hgnc_symbol')]
+  rownames(B) <- B[['VALUE']]
+  # B <- B['hgnc_symbol']
+  
+  df <- tibble::rownames_to_column(df, "Id")
+  df <- dplyr::left_join(df, B, by="Id")
+  df <- df%>% 
+    rename(nameGene = hgnc_symbol)%>%
+    filter(nameGene!="")
+  rownames(df) <- df[["Id"]]
+  
+  
+  matrixFunc <- data.frame(nameGene = sort(unique(expr_ALL_annotation$hgnc_symbol)),
+                           row.names = sort(unique(expr_ALL_annotation$hgnc_symbol)))
+  matrixFunc[,c("Func1","Func2","Func3","Func4","Top4ABL1","Top19ABL1","Func7")] <- 0
+  matrixFunc[unique((df%>% filter(logp> 3) %>% filter(abs(fc)>1))[["nameGene"]]),"Func1"] <- 1
+  
+  Func2 = 712:798
+  matrixFunc[Func2, "Func2"] <- 1  
+  
+  Func3 = (df %>% filter(abs(fc)>1.4))$nameGene
+  matrixFunc[Func2, "Func3"] <- 1
+  
+  Func4 = (df %>% filter(logp > 5))$nameGene
+  matrixFunc[Func4, "Func4"] <- 1
+  
+  Func5 = c("FN1","CRK","ABL1","PPM1B","PAK4")
+  matrixFunc[Func5,"Top4ABL1"] <- 1
+  
+  Func6 = c("FN1","CRK","ABL1","PPM1B","PAK4", "TRAF6","WASL",
+            "ABI1","ABI2","CAP1","ROBO1","CBL","CRKL","INPPL1",
+            "SHC1", "HSP90AA1","DOK1","DOK2","RAD51","PXN")
+  matrixFunc[Func6,"Top19ABL1"] <- 1
+  
+  Func7 = (df %>% filter(abs(fc)<7e-4) %>% filter(logp < 2e-3))$nameGene
+  matrixFunc[Func7, "Func7"] <- 1
+  
+  return(matrixFunc)
+}

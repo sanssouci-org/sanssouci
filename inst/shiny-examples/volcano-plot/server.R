@@ -32,6 +32,9 @@ shinyServer(function(input, output, session) {
                     data$categ[which(categ == "NEG")] <- 1
                     
                     data$annotation <- expr_ALL_annotation[c('affy_hg_u95av2','hgnc_symbol')]
+                    data$annotation <- data$annotation %>% rename(Id = affy_hg_u95av2, nameGene = hgnc_symbol)
+                    
+                    data$biologicalFunc <- defaultBiologicalFunc(expr_ALL, expr_ALL_annotation)
                     
                 } else {
                     req(input$fileData)
@@ -41,6 +44,14 @@ shinyServer(function(input, output, session) {
                     req(input$fileCateg)
                     fileCateg <- req(input$fileCateg)
                     data$categ <- readRDS(fileCateg$datapath)
+                    
+                    req(input$fileAnnotation)
+                    fileAnnotation <- req(input$fileAnnotation)
+                    data$annotation <- readRDS(fileAnnotation$datapath)
+                    
+                    req(input$fileGroup)
+                    fileGroup <- req(input$fileGroup)
+                    data$biologicalFunc <- readRDS(fileGroup$datapath)
                 }
                 return(data)
             }
@@ -233,14 +244,14 @@ shinyServer(function(input, output, session) {
     
     
     annotation <- reactive({ 
-        A <- tibble::rownames_to_column(data.frame(df()), "VALUE")
+        A <- tibble::rownames_to_column(data.frame(df()), "Id")
         
-        B = data()$annotation[c('affy_hg_u95av2','hgnc_symbol')]
+        B = data()$annotation[c('Id','nameGene')]
         B
         
-        B <- dplyr::left_join(A,B, by=c("VALUE"="affy_hg_u95av2"))[c('VALUE','hgnc_symbol')]
-        rownames(B) <- B[['VALUE']]
-        B <- B['hgnc_symbol']
+        B <- dplyr::left_join(A,B, by=c("Id"="Id"))[c('Id','nameGene')]
+        rownames(B) <- B[['Id']]
+        B <- B['nameGene']
         return(B)
     })
     
@@ -359,9 +370,9 @@ shinyServer(function(input, output, session) {
                                            req(TP_FDP()$TP1), lte, req(TP_FDP()$FDP1)))),
                     showarrow = F
                 )%>% add_markers(
-                    showlegend = FALSE,
-                    text = annotation()[['hgnc_symbol']],
-                    customdata = paste0("https://www.genecards.org/cgi-bin/carddisp.pl?gene=", annotation()[['hgnc_symbol']]))%>%
+                    showlegend = TRUE,
+                    text = annotation()[['nameGene']],
+                    customdata = paste0("https://www.genecards.org/cgi-bin/carddisp.pl?gene=", annotation()[['nameGene']]))%>%
                 onRender("
                   function(el) {
                       el.on('plotly_click', function(d) {
