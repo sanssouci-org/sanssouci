@@ -67,17 +67,41 @@ VolcanoPlotNico <- function (X, categ, thr, p = 1, q = 1, r = 0, cex = c(0.2, 0.
   
 }
 
-calcBounds <- function(listPval, selection, thr){
-  n <- length(selection)
-  FP <- maxFP(listPval[selection], thr = thr)
+calcBounds <- function(listPval, thr){
+  n <- length(listPval)
+  FP <- maxFP(listPval, thr = thr)
   TP <- n - FP
   FDP <- round(FP/max(n, 1), 2)
   return(list(n=n, FP=FP, TP=TP, FDP=FDP))
 }
 
+bound1Group<- function(merge, thr, nomFunc){
+  rownames(merge) <- merge[['Id']]
+  listPval <- (merge %>% 
+                 filter( !!rlang::sym(nomFunc)==1))$pval 
+  bounds <- calcBounds(listPval = listPval, thr = thr)
+  return(bounds)
+}
+
+boundGroup <- function(merge, nameFunctions, thr){
+  table <- data.frame("Name" = c(), "# genes" = c(), "TP≥" = c(), "FDP≤"=c(), check.names = FALSE)
+  for (func in nameFunctions){
+    bounds <- bound1Group(merge, thr, func)
+    table <- rbind(table, data.frame(
+      "Name" = func, 
+      "# genes" = bounds$n, 
+      "TP≥" = bounds$TP,
+      "FDP≤" = bounds$FDP,
+      check.names = FALSE))
+  }
+  return(table)
+  
+}
+
+
+
 
 defaultBiologicalFunc <- function(expr_ALl, expr_ALL_annotation){
-  library(sansSouci)
   
   X = expr_ALL
   categ = colnames(X)
@@ -92,7 +116,6 @@ defaultBiologicalFunc <- function(expr_ALl, expr_ALL_annotation){
   adjp <- p.adjust(pval, method = "BH")
   df = data.frame(pval, logp, fc, adjp)
   
-  library(dplyr)
   
   A <- tibble::rownames_to_column(df, "Id")
   

@@ -209,14 +209,16 @@ shinyServer(function(input, output, session) {
         newValue <- data.frame(`Selection`=c("Upper Right", "Upper Left", "Both parts"), 
                                "# genes"=c(TP_FDP()$n1, TP_FDP()$n2, TP_FDP()$n12),
                                "TP≥"=as.integer(c(TP_FDP()$TP1, TP_FDP()$TP2, TP_FDP()$TP12)), 
-                               "FDP≤" = c(TP_FDP()$FDP1, TP_FDP()$FDP2, TP_FDP()$FDP12))
+                               "FDP≤" = c(TP_FDP()$FDP1, TP_FDP()$FDP2, TP_FDP()$FDP12), 
+                               check.names = FALSE)
         tableResult(newValue)
     })
     observeEvent(data(), { # to clean printed table
         newValue <- data.frame(`Selection`=c("Upper Right", "Upper Left", "Both parts"), 
                                "# genes"=c(TP_FDP()$n1, TP_FDP()$n2, TP_FDP()$n12),
                                "TP≥"=as.integer(c(TP_FDP()$TP1, TP_FDP()$TP2, TP_FDP()$TP12)), 
-                               "FDP≤" = c(TP_FDP()$FDP1, TP_FDP()$FDP2, TP_FDP()$FDP12))
+                               "FDP≤" = c(TP_FDP()$FDP1, TP_FDP()$FDP2, TP_FDP()$FDP12), 
+                               check.names = FALSE)
         tableResult(newValue)
     })
     
@@ -246,12 +248,11 @@ shinyServer(function(input, output, session) {
     annotation <- reactive({ 
         A <- tibble::rownames_to_column(data.frame(df()), "Id")
         
-        B = data()$annotation[c('Id','nameGene')]
+        B = data()$annotation#[c('Id','nameGene')]
         B
         
-        B <- dplyr::left_join(A,B, by=c("Id"="Id"))[c('Id','nameGene')]
+        B <- dplyr::left_join(A,B, by=c("Id"="Id"))#[c('Id','nameGene')]
         rownames(B) <- B[['Id']]
-        B <- B['nameGene']
         return(B)
     })
     
@@ -307,7 +308,7 @@ shinyServer(function(input, output, session) {
                                   # showlegend = FALSE,
                                   color = 'grey'), 
                     name = 'unselected',
-                    type='scatter', mode = "markers", source='A'
+                    type='scattergl', mode = "markers", source='A'
                     # , height = 600
             )%>%
                 add_markers(x = selected_points()$x, y = selected_points()$y,
@@ -382,8 +383,9 @@ shinyServer(function(input, output, session) {
                   }
               ") %>%
                 event_register("plotly_selecting") %>%
-                config(editable = TRUE)%>%
-                toWebGL()
+                config(editable = TRUE)
+            # %>%
+            # toWebGL()
         })
     })
     
@@ -410,7 +412,7 @@ shinyServer(function(input, output, session) {
     
     calcBoudSelection <- reactive({ #calculate bounds of selected genes 
         req(manuelSelected())
-        calcBounds(df()$pval, selection=manuelSelected(), thr=cal()$thr)
+        calcBounds(df()$pval[manuelSelected()], thr=cal()$thr)
     })
     
     output$downloadData <- downloadHandler( #download csv of user selection
@@ -429,6 +431,70 @@ shinyServer(function(input, output, session) {
             plotlyProxyInvoke("relayout", list(yaxis = yaxis()))
         
         
+    })
+    
+    ## biological function 
+    
+    anno_bio <- reactive({
+        req(annotation())
+        req(data())
+        
+        dplyr::left_join(annotation(), data()$biologicalFunc, by='nameGene')
+    })
+    output$datatable <- renderPrint({anno_bio()})
+    
+    tableBoundsGroup <- reactive({
+        req(anno_bio())
+        req(data())
+        
+        boundGroup(anno_bio(), 
+                   nameFunctions = colnames(data()$biologicalFunc %>% select(-nameGene)), 
+                   thr=cal()$thr)
+    })
+    
+    output$tableBoundsGroup <- renderTable({
+        tableBoundsGroup()
+    })
+    
+    output$choiceGroupUI <- renderUI({
+        selectInput("choiceGroup", label="Choice Group", 
+                    choices = c("Select a group", colnames(data()$biologicalFunc %>% select(-nameGene)))
+        )
+    })
+    
+    selectionGroup <- reactive({
+        req(data())
+        req(df())
+        
+        name_gene <- (data()$biologicalFunc %>% filter(!!rlang::sym(req(input$choiceGroup))==1))
+        selectionTab <- semi_join(annotation(),name_gene, by="nameGene")
+        
+        list(x = selectionTab$fc, y=selectionTab$logp)
+    })
+    
+    
+    
+    observeEvent(input$choiceGroup, {
+        
+        if(input$choiceGroup != "Select a group"){
+            plotlyProxy("volcanoplot", session) %>%
+                plotlyProxyInvoke(
+                    "addTraces",
+                    list(
+                        x = selectionGroup()$x,
+                        y = selectionGroup()$y,
+                        type = "scattergl",
+                        mode = "markers",
+                        line = list(color = "blue")
+                    )
+                )
+            plotlyProxy("volcanoplot", session) %>%
+                plotlyProxyInvoke("deleteTraces", 2)
+        } 
+        # else {
+        #     plotlyProxy("volcanoplot", session) %>%
+        #         plotlyProxyInvoke("deleteTraces", 2)
+        # }
     })
     
 })

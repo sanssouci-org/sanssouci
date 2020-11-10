@@ -40,6 +40,7 @@ shinyUI(fluidPage(
                     selected = "Simes"),
         uiOutput("inputK")),
       tableOutput("tableBounds"),
+      tableOutput("tableBoundsGroup") 
     ),
     
     # Show a plot of the generated distribution
@@ -54,7 +55,8 @@ shinyUI(fluidPage(
                      inline = TRUE),
         checkboxInput("symetric", 
                       label = "Symetric foldchange threshold", 
-                      value = FALSE)),
+                      value = FALSE)), 
+      uiOutput("choiceGroupUI"),
       plotly::plotlyOutput("volcanoplot", height = "600px"), 
       fluidRow(
         actionButton("resetCSV", "Reset Selections"), 
