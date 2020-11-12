@@ -90,10 +90,11 @@ boundGroup <- function(merge, nameFunctions, thr){
     table <- rbind(table, data.frame(
       "Name" = func, 
       "# genes" = bounds$n, 
-      "TP≥" = bounds$TP,
+      "TP≥" = as.integer(bounds$TP),
       "FDP≤" = bounds$FDP,
       check.names = FALSE))
   }
+  table <- table[order(table["FDP≤"]),]
   return(table)
   
 }

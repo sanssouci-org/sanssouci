@@ -28,11 +28,10 @@ shinyServer(function(input, output, session) {
                     
                     
                     categ <- colnames(data$matrix)
-                    data$categ <- rep(0, length(categ))
-                    data$categ[which(categ == "NEG")] <- 1
+                    data$categ <- rep(1, length(categ))
+                    data$categ[which(categ == "NEG")] <- 0
                     
-                    data$annotation <- expr_ALL_annotation[c('affy_hg_u95av2','hgnc_symbol')]
-                    data$annotation <- data$annotation %>% rename(Id = affy_hg_u95av2, nameGene = hgnc_symbol)
+                    data$annotation <- expr_ALL_annotation[c('affy_hg_u95av2','hgnc_symbol')] %>% rename(Id = affy_hg_u95av2, nameGene = hgnc_symbol)
                     
                     data$biologicalFunc <- defaultBiologicalFunc(expr_ALL, expr_ALL_annotation)
                     

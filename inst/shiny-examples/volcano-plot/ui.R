@@ -1,14 +1,19 @@
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(
   tags$head(
-    tags$style(HTML('#buttonValidate{background-color:lightblue}'))),  ## this should go to css file?
-  
+    # tags$style(HTML('#buttonValidate{background-color:lightblue}'))),  ## this should go to css file?
+    tags$style(HTML(" 
+                      .shiny-split-layout > div {
+                                overflow: visible;
+                              }
+                              "))),
   # Application title
   titlePanel("Permutation-based post hoc confidence bounds for differential gene expression"),
   
   # Sidebar with a slider input for number of bins
   sidebarLayout(
     sidebarPanel(
+      # wellPanel(
       splitLayout(
         checkboxInput("checkboxDemo", label = "Use demo data", value = TRUE),
         actionButton("buttonValidate", "Run!"), align = "right"),
@@ -38,9 +43,17 @@ shinyUI(fluidPage(
         selectInput("refFamily", label = "Reference family", 
                     choices = list("Simes" = "Simes", "Beta" = "Beta"), 
                     selected = "Simes"),
-        uiOutput("inputK")),
-      tableOutput("tableBounds"),
-      tableOutput("tableBoundsGroup") 
+        uiOutput("inputK")#)
+      ),
+      # wellPanel(
+      tabsetPanel(
+        tabPanel("Plot",
+                 tableOutput("tableBounds")),
+        tabPanel("group",
+                 tableOutput("tableBoundsGroup") )
+        
+      )
+      # )
     ),
     
     # Show a plot of the generated distribution
@@ -57,6 +70,7 @@ shinyUI(fluidPage(
                       label = "Symetric foldchange threshold", 
                       value = FALSE)), 
       uiOutput("choiceGroupUI"),
+      
       plotly::plotlyOutput("volcanoplot", height = "600px"), 
       fluidRow(
         actionButton("resetCSV", "Reset Selections"), 
