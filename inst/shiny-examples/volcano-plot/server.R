@@ -256,6 +256,10 @@ shinyServer(function(input, output, session) {
         return(B)
     })
     
+    thr_yaxis <- reactive({
+        thrYaxis(thr = cal()$thr, maxlogp=max(df()$logp))
+    })
+    
     yaxis <- reactive({
         f <- list(
             size = 14,
@@ -280,8 +284,8 @@ shinyServer(function(input, output, session) {
                             titlefont = f, 
                             autotick = FALSE,
                             tickmode = "array",
-                            tickvals = -log10(cal()$thr)[1:10],
-                            ticktext = as.character(1:10-1)
+                            tickvals = thr_yaxis()$pvalue,
+                            ticktext = thr_yaxis()$num
                         )
         )
         return(yaxis)
@@ -383,9 +387,8 @@ shinyServer(function(input, output, session) {
                   }
               ") %>%
                 event_register("plotly_selecting") %>%
-                config(editable = TRUE)
-            # %>%
-            # toWebGL()
+                config(editable = TRUE)%>%
+            toWebGL()
         })
     })
     

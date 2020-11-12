@@ -162,3 +162,16 @@ defaultBiologicalFunc <- function(expr_ALl, expr_ALL_annotation){
   
   return(matrixFunc)
 }
+
+thrYaxis <- function(thr, maxlogp){
+  df1 <- data.frame(num = 1:length(thr)-1, pvalue=-log10(thr))
+  df2 <- data.frame(df1[c(1),])
+  valeurTest <- df2[c(dim(df2)[1]),"pvalue"]
+  for (i in 1:dim(df1)[1]){
+    if (valeurTest - df1[i,"pvalue"] > 0.3*maxlogp/12.5){
+      df2 <- rbind(df2, (df1[i,]))
+      valeurTest <- df1[i,"pvalue"]
+    }
+  }
+  return(df2)
+}
