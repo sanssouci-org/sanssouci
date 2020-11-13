@@ -1,15 +1,3 @@
-library(shiny)
-library(plotly)
-library(sansSouci)
-library(sansSouci.data)
-library(ggplot2)
-library(dplyr)
-library(htmlwidgets)
-library(DT)
-
-data(expr_ALL, package = "sansSouci.data")
-data(expr_ALL_annotation, package = "sansSouci.data")
-
 shinyServer(function(input, output, session) {
     
     source("function.R")
@@ -59,7 +47,9 @@ shinyServer(function(input, output, session) {
     output$inputK <- renderUI({
         numericInput("valueK", 
                      label = "K (size of reference family)", 
-                     value = nrow(data()$matrix),
+                     value = ifelse(input$refFamily=="Beta", 
+                                    round(2*nrow(data()$matrix)/100),
+                                    nrow(data()$matrix)),
                      min = 1,
                      max = nrow(data()$matrix))
     })

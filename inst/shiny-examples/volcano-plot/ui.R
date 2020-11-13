@@ -1,15 +1,19 @@
-# Define UI for application that draws a histogram
+library(shiny)
+library(plotly)
+library(sansSouci)
+library(sansSouci.data)
+library(ggplot2)
+library(dplyr)
+library(htmlwidgets)
+library(DT)
+
+data(expr_ALL, package = "sansSouci.data")
+data(expr_ALL_annotation, package = "sansSouci.data")
+
 shinyUI(fluidPage(
   
   includeCSS("www/style.css"),
   
-  # tags$head(
-  #   # tags$style(HTML('#buttonValidate{background-color:lightblue}'))),  ## this should go to css file?
-  #   tags$style(HTML(" 
-  #                     .shiny-split-layout > div {
-  #                               overflow: visible;
-  #                             }
-  #                             "))),
   # Application title
   titlePanel("Permutation-based post hoc confidence bounds for differential gene expression"),
   
@@ -35,12 +39,12 @@ shinyUI(fluidPage(
       sliderInput("sliderConfLevel", label = "Confidence level", min = 0, 
                   max = 100, value = 90, post = " %"),
       splitLayout(
-        selectInput("alternative", label="Alternative", 
+        selectInput("alternative", label = "Alternative", 
                     choices = list("Two sided" = "two.sided", 
-                                   "Less"="less", 
-                                   "Greater"="greater"),
+                                   "Less" = "less", 
+                                   "Greater" = "greater"),
                     selected = "two.sided"),
-        numericInput("numB", label = "Number of permutations", value = 100, min=2)
+        numericInput("numB", label = "Number of permutations", value = 100, min = 2)
       ),
       splitLayout(
         selectInput("refFamily", label = "Reference family", 
