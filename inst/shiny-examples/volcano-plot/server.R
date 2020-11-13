@@ -47,7 +47,7 @@ shinyServer(function(input, output, session) {
     output$inputK <- renderUI({
         numericInput("valueK", 
                      label = "K (size of reference family)", 
-                     value = ifelse(input$refFamily=="Beta", 
+                     value = ifelse(input$refFamily == "Beta", 
                                     round(2*nrow(data()$matrix)/100),
                                     nrow(data()$matrix)),
                      min = 1,
@@ -73,7 +73,7 @@ shinyServer(function(input, output, session) {
     cal <- reactive({
         calibrateJER(data()$matrix, categ = data()$categ, 
                      B = numB(), alpha = alpha(), 
-                     refFamily=refFamily(), alternative = alternative(), 
+                     refFamily = refFamily(), alternative = alternative(), 
                      K = numK()
         )
     })
@@ -84,12 +84,8 @@ shinyServer(function(input, output, session) {
         logp <- -log10(pval)
         fc <- dex$meanDiff
         adjp <- p.adjust(pval, method = "BH")
-        return(list(logp=logp, fc=fc, adjp=adjp, pval=pval))
+        return(list(logp = logp, fc = fc, adjp = adjp, pval = pval))
     })
-    
-    
-    
-    
     
     
     vertical <- reactive({event_data("plotly_relayout", source='A')})
@@ -97,11 +93,11 @@ shinyServer(function(input, output, session) {
     xint <- reactiveVal(0.5)
     observeEvent(vertical()[["shapes[0].x0"]], {
         if(input$symetric){
-            newValue <-  vertical()[["shapes[0].x0"]]
+            newValue <- vertical()[["shapes[0].x0"]]
             xint(newValue)
             xint2(-newValue)
         } else {
-            newValue <-  vertical()[["shapes[0].x0"]]   
+            newValue <- vertical()[["shapes[0].x0"]]   
             xint(newValue)  
         }
     })
@@ -130,8 +126,10 @@ shinyServer(function(input, output, session) {
     })
     
     output$thresholdTxt <- renderText({
-        paste(c(sprintf("Foldchange: \n right: %s \nleft: %s \n P_values: %s", 
-                        round(xint(), digits = 3), round(xint2(), digits = 3),  formatC(10^(-yint()), format = "e", digits = 3)
+        paste(c(sprintf("Foldchange: \n right: %s \nleft: %s \n P_values: %s",
+                        round(xint(), digits = 3), 
+                        round(xint2(), digits = 3),  
+                        formatC(10^(-yint()), format = "e", digits = 3)
         )))
     })
     
@@ -141,7 +139,7 @@ shinyServer(function(input, output, session) {
         sel1 <- which(df()$logp >= yint() & df()$fc >= xint()) 
         sel2 <- which(df()$logp >= yint() & df()$fc <= xint2())
         sel12 <- sort(union(sel1,sel2))
-        return(list(sel1=sel1, sel2=sel2, sel12=sel12))
+        return(list(sel1 = sel1, sel2 = sel2, sel12 = sel12))
     })
     
     TP_FDP <- reactive({
@@ -162,7 +160,7 @@ shinyServer(function(input, output, session) {
         TP12 <- n12 - FP12
         FDP12 <- round(FP12/max(n12, 1), 2)
         
-        return(list(n1=n1, TP1=TP1, FDP1=FDP1, n2=n2, TP2=TP2, FDP2=FDP2, n12=n12, TP12=TP12, FDP12=FDP12))
+        return(list(n1 = n1, TP1 = TP1, FDP1 = FDP1, n2 = n2, TP2 = TP2, FDP2 = FDP2, n12 = n12, TP12 = TP12, FDP12 = FDP12))
         
     })
     
@@ -171,22 +169,23 @@ shinyServer(function(input, output, session) {
              y = df()$logp[selectedGenes()$sel12])
     })
     
-    tableResult <- reactiveVal( data.frame(Selection=c("Upper Right", "Upper Left", "Both parts"))) #Initialization
+    tableResult <- reactiveVal(data.frame(
+        Selection = c("Upper Right", "Upper Left", "Both parts"))) #Initialization
     observeEvent(TP_FDP(),{ #When threshold change
         
         bottomTable <- tableResult() %>% 
             filter(Selection != "Upper Right") %>% 
             filter(Selection != "Both parts") %>% 
-            filter(Selection!="Upper Left")
-        upperTable <- data.frame(`Selection`=c("Upper Right", "Upper Left", "Both parts"), 
-                                 "# genes"=c(TP_FDP()$n1, TP_FDP()$n2, TP_FDP()$n12),
-                                 "TP≥"=as.integer(c(TP_FDP()$TP1, TP_FDP()$TP2, TP_FDP()$TP12)), 
+            filter(Selection != "Upper Left")
+        upperTable <- data.frame(`Selection` = c("Upper Right", "Upper Left", "Both parts"), 
+                                 "# genes" = c(TP_FDP()$n1, TP_FDP()$n2, TP_FDP()$n12),
+                                 "TP≥" = as.integer(c(TP_FDP()$TP1, TP_FDP()$TP2, TP_FDP()$TP12)), 
                                  "FDP≤" = c(TP_FDP()$FDP1, TP_FDP()$FDP2, TP_FDP()$FDP12),
                                  check.names = FALSE)
         newValue <- rbind(upperTable, bottomTable)
         tableResult(newValue)
     })
-    observeEvent(d(),{ #When user select a new group of points
+    observeEvent(d(),{  # When user selects a new group of points
         req(calcBoudSelection())
         n <- dim(tableResult())[1]-2
         newValue <- rbind(tableResult(), c(paste("User selection",n), 
@@ -197,16 +196,16 @@ shinyServer(function(input, output, session) {
     })
     observeEvent(input$resetCSV, { # to clean printed table
         newValue <- data.frame(`Selection`=c("Upper Right", "Upper Left", "Both parts"), 
-                               "# genes"=c(TP_FDP()$n1, TP_FDP()$n2, TP_FDP()$n12),
-                               "TP≥"=as.integer(c(TP_FDP()$TP1, TP_FDP()$TP2, TP_FDP()$TP12)), 
+                               "# genes" = c(TP_FDP()$n1, TP_FDP()$n2, TP_FDP()$n12),
+                               "TP≥" = as.integer(c(TP_FDP()$TP1, TP_FDP()$TP2, TP_FDP()$TP12)), 
                                "FDP≤" = c(TP_FDP()$FDP1, TP_FDP()$FDP2, TP_FDP()$FDP12), 
                                check.names = FALSE)
         tableResult(newValue)
     })
     observeEvent(data(), { # to clean printed table
-        newValue <- data.frame(`Selection`=c("Upper Right", "Upper Left", "Both parts"), 
-                               "# genes"=c(TP_FDP()$n1, TP_FDP()$n2, TP_FDP()$n12),
-                               "TP≥"=as.integer(c(TP_FDP()$TP1, TP_FDP()$TP2, TP_FDP()$TP12)), 
+        newValue <- data.frame(`Selection` = c("Upper Right", "Upper Left", "Both parts"), 
+                               "# genes" = c(TP_FDP()$n1, TP_FDP()$n2, TP_FDP()$n12),
+                               "TP≥" = as.integer(c(TP_FDP()$TP1, TP_FDP()$TP2, TP_FDP()$TP12)), 
                                "FDP≤" = c(TP_FDP()$FDP1, TP_FDP()$FDP2, TP_FDP()$FDP12), 
                                check.names = FALSE)
         tableResult(newValue)
@@ -241,7 +240,7 @@ shinyServer(function(input, output, session) {
         B = data()$annotation#[c('Id','nameGene')]
         B
         
-        B <- dplyr::left_join(A,B, by=c("Id"="Id"))#[c('Id','nameGene')]
+        B <- dplyr::left_join(A, B, by = c("Id" = "Id")) #[c('Id','nameGene')]
         rownames(B) <- B[['Id']]
         return(B)
     })
@@ -257,11 +256,11 @@ shinyServer(function(input, output, session) {
         )
         
         yaxis <- switch(input$choiceYaxis, 
-                        "pval"= list(
+                        "pval" = list(
                             title = "p-value (-log[10] scale)", 
                             titlefont = f
                         ),
-                        "adjPval"=list(
+                        "adjPval" = list(
                             title = "Adjusted p-value (-log[10] scale)", 
                             titlefont = f,
                             autotick = FALSE,
@@ -269,8 +268,8 @@ shinyServer(function(input, output, session) {
                             tickvals = lineAdjp(),
                             ticktext = c(0.5,0.25,0.1,0.05,0.025,0.01,0.001,0.0001)
                         ),
-                        "thr"=list(
-                            title = "Calib. thr (-log[10] scale)", 
+                        "thr" = list(
+                            title = "Calibration thresholds (-log[10] scale)", 
                             titlefont = f, 
                             autotick = FALSE,
                             tickmode = "array",
@@ -281,7 +280,6 @@ shinyServer(function(input, output, session) {
         return(yaxis)
     })
     
-    
     output$volcanoplot <- renderPlotly({
         
         f <- list(
@@ -290,10 +288,7 @@ shinyServer(function(input, output, session) {
         )
         lte <- "≤"
         gte <- "≥"
-        
-        
-        
-        
+
         withProgress( message = "Please wait", { 
             
             plot_ly(data.frame(x = df()$fc, y=df()$logp), 
@@ -304,13 +299,13 @@ shinyServer(function(input, output, session) {
                     name = 'unselected',
                     type='scattergl', mode = "markers", source='A'
                     # , height = 600
-            )%>%
+            ) %>%
                 add_markers(x = selected_points()$x, y = selected_points()$y,
                             marker = list(
                                 color = "red",
                                 size = 6
                             ),
-                            name="selected") %>%
+                            name ="selected") %>%
                 layout(
                     # showlegend = FALSE,
                     xaxis = list(title = "Fold change (log scale)", titlefont = f),
@@ -349,25 +344,31 @@ shinyServer(function(input, output, session) {
                     ),
                     dragmode = "select" ) %>%
                 add_annotations(
-                    x= 0,
-                    y= 1,
+                    x = 0,
+                    y = 1,
                     xref = "paper",
                     yref = "paper",
-                    text = paste(c(sprintf("<b>%s genes\nTP %s %s\nFDP %s %s</b>", req(TP_FDP()$n2), gte,
-                                           req(TP_FDP()$TP2), lte, req(TP_FDP()$FDP2)))),
+                    text = paste(c(sprintf(
+                        "<b>%s genes\nTP %s %s\nFDP %s %s</b>", 
+                        req(TP_FDP()$n2), gte,
+                        req(TP_FDP()$TP2), lte, 
+                        req(TP_FDP()$FDP2)))),
                     showarrow = F
-                )%>% add_annotations(
-                    x= 1,
-                    y= 1,
+                ) %>% add_annotations(
+                    x = 1,
+                    y = 1,
                     xref = "paper",
                     yref = "paper",
-                    text = paste(c(sprintf("<b>%s genes\nTP %s %s\nFDP %s %s</b>", req(TP_FDP()$n1), gte,
-                                           req(TP_FDP()$TP1), lte, req(TP_FDP()$FDP1)))),
-                    showarrow = F
-                )%>% add_markers(
+                    text = paste(c(sprintf(
+                        "<b>%s genes\nTP %s %s\nFDP %s %s</b>", 
+                        req(TP_FDP()$n1), gte,
+                        req(TP_FDP()$TP1), lte, 
+                        req(TP_FDP()$FDP1)))),
+                    showarrow = FALSE
+                ) %>% add_markers(
                     showlegend = TRUE,
                     text = annotation()[['nameGene']],
-                    customdata = paste0("https://www.genecards.org/cgi-bin/carddisp.pl?gene=", annotation()[['nameGene']]))%>%
+                    customdata = paste0("https://www.genecards.org/cgi-bin/carddisp.pl?gene=", annotation()[['nameGene']])) %>%
                 onRender("
                   function(el) {
                       el.on('plotly_click', function(d) {
@@ -406,7 +407,7 @@ shinyServer(function(input, output, session) {
     
     calcBoudSelection <- reactive({ #calculate bounds of selected genes 
         req(manuelSelected())
-        calcBounds(df()$pval[manuelSelected()], thr=cal()$thr)
+        calcBounds(df()$pval[manuelSelected()], thr = cal()$thr)
     })
     
     output$downloadData <- downloadHandler( #download csv of user selection
@@ -443,7 +444,7 @@ shinyServer(function(input, output, session) {
         
         boundGroup(anno_bio(), 
                    nameFunctions = colnames(data()$biologicalFunc %>% select(-nameGene)), 
-                   thr=cal()$thr)
+                   thr = cal()$thr)
     })
     
     output$tableBoundsGroup <- renderDT({
@@ -451,8 +452,8 @@ shinyServer(function(input, output, session) {
     })
     
     output$choiceGroupUI <- renderUI({
-        selectInput("choiceGroup", label="Choice Group", 
-                    choices = c("Select a group", colnames(data()$biologicalFunc %>% select(-nameGene)))
+        selectInput("choiceGroup", label = "Gene set", 
+                    choices = c("Select a gene set", colnames(data()$biologicalFunc %>% select(-nameGene)))
         )
     })
     
@@ -460,8 +461,8 @@ shinyServer(function(input, output, session) {
         req(data())
         req(df())
         
-        name_gene <- (data()$biologicalFunc %>% filter(!!rlang::sym(req(input$choiceGroup))==1))
-        selectionTab <- semi_join(annotation(),name_gene, by="nameGene")
+        name_gene <- (data()$biologicalFunc %>% filter(!!rlang::sym(req(input$choiceGroup)) == 1))
+        selectionTab <- semi_join(annotation(),name_gene, by = "nameGene")
         
         list(x = selectionTab$fc, y=selectionTab$logp)
     })
@@ -470,7 +471,7 @@ shinyServer(function(input, output, session) {
     
     observeEvent(input$choiceGroup, {
         
-        if(input$choiceGroup != "Select a group"){
+        if(input$choiceGroup != "Select a gene set"){
             plotlyProxy("volcanoplot", session) %>%
                 plotlyProxyInvoke(
                     "addTraces",

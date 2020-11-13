@@ -23,7 +23,7 @@ shinyUI(fluidPage(
       # wellPanel(
       splitLayout(
         checkboxInput("checkboxDemo", label = "Use demo data", value = TRUE),
-        actionButton("buttonValidate", "Run!"), align = "right"),
+        actionButton("buttonValidate", "Perfor calibration!"), align = "right"),
       conditionalPanel(condition = "!input.checkboxDemo", 
                        splitLayout(
                          fileInput("fileData",label = "Input expression data"), 
@@ -54,9 +54,9 @@ shinyUI(fluidPage(
       ),
       # wellPanel(
       tabsetPanel(
-        tabPanel("Plot",
+        tabPanel("User selections",
                  DTOutput("tableBounds")),
-        tabPanel("group",
+        tabPanel("Gene sets",
                  DTOutput("tableBoundsGroup") )
         
       )
@@ -74,7 +74,7 @@ shinyUI(fluidPage(
                      selected = "pval",
                      inline = TRUE),
         checkboxInput("symetric", 
-                      label = "Symetric foldchange threshold", 
+                      label = "Symmetric fold change threshold", 
                       value = FALSE)), 
       uiOutput("choiceGroupUI"),
       
