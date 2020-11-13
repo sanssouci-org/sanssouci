@@ -5,6 +5,7 @@ library(sansSouci.data)
 library(ggplot2)
 library(dplyr)
 library(htmlwidgets)
+library(DT)
 
 data(expr_ALL, package = "sansSouci.data")
 data(expr_ALL_annotation, package = "sansSouci.data")
@@ -63,7 +64,6 @@ shinyServer(function(input, output, session) {
                      max = nrow(data()$matrix))
     })
     
-    output$datatable <- renderTable({head(data()$matrix)})
     
     alpha <- eventReactive(input$buttonValidate, {
         req(1 - input$sliderConfLevel/100)
@@ -224,7 +224,7 @@ shinyServer(function(input, output, session) {
     
     
     
-    output$tableBounds <- renderTable({
+    output$tableBounds <- renderDT({
         req(TP_FDP())
         
         tableResult()
@@ -387,8 +387,9 @@ shinyServer(function(input, output, session) {
                   }
               ") %>%
                 event_register("plotly_selecting") %>%
-                config(editable = TRUE)%>%
-            toWebGL()
+                config(editable = TRUE)
+            # %>%
+            # toWebGL()
         })
     })
     
@@ -455,7 +456,7 @@ shinyServer(function(input, output, session) {
                    thr=cal()$thr)
     })
     
-    output$tableBoundsGroup <- renderTable({
+    output$tableBoundsGroup <- renderDT({
         tableBoundsGroup()
     })
     
@@ -491,8 +492,8 @@ shinyServer(function(input, output, session) {
                         line = list(color = "blue")
                     )
                 )
-            plotlyProxy("volcanoplot", session) %>%
-                plotlyProxyInvoke("deleteTraces", 2)
+            # plotlyProxy("volcanoplot", session) %>%
+            #     plotlyProxyInvoke("deleteTraces", 3)
         } 
         # else {
         #     plotlyProxy("volcanoplot", session) %>%

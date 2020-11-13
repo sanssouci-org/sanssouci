@@ -1,12 +1,15 @@
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(
-  tags$head(
-    # tags$style(HTML('#buttonValidate{background-color:lightblue}'))),  ## this should go to css file?
-    tags$style(HTML(" 
-                      .shiny-split-layout > div {
-                                overflow: visible;
-                              }
-                              "))),
+  
+  includeCSS("www/style.css"),
+  
+  # tags$head(
+  #   # tags$style(HTML('#buttonValidate{background-color:lightblue}'))),  ## this should go to css file?
+  #   tags$style(HTML(" 
+  #                     .shiny-split-layout > div {
+  #                               overflow: visible;
+  #                             }
+  #                             "))),
   # Application title
   titlePanel("Permutation-based post hoc confidence bounds for differential gene expression"),
   
@@ -48,9 +51,9 @@ shinyUI(fluidPage(
       # wellPanel(
       tabsetPanel(
         tabPanel("Plot",
-                 tableOutput("tableBounds")),
+                 DTOutput("tableBounds")),
         tabPanel("group",
-                 tableOutput("tableBoundsGroup") )
+                 DTOutput("tableBoundsGroup") )
         
       )
       # )

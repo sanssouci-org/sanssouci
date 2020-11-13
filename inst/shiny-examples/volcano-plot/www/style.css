@@ -1,0 +1,5 @@
+.shiny-split-layout > div {
+  overflow: visible;
+}
+
+#buttonValidate{background-color:lightblue}
