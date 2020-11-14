@@ -23,7 +23,7 @@ shinyUI(fluidPage(
       # wellPanel(
       splitLayout(
         checkboxInput("checkboxDemo", label = "Use demo data", value = TRUE),
-        actionButton("buttonValidate", "Perfor calibration!"), align = "right"),
+        actionButton("buttonValidate", "Perform calibration!"), align = "right"),
       conditionalPanel(condition = "!input.checkboxDemo", 
                        splitLayout(
                          fileInput("fileData",label = "Input expression data"), 
