@@ -436,8 +436,7 @@ shinyServer(function(input, output, session) {
         
         dplyr::left_join(annotation(), data()$biologicalFunc, by='nameGene')
     })
-    output$datatable <- renderPrint({anno_bio()})
-    
+
     tableBoundsGroup <- reactive({
         req(anno_bio())
         req(data())
