@@ -186,12 +186,12 @@ shinyServer(function(input, output, session) {
         tableResult(newValue)
     })
     observeEvent(d(),{  # When user selects a new group of points
-        req(calcBoudSelection())
+        req(calcBoundSelection())
         n <- dim(tableResult())[1]-2
         newValue <- rbind(tableResult(), c(paste("User selection",n), 
-                                           calcBoudSelection()$n, 
-                                           calcBoudSelection()$TP,
-                                           calcBoudSelection()$FDP))
+                                           calcBoundSelection()$n, 
+                                           calcBoundSelection()$TP,
+                                           calcBoundSelection()$FDP))
         tableResult(newValue)
     })
     observeEvent(input$resetCSV, { # to clean printed table
@@ -400,12 +400,12 @@ shinyServer(function(input, output, session) {
         vecteur[manuelSelected()] <- 1
         nameCol <- colnames(tableCSV())
         df <- cbind(tableCSV(), selection2=vecteur)
-        colnames(df) <- c(nameCol, paste("User selection", length(nameCol)+1))
+        colnames(df) <- c(nameCol, paste("User selections", length(nameCol)+1))
         tableCSV(df)
     })
     
     
-    calcBoudSelection <- reactive({ #calculate bounds of selected genes 
+    calcBoundSelection <- reactive({ #calculate bounds of selected genes 
         req(manuelSelected())
         calcBounds(df()$pval[manuelSelected()], thr = cal()$thr)
     })
