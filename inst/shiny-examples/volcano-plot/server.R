@@ -473,6 +473,8 @@ shinyServer(function(input, output, session) {
         
         if(input$choiceGroup != "Select a gene set"){
             plotlyProxy("volcanoplot", session) %>%
+                    plotlyProxyInvoke("deleteTraces", c(3))
+            plotlyProxy("volcanoplot", session) %>%
                 plotlyProxyInvoke(
                     "addTraces",
                     list(
@@ -483,13 +485,10 @@ shinyServer(function(input, output, session) {
                         line = list(color = "blue")
                     )
                 )
-            # plotlyProxy("volcanoplot", session) %>%
-            #     plotlyProxyInvoke("deleteTraces", 3)
-        } 
-        # else {
-        #     plotlyProxy("volcanoplot", session) %>%
-        #         plotlyProxyInvoke("deleteTraces", 2)
-        # }
+        } else {
+            plotlyProxy("volcanoplot", session) %>%
+                plotlyProxyInvoke("deleteTraces", c(3))
+        }
     })
     
 })
