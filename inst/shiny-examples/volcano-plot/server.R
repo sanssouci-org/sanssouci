@@ -170,14 +170,14 @@ shinyServer(function(input, output, session) {
     })
     
     tableResult <- reactiveVal(data.frame(
-        Selection = c("Upper Right", "Upper Left", "Both parts"))) #Initialization
-    observeEvent(TP_FDP(),{ #When threshold change
+        Selection = c("Upper right", "Upper left", "Upper left+right"))) #Initialization
+    observeEvent(TP_FDP(),{ # When threshold change
         
         bottomTable <- tableResult() %>% 
-            filter(Selection != "Upper Right") %>% 
-            filter(Selection != "Both parts") %>% 
-            filter(Selection != "Upper Left")
-        upperTable <- data.frame(`Selection` = c("Upper Right", "Upper Left", "Both parts"), 
+            filter(Selection != "Upper right") %>% 
+            filter(Selection != "Upper left+right") %>% 
+            filter(Selection != "Upper left")
+        upperTable <- data.frame(`Selection` = c("Upper right", "Upper left", "Upper left+right"), 
                                  "# genes" = c(TP_FDP()$n1, TP_FDP()$n2, TP_FDP()$n12),
                                  "TP≥" = as.integer(c(TP_FDP()$TP1, TP_FDP()$TP2, TP_FDP()$TP12)), 
                                  "FDP≤" = c(TP_FDP()$FDP1, TP_FDP()$FDP2, TP_FDP()$FDP12),
@@ -195,7 +195,7 @@ shinyServer(function(input, output, session) {
         tableResult(newValue)
     })
     observeEvent(input$resetCSV, { # to clean printed table
-        newValue <- data.frame(`Selection`=c("Upper Right", "Upper Left", "Both parts"), 
+        newValue <- data.frame(`Selection`= c("Upper right", "Upper left", "Upper left+right"), 
                                "# genes" = c(TP_FDP()$n1, TP_FDP()$n2, TP_FDP()$n12),
                                "TP≥" = as.integer(c(TP_FDP()$TP1, TP_FDP()$TP2, TP_FDP()$TP12)), 
                                "FDP≤" = c(TP_FDP()$FDP1, TP_FDP()$FDP2, TP_FDP()$FDP12), 
@@ -203,7 +203,7 @@ shinyServer(function(input, output, session) {
         tableResult(newValue)
     })
     observeEvent(data(), { # to clean printed table
-        newValue <- data.frame(`Selection` = c("Upper Right", "Upper Left", "Both parts"), 
+        newValue <- data.frame(`Selection` = c("Upper right", "Upper left", "Upper left+right"), 
                                "# genes" = c(TP_FDP()$n1, TP_FDP()$n2, TP_FDP()$n12),
                                "TP≥" = as.integer(c(TP_FDP()$TP1, TP_FDP()$TP2, TP_FDP()$TP12)), 
                                "FDP≤" = c(TP_FDP()$FDP1, TP_FDP()$FDP2, TP_FDP()$FDP12), 
