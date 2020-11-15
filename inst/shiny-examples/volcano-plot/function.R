@@ -75,18 +75,13 @@ calcBounds <- function(listPval, thr){
   return(list(n=n, FP=FP, TP=TP, FDP=FDP))
 }
 
-bound1Group<- function(merge, thr, nomFunc){
-  rownames(merge) <- merge[['Id']]
-  listPval <- (merge %>% 
-                 filter( !!rlang::sym(nomFunc)==1))$pval 
-  bounds <- calcBounds(listPval = listPval, thr = thr)
-  return(bounds)
-}
 
-boundGroup <- function(merge, nameFunctions, thr){
+boundGroup <- function(df, bioFun, nameFunctions, thr){
   table <- data.frame("Name" = c(), "# genes" = c(), "TP≥" = c(), "FDP≤"=c(), check.names = FALSE)
   for (func in nameFunctions){
-    bounds <- bound1Group(merge, thr, func)
+    ids <- which(bioFun[, func] == 1)
+    listPval <- df$pval[ids]
+    bounds <- calcBounds(listPval = listPval, thr = thr)
     table <- rbind(table, data.frame(
       "Name" = func, 
       "# genes" = bounds$n, 

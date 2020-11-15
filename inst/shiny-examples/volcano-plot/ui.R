@@ -1,7 +1,8 @@
 library(shiny)
 library(plotly)
 library(sansSouci)
-library(sansSouci.data)
+library(sansSouci.data)  
+stopifnot(packageVersion("sansSouci.data") >= '0.2.2')
 library(ggplot2)
 library(dplyr)
 library(htmlwidgets)
@@ -9,6 +10,9 @@ library(DT)
 
 data(expr_ALL, package = "sansSouci.data")
 data(expr_ALL_annotation, package = "sansSouci.data")
+data(hgu95av2_GO_BP, package = "sansSouci.data")
+# data(hgu95av2_GO_MF, package = "sansSouci.data")
+# data(hgu95av2_GO_CC, package = "sansSouci.data")
 
 shinyUI(fluidPage(
   
@@ -52,7 +56,6 @@ shinyUI(fluidPage(
                     selected = "Simes"),
         uiOutput("inputK")#)
       ),
-      # wellPanel(
       tabsetPanel(
         tabPanel("User selections",
                  DTOutput("tableBounds")),

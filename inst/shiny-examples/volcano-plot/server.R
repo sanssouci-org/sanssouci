@@ -10,20 +10,23 @@ shinyServer(function(input, output, session) {
             {
                 data <- list()
                 if(input$checkboxDemo){
-                    # data_url <- url("https://plmbox.math.cnrs.fr/f/755496cc4c154a6dbab0/?dl=1")
-                    # data$matrix <- read(data_url)
-                    # data(expr_ALL, package = "sansSouci.data")
                     data$matrix <- expr_ALL
-                    
-                    
+
                     categ <- colnames(data$matrix)
                     data$categ <- rep(1, length(categ))
                     data$categ[which(categ == "NEG")] <- 0
                     
                     data$annotation <- expr_ALL_annotation[c('affy_hg_u95av2','hgnc_symbol')] %>% rename(Id = affy_hg_u95av2, nameGene = hgnc_symbol)
                     
-                    data$biologicalFunc <- defaultBiologicalFunc(expr_ALL, expr_ALL_annotation)
-                    
+                    # data$biologicalFunc <- defaultBiologicalFunc(expr_ALL, expr_ALL_annotation)
+                    bioFun <- hgu95av2_GO_BP
+                    stopifnot(nrow(bioFun) == nrow(data$matrix))  ## sanity check: dimensions
+                    ## make sure the ordering of probes (genes) 
+                    ## is the same for biological functions and expression data:
+                    mm <- match(rownames(bioFun), rownames(data$matrix))
+                    stopifnot(!any(is.na(mm)))
+                    data$biologicalFunc <- bioFun[mm, ]
+                    rm(bioFun)
                 } else {
                     req(input$fileData)
                     file <- req(input$fileData)
@@ -424,26 +427,16 @@ shinyServer(function(input, output, session) {
     observeEvent(input$choiceYaxis, {
         plotlyProxy("volcanoplot", session) %>%
             plotlyProxyInvoke("relayout", list(yaxis = yaxis()))
-        
-        
     })
     
     ## biological function 
-    
-    anno_bio <- reactive({
-        req(annotation())
-        req(data())
-        
-        dplyr::left_join(annotation(), data()$biologicalFunc, by='nameGene')
-    })
-
     tableBoundsGroup <- reactive({
-        req(anno_bio())
         req(data())
         
-        boundGroup(anno_bio(), 
-                   nameFunctions = colnames(data()$biologicalFunc %>% select(-nameGene)), 
-                   thr = cal()$thr)
+        boundGroup(df(), 
+                   data()$biologicalFunc, 
+                   thr = cal()$thr,
+                   nameFunctions = colnames(data()$biologicalFunc))
     })
     
     output$tableBoundsGroup <- renderDT({
@@ -452,7 +445,7 @@ shinyServer(function(input, output, session) {
     
     output$choiceGroupUI <- renderUI({
         selectInput("choiceGroup", label = "Gene set", 
-                    choices = c("Select a gene set", colnames(data()$biologicalFunc %>% select(-nameGene)))
+                    choices = c("Select a gene set", colnames(data()$biologicalFunc))
         )
     })
     
@@ -460,16 +453,15 @@ shinyServer(function(input, output, session) {
         req(data())
         req(df())
         
-        name_gene <- (data()$biologicalFunc %>% filter(!!rlang::sym(req(input$choiceGroup)) == 1))
-        selectionTab <- semi_join(annotation(),name_gene, by = "nameGene")
-        
-        list(x = selectionTab$fc, y=selectionTab$logp)
+        group <- req(input$choiceGroup)
+        bioFun <- data()$biologicalFunc
+        ids <- which(bioFun[, group] == 1)
+        list(sel = ids)
     })
     
     
     
     observeEvent(input$choiceGroup, {
-        
         if(input$choiceGroup != "Select a gene set"){
             plotlyProxy("volcanoplot", session) %>%
                     plotlyProxyInvoke("deleteTraces", c(3))
@@ -477,11 +469,12 @@ shinyServer(function(input, output, session) {
                 plotlyProxyInvoke(
                     "addTraces",
                     list(
-                        x = selectionGroup()$x,
-                        y = selectionGroup()$y,
+                        x = unname(df()$fc[selectionGroup()$sel]),
+                        y = unname(df()$logp[selectionGroup()$sel]),
                         type = "scattergl",
                         mode = "markers",
-                        line = list(color = "blue")
+                        line = list(color = "blue"),
+                        name = input$choiceGroup
                     )
                 )
         } else {
