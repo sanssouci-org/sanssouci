@@ -73,6 +73,31 @@ shinyServer(function(input, output, session) {
     numK <- eventReactive(input$buttonValidate, {
         req(input$valueK)
     })
+    perm_p <- reactive({
+        get_perm_p(data()$matrix, categ = data()$categ, B = numB())
+    })
+    fam <- reactive({
+        refFamily <- refFamily()
+        kMax <- numK()
+        if (refFamily == "Simes") {
+            tk <- function(alpha) min(alpha, 1)*(1:kMax)/m
+            tk_inv <- t_inv_linear
+        } else if (refFamily == "Beta") {
+            tk <- function(alpha) qbeta(alpha, 1:kMax, m+1-1:kMax)
+            tk_inv <- t_inv_beta
+        }
+        list(t = tk, t_inv = tk_inv)
+    })
+    pivStat <- reactive({
+        get_pivotal_stat(perm_p(), 
+                         t_inv = fam()$t_inv, 
+                         K = numK())
+    })
+    cal2 <- reactive({
+        tk <- fam()$t
+        lambda <- stats::quantile(pivStat(), alpha(), type = 1)
+        list(thr = tk(lambda))
+    })
     cal <- reactive({
         calibrateJER(data()$matrix, categ = data()$categ, 
                      B = numB(), alpha = alpha(), 
