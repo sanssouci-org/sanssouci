@@ -6,6 +6,17 @@
 
 using namespace Rcpp;
 
+// colSort
+arma::mat colSort(arma::mat X);
+RcppExport SEXP _sansSouci_colSort(SEXP XSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    rcpp_result_gen = Rcpp::wrap(colSort(X));
+    return rcpp_result_gen;
+END_RCPP
+}
 // empiricalCoverageO
 NumericVector empiricalCoverageO(NumericVector thr, arma::mat Z);
 RcppExport SEXP _sansSouci_empiricalCoverageO(SEXP thrSEXP, SEXP ZSEXP) {
@@ -92,6 +103,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_sansSouci_colSort", (DL_FUNC) &_sansSouci_colSort, 1},
     {"_sansSouci_empiricalCoverageO", (DL_FUNC) &_sansSouci_empiricalCoverageO, 2},
     {"_sansSouci_marginalKFWER", (DL_FUNC) &_sansSouci_marginalKFWER, 2},
     {"_sansSouci_minPseudoRanks", (DL_FUNC) &_sansSouci_minPseudoRanks, 2},

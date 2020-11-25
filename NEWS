@@ -3,9 +3,14 @@
 Package: sansSouci
 ==================
 
-Version 0.9.2 [2020-11-15]
+Version 0.9.3 [2020-11-25]
 
-* volcano plot shiny app: improved user interface + add interaction with Gene Ontology 
+* Increased modularity in get_pivotal_stat
+* Add test script for get_pivotal_stat* for Simes and Beta templates
+
+Version 0.9.2 [2020-11-14]
+
+* Volcano plot shiny app: improved user interface + add interaction with Gene Ontology 
 
 Version 0.9.1 [2020-11-07]
 

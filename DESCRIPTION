@@ -1,6 +1,6 @@
 Package: sansSouci
-Version: 0.9.2
-Date: 2020-11-14
+Version: 0.9.3
+Date: 2020-11-25
 Title: Post Hoc Multiple Testing Inference
 Authors@R: c(person("Benjamin", "Sadacca", role="ctb"),
              person("Gilles", "Blanchard", role="aut"),
