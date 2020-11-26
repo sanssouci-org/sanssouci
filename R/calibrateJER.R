@@ -45,6 +45,7 @@
 #'   
 #'   \item{FP}{A numeric vector of length \code{m}, a 1-alpha confidence envelope on the number of false positives} 
 #'   }
+#' @references Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc confidence bounds on false positives using reference families. Annals of Statistics, 48(3), 1281-1303.
 #'
 #' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 #' @export

@@ -41,3 +41,6 @@ all_env <- list("Simes" = ce,
 plotConfidenceEnvelope(all_env, xmax = 200)
 
 }
+\references{
+Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc confidence bounds on false positives using reference families. Annals of Statistics, 48(3), 1281-1303.
+}

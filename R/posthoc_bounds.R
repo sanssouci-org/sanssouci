@@ -3,6 +3,7 @@
 #' @param p.values A vector of p-values for the selected items
 #' @param thr A vector of non-decreasing k-FWER-controlling thresholds
 #' @return A post hoc upper bound on the number of false discoveries in the selection
+#' @references Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc confidence bounds on false positives using reference families. Annals of Statistics, 48(3), 1281-1303.
 #' @export
 #' @examples
 #' 

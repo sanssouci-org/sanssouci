@@ -121,4 +121,6 @@ legend("topleft", c("H0", "H1"), pch = pch, col = 1:2)
 \references{
 Ge, Y., Dudoit, S. and Speed, T.P., 2003. Resampling-based
   multiple testing for microarray data analysis. _Test_, 12(1), pp.1-77.
+
+Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc confidence bounds on false positives using reference families. Annals of Statistics, 48(3), 1281-1303.
 }

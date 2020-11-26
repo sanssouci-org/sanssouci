@@ -101,6 +101,7 @@ confidenceEnvelope <- function(p.values, refFamily, param, K = length(p.values),
 #'
 #' @param xmax Right limit of the plot
 #' @param cols A vector of colors of the same length as `conf_env`
+#' @references Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc confidence bounds on false positives using reference families. Annals of Statistics, 48(3), 1281-1303.
 #'
 #' @export
 #' @examples

@@ -182,7 +182,9 @@ get_one_pivotal_stat <- function(X, categ,
 #'   provided, a one-sample test is performed.
 #' @param B A numeric value, the number of permutations to be performed
 #' @param rowTestFUN a testing function with the same I/O as \code{rowWelchTests}
-#' @return A \eqn{m \times B} matrix
+#' @return A \eqn{m \times B} matrix whose entry i,j corresponds to \eqn{p_{(i)}(g_j.X)} with notation of the AoS 2020 paper cited below (section 4.5) 
+#'
+#' @references Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc confidence bounds on false positives using reference families. Annals of Statistics, 48(3), 1281-1303.
 #' @examples
 #' 
 #' p0 <- sansSouci:::get_perm_p(X, categ, B)
@@ -204,12 +206,16 @@ get_perm_p <- function(X, categ, B,
 
 
 #' Get pivotal statistic
+#' 
+#' 
 #' @param p0 A \eqn{m \times B} matrix of null p-values obtained from \eqn{B} 
 #' permutations for \eqn{m} hypotheses
 #' @param t_inv A function with the same I/O as \code{t_inv_linear}
 #' @param K For JER control over \code{1:K}, ie joint control of all
 #'   \eqn{k}-FWER, \eqn{k \le K}. Defaults to \eqn{m}.
-#' @return A vector of length \eqn{B} pivotal statitics
+#' @return A vector of length \eqn{B} pivotal statitics, whose j-th entry corresponds to \eqn{\psi(g_j.X)} with notation of the AoS 2020 paper cited below (section 4.5) 
+#'
+#' @references Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc confidence bounds on false positives using reference families. Annals of Statistics, 48(3), 1281-1303.
 #' 
 #' @examples
 #' 
