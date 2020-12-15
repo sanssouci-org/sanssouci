@@ -163,7 +163,8 @@ thrYaxis <- function(thr, maxlogp){
   df2 <- data.frame(df1[c(1),])
   valeurTest <- df2[c(dim(df2)[1]),"pvalue"]
   for (i in 1:dim(df1)[1]){
-    if (valeurTest - df1[i,"pvalue"] > 0.3*maxlogp/12.5){
+    mod <- if(df1[i,"num"] < 100){ 1} else if(df1[i,"num"] < 500){ 10} else if(df1[i,"num"] < 1000){50}else{100}
+    if (valeurTest - df1[i,"pvalue"] > 0.3*maxlogp/12.5 & df1[i,"num"]%%mod == 0){
       df2 <- rbind(df2, (df1[i,]))
       valeurTest <- df1[i,"pvalue"]
     }
@@ -236,7 +237,7 @@ curveMaxFP <- function(p.values, thr, flavor=c("BNR2016", "Mein2006", "BNR2014")
 
 plotMaxFP <- function(pval, thr){
   sort_pval <- sort(pval)
-  curve <- curveMaxFP(sort_pval, thr, flavor="BNR2014")
+  curve <- curveMaxFP(sort_pval, thr, flavor="BNR2016")
   x <- 1:length(sort_pval)
   ggplot(data = data.frame(x = x, y=curve), aes(x=x, y=y)) +
     geom_line() + 
