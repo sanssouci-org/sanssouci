@@ -85,6 +85,10 @@ shinyUI(fluidPage(
       fluidRow(
         actionButton("resetCSV", "Reset Selections"), 
         downloadButton("downloadData", "Download binary csv of user selection")
+      ), 
+      splitLayout(
+        plotlyOutput("curveMaxFPBoth"), 
+        plotlyOutput("curveMaxFPSelect")
       )
     )
   ),

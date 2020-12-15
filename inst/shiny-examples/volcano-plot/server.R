@@ -483,4 +483,14 @@ shinyServer(function(input, output, session) {
         }
     })
     
+    output$curveMaxFPBoth <- renderPlotly({
+        plotMaxFP(pval = df()$pval[selectedGenes()$sel12], thr = cal()$thr) + 
+            ggtitle("Upper Left + right")
+    })
+    
+    output$curveMaxFPSelect <- renderPlotly({
+        plotMaxFP(pval = df()$pval[manuelSelected()], thr = cal()$thr) + 
+            ggtitle("Last user selection")
+    })
+    
 })
