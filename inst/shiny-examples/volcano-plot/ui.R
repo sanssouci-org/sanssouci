@@ -79,8 +79,8 @@ shinyUI(fluidPage(
         checkboxInput("symetric", 
                       label = "Symmetric fold change threshold", 
                       value = FALSE)), 
-      conditionalPanel(condition = "input.tabSelected==2",
-                       uiOutput("choiceGroupUI")),
+      # conditionalPanel(condition = "input.tabSelected==2",
+      #                  uiOutput("choiceGroupUI")),
       
       conditionalPanel(condition = "input.tabSelected==1",
                        plotly::plotlyOutput("volcanoplotPosteriori", height = "600px"), 

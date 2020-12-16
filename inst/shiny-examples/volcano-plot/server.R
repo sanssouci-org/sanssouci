@@ -221,7 +221,7 @@ shinyServer(function(input, output, session) {
     
     tableResult()
     
-  })
+  }, selection = list(mode = 'single', selectable = -(1:3)) )
   
   
   lineAdjp <- reactive({ # value for 
@@ -408,7 +408,7 @@ shinyServer(function(input, output, session) {
           line = list(color = "red"), 
           name = "selected", 
           showlegend = TRUE
-        )
+        ), 1
       )
     
     
@@ -446,7 +446,7 @@ shinyServer(function(input, output, session) {
     vecteur[manuelSelected()] <- 1
     nameCol <- colnames(tableCSV())
     df <- cbind(tableCSV(), selection2=vecteur)
-    colnames(df) <- c(nameCol, paste("User selections", length(nameCol)+1))
+    colnames(df) <- c(nameCol, paste("User selection", length(nameCol)+1))
     tableCSV(df)
   })
   
@@ -471,8 +471,48 @@ shinyServer(function(input, output, session) {
   })
   
   output$curveMaxFPSelect <- renderPlotly({
+    if(length(userDTselectPost()) == 1){
+      plotMaxFP(pval = df()$pval[selectionUserRe()$sel], thr = cal()$thr) + 
+        ggtitle(userDTselectPost())
+    }else{
     plotMaxFP(pval = df()$pval[manuelSelected()], thr = cal()$thr) + 
-      ggtitle("Last user selection")
+      ggtitle("User selection")
+    }
+  })
+  
+  
+  
+  
+  userDTselectPost <- reactive({
+    tableResult()[input$tableBounds_rows_selected, "Selection"]
+  })
+  
+  selectionUserRe <- reactive({
+    vect <- tableCSV()[,userDTselectPost()]
+    sel <- which(vect == 1)
+    list(sel = sel)
+  })
+  
+  observeEvent(userDTselectPost(), {
+    if(length(userDTselectPost()) == 1){
+      plotlyProxy("volcanoplotPosteriori", session) %>%
+        plotlyProxyInvoke("deleteTraces", 2)
+      plotlyProxy("volcanoplotPosteriori", session) %>%
+        plotlyProxyInvoke(
+          "addTraces",
+          list(
+            x = unname(df()$fc[selectionUserRe()$sel]),
+            y = unname(df()$logp[selectionUserRe()$sel]),
+            type = "scattergl",
+            mode = "markers",
+            line = list(color = "blue"),
+            name = userDTselectPost()
+          ), 2
+        )
+    } else {
+      plotlyProxy("volcanoplotPosteriori", session) %>%
+        plotlyProxyInvoke("deleteTraces",2)
+    }
   })
   
   
@@ -491,19 +531,23 @@ shinyServer(function(input, output, session) {
   
   output$tableBoundsGroup <- renderDT({
     tableBoundsGroup()
-  })
+  }, selection = 'single')
   
-  output$choiceGroupUI <- renderUI({
-    selectInput("choiceGroup", label = "Gene set", 
-                choices = c("Select a gene set", colnames(data()$biologicalFunc))
-    )
+  # output$choiceGroupUI <- renderUI({
+  #   selectInput("choiceGroup", label = "Gene set", 
+  #               choices = c("Select a gene set", colnames(data()$biologicalFunc))
+  #   )
+  # })
+  
+  userDTselectPrio <- reactive({
+    tableBoundsGroup()[input$tableBoundsGroup_rows_selected,"Name"]
   })
   
   selectionGroup <- reactive({
     req(data())
     req(df())
     
-    group <- req(input$choiceGroup)
+    group <- req(userDTselectPrio())
     bioFun <- data()$biologicalFunc
     ids <- which(bioFun[, group] == 1)
     list(sel = ids)
@@ -565,8 +609,8 @@ shinyServer(function(input, output, session) {
   
   
   
-  observeEvent(input$choiceGroup, {
-    if(input$choiceGroup != "Select a gene set"){
+  observeEvent(userDTselectPrio(), {
+    if(length(userDTselectPrio()) == 1){
       plotlyProxy("volcanoplotPriori", session) %>%
         plotlyProxyInvoke("deleteTraces", 1)
       plotlyProxy("volcanoplotPriori", session) %>%
@@ -578,7 +622,7 @@ shinyServer(function(input, output, session) {
             type = "scattergl",
             mode = "markers",
             line = list(color = "blue"),
-            name = input$choiceGroup
+            name = userDTselectPrio()
           )
         )
     } else {
@@ -590,7 +634,7 @@ shinyServer(function(input, output, session) {
   output$curveMaxFPGroup <- renderPlotly({
     req(selectionGroup())
     plotMaxFP(pval = df()$pval[selectionGroup()$sel], thr = cal()$thr) + 
-      ggtitle(input$choiceGroup) 
+      ggtitle(userDTselectPrio()) 
   })
   
   
