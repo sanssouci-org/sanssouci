@@ -97,76 +97,149 @@ boundGroup <- function(df, bioFun, nameFunctions, thr){
 
 
 
-defaultBiologicalFunc <- function(expr_ALl, expr_ALL_annotation){
-  
-  X = expr_ALL
-  categ = colnames(X)
-  categ <- rep(0, length(categ))
-  categ[colnames(X)=="NEG"] <- 1
-  cal <- calibrateJER(X, categ = categ,  B = 1e2, alpha = 0.05)
-  thr = cal$thr
-  dex <- rowWelchTests(X, categ)
-  pval <- dex[["p.value"]]
-  logp <- -log10(pval)
-  fc <- dex$meanDiff
-  adjp <- p.adjust(pval, method = "BH")
-  df = data.frame(pval, logp, fc, adjp)
-  
-  
-  A <- tibble::rownames_to_column(df, "Id")
-  
-  B = expr_ALL_annotation[c('affy_hg_u95av2','hgnc_symbol')]
-  B
-  
-  B <- dplyr::left_join(A,B, by=c("Id"="affy_hg_u95av2"))[c('Id','hgnc_symbol')]
-  rownames(B) <- B[['VALUE']]
-  # B <- B['hgnc_symbol']
-  
-  df <- tibble::rownames_to_column(df, "Id")
-  df <- dplyr::left_join(df, B, by="Id")
-  df <- df%>% 
-    rename(nameGene = hgnc_symbol)%>%
-    filter(nameGene!="")
-  rownames(df) <- df[["Id"]]
-  
-  
-  matrixFunc <- data.frame(nameGene = sort(unique(expr_ALL_annotation$hgnc_symbol)),
-                           row.names = sort(unique(expr_ALL_annotation$hgnc_symbol)))
-  matrixFunc[,c("Func1","Func2","Func3","Func4","Top4ABL1","Top19ABL1","Func7")] <- 0
-  matrixFunc[unique((df%>% filter(logp> 3) %>% filter(abs(fc)>1))[["nameGene"]]),"Func1"] <- 1
-  
-  Func2 = 712:798
-  matrixFunc[Func2, "Func2"] <- 1  
-  
-  Func3 = (df %>% filter(abs(fc)>1.4))$nameGene
-  matrixFunc[Func3, "Func3"] <- 1
-  
-  Func4 = (df %>% filter(logp > 5))$nameGene
-  matrixFunc[Func4, "Func4"] <- 1
-  
-  Func5 = c("FN1","CRK","ABL1","PPM1B","PAK4")
-  matrixFunc[Func5,"Top4ABL1"] <- 1
-  
-  Func6 = c("FN1","CRK","ABL1","PPM1B","PAK4", "TRAF6","WASL",
-            "ABI1","ABI2","CAP1","ROBO1","CBL","CRKL","INPPL1",
-            "SHC1", "HSP90AA1","DOK1","DOK2","RAD51","PXN")
-  matrixFunc[Func6,"Top19ABL1"] <- 1
-  
-  Func7 = (df %>% filter(abs(fc)<7e-4) %>% filter(logp < 2e-3))$nameGene
-  matrixFunc[Func7, "Func7"] <- 1
-  
-  return(matrixFunc)
-}
+# defaultBiologicalFunc <- function(expr_ALl, expr_ALL_annotation){
+#   
+#   X = expr_ALL
+#   categ = colnames(X)
+#   categ <- rep(0, length(categ))
+#   categ[colnames(X)=="NEG"] <- 1
+#   cal <- calibrateJER(X, categ = categ,  B = 1e2, alpha = 0.05)
+#   thr = cal$thr
+#   dex <- rowWelchTests(X, categ)
+#   pval <- dex[["p.value"]]
+#   logp <- -log10(pval)
+#   fc <- dex$meanDiff
+#   adjp <- p.adjust(pval, method = "BH")
+#   df = data.frame(pval, logp, fc, adjp)
+#   
+#   
+#   A <- tibble::rownames_to_column(df, "Id")
+#   
+#   B = expr_ALL_annotation[c('affy_hg_u95av2','hgnc_symbol')]
+#   B
+#   
+#   B <- dplyr::left_join(A,B, by=c("Id"="affy_hg_u95av2"))[c('Id','hgnc_symbol')]
+#   rownames(B) <- B[['VALUE']]
+#   # B <- B['hgnc_symbol']
+#   
+#   df <- tibble::rownames_to_column(df, "Id")
+#   df <- dplyr::left_join(df, B, by="Id")
+#   df <- df%>% 
+#     rename(nameGene = hgnc_symbol)%>%
+#     filter(nameGene!="")
+#   rownames(df) <- df[["Id"]]
+#   
+#   
+#   matrixFunc <- data.frame(nameGene = sort(unique(expr_ALL_annotation$hgnc_symbol)),
+#                            row.names = sort(unique(expr_ALL_annotation$hgnc_symbol)))
+#   matrixFunc[,c("Func1","Func2","Func3","Func4","Top4ABL1","Top19ABL1","Func7")] <- 0
+#   matrixFunc[unique((df%>% filter(logp> 3) %>% filter(abs(fc)>1))[["nameGene"]]),"Func1"] <- 1
+#   
+#   Func2 = 712:798
+#   matrixFunc[Func2, "Func2"] <- 1  
+#   
+#   Func3 = (df %>% filter(abs(fc)>1.4))$nameGene
+#   matrixFunc[Func3, "Func3"] <- 1
+#   
+#   Func4 = (df %>% filter(logp > 5))$nameGene
+#   matrixFunc[Func4, "Func4"] <- 1
+#   
+#   Func5 = c("FN1","CRK","ABL1","PPM1B","PAK4")
+#   matrixFunc[Func5,"Top4ABL1"] <- 1
+#   
+#   Func6 = c("FN1","CRK","ABL1","PPM1B","PAK4", "TRAF6","WASL",
+#             "ABI1","ABI2","CAP1","ROBO1","CBL","CRKL","INPPL1",
+#             "SHC1", "HSP90AA1","DOK1","DOK2","RAD51","PXN")
+#   matrixFunc[Func6,"Top19ABL1"] <- 1
+#   
+#   Func7 = (df %>% filter(abs(fc)<7e-4) %>% filter(logp < 2e-3))$nameGene
+#   matrixFunc[Func7, "Func7"] <- 1
+#   
+#   return(matrixFunc)
+# }
 
 thrYaxis <- function(thr, maxlogp){
   df1 <- data.frame(num = 1:length(thr)-1, pvalue=-log10(thr))
   df2 <- data.frame(df1[c(1),])
   valeurTest <- df2[c(dim(df2)[1]),"pvalue"]
   for (i in 1:dim(df1)[1]){
-    if (valeurTest - df1[i,"pvalue"] > 0.3*maxlogp/12.5){
+    mod <- if(df1[i,"num"] < 100){ 1} else if(df1[i,"num"] < 500){ 10} else if(df1[i,"num"] < 1000){50}else{100}
+    if (valeurTest - df1[i,"pvalue"] > 0.3*maxlogp/12.5 & df1[i,"num"]%%mod == 0){
       df2 <- rbind(df2, (df1[i,]))
       valeurTest <- df1[i,"pvalue"]
     }
   }
   return(df2)
+}
+
+
+curveMaxFP <- function(p.values, thr, flavor=c("BNR2016", "Mein2006", "BNR2014")) {
+  flavor <- match.arg(flavor)
+  m <- length(p.values)
+  kMax <- length(thr)
+  if (kMax < m && flavor %in% c("Mein2006", "BNR2016")) {
+    thr <- c(thr, rep(thr[kMax], m-kMax))
+    kMax <- length(thr)
+    stopifnot(kMax==m)
+  }
+  if (flavor=="Mein2006") {
+    ## (loose) upper bound on number of FALSE discoveries among first rejections
+    R <- 1:m
+    BB <- sapply(p.values[R], function(x) sum(x>thr))     ## Eqn (7) in Meinshausen 
+    ## corresponds to 'K' in 'BNR2016'
+    
+    ## lower bound on number of TRUE discoveries among first rejections
+    Sbar <- pmax(0, cummax(R-BB))
+    
+    ## (tighter) upper bound on number of FALSE discoveries among first rejections
+    Vbar <- R-Sbar[R]
+  } else if (flavor=="BNR2014") {    ## Etienne's version
+    bound <- function(kk, ii) {
+      (kk-1) + sum(p.values[1:ii] > thr[kk])
+    }
+    Vbar <- sapply(1:m, function(ii) {
+      cand <- sapply(1:kMax, bound, ii)
+      min(cand)
+    })
+  } else if (flavor=="BNR2016") {    ## Pierre's version
+    ## sanity checks
+    ##stopifnot(length(stat)==m)
+    stopifnot(identical(sort(thr), thr))
+    stopifnot(identical(sort(p.values), p.values))
+    
+    K <- rep(kMax, m) ## K[i] = number of k/ T[i] <= s[k] = BB in 'Mein2006'
+    Z <- rep(m, kMax) ## Z[k] = number of i/ T[i] >  s[k] = cardinal of R_k
+    ## 'K' and 'Z' are initialized to their largest possible value, 
+    ## ie 'm' and 'kMax', respectively
+    kk <- 1
+    ii <- 1
+    while ((kk <= kMax) && (ii <= m)) {
+      if (thr[kk] >= p.values[ii]) {
+        K[ii] <- kk-1
+        ii <- ii+1
+      } else {
+        Z[kk] <- ii-1
+        kk <- kk+1
+      }
+    }
+    Vbar <- numeric(m)
+    ww <- which(K>0)
+    A <- Z - (1:kMax)+1
+    cA <- cummax(A)[K[ww]]  # cA[i] = max_{k<K[i]} A[k]
+    Vbar[ww] <- pmin(ww-cA, K[ww])
+    # Vbar[ww] <- ww-cA
+    # www <- which(Vbar > K & Vbar < kMax)
+    # www <- which(Vbar > K)
+    # Vbar[www] <- K[www]
+  }
+  Vbar
+}
+
+plotMaxFP <- function(pval, thr){
+  sort_pval <- sort(pval)
+  curve <- curveMaxFP(sort_pval, thr, flavor="BNR2016")
+  x <- 1:length(sort_pval)
+  ggplot(data = data.frame(x = x, y=curve), aes(x=x, y=y)) +
+    geom_line() + 
+    labs(x = "Number of top features selected", y="Upper bound on the number of false positives")
 }

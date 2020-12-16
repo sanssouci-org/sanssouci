@@ -56,10 +56,10 @@ shinyUI(fluidPage(
                     selected = "Simes"),
         uiOutput("inputK")#)
       ),
-      tabsetPanel(
-        tabPanel("User selections",
+      tabsetPanel( id = "tabSelected",
+        tabPanel("User selections", value = 1,
                  DTOutput("tableBounds")),
-        tabPanel("Gene sets",
+        tabPanel("Gene sets", value = 2,
                  DTOutput("tableBoundsGroup") )
         
       )
@@ -79,12 +79,22 @@ shinyUI(fluidPage(
         checkboxInput("symetric", 
                       label = "Symmetric fold change threshold", 
                       value = FALSE)), 
-      uiOutput("choiceGroupUI"),
+      # conditionalPanel(condition = "input.tabSelected==2",
+      #                  uiOutput("choiceGroupUI")),
       
-      plotly::plotlyOutput("volcanoplot", height = "600px"), 
-      fluidRow(
-        actionButton("resetCSV", "Reset Selections"), 
-        downloadButton("downloadData", "Download binary csv of user selection")
+      conditionalPanel(condition = "input.tabSelected==1",
+                       plotly::plotlyOutput("volcanoplotPosteriori", height = "600px"), 
+                       fluidRow(
+                         actionButton("resetCSV", "Reset Selections"), 
+                         downloadButton("downloadData", "Download binary csv of user selection")
+                       ), 
+                       splitLayout(
+                         plotlyOutput("curveMaxFPBoth"), 
+                         plotlyOutput("curveMaxFPSelect")
+                       )), 
+      conditionalPanel(condition = "input.tabSelected==2",
+                       plotly::plotlyOutput("volcanoplotPriori", height = "600px"), 
+                       plotlyOutput(outputId = "curveMaxFPGroup")
       )
     )
   ),
