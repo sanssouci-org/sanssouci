@@ -10,10 +10,11 @@ library(DT)
 library(shinyBS)
 
 data(expr_ALL, package = "sansSouci.data")
-data(expr_ALL_annotation, package = "sansSouci.data")
+#data(expr_ALL_annotation, package = "sansSouci.data")
 data(hgu95av2_GO_BP, package = "sansSouci.data")
 # data(hgu95av2_GO_MF, package = "sansSouci.data")
 # data(hgu95av2_GO_CC, package = "sansSouci.data")
+data(expr_ALL_GO, package = "sansSouci.data")
 
 shinyUI(fluidPage(
   

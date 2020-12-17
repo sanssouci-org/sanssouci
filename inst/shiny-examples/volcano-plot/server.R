@@ -16,10 +16,10 @@ shinyServer(function(input, output, session) {
           data$categ <- rep(1, length(categ))
           data$categ[which(categ == "NEG")] <- 0
           
-          data$annotation <- expr_ALL_annotation[c('affy_hg_u95av2','hgnc_symbol')] %>% rename(Id = affy_hg_u95av2, nameGene = hgnc_symbol)
+          data$geneNames <- rownames(data$matrix)
           
           # data$biologicalFunc <- defaultBiologicalFunc(expr_ALL, expr_ALL_annotation)
-          bioFun <- hgu95av2_GO_BP
+          bioFun <- expr_ALL_GO
           stopifnot(nrow(bioFun) == nrow(data$matrix))  ## sanity check: dimensions
           ## make sure the ordering of probes (genes) 
           ## is the same for biological functions and expression data:
@@ -258,18 +258,6 @@ shinyServer(function(input, output, session) {
   })
   
   output$lineAdjp <- renderPrint({list(lineAdjp(), class(lineAdjp()))})
-  
-  
-  annotation <- reactive({ 
-    A <- tibble::rownames_to_column(data.frame(df()), "Id")
-    
-    B = data()$annotation#[c('Id','nameGene')]
-    B
-    
-    B <- dplyr::left_join(A, B, by = c("Id" = "Id")) #[c('Id','nameGene')]
-    rownames(B) <- B[['Id']]
-    return(B)
-  })
   
   thr_yaxis <- reactive({
     thrYaxis(thr = cal()$thr, maxlogp=max(df()$logp))
@@ -604,8 +592,8 @@ shinyServer(function(input, output, session) {
             name = 'genecards',
             type='scattergl', mode = "markers", source='B'
             ,
-            text = annotation()[['nameGene']],
-            customdata = paste0("https://www.genecards.org/cgi-bin/carddisp.pl?gene=", annotation()[['nameGene']])
+            text = data()$geneName,
+            customdata = paste0("http://www.ensembl.org/Homo_sapiens/Gene/Summary?g=", data()$geneName)
             # , height = 600
     )%>% 
       layout(
