@@ -7,6 +7,7 @@ library(ggplot2)
 library(dplyr)
 library(htmlwidgets)
 library(DT)
+library(shinyBS)
 
 data(expr_ALL, package = "sansSouci.data")
 data(expr_ALL_annotation, package = "sansSouci.data")
@@ -29,17 +30,24 @@ shinyUI(fluidPage(
         checkboxInput("checkboxDemo", label = "Use demo data", value = TRUE),
         actionButton("buttonValidate", "Perform calibration!"), align = "right"),
       conditionalPanel(condition = "!input.checkboxDemo", 
-                       splitLayout(
-                         fileInput("fileData",label = "Input expression data"), 
-                         fileInput("fileCateg", label = "Input condition vector")
-                       )
+                       fileInput("fileData",label = p("Input expression data", 
+                                                      bsButton("QfileData", label = "", icon = icon("question"), style = "info", size = "extra-small"))),
+                       bsTooltip("QfileData", "Upload a RDS file containing matrix within  __ in line index and categories in column (in {0, 1})",
+                                 "right", options = list(container = "body"), trigger = "focus")
       ), 
       conditionalPanel(condition = "!input.checkboxDemo",
                        splitLayout(
-                         fileInput("fileAnnotation", label = "Input gene annotation"), 
-                         fileInput("fileGroup", label = "Matrix of biological function")
-                       )
+                         fileInput("fileAnnotation", label = p("Input gene annotation",  
+                                                               bsButton("QfileAnnotation", label = "", icon = icon("question"), style = "info", size = "extra-small"))), 
+                         fileInput("fileGroup", label = p("Matrix of biological function",
+                                                          bsButton("QfileGroup", label = "", icon = icon("question"), style = "info", size = "extra-small")))
+                       ),
+                       bsTooltip(id = "QfileAnnotation", title = 'Upload a RDS file containing matrix within two columns. One called "Id" contains index label from matrix and the other, called "nameGene", contains names of associated genes.', placement = "bottom",  options = list(container = "body"), trigger = "focus"),
+                       bsTooltip(id = "QfileGroup", title = 'Upload a RDS file containing matrix within nameGenes in line index. Binary vecotr composed this matrix for each biological function.', placement = "bottom", trigger = "hover", options = NULL)
       ), 
+      bsButton("Qparam", label = "", icon = icon("question"), style = "info", size = "extra-small"),
+      bsPopover(id = "Qparam", title = "Parameters", content = paste("Select parameters to implement permutation-based post hoc inference bounds for differential gene expression analysis, see dedicated ", a("vignette.", href = "https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html")), 
+                placement = "bottom", trigger = "focus", options = NULL),
       sliderInput("sliderConfLevel", label = "Confidence level", min = 0, 
                   max = 100, value = 90, post = " %"),
       splitLayout(
@@ -57,11 +65,14 @@ shinyUI(fluidPage(
         uiOutput("inputK")#)
       ),
       tabsetPanel( id = "tabSelected",
-        tabPanel("User selections", value = 1,
-                 DTOutput("tableBounds")),
-        tabPanel("Gene sets", value = 2,
-                 DTOutput("tableBoundsGroup") )
-        
+                   tabPanel("User selections", value = 1,
+                            
+                            uiOutput("OutQtableBounds"),
+                            DTOutput("tableBounds")),
+                   tabPanel("Gene sets", value = 2,
+                            uiOutput("OutQtableBoundsGroup"),
+                            DTOutput("tableBoundsGroup") )
+                   
       )
       # )
     ),
@@ -69,29 +80,41 @@ shinyUI(fluidPage(
     # Show a plot of the generated distribution
     mainPanel(
       splitLayout(
-        cellWidths = c("60%", "40%"),
+        cellWidths = c("55%", "35%", "10%"),
         radioButtons("choiceYaxis", label = "'y' axis label", 
                      choices = list("p-values" = "pval", 
                                     "Adjusted p-values" = "adjPval",
                                     "Calibration thresholds" = "thr"), 
                      selected = "pval",
                      inline = TRUE),
+        
         checkboxInput("symetric", 
                       label = "Symmetric fold change threshold", 
-                      value = FALSE)), 
-      # conditionalPanel(condition = "input.tabSelected==2",
-      #                  uiOutput("choiceGroupUI")),
+                      value = FALSE),
+        bsButton("Qparam1", label = "", icon = icon("question"), style = "info", size = "extra-small"),
+        bsPopover(id = "Qparam1", title = "VolcanoPlot", content = paste('You can make some selections on the volcano plot. Firstly, you can draggle threshold (orange pointed lines) to select both upper right and left corner. Post-hoc bounds of these selections are printed in the table on the left of the app. Secondly, you can select some point with the "box select" or the "lasso select". Post-hoc bounds are also on the left of the app.'), 
+                  placement = "bottom", trigger = "focus", options = NULL)
+        
+      ),
+      
       
       conditionalPanel(condition = "input.tabSelected==1",
                        plotly::plotlyOutput("volcanoplotPosteriori", height = "600px"), 
                        fluidRow(
                          actionButton("resetCSV", "Reset Selections"), 
-                         downloadButton("downloadData", "Download binary csv of user selection")
-                       ), 
+                         downloadButton("downloadData", "Download binary csv of user selection"), 
+                         bsButton("Qdownload", label = "", icon = icon("question"), style = "info", size = "extra-small"),
+                         bsTooltip("Qdownload", "Delete you box select manual selection from the post hoc bounds and downloadable csv file. Download a csv file containing matrix with binary vector of your User selection",
+                                   "right", options = list(container = "body"), trigger = "focus"),
+                         bsTooltip(id = "resetCSV", title = "Delete you box select manual selection from the post hoc bounds and downloadable csv file.", placement = "bottom", trigger = "hover", options = NULL),
+                         bsTooltip(id = "downloadData", title = "Download a csv file containing matrix with binary vector of your User selection", placement = "bottom", trigger = "hover", options = NULL)
+                       ),
+                       
                        splitLayout(
                          plotlyOutput("curveMaxFPBoth"), 
                          plotlyOutput("curveMaxFPSelect")
                        )), 
+      
       conditionalPanel(condition = "input.tabSelected==2",
                        plotly::plotlyOutput("volcanoplotPriori", height = "600px"), 
                        plotlyOutput(outputId = "curveMaxFPGroup")

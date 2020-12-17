@@ -173,67 +173,7 @@ thrYaxis <- function(thr, maxlogp){
 }
 
 
-curveMaxFP <- function(p.values, thr, flavor=c("BNR2016", "Mein2006", "BNR2014")) {
-  flavor <- match.arg(flavor)
-  m <- length(p.values)
-  kMax <- length(thr)
-  if (kMax < m && flavor %in% c("Mein2006", "BNR2016")) {
-    thr <- c(thr, rep(thr[kMax], m-kMax))
-    kMax <- length(thr)
-    stopifnot(kMax==m)
-  }
-  if (flavor=="Mein2006") {
-    ## (loose) upper bound on number of FALSE discoveries among first rejections
-    R <- 1:m
-    BB <- sapply(p.values[R], function(x) sum(x>thr))     ## Eqn (7) in Meinshausen 
-    ## corresponds to 'K' in 'BNR2016'
-    
-    ## lower bound on number of TRUE discoveries among first rejections
-    Sbar <- pmax(0, cummax(R-BB))
-    
-    ## (tighter) upper bound on number of FALSE discoveries among first rejections
-    Vbar <- R-Sbar[R]
-  } else if (flavor=="BNR2014") {    ## Etienne's version
-    bound <- function(kk, ii) {
-      (kk-1) + sum(p.values[1:ii] > thr[kk])
-    }
-    Vbar <- sapply(1:m, function(ii) {
-      cand <- sapply(1:kMax, bound, ii)
-      min(cand)
-    })
-  } else if (flavor=="BNR2016") {    ## Pierre's version
-    ## sanity checks
-    ##stopifnot(length(stat)==m)
-    stopifnot(identical(sort(thr), thr))
-    stopifnot(identical(sort(p.values), p.values))
-    
-    K <- rep(kMax, m) ## K[i] = number of k/ T[i] <= s[k] = BB in 'Mein2006'
-    Z <- rep(m, kMax) ## Z[k] = number of i/ T[i] >  s[k] = cardinal of R_k
-    ## 'K' and 'Z' are initialized to their largest possible value, 
-    ## ie 'm' and 'kMax', respectively
-    kk <- 1
-    ii <- 1
-    while ((kk <= kMax) && (ii <= m)) {
-      if (thr[kk] >= p.values[ii]) {
-        K[ii] <- kk-1
-        ii <- ii+1
-      } else {
-        Z[kk] <- ii-1
-        kk <- kk+1
-      }
-    }
-    Vbar <- numeric(m)
-    ww <- which(K>0)
-    A <- Z - (1:kMax)+1
-    cA <- cummax(A)[K[ww]]  # cA[i] = max_{k<K[i]} A[k]
-    Vbar[ww] <- pmin(ww-cA, K[ww])
-    # Vbar[ww] <- ww-cA
-    # www <- which(Vbar > K & Vbar < kMax)
-    # www <- which(Vbar > K)
-    # Vbar[www] <- K[www]
-  }
-  Vbar
-}
+curveMaxFP <- sansSouci:::curveMaxFP
 
 plotMaxFP <- function(pval, thr){
   sort_pval <- sort(pval)
