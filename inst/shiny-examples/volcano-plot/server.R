@@ -204,24 +204,29 @@ shinyServer(function(input, output, session) {
   })
   
   tableResult <- reactiveVal(data.frame(
-    Selection = c("Upper right", "Upper left", "Upper left+right"))) #Initialization
+    Selection = c("Threshold selection"))) #Initialization
+  
+  baseTable <- reactive({
+    data.frame(`Selection` = c("Threshold selection"), 
+               "# genes" = c(TP_FDP()$n12),
+               "TP≥" = as.integer(c(TP_FDP()$TP12)), 
+               "FDP≤" = c(TP_FDP()$FDP12),
+               check.names = FALSE)
+  })
+  
   observeEvent(TP_FDP(),{ # When threshold change
     
     bottomTable <- tableResult() %>% 
       filter(Selection != "Upper right") %>% 
-      filter(Selection != "Upper left+right") %>% 
+      filter(Selection != "Threshold selection") %>% 
       filter(Selection != "Upper left")
-    upperTable <- data.frame(`Selection` = c("Upper right", "Upper left", "Upper left+right"), 
-                             "# genes" = c(TP_FDP()$n1, TP_FDP()$n2, TP_FDP()$n12),
-                             "TP≥" = as.integer(c(TP_FDP()$TP1, TP_FDP()$TP2, TP_FDP()$TP12)), 
-                             "FDP≤" = c(TP_FDP()$FDP1, TP_FDP()$FDP2, TP_FDP()$FDP12),
-                             check.names = FALSE)
+    upperTable <- baseTable()
     newValue <- rbind(upperTable, bottomTable)
     tableResult(newValue)
   })
   observeEvent(d(),{  # When user selects a new group of points
     req(calcBoundSelection())
-    n <- dim(tableResult())[1]-2
+    n <- dim(tableResult())[1]
     newValue <- rbind(tableResult(), c(paste("User selection",n), 
                                        calcBoundSelection()$n, 
                                        calcBoundSelection()$TP,
@@ -229,19 +234,11 @@ shinyServer(function(input, output, session) {
     tableResult(newValue)
   })
   observeEvent(input$resetCSV, { # to clean printed table
-    newValue <- data.frame(`Selection`= c("Upper right", "Upper left", "Upper left+right"), 
-                           "# genes" = c(TP_FDP()$n1, TP_FDP()$n2, TP_FDP()$n12),
-                           "TP≥" = as.integer(c(TP_FDP()$TP1, TP_FDP()$TP2, TP_FDP()$TP12)), 
-                           "FDP≤" = c(TP_FDP()$FDP1, TP_FDP()$FDP2, TP_FDP()$FDP12), 
-                           check.names = FALSE)
+    newValue <- baseTable()
     tableResult(newValue)
   })
   observeEvent(data(), { # to clean printed table
-    newValue <- data.frame(`Selection` = c("Upper right", "Upper left", "Upper left+right"), 
-                           "# genes" = c(TP_FDP()$n1, TP_FDP()$n2, TP_FDP()$n12),
-                           "TP≥" = as.integer(c(TP_FDP()$TP1, TP_FDP()$TP2, TP_FDP()$TP12)), 
-                           "FDP≤" = c(TP_FDP()$FDP1, TP_FDP()$FDP2, TP_FDP()$FDP12), 
-                           check.names = FALSE)
+    newValue <- baseTable()
     tableResult(newValue)
   })
   
@@ -277,7 +274,7 @@ shinyServer(function(input, output, session) {
     
     tableResult()
     
-  }, selection = list(mode = 'single', selectable = -(1:3)) )
+  }, selection = list(mode = 'single', selectable = -(1)) )
   
   
   lineAdjp <- reactive({ # value for 

@@ -42,8 +42,8 @@ shinyUI(fluidPage(
                        # splitLayout(
                        #   fileInput("fileAnnotation", label = p("Input gene annotation",  
                        #                                         bsButton("QfileAnnotation", label = "", icon = icon("question"), style = "info", size = "extra-small"))), 
-                         fileInput("fileGroup", label = p("Matrix of biological function",
-                                                          bsButton("QfileGroup", label = "", icon = icon("question"), style = "info", size = "extra-small"))),
+                       fileInput("fileGroup", label = p("Matrix of biological function",
+                                                        bsButton("QfileGroup", label = "", icon = icon("question"), style = "info", size = "extra-small"))),
                        # ),
                        # bsTooltip(id = "QfileAnnotation", title = 'Upload a RDS file containing matrix within two columns. One called "Id" contains index label from matrix and the other, called "nameGene", contains names of associated genes.', placement = "bottom",  options = list(container = "body"), trigger = "focus"),
                        bsTooltip(id = "QfileGroup", title = 'Upload a RDS file containing matrix within nameGenes in line index. Binary vecotr composed this matrix for each biological function.', placement = "bottom", trigger = "hover", options = NULL)
@@ -51,22 +51,25 @@ shinyUI(fluidPage(
       bsButton("Qparam", label = "", icon = icon("question"), style = "info", size = "extra-small"),
       bsPopover(id = "Qparam", title = "Parameters", content = paste("Select parameters to implement permutation-based post hoc inference bounds for differential gene expression analysis, see dedicated ", a("vignette.", href = "https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html")), 
                 placement = "bottom", trigger = "focus", options = NULL),
+      
+      checkboxInput("checkboxAdvancedParam", label = "Advanced calibration parameters", value = FALSE),
       sliderInput("sliderConfLevel", label = "Confidence level", min = 0, 
                   max = 100, value = 90, post = " %"),
-      splitLayout(
-        selectInput("alternative", label = "Alternative", 
-                    choices = list("Two sided" = "two.sided", 
-                                   "Less" = "less", 
-                                   "Greater" = "greater"),
-                    selected = "two.sided"),
-        numericInput("numB", label = "Number of permutations", value = 100, min = 2)
-      ),
-      splitLayout(
-        selectInput("refFamily", label = "Reference family", 
-                    choices = list("Simes" = "Simes", "Beta" = "Beta"), 
-                    selected = "Simes"),
-        uiOutput("inputK")#)
-      ),
+      conditionalPanel(condition = "input.checkboxAdvancedParam",
+                       splitLayout(
+                         selectInput("alternative", label = "Alternative", 
+                                     choices = list("Two sided" = "two.sided", 
+                                                    "Less" = "less", 
+                                                    "Greater" = "greater"),
+                                     selected = "two.sided"),
+                         numericInput("numB", label = "Number of permutations", value = 100, min = 2)
+                       ),
+                       splitLayout(
+                         selectInput("refFamily", label = "Reference family", 
+                                     choices = list("Simes" = "Simes", "Beta" = "Beta"), 
+                                     selected = "Simes"),
+                         uiOutput("inputK")#)
+                       )),
       tabsetPanel( id = "tabSelected",
                    tabPanel("User selections", value = 1,
                             
