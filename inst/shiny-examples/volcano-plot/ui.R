@@ -8,6 +8,7 @@ library(dplyr)
 library(htmlwidgets)
 library(DT)
 library(shinyBS)
+library(stringr)
 
 data(expr_ALL, package = "sansSouci.data")
 #data(expr_ALL_annotation, package = "sansSouci.data")

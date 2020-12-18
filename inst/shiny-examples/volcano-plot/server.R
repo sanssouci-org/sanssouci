@@ -226,8 +226,10 @@ shinyServer(function(input, output, session) {
   })
   observeEvent(d(),{  # When user selects a new group of points
     req(calcBoundSelection())
+    vectorGene <- names(df()$pval[manuelSelected()])
+    url <- UrlStringdbGrah(vectorGene)
     n <- dim(tableResult())[1]
-    newValue <- rbind(tableResult(), c(paste("User selection",n), 
+    newValue <- rbind(tableResult(), c(paste('<a href="', url, '" >User selection ',n, '</a>', sep=""), 
                                        calcBoundSelection()$n, 
                                        calcBoundSelection()$TP,
                                        calcBoundSelection()$FDP))
@@ -274,7 +276,7 @@ shinyServer(function(input, output, session) {
     
     tableResult()
     
-  }, selection = list(mode = 'single', selectable = -(1)) )
+  }, selection = list(mode = 'single', selectable = -(1)) , escape = FALSE )
   
   
   lineAdjp <- reactive({ # value for 
@@ -525,7 +527,8 @@ shinyServer(function(input, output, session) {
   
   
   userDTselectPost <- reactive({
-    tableResult()[input$tableBounds_rows_selected, "Selection"]
+    href <- tableResult()[input$tableBounds_rows_selected, "Selection"]
+    str_remove_all(str_remove_all(href, "<a(.*?)>"), "(</a>)")
   })
   
   selectionUserRe <- reactive({

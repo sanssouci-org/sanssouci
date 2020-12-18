@@ -183,3 +183,11 @@ plotMaxFP <- function(pval, thr){
     geom_line() + 
     labs(x = "Number of top features selected", y="Upper bound on the number of false positives")
 }
+
+
+
+UrlStringdbGrah <- function(vector){
+  vector[2:length(vector)] <- paste0("%0d", vector[2:length(vector)])
+  url <- paste("https://string-db.org/api/image/network?identifiers=", paste(vector, collapse = ""), "&species=9606", sep="")
+  return(url)
+}
