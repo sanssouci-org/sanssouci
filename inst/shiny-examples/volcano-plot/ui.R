@@ -29,7 +29,9 @@ shinyUI(fluidPage(
       # wellPanel(
       splitLayout(
         checkboxInput("checkboxDemo", label = "Use demo data", value = TRUE),
-        actionButton("buttonValidate", "Perform calibration!"), align = "right"),
+        # uiOutput("CheckData"),
+        actionButton("buttonValidate", "Perform calibration!"),
+        align = "right"),
       conditionalPanel(condition = "!input.checkboxDemo", 
                        fileInput("fileData",label = p("Input expression data", 
                                                       bsButton("QfileData", label = "", icon = icon("question"), style = "info", size = "extra-small"))),
@@ -37,13 +39,13 @@ shinyUI(fluidPage(
                                  "right", options = list(container = "body"), trigger = "focus")
       ), 
       conditionalPanel(condition = "!input.checkboxDemo",
-                       splitLayout(
-                         fileInput("fileAnnotation", label = p("Input gene annotation",  
-                                                               bsButton("QfileAnnotation", label = "", icon = icon("question"), style = "info", size = "extra-small"))), 
+                       # splitLayout(
+                       #   fileInput("fileAnnotation", label = p("Input gene annotation",  
+                       #                                         bsButton("QfileAnnotation", label = "", icon = icon("question"), style = "info", size = "extra-small"))), 
                          fileInput("fileGroup", label = p("Matrix of biological function",
-                                                          bsButton("QfileGroup", label = "", icon = icon("question"), style = "info", size = "extra-small")))
-                       ),
-                       bsTooltip(id = "QfileAnnotation", title = 'Upload a RDS file containing matrix within two columns. One called "Id" contains index label from matrix and the other, called "nameGene", contains names of associated genes.', placement = "bottom",  options = list(container = "body"), trigger = "focus"),
+                                                          bsButton("QfileGroup", label = "", icon = icon("question"), style = "info", size = "extra-small"))),
+                       # ),
+                       # bsTooltip(id = "QfileAnnotation", title = 'Upload a RDS file containing matrix within two columns. One called "Id" contains index label from matrix and the other, called "nameGene", contains names of associated genes.', placement = "bottom",  options = list(container = "body"), trigger = "focus"),
                        bsTooltip(id = "QfileGroup", title = 'Upload a RDS file containing matrix within nameGenes in line index. Binary vecotr composed this matrix for each biological function.', placement = "bottom", trigger = "hover", options = NULL)
       ), 
       bsButton("Qparam", label = "", icon = icon("question"), style = "info", size = "extra-small"),

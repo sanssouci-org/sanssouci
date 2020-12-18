@@ -8,6 +8,9 @@ shinyServer(function(input, output, session) {
     reactive (
       # eventReactive(input$buttonData,
       {
+        # output$CheckData <- renderUI({
+        #   tags$span(style="color:blue", "Please, upload your data")
+        # })
         data <- list()
         if(input$checkboxDemo){
           data$matrix <- expr_ALL
@@ -27,20 +30,50 @@ shinyServer(function(input, output, session) {
           stopifnot(!any(is.na(mm)))
           data$biologicalFunc <- bioFun[mm, ]
           rm(bioFun)
+          # output$CheckData <- renderUI({
+          #   actionButton("buttonValidate", "Perform calibration!")
+          # })
+          
         } else {
           req(input$fileData)
           file <- req(input$fileData)
-          data$matrix <- readRDS(file$datapath)
+          data$matrix <- read.csv(file = file$datapath, row.names = 1, check.names=FALSE)
           
+          colnam <- colnames(data$matrix) #Control colnames(matrix)
+          valueColnam <- sort(unique(colnam))
+          if(length(valueColnam)==2){
+            if(valueColnam != c("0","1")){
+              colnam[ colnam == valueColnam[1] ] <- 0
+              colnam[ colnam == valueColnam[2] ] <- 1
+              colnames(data$matrix) <- colnam
+              output$errorInput <- renderUI({
+                tags$span(style="color:orange", paste("The colnames of your matrix does not contains 0 or 1.We consider that", valueColnam[1] ,"becomes 0 and ", valueColnam[2]," becomes 1"))
+              })
+            }
+          }else{
+            output$errorInput <- renderUI({
+              tags$span(style="color:red", "The column names of your data contains more (or less) than 2 categories. Please use {0, 1} for the colnames of your matrix.")
+            })
+          }
           data$categ <- colnames(data$matrix)
           
-          req(input$fileAnnotation)
-          fileAnnotation <- req(input$fileAnnotation)
-          data$annotation <- readRDS(fileAnnotation$datapath)
+          data$geneNames <- rownames(data$matrix)
           
           req(input$fileGroup)
           fileGroup <- req(input$fileGroup)
-          data$biologicalFunc <- readRDS(fileGroup$datapath)
+          biofun <- read.csv(file = fileGroup$datapath, row.names = 1, check.names=FALSE)
+          stopifnot(nrow(bioFun) == nrow(data$matrix))  ## sanity check: dimensions
+          ## make sure the ordering of probes (genes) 
+          ## is the same for biological functions and expression data:
+          mm <- match(rownames(bioFun), rownames(data$matrix))
+          stopifnot(!any(is.na(mm)))
+          data$biologicalFunc <- bioFun[mm, ]
+          rm(bioFun)
+          
+          # output$CheckData <- renderUI({
+          #   actionButton("buttonValidate", "Perform calibration!")
+          # })
+          
         }
         return(data)
       }
