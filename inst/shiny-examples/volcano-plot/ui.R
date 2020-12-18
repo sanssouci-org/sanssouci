@@ -28,6 +28,7 @@ shinyUI(fluidPage(
   sidebarLayout(
     sidebarPanel(
       # wellPanel(
+      downloadButton("downloadExampleData", "Download example data set"),
       splitLayout(
         checkboxInput("checkboxDemo", label = "Use demo data", value = TRUE),
         # uiOutput("CheckData"),

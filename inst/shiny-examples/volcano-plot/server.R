@@ -4,6 +4,47 @@ shinyServer(function(input, output, session) {
   
   options(shiny.maxRequestSize=1024^3)
   
+  exampleData <- reactive({
+    data <- list()
+    data$matrix <- expr_ALL
+    
+    categ <- colnames(data$matrix)
+    data$categ <- rep(1, length(categ))
+    data$categ[which(categ == "NEG")] <- 0
+    
+    colnames(data$matrix) <- data$categ
+    
+    data$geneNames <- rownames(data$matrix)
+    
+    # data$biologicalFunc <- defaultBiologicalFunc(expr_ALL, expr_ALL_annotation)
+    bioFun <- expr_ALL_GO
+    stopifnot(nrow(bioFun) == nrow(data$matrix))  ## sanity check: dimensions
+    ## make sure the ordering of probes (genes) 
+    ## is the same for biological functions and expression data:
+    mm <- match(rownames(bioFun), rownames(data$matrix))
+    stopifnot(!any(is.na(mm)))
+    data$biologicalFunc <- bioFun[mm, ]
+    rm(bioFun)
+    return(data)
+  })
+  
+  output$downloadExampleData <- downloadHandler(
+    filename = function() {
+      paste("ExampleData", "zip", sep=".")
+    },
+    content = function(fname) {
+      fs <- c()
+      tmpdir <- tempdir()
+      setwd(tempdir())
+      paths <- c("expressData.csv", "biologicalFunction.csv")
+      write.csv(exampleData()$matrix, paths[1])
+      write.csv(exampleData()$biologicalFunc, paths[2])
+      zip(zipfile=fname, files=paths)
+    },
+    contentType = "application/zip"
+  )
+  
+  
   data <- 
     reactive (
       # eventReactive(input$buttonData,
