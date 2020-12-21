@@ -53,7 +53,7 @@ shinyServer(function(input, output, session) {
         #   tags$span(style="color:blue", "Please, upload your data")
         # })
         data <- list()
-        if(input$checkboxDemo){
+        if (input$checkboxDemo){
           data$matrix <- expr_ALL
           
           categ <- colnames(data$matrix)

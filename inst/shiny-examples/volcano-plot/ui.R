@@ -12,7 +12,7 @@ library(stringr)
 
 data(expr_ALL, package = "sansSouci.data")
 #data(expr_ALL_annotation, package = "sansSouci.data")
-data(hgu95av2_GO_BP, package = "sansSouci.data")
+# data(hgu95av2_GO_BP, package = "sansSouci.data")
 # data(hgu95av2_GO_MF, package = "sansSouci.data")
 # data(hgu95av2_GO_CC, package = "sansSouci.data")
 data(expr_ALL_GO, package = "sansSouci.data")
@@ -24,39 +24,75 @@ shinyUI(fluidPage(
   # Application title
   titlePanel("IIDEA: Interactive Inference for Differential Expression Analysis"),
   
-  # Sidebar with a slider input for number of bins
+  # Sidebar with panel
   sidebarLayout(
     sidebarPanel(
       # wellPanel(
-      downloadButton("downloadExampleData", "Download example data set"),
       splitLayout(
-        checkboxInput("checkboxDemo", label = "Use demo data", value = TRUE),
+        checkboxInput("checkboxDemo", 
+                      label = "Use demo data", 
+                      value = TRUE),
         # uiOutput("CheckData"),
-        actionButton("buttonValidate", "Run !"),
-        align = "right"),
+        actionButton("buttonValidate", "Run !")),
       conditionalPanel(condition = "!input.checkboxDemo", 
-                       fileInput("fileData",label = p("Input expression data", 
-                                                      bsButton("QfileData", label = "", icon = icon("question"), style = "info", size = "extra-small"))),
-                       bsTooltip("QfileData", "Upload a RDS file containing matrix within  __ in line index and categories in column (in {0, 1})",
-                                 "right", options = list(container = "body"), trigger = "focus")
+                       fileInput("fileData",
+                                 label = p("Gene expression data matrix", 
+                                           bsButton("QfileData", 
+                                                    label = "", 
+                                                    icon = icon("question"), 
+                                                    style = "info", 
+                                                    size = "extra-small"))),
+                       bsTooltip("QfileData", "Upload a RDS file containing matrix with genes in rows and samples in column. Column names should be in (in {0, 1})",
+                                 "right", 
+                                 options = list(container = "body"), 
+                                 trigger = "hover")
       ), 
       conditionalPanel(condition = "!input.checkboxDemo",
                        # splitLayout(
                        #   fileInput("fileAnnotation", label = p("Input gene annotation",  
                        #                                         bsButton("QfileAnnotation", label = "", icon = icon("question"), style = "info", size = "extra-small"))), 
-                       fileInput("fileGroup", label = p("Matrix of gene sets",
-                                                        bsButton("QfileGroup", label = "", icon = icon("question"), style = "info", size = "extra-small"))),
+                       fileInput("fileGroup", 
+                                 label = p("Gene set matrix",
+                                           bsButton("QfileGroup", 
+                                                    label = "", 
+                                                    icon = icon("question"), 
+                                                    style = "info", 
+                                                    size = "extra-small"))),
                        # ),
                        # bsTooltip(id = "QfileAnnotation", title = 'Upload a RDS file containing matrix within two columns. One called "Id" contains index label from matrix and the other, called "nameGene", contains names of associated genes.', placement = "bottom",  options = list(container = "body"), trigger = "focus"),
-                       bsTooltip(id = "QfileGroup", title = 'Upload a RDS file containing matrix within nameGenes in line index. Binary vector composed this matrix for each gene set.', placement = "bottom", trigger = "hover", options = NULL)
+                       bsTooltip(id = "QfileGroup", 
+                                 title = 'Upload a RDS file containing matrix within nameGenes in line index. Binary vector composed this matrix for each gene set.', 
+                                 placement = "bottom", 
+                                 trigger = "hover", 
+                                 options = NULL)
       ), 
-      bsButton("Qparam", label = "", icon = icon("question"), style = "info", size = "extra-small"),
-      bsPopover(id = "Qparam", title = "Parameters", content = paste("Select parameters to implement permutation-based post hoc inference bounds for differential gene expression analysis, see dedicated ", a("vignette.", href = "https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html")), 
-                placement = "bottom", trigger = "focus", options = NULL),
-      
-      checkboxInput("checkboxAdvancedParam", label = "Advanced calibration parameters", value = FALSE),
-      sliderInput("sliderConfLevel", label = "Confidence level", min = 0, 
+      sliderInput("sliderConfLevel", 
+                  label = p("Confidence level", 
+                            bsButton("QconfLevel", 
+                                     label = "", 
+                                     icon = icon("question"), 
+                                     style = "info", 
+                                     size = "extra-small")),
+                  min = 0, 
                   max = 100, value = 90, post = " %"),
+      bsTooltip("QconfLevel", "Confidence level",
+                "right", 
+                options = list(container = "body"), 
+                trigger = "hover"),
+      checkboxInput("checkboxAdvancedParam", 
+                    label = p("Advanced parameters", 
+                              bsButton("Qparam", 
+                                       label = "", 
+                                       icon = icon("question"), 
+                                       style = "info", 
+                                       size = "extra-small")),
+                    value = FALSE),
+      bsTooltip(id = "Qparam", 
+                title = paste("Select parameters to implement permutation-based post hoc inference bounds for differential gene expression analysis, see dedicated ", 
+                                a("vignette.", 
+                                  href = "https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html")), 
+                trigger = c("click", "hover"),
+                options = NULL),
       conditionalPanel(condition = "input.checkboxAdvancedParam",
                        splitLayout(
                          selectInput("alternative", label = "Alternative", 
@@ -81,7 +117,7 @@ shinyUI(fluidPage(
                             uiOutput("OutQtableBoundsGroup"),
                             DTOutput("tableBoundsGroup") )
                    
-      )
+      ),
       # )
     ),
     
@@ -112,7 +148,7 @@ shinyUI(fluidPage(
                        plotly::plotlyOutput("volcanoplotPosteriori", height = "600px"), 
                        fluidRow(
                          actionButton("resetCSV", "Reset Selections"), 
-                         downloadButton("downloadData", "Download binary csv of user selection")
+                         downloadButton("downloadData", "Download csv file with user selection")
                          # bsButton("Qdownload", label = "", icon = icon("question"), style = "info", size = "extra-small"),
                          # bsTooltip("Qdownload", "Delete your select manual selection from the post hoc bounds and downloadable csv file. Download a csv file containing matrix with binary vector of your User selection",
                          #           "right", options = list(container = "body"), trigger = "focus"),
