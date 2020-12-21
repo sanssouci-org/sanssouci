@@ -663,7 +663,7 @@ shinyServer(function(input, output, session) {
             marker = list(size = 2,
                           # showlegend = FALSE,
                           color = 'grey'), 
-            name = 'genecards',
+            name = 'genes',
             type='scattergl', mode = "markers", source='B'
             ,
             text = data()$geneName,

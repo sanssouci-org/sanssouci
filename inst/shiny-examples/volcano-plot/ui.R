@@ -22,7 +22,16 @@ shinyUI(fluidPage(
   includeCSS("www/style.css"),
   
   # Application title
-  titlePanel("IIDEA: Interactive Inference for Differential Expression Analysis"),
+  titlePanel(p("IIDEA: Interactive Inference for Differential Expression Analyses",
+               bsButton("Qtitle", 
+                        label = "", 
+                        icon = icon("question"), 
+                        style = "info", 
+                        size = "normal"))),
+  bsTooltip("Qtitle", "See references at the bottom of the page for an introduction to post hoc inference",
+            "right", 
+            options = list(container = "body"), 
+            trigger = "hover"),
   
   # Sidebar with panel
   sidebarLayout(
@@ -42,7 +51,7 @@ shinyUI(fluidPage(
                                                     icon = icon("question"), 
                                                     style = "info", 
                                                     size = "extra-small"))),
-                       bsTooltip("QfileData", "Upload a RDS file containing matrix with genes in rows and samples in column. Column names should be in (in {0, 1})",
+                       bsTooltip("QfileData", "Upload a CSV file containing matrix with genes in rows and samples in column. Column names should be in (in {0, 1})",
                                  "right", 
                                  options = list(container = "body"), 
                                  trigger = "hover")
@@ -59,7 +68,7 @@ shinyUI(fluidPage(
                                                     style = "info", 
                                                     size = "extra-small"))),
                        # ),
-                       # bsTooltip(id = "QfileAnnotation", title = 'Upload a RDS file containing matrix within two columns. One called "Id" contains index label from matrix and the other, called "nameGene", contains names of associated genes.', placement = "bottom",  options = list(container = "body"), trigger = "focus"),
+                       # bsTooltip(id = "QfileAnnotation", title = 'Upload a CSV file containing matrix within two columns. One called "Id" contains index label from matrix and the other, called "nameGene", contains names of associated genes.', placement = "bottom",  options = list(container = "body"), trigger = "focus"),
                        bsTooltip(id = "QfileGroup", 
                                  title = 'Upload a RDS file containing matrix within nameGenes in line index. Binary vector composed this matrix for each gene set.', 
                                  placement = "bottom", 
