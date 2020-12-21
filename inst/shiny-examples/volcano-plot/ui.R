@@ -124,24 +124,22 @@ shinyUI(fluidPage(
     # Main panel
     mainPanel(
       flowLayout(
-      
-      h2("Volcano plot",
-      bsButton("Qparam1", label = "", icon = icon("question"), style = "info", size = "extra-small")),
-      bsPopover(id = "Qparam1", 
-                title = "VolcanoPlot", 
-                content = paste('Select genes by dragging horizontal or vertical bars, of using "box select" or "lasso select" from the plot menu. The table in the left panel gives post-hoc bounds for these selections.'), 
-                placement = "bottom", 
-                trigger = "hover", 
-                options = NULL),
-      selectInput("choiceYaxis", label = "'y' axis label", 
+        selectInput("choiceYaxis", label = "'y' axis label", 
                   choices = list("p-values" = "pval", 
                                  "Adjusted p-values" = "adjPval",
                                  "Number of false positves" = "thr"), 
                   selected = "pval"),
       checkboxInput("symetric", 
                     label = "Symmetric fold change threshold", 
-                    value = FALSE)),
-      
+                    value = FALSE),
+      h2("Volcano plot",
+         bsButton("Qparam1", label = "", icon = icon("question"), style = "info", size = "extra-small")),
+      bsPopover(id = "Qparam1", 
+                title = "VolcanoPlot", 
+                content = paste('Select genes by dragging horizontal or vertical bars, of using "box select" or "lasso select" from the plot menu. The table in the left panel gives post-hoc bounds for these selections.'), 
+                placement = "bottom", 
+                trigger = "hover", 
+                options = NULL)),
       conditionalPanel(condition = "input.tabSelected==1",
                          plotly::plotlyOutput("volcanoplotPosteriori", height = "600px"), 
                        

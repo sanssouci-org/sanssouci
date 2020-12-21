@@ -431,7 +431,7 @@ shinyServer(function(input, output, session) {
         # showlegend = FALSE,
         xaxis = list(title = "Fold change (log scale)", titlefont = f),
         yaxis = isolate(yaxis()),
-        title = "Volcano plot",
+        title = "",
         shapes = isolate(thrLine()),
         dragmode = "select" ) %>%
       # add_annotations(
@@ -674,7 +674,7 @@ shinyServer(function(input, output, session) {
         showlegend = TRUE,
         xaxis = list(title = "Fold change (log scale)", titlefont = f),
         yaxis = isolate(yaxis()),
-        title = "Volcano plot",
+        title = "",
         # shapes = isolate(thrLine()),
         dragmode = "select" )%>%
       onRender("
