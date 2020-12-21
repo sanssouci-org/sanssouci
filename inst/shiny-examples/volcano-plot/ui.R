@@ -123,6 +123,8 @@ shinyUI(fluidPage(
     
     # Main panel
     mainPanel(
+      flowLayout(
+      
       h2("Volcano plot",
       bsButton("Qparam1", label = "", icon = icon("question"), style = "info", size = "extra-small")),
       bsPopover(id = "Qparam1", 
@@ -131,21 +133,18 @@ shinyUI(fluidPage(
                 placement = "bottom", 
                 trigger = "hover", 
                 options = NULL),
-      splitLayout(
-        cellWidths = c("55%", "35%", "10%"),
-        selectInput("choiceYaxis", label = "'y' axis label", 
-                     choices = list("p-values" = "pval", 
-                                    "Adjusted p-values" = "adjPval",
-                                    "Number of false positves" = "thr"), 
-                     selected = "pval"),
-        checkboxInput("symetric", 
-                      label = "Symmetric fold change threshold", 
-                      value = FALSE)
-      ),
-      
+      selectInput("choiceYaxis", label = "'y' axis label", 
+                  choices = list("p-values" = "pval", 
+                                 "Adjusted p-values" = "adjPval",
+                                 "Number of false positves" = "thr"), 
+                  selected = "pval"),
+      checkboxInput("symetric", 
+                    label = "Symmetric fold change threshold", 
+                    value = FALSE)),
       
       conditionalPanel(condition = "input.tabSelected==1",
-                       plotly::plotlyOutput("volcanoplotPosteriori", height = "600px"), 
+                         plotly::plotlyOutput("volcanoplotPosteriori", height = "600px"), 
+                       
                        fluidRow(
                          actionButton("resetCSV", "Reset Selections"), 
                          downloadButton("downloadData", "Download csv file with user selection")
