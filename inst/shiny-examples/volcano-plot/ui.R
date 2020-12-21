@@ -22,7 +22,7 @@ shinyUI(fluidPage(
   includeCSS("www/style.css"),
   
   # Application title
-  titlePanel("Permutation-based post hoc confidence bounds for differential gene expression"),
+  titlePanel("IIDEA: Interactive Inference for Differential Expression Analysis"),
   
   # Sidebar with a slider input for number of bins
   sidebarLayout(
@@ -32,7 +32,7 @@ shinyUI(fluidPage(
       splitLayout(
         checkboxInput("checkboxDemo", label = "Use demo data", value = TRUE),
         # uiOutput("CheckData"),
-        actionButton("buttonValidate", "Perform calibration!"),
+        actionButton("buttonValidate", "Run !"),
         align = "right"),
       conditionalPanel(condition = "!input.checkboxDemo", 
                        fileInput("fileData",label = p("Input expression data", 
@@ -44,11 +44,11 @@ shinyUI(fluidPage(
                        # splitLayout(
                        #   fileInput("fileAnnotation", label = p("Input gene annotation",  
                        #                                         bsButton("QfileAnnotation", label = "", icon = icon("question"), style = "info", size = "extra-small"))), 
-                       fileInput("fileGroup", label = p("Matrix of biological function",
+                       fileInput("fileGroup", label = p("Matrix of gene sets",
                                                         bsButton("QfileGroup", label = "", icon = icon("question"), style = "info", size = "extra-small"))),
                        # ),
                        # bsTooltip(id = "QfileAnnotation", title = 'Upload a RDS file containing matrix within two columns. One called "Id" contains index label from matrix and the other, called "nameGene", contains names of associated genes.', placement = "bottom",  options = list(container = "body"), trigger = "focus"),
-                       bsTooltip(id = "QfileGroup", title = 'Upload a RDS file containing matrix within nameGenes in line index. Binary vecotr composed this matrix for each biological function.', placement = "bottom", trigger = "hover", options = NULL)
+                       bsTooltip(id = "QfileGroup", title = 'Upload a RDS file containing matrix within nameGenes in line index. Binary vector composed this matrix for each gene set.', placement = "bottom", trigger = "hover", options = NULL)
       ), 
       bsButton("Qparam", label = "", icon = icon("question"), style = "info", size = "extra-small"),
       bsPopover(id = "Qparam", title = "Parameters", content = paste("Select parameters to implement permutation-based post hoc inference bounds for differential gene expression analysis, see dedicated ", a("vignette.", href = "https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html")), 
@@ -100,7 +100,9 @@ shinyUI(fluidPage(
                       label = "Symmetric fold change threshold", 
                       value = FALSE),
         bsButton("Qparam1", label = "", icon = icon("question"), style = "info", size = "extra-small"),
-        bsPopover(id = "Qparam1", title = "VolcanoPlot", content = paste('You can make some selections on the volcano plot. Firstly, you can draggle threshold (orange pointed lines) to select both upper right and left corner. Post-hoc bounds of these selections are printed in the table on the left of the app. Secondly, you can select some point with the "box select" or the "lasso select". Post-hoc bounds are also on the left of the app.'), 
+        bsPopover(id = "Qparam1", 
+                  title = "VolcanoPlot", 
+                  content = paste('Select genes by dragging horizontal or vertical bars, of using "box select" or "lasso select" from the plot menu. The table in the left panel gives post-hoc bounds for these selections.'), 
                   placement = "bottom", trigger = "focus", options = NULL)
         
       ),
@@ -110,12 +112,12 @@ shinyUI(fluidPage(
                        plotly::plotlyOutput("volcanoplotPosteriori", height = "600px"), 
                        fluidRow(
                          actionButton("resetCSV", "Reset Selections"), 
-                         downloadButton("downloadData", "Download binary csv of user selection"), 
-                         bsButton("Qdownload", label = "", icon = icon("question"), style = "info", size = "extra-small"),
-                         bsTooltip("Qdownload", "Delete you box select manual selection from the post hoc bounds and downloadable csv file. Download a csv file containing matrix with binary vector of your User selection",
-                                   "right", options = list(container = "body"), trigger = "focus"),
-                         bsTooltip(id = "resetCSV", title = "Delete you box select manual selection from the post hoc bounds and downloadable csv file.", placement = "bottom", trigger = "hover", options = NULL),
-                         bsTooltip(id = "downloadData", title = "Download a csv file containing matrix with binary vector of your User selection", placement = "bottom", trigger = "hover", options = NULL)
+                         downloadButton("downloadData", "Download binary csv of user selection")
+                         # bsButton("Qdownload", label = "", icon = icon("question"), style = "info", size = "extra-small"),
+                         # bsTooltip("Qdownload", "Delete your select manual selection from the post hoc bounds and downloadable csv file. Download a csv file containing matrix with binary vector of your User selection",
+                         #           "right", options = list(container = "body"), trigger = "focus"),
+                         # bsTooltip(id = "resetCSV", title = "Delete you box select manual selection from the post hoc bounds and downloadable csv file.", placement = "bottom", trigger = "hover", options = NULL),
+                         # bsTooltip(id = "downloadData", title = "Download a csv file containing matrix with binary vector of your User selection", placement = "bottom", trigger = "hover", options = NULL)
                        ),
                        
                        splitLayout(
