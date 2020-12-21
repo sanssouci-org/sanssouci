@@ -80,19 +80,19 @@ shinyUI(fluidPage(
                 options = list(container = "body"), 
                 trigger = "hover"),
       checkboxInput("checkboxAdvancedParam", 
-                    label = p("Advanced parameters", 
-                              bsButton("Qparam", 
-                                       label = "", 
-                                       icon = icon("question"), 
-                                       style = "info", 
-                                       size = "extra-small")),
+                    label = p("Advanced parameters"),
+                              # bsButton("Qparam", 
+                              #          label = "", 
+                              #          icon = icon("question"), 
+                              #          style = "info", 
+                              #          size = "extra-small")),
                     value = FALSE),
-      bsTooltip(id = "Qparam", 
-                title = paste("Select parameters to implement permutation-based post hoc inference bounds for differential gene expression analysis, see dedicated ", 
-                                a("vignette.", 
-                                  href = "https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html")), 
-                trigger = c("click", "hover"),
-                options = NULL),
+      # bsTooltip(id = "Qparam", 
+      #           title = paste("Select parameters to implement permutation-based post hoc inference bounds for differential gene expression analysis, see dedicated ", 
+      #                           a("vignette.", 
+      #                             href = "https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html")), 
+      #           trigger = c("click", "hover"),
+      #           options = NULL),
       conditionalPanel(condition = "input.checkboxAdvancedParam",
                        splitLayout(
                          selectInput("alternative", label = "Alternative", 
@@ -121,26 +121,26 @@ shinyUI(fluidPage(
       # )
     ),
     
-    # Show a plot of the generated distribution
+    # Main panel
     mainPanel(
+      h2("Volcano plot",
+      bsButton("Qparam1", label = "", icon = icon("question"), style = "info", size = "extra-small")),
+      bsPopover(id = "Qparam1", 
+                title = "VolcanoPlot", 
+                content = paste('Select genes by dragging horizontal or vertical bars, of using "box select" or "lasso select" from the plot menu. The table in the left panel gives post-hoc bounds for these selections.'), 
+                placement = "bottom", 
+                trigger = "hover", 
+                options = NULL),
       splitLayout(
         cellWidths = c("55%", "35%", "10%"),
-        radioButtons("choiceYaxis", label = "'y' axis label", 
+        selectInput("choiceYaxis", label = "'y' axis label", 
                      choices = list("p-values" = "pval", 
                                     "Adjusted p-values" = "adjPval",
-                                    "Calibration thresholds" = "thr"), 
-                     selected = "pval",
-                     inline = TRUE),
-        
+                                    "Number of false positves" = "thr"), 
+                     selected = "pval"),
         checkboxInput("symetric", 
                       label = "Symmetric fold change threshold", 
-                      value = FALSE),
-        bsButton("Qparam1", label = "", icon = icon("question"), style = "info", size = "extra-small"),
-        bsPopover(id = "Qparam1", 
-                  title = "VolcanoPlot", 
-                  content = paste('Select genes by dragging horizontal or vertical bars, of using "box select" or "lasso select" from the plot menu. The table in the left panel gives post-hoc bounds for these selections.'), 
-                  placement = "bottom", trigger = "focus", options = NULL)
-        
+                      value = FALSE)
       ),
       
       
