@@ -289,26 +289,26 @@ shinyServer(function(input, output, session) {
   
   textQtableBounds <- reactive({
     paste("This table prints your post-hoc bounds for your selections.", 
-                                      "FDP : False discovery Proportion.", 
-                                      "TP : True positive", 
-                                      "For example, the selection called Upper Left have at leat", 
-                                      tableResult()[1, "TP≥"],
-                                      " true positives and max ",
-                                      tableResult()[1, "FDP≤"],
-                                      " False discovery proportion.")})
+          "FDP : False discovery Proportion.", 
+          "TP : True positive", 
+          "For example, the selection called Upper Left have at leat", 
+          tableResult()[1, "TP≥"],
+          " true positives and max ",
+          tableResult()[1, "FDP≤"],
+          " False discovery proportion.")})
   
   output$OutQtableBounds <- renderUI({
-      popify(el = bsButton("QtableBounds", label = "", icon = icon("question"), style = "info", size = "extra-small"), 
-             title = "Data", content = paste("This table prints your post-hoc bounds for your selections."  ,
-                                             "FDP : False discovery Proportion.",
-                                             "TP : True positive", 
-                                                                   "For example, the selection called Upper Left have at leat", 
-                                                                   tableResult()[1, "TP≥"],
-                                                                   " true positives and max ",
-                                                                   tableResult()[1, "FDP≤"]*100,
-                                                                   "% False discovery proportion.")
-                , trigger='focus')
-    })
+    popify(el = bsButton("QtableBounds", label = "", icon = icon("question"), style = "info", size = "extra-small"), 
+           title = "Data", content = paste("This table prints your post-hoc bounds for your selections."  ,
+                                           "FDP : False discovery Proportion.",
+                                           "TP : True positive", 
+                                           "For example, the selection called Upper Left have at leat", 
+                                           tableResult()[1, "TP≥"],
+                                           " true positives and max ",
+                                           tableResult()[1, "FDP≤"]*100,
+                                           "% False discovery proportion.")
+           , trigger='focus')
+  })
   
   # addPopover(session, "QtableBounds", "Data", content = textQtableBounds(), trigger = 'focus')
   
@@ -559,8 +559,8 @@ shinyServer(function(input, output, session) {
       plotMaxFP(pval = df()$pval[selectionUserRe()$sel], thr = cal()$thr) + 
         ggtitle(userDTselectPost())
     }else{
-    plotMaxFP(pval = df()$pval[manuelSelected()], thr = cal()$thr) + 
-      ggtitle("User selection")
+      plotMaxFP(pval = df()$pval[manuelSelected()], thr = cal()$thr) + 
+        ggtitle("User selection")
     }
   })
   
