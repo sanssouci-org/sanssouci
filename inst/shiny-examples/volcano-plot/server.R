@@ -298,16 +298,20 @@ shinyServer(function(input, output, session) {
           " False discovery proportion.")})
   
   output$OutQtableBounds <- renderUI({
+    tab <- tableResult()
+    msg <- "The table below prints post hoc bounds for user selections. "
+    if (nrow(tab)>0) {
+      msg <- paste(msg, "For example, the selection called",
+                       tab[1, 1], 
+                       "contains at least", 
+                       tab[1, "TP≥"],
+                       " true positives (TP) and its False Discovery Proportion (FDP) is less than",
+                       tab[1, "FDP≤"])
+    }
     popify(el = bsButton("QtableBounds", label = "", icon = icon("question"), style = "info", size = "extra-small"), 
-           title = "Data", content = paste("This table prints your post-hoc bounds for your selections."  ,
-                                           "FDP : False discovery Proportion.",
-                                           "TP : True positive", 
-                                           "For example, the selection called Upper Left have at leat", 
-                                           tableResult()[1, "TP≥"],
-                                           " true positives and max ",
-                                           tableResult()[1, "FDP≤"]*100,
-                                           "% False discovery proportion.")
-           , trigger='focus')
+           title = "Data", 
+           content = msg,
+           trigger='hover')
   })
   
   # addPopover(session, "QtableBounds", "Data", content = textQtableBounds(), trigger = 'focus')

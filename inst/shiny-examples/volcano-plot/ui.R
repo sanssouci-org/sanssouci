@@ -160,16 +160,16 @@ shinyUI(fluidPage(
                          #           "right", options = list(container = "body"), trigger = "focus"),
                          # bsTooltip(id = "resetCSV", title = "Delete you box select manual selection from the post hoc bounds and downloadable csv file.", placement = "bottom", trigger = "hover", options = NULL),
                          # bsTooltip(id = "downloadData", title = "Download a csv file containing matrix with binary vector of your User selection", placement = "bottom", trigger = "hover", options = NULL)
-                       ),
+                      )),
                        
-                       splitLayout(
-                         plotlyOutput("curveMaxFPBoth"), 
-                         plotlyOutput("curveMaxFPSelect")
-                       )), 
-      
+                       # splitLayout(
+                       #   plotlyOutput("curveMaxFPBoth"), 
+                       #   plotlyOutput("curveMaxFPSelect")
+                       # )), 
+                       # 
       conditionalPanel(condition = "input.tabSelected==2",
-                       plotly::plotlyOutput("volcanoplotPriori", height = "600px"), 
-                       plotlyOutput(outputId = "curveMaxFPGroup")
+                       plotly::plotlyOutput("volcanoplotPriori", height = "600px")
+                       # plotlyOutput(outputId = "curveMaxFPGroup")
       )
     )
   ),
