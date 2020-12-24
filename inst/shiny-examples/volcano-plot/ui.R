@@ -22,27 +22,18 @@ shinyUI(fluidPage(
   includeCSS("www/style.css"),
   
   # Application title
-  titlePanel(p("IIDEA: Interactive Inference for Differential Expression Analyses",
-               bsButton("Qtitle", 
-                        label = "", 
-                        icon = icon("question"), 
-                        style = "info", 
-                        size = "normal"))),
-  bsTooltip("Qtitle", "See references at the bottom of the page for an introduction to post hoc inference",
-            "right", 
-            options = list(container = "body"), 
-            trigger = "hover"),
-  
+  titlePanel("IIDEA: Interactive Inference for Differential Expression Analyses"),
   # Sidebar with panel
   sidebarLayout(
     sidebarPanel(
       # wellPanel(
       splitLayout(
+        htmlOutput("help"),
         checkboxInput("checkboxDemo", 
                       label = "Use demo data", 
                       value = TRUE),
         # uiOutput("CheckData"),
-        actionButton("buttonValidate", "Run !")),
+        actionButton("buttonValidate", "Run!", )),
       conditionalPanel(condition = "!input.checkboxDemo", 
                        fileInput("fileData",
                                  label = p("Gene expression data matrix", 

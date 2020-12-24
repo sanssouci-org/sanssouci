@@ -3,7 +3,10 @@ shinyServer(function(input, output, session) {
   source("function.R")
   
   options(shiny.maxRequestSize=1024^3)
-  
+  output$help <- renderUI({
+    a("IIDEA help page", href = "https://pneuvial.github.io/sanssouci/articles/IIDEA.html", target= "_blank")
+  })
+
   exampleData <- reactive({
     data <- list()
     data$matrix <- expr_ALL
