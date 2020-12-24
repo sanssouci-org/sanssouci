@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.4</span>
       </span>
     </div>
 
@@ -39,7 +39,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -54,6 +54,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="../articles/IIDEA.html">IIDEA: Interactive Inference for Differential Expression Analyses</a>
+    </li>
+    <li>
       <a href="../articles/Simes_equi-correlation.html">Conservativeness of the Simes inequality under positive dependence</a>
     </li>
     <li>
@@ -77,7 +80,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/pneuvial/sanssouci/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -91,14 +94,13 @@
 
       
 
-      </header><script src="post-hoc_differential-expression_files/accessible-code-block-0.0.1/empty-anchor.js"></script><link href="post-hoc_differential-expression_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
-<script src="post-hoc_differential-expression_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
+      </header><script src="post-hoc_differential-expression_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Permutation-based post hoc inference for differential gene expression studies</h1>
                         <h4 class="author">Gilles Blanchard, Pierre Neuvial and Etienne Roquain</h4>
             
-            <h4 class="date">2020-11-07</h4>
+            <h4 class="date">2020-12-24</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/pneuvial/sanssouci/blob/master/vignettes/post-hoc_differential-expression.Rmd"><code>vignettes/post-hoc_differential-expression.Rmd</code></a></small>
       <div class="hidden name"><code>post-hoc_differential-expression.Rmd</code></div>
@@ -138,7 +140,7 @@
 <span class="co">#&gt; BCR/ABL     NEG </span>
 <span class="co">#&gt;      37      42</span>
 <span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></code></pre></div>
-<p>The goal of this study is to understand the molecular differences at the gene expression level between the populations of BCR/ABL positive and negative (“NEG”) patients. For each patient, we observe a vector of <span class="math inline">\(m = 12625\)</span> gene expression values.</p>
+<p>The goal of this study is to understand the molecular differences at the gene expression level between the populations of BCR/ABL positive and negative (“NEG”) patients. For each patient, we observe a vector of <span class="math inline">\(m = 9038\)</span> gene expression values.</p>
 <p>The most basic question to ask is:</p>
 <blockquote>
 <p>For which genes is there a difference in the mean expression level of the mutated and non-mutated population?</p>
@@ -165,7 +167,7 @@
 <span class="va">dex</span><span class="op">$</span><span class="va">adjp</span> <span class="op">&lt;-</span> <span class="va">adjp.BH</span>
 <span class="va">nBH</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">adjp.BH</span> <span class="op">&lt;=</span> <span class="va">q</span><span class="op">)</span>
 <span class="va">nBH</span>
-<span class="co">#&gt; [1] 163</span></code></pre></div>
+<span class="co">#&gt; [1] 150</span></code></pre></div>
 <p>The application of the BH procedure at level <span class="math inline">\(q = 0.05\)</span> is illustrated in the figures below (all genes are displayed in the first one, second one is a zoom on the top genes):</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">my_col</span> <span class="op">&lt;-</span> <span class="st">"#FF000080"</span>
@@ -194,7 +196,7 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">xlim</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">xmax</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html">ylim</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">ymax</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html">geom_segment</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">nBH</span>, y <span class="op">=</span> <span class="fl">0</span>, yend <span class="op">=</span> <span class="va">q</span><span class="op">*</span><span class="va">nBH</span><span class="op">/</span><span class="va">m</span>, xend <span class="op">=</span> <span class="va">nBH</span><span class="op">)</span>, linetype <span class="op">=</span> <span class="st">"dotted"</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html">geom_segment</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span>, y <span class="op">=</span> <span class="va">q</span><span class="op">*</span><span class="va">nBH</span><span class="op">/</span><span class="va">m</span>, xend <span class="op">=</span> <span class="va">nBH</span>, yend <span class="op">=</span> <span class="va">q</span><span class="op">*</span><span class="va">nBH</span><span class="op">/</span><span class="va">m</span><span class="op">)</span>, linetype <span class="op">=</span> <span class="st">"dotted"</span>, col <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
-<span class="co">#&gt; Warning: Removed 12218 row(s) containing missing values (geom_path).</span></code></pre></div>
+<span class="co">#&gt; Warning: Removed 8663 row(s) containing missing values (geom_path).</span></code></pre></div>
 <p><img src="post-hoc_differential-expression_files/figure-html/bh-plot-zoom-1.png" width="768"></p>
 </div>
 <div id="basic-posthoc-bounds" class="section level2">
@@ -215,22 +217,22 @@
 <span class="va">S</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="va">nBH</span>
 <span class="va">FP_k0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">pvalo</span><span class="op">[</span><span class="va">S</span><span class="op">]</span> <span class="op">&gt;=</span> <span class="va">alpha</span><span class="op">*</span><span class="va">k0</span><span class="op">/</span><span class="va">m</span><span class="op">)</span> <span class="op">+</span> <span class="va">k0</span> <span class="op">-</span> <span class="fl">1</span>
 <span class="va">FP_k0</span><span class="op">/</span><span class="va">nBH</span>
-<span class="co">#&gt; [1] 0.607362</span></code></pre></div>
-<p>This implies that with probability larger than 0.9 the false discovery proportion among the genes selected by the BH procedure at level <span class="math inline">\(q= 0.05\)</span> is upper bounded by 0.61.</p>
+<span class="co">#&gt; [1] 0.66</span></code></pre></div>
+<p>This implies that with probability larger than 0.9 the false discovery proportion among the genes selected by the BH procedure at level <span class="math inline">\(q= 0.05\)</span> is upper bounded by 0.66.</p>
 </div>
 <div id="simes-bound" class="section level3">
 <h3 class="hasAnchor">
 <a href="#simes-bound" class="anchor"></a>Simes bound</h3>
-<p>A more refined post hoc bound has been proposed by <span class="citation">Goeman and Solari (2011)</span> under the PRDS assumption. In the framework of <span class="citation">Blanchard, Neuvial, and Roquain (2019)</span> this bound is a direct consequence of the <span class="citation">Simes (1986)</span> inequality. It can be applied to the 163 rejections of the BH procedure as follows:</p>
+<p>A more refined post hoc bound has been proposed by <span class="citation">Goeman and Solari (2011)</span> under the PRDS assumption. In the framework of <span class="citation">Blanchard, Neuvial, and Roquain (2019)</span> this bound is a direct consequence of the <span class="citation">Simes (1986)</span> inequality. It can be applied to the 150 rejections of the BH procedure as follows:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">#posthocBySimes(pvalo, 1:nBH, alpha = alpha)</span>
 <span class="va">thr_Simes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SimesThresholdFamily.html">SimesThresholdFamily</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span><span class="op">(</span><span class="va">alpha</span><span class="op">)</span>
 <span class="va">FP_Simes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/maxFP.html">maxFP</a></span><span class="op">(</span><span class="va">pvalo</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="va">nBH</span><span class="op">]</span>, <span class="va">thr_Simes</span><span class="op">)</span>
 <span class="va">FP_Simes</span>
-<span class="co">#&gt; [1] 78</span>
+<span class="co">#&gt; [1] 65</span>
 <span class="va">FP_Simes</span><span class="op">/</span><span class="va">nBH</span>
-<span class="co">#&gt; [1] 0.4785276</span></code></pre></div>
-<p>The Simes bound implies that with probability larger than 0.9, the false discovery proportion among the genes selected by the BH procedure at level <span class="math inline">\(q= 0.05\)</span> is upper bounded by 0.48. The Simes bound is sharper than the <span class="math inline">\(k_0\)</span>-Bonferroni bound because it is obtained from a <em>joint</em> control of all <span class="math inline">\(k\)</span>-FWER for all <span class="math inline">\(k=1, \dots, m\)</span>.</p>
+<span class="co">#&gt; [1] 0.4333333</span></code></pre></div>
+<p>The Simes bound implies that with probability larger than 0.9, the false discovery proportion among the genes selected by the BH procedure at level <span class="math inline">\(q= 0.05\)</span> is upper bounded by 0.44. The Simes bound is sharper than the <span class="math inline">\(k_0\)</span>-Bonferroni bound because it is obtained from a <em>joint</em> control of all <span class="math inline">\(k\)</span>-FWER for all <span class="math inline">\(k=1, \dots, m\)</span>.</p>
 </div>
 </div>
 </div>
@@ -253,10 +255,10 @@
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">FP_SimesCal</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/maxFP.html">maxFP</a></span><span class="op">(</span><span class="va">pvalo</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="va">nBH</span><span class="op">]</span>, <span class="va">cal</span><span class="op">$</span><span class="va">thr</span><span class="op">)</span>
 <span class="va">FP_SimesCal</span><span class="op">/</span><span class="va">nBH</span>
-<span class="co">#&gt; [1] 0.1717791</span>
+<span class="co">#&gt; [1] 0.1866667</span>
 <span class="va">FP_BetaCal</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/maxFP.html">maxFP</a></span><span class="op">(</span><span class="va">pvalo</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="va">nBH</span><span class="op">]</span>, <span class="va">cal_beta</span><span class="op">$</span><span class="va">thr</span><span class="op">)</span>
 <span class="va">FP_BetaCal</span><span class="op">/</span><span class="va">nBH</span>
-<span class="co">#&gt; [1] 0.1349693</span></code></pre></div>
+<span class="co">#&gt; [1] 0.1466667</span></code></pre></div>
 <p>The FDP bound obtained by these bounds is much tighter than the <span class="math inline">\(k_0\)</span>-Bonferroni and Simes bounds:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">bounds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"k0-Bonferroni"</span> <span class="op">=</span> <span class="va">FP_k0</span>, 
@@ -284,23 +286,23 @@
 <tbody>
 <tr class="odd">
 <td align="left">k0-Bonferroni</td>
-<td align="right">64</td>
-<td align="right">0.61</td>
+<td align="right">51</td>
+<td align="right">0.66</td>
 </tr>
 <tr class="even">
 <td align="left">Simes</td>
 <td align="right">85</td>
-<td align="right">0.48</td>
+<td align="right">0.44</td>
 </tr>
 <tr class="odd">
 <td align="left">Linear</td>
-<td align="right">135</td>
-<td align="right">0.18</td>
+<td align="right">122</td>
+<td align="right">0.19</td>
 </tr>
 <tr class="even">
 <td align="left">Beta (K=50)</td>
-<td align="right">141</td>
-<td align="right">0.14</td>
+<td align="right">128</td>
+<td align="right">0.15</td>
 </tr>
 </tbody>
 </table>
@@ -396,24 +398,24 @@
 <tbody>
 <tr class="odd">
 <td align="left">BH-adjusted p.value &lt; q and fold change &gt; r</td>
-<td align="left">124</td>
-<td align="left">62</td>
-<td align="left">96</td>
-<td align="left">102</td>
+<td align="left">111</td>
+<td align="left">60</td>
+<td align="left">86</td>
+<td align="left">90</td>
 </tr>
 <tr class="even">
 <td align="left">BH-adjusted p.value &lt; q and fold change &lt; -r</td>
-<td align="left">27</td>
+<td align="left">22</td>
 <td align="left">1</td>
-<td align="left">9</td>
-<td align="left">6</td>
+<td align="left">7</td>
+<td align="left">3</td>
 </tr>
 <tr class="odd">
 <td align="left">BH-adjusted p.value &lt; q and |fold change| &gt; r</td>
-<td align="left">151</td>
-<td align="left">79</td>
-<td align="left">123</td>
-<td align="left">129</td>
+<td align="left">133</td>
+<td align="left">74</td>
+<td align="left">107</td>
+<td align="left">111</td>
 </tr>
 </tbody>
 </table>
@@ -438,21 +440,21 @@
 <span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; other attached packages:</span>
-<span class="co">#&gt; [1] sansSouci.data_0.2.1 sansSouci_0.9.1      ggplot2_3.3.2       </span>
+<span class="co">#&gt; [1] sansSouci_0.9.4 ggplot2_3.3.2  </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; loaded via a namespace (and not attached):</span>
 <span class="co">#&gt;  [1] Rcpp_1.0.5         RColorBrewer_1.1-2 highr_0.8          compiler_4.0.3    </span>
-<span class="co">#&gt;  [5] pillar_1.4.6       tools_4.0.3        digest_0.6.27      evaluate_0.14     </span>
+<span class="co">#&gt;  [5] pillar_1.4.7       tools_4.0.3        digest_0.6.27      evaluate_0.14     </span>
 <span class="co">#&gt;  [9] memoise_1.1.0      lifecycle_0.2.0    tibble_3.0.4       gtable_0.3.0      </span>
-<span class="co">#&gt; [13] lattice_0.20-41    pkgconfig_2.0.3    rlang_0.4.8        Matrix_1.2-18     </span>
+<span class="co">#&gt; [13] lattice_0.20-41    pkgconfig_2.0.3    rlang_0.4.9        Matrix_1.2-18     </span>
 <span class="co">#&gt; [17] yaml_2.2.1         pkgdown_1.6.1      xfun_0.19          withr_2.3.0       </span>
 <span class="co">#&gt; [21] stringr_1.4.0      knitr_1.30         desc_1.2.0         fs_1.5.0          </span>
-<span class="co">#&gt; [25] vctrs_0.3.4        systemfonts_0.3.2  rprojroot_1.3-2    grid_4.0.3        </span>
-<span class="co">#&gt; [29] glue_1.4.2         R6_2.5.0           textshaping_0.1.2  rmarkdown_2.5     </span>
-<span class="co">#&gt; [33] farver_2.0.3       magrittr_1.5       codetools_0.2-16   backports_1.2.0   </span>
-<span class="co">#&gt; [37] scales_1.1.1       htmltools_0.5.0    ellipsis_0.3.1     matrixStats_0.57.0</span>
-<span class="co">#&gt; [41] assertthat_0.2.1   colorspace_1.4-1   labeling_0.4.2     ragg_0.4.0        </span>
-<span class="co">#&gt; [45] stringi_1.5.3      munsell_0.5.0      crayon_1.3.4</span></code></pre></div>
+<span class="co">#&gt; [25] vctrs_0.3.6        systemfonts_0.3.2  rprojroot_2.0.2    grid_4.0.3        </span>
+<span class="co">#&gt; [29] glue_1.4.2         R6_2.5.0           textshaping_0.2.1  rmarkdown_2.6     </span>
+<span class="co">#&gt; [33] farver_2.0.3       magrittr_2.0.1     codetools_0.2-16   scales_1.1.1      </span>
+<span class="co">#&gt; [37] htmltools_0.5.0    ellipsis_0.3.1     matrixStats_0.57.0 assertthat_0.2.1  </span>
+<span class="co">#&gt; [41] colorspace_2.0-0   labeling_0.4.2     ragg_0.4.0         stringi_1.5.3     </span>
+<span class="co">#&gt; [45] munsell_0.5.0      crayon_1.3.4</span></code></pre></div>
 </div>
 <div id="reproducibility" class="section level1">
 <h1 class="hasAnchor">

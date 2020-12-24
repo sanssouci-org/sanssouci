@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.4</span>
       </span>
     </div>
 
@@ -80,7 +80,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -94,6 +94,9 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/IIDEA.html">IIDEA: Interactive Inference for Differential Expression Analyses</a>
+    </li>
     <li>
       <a href="../articles/Simes_equi-correlation.html">Conservativeness of the Simes inequality under positive dependence</a>
     </li>
@@ -118,7 +121,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/pneuvial/sanssouci/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -150,8 +153,7 @@
   <span class='va'>B</span>,
   alternative <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"two.sided"</span>, <span class='st'>"less"</span>, <span class='st'>"greater"</span><span class='op'>)</span>,
   rowTestFUN <span class='op'>=</span> <span class='va'>rowWelchTests</span>,
-  rand.p.value <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  seed <span class='op'>=</span> <span class='cn'>NULL</span>
+  rand.p.value <span class='op'>=</span> <span class='cn'>FALSE</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -185,11 +187,6 @@ Defaults to <code><a href='rowWelchTests.html'>rowWelchTests</a></code></p></td>
       <th>rand.p.value</th>
       <td><p>A boolean value: should randomization \(p\)-values be
 calculated and returned? Defaults to @FALSE</p></td>
-    </tr>
-    <tr>
-      <th>seed</th>
-      <td><p>An integer (or NULL) value used as a seed for random number
-generation. If <code>NULL</code>, no seed is specified</p></td>
     </tr>
     </table>
 
@@ -243,6 +240,7 @@ generation. If <code>NULL</code>, no seed is specified</p></td>
 
     <p>Ge, Y., Dudoit, S. and Speed, T.P., 2003. Resampling-based
   multiple testing for microarray data analysis. _Test_, 12(1), pp.1-77.</p>
+<p>Blanchard, G., Neuvial, P., &amp; Roquain, E. (2020). Post hoc confidence bounds on false positives using reference families. Annals of Statistics, 48(3), 1281-1303.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>

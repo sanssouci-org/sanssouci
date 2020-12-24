@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.4</span>
       </span>
     </div>
 
@@ -39,7 +39,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -54,6 +54,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="../articles/IIDEA.html">IIDEA: Interactive Inference for Differential Expression Analyses</a>
+    </li>
+    <li>
       <a href="../articles/Simes_equi-correlation.html">Conservativeness of the Simes inequality under positive dependence</a>
     </li>
     <li>
@@ -77,7 +80,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/pneuvial/sanssouci/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -91,8 +94,7 @@
 
       
 
-      </header><script src="jointErrorRateCalibration_simulations_files/accessible-code-block-0.0.1/empty-anchor.js"></script><link href="jointErrorRateCalibration_simulations_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
-<script src="jointErrorRateCalibration_simulations_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
+      </header><script src="jointErrorRateCalibration_simulations_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Joint Error Rate calibration</h1>
@@ -146,9 +148,9 @@
 <code class="sourceCode R"><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gaussianSamples.html">gaussianSamples</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">rho</span>, <span class="va">n</span>, <span class="va">pi0</span>, SNR <span class="op">=</span> <span class="va">SNR</span>, prob <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">sim</span><span class="op">)</span></code></pre></div>
 <pre><code>## List of 3
-##  $ X    : num [1:1000, 1:124] -2.594 0.24 -0.464 -1.196 -0.278 ...
-##   ..- attr(*, "w")= num [1:124] -0.693 -1.119 0.852 1.366 -1.404 ...
-##  $ categ: int [1:124] 0 0 0 0 0 1 1 1 1 0 ...
+##  $ X    : num [1:1000, 1:124] 1.0793 0.0582 -0.057 0.878 -0.2212 ...
+##   ..- attr(*, "w")= num [1:124] 0.505 0.871 -0.972 -2.519 2.265 ...
+##  $ categ: int [1:124] 0 0 0 0 0 0 1 1 0 0 ...
 ##  $ H    : num [1:1000] 0 0 0 0 0 0 0 0 0 0 ...</code></pre>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">X</span> <span class="op">&lt;-</span> <span class="va">sim</span><span class="op">$</span><span class="va">X</span>
@@ -156,7 +158,7 @@
 <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">categ</span><span class="op">)</span></code></pre></div>
 <pre><code>## categ
 ##  0  1 
-## 55 69</code></pre>
+## 70 54</code></pre>
 <p>We perform JER calibration using the linear (Simes) template <span class="math inline">\(\mathfrak{R(\lambda)}=(R_1(\lambda),\)</span> <span class="math inline">\(\ldots,R_K(\lambda)\)</span>, where for <span class="math inline">\(1 \leq k \leq K\)</span></p>
 <p><span class="math display">\[R_k(\lambda) = \left\{i\in \{1, \dots , m\}\::\: \bar{\Phi}(Z_i) &gt;  \frac{\lambda k}{m} \right\}\,\]</span></p>
 <p>where <span class="math inline">\(\bar{\Phi}\)</span> is the cdf of the <span class="math inline">\(\mathcal{N}(0,1)\)</span> distribution. Note that <span class="math inline">\(p_i = \bar{\Phi}(Z_i)\)</span> is the one-sided <span class="math inline">\(p\)</span>-value associated to the test statistics <span class="math inline">\(Z_i\)</span>.</p>
@@ -170,19 +172,19 @@
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">cal</span><span class="op">)</span></code></pre></div>
 <pre><code>## List of 5
-##  $ p.values: num [1:1000] 0.9876 0.0967 0.7894 0.4206 0.109 ...
-##  $ pivStat : num [1:500] 0.501 1 0.86 1 0.996 ...
-##  $ thr     : num [1:1000] 0.000361 0.000722 0.001083 0.001444 0.001805 ...
-##  $ lambda  : Named num 0.361
+##  $ p.values: num [1:1000] 0.152 0.527 0.338 0.986 0.144 ...
+##  $ pivStat : num [1:500] 0.658 1.005 0.302 0.418 0.713 ...
+##  $ thr     : num [1:1000] 0.000431 0.000862 0.001293 0.001724 0.002155 ...
+##  $ lambda  : Named num 0.431
 ##   ..- attr(*, "names")= chr "25%"
 ##  $ conf_env:'data.frame':    2000 obs. of  7 variables:
 ##   ..$ x        : int [1:2000] 1 2 3 4 5 6 7 8 9 10 ...
-##   ..$ rank     : num [1:2000] 994 190 881 592 211 600 242 530 531 147 ...
+##   ..$ rank     : num [1:2000] 225 552 378 983 217 336 594 255 161 929 ...
 ##   ..$ family   : chr [1:2000] "Simes" "Simes" "Simes" "Simes" ...
-##   ..$ param    : num [1:2000] 0.361 0.361 0.361 0.361 0.361 ...
+##   ..$ param    : num [1:2000] 0.431 0.431 0.431 0.431 0.431 ...
 ##   ..$ procedure: chr [1:2000] "Simes + calibration" "Simes + calibration" "Simes + calibration" "Simes + calibration" ...
 ##   ..$ stat     : chr [1:2000] "TP" "TP" "TP" "TP" ...
-##   ..$ bound    : num [1:2000] 1 1 1 1 1 1 1 1 1 1 ...</code></pre>
+##   ..$ bound    : num [1:2000] 1 2 3 4 5 6 6 7 8 8 ...</code></pre>
 <ul>
 <li>
 <code>p.values</code>: <span class="math inline">\(m\)</span> test statistics calculated by permutation</li>
@@ -207,12 +209,12 @@
 <code class="sourceCode R"><span class="va">env</span> <span class="op">&lt;-</span> <span class="va">cal</span><span class="op">$</span><span class="va">conf_env</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">env</span><span class="op">)</span></code></pre></div>
 <pre><code>##   x rank family     param           procedure stat bound
-## 1 1  994  Simes 0.3609648 Simes + calibration   TP     1
-## 2 2  190  Simes 0.3609648 Simes + calibration   TP     1
-## 3 3  881  Simes 0.3609648 Simes + calibration   TP     1
-## 4 4  592  Simes 0.3609648 Simes + calibration   TP     1
-## 5 5  211  Simes 0.3609648 Simes + calibration   TP     1
-## 6 6  600  Simes 0.3609648 Simes + calibration   TP     1</code></pre>
+## 1 1  225  Simes 0.4309363 Simes + calibration   TP     1
+## 2 2  552  Simes 0.4309363 Simes + calibration   TP     2
+## 3 3  378  Simes 0.4309363 Simes + calibration   TP     3
+## 4 4  983  Simes 0.4309363 Simes + calibration   TP     4
+## 5 5  217  Simes 0.4309363 Simes + calibration   TP     5
+## 6 6  336  Simes 0.4309363 Simes + calibration   TP     6</code></pre>
 <p>We compare it to the true number of false positives among the most significant items, and to the Simes bound without calibration</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">env_Simes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/confidenceEnvelope.html">confidenceEnvelope</a></span><span class="op">(</span><span class="va">cal</span><span class="op">$</span><span class="va">p.values</span>, refFamily <span class="op">=</span> <span class="st">"Simes"</span>, param <span class="op">=</span> <span class="va">alpha</span><span class="op">)</span>
@@ -235,8 +237,8 @@
 <code class="sourceCode R"><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gaussianSamples.html">gaussianSamples</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">rho</span>, <span class="va">n</span>, <span class="va">pi0</span>, SNR <span class="op">=</span> <span class="va">SNR</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">sim</span><span class="op">)</span></code></pre></div>
 <pre><code>## List of 3
-##  $ X    : num [1:1000, 1:124] -0.3511 -0.0242 -0.5231 1.0039 1.0661 ...
-##   ..- attr(*, "w")= num [1:124] 0.13 -0.446 -0.159 -0.762 -0.799 ...
+##  $ X    : num [1:1000, 1:124] 0.237 -1.387 -0.459 -0.412 0.85 ...
+##   ..- attr(*, "w")= num [1:124] 0.6473 0.0108 0.8395 0.8167 -0.4748 ...
 ##  $ categ: int [1:124] 1 1 1 1 1 1 1 1 1 1 ...
 ##  $ H    : num [1:1000] 0 0 0 0 0 0 0 0 0 0 ...</code></pre>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
@@ -246,19 +248,19 @@
 <code class="sourceCode R"><span class="va">cal</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/calibrateJER.html">calibrateJER</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">categ</span>, B <span class="op">=</span> <span class="va">B</span>, alpha <span class="op">=</span> <span class="va">alpha</span>, refFamily <span class="op">=</span> <span class="st">"Simes"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">cal</span><span class="op">)</span></code></pre></div>
 <pre><code>## List of 5
-##  $ p.values: num [1:1000] 0.065 0.824 0.809 0.597 0.891 ...
-##  $ pivStat : num [1:500] 0.2426 0.0775 0.9951 0.9977 0.9979 ...
-##  $ thr     : num [1:1000] 0.000406 0.000813 0.001219 0.001625 0.002032 ...
-##  $ lambda  : Named num 0.406
+##  $ p.values: num [1:1000] 0.469 0.674 0.77 0.325 0.144 ...
+##  $ pivStat : num [1:500] 0.373 1.017 1.023 0.823 0.861 ...
+##  $ thr     : num [1:1000] 0.000371 0.000741 0.001112 0.001483 0.001854 ...
+##  $ lambda  : Named num 0.371
 ##   ..- attr(*, "names")= chr "25%"
 ##  $ conf_env:'data.frame':    2000 obs. of  7 variables:
 ##   ..$ x        : int [1:2000] 1 2 3 4 5 6 7 8 9 10 ...
-##   ..$ rank     : num [1:2000] 130 827 813 624 898 610 348 801 494 958 ...
+##   ..$ rank     : num [1:2000] 618 768 846 500 320 921 930 926 978 751 ...
 ##   ..$ family   : chr [1:2000] "Simes" "Simes" "Simes" "Simes" ...
-##   ..$ param    : num [1:2000] 0.406 0.406 0.406 0.406 0.406 ...
+##   ..$ param    : num [1:2000] 0.371 0.371 0.371 0.371 0.371 ...
 ##   ..$ procedure: chr [1:2000] "Simes + calibration" "Simes + calibration" "Simes + calibration" "Simes + calibration" ...
 ##   ..$ stat     : chr [1:2000] "TP" "TP" "TP" "TP" ...
-##   ..$ bound    : num [1:2000] 1 2 2 3 3 4 4 5 6 7 ...</code></pre>
+##   ..$ bound    : num [1:2000] 1 2 3 4 5 6 7 8 9 10 ...</code></pre>
 <p>Again we expect <span class="math inline">\(\lambda &gt; \alpha\)</span>.</p>
 <div id="confidence-envelopes" class="section level3">
 <h3 class="hasAnchor">
@@ -297,20 +299,20 @@
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] ggplot2_3.3.2   sansSouci_0.9.1
+## [1] ggplot2_3.3.2   sansSouci_0.9.4
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_1.0.5         compiler_4.0.3     pillar_1.4.6       tools_4.0.3       
+##  [1] Rcpp_1.0.5         compiler_4.0.3     pillar_1.4.7       tools_4.0.3       
 ##  [5] digest_0.6.27      evaluate_0.14      memoise_1.1.0      lifecycle_0.2.0   
 ##  [9] tibble_3.0.4       gtable_0.3.0       lattice_0.20-41    pkgconfig_2.0.3   
-## [13] rlang_0.4.8        Matrix_1.2-18      yaml_2.2.1         pkgdown_1.6.1     
+## [13] rlang_0.4.9        Matrix_1.2-18      yaml_2.2.1         pkgdown_1.6.1     
 ## [17] xfun_0.19          withr_2.3.0        stringr_1.4.0      knitr_1.30        
-## [21] desc_1.2.0         fs_1.5.0           vctrs_0.3.4        systemfonts_0.3.2 
-## [25] rprojroot_1.3-2    grid_4.0.3         glue_1.4.2         R6_2.5.0          
-## [29] textshaping_0.1.2  rmarkdown_2.5      farver_2.0.3       magrittr_1.5      
-## [33] backports_1.2.0    scales_1.1.1       matrixStats_0.57.0 htmltools_0.5.0   
-## [37] ellipsis_0.3.1     assertthat_0.2.1   colorspace_1.4-1   labeling_0.4.2    
-## [41] ragg_0.4.0         stringi_1.5.3      munsell_0.5.0      crayon_1.3.4</code></pre>
+## [21] desc_1.2.0         fs_1.5.0           vctrs_0.3.6        systemfonts_0.3.2 
+## [25] rprojroot_2.0.2    grid_4.0.3         glue_1.4.2         R6_2.5.0          
+## [29] textshaping_0.2.1  rmarkdown_2.6      farver_2.0.3       magrittr_2.0.1    
+## [33] scales_1.1.1       matrixStats_0.57.0 htmltools_0.5.0    ellipsis_0.3.1    
+## [37] assertthat_0.2.1   colorspace_2.0-0   labeling_0.4.2     ragg_0.4.0        
+## [41] stringi_1.5.3      munsell_0.5.0      crayon_1.3.4</code></pre>
 </div>
   </div>
 
