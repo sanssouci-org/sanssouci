@@ -1,14 +1,15 @@
 Package: sansSouci
-Version: 0.9.3
-Date: 2020-11-25
+Version: 0.9.4
+Date: 2020-12-24
 Title: Post Hoc Multiple Testing Inference
-Authors@R: c(person("Benjamin", "Sadacca", role="ctb"),
-             person("Gilles", "Blanchard", role="aut"),
+Authors@R: c(person("Gilles", "Blanchard", role="aut"),
              person("Guillermo", "Durand", role="aut"),
              person("Pierre", "Neuvial", role=c("aut", "cre"),
                  email="pierre.neuvial@math.univ-toulouse.fr",
                  comment = c(ORCID = "0000-0003-3584-9998")),
-             person("Etienne", "Roquain", role="aut"))
+             person("Etienne", "Roquain", role="aut"),
+             person("Benjamin", "Sadacca", role="ctb"),
+	     person("Nicolas", "Enjalbert-Courrech", role="ctb"))
 License: GPL-3
 Description: Post hoc inference based on the control of a dedicated risk called the Joint (Family-Wise) Error Rate.
 Depends: R (>= 3.5.0)
