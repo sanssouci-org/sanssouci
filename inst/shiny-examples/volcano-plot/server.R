@@ -270,7 +270,7 @@ shinyServer(function(input, output, session) {
     vectorGene <- names(df()$pval[manuelSelected()])
     url <- UrlStringdbGrah(vectorGene)
     n <- dim(tableResult())[1]
-    newValue <- rbind(tableResult(), c(paste('<a href="', url, '" >User selection ',n, '</a>', sep=""), 
+    newValue <- rbind(tableResult(), c(paste('<a target="_blanck" href="', url, '" >User selection ',n, '</a>', sep=""), 
                                        calcBoundSelection()$n, 
                                        calcBoundSelection()$TP,
                                        calcBoundSelection()$FDP))
