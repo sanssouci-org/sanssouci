@@ -1,14 +1,14 @@
-library(shiny)
-library(plotly)
-library(sansSouci)
-library(sansSouci.data)  
+library("shiny")
+library("plotly")
+library("sansSouci")
+library("sansSouci.data")  
 stopifnot(packageVersion("sansSouci.data") >= '0.2.2')
-library(ggplot2)
-library(dplyr)
-library(htmlwidgets)
-library(DT)
-library(shinyBS)
-library(stringr)
+library("ggplot2")
+library("dplyr")
+library("htmlwidgets")
+library("DT")
+library("shinyBS")
+library("stringr")
 
 data(expr_ALL, package = "sansSouci.data")
 #data(expr_ALL_annotation, package = "sansSouci.data")
@@ -83,11 +83,11 @@ shinyUI(fluidPage(
       #           trigger = "hover"),
       checkboxInput("checkboxAdvancedParam", 
                     label = p("Advanced parameters"),
-                              # bsButton("Qparam", 
-                              #          label = "", 
-                              #          icon = icon("question"), 
-                              #          style = "info", 
-                              #          size = "extra-small")),
+                    # bsButton("Qparam", 
+                    #          label = "", 
+                    #          icon = icon("question"), 
+                    #          style = "info", 
+                    #          size = "extra-small")),
                     value = FALSE),
       # bsTooltip(id = "Qparam", 
       #           title = paste("Select parameters to implement permutation-based post hoc inference bounds for differential gene expression analysis, see dedicated ", 
@@ -126,24 +126,25 @@ shinyUI(fluidPage(
     # Main panel
     mainPanel(
       flowLayout(
+        bsPopover(id = "Qparam1", 
+                  title = "VolcanoPlot", 
+                  content = paste('Select genes by dragging horizontal or vertical bars, of using "box select" or "lasso select" from the plot menu. The table in the left panel gives post-hoc bounds for these selections.'), 
+                  placement = "bottom", 
+                  trigger = "hover", 
+                  options = NULL),
+        h2("Volcano plot",
+           bsButton("Qparam1", label = "", icon = icon("question"), style = "info", size = "extra-small")),
+        
         selectInput("choiceYaxis", label = "'y' axis label", 
-                  choices = list("p-values" = "pval", 
-                                 "Adjusted p-values" = "adjPval",
-                                 "Number of false positves" = "thr"), 
-                  selected = "pval"),
-      checkboxInput("symetric", 
-                    label = "Symmetric fold change threshold", 
-                    value = FALSE),
-      h2("Volcano plot",
-         bsButton("Qparam1", label = "", icon = icon("question"), style = "info", size = "extra-small")),
-      bsPopover(id = "Qparam1", 
-                title = "VolcanoPlot", 
-                content = paste('Select genes by dragging horizontal or vertical bars, of using "box select" or "lasso select" from the plot menu. The table in the left panel gives post-hoc bounds for these selections.'), 
-                placement = "bottom", 
-                trigger = "hover", 
-                options = NULL)),
+                    choices = list("p-values" = "pval", 
+                                   "Adjusted p-values" = "adjPval",
+                                   "Number of false positves" = "thr"), 
+                    selected = "pval"),
+        checkboxInput("symetric", 
+                      label = "Symmetric fold change threshold", 
+                      value = FALSE)),
       conditionalPanel(condition = "input.tabSelected==1",
-                         plotly::plotlyOutput("volcanoplotPosteriori", height = "600px"), 
+                       plotly::plotlyOutput("volcanoplotPosteriori", height = "600px"), 
                        
                        fluidRow(
                          actionButton("resetCSV", "Reset Selections"), 
@@ -153,13 +154,13 @@ shinyUI(fluidPage(
                          #           "right", options = list(container = "body"), trigger = "focus"),
                          # bsTooltip(id = "resetCSV", title = "Delete you box select manual selection from the post hoc bounds and downloadable csv file.", placement = "bottom", trigger = "hover", options = NULL),
                          # bsTooltip(id = "downloadData", title = "Download a csv file containing matrix with binary vector of your User selection", placement = "bottom", trigger = "hover", options = NULL)
-                      )),
-                       
-                       # splitLayout(
-                       #   plotlyOutput("curveMaxFPBoth"), 
-                       #   plotlyOutput("curveMaxFPSelect")
-                       # )), 
-                       # 
+                       )),
+      
+      # splitLayout(
+      #   plotlyOutput("curveMaxFPBoth"), 
+      #   plotlyOutput("curveMaxFPSelect")
+      # )), 
+      # 
       conditionalPanel(condition = "input.tabSelected==2",
                        plotly::plotlyOutput("volcanoplotPriori", height = "600px")
                        # plotlyOutput(outputId = "curveMaxFPGroup")

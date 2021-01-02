@@ -440,7 +440,8 @@ shinyServer(function(input, output, session) {
         yaxis = isolate(yaxis()),
         title = "",
         shapes = isolate(thrLine()),
-        dragmode = "select" ) %>%
+        dragmode = "select",
+        showlegend = FALSE) %>%
       # add_annotations(
       #     x = 0,
       #     y = 1,
