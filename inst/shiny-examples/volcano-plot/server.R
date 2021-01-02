@@ -149,11 +149,17 @@ shinyServer(function(input, output, session) {
     req(input$valueK)
   })
   cal <- reactive({
-    calibrateJER(data()$matrix, categ = data()$categ, 
-                 B = numB(), alpha = alpha(), 
-                 refFamily = refFamily(), alternative = alternative(), 
-                 K = numK()
+    R.cache::memoizedCall(calibrateJER,
+                          data()$matrix, categ = data()$categ, 
+                          B = numB(), alpha = alpha(), 
+                          refFamily = refFamily(), alternative = alternative(), 
+                          K = numK()
     )
+    # calibrateJER(data()$matrix, categ = data()$categ, 
+    #              B = numB(), alpha = alpha(), 
+    #              refFamily = refFamily(), alternative = alternative(), 
+    #              K = numK()
+    # )
   })
   
   df <- reactive({

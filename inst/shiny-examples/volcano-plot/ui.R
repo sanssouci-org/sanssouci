@@ -9,6 +9,7 @@ library("htmlwidgets")
 library("DT")
 library("shinyBS")
 library("stringr")
+library("R.cache")
 
 data(expr_ALL, package = "sansSouci.data")
 #data(expr_ALL_annotation, package = "sansSouci.data")
@@ -102,7 +103,7 @@ shinyUI(fluidPage(
                                                     "Less" = "less", 
                                                     "Greater" = "greater"),
                                      selected = "two.sided"),
-                         numericInput("numB", label = "Number of permutations", value = 100, min = 2)
+                         numericInput("numB", label = "Number of permutations", value = 1000, min = 10)
                        ),
                        splitLayout(
                          selectInput("refFamily", label = "Reference family", 
