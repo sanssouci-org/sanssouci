@@ -3,6 +3,12 @@
 Package: sansSouci
 ==================
 
+Version 0.9.5 [2021-01-02]
+
+* Use R.cache to memoize calibration results
+* Default number of permutations now set to 1000
+
+
 Version 0.9.4 [2020-12-24]
 
 * Added IIDEA vignette (for volcano plot shiny app)
