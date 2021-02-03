@@ -118,6 +118,7 @@ shinyUI(fluidPage(
                             DTOutput("tableBounds")),
                    tabPanel("Gene sets", value = 2,
                             uiOutput("OutQtableBoundsGroup"),
+                            uiOutput("errorMatch"),
                             DTOutput("tableBoundsGroup") )
                    
       ),
@@ -126,6 +127,7 @@ shinyUI(fluidPage(
     
     # Main panel
     mainPanel(
+      uiOutput("errorInput"),
       flowLayout(
         bsPopover(id = "Qparam1", 
                   title = "VolcanoPlot", 
@@ -163,6 +165,7 @@ shinyUI(fluidPage(
       # )), 
       # 
       conditionalPanel(condition = "input.tabSelected==2",
+                       uiOutput("errorBioMatrix"),
                        plotly::plotlyOutput("volcanoplotPriori", height = "600px")
                        # plotlyOutput(outputId = "curveMaxFPGroup")
       )

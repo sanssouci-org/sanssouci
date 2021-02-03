@@ -67,6 +67,82 @@ VolcanoPlotNico <- function (X, categ, thr, p = 1, q = 1, r = 0, cex = c(0.2, 0.
   
 }
 
+
+cleanMatrix <- function(matrixFunc){
+  text = ""
+  boolValidation = TRUE
+  color = "color:blue"
+  
+  for (i in 1:length(matrixFunc)){
+    if(!is.numeric(matrixFunc[,i])){
+      text <- "The matrix contains textual variable. We cannot use them."
+      boolValidation <- FALSE
+      color <- "color:red"
+      return(list(data = matrixFunc, text = text, boolValidation = boolValidation, color = color))
+    }
+  }
+  
+  colnam <- colnames(matrixFunc) #Control colnames(matrix)
+  valueColnam <- sort(unique(colnam))
+  if(length(valueColnam)==2){
+    if(any(valueColnam != c("0","1"))){
+      colnam[ colnam == valueColnam[1] ] <- 0
+      colnam[ colnam == valueColnam[2] ] <- 1
+      colnames(matrixFunc) <- colnam
+      text <- paste("The colnames of your matrix does not contains 0 or 1.We consider that", valueColnam[1] ,"becomes 0 and ", valueColnam[2]," becomes 1")
+      boolValidation <- TRUE
+      color <- "color:orange"
+    }
+  }else{
+    boolValidation <- FALSE
+    color <- "color:red"
+    text <- "The column names of your data contains more (or less) than 2 categories. Please use {0, 1} for the colnames of your matrix."
+  }
+  return(list(data = matrixFunc, text = text, boolValidation = boolValidation, color = color))
+}
+
+cleanBiofun <- function(biofun){
+  
+  text = ""
+  boolValidation = TRUE
+  color = "color:blue"
+  
+  # if biofun cotains at least one textual variable
+  for (i in 1:length(biofun)){
+    if(!is.numeric(biofun[,i])){
+      text <- "The biological function matrix contains textual variable. We cannot use them."
+      boolValidation <- FALSE
+      color <- "color:red"
+      return(list(biofun = biofun, text = text, boolValidation = boolValidation, color = color))
+    }
+  }
+  
+  if(!all(biofun == 0 | biofun==1)){
+    text <- "The biological function matrix contains other values than 0 or 1"
+    boolValidation <- FALSE
+    color <- "color:red"
+  }
+  
+  return(list(biofun = biofun, text = text, boolValidation = boolValidation, color = color))
+}
+
+matchMatrixBiofun <- function(matrixFunc, biofun){
+  text = ""
+  boolValidation = TRUE
+  color = "color:blue"
+  
+  mm <- match(rownames(biofun), rownames(matrixFunc))
+  biofun <- biofun[mm, ]
+  if(all(is.na(mm))){
+    text = "None of the lines of the biological function matrix correspond to the lines of the expression matrix."
+    boolValidation = FALSE
+    color = "color:green"
+  }
+  
+  return(list(biofun = biofun, text = text, boolValidation = boolValidation, color = color))
+  
+}
+
 calcBounds <- function(listPval, thr){
   n <- length(listPval)
   FP <- maxFP(listPval, thr = thr)
