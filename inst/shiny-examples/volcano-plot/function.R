@@ -110,7 +110,7 @@ cleanBiofun <- function(biofun){
   # if biofun cotains at least one textual variable
   for (i in 1:length(biofun)){
     if(!is.numeric(biofun[,i])){
-      text <- "The biological function matrix contains textual variable. We cannot use them."
+      text <- "The gene set matrix contains textual variable. We cannot use them."
       boolValidation <- FALSE
       color <- "color:red"
       return(list(biofun = biofun, text = text, boolValidation = boolValidation, color = color))
@@ -118,7 +118,7 @@ cleanBiofun <- function(biofun){
   }
   
   if(!all(biofun == 0 | biofun==1)){
-    text <- "The biological function matrix contains other values than 0 or 1"
+    text <- "The gene set matrix contains other values than 0 or 1"
     boolValidation <- FALSE
     color <- "color:red"
   }
@@ -134,7 +134,7 @@ matchMatrixBiofun <- function(matrixFunc, biofun){
   mm <- match(rownames(biofun), rownames(matrixFunc))
   biofun <- biofun[mm, ]
   if(all(is.na(mm))){
-    text = "None of the lines of the biological function matrix correspond to the lines of the expression matrix."
+    text = "None of the lines of the gene set matrix correspond to the lines of the gene expression data matrix."
     boolValidation = FALSE
     color = "color:green"
   }

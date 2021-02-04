@@ -76,63 +76,77 @@ shinyServer(function(input, output, session) {
                       # })
                       data$boolValidation <- TRUE 
                       
-                    } else {
+                    } else { # if user use his own data
                       req(input$fileData)
                       file <- req(input$fileData)
                       data$matrix <- read.csv(file = file$datapath, row.names = 1, check.names=FALSE)
                       
-                      clean <- cleanMatrix(data$matrix)
+                      data$boolDegrade <- (length(data$matrix) == 2 & all(sort(colnames(data$matrix)) == sort(c("fc","p.value"))))
                       
-                      if(clean$boolValidation){
-                        data$matrix = clean$data
-                      }else{
-                        data$matrix=NULL
-                      }
-                      
-                      
-                      data$categ <- colnames(data$matrix)
-                      
-                      output$errorInput <- renderUI({
-                        tags$span(style=clean$color, paste(clean$text))
-                      })
-                      
-                      data$geneNames <- rownames(data$matrix)
-                      
-                      req(input$fileGroup)
-                      fileGroup <- req(input$fileGroup)
-                      bioFun <- read.csv(file = fileGroup$datapath, row.names = 1, check.names=FALSE)
-                      
-                      cleanBio <- cleanBiofun(bioFun)
-                      
-                      output$errorBioMatrix <- renderUI({
-                        tags$span(style=cleanBio$color, paste(cleanBio$text))
-                      })
-                      
-                      
-                      bioFun <- cleanBio$biofun
-                      
-                      matchBio <- matchMatrixBiofun(matrixFunc = data$matrix, biofun = bioFun)
-                      if(matchBio$boolValidation & cleanBio$boolValidation){
-                        data$biologicalFunc <- matchBio$biofun
+                      if (data$boolDegrade){
+                        data$df <- data$matrix
                       } else {
-                        data$biologicalFunc <- NULL
+                        
+                        clean <- cleanMatrix(data$matrix)
+                        
+                        if(clean$boolValidation){
+                          data$matrix = clean$data
+                        }else{
+                          data$matrix=NULL
+                        }
+                        
+                        
+                        data$categ <- colnames(data$matrix)
+                        
+                        output$errorInput <- renderUI({
+                          tags$span(style=clean$color, paste(clean$text))
+                        })
+                        
+                        data$geneNames <- rownames(data$matrix)
+                        data$boolValidation <- clean$boolValidation
                       }
                       
-                      output$errorMatch <- renderUI({
-                        tags$span(style=matchBio$color, paste(matchBio$text))
-                      })
+                      # req(input$fileGroup)
+                      fileGroup <- input$fileGroup
+                      if (!is.null(fileGroup)){
+                        bioFun <- read.csv(file = fileGroup$datapath, row.names = 1, check.names=FALSE)
+                        
+                        cleanBio <- cleanBiofun(bioFun)
+                        
+                        output$errorBioMatrix <- renderUI({
+                          tags$span(style=cleanBio$color, paste(cleanBio$text))
+                        })
+                        
+                        
+                        bioFun <- cleanBio$biofun
+                        
+                        matchBio <- matchMatrixBiofun(matrixFunc = data$matrix, biofun = bioFun)
+                        if(matchBio$boolValidation & cleanBio$boolValidation){
+                          data$biologicalFunc <- matchBio$biofun
+                        } else {
+                          data$biologicalFunc <- NULL
+                        }
+                        
+                        output$errorMatch <- renderUI({
+                          tags$span(style=matchBio$color, paste(matchBio$text))
+                        })
+                        
+                        
+                        
+                        # stopifnot(nrow(bioFun) == nrow(data$matrix))  ## sanity check: dimensions
+                        ## make sure the ordering of probes (genes) 
+                        ## is the same for biological functions and expression data:
+                        # mm <- match(rownames(bioFun), rownames(data$matrix))
+                        # stopifnot(!any(is.na(mm)))
+                        # data$biologicalFunc <- bioFun[mm, ]
+                        rm(bioFun)
+                      }
+                      
+                      if (data$boolDegrade){
+                        data$matrix <- NULL
+                      } 
                       
                       
-                      
-                      # stopifnot(nrow(bioFun) == nrow(data$matrix))  ## sanity check: dimensions
-                      ## make sure the ordering of probes (genes) 
-                      ## is the same for biological functions and expression data:
-                      # mm <- match(rownames(bioFun), rownames(data$matrix))
-                      # stopifnot(!any(is.na(mm)))
-                      # data$biologicalFunc <- bioFun[mm, ]
-                      rm(bioFun)
-                      
-                      data$boolValidation <- clean$boolValidation
                       
                     }
                     return(data)
@@ -213,14 +227,44 @@ shinyServer(function(input, output, session) {
     # )
   })
   
-  df <- reactive({
+  thr <- reactiveVal()
+  
+  observe({ # if gene expression data matrix is used
+    req(data()$matrix)
+    newValue <- req(cal()$thr)
+    thr(newValue)
+  })
+  
+  observe({ # if p.value matrix is used
+    req(data()$df)
+    m = dim(data()$df)[1]
+    newValue <- SimesThresholdFamily(m, kMax = m)(alpha())
+    thr(newValue)
+  })
+  
+  df <- reactiveVal()
+  
+  observe({
+    req(data()$matrix)
     dex <- rowWelchTests(req(data()$matrix), data()$categ)
     pval <- dex[["p.value"]]
     logp <- -log10(pval)
     fc <- dex$meanDiff
     adjp <- p.adjust(pval, method = "BH")
-    return(list(logp = logp, fc = fc, adjp = adjp, pval = pval))
+    newValue <- list(logp = logp, fc = fc, adjp = adjp, pval = pval)
+    df(newValue)
   })
+  
+  observe({
+    req(data()$df)
+    pval <- data()$df[['p.value']]
+    fc <- data()$df[['fc']]
+    logp <- -log10(pval)
+    adjp <- p.adjust(pval, method = "BH")
+    newValue <- list(logp = logp, fc = fc, adjp = adjp, pval = pval)
+    df(newValue)
+  })
+  
   
   
   vertical <- reactive({event_data("plotly_relayout", source='A')})
@@ -281,17 +325,17 @@ shinyServer(function(input, output, session) {
     req(selectedGenes())
     ## post hoc bounds in selections
     n1 <- length(selectedGenes()$sel1)
-    FP1 <- maxFP(df()$pval[selectedGenes()$sel1], thr = cal()$thr)
+    FP1 <- maxFP(df()$pval[selectedGenes()$sel1], thr = thr())
     TP1 <- n1 - FP1
     FDP1 <- round(FP1/max(n1, 1), 2)
     
     n2 <- length(selectedGenes()$sel2)
-    FP2 <- maxFP(df()$pval[selectedGenes()$sel2], thr = cal()$thr)
+    FP2 <- maxFP(df()$pval[selectedGenes()$sel2], thr = thr())
     TP2 <- n2 - FP2
     FDP2 <- round(FP2/max(n2, 1), 2)
     
     n12 <- length(selectedGenes()$sel12)
-    FP12 <- maxFP(df()$pval[selectedGenes()$sel12], thr = cal()$thr)
+    FP12 <- maxFP(df()$pval[selectedGenes()$sel12], thr = thr())
     TP12 <- n12 - FP12
     FDP12 <- round(FP12/max(n12, 1), 2)
     
@@ -387,7 +431,7 @@ shinyServer(function(input, output, session) {
   lineAdjp <- reactive({ # value for 
     listLog <- c()
     for (i in c(0.5,0.25,0.1,0.05,0.025,0.01,0.001,0.0001)){
-      min05 <- names(which.min(abs(df()$adjp-i)))
+      min05 <- which.min(abs(df()$adjp-i))
       y05 <- df()$logp[[min05]]
       listLog <- c(listLog, y05)
     }
@@ -397,7 +441,7 @@ shinyServer(function(input, output, session) {
   output$lineAdjp <- renderPrint({list(lineAdjp(), class(lineAdjp()))})
   
   thr_yaxis <- reactive({
-    thrYaxis(thr = cal()$thr, maxlogp=max(df()$logp))
+    thrYaxis(thr = thr(), maxlogp=max(df()$logp))
   })
   
   yaxis <- reactive({
@@ -609,7 +653,7 @@ shinyServer(function(input, output, session) {
   
   calcBoundSelection <- reactive({ #calculate bounds of selected genes 
     req(manuelSelected())
-    calcBounds(df()$pval[manuelSelected()], thr = cal()$thr)
+    calcBounds(df()$pval[manuelSelected()], thr = thr())
   })
   
   output$downloadData <- downloadHandler( #download csv of user selection
@@ -622,16 +666,16 @@ shinyServer(function(input, output, session) {
   )
   
   output$curveMaxFPBoth <- renderPlotly({
-    plotMaxFP(pval = df()$pval[selectedGenes()$sel12], thr = cal()$thr) + 
+    plotMaxFP(pval = df()$pval[selectedGenes()$sel12], thr = thr()) + 
       ggtitle("Upper Left + right")
   })
   
   output$curveMaxFPSelect <- renderPlotly({
     if(length(userDTselectPost()) == 1){
-      plotMaxFP(pval = df()$pval[selectionUserRe()$sel], thr = cal()$thr) + 
+      plotMaxFP(pval = df()$pval[selectionUserRe()$sel], thr = thr()) + 
         ggtitle(userDTselectPost())
     }else{
-      plotMaxFP(pval = df()$pval[manuelSelected()], thr = cal()$thr) + 
+      plotMaxFP(pval = df()$pval[manuelSelected()], thr = thr()) + 
         ggtitle("User selection")
     }
   })
@@ -682,7 +726,7 @@ shinyServer(function(input, output, session) {
     req(data()$biologicalFunc)
     boundGroup(df(), 
                data()$biologicalFunc, 
-               thr = cal()$thr,
+               thr = thr(),
                nameFunctions = colnames(data()$biologicalFunc))
   })
   
@@ -805,7 +849,7 @@ shinyServer(function(input, output, session) {
   
   output$curveMaxFPGroup <- renderPlotly({
     req(selectionGroup())
-    plotMaxFP(pval = df()$pval[selectionGroup()$sel], thr = cal()$thr) + 
+    plotMaxFP(pval = df()$pval[selectionGroup()$sel], thr = thr()) + 
       ggtitle(userDTselectPrio()) 
   })
   
