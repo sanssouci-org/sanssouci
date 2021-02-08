@@ -4,7 +4,7 @@ p <- 2e2
 n <- 100
 ## null distribution
 mat <- matrix(rnorm(p*n), ncol=n)
-cls <- rep(c(0, 1), times=c(n/2, n-n/2))
+cls <- rep(c(0, 1), times=c(10, n-10))
 
 test_that("rowWelchTests <=> welch.test", {
     for (alt in c("two.sided", "greater", "less")) {
