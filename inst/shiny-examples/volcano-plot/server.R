@@ -7,6 +7,19 @@ shinyServer(function(input, output, session) {
     a("IIDEA help page", href = "https://pneuvial.github.io/sanssouci/articles/IIDEA.html", target= "_blank")
   })
   
+  geo2kegg <- reactive({R.cache::memoizedCall(GSEABenchmarkeR::loadEData,
+                                              "geo2kegg"
+  )})
+  
+  nameGeo2kegg <- reactive({namedGeo2kegg(geo2kegg())})
+  
+  output$choiceGSEAUI <- renderUI({
+    selectInput("choiceGSEA", label = "Choose a gene data set", 
+                choices = c('sansSouci example data with gene set'='OurData', nameGeo2kegg()))
+  })
+  
+  
+  
   exampleData <- reactive({
     data <- list()
     data$matrix <- expr_ALL
@@ -17,14 +30,15 @@ shinyServer(function(input, output, session) {
     
     colnames(data$matrix) <- data$categ
     
-    data$geneNames <- rownames(data$matrix)
+    data$geneNames <- base::rownames(data$matrix)
+    
     
     # data$biologicalFunc <- defaultBiologicalFunc(expr_ALL, expr_ALL_annotation)
     bioFun <- expr_ALL_GO
     stopifnot(nrow(bioFun) == nrow(data$matrix))  ## sanity check: dimensions
     ## make sure the ordering of probes (genes) 
     ## is the same for biological functions and expression data:
-    mm <- match(rownames(bioFun), rownames(data$matrix))
+    mm <- match(base::rownames(bioFun), base::rownames(data$matrix))
     stopifnot(!any(is.na(mm)))
     data$biologicalFunc <- bioFun[mm, ]
     rm(bioFun)
@@ -47,6 +61,17 @@ shinyServer(function(input, output, session) {
     contentType = "application/zip"
   )
   
+  fileData <- reactiveVal(NULL)
+  observe({
+    newValue <- req(input$fileData)
+    fileData(newValue)
+  })
+  
+  fileGroup <- reactiveVal(NULL)
+  observe({
+    newValue <- input$fileGroup
+    fileGroup(newValue)
+  })
   
   data <- 
     # reactive (
@@ -54,31 +79,50 @@ shinyServer(function(input, output, session) {
                   {
                     data <- list()
                     if (input$checkboxDemo){
-                      data$matrix <- expr_ALL
-                      
-                      categ <- colnames(data$matrix)
-                      data$categ <- rep(1, length(categ))
-                      data$categ[which(categ == "NEG")] <- 0
-                      
-                      data$geneNames <- rownames(data$matrix)
-                      
-                      # data$biologicalFunc <- defaultBiologicalFunc(expr_ALL, expr_ALL_annotation)
-                      bioFun <- expr_ALL_GO
-                      stopifnot(nrow(bioFun) == nrow(data$matrix))  ## sanity check: dimensions
-                      ## make sure the ordering of probes (genes) 
-                      ## is the same for biological functions and expression data:
-                      mm <- match(rownames(bioFun), rownames(data$matrix))
-                      stopifnot(!any(is.na(mm)))
-                      data$biologicalFunc <- bioFun[mm, ]
-                      rm(bioFun)
-                      # output$CheckData <- renderUI({
-                      #   actionButton("buttonValidate", "Perform calibration!")
-                      # })
-                      data$boolValidation <- TRUE 
+                      if(req(input$choiceGSEA)=='OurData'){
+                        data$matrix <- expr_ALL
+                        
+                        categ <- colnames(data$matrix)
+                        data$categ <- rep(1, length(categ))
+                        data$categ[which(categ == "NEG")] <- 0
+                        
+                        data$geneNames <- rownames(data$matrix)
+                        
+                        # data$biologicalFunc <- defaultBiologicalFunc(expr_ALL, expr_ALL_annotation)
+                        bioFun <- expr_ALL_GO
+                        stopifnot(nrow(bioFun) == nrow(data$matrix))  ## sanity check: dimensions
+                        ## make sure the ordering of probes (genes) 
+                        ## is the same for biological functions and expression data:
+                        
+                        mm <- match(base::rownames(bioFun), base::rownames(data$matrix))
+                        stopifnot(!any(is.na(mm)))
+                        data$biologicalFunc <- bioFun[mm, ]
+                        rm(bioFun)
+                        # output$CheckData <- renderUI({
+                        #   actionButton("buttonValidate", "Perform calibration!")
+                        # })
+                        data$boolValidation <- TRUE 
+                      } else {
+                        rawData <- R.cache::memoizedCall(maPreproc,geo2kegg()[input$choiceGSEA])[[1]]
+                        # rawData <- maPreproc(geo2kegg()[input$choiceGSEA])[[1]]
+                        
+                        data$matrix <- SummarizedExperiment::assays(rawData)$exprs
+                        
+                        cats <- SummarizedExperiment::colData(rawData)
+                        ww <- match(cats$Sample, base::colnames(data$matrix))
+                        categ <- cats$GROUP[ww]
+                        # colnames(data$matrix) <- categ
+                        data$categ <- categ
+                        
+                        data$boolValidation <- TRUE
+                        
+                        print(input$choiceGSEA)
+                      }
                       
                     } else { # if user use his own data
                       req(input$fileData)
-                      file <- req(input$fileData)
+                      req(fileData())
+                      file <- req(fileData())
                       data$matrix <- read.csv(file = file$datapath, row.names = 1, check.names=FALSE)
                       
                       data$boolDegrade <- (length(data$matrix) == 2 & all(sort(colnames(data$matrix)) == sort(c("fc","p.value"))))
@@ -95,27 +139,27 @@ shinyServer(function(input, output, session) {
                           data$matrix=NULL
                         }
                         
+                        data$matrix.color <- clean$color
+                        data$matrix.text <- clean$text
                         
                         data$categ <- colnames(data$matrix)
                         
-                        output$errorInput <- renderUI({
-                          tags$span(style=clean$color, paste(clean$text))
-                        })
                         
-                        data$geneNames <- rownames(data$matrix)
+                        data$geneNames <- base::rownames(data$matrix)
                         data$boolValidation <- clean$boolValidation
                       }
                       
                       # req(input$fileGroup)
-                      fileGroup <- input$fileGroup
+                      fileGroup <- fileGroup()
                       if (!is.null(fileGroup)){
                         bioFun <- read.csv(file = fileGroup$datapath, row.names = 1, check.names=FALSE)
                         
                         cleanBio <- cleanBiofun(bioFun)
                         
-                        output$errorBioMatrix <- renderUI({
-                          tags$span(style=cleanBio$color, paste(cleanBio$text))
-                        })
+                        data$bioFun.color <- cleanBio$color
+                        data$bioFun.text <- cleanBio$text
+                        
+                        
                         
                         
                         bioFun <- cleanBio$biofun
@@ -127,18 +171,12 @@ shinyServer(function(input, output, session) {
                           data$biologicalFunc <- NULL
                         }
                         
-                        output$errorMatch <- renderUI({
-                          tags$span(style=matchBio$color, paste(matchBio$text))
-                        })
+                        data$match.color <- matchBio$color
+                        data$match.text <- matchBio$text
                         
                         
                         
-                        # stopifnot(nrow(bioFun) == nrow(data$matrix))  ## sanity check: dimensions
-                        ## make sure the ordering of probes (genes) 
-                        ## is the same for biological functions and expression data:
-                        # mm <- match(rownames(bioFun), rownames(data$matrix))
-                        # stopifnot(!any(is.na(mm)))
-                        # data$biologicalFunc <- bioFun[mm, ]
+                        
                         rm(bioFun)
                       }
                       
@@ -152,6 +190,29 @@ shinyServer(function(input, output, session) {
                     return(data)
                   }
     )
+  
+  output$errorInput <- renderUI({
+    tags$span(style= req(data()$matrix.color), paste(req(data()$matrix.text)))
+  })
+  
+  output$errorBioMatrix <- renderUI({
+    tags$span(style=req(data()$bioFun.color), paste(req(data()$bioFun.text)))
+  })
+  output$errorMatch <- renderUI({
+    tags$span(style=req(data()$match.color), paste(req(data()$match.text)))
+  })
+  
+  observeEvent(input$resetInputData, {
+    fileData(NULL)
+    reset("fileData")
+  })
+  
+  observeEvent(input$resetInputGroup, {
+    fileGroup(NULL)
+    reset("fileGroup")
+  })
+  
+  
   output$inputK <- renderUI({
     req(data()$matrix)
     numericInput("valueK", 
@@ -263,6 +324,13 @@ shinyServer(function(input, output, session) {
     adjp <- p.adjust(pval, method = "BH")
     newValue <- list(logp = logp, fc = fc, adjp = adjp, pval = pval)
     df(newValue)
+  })
+  
+  observe({
+    if(is.null(data()$df) & is.null(data()$matrix)){
+      newValue <- NULL
+      df(newValue)
+    }
   })
   
   
@@ -634,11 +702,11 @@ shinyServer(function(input, output, session) {
   
   tableCSV <- reactiveVal()
   observe({
-    newValue <- data.frame(row.names = rownames(req(data()$matrix)))
+    newValue <- data.frame(row.names = base::rownames(req(data()$matrix)))
     tableCSV(newValue)
   })
   observeEvent(input$resetCSV,{
-    tableCSV(data.frame(row.names = rownames(req(data()$matrix))))
+    tableCSV(data.frame(row.names = base::rownames(req(data()$matrix))))
   })
   observeEvent(d(), { 
     req(data()$matrix)

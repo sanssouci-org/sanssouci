@@ -1,12 +1,25 @@
+namedGeo2kegg <- function(geo2kegg){
+  namesData <- list()
+  for (i in 1:length(geo2kegg)){
+    x <- geo2kegg[[i]]
+    ed <- Biobase::experimentData(x)
+    if(!any(ed@name == c('GSE781','GSE32676'))){
+      disease <- ed@other$disease
+      namesData[paste(disease, ed@name)] = ed@name
+    }
+  }
+  return(namesData)
+}
+
 VolcanoPlotNico <- function (X, categ, thr, p = 1, q = 1, r = 0, cex = c(0.2, 0.6), 
-          col = c("#33333333", "#FF0000", "#FF666633"), pch = 19, ylim = NULL) 
+                             col = c("#33333333", "#FF0000", "#FF666633"), pch = 19, ylim = NULL) 
 {
   if (p < 1 && q < 1) {
     warning("Filtering both on p-values and BH-adjusted p-values")
   }
   m <- nrow(X)
   dex <- rowWelchTests(X, categ)
-
+  
   
   pval <- dex[["p.value"]]
   logp <- -log10(pval)
@@ -45,11 +58,11 @@ VolcanoPlotNico <- function (X, categ, thr, p = 1, q = 1, r = 0, cex = c(0.2, 0.
   lte <- "≤"
   gte <- "≥"
   title <- paste(c(sprintf("%s genes selected\nAt least %s true positives (FDP %s %s)",
-                     n12, TP12, lte, FDP12)))
+                           n12, TP12, lte, FDP12)))
   txtLeft <- paste(c(sprintf("%s genes\nTP %s %s\nFDP %s %s", n2, gte,
-                   TP2, lte, FDP2)))
+                             TP2, lte, FDP2)))
   txtRight <- paste(c(sprintf("%s genes\nTP %s %s\nFDP %s %s", n1, gte,
-                   TP1, lte, FDP1)))
+                              TP1, lte, FDP1)))
   
   ggplot(data= data.frame(pvalue=logp, fc=fc, color=cols, size=cexs, stringsAsFactors=TRUE), 
          aes(x=fc, y=logp, color=as.factor(color), size = as.factor(size))) + 
@@ -235,6 +248,9 @@ boundGroup <- function(df, bioFun, nameFunctions, thr){
 # }
 
 thrYaxis <- function(thr, maxlogp){
+  if(maxlogp == Inf){
+    maxlogp <- 16
+  }
   df1 <- data.frame(num = 1:length(thr)-1, pvalue=-log10(thr))
   df2 <- data.frame(df1[c(1),])
   valeurTest <- df2[c(dim(df2)[1]),"pvalue"]

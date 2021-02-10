@@ -1,4 +1,10 @@
+geo2kegg <- R.cache::memoizedCall(GSEABenchmarkeR::loadEData,
+                                  "geo2kegg"
+)
+
+
 library("shiny")
+library("shinyjs")
 library("plotly")
 library("sansSouci")
 library("sansSouci.data")  
@@ -10,6 +16,10 @@ library("DT")
 library("shinyBS")
 library("stringr")
 library("R.cache")
+library("GSEABenchmarkeR")
+
+
+
 
 data(expr_ALL, package = "sansSouci.data")
 #data(expr_ALL_annotation, package = "sansSouci.data")
@@ -19,6 +29,7 @@ data(expr_ALL, package = "sansSouci.data")
 data(expr_ALL_GO, package = "sansSouci.data")
 
 shinyUI(fluidPage(
+  useShinyjs(),
   
   includeCSS("www/style.css"),
   
@@ -33,8 +44,12 @@ shinyUI(fluidPage(
         checkboxInput("checkboxDemo", 
                       label = "Use demo data", 
                       value = TRUE),
+        
         # uiOutput("CheckData"),
         actionButton("buttonValidate", "Run!", )),
+      conditionalPanel(condition = "input.checkboxDemo",
+                       uiOutput("choiceGSEAUI")
+      ),
       conditionalPanel(condition = "!input.checkboxDemo", 
                        fileInput("fileData",
                                  label = p("Gene expression data matrix", 
@@ -42,7 +57,9 @@ shinyUI(fluidPage(
                                                     label = "", 
                                                     icon = icon("question"), 
                                                     style = "info", 
-                                                    size = "extra-small"))),
+                                                    size = "extra-small"), 
+                                           actionButton("resetInputData", icon("trash"))),
+                                 accept = ".csv"),
                        bsTooltip("QfileData", "Upload a CSV file containing matrix with genes in rows and samples in column. Column names should be in (in {0, 1})",
                                  "right", 
                                  options = list(container = "body"), 
@@ -58,7 +75,9 @@ shinyUI(fluidPage(
                                                     label = "", 
                                                     icon = icon("question"), 
                                                     style = "info", 
-                                                    size = "extra-small"))),
+                                                    size = "extra-small"), 
+                                           actionButton("resetInputGroup", icon("trash"))),
+                                 accept = ".csv"),
                        # ),
                        # bsTooltip(id = "QfileAnnotation", title = 'Upload a CSV file containing matrix within two columns. One called "Id" contains index label from matrix and the other, called "nameGene", contains names of associated genes.', placement = "bottom",  options = list(container = "body"), trigger = "focus"),
                        bsTooltip(id = "QfileGroup", 
@@ -164,6 +183,7 @@ shinyUI(fluidPage(
       #   plotlyOutput("curveMaxFPSelect")
       # )), 
       # 
+      
       conditionalPanel(condition = "input.tabSelected==2",
                        uiOutput("errorBioMatrix"),
                        plotly::plotlyOutput("volcanoplotPriori", height = "600px")
