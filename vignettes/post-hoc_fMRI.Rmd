@@ -105,7 +105,7 @@ To bypass these limitations, @blanchard20post-hoc have proposed a randomization-
 
 
 ```{r post-hoc-calibration, cache=TRUE}
-B <- 1000
+B <- 100
 cal <- calibrateJER(X = dat, categ, B = B, alpha = alpha, refFamily = "Simes")
 ```
 

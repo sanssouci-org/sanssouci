@@ -25,6 +25,16 @@ A vector of size \eqn{m} giving an joint upper confidence bound on
 \description{
 Upper bound for the number of false discoveries among most significant items
 }
+\examples{
+m <- 5
+n <- 45
+X <- matrix(rnorm(m*n), ncol = n, nrow = m)
+categ <- rbinom(n, 1, 0.4)
+pval <-  rowWelchTests(X, categ)$p.value
+cal <- calibrate(X, categ, B = 1e2, alpha = 0.1, family = "Simes")
+
+curveMaxFP(sort(pval), cal$thr)
+}
 \author{
 Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 }

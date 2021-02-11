@@ -180,7 +180,17 @@ plotConfidenceEnvelope <- function(conf_env, xmax, cols = NULL) {
 #'   the number of false discoveries among the \eqn{k} most significant items
 #'   for all \eqn{k \in \{1\ldots m\}}.
 #' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
-
+#' @export
+#' 
+#' @examples
+#' m <- 5
+#' n <- 45
+#' X <- matrix(rnorm(m*n), ncol = n, nrow = m)
+#' categ <- rbinom(n, 1, 0.4)
+#' pval <-  rowWelchTests(X, categ)$p.value
+#' cal <- calibrate(X, categ, B = 1e2, alpha = 0.1, family = "Simes")
+#' 
+#' curveMaxFP(sort(pval), cal$thr)
 curveMaxFP <- function(p.values, thr, flavor=c("BNR2016", "Mein2006", "BNR2014")) {
     flavor <- match.arg(flavor)
     m <- length(p.values)
@@ -256,4 +266,3 @@ curveMaxFP <- function(p.values, thr, flavor=c("BNR2016", "Mein2006", "BNR2014")
 ## 2014-05-22
 ## o Created.
 ############################################################################
-

@@ -197,7 +197,7 @@ As discussed in @blanchard20post-hoc, the above-described bound has two major li
 To bypass these limitations, @blanchard20post-hoc have proposed a randomization-based procedure known as $\lambda$-calibration, which yields tighter bounds that are adapted to the dependency observed in the data set at hand^[A related approach has been proposed by @HSG2019, but no implementation is currently available for this approach.]. In the case of two-sample tests, this calibration can be achieved by permutation of class labels:
 
 ```{r calibration, cache=TRUE}
-B <- 1000
+B <- 100
 cal <- calibrateJER(X = dat, categ, B = B, alpha = alpha, refFamily = "Simes")
 ```
 
@@ -261,11 +261,15 @@ The confidence envelopes obtained by calibration of the Simes and Beta families 
 conf_envs <- list("Simes" = ce_Simes,
                   "Linear" = cal$conf_env,
                   "Beta" = cal_beta$conf_env)
+#conf_envs <- lapply(conf_envs, subset, stat == "FDP")
 names(conf_envs)[3] <- sprintf("Beta (K=%s)", K)
 cols <- RColorBrewer::brewer.pal(length(conf_envs), "Dark2")
 p <- plotConfidenceEnvelope(conf_envs, xmax = 300, cols = cols)
-p + geom_vline(xintercept = nBH, color = "gray", linetype = "dotted", size = 1.5) +
-  geom_line(size = 1.5)
+p <- p + geom_vline(xintercept = nBH, color = "gray", linetype = "dotted", size = 1.5) +
+  geom_line(size = 1.5)  +
+  # geom_line(size = 1.5)  +
+  # ylab("False Discovery Proportion")
+ggsave(p, file = "conf-env.pdf", scale = 0.5, width=16)
 ```
 
 Both calibrated envelopes outperform the Simes envelope in this example. 
@@ -298,7 +302,9 @@ The substantial gain in power offered by the above-described calibration is illu
 
 ```{r volcano-plot-Simes-calibrated}
 thr <- thrs[["Linear"]]
+pdf("volcano-plot")
 volcanoPlot(dat, categ = categ, thr = thr, q = q, r = r, ylim = ylim)
+dev.off()
 ```
 
 and for the Beta reference family.
@@ -325,6 +331,7 @@ tab <- cbind(c("BH-adjusted p.value < q and fold change > r",
                "BH-adjusted p.value < q and |fold change| > r"), 
              tab)
 cap <- "Post hoc bounds on true positives in user-defined gene selections"
+#knitr::kable(tab, caption = cap, format = "latex")
 knitr::kable(tab, caption = cap)
 ```
 
