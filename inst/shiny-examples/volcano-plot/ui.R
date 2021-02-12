@@ -1,6 +1,6 @@
-geo2kegg <- R.cache::memoizedCall(GSEABenchmarkeR::loadEData,
-                                  "geo2kegg"
-)
+# geo2kegg <- R.cache::memoizedCall(GSEABenchmarkeR::loadEData,
+#                                   "geo2kegg"
+# )
 
 
 library("shiny")
