@@ -130,6 +130,7 @@ shinyUI(fluidPage(
                                      selected = "Simes"),
                          uiOutput("inputK")#)
                        )),
+      verbatimTextOutput("sorti"),
       tabsetPanel( id = "tabSelected",
                    tabPanel("User selections", value = 1,
                             
