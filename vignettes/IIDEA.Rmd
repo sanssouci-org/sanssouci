@@ -123,12 +123,4 @@ The parameters for this estimation step can be customized by clicking "Advanced 
 
 # References
 
-[1] Blanchard, Neuvial, and Roquain (2020). Annals of Statistics 48 (3): 1281–1303. https://projecteuclid.org/euclid.aos/1594972818.
-[2] ---, (in press). Book chapter for Handbook of Multiple Comparisons (Springer). https://hal.archives-ouvertes.fr/hal-02320543.
-[3] Goeman, and Solari. (2011). Statistical Science. https://projecteuclid.org/euclid.ss/1330437937
-[4] Ebrahimpoor et. al. (2020). Briefings in Bioinformatics. https://academic.oup.com/bib/article/21/4/1302/5528235
-
-
-# References
-
 
