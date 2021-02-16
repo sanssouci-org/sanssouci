@@ -1,8 +1,3 @@
-# geo2kegg <- R.cache::memoizedCall(GSEABenchmarkeR::loadEData,
-#                                   "geo2kegg"
-# )
-
-
 library("shiny")
 library("shinyjs")
 library("plotly")
@@ -137,6 +132,11 @@ shinyUI(fluidPage(
                             uiOutput("OutQtableBounds"),
                             DTOutput("tableBounds")),
                    tabPanel("Gene sets", value = 2,
+                            selectInput("buttonSEA", label = "Simultaneous Enrichment Analysis",
+                                        choices = list("All gene sets" = "nothing", 
+                                                       "Significant for self-contained method" = "self", 
+                                                       "Significant for self-contained method" = "competitive")),
+                            
                             uiOutput("OutQtableBoundsGroup"),
                             uiOutput("errorMatch"),
                             DTOutput("tableBoundsGroup") )
@@ -148,16 +148,16 @@ shinyUI(fluidPage(
     # Main panel
     mainPanel(
       uiOutput("errorInput"),
+      h2("Volcano plot", 
+         bsButton("Qparam1", label = "", icon = icon("question"), style = "info", size = "extra-small"),  
+         align = "center"),
+      bsPopover(id = "Qparam1", 
+                title = "VolcanoPlot", 
+                content = paste('Select genes by dragging horizontal or vertical bars, of using "box select" or "lasso select" from the plot menu. The table in the left panel gives post-hoc bounds for these selections.'), 
+                placement = "bottom", 
+                trigger = "hover", 
+                options = NULL),
       flowLayout(
-        bsPopover(id = "Qparam1", 
-                  title = "VolcanoPlot", 
-                  content = paste('Select genes by dragging horizontal or vertical bars, of using "box select" or "lasso select" from the plot menu. The table in the left panel gives post-hoc bounds for these selections.'), 
-                  placement = "bottom", 
-                  trigger = "hover", 
-                  options = NULL),
-        h2("Volcano plot",
-           bsButton("Qparam1", label = "", icon = icon("question"), style = "info", size = "extra-small")),
-        
         selectInput("choiceYaxis", label = "'y' axis label", 
                     choices = list("p-values" = "pval", 
                                    "Adjusted p-values" = "adjPval",

@@ -134,6 +134,8 @@ shinyServer(function(input, output, session) {
                           data$categ <- categ
                           setProgress(value = 0.7, detail = "GSEA data set ...")
                           
+                          data$geneNames <- base::rownames(data$matrix)
+                          
                           data$boolValidation <- TRUE
                           
                           print(input$choiceGSEA)
@@ -151,6 +153,7 @@ shinyServer(function(input, output, session) {
                         if (data$boolDegrade){
                           setProgress(value = 0.4)
                           data$df <- data$matrix
+                          data$geneNames <- base::rownames(data$matrix)
                         } else {
                           setProgress(value = 0.4, detail = "Clean data set ...")
                           clean <- cleanMatrix(data$matrix)
@@ -222,24 +225,24 @@ shinyServer(function(input, output, session) {
     reactive (
       # eventReactive(input$buttonValidate,
       {
-          if (input$checkboxDemo){
-            if(req(input$choiceGSEA)=='OurData'){
-              matrix <- expr_ALL
-              
-            } else {
-              rawData <- R.cache::memoizedCall(maPreproc,geo2kegg()[input$choiceGSEA])[[1]]
-              
-              matrix <- SummarizedExperiment::assays(rawData)$exprs
-              
-            }
+        if (input$checkboxDemo){
+          if(req(input$choiceGSEA)=='OurData'){
+            matrix <- expr_ALL
             
-          } else { # if user use his own data
-            req(input$fileData)
-            req(fileData())
-            file <- req(fileData())
-            matrix <- read.csv(file = file$datapath, row.names = 1, check.names=FALSE)
+          } else {
+            rawData <- R.cache::memoizedCall(maPreproc,geo2kegg()[input$choiceGSEA])[[1]]
+            
+            matrix <- SummarizedExperiment::assays(rawData)$exprs
+            
           }
-          return(matrix)
+          
+        } else { # if user use his own data
+          req(input$fileData)
+          req(fileData())
+          file <- req(fileData())
+          matrix <- read.csv(file = file$datapath, row.names = 1, check.names=FALSE)
+        }
+        return(matrix)
       }
     )
   
@@ -309,7 +312,6 @@ shinyServer(function(input, output, session) {
   #   req(input$alternative)
   # })
   
-  output$sorti <- renderPrint({numK()})
   numK <- reactiveVal()
   observe({
     req(matrixChosen())
@@ -477,6 +479,12 @@ shinyServer(function(input, output, session) {
     
   })
   
+  boundsW <- reactive({ #calcul bounds for all features
+    req(df())
+    calcBounds(listPval = df()$pval, thr = thr())
+  })
+  
+  
   selected_points <- reactive({
     list(x = df()$fc[selectedGenes()$sel12], 
          y = df()$logp[selectedGenes()$sel12])
@@ -511,7 +519,7 @@ shinyServer(function(input, output, session) {
     newValue <- rbind(tableResult(), c(paste('<a target="_blanck" href="', url, '" >User selection ',n, '</a>', sep=""), 
                                        calcBoundSelection()$n, 
                                        calcBoundSelection()$TP,
-                                       calcBoundSelection()$FDP))
+                                       round(calcBoundSelection()$FDP, 2)))
     tableResult(newValue)
   })
   observeEvent(input$resetCSV, { # to clean printed table
@@ -522,6 +530,8 @@ shinyServer(function(input, output, session) {
     newValue <- baseTable()
     tableResult(newValue)
   })
+  
+  
   
   
   
@@ -870,6 +880,24 @@ shinyServer(function(input, output, session) {
                nameFunctions = colnames(data()$biologicalFunc))
   })
   
+  # output$sorti <- renderPrint({filteredTableBoundsGroup()})
+  
+  filteredTableBoundsGroup  <- reactive({
+    req(input$buttonSEA)
+    if (input$buttonSEA == "competitive"){
+      table <- tableBoundsGroup()
+      sel <- which(table[["FDP≤"]] < boundsW()$FDP)
+      newValue <- table[sel,]
+      return(newValue)
+    } else if (input$buttonSEA == "self"){
+      table <- tableBoundsGroup()
+      sel <- which(table[["TP≥"]] > 0)
+      return(table[sel,])
+    } else {
+      return(tableBoundsGroup())
+    }
+  })
+  
   output$OutQtableBoundsGroup <- renderUI({
     popify(el = bsButton("QtableBoundsGroup", label = "", icon = icon("question"), style = "info", size = "extra-small"), 
            title = "Data", content = paste("This table prints your post-hoc bounds for your selections."  ,
@@ -883,8 +911,17 @@ shinyServer(function(input, output, session) {
            , trigger='focus')
   })
   
+  # formatRound(DT::datatable(genesInputGvsG(),options=list(pageLength=10)),columns=c(2,3,4,5,6,7),digits=3)
   output$tableBoundsGroup <- renderDT({
-    tableBoundsGroup()
+    # DT::formatRound(
+    #   DT::datatable(filteredTableBoundsGroup()), 
+    #   columns = c(4), 
+    #   digits=2
+    # )
+    table <- filteredTableBoundsGroup()
+    table[["FDP≤"]] <- round(table[["FDP≤"]], 2)
+    table
+    
   }, selection = 'single')
   
   # output$choiceGroupUI <- renderUI({
@@ -894,7 +931,7 @@ shinyServer(function(input, output, session) {
   # })
   
   userDTselectPrio <- reactive({
-    tableBoundsGroup()[input$tableBoundsGroup_rows_selected,"Name"]
+    filteredTableBoundsGroup()[input$tableBoundsGroup_rows_selected,"Name"]
   })
   
   selectionGroup <- reactive({
@@ -924,8 +961,8 @@ shinyServer(function(input, output, session) {
               name = 'genes',
               type='scattergl', mode = "markers", source='B'
               ,
-              text = data()$geneName,
-              customdata = paste0("http://www.ensembl.org/Homo_sapiens/Gene/Summary?g=", data()$geneName)
+              text = data()$geneNames,
+              customdata = paste0("http://www.ensembl.org/Homo_sapiens/Gene/Summary?g=", data()$geneNames)
               # , height = 600
       )%>% 
         layout(

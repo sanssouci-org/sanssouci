@@ -160,7 +160,7 @@ calcBounds <- function(listPval, thr){
   n <- length(listPval)
   FP <- maxFP(listPval, thr = thr)
   TP <- n - FP
-  FDP <- round(FP/max(n, 1), 2)
+  FDP <- FP/max(n, 1)
   return(list(n=n, FP=FP, TP=TP, FDP=FDP))
 }
 
@@ -182,6 +182,8 @@ boundGroup <- function(df, bioFun, nameFunctions, thr){
   return(table)
   
 }
+
+
 
 
 
