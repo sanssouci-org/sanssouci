@@ -102,7 +102,7 @@ get_pivotal_stat <- function(p0,
 #' n <- 45
 #' X <- matrix(rnorm(m*n), ncol = n, nrow = m)
 #' categ <- rbinom(n, 1, 0.4)
-#' B <- 10
+#' B <- 100
 #' p <- rowWelchTests(X, categ)$p.value
 #' p0 <- sansSouci:::get_perm_p(X, categ, B)
 #' calib <- get_calibrated_thresholds(p0, alpha = 0.1, family = "Linear")
