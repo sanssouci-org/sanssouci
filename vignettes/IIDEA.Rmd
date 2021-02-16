@@ -72,8 +72,8 @@ The table displays, for each user selection of a set of genes, the following sta
 - Click on the 'Gene sets' tab in the left panel. 
 
 > - The table at the bottom of the left panel now displays statistical guarantees obtained by post hoc bounds for a list of GO terms
-> - Clicking on the line corresponding to GO a term highlights the corresponding genes in the volcano plot
-> - Clicking on a GO term opens the associated QuickGO page (@binns2009quickgo), e.g. https://www.ebi.ac.uk/QuickGO/term/GO:0018108.
+> - Clicking on the line corresponding to GO a term highlights the corresponding genes in the volcano plot (see next Figure)
+> - Clicking on a GO term opens the associated QuickGO page (@binns2009quickgo), e.g. https://www.ebi.ac.uk/QuickGO/term/GO:0002576.
 
 By default, all available gene sets are listed. As noted by @ebrahimpoor2020simultaneous, post hoc inference makes it possible to perform enrichment analyses for both the "self-contained" and "competitive" hypotheses. Quoting @ebrahimpoor2020simultaneous:
 
@@ -81,6 +81,14 @@ By default, all available gene sets are listed. As noted by @ebrahimpoor2020simu
 > Methods testing the self-contained null test whether there are any active features in the feature set of interest.
 
 Both approaches are readily avialable via the drop-down menu, which makes it possible to display only those gene sets that are significant for the "self-contained" and "competitive" hypotheses. 
+
+For example, in the Leukemia data set, the GO term Platelet degranulation (GO:0002576) is significant both for the competitive and the self-contained null hypotheses. This GO term is highlighted in the next plot, which has been obtained by clicking on the associated line in the gene set table.
+
+
+```{r GO-plot, out.width="600px", echo=FALSE}
+knitr::include_graphics("img/IIDEA_GO-0002576.png")
+```
+
 
 # Data
 

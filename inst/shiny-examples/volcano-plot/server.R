@@ -615,7 +615,7 @@ shinyServer(function(input, output, session) {
                       ticktext = c(0.5,0.25,0.1,0.05,0.025,0.01,0.001,0.0001)
                     ),
                     "thr" = list(
-                      title = "Number of false positives", 
+                      title = "Maximal number of false positives", 
                       titlefont = f, 
                       autotick = FALSE,
                       tickmode = "array",
