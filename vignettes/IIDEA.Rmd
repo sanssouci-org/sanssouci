@@ -42,9 +42,9 @@ knitr::include_graphics("img/IIDEA_overview.png")
 ```
 
 
-## Interactive statistical guarantees
+# Interactive statistical guarantees
 
-### Default output
+## Default output
 
 ```{r IIDEA_post-hoc-table, out.width="400px", echo=FALSE}
 knitr::include_graphics("img/IIDEA_post-hoc-table.png")
@@ -57,7 +57,7 @@ The table displays, for each user selection of a set of genes, the following sta
 - **FDP$\leq$**: the proportion of genes erroneously called differentially expressed among those selected (False Discovery Proportion, FDP) is less than 19%
 
 
-### User selections
+## User selections
 
 - Select a set of genes of interest by dragging and dropping the horizonal and vertical bars, or by making a rectangular or a "lasso" selection. 
 
@@ -67,13 +67,20 @@ The table displays, for each user selection of a set of genes, the following sta
 > - User selections can be downloaded as a CSV file
 
 
-## Gene sets 
+# Enrichment analyses
 
 - Click on the 'Gene sets' tab in the left panel. 
 
-> The table at the bottom of the left panel now displays statistical guarantees obtained by post hoc bounds for a list of GO terms
-> Clicking on a GO term highlights the corresponding genes in the volcano plot
+> - The table at the bottom of the left panel now displays statistical guarantees obtained by post hoc bounds for a list of GO terms
+> - Clicking on the line corresponding to GO a term highlights the corresponding genes in the volcano plot
+> - Clicking on a GO term opens the associated QuickGO page (@binns2009quickgo), e.g. https://www.ebi.ac.uk/QuickGO/term/GO:0018108.
 
+By default, all available gene sets are listed. As noted by @ebrahimpoor2020simultaneous, post hoc inference makes it possible to perform enrichment analyses for both the "self-contained" and "competitive" hypotheses. Quoting @ebrahimpoor2020simultaneous:
+
+> Methods testing the competitive null test whether features in the feature set of interest are more often active than features outside the feature set. 
+> Methods testing the self-contained null test whether there are any active features in the feature set of interest.
+
+Both approaches are readily avialable via the drop-down menu, which makes it possible to display only those gene sets that are significant for the "self-contained" and "competitive" hypotheses. 
 
 # Data
 
