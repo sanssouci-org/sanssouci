@@ -18,6 +18,13 @@ shinyServer(function(input, output, session) {
     })
   })
   
+  isolate({shinyjs::disable("buttonValidate")})
+  
+  observeEvent(geo2kegg(),{
+    shinyjs::enable("buttonValidate")
+    
+  })
+  
   nameGeo2kegg <- reactive({namedGeo2kegg(geo2kegg())})
   
   output$choiceGSEAUI <- renderUI({
@@ -874,7 +881,7 @@ shinyServer(function(input, output, session) {
   tableBoundsGroup <- reactive({
     req(data())
     req(data()$biologicalFunc)
-    boundGroup(df(), 
+    table <- boundGroup(df(), 
                data()$biologicalFunc, 
                thr = thr(),
                nameFunctions = colnames(data()$biologicalFunc))
@@ -922,7 +929,7 @@ shinyServer(function(input, output, session) {
     table[["FDP≤"]] <- round(table[["FDP≤"]], 2)
     table
     
-  }, selection = 'single')
+  }, selection = 'single' , escape = FALSE )
   
   # output$choiceGroupUI <- renderUI({
   #   selectInput("choiceGroup", label = "Gene set", 
@@ -931,7 +938,10 @@ shinyServer(function(input, output, session) {
   # })
   
   userDTselectPrio <- reactive({
-    filteredTableBoundsGroup()[input$tableBoundsGroup_rows_selected,"Name"]
+    req(filteredTableBoundsGroup())
+    req(input$tableBoundsGroup_rows_selected)
+    href <- filteredTableBoundsGroup()[input$tableBoundsGroup_rows_selected,"Name"]
+    str_remove_all(str_remove_all(href, "<a(.*?)>"), "(</a>)")
   })
   
   selectionGroup <- reactive({

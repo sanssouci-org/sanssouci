@@ -172,7 +172,7 @@ boundGroup <- function(df, bioFun, nameFunctions, thr){
     listPval <- df$pval[ids]
     bounds <- calcBounds(listPval = listPval, thr = thr)
     table <- rbind(table, data.frame(
-      "Name" = func, 
+      "Name" = addUrlLink(func), 
       "# genes" = bounds$n, 
       "TP≥" = as.integer(bounds$TP),
       "FDP≤" = bounds$FDP,
@@ -181,6 +181,16 @@ boundGroup <- function(df, bioFun, nameFunctions, thr){
   table <- table[order(table["FDP≤"]),]
   return(table)
   
+}
+
+addUrlLink <- function(name){
+  if(grepl("GO:\\d+", name)){
+    url <- paste("https://www.ebi.ac.uk/QuickGO/term/",name, sep="")
+    url <- paste('<a target="_blanck" href="', url, '" >',name, '</a>', sep="")
+    return(url)
+  } else {
+    return(name)
+  }
 }
 
 
