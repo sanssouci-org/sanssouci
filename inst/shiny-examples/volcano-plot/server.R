@@ -29,7 +29,7 @@ shinyServer(function(input, output, session) {
   
   output$choiceGSEAUI <- renderUI({
     selectInput("choiceGSEA", label = "Choose a gene data set", 
-                choices = c('sansSouci example data with gene set'='OurData', nameGeo2kegg()))
+                choices = c('Leukemia (ALL): BCR/ABL mutated vs wild type'='OurData', nameGeo2kegg()))
   })
   
   
@@ -615,7 +615,7 @@ shinyServer(function(input, output, session) {
                       ticktext = c(0.5,0.25,0.1,0.05,0.025,0.01,0.001,0.0001)
                     ),
                     "thr" = list(
-                      title = "Calibration thresholds (-log[10] scale)", 
+                      title = "Number of false positives", 
                       titlefont = f, 
                       autotick = FALSE,
                       tickmode = "array",
