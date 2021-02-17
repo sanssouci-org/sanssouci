@@ -135,7 +135,7 @@ shinyUI(fluidPage(
                             selectInput("buttonSEA", label = "Simultaneous Enrichment Analysis",
                                         choices = list("All gene sets" = "nothing", 
                                                        "Significant for self-contained method" = "self", 
-                                                       "Significant for self-contained method" = "competitive")),
+                                                       "Significant for competitive method" = "competitive")),
                             
                             uiOutput("OutQtableBoundsGroup"),
                             uiOutput("errorMatch"),
@@ -162,7 +162,7 @@ shinyUI(fluidPage(
                     choices = list("p-values" = "pval", 
                                    "Adjusted p-values" = "adjPval",
                                    "Number of false positves" = "thr"), 
-                    selected = "pval"),
+                    selected = "thr"),
         checkboxInput("symetric", 
                       label = "Symmetric fold change threshold", 
                       value = FALSE)),

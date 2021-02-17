@@ -592,6 +592,8 @@ shinyServer(function(input, output, session) {
   output$lineAdjp <- renderPrint({list(lineAdjp(), class(lineAdjp()))})
   
   thr_yaxis <- reactive({
+    req(thr())
+    req(df())
     thrYaxis(thr = thr(), maxlogp=max(df()$logp))
   })
   
