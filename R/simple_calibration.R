@@ -185,7 +185,7 @@ get_calibrated_thresholds <- function(p0, alpha,
 #'
 #' # 1. Simulated data
 #' set.seed(0xBEEF)
-#' m <- 5
+#' m <- 500
 #' n <- 45
 #' X <- matrix(rnorm(m*n), ncol = n, nrow = m)
 #' categ <- rbinom(n, 1, 0.4)
