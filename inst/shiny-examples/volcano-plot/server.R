@@ -11,6 +11,7 @@ shinyServer(function(input, output, session) {
     withProgress(message = "Load GSEABenchmarkeR data set ... ", {
       t1 <- Sys.time()
       data <- R.cache::memoizedCall(GSEABenchmarkeR::loadEData,"geo2kegg")
+      
       t2 <- Sys.time()
       print(paste("Load GSEABenchmarkeR data set:",difftime(t2, t1)))
       setProgress(value = 1, detail = "Done")
@@ -18,7 +19,25 @@ shinyServer(function(input, output, session) {
     })
   })
   
+  go.gs <- reactive({
+    withProgress(message = "Load EnrichmentBrowser getGenesets ... ", {
+      t1 <- Sys.time()
+      go.gs <- R.cache::memoizedCall(EnrichmentBrowser::getGenesets,
+                                     org = "hsa", db = "go", onto = "BP", mode = "GO.db")
+      T3 <- Sys.time()
+      go.gs <- R.cache::memoizedCall(cleanGo.GS, go.gs)
+      t2 <- Sys.time()
+      print(paste("Load EnrichmentBrowser getGenesets:",difftime(t2, t1)))
+      print(paste("T3-T1:",difftime(T3, t1)))
+      print(paste("T2-T3:", difftime(t2, T3)))
+      setProgress(value = 1, detail = "Done")
+      return(go.gs)
+    })
+  })
+  
   isolate({shinyjs::disable("buttonValidate")})
+  
+  isolate(go.gs())
   
   observeEvent(geo2kegg(),{
     shinyjs::enable("buttonValidate")
@@ -143,6 +162,8 @@ shinyServer(function(input, output, session) {
                           
                           data$geneNames <- base::rownames(data$matrix)
                           
+                          data$biologicalFunc <- go.gs()
+                          
                           data$boolValidation <- TRUE
                           
                           print(input$choiceGSEA)
@@ -186,7 +207,10 @@ shinyServer(function(input, output, session) {
                         fileGroup <- fileGroup()
                         if (!is.null(fileGroup)){
                           setProgress(value = 0.75, detail = "Read gene set data ...")
+                          T1 <- Sys.time()
                           bioFun <- read.csv(file = fileGroup$datapath, row.names = 1, check.names=FALSE)
+                          T2 <- Sys.time()
+                          print(paste("read gene set", T2-T1))
                           setProgress(value = 0.8, detail = "Cleaning of gene set data ...")
                           cleanBio <- cleanBiofun(bioFun)
                           
@@ -881,12 +905,20 @@ shinyServer(function(input, output, session) {
   
   ## biological function 
   tableBoundsGroup <- reactive({
-    req(data())
-    req(data()$biologicalFunc)
-    table <- boundGroup(df(), 
-               data()$biologicalFunc, 
-               thr = thr(),
-               nameFunctions = colnames(data()$biologicalFunc))
+    withProgress(message = "tableBoundsGroup", {
+      T1 <- Sys.time()
+      req(data())
+      req(data()$biologicalFunc)
+      table <- boundGroup(df(), 
+                          data()$biologicalFunc, 
+                          thr = thr()
+                          # ,
+                          # nameFunctions = colnames(data()$biologicalFunc)
+      )
+      T2 <- Sys.time()
+      print(paste("post hoc bounds on gene set:",difftime(T2, T1)))
+    })
+    return(table)
   })
   
   # output$sorti <- renderPrint({filteredTableBoundsGroup()})
@@ -943,7 +975,10 @@ shinyServer(function(input, output, session) {
     req(filteredTableBoundsGroup())
     req(input$tableBoundsGroup_rows_selected)
     href <- filteredTableBoundsGroup()[input$tableBoundsGroup_rows_selected,"Name"]
-    str_remove_all(str_remove_all(href, "<a(.*?)>"), "(</a>)")
+    print(href)
+    name <- str_remove_all(str_remove_all(href, "<a(.*?)>"), "(</a>)")
+    print(name)
+    return(name)
   })
   
   selectionGroup <- reactive({
@@ -952,7 +987,11 @@ shinyServer(function(input, output, session) {
     
     group <- req(userDTselectPrio())
     bioFun <- data()$biologicalFunc
-    ids <- which(bioFun[, group] == 1)
+    if (class(bioFun)=="list"){
+      ids <- bioFun[[group]]
+    }else{
+      ids <- which(bioFun[, group] == 1)
+    }
     list(sel = ids)
   })
   

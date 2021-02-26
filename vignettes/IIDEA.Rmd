@@ -106,6 +106,13 @@ This data set consists of gene expression measurements for  $n = `r ncol(dat)`$ 
 
 This data set is available from the R package [`sansSouci.data`](https://github.com/pneuvial/sanssouci.data).
 
+## GSEAbenchmarkeR data
+
+We consider 40 others data sets from the R package [`GSEABenchmarkeR`](https://bioconductor.org/packages/release/bioc/html/GSEABenchmarkeR.html). Theses data sets consider some diseases : many cancers, Alzeihmer's disease, Parkinson's disease, cardiomyopathy, Huntington's disease, diabetes ...  
+This differents disease can be choosen one by one with the 'Choose a gene data set' dropdown menu. 
+
+With the package [`EnrichmentBrowser`](https://bioconductor.org/packages/release/bioc/html/EnrichmentBrowser.html), an enrichement analysis of gene sets based on GeneOntology gene sets is available.
+
 ## User data
 
 - Uncheck "Use demo data": you will be able to upload your own gene expression data, and optionally a file containing gene sets of interest (for example obtained from Gene Ontology). The file format is described in the app, and example data files are also provided. 

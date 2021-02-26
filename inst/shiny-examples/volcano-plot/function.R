@@ -11,6 +11,28 @@ namedGeo2kegg <- function(geo2kegg){
   return(namesData)
 }
 
+cleanGo.GS <- function(go.gs){
+  for(i in names(go.gs)){
+    incProgress(1/length(go.gs))
+    if(length(go.gs[[i]])<6){
+      go.gs[i] <- NULL
+    }
+  }
+  return(go.gs)
+  
+  # longueur3 <- function(x){
+  #   if(length(x)<6){
+  #     NULL
+  #   } else {
+  #     x
+  #   }
+  #   # ifelse(test = length(x) > 4, x, NULL)
+  # }
+  # 
+  # go.gs <- lapply(go.gs, longueur3)
+  # return(go.gs)
+}
+
 VolcanoPlotNico <- function (X, categ, thr, p = 1, q = 1, r = 0, cex = c(0.2, 0.6), 
                              col = c("#33333333", "#FF0000", "#FF666633"), pch = 19, ylim = NULL) 
 {
@@ -158,40 +180,90 @@ matchMatrixBiofun <- function(matrixFunc, biofun){
 
 calcBounds <- function(listPval, thr){
   n <- length(listPval)
-  FP <- maxFP(listPval, thr = thr)
+  # curve_max_FP <- curveMaxFP(sort(listPval), sort(thr), "BNR2016")
+  # FP <- curve_max_FP[length(curve_max_FP)]
+  FP <- maxFP(sort(listPval), thr = sort(thr))
   TP <- n - FP
   FDP <- FP/max(n, 1)
   return(list(n=n, FP=FP, TP=TP, FDP=FDP))
+  
 }
 
 
-boundGroup <- function(df, bioFun, nameFunctions, thr){
+# boundGroup <- function(df, bioFun, nameFunctions, thr){
+#   table <- data.frame("Name" = c(), "# genes" = c(), "TP≥" = c(), "FDP≤"=c(), check.names = FALSE)
+#   for (func in nameFunctions){
+#     ids <- which(bioFun[, func] == 1)
+#     listPval <- df$pval[ids]
+#     bounds <- calcBounds(listPval = listPval, thr = thr)
+#     table <- rbind(table, data.frame(
+#       "Name" = addUrlLink(func), 
+#       "# genes" = bounds$n, 
+#       "TP≥" = as.integer(bounds$TP),
+#       "FDP≤" = bounds$FDP,
+#       check.names = FALSE))
+#   }
+#   table <- table[order(table["FDP≤"]),]
+#   return(table)
+#   
+# }
+
+boundGroup <- function(df, bioFun, thr){
+  print(class(bioFun))
   table <- data.frame("Name" = c(), "# genes" = c(), "TP≥" = c(), "FDP≤"=c(), check.names = FALSE)
-  for (func in nameFunctions){
-    ids <- which(bioFun[, func] == 1)
-    listPval <- df$pval[ids]
-    bounds <- calcBounds(listPval = listPval, thr = thr)
-    table <- rbind(table, data.frame(
-      "Name" = addUrlLink(func), 
-      "# genes" = bounds$n, 
-      "TP≥" = as.integer(bounds$TP),
-      "FDP≤" = bounds$FDP,
-      check.names = FALSE))
+  print(class(bioFun))
+  if(class(bioFun)=="list"){
+    nameFunctions <- names(bioFun)
+    for (func in nameFunctions){
+      incProgress(1/length(nameFunctions))
+      ids <- bioFun[[func]]
+      if (length(ids)>5){
+        listPval <- df$pval[ids]
+        listPval <- listPval[!is.na(listPval)]
+        if(length(listPval)>1){
+          bounds <- calcBounds(listPval = listPval, thr = thr)
+          table <- rbind(table, data.frame(
+            "Name" = addUrlLink(func), 
+            "# genes" = bounds$n, 
+            "TP≥" = as.integer(bounds$TP),
+            "FDP≤" = bounds$FDP,
+            check.names = FALSE))
+        }
+      } else {
+        print("length(ids)>2")
+      }
+    }
+  } else {
+    nameFunctions <- colnames(bioFun)
+    for (func in nameFunctions){
+      ids <- which(bioFun[, func] == 1)
+      listPval <- df$pval[ids]
+      bounds <- calcBounds(listPval = listPval, thr = thr)
+      table <- rbind(table, data.frame(
+        "Name" = addUrlLink(func), 
+        "# genes" = bounds$n, 
+        "TP≥" = as.integer(bounds$TP),
+        "FDP≤" = bounds$FDP,
+        check.names = FALSE))
+    }
   }
   table <- table[order(table["FDP≤"]),]
+  print("boundGroup OK")
   return(table)
   
 }
 
 addUrlLink <- function(name){
   if(grepl("GO:\\d+", name)){
-    url <- paste("https://www.ebi.ac.uk/QuickGO/term/",name, sep="")
+    url <- paste("https://www.ebi.ac.uk/QuickGO/term/",str_extract_all(name, "GO:\\d+"), sep="")
     url <- paste('<a target="_blanck" href="', url, '" >',name, '</a>', sep="")
     return(url)
   } else {
     return(name)
   }
 }
+
+
 
 
 
