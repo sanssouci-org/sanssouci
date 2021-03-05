@@ -61,18 +61,29 @@ print.SansSouci <- function(object) {
         cat("Data:")
         cat("\n")
         str(input$Y)
+        cat("\n")
     }
     params <- object$parameters
     if (!is.null(params)) {
-        cat("Parameters:")
+        cat("Parameters:", "\n")
+        cat("\tTest function:", params$funName, "\n")
+        cat("\tNumber of permutations: B=", params$B, "\n", sep = "")
+        cat("\tSignificance level: alpha=", params$alpha, "\n", sep = "")
+        cat("\tReference family:", params$refFam, "\n")
+        cat("\t(of size: K=", params$K, ")", "\n", sep = "")
         cat("\n")
-        str(params)
     }
     output <- object$output
     if (!is.null(output)) {
-        cat("Output:")
+        cat("Output:\n")
+        cat("\tp-values:\n")
+        print(summary(output$p.values))
+        cat("\tPivotal statistic:\n")
+        print(summary(output$pivStat))
+        cat("\tCalibration parameter: lambda=", output$lambda, "\n", sep = "")
+        cat("\tCalibrated thresholds:\n")
+        print(summary(output$thr))
         cat("\n")
-        str(output)
     }
     invisible(object)
 }
@@ -94,6 +105,7 @@ fit.SansSouci <- function(object, B, alpha,
                      alpha = alpha,
                      alternative = alternative, 
                      rowTestFUN = rowTestFUN, 
+                     funName = as.character(substitute(rowTestFUN)),
                      refFamily = refFamily, 
                      maxStepsDown = maxStepsDown, 
                      K = n_hyp(object), verbose = verbose)
