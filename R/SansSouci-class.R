@@ -14,6 +14,9 @@
 #' n_obs(a)
 #' res <- fit(a, B = 100, alpha = 0.1)
 #' print(res)
+#' label(res)
+#' res <- fit(a, B = 100, alpha = 0.1, refFamily="Beta", K=10)
+#' label(res)
 SansSouci <- function(Y, groups) {
     obj <- structure(list(input = list(Y = Y, 
                                        groups = groups),
@@ -33,6 +36,18 @@ n_hyp.SansSouci <- function(object) nrow(object$input$Y)
 n_obs <- function(object) UseMethod("n_obs")
 #' @export
 n_obs.SansSouci <- function(object) ncol(object$input$Y)
+
+#' @export
+label <- function(object) UseMethod("label")
+#' @export
+label.SansSouci <- function(object) {
+    param <- object$parameters
+    lab <- param$refFamily
+    if (param$K < n_hyp(object)) {
+        lab <- sprintf("%s(K=%d)", lab, param$K)
+    } 
+    return(lab)
+}
 
 #' @export
 print.SansSouci <- function(object) {
@@ -62,6 +77,8 @@ print.SansSouci <- function(object) {
     invisible(object)
 }
 
+
+
 #' @describeIn calibrateJER Fit SansSouci object
 #' @importFrom generics fit
 #' @export
@@ -79,7 +96,7 @@ fit.SansSouci <- function(object, B, alpha,
                      rowTestFUN = rowTestFUN, 
                      refFamily = refFamily, 
                      maxStepsDown = maxStepsDown, 
-                     K = K, verbose = verbose)
+                     K = n_hyp(object), verbose = verbose)
     Y <- object$input$Y
     groups <- object$input$groups
     
@@ -139,6 +156,9 @@ thresholds.SansSouci <- function(object) object$output$thr
 max_FP <- function(object, S, envelope = FALSE, ...) UseMethod("max_FP")
 #' @export
 max_FP.SansSouci <- function(object, S = 1:n_hyp(object), envelope = FALSE, ...) {
+    if (is.null(object$output)) {
+        stop("Object not fitted yet! Please use the 'fit' function first.")
+    }
     p.values <- p_values(object)
     thr <- thresholds(object)
     s <- length(S)
@@ -187,4 +207,71 @@ min_TDP <- function(object, S, envelope, ...) UseMethod("min_TDP")
 #' @export
 min_TDP.SansSouci <- function(object, S = 1:n_hyp(object), envelope = FALSE, ...) {
     1 - max_FP(object, S = S, envelope = envelope, ...)/length(S)
+}
+
+
+#' Confidence envelope on the true/false positives among most significant items
+#' 
+#' @param object An object of class 'SansSouci'
+#' @param S A subset of indices
+#' @param what A character vector, the names of the post hoc bounds to be
+#'   computed, among:
+#' 
+#' \describe{
+#' \item{FP}{Upper bound on the number of false positives in the 'x' most significant items}
+#' \item{TP}{Lower bound on the number of true positives in the 'x' most significant items}
+#' \item{FDP}{Upper bound on the proportion of false positives in the 'x' most significant items}
+#' \item{TP}{Lower bound on the proportion of true positives in the 'x' most significant items}}
+#' Defaults to \code{c("TP", "FDP")}.
+#' 
+#' @return A \code{data.frame} with \eqn{m} rows and 5 columns: \describe{
+#' \item{x}{Number of most significant items selected}
+#' \item{family}{Matches input argument \code{refFamily}}
+#' \item{param}{Matches argument \code{param}}
+#' \item{procedure}{Label for the procedure, typically of the form '<refFamily>(<param>)'}
+#' \item{bound}{Value of the post hoc bound}
+#' \item{stat}{Type of post hoc bound, as specified by argument \code{bound}}
+#' }
+#' @export
+#' @examples
+#' 
+#' # Generate Gaussian data and perform multiple tests
+#' sim <- gaussianSamples(m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
+#' obj <- SansSouci(Y = sim$X, groups = sim$categ)
+#' res <- fit(obj, B = 100, alpha = 0.1)
+#' # calculate, print, and plot confidence envelope
+#' ce <- bound(res, envelope = TRUE)
+#' head(ce)
+#' 
+#' ce <- bound(res, S=1:10, envelope = TRUE)
+#' head(ce)
+#' 
+#' plot(res, S=which(sim$H==1))
+#' 
+#' @export
+bound <- function(object, S, what, envelope = FALSE, ...) UseMethod("bound")
+
+#' @export
+bound.SansSouci <- function(object, S = 1:n_hyp(object), 
+                          what = c("TP", "FDP"), envelope = FALSE) {
+    p.values <- p_values(object)
+    thr <- thresholds(object)
+    lab <- label(object)
+    if (max(S) > n_hyp(object)) {
+        stop("'S' is not a subset of hypotheses")
+    }
+    bounds <- conf_env(p.values = p.values[S], thr = thr, lab = lab, what = what, envelope = envelope)
+    return(bounds)
+}
+
+
+#' Plot confidence envelope on the true/false positives among most significant items
+#' 
+#' @param x An object of class 'SansSouci'
+#' @param y Not used
+#' @param ... Further arguments to be passed to \code{posthoc_bound}
+#' @export
+plot.SansSouci <- function(x, y, xmax = n_hyp(x), ...) {
+    ce <- posthoc_bound(x, envelope = TRUE, ...)
+    plotConfidenceEnvelope(ce, xmax = xmax)
 }

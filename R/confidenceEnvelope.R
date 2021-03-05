@@ -1,3 +1,5 @@
+
+
 #'
 #' Confidence envelope on the true/false positives among most significant items
 #'
@@ -58,11 +60,6 @@ confidenceEnvelope <- function(p.values, refFamily, param, K = length(p.values),
              "Only the following reference families are currently supported: ", 
              paste(fam0, collapse = ", "))
     }
-    what0 <- c("FP", "TP", "FDP", "TDP")
-    if (!all(what %in% what0)) {
-        stop("Error in argument 'what': only the following statistics are supported: ", what0)
-    }
-    max_FP <- rep(NA_real_, m)
     if (refFamily %in% c("Simes", "Linear")) {
         thr <- SimesThresholdFamily(m, kMax = K)(param)
         max_FP <- curveMaxFP(p.values[o], thr)
@@ -74,25 +71,37 @@ confidenceEnvelope <- function(p.values, refFamily, param, K = length(p.values),
         max_FP <- cumsum(o %in% which(param))
     }
     proc <- sprintf("%s(%s)", refFamily, param)
-    if (refFamily == "Oracle") {
-        proc <- "Oracle"
-        param <- NA_real_
+    conf_env(p.values, thr, lab = proc, what = what, envelope = TRUE)
+}
+
+conf_env <- function(p.values, thr, lab, 
+                     what = c("TP", "FDP"), envelope = FALSE) {
+    s <- length(p.values)
+    o <- order(p.values)
+    idxs <- seq(along = p.values)
+    sorted_p <- p.values[o]
+    maxFP <- curveMaxFP(sorted_p, thr) ## OK to do 'thr[length(S)]' here?
+    maxFDP <- maxFP/idxs
+    what0 <- c("FP", "TP", "FDP", "TDP")
+    if (!all(what %in% what0)) {
+        stop("Error in argument 'what': only the following statistics are supported: ", paste(what0, collapse = ", "))
     }
-    max_FDP <- max_FP/idxs
     annot <- data.frame(x = idxs, 
-                        rank = rk,
-                        family = refFamily,
-                        param = param,
-                        procedure = proc,
+                        label = lab,
                         row.names = NULL)
     boundsList <- list(
-        FP = cbind(annot, stat = "FP", bound = max_FP),
-        TP = cbind(annot, stat = "TP", bound = idxs - max_FP),
-        FDP = cbind(annot, stat = "FDP", bound = max_FDP),
-        TDP = cbind(annot, stat = "TDP", bound = 1 - max_FDP))
+        FP = cbind(annot, stat = "FP", bound = maxFP),
+        TP = cbind(annot, stat = "TP", bound = idxs - maxFP),
+        FDP = cbind(annot, stat = "FDP", bound = maxFDP),
+        TDP = cbind(annot, stat = "TDP", bound = 1 - maxFDP))
     boundsList <- boundsList[what]
-    Reduce(rbind, boundsList)
+    if (!envelope) {
+        boundsList <- lapply(boundsList, FUN = function(x) x[s, ])
+    }
+    bounds <- Reduce(rbind, boundsList)
+    return(bounds)
 }
+
 
 #' Plot confidence envelope
 #' 
