@@ -98,9 +98,10 @@ The state of the art approach to large-scale multiple testing is to control the 
 
 ```{r bh}
 q <- 0.05
-adjp.BH <- p.adjust(pval, method = "BH")
-dex$adjp <- adjp.BH
-nBH <- sum(adjp.BH <= q)
+adjp_BH <- p.adjust(pval, method = "BH")
+dex$adjp <- adjp_BH
+S_BH <- which(adjp_BH <= q)
+nBH <- length(S_BH)
 nBH
 ```
 
@@ -168,22 +169,12 @@ This implies that with probability larger than `r 1-alpha` the false discovery p
 A more refined post hoc bound has been proposed by @GS2011 under the PRDS assumption. In the framework of @BNR:chap this bound is a direct consequence of the @simes86improved inequality. It can be applied to the `r nBH` rejections of the BH procedure as follows:
 
 ```{r}
-#posthocBySimes(pvalo, 1:nBH, alpha = alpha)
-thr_Simes <- SimesThresholdFamily(m)(alpha)
-FP_Simes <- maxFP(pvalo[1:nBH], thr_Simes)
-FP_Simes
-FP_Simes/nBH
+obj <- SansSouci(Y = dat, groups = categ)
+res_Simes <- fit(obj, B = 0, refFamily = "Simes", alpha = alpha) ## B=0 => no calibration!
+FP_Simes <- bound(res_Simes, S_BH, what = "FP")
 ```
 
-The Simes bound implies that with probability larger than `r 1-alpha`, the false discovery proportion among the genes selected by the BH procedure at level $q= `r q`$ is upper bounded by `r ceiling(FP_Simes/nBH*100)/100`. The Simes bound is sharper than the $k_0$-Bonferroni bound because it is obtained from a *joint* control of all $k$-FWER for all $k=1, \dots, m$.
-
-
-```{r k0-bonf-fam, eval=FALSE, echo=FALSE}
-# Sanity check (one-element reference family)
-thr0 <- rep(0, m)
-thr0[k0:m] <- thr_Simes[k0]
-FP_k0 + minTP(pvalo[1:nBH], thr0) == nBH
-```
+The Simes bound implies that with probability larger than `r 1-alpha`, the false discovery proportion among the genes selected by the BH procedure at level $q= `r q`$ is upper bounded by `r ceiling(FP_Simes/nBH*100)/100`. The Simes bound is sharper than the $k_0$-Bonferroni bound because it is obtained from a *joint* control of all $k$-FWER for all $k=1, \dots, m$.  The $k_0$-Bonferroni bound will therefore not be considered further in this vignette.
 
 
 # Tighter confidence bounds by adaptation to unknown dependence 
@@ -197,8 +188,8 @@ As discussed in @blanchard20post-hoc, the above-described bound has two major li
 To bypass these limitations, @blanchard20post-hoc have proposed a randomization-based procedure known as $\lambda$-calibration, which yields tighter bounds that are adapted to the dependency observed in the data set at hand^[A related approach has been proposed by @HSG2019, but no implementation is currently available for this approach.]. In the case of two-sample tests, this calibration can be achieved by permutation of class labels:
 
 ```{r calibration, cache=TRUE}
-B <- 1000
-cal <- calibrateJER(X = dat, categ, B = B, alpha = alpha, refFamily = "Simes")
+B <- 100
+res <- fit(obj, B = B, alpha = alpha, refFamily = "Simes")
 ```
 
 
@@ -206,30 +197,21 @@ An alternative to the Simes/Linear reference family is the Beta reference family
 
 ```{r calibration-beta, cache=TRUE}
 K <- 50
-cal_beta <- calibrateJER(X = dat, categ, B = B, alpha = alpha, refFamily = "Beta", K = K)
+res_Beta <- fit(res, B = B, alpha = alpha, refFamily = "Beta", K = K)
 ```
 
-```{r calibration-BH}
-FP_SimesCal <- maxFP(pvalo[1:nBH], cal$thr)
-FP_SimesCal/nBH
-FP_BetaCal <- maxFP(pvalo[1:nBH], cal_beta$thr)
-FP_BetaCal/nBH
-```
 
-The FDP bound obtained by these bounds is much tighter than the $k_0$-Bonferroni and Simes bounds:
+As expected from the theory, the post hoc bounds obtained after calibration by these methods is much tighter than the $k_0$-Bonferroni and Simes bounds:
 
 ```{r tighter-bounds}
-bounds <- c("k0-Bonferroni" = FP_k0, 
-         "Simes" = FP_Simes,
-         "Linear" = FP_SimesCal,
-         "Beta" = FP_BetaCal)
-names(bounds)[4] <- sprintf("Beta (K=%s)", K)
+resList <- list("Simes" = res_Simes,
+            "Linear" = res,
+            "Beta" = res_Beta)
+names(resList)[3] <- sprintf("Beta (K=%s)", K)
 
-tab <- data.frame("Method" = names(bounds), 
-                  "Lower bound on True Positives" = nBH - bounds, 
-                  "Upper bound on False Discovery Proportion" = ceiling(bounds/nBH*100)/100,
-                  check.names = FALSE, row.names = NULL)
-knitr::kable(tab)
+bounds <- sapply(resList, bound, S_BH)
+rownames(bounds) <- c("Lower bound on True Positives", "Upper bound on False Discovery Proportion")
+knitr::kable(t(bounds), digits = 2)
 ```
 
 In the next two sections we illustrate the use of these improved bounds in order to build
@@ -245,23 +227,10 @@ In the absence of prior information on genes, a natural idea is to rank them by 
 
 We illustrate the use of post-hoc methods to provide this type of information. More specifcally, we build confidence statements on the number of true/false positives within the top $k$ most significant genes in a differential gene expression study, where $k$ may be defined by the user after seing the data, and multiple choices of $k$ are allowed. 
 
-The method of @GS2011 makes it possible to calculate a confidence envelope on the number of true positives among the most significant genes. This is obtained as follows via the `sansSouci` package:
-
-```{r plot-conf-envelope}
-xmax <- 300
-ce_Simes <- confidenceEnvelope(dex$p.value, refFamily = 'Simes', param = alpha)
-p <- plotConfidenceEnvelope(ce_Simes, xmax = xmax)
-p + geom_vline(xintercept = nBH, color = "gray", linetype = "dotted", size = 1.5) +
-  geom_line(size=1.5)
-```
-
-The confidence envelopes obtained by calibration of the Simes and Beta families can be compared graphically to the Simes envelope:
+The confidence envelopes obtained by calibration of the Simes and Beta families can be compared graphically to the (parametric) Simes envelope of @GS2011:
 
 ```{r, conf-env-plot}
-conf_envs <- list("Simes" = ce_Simes,
-                  "Linear" = cal$conf_env,
-                  "Beta" = cal_beta$conf_env)
-names(conf_envs)[3] <- sprintf("Beta (K=%s)", K)
+conf_envs <- lapply(resList, bound, envelope = TRUE)
 cols <- RColorBrewer::brewer.pal(length(conf_envs), "Dark2")
 p <- plotConfidenceEnvelope(conf_envs, xmax = 300, cols = cols)
 p + geom_vline(xintercept = nBH, color = "gray", linetype = "dotted", size = 1.5) +
@@ -275,10 +244,6 @@ Both calibrated envelopes outperform the Simes envelope in this example.
 For an interactive volcano plot, see the [volcano plot shiny application](https://pneuvial.shinyapps.io/volcano-plot/).
 
 ```{r volcano-setup}
-thrs <- list("Simes" = thr_Simes,
-             "Lines" = cal$thr,
-             "Beta"= cal_beta$thr)
-names(thrs) <- names(conf_envs)
 q <- 0.05
 r <-  0.3
 ```
@@ -288,8 +253,7 @@ Let us assume that we are interested in genes selected by the BH procedure at le
 
 ```{r volcano-plot-Simes}
 ylim <- c(0, 6)
-thr <- thrs[["Simes"]]
-vo <- volcanoPlot(dat, categ = categ, thr = thr, q = q, r = r, ylim = ylim)
+volcano_plot(res_Simes, q = q, r = r, ylim = ylim)
 ```
 
 This type of plot is called a "volcano plot" @CC2003. Post hoc inference makes it possible to obtain statistical guarantees on selections such as the ones represented in the above figure. 
@@ -297,34 +261,35 @@ This type of plot is called a "volcano plot" @CC2003. Post hoc inference makes i
 The substantial gain in power offered by the above-described calibration is illustrated as follows for the Simes reference family:
 
 ```{r volcano-plot-Simes-calibrated}
-thr <- thrs[["Linear"]]
-volcanoPlot(dat, categ = categ, thr = thr, q = q, r = r, ylim = ylim)
+volcano_plot(res, q = q, r = r, ylim = ylim)
 ```
 
 and for the Beta reference family.
 
 ```{r volcano-plot-Beta-calibrated}
-thr <- thrs[[sprintf("Beta (K=%s)", K)]]
-volcanoPlot(dat, categ = categ, thr = thr, q = q, r = r, ylim = ylim)
+volcano_plot(res_Beta, q = q, r = r, ylim = ylim)
 ```
 
 The comparison between these bounds may be summarized by the following Table:
 
 ```{r compare-volcano-bounds}
-all_bounds <- function(pvals, thrs) {
-  c("|S|" = length(pvals), sapply(thrs, function(thr) minTP(pvals, thr)))
+fc <- fold_changes(res)
+S_pos <- which(fc >= r & adjp_BH <= q)
+S_neg <- which(fc <= -r & adjp_BH <= q)
+S_all <- union(S_pos, S_neg)
+
+all_bounds <- function(S, resList) {
+  c(length(S), sapply(resList, bound, S, "TP"))
 }
-pval_pos <- subset(dexo, meanDiff >= r & adjp <= q)$p.value
-pval_neg <- subset(dexo, meanDiff <= -r & adjp <= q)$p.value
-pval_all <- c(pval_pos, pval_neg)
-tab <- rbind(all_bounds(pval_pos, thrs), 
-             all_bounds(pval_neg, thrs),
-             all_bounds(pval_all, thrs))
+tab <- rbind(all_bounds(S_pos, resList), 
+             all_bounds(S_neg, resList),
+             all_bounds(S_all, resList))
 tab <- cbind(c("BH-adjusted p.value < q and fold change > r",
                "BH-adjusted p.value < q and fold change < -r",
                "BH-adjusted p.value < q and |fold change| > r"), 
              tab)
 cap <- "Post hoc bounds on true positives in user-defined gene selections"
+#knitr::kable(tab, caption = cap, format = "latex")
 knitr::kable(tab, caption = cap)
 ```
 

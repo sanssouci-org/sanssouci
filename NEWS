@@ -9,7 +9,6 @@ Version 0.9.4 [2020-12-24]
 * Volcano plot shiny app: improved user interface
 
 
-
 Version 0.9.3 [2020-11-25]
 
 * Increased modularity in get_pivotal_stat
