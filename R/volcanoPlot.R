@@ -1,5 +1,22 @@
 #' Volcano plot
 #' 
+#' @param x An object. See individual methods for specifics
+#' @param ... Other arguments passed to methods
+#' @export
+volcano_plot <- function(x, ...) UseMethod("volcano_plot")
+
+#' @inheritParams volcano_plot
+#' @export
+volcano_plot.SansSouci <- function(x, ...) {
+    object <- x; rm(x);
+    pval <- p_values(object)
+    fc <- fold_changes(object)
+    thr <- thresholds(object)
+    volcano_plot(pval = pval, fc = fc, thr = thr, ...)
+}
+
+#' Volcano plot
+#' 
 #' Volcano plot for differential expression studies
 #' 
 #' @param X A matrix of \eqn{m} variables (hypotheses) by \eqn{n} observations
@@ -40,7 +57,8 @@
 #' categ <- sim$categ
 #' alpha <- 0.2
 #' cal <- calibrateJER(X = X, categ = categ, B = 1e2, alpha = alpha, refFamily="Simes")
-#' sel <- volcano_plot(X = X, categ = categ, thr = cal$thr, q = 0.2, r = 0.2, ylim = c(0, 6))
+#' tests <- rowWelchTests(X, categ)
+#' sel <- volcano_plot(tests$p.value, tests$meanDiff, thr = cal$thr, q = 0.2, r = 0.2, ylim = c(0, 6))
 #' 
 #' # Compare bound to reality
 #' TP <- sum(sim$H[sel])

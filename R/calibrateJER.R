@@ -65,15 +65,15 @@
 #' #   ie upper confidence bound for the number of false positives 
 #' #   among the k most significant items for all k
 #' env <- cal$conf_env
-#' plotConfidenceEnvelope(env, xmax = 200)
+#' plot_conf_envelope(env, xmax = 200)
 #'   
 #' ## Compare to Simes (without calibration) and "Oracle" (ie truth from the simulation settings)
-#' env_Simes <- confidenceEnvelope(cal$p.values, refFamily = "Simes", param = alpha)
-#' env_Oracle <- confidenceEnvelope(cal$p.values, refFamily = "Oracle", param = (sim$H == 0))
+#' env_Simes <- conf_envelope(cal$p.values, refFamily = "Simes", param = alpha)
+#' env_Oracle <- conf_envelope(cal$p.values, refFamily = "Oracle", param = (sim$H == 0))
 #' all_env <- list("Simes + calibration" = env, 
 #'                 "Simes"= env_Simes, 
 #'                 "Oracle" = env_Oracle)
-#' plotConfidenceEnvelope(all_env, xmax = 200)
+#' plot_conf_envelope(all_env, xmax = 200)
 #' 
 #' # Application 2a: bound on the number of false positives in one or 
 #' #    more user-defined selections
@@ -119,20 +119,20 @@ calibrateJER <- function(X, categ, B, alpha,
     res <- calibrateJER0(pval0, refFamily = refFamily, alpha = alpha, 
                          p.values = pval, maxStepsDown = maxStepsDown, kMax = K)
     # fam <- toFamily(refFamily, res$lambda)
-    conf_env <- confidenceEnvelope(p.values = pval, 
-                                   refFamily = refFamily, 
-                                   param = res$lambda, K = K)
-    proc <- sprintf("%s + calibration", refFamily)
-    if (K < m) {
-        proc <- sprintf("%s (K = %s)", proc, K)
-    }
-    conf_env$procedure <- proc
-    
+    # conf_env <- conf_envelope(p.values = pval, 
+    #                                refFamily = refFamily, 
+    #                                param = res$lambda, K = K)
+    # proc <- sprintf("%s + calibration", refFamily)
+    # if (K < m) {
+    #     proc <- sprintf("%s (K = %s)", proc, K)
+    # }
+    # conf_env$procedure <- proc
+    ce <- conf_env(p.values = pval, thr = res$thr, lab = refFamily, envelope = TRUE)    
     calib <- list(p.values = pval, 
                   fold_changes = fc,
                   piv_stat = res$pivStat, 
                   thr = res$thr, 
                   lambda = res$lambda, 
-                  conf_env = conf_env) 
+                  conf_env = ce) 
     return(calib)
 }
