@@ -106,6 +106,9 @@ volcano_plot.numeric <- function(pval, fc, thr,
     }
     plot(fc, logp, pch = pch, cex = cexs, col = cols, 
          xlab = xlab, ylab = ylab, ylim = ylim)
+    # axis4 <- thrYaxis(thr, max(ylim))
+    # axis(side = 4, at = axis4$pvalue, labels = axis4$num, las = 1)
+    # abline(h = -log10(thr[1:100]), col = "lightgray")
     rect(xleft = -infty, ybottom = y_thr, xright = -r, ytop = infty, 
          col = col[3], border = NA, lwd = 2)
     rect(xleft = r, ybottom = y_thr, xright = infty, ytop = infty, 
@@ -123,4 +126,18 @@ volcano_plot.numeric <- function(pval, fc, thr,
                       "At least" ~ .(TP12) ~ "true positives (FDP" <= .(FDP12) ~")"))
     title(bq)
     invisible(sel12)
+}
+
+thrYaxis <- function(thr, maxlogp){
+    df1 <- data.frame(num = 1:length(thr)-1, pvalue=-log10(thr))
+    df2 <- data.frame(df1[c(1),])
+    valeurTest <- df2[c(dim(df2)[1]),"pvalue"]
+    for (i in 1:dim(df1)[1]){
+        mod <- if(df1[i,"num"] < 100){ 1} else if(df1[i,"num"] < 500){ 10} else if(df1[i,"num"] < 1000){50}else{100}
+        if (valeurTest - df1[i,"pvalue"] > 0.3*maxlogp/12.5 & df1[i,"num"]%%mod == 0){
+            df2 <- rbind(df2, (df1[i,]))
+            valeurTest <- df1[i,"pvalue"]
+        }
+    }
+    return(df2)
 }

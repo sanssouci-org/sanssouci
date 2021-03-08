@@ -121,7 +121,7 @@ fit.SansSouci <- function(object, B, alpha,
     } else {
         ## B=0: no calibration!
         rwt <- rowTestFUN(mat = Y, categ = groups, alternative = alternative)
-        p.values <- rwt$p.values
+        p.values <- rwt$p.value
         fc <- rwt$meanDiff
         lambda <- alpha
         if (refFamily %in% c("Simes", "Linear")) {
@@ -285,7 +285,7 @@ bound <- function(object, S, what, envelope = FALSE, ...) UseMethod("bound")
 
 #' @export
 bound.SansSouci <- function(object, S = 1:n_hyp(object), 
-                          what = c("TP", "FDP"), light = FALSE, envelope = FALSE) {
+                          what = c("TP", "FDP"), envelope = FALSE) {
     p.values <- p_values(object)
     thr <- thresholds(object)
     lab <- label(object)
@@ -293,8 +293,9 @@ bound.SansSouci <- function(object, S = 1:n_hyp(object),
         stop("'S' is not a subset of hypotheses")
     }
     bounds <- conf_env(p.values = p.values[S], thr = thr, lab = lab, what = what, envelope = envelope)
-    if (light) {
+    if (!envelope) {
         bounds <- bounds[, "bound"]
+        names(bounds) <- what
     }
     return(bounds)
 }
