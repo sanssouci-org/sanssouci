@@ -120,7 +120,9 @@ fit.SansSouci <- function(object, B, alpha,
                         K = K, verbose = verbose)
     } else {
         ## B=0: no calibration!
-        p.values <- rowTestFUN(mat = Y, categ = groups, alternative = alternative)$p.value
+        rwt <- rowTestFUN(mat = Y, categ = groups, alternative = alternative)
+        p.values <- rwt$p.values
+        fc <- rwt$meanDiff
         lambda <- alpha
         if (refFamily %in% c("Simes", "Linear")) {
             thr <- SimesThresholdFamily(m, kMax = K)(alpha)
@@ -128,7 +130,8 @@ fit.SansSouci <- function(object, B, alpha,
             thr <- BetaThresholdFamily(m, kMax = K)(alpha)
         }
         cal <- list(p.values = p.values,
-                    pivStat = NULL,
+                    fold_changes = fc,
+                    piv_stat = NULL,
                     thr = thr,
                     lambda = alpha,
                     conf_env = NULL)
@@ -144,10 +147,14 @@ p_values <- function(object) UseMethod("p_values")
 p_values.SansSouci <- function(object) object$output$p.values
 
 #' @export
+fold_changes <- function(object) UseMethod("fold_changes")
+#' @export
+fold_changes.SansSouci <- function(object) object$output$fold_changes
+
+#' @export
 thresholds <- function(object) UseMethod("thresholds")
 #' @export
 thresholds.SansSouci <- function(object) object$output$thr
-
 
 #' Post hoc bounds
 #' 
@@ -309,8 +316,8 @@ volcano_plot <- function(x, ...) UseMethod("volcano_plot")
 #' @export
 volcano_plot.SansSouci <- function(x, ...) {
     object <- x; rm(x);
-    Y <- object$input$Y
-    groups <- object$input$groups
+    pval <- p_values(object)
+    fc <- fold_changes(object)
     thr <- thresholds(object)
-    volcano_plot(Y, groups, categ, thr, ...)
+    volcano_plot(pval = pval, fc = fc, thr = thr, ...)
 }

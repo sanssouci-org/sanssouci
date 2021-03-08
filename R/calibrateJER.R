@@ -110,19 +110,29 @@ calibrateJER <- function(X, categ, B, alpha,
     
     tests <- testByRandomization(X, categ = categ, B = B, alternative = alternative, rowTestFUN = rowTestFUN)
     pval0 <- tests$p0
-    pval <- tests$p
-
+    rwt <- rowTestFUN(X, categ = categ, alternative = alternative)
+    pval <- rwt$p.value
+    fc <- rwt$meanDiff
+    stopifnot(identical(tests$p, pval)) ## sanity check
+    
     rm(tests)
     res <- calibrateJER0(pval0, refFamily = refFamily, alpha = alpha, 
                          p.values = pval, maxStepsDown = maxStepsDown, kMax = K)
     # fam <- toFamily(refFamily, res$lambda)
-    conf_env <- confidenceEnvelope(p.values = pval, refFamily = refFamily, param = res$lambda, K = K)
+    conf_env <- confidenceEnvelope(p.values = pval, 
+                                   refFamily = refFamily, 
+                                   param = res$lambda, K = K)
     proc <- sprintf("%s + calibration", refFamily)
     if (K < m) {
         proc <- sprintf("%s (K = %s)", proc, K)
     }
     conf_env$procedure <- proc
     
-    calib <- list(p.values = pval, pivStat = res$pivStat, thr = res$thr, lambda = res$lambda, conf_env = conf_env) 
+    calib <- list(p.values = pval, 
+                  fold_changes = fc,
+                  piv_stat = res$pivStat, 
+                  thr = res$thr, 
+                  lambda = res$lambda, 
+                  conf_env = conf_env) 
     return(calib)
 }

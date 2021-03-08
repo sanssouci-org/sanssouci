@@ -40,33 +40,28 @@
 #' categ <- sim$categ
 #' alpha <- 0.2
 #' cal <- calibrateJER(X = X, categ = categ, B = 1e2, alpha = alpha, refFamily="Simes")
-#' sel <- volcanoPlot(X = X, categ = categ, thr = cal$thr, q = 0.2, r = 0.2, ylim = c(0, 6))
+#' sel <- volcano_plot(X = X, categ = categ, thr = cal$thr, q = 0.2, r = 0.2, ylim = c(0, 6))
 #' 
 #' # Compare bound to reality
 #' TP <- sum(sim$H[sel])
 #' FP <- sum(1-sim$H[sel])
 #' FDP <- FP/length(sel)
 
-volcano_plot.matrix <- function(X, categ, thr,
+volcano_plot.numeric <- function(pval, fc, thr,
                         p = 1, q = 1, r = 0,
                         cex = c(0.2, 0.6), 
                         col = c("#33333333", "#FF0000", "#FF666633"),
-                        pch = 19, ylim = NULL) {
+                        pch = 19, ylim = NULL, ...) {
     if (p <1 && q < 1) {
         warning("Filtering both on p-values and BH-adjusted p-values")
     }
-    m <- nrow(X)
+    m <- length(pval)
     
-    ## Student/Welch tests
-    dex <- rowWelchTests(X, categ)
-
-    ## p-values
-    pval <- dex[["p.value"]]
+    ## sanity checks
+    stopifnot(length(fc) == m)
+    stopifnot(length(thr) <= m)
+    
     logp <- -log10(pval)
-
-    ## fold changes
-    fc <- dex$meanDiff  
-    
     adjp <- p.adjust(pval, method = "BH")  ## adjusted p-values
     y_sel <- which((adjp <= q) &           ## selected by q-value
                        (pval <= p))        ##          or p-value
