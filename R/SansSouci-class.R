@@ -258,13 +258,11 @@ min_TDP.SansSouci <- function(object, S = 1:n_hyp(object), envelope = FALSE, ...
 #' \item{TP}{Lower bound on the proportion of true positives in the 'x' most significant items}}
 #' Defaults to \code{c("TP", "FDP")}.
 #' 
-#' @return A \code{data.frame} with \eqn{m} rows and 5 columns: \describe{
+#' @return If \code{light} is \code{FALSE} (the default), a \code{data.frame} with \eqn{m} rows and 4 columns: \describe{
 #' \item{x}{Number of most significant items selected}
-#' \item{family}{Matches input argument \code{refFamily}}
-#' \item{param}{Matches argument \code{param}}
-#' \item{procedure}{Label for the procedure, typically of the form '<refFamily>(<param>)'}
+#' \item{label}{Label for the procedure, typically of the form '<refFamily>(<param>)'}
 #' \item{bound}{Value of the post hoc bound}
-#' \item{stat}{Type of post hoc bound, as specified by argument \code{bound}}
+#' \item{stat}{Type of post hoc bound, as specified by argument \code{bound}}. If \code{light} is \code{TRUE}, only the value of the bound is returned. 
 #' }
 #' @export
 #' @examples
@@ -287,7 +285,7 @@ bound <- function(object, S, what, envelope = FALSE, ...) UseMethod("bound")
 
 #' @export
 bound.SansSouci <- function(object, S = 1:n_hyp(object), 
-                          what = c("TP", "FDP"), envelope = FALSE) {
+                          what = c("TP", "FDP"), light = FALSE, envelope = FALSE) {
     p.values <- p_values(object)
     thr <- thresholds(object)
     lab <- label(object)
@@ -295,6 +293,9 @@ bound.SansSouci <- function(object, S = 1:n_hyp(object),
         stop("'S' is not a subset of hypotheses")
     }
     bounds <- conf_env(p.values = p.values[S], thr = thr, lab = lab, what = what, envelope = envelope)
+    if (light) {
+        bounds <- bounds[, "bound"]
+    }
     return(bounds)
 }
 
