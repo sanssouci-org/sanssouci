@@ -24,7 +24,7 @@ SansSouci <- function(Y, groups) {
                           alpha = NULL,
                           output = NULL), 
                      class = "SansSouci")
-    obj
+    return(obj)
 }
 
 #' @export
@@ -88,10 +88,9 @@ print.SansSouci <- function(object) {
     invisible(object)
 }
 
-
-
 #' @describeIn calibrateJER Fit SansSouci object
 #' @importFrom generics fit
+#' @export fit
 #' @export
 fit.SansSouci <- function(object, B, alpha, 
                            alternative = c("two.sided", "less", "greater"),
@@ -112,12 +111,28 @@ fit.SansSouci <- function(object, B, alpha,
     Y <- object$input$Y
     groups <- object$input$groups
     
-    cal <- calibrateJER(X = Y, categ = groups, B=B, alpha=alpha, 
+    if (B>0) {
+        cal <- calibrateJER(X = Y, categ = groups, B=B, alpha=alpha, 
                         alternative = alternative, 
                         rowTestFUN = rowTestFUN, 
                         refFamily = refFamily, 
                         maxStepsDown = maxStepsDown, 
                         K = K, verbose = verbose)
+    } else {
+        ## B=0: no calibration!
+        p.values <- rowTestFUN(mat = Y, categ = groups, alternative = alternative)$p.value
+        lambda <- alpha
+        if (refFamily %in% c("Simes", "Linear")) {
+            thr <- SimesThresholdFamily(m, kMax = K)(alpha)
+        } else if (refFamily == "Beta") {
+            thr <- BetaThresholdFamily(m, kMax = K)(alpha)
+        }
+        cal <- list(p.values = p.values,
+                    pivStat = NULL,
+                    thr = thr,
+                    lambda = alpha,
+                    conf_env = NULL)
+    }
     object$output <- cal
     object
 }
@@ -284,6 +299,18 @@ bound.SansSouci <- function(object, S = 1:n_hyp(object),
 #' @param ... Further arguments to be passed to \code{posthoc_bound}
 #' @export
 plot.SansSouci <- function(x, y, xmax = n_hyp(x), ...) {
-    ce <- posthoc_bound(x, envelope = TRUE, ...)
+    ce <- bound(x, envelope = TRUE, ...)
     plotConfidenceEnvelope(ce, xmax = xmax)
+}
+
+## TODO: method volcano plot !
+#' @export
+volcano_plot <- function(x, ...) UseMethod("volcano_plot")
+#' @export
+volcano_plot.SansSouci <- function(x, ...) {
+    object <- x; rm(x);
+    Y <- object$input$Y
+    groups <- object$input$groups
+    thr <- thresholds(object)
+    volcano_plot(Y, groups, categ, thr, ...)
 }

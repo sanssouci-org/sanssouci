@@ -47,7 +47,7 @@
 #' FP <- sum(1-sim$H[sel])
 #' FDP <- FP/length(sel)
 
-volcanoPlot <- function(X, categ, thr,
+volcano_plot.matrix <- function(X, categ, thr,
                         p = 1, q = 1, r = 0,
                         cex = c(0.2, 0.6), 
                         col = c("#33333333", "#FF0000", "#FF666633"),
