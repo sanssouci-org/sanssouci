@@ -49,7 +49,7 @@ bound.SansSouci <- function(object, S = 1:nHyp(object),
     if (max(S) > nHyp(object)) {
         stop("'S' is not a subset of hypotheses")
     }
-    bounds <- confCurve(p.values = p.values[S], thr = thr, lab = lab, what = what, all = all)
+    bounds <- bound(object = p.values, S = S, thr = thr, lab = lab, what = what, all = all)
     if (!all) {
         bounds <- bounds[, "bound"]
         names(bounds) <- what
@@ -57,13 +57,22 @@ bound.SansSouci <- function(object, S = 1:nHyp(object),
     return(bounds)
 }
 
-confCurve <- function(p.values, thr, lab, 
+bound.numeric <- function(object, S, thr, lab, 
                      what = c("TP", "FDP"), all = FALSE) {
-    s <- length(p.values)
+    p.values <- object; rm(object);
+    s <- length(S)
     o <- order(p.values)
-    idxs <- seq(along = p.values)
-    sorted_p <- p.values[o]
-    maxFP <- curveMaxFP(sorted_p, thr) ## OK to do 'thr[length(S)]' here?
+    idxs <- seq_len(s)
+    maxFP <- rep(NA_integer_, s)
+    if (length(thr) == length(p.values) && all(thr %in% c(0,1))) {
+        # assume 'thr' is in fact the "truth" <=> Oracle thresholds
+        # then it suffices to count the number of '0' in 'thr', cumulatively
+        maxFP <- cumsum(thr[o[S]]==0) 
+    } else {
+        sorted_p <- p.values[o[S]]
+        maxFP <- curveMaxFP(sorted_p, thr) ## Would be faster to do 'thr[length(S)]' here. Is it correct?
+        rm(sorted_p, o, p.values)
+    }
     maxFDP <- maxFP/idxs
     what0 <- c("FP", "TP", "FDP", "TDP")
     if (!all(what %in% what0)) {
@@ -85,11 +94,10 @@ confCurve <- function(p.values, thr, lab,
     return(bounds)
 }
 
-
 #' Plot confidence bound
 #' 
 #' @param conf_bound A data.frame or a list of data.frames as output by 
-#'   \code{\link{confCurve}}
+#'   \code{\link{bound}}
 #'
 #' @param xmax Right limit of the plot
 #' @param cols A vector of colors of the same length as `conf_bound`

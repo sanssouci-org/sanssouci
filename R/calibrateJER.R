@@ -69,7 +69,7 @@
 #'   
 #' ## Compare to Simes (without calibration) and "Oracle" (ie truth from the simulation settings)
 #' cb_Simes <- confCurveFromFam(cal$p.values, refFamily = "Simes", param = alpha)
-#' cb_Oracle <- confCurveFromFam(cal$p.values, refFamily = "Oracle", param = (sim$H == 0))
+#' cb_Oracle <- confCurveFromFam(cal$p.values, refFamily = "Oracle", param = (sim$H == 1))
 #' all_cb <- list("Simes + calibration" = cb, 
 #'                 "Simes"= cb_Simes, 
 #'                 "Oracle" = cb_Oracle)
@@ -110,14 +110,17 @@ calibrateJER <- function(X, categ, B, alpha,
     
     tests <- testByRandomization(X, categ = categ, B = B, alternative = alternative, rowTestFUN = rowTestFUN)
     pval0 <- tests$p0
-    rwt <- rowTestFUN(X, categ = categ, alternative = alternative)
-    pval <- rwt$p.value
-    fc <- rwt$meanDiff
-    stopifnot(identical(tests$p, pval)) ## sanity check
-    
-    rm(tests)
+    pval <- tests$p
+    n_categ <- length(unique(categ))
+    fc <- NULL
+    if (n_categ == 2) { # two-sample tests: apply rowTestFUN to get fold changes...
+        rwt <- rowTestFUN(X, categ = categ, alternative = alternative)
+        fc <- rwt$meanDiff
+        stopifnot(identical(rwt$p.value, pval)) ## sanity check
+    }
     res <- calibrateJER0(pval0, refFamily = refFamily, alpha = alpha, 
                          p.values = pval, maxStepsDown = maxStepsDown, kMax = K)
+    rm(tests)
     # fam <- toFamily(refFamily, res$lambda)
     # conf_bound <- confCurveFromFam(p.values = pval, 
     #                                refFamily = refFamily, 
@@ -127,7 +130,8 @@ calibrateJER <- function(X, categ, B, alpha,
     #     proc <- sprintf("%s (K = %s)", proc, K)
     # }
     # conf_bound$procedure <- proc
-    cb <- confCurve(p.values = pval, thr = res$thr, lab = refFamily, all = TRUE)    
+    cb <- bound(pval, S = seq(along = pval), thr = res$thr, 
+                lab = refFamily, all = TRUE)    
     calib <- list(p.values = pval, 
                   fold_changes = fc,
                   piv_stat = res$pivStat, 

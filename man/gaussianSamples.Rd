@@ -78,6 +78,9 @@ plot(tests$T, col=colStat, main="Test statistics", pch=pch)
 legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
 
 }
+\seealso{
+[SansSouciSamples]
+}
 \author{
 Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 }

@@ -9,6 +9,9 @@ volcanoPlot <- function(x, ...) UseMethod("volcanoPlot")
 #' @export
 volcanoPlot.SansSouci <- function(x, ...) {
     object <- x; rm(x);
+    if (object$input$n_group == 1) {
+        stop("Can't do a volcano plot for one-sample tests!")
+    }
     pval <- pValues(object)
     fc <- foldChanges(object)
     thr <- thresholds(object)

@@ -48,27 +48,23 @@
 #' 
 confCurveFromFam <- function(p.values, refFamily, param, K = length(p.values), what = c("TP", "FDP")) {
     m <- length(p.values)
-    idxs <- 1:m
-    o <- order(p.values)
-    rk <- rank(p.values)
     fam0 <- c("Simes", "Beta", "Oracle")
     if (!(refFamily %in% fam0)) {
         stop("Unknown family: ", refFamily, "\n",
              "Only the following reference families are currently supported: ", 
              paste(fam0, collapse = ", "))
     }
+    thr <- NULL
     if (refFamily %in% c("Simes", "Linear")) {
         thr <- SimesThresholdFamily(m, kMax = K)(param)
-        max_FP <- curveMaxFP(p.values[o], thr)
     } else if (refFamily == "Beta") {
         thr <- BetaThresholdFamily(m, kMax = K)(param)
-        max_FP <- curveMaxFP(p.values[o], thr)
     } else if (refFamily == "Oracle") {
-        stopifnot(length(param) == m)
-        max_FP <- cumsum(o %in% which(param))
+        stopifnot(length(param) == m && all(param %in% c(0,1)))
+        thr <- param
     }
     proc <- sprintf("%s(%s)", refFamily, param)
-    confCurve(p.values, thr, lab = proc, what = what, all = TRUE)
+    bound(p.values, S = 1:m, thr, lab = proc, what = what, all = TRUE)
 }
 
 

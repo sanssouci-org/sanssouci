@@ -7,11 +7,11 @@
 \usage{
 \method{fit}{SansSouci}(
   object,
-  B,
   alpha,
+  B = ceiling(10/alpha),
   alternative = c("two.sided", "less", "greater"),
-  rowTestFUN = rowWelchTests,
-  refFamily = c("Simes", "Beta"),
+  rowTestFUN = NULL,
+  refFamily = c("Simes", "Beta", "Oracle"),
   maxStepsDown = 10L,
   K = nHyp(object),
   verbose = TRUE,
@@ -32,9 +32,9 @@ calibrateJER(
 )
 }
 \arguments{
-\item{B}{A numeric value, the number of permutations to be performed}
-
 \item{alpha}{Target JER level}
+
+\item{B}{A numeric value, the number of permutations to be performed}
 
 \item{alternative}{A character string specifying the alternative hypothesis.
 Must be one of "two.sided" (default), "greater" or "less".}
@@ -114,7 +114,7 @@ plotConfCurve(cb, xmax = 200)
   
 ## Compare to Simes (without calibration) and "Oracle" (ie truth from the simulation settings)
 cb_Simes <- confCurveFromFam(cal$p.values, refFamily = "Simes", param = alpha)
-cb_Oracle <- confCurveFromFam(cal$p.values, refFamily = "Oracle", param = (sim$H == 0))
+cb_Oracle <- confCurveFromFam(cal$p.values, refFamily = "Oracle", param = (sim$H == 1))
 all_cb <- list("Simes + calibration" = cb, 
                 "Simes"= cb_Simes, 
                 "Oracle" = cb_Oracle)

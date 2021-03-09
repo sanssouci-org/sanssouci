@@ -1,7 +1,8 @@
 #' Create an object of class "SansSouci"
 #' 
 #' @param Y A matrix of \eqn{m} variables (hypotheses) by \eqn{n} observations
-#' @param groups An optional numeric vector of \eqn{n} values in \eqn{0, 1}
+#' @param groups A numeric vector of \eqn{n} values in \eqn{0, 1}, the groups of observations on which to perform two-sample tests
+#' @param truth An optional numeric vector of $m$ values in ${0,1}$, the status of each null hypothesis (0 means H0 is true, 1 means H1 is true). Typically used in simulations.
 #' @return An object of class "SansSouci"
 #' @export
 #' 
@@ -20,14 +21,71 @@
 #' 
 #' res <- fit(a, B = 100, alpha = 0.1, refFamily="Beta", K=10)
 #' label(res)
-SansSouci <- function(Y, groups) {
-    obj <- structure(list(input = list(Y = Y, 
-                                       groups = groups),
+#' 
+SansSouci <- function(Y, groups, truth = NULL) {
+    ugroups <- unique(groups)
+    n_groups <- length(ugroups)
+    
+    if (n_groups > 1) {
+        categCheck(groups, ncol(Y))
+    }
+    if (!is.null(truth)) {
+        categCheck(truth, nrow(Y))
+    }
+    input = list(Y = Y, 
+                 groups = groups, 
+                 n_groups = n_groups)
+    input$truth <- truth
+    obj <- structure(list(input = input,
                           parameters = NULL,
                           alpha = NULL,
                           output = NULL), 
                      class = "SansSouci")
-    return(obj)
+    obj
+}
+
+
+#' Create an object of class "SansSouci" from simulated data
+#' 
+#' Create an object of class "SansSouci" from simulated data in the Gaussian
+#' equi-correlated model
+#' 
+#' @rdname SansSouci
+#' @param ... Parameters to be passed to [gaussianSamples]
+#' @seealso [gaussianSamples]
+#' @export
+#' @examples
+#' obj <- SansSouciSamples(m = 543, rho = 0.4, n = 210,
+#'                         pi0 = 0.8, SNR = 3, prob = 0.5)
+#' alpha <- 0.1
+#' 
+#' # Adaptive Simes (lambda-calibration)
+#' res <- fit(obj, B = 100, alpha = alpha, refFamily = "Simes")
+#' res
+#' # upper bound on number of signals if the entire data set
+#' # (and corresponding lower bound on FDP)
+#' bound(res)
+#' 
+#' # confidence curve 
+#' plot(res)
+#' 
+#' # comparison to other confidence curves
+#' # Parametric Simes (no calibration -- assume positive dependence (PRDS))
+#' res0 <- fit(obj, B = 0, alpha = alpha, refFamily = "Simes")
+#' res0
+#' 
+#' # Oracle
+#' oracle <- fit(obj, alpha = alpha, refFamily = "Oracle")
+#' oracle
+#' 
+#' confs <- list(Simes = bound(res0, all = TRUE),
+#'               "Simes+calibration" = bound(res, all = TRUE),
+#'               "Oracle" = bound(oracle, all = TRUE))
+#' plotConfCurve(confs)
+
+SansSouciSamples <- function(...) {
+    sim <- gaussianSamples(...)
+    SansSouci(Y = sim$X, groups = sim$categ, truth = sim$H)
 }
 
 #' SansSouci class
@@ -98,19 +156,29 @@ label.SansSouci <- function(object) {
 
 #' @rdname SansSouci-class
 #' @export
-print.SansSouci <- function(x, ...) {
+print.SansSouci <- function(x, ..., verbose = FALSE) {
     object <- x; rm(x)
-    cat("'SansSouci' object")
+    cat("'SansSouci' object:\n")
     input <- object$input
     if (!is.null(input)) {
-        msg <- sprintf(" with %d hypotheses.", 
-                       nHyp(object))
-        cat(msg)
+        cat("\tNumber of hypotheses: ", nHyp(object), "\n")
+        cat("\t", input$n_group, "-sample data", "\n", sep="")
         cat("\n")
-        cat("Data:")
-        cat("\n")
-        str(input$Y)
-        cat("\n")
+        if (verbose) {
+            cat("Data:")
+            cat("\n")
+            str(input$Y)
+            cat("\n")
+        }
+        truth <- input$truth
+        if (!is.null(truth)) {
+            cat("Truth: ")
+            cat("\n")
+            cat("\t", sum(truth), "false null hypotheses (signals)")
+            pi0 <- 1 - mean(truth)
+            cat(" out of ", nHyp(object), " (pi0=", round(pi0, 3), ")", sep = "")
+            cat("\n")
+        }
     }
     params <- object$parameters
     if (!is.null(params)) {
@@ -125,14 +193,21 @@ print.SansSouci <- function(x, ...) {
     output <- object$output
     if (!is.null(output)) {
         cat("Output:\n")
-        cat("\tp-values:\n")
-        print(summary(output$p.values))
-        cat("\tPivotal statistic:\n")
-        print(summary(output$pivStat))
+        if (verbose) {
+            cat("\tp-values:\n")
+            print(summary(output$p.values))
+            cat("\tCalibrated thresholds:")
+            if (all(output$thr %in% c(0,1))) {
+                print(table(output$thr))
+                cat("\n")
+            } else {
+                print(summary(output$thr))
+                cat("\tPivotal statistic:\n")
+                print(summary(output$piv_stat))
+            }
+            cat("\n")
+        }
         cat("\tCalibration parameter: lambda=", output$lambda, "\n", sep = "")
-        cat("\tCalibrated thresholds:\n")
-        print(summary(output$thr))
-        cat("\n")
     }
     invisible(object)
 }
@@ -141,34 +216,61 @@ print.SansSouci <- function(x, ...) {
 #' @importFrom generics fit
 #' @export fit
 #' @export
-fit.SansSouci <- function(object, B, alpha, 
+fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
                            alternative = c("two.sided", "less", "greater"),
-                           rowTestFUN = rowWelchTests, 
-                           refFamily = c("Simes", "Beta"), 
+                           rowTestFUN = NULL, 
+                           refFamily = c("Simes", "Beta", "Oracle"), 
                            maxStepsDown = 10L, K = nHyp(object), 
                            verbose = TRUE, ...) {
     alternative <- match.arg(alternative)
     refFamily <- match.arg(refFamily)
-    object$parameters <- list(B = B,
+    if (refFamily == "Oracle") {
+        truth <- object$input$truth
+        if (is.null(truth)) {
+            stop("'truth' should be available for 'Oracle'. See ?SansSouci")
+        }
+    }
+    Y <- object$input$Y
+    groups <- object$input$groups
+    n_groups <- object$input$n_groups
+    funName <- NA_character_
+    if (is.null(rowTestFUN)) {
+        if (object$input$n_groups == 1) {
+            rowTestFUN <- function(mat, categ, alternative) {
+                T <- rowSums(mat)/sqrt(length(categ))
+                p <- switch(alternative, 
+                             "two.sided" = 2*(pnorm(abs(T), lower.tail = FALSE)),
+                             "greater" = pnorm(T, lower.tail = FALSE),
+                             "less" = pnorm(T, lower.tail = TRUE))
+                data.frame(statistic = T, parameter = NA, p.value = p)
+            }
+            funName <- "testBySignFlipping"
+        } else if (object$input$n_groups == 2) {
+            rowTestFUN <- rowWelchTests
+            funName <- "rowWelchTests"
+        }
+    }  else {
+        funName <- as.character(substitute(rowTestFUN))
+    }
+    object$parameters <- list(
                      alpha = alpha,
+                     B = B,
                      alternative = alternative, 
                      rowTestFUN = rowTestFUN, 
-                     funName = as.character(substitute(rowTestFUN)),
+                     funName = funName,
                      refFamily = refFamily, 
                      maxStepsDown = maxStepsDown, 
                      K = nHyp(object), verbose = verbose)
-    Y <- object$input$Y
-    groups <- object$input$groups
     
-    if (B>0) {
-        cal <- calibrateJER(X = Y, categ = groups, B=B, alpha=alpha, 
+    if (B > 0 && refFamily != "Oracle") {
+        cal <- calibrateJER(X = Y, categ = groups, B = B, alpha = alpha, 
                         alternative = alternative, 
                         rowTestFUN = rowTestFUN, 
                         refFamily = refFamily, 
                         maxStepsDown = maxStepsDown, 
                         K = K, verbose = verbose)
     } else {
-        ## B=0: no calibration!
+        # no calibration!
         rwt <- rowTestFUN(mat = Y, categ = groups, alternative = alternative)
         p.values <- rwt$p.value
         fc <- rwt$meanDiff
@@ -177,6 +279,9 @@ fit.SansSouci <- function(object, B, alpha,
             thr <- SimesThresholdFamily(m, kMax = K)(alpha)
         } else if (refFamily == "Beta") {
             thr <- BetaThresholdFamily(m, kMax = K)(alpha)
+        } else if (refFamily == "Oracle") {
+            lambda <- 0  # 100% confidence -- should it be set to alpha for consistency?
+            thr <- object$input$truth
         }
         cal <- list(p.values = p.values,
                     fold_changes = fc,
