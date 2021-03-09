@@ -142,7 +142,7 @@ V <- sapply(idxs, FUN = function(ii) {
 res[["Partition"]] <- data.frame(idxs, V, method = "Partition")
 ```
 
-## Plot confidence envelopes
+## Plot confidence curves
 
 ```{r fig-params}
 library("ggplot2")
@@ -168,7 +168,7 @@ The "Tree" and "Partition" bounds are sharper than the "Simes" bound as soon as 
 
 Zooming on the first `r xymax` null hypotheses (in the order of the $p$-values):
 
-```{r zoom-plot-confidence-envelope, warning=FALSE}
+```{r zoom-plot-confidence-curve, warning=FALSE}
 pV + xlim(1, xymax) + ylim(0, xymax)
 ```
 
