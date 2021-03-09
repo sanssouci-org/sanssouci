@@ -42,11 +42,11 @@
 #' rwt <- rowWelchTests(sim$X, sim$categ, alternative = "greater")
 #' 
 #' # calculate, print, and plot confidence bound
-#' cb <- confBoundFam(rwt$p.value, refFamily = "Simes", param = 0.1)
+#' cb <- confCurveFromFam(rwt$p.value, refFamily = "Simes", param = 0.1)
 #' head(cb)
-#' plotConfBound(cb, xmax = 200) 
+#' plotConfCurve(cb, xmax = 200) 
 #' 
-confBoundFam <- function(p.values, refFamily, param, K = length(p.values), what = c("TP", "FDP")) {
+confCurveFromFam <- function(p.values, refFamily, param, K = length(p.values), what = c("TP", "FDP")) {
     m <- length(p.values)
     idxs <- 1:m
     o <- order(p.values)
@@ -68,7 +68,7 @@ confBoundFam <- function(p.values, refFamily, param, K = length(p.values), what 
         max_FP <- cumsum(o %in% which(param))
     }
     proc <- sprintf("%s(%s)", refFamily, param)
-    confBound(p.values, thr, lab = proc, what = what, all = TRUE)
+    confCurve(p.values, thr, lab = proc, what = what, all = TRUE)
 }
 
 

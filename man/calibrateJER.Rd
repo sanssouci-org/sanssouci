@@ -110,15 +110,15 @@ cal$lambda # > alpha (whp) if rho > 0
 #   ie upper confidence bound for the number of false positives 
 #   among the k most significant items for all k
 cb <- cal$conf_bound
-plotConfBound(cb, xmax = 200)
+plotConfCurve(cb, xmax = 200)
   
 ## Compare to Simes (without calibration) and "Oracle" (ie truth from the simulation settings)
-cb_Simes <- confBoundFam(cal$p.values, refFamily = "Simes", param = alpha)
-cb_Oracle <- confBoundFam(cal$p.values, refFamily = "Oracle", param = (sim$H == 0))
+cb_Simes <- confCurveFromFam(cal$p.values, refFamily = "Simes", param = alpha)
+cb_Oracle <- confCurveFromFam(cal$p.values, refFamily = "Oracle", param = (sim$H == 0))
 all_cb <- list("Simes + calibration" = cb, 
                 "Simes"= cb_Simes, 
                 "Oracle" = cb_Oracle)
-plotConfBound(all_cb, xmax = 200)
+plotConfCurve(all_cb, xmax = 200)
 
 # Application 2a: bound on the number of false positives in one or 
 #    more user-defined selections

@@ -49,7 +49,7 @@ bound.SansSouci <- function(object, S = 1:nHyp(object),
     if (max(S) > nHyp(object)) {
         stop("'S' is not a subset of hypotheses")
     }
-    bounds <- confBound(p.values = p.values[S], thr = thr, lab = lab, what = what, all = all)
+    bounds <- confCurve(p.values = p.values[S], thr = thr, lab = lab, what = what, all = all)
     if (!all) {
         bounds <- bounds[, "bound"]
         names(bounds) <- what
@@ -57,7 +57,7 @@ bound.SansSouci <- function(object, S = 1:nHyp(object),
     return(bounds)
 }
 
-confBound <- function(p.values, thr, lab, 
+confCurve <- function(p.values, thr, lab, 
                      what = c("TP", "FDP"), all = FALSE) {
     s <- length(p.values)
     o <- order(p.values)
@@ -89,7 +89,7 @@ confBound <- function(p.values, thr, lab,
 #' Plot confidence bound
 #' 
 #' @param conf_bound A data.frame or a list of data.frames as output by 
-#'   \code{\link{confBound}}
+#'   \code{\link{confCurve}}
 #'
 #' @param xmax Right limit of the plot
 #' @param cols A vector of colors of the same length as `conf_bound`
@@ -106,21 +106,21 @@ confBound <- function(p.values, thr, lab,
 #' 
 #' # calculate and plot confidence bound
 #' alpha <- 0.1
-#' ce <- confBoundFam(rwt$p.value, refFamily = "Simes", param = alpha)
-#' plotConfBound(ce, xmax = 200) 
+#' ce <- confCurveFromFam(rwt$p.value, refFamily = "Simes", param = alpha)
+#' plotConfCurve(ce, xmax = 200) 
 #' 
 #' # calculate and plot several confidence bounds
 #' B <- 100
 #' cal <- calibrateJER(X = dat, categ = categ, B = B, alpha = alpha, refFamily = "Simes")
 #' cal_beta <- calibrateJER(X = dat, categ = categ, B = B, alpha = alpha, refFamily = "Beta", K = 20)
-#' cec <- confBoundFam(rwt$p.value, refFamily = "Simes", param = cal$lambda)
+#' cec <- confCurveFromFam(rwt$p.value, refFamily = "Simes", param = cal$lambda)
 
 #' all_bounds <- list("Simes" = ce, 
 #'                 "Simes + calibration"= cal$conf_bound, 
 #'                 "Beta + calibration" = cal_beta$conf_bound)
-#' plotConfBound(all_bounds, xmax = 200)
+#' plotConfCurve(all_bounds, xmax = 200)
 #' 
-plotConfBound <- function(conf_bound, xmax, cols = NULL) {
+plotConfCurve <- function(conf_bound, xmax, cols = NULL) {
     nb <- 1
     if (class(conf_bound) == "data.frame") {    # (assume) a single conf. bound
         ## do nothing!

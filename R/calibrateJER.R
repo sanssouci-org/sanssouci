@@ -65,15 +65,15 @@
 #' #   ie upper confidence bound for the number of false positives 
 #' #   among the k most significant items for all k
 #' cb <- cal$conf_bound
-#' plotConfBound(cb, xmax = 200)
+#' plotConfCurve(cb, xmax = 200)
 #'   
 #' ## Compare to Simes (without calibration) and "Oracle" (ie truth from the simulation settings)
-#' cb_Simes <- confBoundFam(cal$p.values, refFamily = "Simes", param = alpha)
-#' cb_Oracle <- confBoundFam(cal$p.values, refFamily = "Oracle", param = (sim$H == 0))
+#' cb_Simes <- confCurveFromFam(cal$p.values, refFamily = "Simes", param = alpha)
+#' cb_Oracle <- confCurveFromFam(cal$p.values, refFamily = "Oracle", param = (sim$H == 0))
 #' all_cb <- list("Simes + calibration" = cb, 
 #'                 "Simes"= cb_Simes, 
 #'                 "Oracle" = cb_Oracle)
-#' plotConfBound(all_cb, xmax = 200)
+#' plotConfCurve(all_cb, xmax = 200)
 #' 
 #' # Application 2a: bound on the number of false positives in one or 
 #' #    more user-defined selections
@@ -119,7 +119,7 @@ calibrateJER <- function(X, categ, B, alpha,
     res <- calibrateJER0(pval0, refFamily = refFamily, alpha = alpha, 
                          p.values = pval, maxStepsDown = maxStepsDown, kMax = K)
     # fam <- toFamily(refFamily, res$lambda)
-    # conf_bound <- confBound(p.values = pval, 
+    # conf_bound <- confCurveFromFam(p.values = pval, 
     #                                refFamily = refFamily, 
     #                                param = res$lambda, K = K)
     # proc <- sprintf("%s + calibration", refFamily)
@@ -127,7 +127,7 @@ calibrateJER <- function(X, categ, B, alpha,
     #     proc <- sprintf("%s (K = %s)", proc, K)
     # }
     # conf_bound$procedure <- proc
-    cb <- confBound(p.values = pval, thr = res$thr, lab = refFamily, all = TRUE)    
+    cb <- confCurve(p.values = pval, thr = res$thr, lab = refFamily, all = TRUE)    
     calib <- list(p.values = pval, 
                   fold_changes = fc,
                   piv_stat = res$pivStat, 

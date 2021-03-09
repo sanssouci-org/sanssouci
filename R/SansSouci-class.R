@@ -229,6 +229,6 @@ thresholds.SansSouci <- function(object, ...) object$output$thr
 #' @export
 plot.SansSouci <- function(x, y, xmax = nHyp(x), ...) {
     cb <- bound(x, all = TRUE, ...)
-    plotConfBound(cb, xmax = xmax)
+    plotConfCurve(cb, xmax = xmax)
 }
 
