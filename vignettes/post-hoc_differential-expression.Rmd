@@ -27,7 +27,7 @@ fig.height=6
 This vignette reproduces figures from Section 9 in the book chapter: @BNR:chap. It demonstrates how the [`sansSouci`](https://github.com/pneuvial/sanssouci) package may be used to obtain post hoc confidence bounds on false positives in the case of differential gene expression analysis. After showing the output of a classical differential analysis based on False Discovery Rate control we illustrate the application of basic post-hoc bounds derived from probabilistic inequalities. 
 Then, we introduce more powerful post hoc methods (introduced by @blanchard20post-hoc) that yield tighter bounds by adapting to unknown dependence by randomization. Finally we demonstrate the use of these methods on two applications of post hoc methods:
 
-- confidence envelopes for the true or false positives
+- confidence curves (envelopes) for the true or false positives
 - statistical inference on volcano plots
 
 The methods described in this vignette are described in detail in the book chapter @BNR:chap and in the paper @blanchard20post-hoc. A shiny application for volcano plots is also available from https://pneuvial.shinyapps.io/volcano-plot/.
@@ -188,7 +188,7 @@ As discussed in @blanchard20post-hoc, the above-described bound has two major li
 To bypass these limitations, @blanchard20post-hoc have proposed a randomization-based procedure known as $\lambda$-calibration, which yields tighter bounds that are adapted to the dependency observed in the data set at hand^[A related approach has been proposed by @HSG2019, but no implementation is currently available for this approach.]. In the case of two-sample tests, this calibration can be achieved by permutation of class labels:
 
 ```{r calibration, cache=TRUE}
-B <- 100
+B <- 1000
 res <- fit(obj, B = B, alpha = alpha, refFamily = "Simes")
 ```
 
@@ -216,28 +216,28 @@ knitr::kable(t(bounds), digits = 2)
 
 In the next two sections we illustrate the use of these improved bounds in order to build
 
-- confidence envelopes for the true or false positives
+- confidence curves for the true or false positives
 - confidence statements for volcano plots
 
-# Confidence envelopes on "top-$k$" lists
+# Confidence curves on "top-$k$" lists
 
 In the absence of prior information on genes, a natural idea is to rank them by decreasing statistical significance, and a natural question to ask is: 
 
-> Can we provide a lower confidence envelope on the number (or proportion) of truly differentially expressed genes among the most significant genes?
+> Can we provide a lower confidence curve on the number (or proportion) of truly differentially expressed genes among the most significant genes?
 
 We illustrate the use of post-hoc methods to provide this type of information. More specifcally, we build confidence statements on the number of true/false positives within the top $k$ most significant genes in a differential gene expression study, where $k$ may be defined by the user after seing the data, and multiple choices of $k$ are allowed. 
 
-The confidence envelopes obtained by calibration of the Simes and Beta families can be compared graphically to the (parametric) Simes envelope of @GS2011:
+The confidence curves obtained by calibration of the Simes and Beta families can be compared graphically to the (parametric) Simes curve of @GS2011:
 
 ```{r, conf-env-plot}
-conf_envs <- lapply(resList, bound, envelope = TRUE)
-cols <- RColorBrewer::brewer.pal(length(conf_envs), "Dark2")
-p <- plotConfidenceEnvelope(conf_envs, xmax = 300, cols = cols)
+confBounds <- lapply(resList, bound, all = TRUE)
+cols <- RColorBrewer::brewer.pal(length(confBounds), "Dark2")
+p <- plotConfCurve(confBounds, xmax = 300, cols = cols)
 p + geom_vline(xintercept = nBH, color = "gray", linetype = "dotted", size = 1.5) +
   geom_line(size = 1.5)
 ```
 
-Both calibrated envelopes outperform the Simes envelope in this example. 
+Both calibrated curves outperform the Simes curve in this example. 
 
 # Volcano plots
 
@@ -253,7 +253,7 @@ Let us assume that we are interested in genes selected by the BH procedure at le
 
 ```{r volcano-plot-Simes}
 ylim <- c(0, 6)
-volcano_plot(res_Simes, q = q, r = r, ylim = ylim)
+volcanoPlot(res_Simes, q = q, r = r, ylim = ylim)
 ```
 
 This type of plot is called a "volcano plot" @CC2003. Post hoc inference makes it possible to obtain statistical guarantees on selections such as the ones represented in the above figure. 
@@ -261,19 +261,19 @@ This type of plot is called a "volcano plot" @CC2003. Post hoc inference makes i
 The substantial gain in power offered by the above-described calibration is illustrated as follows for the Simes reference family:
 
 ```{r volcano-plot-Simes-calibrated}
-volcano_plot(res, q = q, r = r, ylim = ylim)
+volcanoPlot(res, q = q, r = r, ylim = ylim)
 ```
 
 and for the Beta reference family.
 
 ```{r volcano-plot-Beta-calibrated}
-volcano_plot(res_Beta, q = q, r = r, ylim = ylim)
+volcanoPlot(res_Beta, q = q, r = r, ylim = ylim)
 ```
 
 The comparison between these bounds may be summarized by the following Table:
 
 ```{r compare-volcano-bounds}
-fc <- fold_changes(res)
+fc <- foldChanges(res)
 S_pos <- which(fc >= r & adjp_BH <= q)
 S_neg <- which(fc <= -r & adjp_BH <= q)
 S_all <- union(S_pos, S_neg)
@@ -284,10 +284,11 @@ all_bounds <- function(S, resList) {
 tab <- rbind(all_bounds(S_pos, resList), 
              all_bounds(S_neg, resList),
              all_bounds(S_all, resList))
-tab <- cbind(c("BH-adjusted p.value < q and fold change > r",
-               "BH-adjusted p.value < q and fold change < -r",
-               "BH-adjusted p.value < q and |fold change| > r"), 
-             tab)
+plab <- paste("BH-adjusted p.value <", q)
+lab <- c(paste(plab, "&", " fold change  > ", r),
+         paste(plab, "&", " fold change  < ", -r),
+         paste(plab, "&", "|fold change| > ", r))
+tab <- cbind(lab, tab)
 cap <- "Post hoc bounds on true positives in user-defined gene selections"
 #knitr::kable(tab, caption = cap, format = "latex")
 knitr::kable(tab, caption = cap)
@@ -310,5 +311,3 @@ rmarkdown::render("post-hoc_differential-expression.Rmd", output_format = "html_
 ```
 
 # References
-
-

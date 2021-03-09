@@ -206,11 +206,13 @@ pValues.SansSouci <- function(object, ...) {
 #' 
 #' @inheritParams nHyp
 #' @export
-fold_changes <- function(object, ...) UseMethod("fold_changes")
+foldChanges <- function(object, ...) UseMethod("foldChanges")
 
 #' @rdname SansSouci-class
 #' @export
-fold_changes.SansSouci <- function(object, ...) object$output$fold_changes
+foldChanges.SansSouci <- function(object, ...) {
+    object$output$fold_changes
+}
 
 #' Get thresholds
 #' @export

@@ -9,8 +9,8 @@ volcanoPlot <- function(x, ...) UseMethod("volcanoPlot")
 #' @export
 volcanoPlot.SansSouci <- function(x, ...) {
     object <- x; rm(x);
-    pval <- p_values(object)
-    fc <- fold_changes(object)
+    pval <- pValues(object)
+    fc <- foldChanges(object)
     thr <- thresholds(object)
     volcanoPlot(pval = pval, fc = fc, thr = thr, ...)
 }
