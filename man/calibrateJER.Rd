@@ -13,7 +13,7 @@
   rowTestFUN = rowWelchTests,
   refFamily = c("Simes", "Beta"),
   maxStepsDown = 10L,
-  K = n_hyp(object),
+  K = nHyp(object),
   verbose = TRUE,
   ...
 )
@@ -110,15 +110,15 @@ cal$lambda # > alpha (whp) if rho > 0
 #   ie upper confidence bound for the number of false positives 
 #   among the k most significant items for all k
 env <- cal$conf_env
-plot_conf_envelope(env, xmax = 200)
+plotConfEnvelope(env, xmax = 200)
   
 ## Compare to Simes (without calibration) and "Oracle" (ie truth from the simulation settings)
-env_Simes <- conf_envelope(cal$p.values, refFamily = "Simes", param = alpha)
-env_Oracle <- conf_envelope(cal$p.values, refFamily = "Oracle", param = (sim$H == 0))
+env_Simes <- confEnvelope(cal$p.values, refFamily = "Simes", param = alpha)
+env_Oracle <- confEnvelope(cal$p.values, refFamily = "Oracle", param = (sim$H == 0))
 all_env <- list("Simes + calibration" = env, 
                 "Simes"= env_Simes, 
                 "Oracle" = env_Oracle)
-plot_conf_envelope(all_env, xmax = 200)
+plotConfEnvelope(all_env, xmax = 200)
 
 # Application 2a: bound on the number of false positives in one or 
 #    more user-defined selections

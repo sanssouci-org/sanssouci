@@ -149,7 +149,7 @@ gen.p.values <- function(m, mu = rep(0, length(mu)), rho = 0) {
 #' Vp <- curveVstar_tree(treeFam, op)
 #'
 #' # Simes
-#' ce <- conf_envelope(pvals, refFamily = "Simes", param = alpha, what = "FP")
+#' ce <- confEnvelope(pvals, refFamily = "Simes", param = alpha, what = "FP")
 #' VpS <- ce$bound
 #'
 #' plot(1:m, 1:m-Vp, t = 's',

@@ -1,6 +1,6 @@
 #' Post hoc confidence bounds on the true/false positives
 #' 
-#' @inheritParams n_hyp
+#' @inheritParams nHyp
 #' @param S A subset of indices
 #' @export
 bound <- function(object, S, ...) UseMethod("bound")
@@ -41,15 +41,15 @@ bound <- function(object, S, ...) UseMethod("bound")
 #' plot(res, S=which(sim$H==1))
 #' 
 #' @export
-bound.SansSouci <- function(object, S = 1:n_hyp(object), 
+bound.SansSouci <- function(object, S = 1:nHyp(object), 
                             what = c("TP", "FDP"), envelope = FALSE) {
-    p.values <- p_values(object)
+    p.values <- pValues(object)
     thr <- thresholds(object)
     lab <- label(object)
-    if (max(S) > n_hyp(object)) {
+    if (max(S) > nHyp(object)) {
         stop("'S' is not a subset of hypotheses")
     }
-    bounds <- conf_env(p.values = p.values[S], thr = thr, lab = lab, what = what, envelope = envelope)
+    bounds <- confEnv(p.values = p.values[S], thr = thr, lab = lab, what = what, envelope = envelope)
     if (!envelope) {
         bounds <- bounds[, "bound"]
         names(bounds) <- what
@@ -57,7 +57,7 @@ bound.SansSouci <- function(object, S = 1:n_hyp(object),
     return(bounds)
 }
 
-conf_env <- function(p.values, thr, lab, 
+confEnv <- function(p.values, thr, lab, 
                      what = c("TP", "FDP"), envelope = FALSE) {
     s <- length(p.values)
     o <- order(p.values)
@@ -88,11 +88,11 @@ conf_env <- function(p.values, thr, lab,
 
 #' Plot confidence envelope
 #' 
-#' @param conf_env A data.frame or a list of data.frames as output by 
-#'   \code{\link{conf_envelope}}
+#' @param confEnv A data.frame or a list of data.frames as output by 
+#'   \code{\link{confEnvelope}}
 #'
 #' @param xmax Right limit of the plot
-#' @param cols A vector of colors of the same length as `conf_env`
+#' @param cols A vector of colors of the same length as `confEnv`
 #' @references Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc confidence bounds on false positives using reference families. Annals of Statistics, 48(3), 1281-1303.
 #'
 #' @export
@@ -106,45 +106,45 @@ conf_env <- function(p.values, thr, lab,
 #' 
 #' # calculate and plot confidence envelope
 #' alpha <- 0.1
-#' ce <- conf_envelope(rwt$p.value, refFamily = "Simes", param = alpha)
-#' plot_conf_envelope(ce, xmax = 200) 
+#' ce <- confEnvelope(rwt$p.value, refFamily = "Simes", param = alpha)
+#' plotConfEnvelope(ce, xmax = 200) 
 #' 
 #' # calculate and plot several confidence envelopes
 #' B <- 100
 #' cal <- calibrateJER(X = dat, categ = categ, B = B, alpha = alpha, refFamily = "Simes")
 #' cal_beta <- calibrateJER(X = dat, categ = categ, B = B, alpha = alpha, refFamily = "Beta", K = 20)
-#' cec <- conf_envelope(rwt$p.value, refFamily = "Simes", param = cal$lambda)
+#' cec <- confEnvelope(rwt$p.value, refFamily = "Simes", param = cal$lambda)
 
 #' all_env <- list("Simes" = ce, 
 #'                 "Simes + calibration"= cal$conf_env, 
 #'                 "Beta + calibration" = cal_beta$conf_env)
-#' plot_conf_envelope(all_env, xmax = 200)
+#' plotConfEnvelope(all_env, xmax = 200)
 #' 
-plot_conf_envelope <- function(conf_env, xmax, cols = NULL) {
+plotConfEnvelope <- function(confEnv, xmax, cols = NULL) {
     nb_env <- 1
-    if (class(conf_env) == "data.frame") {    # (assume) a single conf. envelope
+    if (class(confEnv) == "data.frame") {    # (assume) a single conf. envelope
         ## do nothing!
-    } else if (class(conf_env) == "list") {          # (assume) a list of conf. envelopes
-        nb_env <- length(conf_env)
-        nms <- names(conf_env)
+    } else if (class(confEnv) == "list") {          # (assume) a list of conf. envelopes
+        nb_env <- length(confEnv)
+        nms <- names(confEnv)
         if (!is.null(nms)) {
-            for (kk in seq_along(conf_env)) {
-                conf_env[[kk]]$Template <- nms[kk]
+            for (kk in seq_along(confEnv)) {
+                confEnv[[kk]]$Template <- nms[kk]
             }
         }
         if (!is.null(cols)) {
-            stopifnot(length(conf_env) == length(cols))
+            stopifnot(length(confEnv) == length(cols))
         } else {
-            cols <- scales::hue_pal()(length(conf_env))
+            cols <- scales::hue_pal()(length(confEnv))
         }
-        conf_env <- Reduce(rbind, conf_env)
+        confEnv <- Reduce(rbind, confEnv)
         x <- NULL; rm(x); ## To please R CMD check
     } 
     if (!missing(xmax)) {
-        conf_env <- subset(conf_env, x <= xmax) 
+        confEnv <- subset(confEnv, x <= xmax) 
     }    
     
-    p <- ggplot2::ggplot(conf_env, 
+    p <- ggplot2::ggplot(confEnv, 
                          ggplot2::aes_string(x = "x", y = "bound"))
     if (nb_env > 1) {
         p <- p + ggplot2::aes_string(color = "Template", linetype = "Template")

@@ -3,16 +3,16 @@
 #' @param x An object. See individual methods for specifics
 #' @param ... Other arguments passed to methods
 #' @export
-volcano_plot <- function(x, ...) UseMethod("volcano_plot")
+volcanoPlot <- function(x, ...) UseMethod("volcanoPlot")
 
-#' @inheritParams volcano_plot
+#' @inheritParams volcanoPlot
 #' @export
-volcano_plot.SansSouci <- function(x, ...) {
+volcanoPlot.SansSouci <- function(x, ...) {
     object <- x; rm(x);
     pval <- p_values(object)
     fc <- fold_changes(object)
     thr <- thresholds(object)
-    volcano_plot(pval = pval, fc = fc, thr = thr, ...)
+    volcanoPlot(pval = pval, fc = fc, thr = thr, ...)
 }
 
 #' Volcano plot
@@ -58,14 +58,14 @@ volcano_plot.SansSouci <- function(x, ...) {
 #' alpha <- 0.2
 #' cal <- calibrateJER(X = X, categ = categ, B = 1e2, alpha = alpha, refFamily="Simes")
 #' tests <- rowWelchTests(X, categ)
-#' sel <- volcano_plot(tests$p.value, tests$meanDiff, thr = cal$thr, q = 0.2, r = 0.2, ylim = c(0, 6))
+#' sel <- volcanoPlot(tests$p.value, tests$meanDiff, thr = cal$thr, q = 0.2, r = 0.2, ylim = c(0, 6))
 #' 
 #' # Compare bound to reality
 #' TP <- sum(sim$H[sel])
 #' FP <- sum(1-sim$H[sel])
 #' FDP <- FP/length(sel)
 
-volcano_plot.numeric <- function(pval, fc, thr,
+volcanoPlot.numeric <- function(pval, fc, thr,
                         p = 1, q = 1, r = 0,
                         cex = c(0.2, 0.6), 
                         col = c("#33333333", "#FF0000", "#FF666633"),

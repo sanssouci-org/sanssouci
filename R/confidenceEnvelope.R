@@ -42,11 +42,11 @@
 #' rwt <- rowWelchTests(sim$X, sim$categ, alternative = "greater")
 #' 
 #' # calculate, print, and plot confidence envelope
-#' ce <- conf_envelope(rwt$p.value, refFamily = "Simes", param = 0.1)
+#' ce <- confEnvelope(rwt$p.value, refFamily = "Simes", param = 0.1)
 #' head(ce)
-#' plot_conf_envelope(ce, xmax = 200) 
+#' plotConfEnvelope(ce, xmax = 200) 
 #' 
-conf_envelope <- function(p.values, refFamily, param, K = length(p.values), what = c("TP", "FDP")) {
+confEnvelope <- function(p.values, refFamily, param, K = length(p.values), what = c("TP", "FDP")) {
     m <- length(p.values)
     idxs <- 1:m
     o <- order(p.values)
@@ -68,7 +68,7 @@ conf_envelope <- function(p.values, refFamily, param, K = length(p.values), what
         max_FP <- cumsum(o %in% which(param))
     }
     proc <- sprintf("%s(%s)", refFamily, param)
-    conf_env(p.values, thr, lab = proc, what = what, envelope = TRUE)
+    confEnv(p.values, thr, lab = proc, what = what, envelope = TRUE)
 }
 
 

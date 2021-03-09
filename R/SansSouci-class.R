@@ -11,8 +11,8 @@
 #' table(groups)
 #' a <- SansSouci(Y = expr_ALL, groups = groups)
 #' print(a)
-#' n_hyp(a)
-#' n_obs(a)
+#' nHyp(a)
+#' nObs(a)
 #' 
 #' res <- fit(a, B = 100, alpha = 0.1)
 #' print(res)
@@ -40,8 +40,8 @@ SansSouci <- function(Y, groups) {
 #' table(groups)
 #' a <- SansSouci(Y = expr_ALL, groups = groups)
 #' print(a)
-#' n_hyp(a)
-#' n_obs(a)
+#' nHyp(a)
+#' nObs(a)
 #' label(a)
 #' 
 #' res <- fit(a, B = 100, alpha = 0.1)
@@ -56,29 +56,29 @@ NULL
 #' @param object An object. See individual methods for specifics
 #' @param ... Other arguments passed to methods
 #' @export
-n_hyp <- function(object) UseMethod("n_hyp")
+nHyp <- function(object) UseMethod("nHyp")
 
 #' @rdname SansSouci-class
 #' @export
-n_hyp.SansSouci <- function(object) {
+nHyp.SansSouci <- function(object) {
     nrow(object$input$Y)
 }
 
 #' Get the number of observations
 #' 
-#' @inheritParams n_hyp
+#' @inheritParams nHyp
 #' @export
-n_obs <- function(object) UseMethod("n_obs")
+nObs <- function(object) UseMethod("nObs")
 
 #' @rdname SansSouci-class
 #' @export
-n_obs.SansSouci <- function(object) {
+nObs.SansSouci <- function(object) {
     ncol(object$input$Y)
 }
 
 #' Get the label of hypotheses tested
 #' 
-#' @inheritParams n_hyp
+#' @inheritParams nHyp
 #' @export
 label <- function(object) UseMethod("label")
 
@@ -90,7 +90,7 @@ label.SansSouci <- function(object) {
         return(NULL)
     }
     lab <- param$refFamily
-    if (param$K < n_hyp(object)) {
+    if (param$K < nHyp(object)) {
         lab <- sprintf("%s(K=%d)", lab, param$K)
     } 
     return(lab)
@@ -104,7 +104,7 @@ print.SansSouci <- function(x, ...) {
     input <- object$input
     if (!is.null(input)) {
         msg <- sprintf(" with %d hypotheses.", 
-                       n_hyp(object))
+                       nHyp(object))
         cat(msg)
         cat("\n")
         cat("Data:")
@@ -145,7 +145,7 @@ fit.SansSouci <- function(object, B, alpha,
                            alternative = c("two.sided", "less", "greater"),
                            rowTestFUN = rowWelchTests, 
                            refFamily = c("Simes", "Beta"), 
-                           maxStepsDown = 10L, K = n_hyp(object), 
+                           maxStepsDown = 10L, K = nHyp(object), 
                            verbose = TRUE, ...) {
     alternative <- match.arg(alternative)
     refFamily <- match.arg(refFamily)
@@ -156,7 +156,7 @@ fit.SansSouci <- function(object, B, alpha,
                      funName = as.character(substitute(rowTestFUN)),
                      refFamily = refFamily, 
                      maxStepsDown = maxStepsDown, 
-                     K = n_hyp(object), verbose = verbose)
+                     K = nHyp(object), verbose = verbose)
     Y <- object$input$Y
     groups <- object$input$groups
     
@@ -192,19 +192,19 @@ fit.SansSouci <- function(object, B, alpha,
 
 #' Get p-values
 #' 
-#' @inheritParams n_hyp
+#' @inheritParams nHyp
 #' @export
-p_values <- function(object, ...) UseMethod("p_values")
+pValues <- function(object, ...) UseMethod("pValues")
 
 #' @rdname SansSouci-class
 #' @export
-p_values.SansSouci <- function(object, ...) {
+pValues.SansSouci <- function(object, ...) {
     object$output$p.values
 }
 
 #' Get fold changes
 #' 
-#' @inheritParams n_hyp
+#' @inheritParams nHyp
 #' @export
 fold_changes <- function(object, ...) UseMethod("fold_changes")
 
@@ -214,7 +214,7 @@ fold_changes.SansSouci <- function(object, ...) object$output$fold_changes
 
 #' Get thresholds
 #' @export
-#' @inheritParams n_hyp
+#' @inheritParams nHyp
 thresholds <- function(object, ...) UseMethod("thresholds")
 
 #' @rdname SansSouci-class
@@ -227,8 +227,8 @@ thresholds.SansSouci <- function(object, ...) object$output$thr
 #' @param y Not used
 #' @param ... Further arguments to be passed to \code{bound}
 #' @export
-plot.SansSouci <- function(x, y, xmax = n_hyp(x), ...) {
+plot.SansSouci <- function(x, y, xmax = nHyp(x), ...) {
     ce <- bound(x, envelope = TRUE, ...)
-    plot_conf_envelope(ce, xmax = xmax)
+    plotConfEnvelope(ce, xmax = xmax)
 }
 
