@@ -18,11 +18,11 @@ bound <- function(object, S, ...) UseMethod("bound")
 #' \item{TP}{Lower bound on the proportion of true positives in the 'x' most significant items}}
 #' Defaults to \code{c("TP", "FDP")}.
 #' 
-#' @return If \code{envelope} is \code{TRUE}, a \code{data.frame} with \eqn{m} rows and 4 columns: \describe{
+#' @return If \code{all} is \code{TRUE}, a \code{data.frame} with \eqn{m} rows and 4 columns: \describe{
 #' \item{x}{Number of most significant items selected}
 #' \item{label}{Label for the procedure, typically of the form '<refFamily>(<param>)'}
 #' \item{bound}{Value of the post hoc bound}
-#' \item{stat}{Type of post hoc bound, as specified by argument \code{bound}}. If \code{envelope} is \code{FALSE}, only the value of the bound is returned. 
+#' \item{stat}{Type of post hoc bound, as specified by argument \code{bound}}. If \code{all} is \code{FALSE}, only the value of the bound is returned. 
 #' }
 #' @export
 #' @examples
@@ -31,34 +31,34 @@ bound <- function(object, S, ...) UseMethod("bound")
 #' sim <- gaussianSamples(m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
 #' obj <- SansSouci(Y = sim$X, groups = sim$categ)
 #' res <- fit(obj, B = 100, alpha = 0.1)
-#' # calculate, print, and plot confidence envelope
-#' ce <- bound(res, envelope = TRUE)
+#' # calculate, print, and plot confidence bound
+#' ce <- bound(res, all = TRUE)
 #' head(ce)
 #' 
-#' ce <- bound(res, S=1:10, envelope = TRUE)
+#' ce <- bound(res, S=1:10, all = TRUE)
 #' head(ce)
 #' 
 #' plot(res, S=which(sim$H==1))
 #' 
 #' @export
 bound.SansSouci <- function(object, S = 1:nHyp(object), 
-                            what = c("TP", "FDP"), envelope = FALSE) {
+                            what = c("TP", "FDP"), all = FALSE) {
     p.values <- pValues(object)
     thr <- thresholds(object)
     lab <- label(object)
     if (max(S) > nHyp(object)) {
         stop("'S' is not a subset of hypotheses")
     }
-    bounds <- confEnv(p.values = p.values[S], thr = thr, lab = lab, what = what, envelope = envelope)
-    if (!envelope) {
+    bounds <- confBound(p.values = p.values[S], thr = thr, lab = lab, what = what, all = all)
+    if (!all) {
         bounds <- bounds[, "bound"]
         names(bounds) <- what
     }
     return(bounds)
 }
 
-confEnv <- function(p.values, thr, lab, 
-                     what = c("TP", "FDP"), envelope = FALSE) {
+confBound <- function(p.values, thr, lab, 
+                     what = c("TP", "FDP"), all = FALSE) {
     s <- length(p.values)
     o <- order(p.values)
     idxs <- seq(along = p.values)
@@ -78,7 +78,7 @@ confEnv <- function(p.values, thr, lab,
         FDP = cbind(annot, stat = "FDP", bound = maxFDP),
         TDP = cbind(annot, stat = "TDP", bound = 1 - maxFDP))
     boundsList <- boundsList[what]
-    if (!envelope) {
+    if (!all) {
         boundsList <- lapply(boundsList, FUN = function(x) x[s, ])
     }
     bounds <- Reduce(rbind, boundsList)
@@ -86,13 +86,13 @@ confEnv <- function(p.values, thr, lab,
 }
 
 
-#' Plot confidence envelope
+#' Plot confidence bound
 #' 
-#' @param confEnv A data.frame or a list of data.frames as output by 
-#'   \code{\link{confEnvelope}}
+#' @param conf_bound A data.frame or a list of data.frames as output by 
+#'   \code{\link{confBound}}
 #'
 #' @param xmax Right limit of the plot
-#' @param cols A vector of colors of the same length as `confEnv`
+#' @param cols A vector of colors of the same length as `conf_bound`
 #' @references Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc confidence bounds on false positives using reference families. Annals of Statistics, 48(3), 1281-1303.
 #'
 #' @export
@@ -104,49 +104,49 @@ confEnv <- function(p.values, thr, lab,
 #' categ <- sim$categ
 #' rwt <- rowWelchTests(dat, categ, alternative = "greater")
 #' 
-#' # calculate and plot confidence envelope
+#' # calculate and plot confidence bound
 #' alpha <- 0.1
-#' ce <- confEnvelope(rwt$p.value, refFamily = "Simes", param = alpha)
-#' plotConfEnvelope(ce, xmax = 200) 
+#' ce <- confBoundFam(rwt$p.value, refFamily = "Simes", param = alpha)
+#' plotConfBound(ce, xmax = 200) 
 #' 
-#' # calculate and plot several confidence envelopes
+#' # calculate and plot several confidence bounds
 #' B <- 100
 #' cal <- calibrateJER(X = dat, categ = categ, B = B, alpha = alpha, refFamily = "Simes")
 #' cal_beta <- calibrateJER(X = dat, categ = categ, B = B, alpha = alpha, refFamily = "Beta", K = 20)
-#' cec <- confEnvelope(rwt$p.value, refFamily = "Simes", param = cal$lambda)
+#' cec <- confBoundFam(rwt$p.value, refFamily = "Simes", param = cal$lambda)
 
-#' all_env <- list("Simes" = ce, 
-#'                 "Simes + calibration"= cal$conf_env, 
-#'                 "Beta + calibration" = cal_beta$conf_env)
-#' plotConfEnvelope(all_env, xmax = 200)
+#' all_bounds <- list("Simes" = ce, 
+#'                 "Simes + calibration"= cal$conf_bound, 
+#'                 "Beta + calibration" = cal_beta$conf_bound)
+#' plotConfBound(all_bounds, xmax = 200)
 #' 
-plotConfEnvelope <- function(confEnv, xmax, cols = NULL) {
-    nb_env <- 1
-    if (class(confEnv) == "data.frame") {    # (assume) a single conf. envelope
+plotConfBound <- function(conf_bound, xmax, cols = NULL) {
+    nb <- 1
+    if (class(conf_bound) == "data.frame") {    # (assume) a single conf. bound
         ## do nothing!
-    } else if (class(confEnv) == "list") {          # (assume) a list of conf. envelopes
-        nb_env <- length(confEnv)
-        nms <- names(confEnv)
+    } else if (class(conf_bound) == "list") {          # (assume) a list of conf. bounds
+        nb <- length(conf_bound)
+        nms <- names(conf_bound)
         if (!is.null(nms)) {
-            for (kk in seq_along(confEnv)) {
-                confEnv[[kk]]$Template <- nms[kk]
+            for (kk in seq_along(conf_bound)) {
+                conf_bound[[kk]]$Template <- nms[kk]
             }
         }
         if (!is.null(cols)) {
-            stopifnot(length(confEnv) == length(cols))
+            stopifnot(length(conf_bound) == length(cols))
         } else {
-            cols <- scales::hue_pal()(length(confEnv))
+            cols <- scales::hue_pal()(length(conf_bound))
         }
-        confEnv <- Reduce(rbind, confEnv)
+        conf_bound <- Reduce(rbind, conf_bound)
         x <- NULL; rm(x); ## To please R CMD check
     } 
     if (!missing(xmax)) {
-        confEnv <- subset(confEnv, x <= xmax) 
+        conf_bound <- subset(conf_bound, x <= xmax) 
     }    
     
-    p <- ggplot2::ggplot(confEnv, 
+    p <- ggplot2::ggplot(conf_bound, 
                          ggplot2::aes_string(x = "x", y = "bound"))
-    if (nb_env > 1) {
+    if (nb > 1) {
         p <- p + ggplot2::aes_string(color = "Template", linetype = "Template")
     }
     p + ggplot2::geom_line() +

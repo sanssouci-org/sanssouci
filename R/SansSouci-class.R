@@ -183,7 +183,7 @@ fit.SansSouci <- function(object, B, alpha,
                     piv_stat = NULL,
                     thr = thr,
                     lambda = alpha,
-                    conf_env = NULL)
+                    conf_bound = NULL)
     }
     object$output <- cal
     object
@@ -221,14 +221,14 @@ thresholds <- function(object, ...) UseMethod("thresholds")
 #' @export
 thresholds.SansSouci <- function(object, ...) object$output$thr
 
-#' Plot confidence envelope on the true/false positives among most significant items
+#' Plot confidence bound on the true/false positives among most significant items
 #' 
 #' @param x An object of class 'SansSouci'
 #' @param y Not used
 #' @param ... Further arguments to be passed to \code{bound}
 #' @export
 plot.SansSouci <- function(x, y, xmax = nHyp(x), ...) {
-    ce <- bound(x, envelope = TRUE, ...)
-    plotConfEnvelope(ce, xmax = xmax)
+    cb <- bound(x, all = TRUE, ...)
+    plotConfBound(cb, xmax = xmax)
 }
 

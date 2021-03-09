@@ -80,7 +80,7 @@ A list with elements: \describe{
 
   \item{lambda}{A numeric value, the result of the calibration} 
   
-  \item{FP}{A numeric vector of length \code{m}, a 1-alpha confidence envelope on the number of false positives} 
+  \item{FP}{A numeric vector of length \code{m}, a 1-alpha confidence bound on the number of false positives} 
   }
 }
 \description{
@@ -106,19 +106,19 @@ alpha <- 0.1
 cal <- calibrateJER(X, categ, B = 1e2, alpha = alpha, refFamily="Simes")
 cal$lambda # > alpha (whp) if rho > 0
 
-# Application 1: confidence envelope
+# Application 1: confidence bounds
 #   ie upper confidence bound for the number of false positives 
 #   among the k most significant items for all k
-env <- cal$conf_env
-plotConfEnvelope(env, xmax = 200)
+cb <- cal$conf_bound
+plotConfBound(cb, xmax = 200)
   
 ## Compare to Simes (without calibration) and "Oracle" (ie truth from the simulation settings)
-env_Simes <- confEnvelope(cal$p.values, refFamily = "Simes", param = alpha)
-env_Oracle <- confEnvelope(cal$p.values, refFamily = "Oracle", param = (sim$H == 0))
-all_env <- list("Simes + calibration" = env, 
-                "Simes"= env_Simes, 
-                "Oracle" = env_Oracle)
-plotConfEnvelope(all_env, xmax = 200)
+cb_Simes <- confBoundFam(cal$p.values, refFamily = "Simes", param = alpha)
+cb_Oracle <- confBoundFam(cal$p.values, refFamily = "Oracle", param = (sim$H == 0))
+all_cb <- list("Simes + calibration" = cb, 
+                "Simes"= cb_Simes, 
+                "Oracle" = cb_Oracle)
+plotConfBound(all_cb, xmax = 200)
 
 # Application 2a: bound on the number of false positives in one or 
 #    more user-defined selections

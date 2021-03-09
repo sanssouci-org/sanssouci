@@ -1,4 +1,4 @@
-#' Confidence envelope on the true/false positives among most significant items
+#' Confidence bounds on the true/false positives among most significant items
 #'
 #' @param p.values A vector containing all \eqn{m} p-values, sorted
 #'   increasingly
@@ -41,12 +41,12 @@
 #' sim <- gaussianSamples(m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
 #' rwt <- rowWelchTests(sim$X, sim$categ, alternative = "greater")
 #' 
-#' # calculate, print, and plot confidence envelope
-#' ce <- confEnvelope(rwt$p.value, refFamily = "Simes", param = 0.1)
-#' head(ce)
-#' plotConfEnvelope(ce, xmax = 200) 
+#' # calculate, print, and plot confidence bound
+#' cb <- confBoundFam(rwt$p.value, refFamily = "Simes", param = 0.1)
+#' head(cb)
+#' plotConfBound(cb, xmax = 200) 
 #' 
-confEnvelope <- function(p.values, refFamily, param, K = length(p.values), what = c("TP", "FDP")) {
+confBoundFam <- function(p.values, refFamily, param, K = length(p.values), what = c("TP", "FDP")) {
     m <- length(p.values)
     idxs <- 1:m
     o <- order(p.values)
@@ -68,7 +68,7 @@ confEnvelope <- function(p.values, refFamily, param, K = length(p.values), what 
         max_FP <- cumsum(o %in% which(param))
     }
     proc <- sprintf("%s(%s)", refFamily, param)
-    confEnv(p.values, thr, lab = proc, what = what, envelope = TRUE)
+    confBound(p.values, thr, lab = proc, what = what, all = TRUE)
 }
 
 
