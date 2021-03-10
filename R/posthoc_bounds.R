@@ -65,12 +65,15 @@ bound.numeric <- function(object, S, thr, lab,
     s <- length(S)
     idxs <- seq_len(s)
     maxFP <- rep(NA_integer_, s)
+    pS <- p.values[S]
+    o <- order(pS)
+    sorted_p <- pS[o]
+    
     if (length(thr) == length(p.values) && all(thr %in% c(0,1))) {
         # assume 'thr' is in fact the "truth" <=> Oracle thresholds
         # then it suffices to count the number of '0' in 'thr', cumulatively
-        max_FP <- cumsum(thr[o[S]]==0) 
+        max_FP <- cumsum(thr[o] == 0) 
     } else {
-        sorted_p <- sort(p.values[S])
         max_FP <- curveMaxFP(sorted_p, thr) ## Would be faster to do 'thr[length(S)]' here. Is it correct?
     }
     max_FDP <- max_FP/idxs

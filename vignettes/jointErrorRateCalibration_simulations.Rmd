@@ -86,7 +86,7 @@ cal$output$lambda > alpha
 The fitted `SansSouci` object contains post hoc confidence bounds:
 
 ```{r confidence-bounds}
-env <- cal$output$conf_bound
+env <- bound(cal, all = TRUE)
 head(env)
 ```
 
