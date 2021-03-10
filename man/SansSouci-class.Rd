@@ -19,14 +19,20 @@
 
 \method{print}{SansSouci}(x, ..., verbose = FALSE)
 
-\method{pValues}{SansSouci}(object, ...)
+\method{pValues}{SansSouci}(object)
 
-\method{foldChanges}{SansSouci}(object, ...)
+\method{foldChanges}{SansSouci}(object)
 
-\method{thresholds}{SansSouci}(object, ...)
+\method{thresholds}{SansSouci}(object)
 }
 \arguments{
 \item{object}{An object of class \code{SansSouci}}
+
+\item{x}{An object of class `SansSouci`}
+
+\item{...}{Not used}
+
+\item{verbose}{Should detailed output be printed? Defaults to FALSE}
 }
 \description{
 SansSouci class

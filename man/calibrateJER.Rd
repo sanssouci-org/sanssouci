@@ -32,6 +32,8 @@ calibrateJER(
 )
 }
 \arguments{
+\item{object}{An object of class `SansSouci`}
+
 \item{alpha}{Target JER level}
 
 \item{B}{A numeric value, the number of permutations to be performed}
@@ -60,6 +62,8 @@ Must be one of "two.sided" (default), "greater" or "less".}
 \eqn{k}-FWER, \eqn{k \le K}. Defaults to \eqn{m}.}
 
 \item{verbose}{A boolean value: should extra info be printed?}
+
+\item{...}{Not used}
 
 \item{X}{A matrix of \eqn{m} variables (hypotheses) by \eqn{n} observations}
 

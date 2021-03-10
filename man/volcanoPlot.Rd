@@ -2,14 +2,17 @@
 % Please edit documentation in R/volcanoPlot.R
 \name{volcanoPlot}
 \alias{volcanoPlot}
+\alias{volcanoPlot.SansSouci}
 \title{Volcano plot}
 \usage{
 volcanoPlot(x, ...)
+
+\method{volcanoPlot}{SansSouci}(x, ...)
 }
 \arguments{
-\item{x}{An object. See individual methods for specifics}
+\item{x}{An object of class `SansSouci`}
 
-\item{...}{Other arguments passed to methods}
+\item{...}{Other arguments to be passed to volcanoPlot.numeric}
 }
 \description{
 Volcano plot

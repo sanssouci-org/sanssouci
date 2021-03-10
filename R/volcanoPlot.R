@@ -5,7 +5,9 @@
 #' @export
 volcanoPlot <- function(x, ...) UseMethod("volcanoPlot")
 
-#' @inheritParams volcanoPlot
+#' @rdname volcanoPlot
+#' @param x An object of class `SansSouci`
+#' @param ... Other arguments to be passed to volcanoPlot.numeric
 #' @export
 volcanoPlot.SansSouci <- function(x, ...) {
     object <- x; rm(x);
@@ -15,18 +17,15 @@ volcanoPlot.SansSouci <- function(x, ...) {
     pval <- pValues(object)
     fc <- foldChanges(object)
     thr <- thresholds(object)
-    volcanoPlot(pval = pval, fc = fc, thr = thr, ...)
+    volcanoPlot(pval, fc = fc, thr = thr, ...)
 }
 
 #' Volcano plot
 #' 
 #' Volcano plot for differential expression studies
 #' 
-#' @param X A matrix of \eqn{m} variables (hypotheses) by \eqn{n} observations
-
-#' @param categ A numeric vector of \code{n} categories in \eqn{0, 1} for the
-#'   observations
-
+#' @param x A vector of p-values
+#' @param fc A vector of fold changes, of the same length as `x`
 #' @param thr A numeric vector of length K, a JER controlling family
 #' 
 #' @param p A numeric value, the p-value threshold under which genes are selected
@@ -37,6 +36,7 @@ volcanoPlot.SansSouci <- function(x, ...) {
 #' @param col A vector of length 3
 #' @param pch An integer or single character string specifying the plotting character, see \code{\link{par}}
 #' @param ylim A numeric vector of length 2, the \eqn{y} limits of the plot
+#' @param ... Not used
 #'
 #' @details A Welch T-test of differential expression between the two categories
 #'   defined by \code{categ} are applied for each gene using the
@@ -68,11 +68,12 @@ volcanoPlot.SansSouci <- function(x, ...) {
 #' FP <- sum(1-sim$H[sel])
 #' FDP <- FP/length(sel)
 
-volcanoPlot.numeric <- function(pval, fc, thr,
+volcanoPlot.numeric <- function(x, fc, thr,
                         p = 1, q = 1, r = 0,
                         cex = c(0.2, 0.6), 
                         col = c("#33333333", "#FF0000", "#FF666633"),
                         pch = 19, ylim = NULL, ...) {
+    pval <- x; rm(x);
     if (p <1 && q < 1) {
         warning("Filtering both on p-values and BH-adjusted p-values")
     }
@@ -147,18 +148,4 @@ volcanoPlot.numeric <- function(pval, fc, thr,
                       "At least" ~ .(TP12) ~ "true positives (FDP" <= .(FDP12) ~")"))
     title(bq)
     invisible(sel12)
-}
-
-thrYaxis <- function(thr, maxlogp){
-    df1 <- data.frame(num = 1:length(thr)-1, pvalue=-log10(thr))
-    df2 <- data.frame(df1[c(1),])
-    valeurTest <- df2[c(dim(df2)[1]),"pvalue"]
-    for (i in 1:dim(df1)[1]){
-        mod <- if(df1[i,"num"] < 100){ 1} else if(df1[i,"num"] < 500){ 10} else if(df1[i,"num"] < 1000){50}else{100}
-        if (valeurTest - df1[i,"pvalue"] > 0.3*maxlogp/12.5 & df1[i,"num"]%%mod == 0){
-            df2 <- rbind(df2, (df1[i,]))
-            valeurTest <- df1[i,"pvalue"]
-        }
-    }
-    return(df2)
 }

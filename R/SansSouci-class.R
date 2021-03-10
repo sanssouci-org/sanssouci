@@ -112,7 +112,6 @@ NULL
 #' Get the number of hypotheses
 #' 
 #' @param object An object. See individual methods for specifics
-#' @param ... Other arguments passed to methods
 #' @export
 nHyp <- function(object) UseMethod("nHyp")
 
@@ -155,6 +154,10 @@ label.SansSouci <- function(object) {
 }
 
 #' @rdname SansSouci-class
+#' @param x An object of class `SansSouci`
+#' @param ... Not used
+#' @param verbose Should detailed output be printed? Defaults to FALSE
+#' @importFrom utils str
 #' @export
 print.SansSouci <- function(x, ..., verbose = FALSE) {
     object <- x; rm(x)
@@ -212,9 +215,13 @@ print.SansSouci <- function(x, ..., verbose = FALSE) {
     invisible(object)
 }
 
-#' @describeIn calibrateJER Fit SansSouci object
 #' @importFrom generics fit
-#' @export fit
+#' @export 
+generics::fit
+
+#' @describeIn calibrateJER Fit SansSouci object
+#' @param object An object of class `SansSouci`
+#' @param ... Not used
 #' @export
 fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
                            alternative = c("two.sided", "less", "greater"),
@@ -233,9 +240,10 @@ fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
     Y <- object$input$Y
     groups <- object$input$groups
     n_groups <- object$input$n_groups
+    m <- nHyp(object)
     funName <- NA_character_
     if (is.null(rowTestFUN)) {
-        if (object$input$n_groups == 1) {
+        if (n_groups == 1) {
             rowTestFUN <- function(mat, categ, alternative) {
                 T <- rowSums(mat)/sqrt(length(categ))
                 p <- switch(alternative, 
@@ -245,7 +253,7 @@ fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
                 data.frame(statistic = T, parameter = NA, p.value = p)
             }
             funName <- "testBySignFlipping"
-        } else if (object$input$n_groups == 2) {
+        } else if (n_groups == 2) {
             rowTestFUN <- rowWelchTests
             funName <- "rowWelchTests"
         }
@@ -299,11 +307,11 @@ fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
 #' 
 #' @inheritParams nHyp
 #' @export
-pValues <- function(object, ...) UseMethod("pValues")
+pValues <- function(object) UseMethod("pValues")
 
 #' @rdname SansSouci-class
 #' @export
-pValues.SansSouci <- function(object, ...) {
+pValues.SansSouci <- function(object) {
     object$output$p.values
 }
 
@@ -311,27 +319,28 @@ pValues.SansSouci <- function(object, ...) {
 #' 
 #' @inheritParams nHyp
 #' @export
-foldChanges <- function(object, ...) UseMethod("foldChanges")
+foldChanges <- function(object) UseMethod("foldChanges")
 
 #' @rdname SansSouci-class
 #' @export
-foldChanges.SansSouci <- function(object, ...) {
+foldChanges.SansSouci <- function(object) {
     object$output$fold_changes
 }
 
 #' Get thresholds
 #' @export
 #' @inheritParams nHyp
-thresholds <- function(object, ...) UseMethod("thresholds")
+thresholds <- function(object) UseMethod("thresholds")
 
 #' @rdname SansSouci-class
 #' @export
-thresholds.SansSouci <- function(object, ...) object$output$thr
+thresholds.SansSouci <- function(object) object$output$thr
 
 #' Plot confidence bound on the true/false positives among most significant items
 #' 
 #' @param x An object of class 'SansSouci'
 #' @param y Not used
+#' @param xmax Right limit of the plot
 #' @param ... Further arguments to be passed to \code{bound}
 #' @export
 plot.SansSouci <- function(x, y, xmax = nHyp(x), ...) {

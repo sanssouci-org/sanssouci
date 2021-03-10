@@ -1,6 +1,5 @@
 context("Confidence envelopes on the false positives")
 
-
 test_that("Consistency of output of 'confCurveFromFam'", {
     m <- 123
     alpha <- 0.1
@@ -59,6 +58,8 @@ test_that("Ordering of confidence curves with/without calibration", {
     alpha <- 0.1
     obj <- SansSouciSamples(m = m, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
     
+    cal0 <- fit(obj, alpha = alpha, B = 0, refFamily = "Simes")    
+    cb0 <- bound(cal0, all=TRUE)
     cal <- fit(obj, alpha = alpha, B = 1e2, refFamily = "Simes")    
     cb1 <- bound(cal, all=TRUE)
     

@@ -1,13 +1,14 @@
 #' Post hoc confidence bounds on the true/false positives
 #' 
-#' @inheritParams nHyp
+#' @param object An object. See individual methods for specifics
 #' @param S A subset of indices
+#' @param ... Further arguments to be passed to other methods
 #' @export
 bound <- function(object, S, ...) UseMethod("bound")
 
 #' Post hoc confidence bounds on the true/false positives
 #' 
-#' @inheritParams bound
+#' @rdname bound
 #' @param what A character vector, the names of the post hoc bounds to be
 #'   computed, among:
 #' 
@@ -16,7 +17,8 @@ bound <- function(object, S, ...) UseMethod("bound")
 #' \item{TP}{Lower bound on the number of true positives in the 'x' most significant items}
 #' \item{FDP}{Upper bound on the proportion of false positives in the 'x' most significant items}
 #' \item{TP}{Lower bound on the proportion of true positives in the 'x' most significant items}}
-#' Defaults to \code{c("TP", "FDP")}.
+#' Defaults to \code{c("TP", "FDP")}
+#' @param all A logical value: should the bounds for all ordered subsets of `S` be returned? If FALSE (the default), only the bound for `S` is returned.
 #' 
 #' @return If \code{all} is \code{TRUE}, a \code{data.frame} with \eqn{m} rows and 4 columns: \describe{
 #' \item{x}{Number of most significant items selected}
@@ -42,7 +44,7 @@ bound <- function(object, S, ...) UseMethod("bound")
 #' 
 #' @export
 bound.SansSouci <- function(object, S = 1:nHyp(object), 
-                            what = c("TP", "FDP"), all = FALSE) {
+                            what = c("TP", "FDP"), all = FALSE, ...) {
     p.values <- pValues(object)
     thr <- thresholds(object)
     lab <- label(object)
@@ -101,7 +103,6 @@ bound.numeric <- function(object, S, thr, lab,
 #' 
 #' @param conf_bound A data.frame or a list of data.frames as output by 
 #'   \code{\link{bound}}
-#'
 #' @param xmax Right limit of the plot
 #' @param cols A vector of colors of the same length as `conf_bound`
 #' @references Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc confidence bounds on false positives using reference families. Annals of Statistics, 48(3), 1281-1303.
