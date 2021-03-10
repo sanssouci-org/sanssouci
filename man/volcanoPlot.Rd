@@ -10,7 +10,7 @@ volcanoPlot(x, ...)
 \method{volcanoPlot}{SansSouci}(x, ...)
 }
 \arguments{
-\item{x}{An object of class `SansSouci`}
+\item{x}{An object of class \code{SansSouci}}
 
 \item{...}{Other arguments to be passed to volcanoPlot.numeric}
 }

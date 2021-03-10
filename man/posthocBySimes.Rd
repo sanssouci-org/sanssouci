@@ -23,7 +23,7 @@ screen. Defaults to \code{FALSE}.}
 }
 \value{
 A integer value, Simes's lower bound on the number of
- correct rejections within the selected hypotheses
+correct rejections within the selected hypotheses
 }
 \description{
 Lower bound on the number of correct rejections using Simes' reference

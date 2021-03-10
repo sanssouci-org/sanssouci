@@ -19,8 +19,8 @@ and much much faster than 'BNR2014'.}
 }
 \value{
 A vector of size \eqn{m} giving an joint upper confidence bound on
-  the number of false discoveries among the \eqn{k} most significant items
-  for all \eqn{k \in \{1\ldots m\}}.
+the number of false discoveries among the \eqn{k} most significant items
+for all \eqn{k \in \{1\ldots m\}}.
 }
 \description{
 Upper bound for the number of false discoveries among most significant items

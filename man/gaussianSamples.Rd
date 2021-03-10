@@ -26,28 +26,28 @@ generated.}
 equi-correlation}
 }
 \value{
-A list with three elements: \describe{ 
+A list with three elements: \describe{
 
-  \item{X}{An \eqn{m x n} matrix of \eqn{m}-dimensional Gaussian observations,
-  where \eqn{m1} rows are under H1, and \eqn{m0} rows are under H0, with
-  \eqn{m0/m = pi0}}
-  
-  \item{categ}{A numeric vector of length \eqn{n} matching each observation
-  to a sample (in 0 or 1)}
-  
-  \item{H}{A vector of length \eqn{m}, the status of each hypothesis: 0 for
-  true null hypothesis, and 1 for true alternative hypothesis}}.
+\item{X}{An \eqn{m x n} matrix of \eqn{m}-dimensional Gaussian observations,
+where \eqn{m1} rows are under H1, and \eqn{m0} rows are under H0, with
+\eqn{m0/m = pi0}}
+
+\item{categ}{A numeric vector of length \eqn{n} matching each observation
+to a sample (in 0 or 1)}
+
+\item{H}{A vector of length \eqn{m}, the status of each hypothesis: 0 for
+true null hypothesis, and 1 for true alternative hypothesis}}.
 }
 \description{
 Simulate equi-correlated data coming from one or two populations
 }
 \details{
 If \code{prob = 1}, each of \eqn{m_1} variables under \eqn{H_1} has
-  mean \eqn{SNR/\sqrt(n)}. If \code{0 < p < 1}, then \eqn{n_0} samples are
-  drawn from a \eqn{\mathcal{N}(0,1)} distribution while \eqn{n_1} are drawn
-  from a \eqn{\mathcal{N}(\mu, 1)} distribution, where \eqn{\mu =
+mean \eqn{SNR/\sqrt(n)}. If \code{0 < p < 1}, then \eqn{n_0} samples are
+drawn from a \eqn{\mathcal{N}(0,1)} distribution while \eqn{n_1} are drawn
+from a \eqn{\mathcal{N}(\mu, 1)} distribution, where \eqn{\mu =
   SNR*\sqrt(1/(n_0) + 1/n_1)}. The argument \code{p} is the probability of a
-  sample to belong to the non-zero-mean population.
+sample to belong to the non-zero-mean population.
 }
 \examples{
 
@@ -79,7 +79,7 @@ legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
 
 }
 \seealso{
-[SansSouciSamples]
+\link{SansSouciSamples}
 }
 \author{
 Gilles Blanchard, Pierre Neuvial and Etienne Roquain

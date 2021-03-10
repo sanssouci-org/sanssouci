@@ -14,7 +14,7 @@ k[max]}).}
 }
 \value{
 A threshold function (on the scale of p-values) which
-  achieves "balanced" joint error rate (JER) control under independence
+achieves "balanced" joint error rate (JER) control under independence
 }
 \description{
 Beta threshold family

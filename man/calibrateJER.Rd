@@ -32,7 +32,7 @@ calibrateJER(
 )
 }
 \arguments{
-\item{object}{An object of class `SansSouci`}
+\item{object}{An object of class \code{SansSouci}}
 
 \item{alpha}{Target JER level}
 
@@ -46,15 +46,15 @@ Must be one of "two.sided" (default), "greater" or "less".}
 
 \item{refFamily}{A character value which can be \describe{
 
-  \item{Simes}{The classical family of thresholds introduced by Simes (1986):
-  \eqn{\alpha*k/m}. This family yields joint FWER control if the test
-  statistics are positively dependent (PRDS) under H0.}
+\item{Simes}{The classical family of thresholds introduced by Simes (1986):
+\eqn{\alpha*k/m}. This family yields joint FWER control if the test
+statistics are positively dependent (PRDS) under H0.}
 
-   \item{Beta}{A family of thresholds that achieves "balanced" joint error
-   rate (JER) control under independence}
+\item{Beta}{A family of thresholds that achieves "balanced" joint error
+rate (JER) control under independence}
 
-  \item{kFWER}{A family \eqn{(t_k)} calibrated so that for each k,
-  \eqn{(t_k)} controls the (marginal) k-FWER.}}}
+\item{kFWER}{A family \eqn{(t_k)} calibrated so that for each k,
+\eqn{(t_k)} controls the (marginal) k-FWER.}}}
 
 \item{maxStepsDown}{Maximum number of steps down to be performed.}
 
@@ -74,18 +74,18 @@ provided, a one-sample test is performed.}
 \value{
 A list with elements: \describe{
 
-  \item{p.values}{A numeric vector of \code{m} p-values}
-  \item{pivStat}{A numeric vector of length \code{B}, the values of the pivotal
-         statistic whose quantile of order \eqn{alpha} is \eqn{lambda}.}
-  \item{thr}{A numeric vector of length \code{K}, such that the estimated
-  probability that there exists an index \eqn{k} between 1 and \eqn{K} such
-  that the \eqn{k}-th maximum of the test statistics of is greater than
-  \eqn{thr[k]}, is less than \eqn{\alpha}}
+\item{p.values}{A numeric vector of \code{m} p-values}
+\item{pivStat}{A numeric vector of length \code{B}, the values of the pivotal
+statistic whose quantile of order \eqn{alpha} is \eqn{lambda}.}
+\item{thr}{A numeric vector of length \code{K}, such that the estimated
+probability that there exists an index \eqn{k} between 1 and \eqn{K} such
+that the \eqn{k}-th maximum of the test statistics of is greater than
+\eqn{thr[k]}, is less than \eqn{\alpha}}
 
-  \item{lambda}{A numeric value, the result of the calibration} 
-  
-  \item{FP}{A numeric vector of length \code{m}, a 1-alpha confidence bound on the number of false positives} 
-  }
+\item{lambda}{A numeric value, the result of the calibration}
+
+\item{FP}{A numeric vector of length \code{m}, a 1-alpha confidence bound on the number of false positives}
+}
 }
 \description{
 Calibration of of JER thresholds using one or two-sample tests

@@ -1,6 +1,7 @@
 #' Confidence bounds on the true/false positives among most significant items
 #'
-#' @param p.values A vector containing all \eqn{m} p-values, sorted
+#' @rdname bound
+#' @param p.values A vector containing the p-values for all m hypotheses, sorted
 #'   increasingly
 #'   
 #' @param refFamily A character value, the reference family to be used. Should
@@ -8,31 +9,32 @@
 #'   
 #' @param param A numeric value or vector of parameters for the reference family. 
 #' 
-#' @param K For JER control over \code{1:K}, ie joint control of all
-#'   \eqn{k}-FWER, \eqn{k \le K}. Defaults to \eqn{m}.
+#' @param K For JER control over `1:K`, ie joint control of all
+#'   k-FWER, k <= K. Defaults to m.
 #' 
 #' @param what A character vector, the names of the post hoc bounds to be
 #'   computed, among:
 #' 
-#' \describe{
-#' \item{FP}{Upper bound on the number of false positives in the 'x' most significant items}
-#' \item{TP}{Lower bound on the number of true positives in the 'x' most significant items}
-#' \item{FDP}{Upper bound on the proportion of false positives in the 'x' most significant items}
-#' \item{TP}{Lower bound on the proportion of true positives in the 'x' most significant items}}
-#' Defaults to \code{c("TP", "FDP")}.
+#' - FP: Upper bound on the number of false positives in the 'x' most significant items
+#' - TP: Lower bound on the number of true positives in the 'x' most significant items
+#' - FDP: Upper bound on the proportion of false positives in the 'x' most significant items
+#' - TP: Lower bound on the proportion of true positives in the 'x' most significant items.
 #' 
-#' @details \code{param} should be a numeric value unless \code{refFamily ==
-#'   "Oracle"}. In the latter case, \code{param} should be a boolean vector of
-#'   length \eqn{m} indicating whether each null hypothesis is true or false.
+#' Defaults to `c("TP", "FDP")`
+#' 
+#' @details `param` should be a numeric value unless `refFamily ==
+#'   "Oracle"`. In the latter case, `param`` should be a boolean vector of
+#'   length m indicating whether each null hypothesis is true or false.
 #'
-#' @return A \code{data.frame} with \eqn{m} rows and 5 columns: \describe{
-#' \item{x}{Number of most significant items selected}
-#' \item{family}{Matches input argument \code{refFamily}}
-#' \item{param}{Matches argument \code{param}}
-#' \item{procedure}{Label for the procedure, typically of the form '<refFamily>(<param>)'}
-#' \item{bound}{Value of the post hoc bound}
-#' \item{stat}{Type of post hoc bound, as specified by argument \code{bound}}
-#' }
+#' @return A `data.frame` with `m` rows and 5 columns:
+#' - x: Number of most significant items selected
+#' - family: Matches input argument `refFamily`
+#' - param: Matches argument `param`
+#' - procedure: Label for the procedure, typically of the form 'refFamily(param)'
+#' - bound: Value of the post hoc bound
+#' - stat: Type of post hoc bound, as specified by argument `bound`
+#' 
+
 #' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 #' @export
 #' @examples

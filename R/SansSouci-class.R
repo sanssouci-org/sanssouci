@@ -88,10 +88,13 @@ SansSouciSamples <- function(...) {
     SansSouci(Y = sim$X, groups = sim$categ, truth = sim$H)
 }
 
-#' SansSouci class
+#' Basic methods for class `SansSouci`:
+#' 
+#' - item 1
+#' - item 3
 #'
 #' @param object An object of class \code{SansSouci}
-#' @name SansSouci-class
+#' @name SansSouci-methods
 #' @examples
 #' data(expr_ALL, package = "sansSouci.data")
 #' groups <- ifelse(colnames(expr_ALL)=="NEG", 0, 1)
@@ -103,43 +106,58 @@ SansSouciSamples <- function(...) {
 #' label(a)
 #' 
 #' res <- fit(a, B = 100, alpha = 0.1)
-#' print(res)
 #' label(res)
+#' print(res)
+#' str(pValues(res))
+#' str(foldChanges(res)) 
+#' str(thresholds(res))
 NULL
 #> NULL
 
 
-#' Get the number of hypotheses
+#' `nHyp`: get the number of hypotheses
 #' 
+#' @rdname all-generics
 #' @param object An object. See individual methods for specifics
 #' @export
 nHyp <- function(object) UseMethod("nHyp")
 
-#' @rdname SansSouci-class
+#' `nHyp`: get the number of hypotheses
+#' 
+#' @rdname SansSouci-methods
+#' @param object An object of class `SansSouci`
 #' @export
 nHyp.SansSouci <- function(object) {
     nrow(object$input$Y)
 }
 
-#' Get the number of observations
+#' `nObs` Get the number of observations
 #' 
-#' @inheritParams nHyp
+#' @rdname all-generics
+#' @param object An object. See individual methods for specifics
 #' @export
 nObs <- function(object) UseMethod("nObs")
 
-#' @rdname SansSouci-class
+#' `nObs` Get the number of observations
+#' 
+#' @rdname SansSouci-methods
+#' @param object An object of class `SansSouci`
 #' @export
 nObs.SansSouci <- function(object) {
     ncol(object$input$Y)
 }
 
-#' Get the label of hypotheses tested
+#' `label` Get the label of hypotheses tested
 #' 
-#' @inheritParams nHyp
+#' @rdname all-generics
+#' @param object An object. See individual methods for specifics
 #' @export
 label <- function(object) UseMethod("label")
 
-#' @rdname SansSouci-class
+#' `label` Get the label of hypotheses tested
+#' 
+#' @rdname SansSouci-methods
+#' @param object An object of class `SansSouci`
 #' @export
 label.SansSouci <- function(object) {
     param <- object$parameters
@@ -153,7 +171,7 @@ label.SansSouci <- function(object) {
     return(lab)
 }
 
-#' @rdname SansSouci-class
+#' @rdname SansSouci-methods
 #' @param x An object of class `SansSouci`
 #' @param ... Not used
 #' @param verbose Should detailed output be printed? Defaults to FALSE
@@ -302,37 +320,49 @@ fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
     object
 }
 
-
-#' Get p-values
+#' `pValues`: get p-values
 #' 
-#' @inheritParams nHyp
+#' @rdname all-generics
+#' @param object An object. See individual methods for specifics
 #' @export
 pValues <- function(object) UseMethod("pValues")
 
-#' @rdname SansSouci-class
+#' `pValues`: get p-values
+#' 
+#' @rdname SansSouci-methods
+#' @param object An object of class `SansSouci`
 #' @export
 pValues.SansSouci <- function(object) {
     object$output$p.values
 }
 
-#' Get fold changes
+#' `foldChanges`: get fold changes
 #' 
-#' @inheritParams nHyp
+#' @rdname all-generics
+#' @param object An object. See individual methods for specifics
 #' @export
 foldChanges <- function(object) UseMethod("foldChanges")
 
-#' @rdname SansSouci-class
+#' `foldChanges`: get fold changes
+#' 
+#' @rdname SansSouci-methods
+#' @param object An object of class `SansSouci`
 #' @export
 foldChanges.SansSouci <- function(object) {
     object$output$fold_changes
 }
 
-#' Get thresholds
+#' `thresholds`: get thresholds
+#' 
+#' @rdname all-generics
+#' @param object An object. See individual methods for specifics
 #' @export
-#' @inheritParams nHyp
 thresholds <- function(object) UseMethod("thresholds")
 
-#' @rdname SansSouci-class
+#' `thresholds`: get thresholds
+#' 
+#' @rdname SansSouci-methods
+#' @param object An object of class `SansSouci`
 #' @export
 thresholds.SansSouci <- function(object) object$output$thr
 

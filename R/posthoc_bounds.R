@@ -6,26 +6,24 @@
 #' @export
 bound <- function(object, S, ...) UseMethod("bound")
 
-#' Post hoc confidence bounds on the true/false positives
-#' 
 #' @rdname bound
 #' @param what A character vector, the names of the post hoc bounds to be
 #'   computed, among:
 #' 
-#' \describe{
-#' \item{FP}{Upper bound on the number of false positives in the 'x' most significant items}
-#' \item{TP}{Lower bound on the number of true positives in the 'x' most significant items}
-#' \item{FDP}{Upper bound on the proportion of false positives in the 'x' most significant items}
-#' \item{TP}{Lower bound on the proportion of true positives in the 'x' most significant items}}
-#' Defaults to \code{c("TP", "FDP")}
-#' @param all A logical value: should the bounds for all ordered subsets of `S` be returned? If FALSE (the default), only the bound for `S` is returned.
+#' - FP: Upper bound on the number of false positives in the 'x' most significant items
+#' - TP: Lower bound on the number of true positives in the 'x' most significant items
+#' - FDP: Upper bound on the proportion of false positives in the 'x' most significant items
+#' - TP: Lower bound on the proportion of true positives in the 'x' most significant items.
 #' 
-#' @return If \code{all} is \code{TRUE}, a \code{data.frame} with \eqn{m} rows and 4 columns: \describe{
-#' \item{x}{Number of most significant items selected}
-#' \item{label}{Label for the procedure, typically of the form '<refFamily>(<param>)'}
-#' \item{bound}{Value of the post hoc bound}
-#' \item{stat}{Type of post hoc bound, as specified by argument \code{bound}}. If \code{all} is \code{FALSE}, only the value of the bound is returned. 
-#' }
+#' Defaults to `c("TP", "FDP")`
+#' @param all A logical value: should the bounds for all ordered subsets of `S` be returned? If `FALSE` (the default), only the bound for `S` is returned.
+#' 
+#' @return If `all` is `FALSE` (the default), only the value of the bound is returned. Otherwise, a `data.frame` is return, with |S| rows and 4 columns:
+#' - x: Number of most significant items selected
+#' - label: Label for the procedure, typically of the form 'refFamily(param)'
+#' - bound: Value of the post hoc bound
+#' - stat: Type of post hoc bound, as specified by argument `bound`.
+#' 
 #' @export
 #' @examples
 #' 
@@ -61,6 +59,8 @@ bound.SansSouci <- function(object, S = 1:nHyp(object),
     return(bounds)
 }
 
+#' @rdname bound
+#' @inheritParams bound.SansSouci
 bound.numeric <- function(object, S, thr, lab, 
                      what = c("TP", "FDP"), all = FALSE) {
     p.values <- object; rm(object);

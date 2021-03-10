@@ -30,6 +30,7 @@ Suggests:
     testthat,
     covr
 VignetteBuilder: knitr
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 LazyData: true
 Encoding: UTF-8
