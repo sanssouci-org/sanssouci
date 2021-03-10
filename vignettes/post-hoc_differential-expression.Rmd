@@ -168,7 +168,7 @@ This implies that with probability larger than `r 1-alpha` the false discovery p
 
 A more refined post hoc bound has been proposed by @GS2011 under the PRDS assumption. In the framework of @BNR:chap this bound is a direct consequence of the @simes86improved inequality. It can be applied to the `r nBH` rejections of the BH procedure as follows:
 
-```{r}
+```{r, Simes}
 obj <- SansSouci(Y = dat, groups = categ)
 res_Simes <- fit(obj, B = 0, refFamily = "Simes", alpha = alpha) ## B=0 => no calibration!
 FP_Simes <- bound(res_Simes, S_BH, what = "FP")

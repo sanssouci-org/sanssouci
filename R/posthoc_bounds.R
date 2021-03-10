@@ -52,7 +52,9 @@ bound.SansSouci <- function(object, S = 1:nHyp(object),
     bounds <- bound(object = p.values, S = S, thr = thr, lab = lab, what = what, all = all)
     if (!all) {
         bounds <- bounds[, "bound"]
-        names(bounds) <- what
+        if (length(bounds) > 1) {
+            names(bounds) <- what
+        }
     }
     return(bounds)
 }
@@ -61,19 +63,17 @@ bound.numeric <- function(object, S, thr, lab,
                      what = c("TP", "FDP"), all = FALSE) {
     p.values <- object; rm(object);
     s <- length(S)
-    o <- order(p.values)
     idxs <- seq_len(s)
     maxFP <- rep(NA_integer_, s)
     if (length(thr) == length(p.values) && all(thr %in% c(0,1))) {
         # assume 'thr' is in fact the "truth" <=> Oracle thresholds
         # then it suffices to count the number of '0' in 'thr', cumulatively
-        maxFP <- cumsum(thr[o[S]]==0) 
+        max_FP <- cumsum(thr[o[S]]==0) 
     } else {
-        sorted_p <- p.values[o[S]]
-        maxFP <- curveMaxFP(sorted_p, thr) ## Would be faster to do 'thr[length(S)]' here. Is it correct?
-        rm(sorted_p, o, p.values)
+        sorted_p <- sort(p.values[S])
+        max_FP <- curveMaxFP(sorted_p, thr) ## Would be faster to do 'thr[length(S)]' here. Is it correct?
     }
-    maxFDP <- maxFP/idxs
+    max_FDP <- max_FP/idxs
     what0 <- c("FP", "TP", "FDP", "TDP")
     if (!all(what %in% what0)) {
         stop("Error in argument 'what': only the following statistics are supported: ", paste(what0, collapse = ", "))
@@ -82,10 +82,10 @@ bound.numeric <- function(object, S, thr, lab,
                         label = lab,
                         row.names = NULL)
     boundsList <- list(
-        FP = cbind(annot, stat = "FP", bound = maxFP),
-        TP = cbind(annot, stat = "TP", bound = idxs - maxFP),
-        FDP = cbind(annot, stat = "FDP", bound = maxFDP),
-        TDP = cbind(annot, stat = "TDP", bound = 1 - maxFDP))
+        FP = cbind(annot, stat = "FP", bound = max_FP),
+        TP = cbind(annot, stat = "TP", bound = idxs - max_FP),
+        FDP = cbind(annot, stat = "FDP", bound = max_FDP),
+        TDP = cbind(annot, stat = "TDP", bound = 1 - max_FDP))
     boundsList <- boundsList[what]
     if (!all) {
         boundsList <- lapply(boundsList, FUN = function(x) x[s, ])
