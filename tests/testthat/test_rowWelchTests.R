@@ -88,5 +88,5 @@ test_that("suffWelchTest gives identical results to welch.test", {
 
 test_that("Sanity checks of 'categCheck' throw errors when expected to", {
     expect_error(categCheck(c(1,2), 2), 
-                            "Expected two categories named '0' and '1'!")
+                            "'c12' should consist only of '0' and '1'!")
 })

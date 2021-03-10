@@ -1,18 +1,18 @@
 context("Confidence envelopes on the false positives")
 
 
-test_that("Consistency of output of 'confidenceEnvelope'", {
+test_that("Consistency of output of 'confCurveFromFam'", {
     m <- 123
     alpha <- 0.1
     sim <- gaussianSamples(m = m, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
     dex <- rowWelchTests(sim$X, sim$categ)
-    conf_env <- confidenceEnvelope(dex$p.value, refFamily = "Simes", param = alpha, what = c("FP", "TP", "FDP", "TDP"))
+    conf_bound <- confCurveFromFam(dex$p.value, refFamily = "Simes", param = alpha, what = c("FP", "TP", "FDP", "TDP"))
     
     ## FP and TP
-    FP <- subset(conf_env, stat == "FP")$bound
-    x <- subset(conf_env, stat == "FP")$x
-    TP <- subset(conf_env, stat == "TP")$bound
-    xx <- subset(conf_env, stat == "TP")$x
+    FP <- subset(conf_bound, stat == "FP")$bound
+    x <- subset(conf_bound, stat == "FP")$x
+    TP <- subset(conf_bound, stat == "TP")$bound
+    xx <- subset(conf_bound, stat == "TP")$x
     expect_equal(x, xx)
     expect_equal(FP + TP, x)
     
@@ -21,10 +21,10 @@ test_that("Consistency of output of 'confidenceEnvelope'", {
     expect_lte(max(FP), m)
     
     ## FDP and TDP
-    FDP <- subset(conf_env, stat == "FDP")$bound
-    x <- subset(conf_env, stat == "FP")$x
-    TDP <- subset(conf_env, stat == "TDP")$bound
-    xx <- subset(conf_env, stat == "TDP")$x
+    FDP <- subset(conf_bound, stat == "FDP")$bound
+    x <- subset(conf_bound, stat == "FP")$x
+    TDP <- subset(conf_bound, stat == "TDP")$bound
+    xx <- subset(conf_bound, stat == "TDP")$x
     expect_equal(x, xx)
     expect_equal(FDP + TDP, rep(1, m))
     
@@ -33,23 +33,46 @@ test_that("Consistency of output of 'confidenceEnvelope'", {
     expect_lte(max(FDP), 1)
 })
 
-test_that("Ordering of confidence envelopes with/without calibration", {
+test_that("Consistency between outputs of 'fit', 'bound' and 'confCurveFromFam'", {
     m <- 123
     alpha <- 0.1
-    sim <- gaussianSamples(m = m, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
-    cal <- calibrateJER(sim$X, sim$categ, B = 1e3, alpha = alpha, refFamily = "Simes")    
-    conf_env <- confidenceEnvelope(cal$p.value, "Simes", param = alpha)
-    TP_Simes <- subset(cal$conf_env, stat == "TP")$bound
-    TP <- subset(conf_env, stat == "TP" )$bound
-    diff <- TP_Simes - TP
+    obj <- SansSouciSamples(m = m, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
+    cal <- fit(obj, alpha = alpha, B = 1e2, refFamily = "Simes")    
+    cb0 <- bound(cal, all=TRUE)
+    cb1 <- cal$output$conf_bound
+    expect_identical(cb0, cb1)
+    
+    # using 'confCurveFromFam'
+    lambda <- cal$output$lambda
+    cb2 <- confCurveFromFam(pValues(cal), "Simes", param = lambda)
+    expect_identical(cb0[, c("stat", "bound")], cb2[, c("stat", "bound")])
+    
+    # using 'confCurveFromFam' and 'fit(..., B=0)' to bypass calibration
+    cb0 <- confCurveFromFam(pValues(cal), "Simes", param = alpha)
+    cal0 <- fit(obj, alpha = alpha, B = 0, refFamily = "Simes")    
+    cb00 <- bound(cal0, all = TRUE)
+    expect_identical(cb0[, c("stat", "bound")], cb00[, c("stat", "bound")])
+})
+
+test_that("Ordering of confidence curves with/without calibration", {
+    m <- 1230
+    alpha <- 0.1
+    obj <- SansSouciSamples(m = m, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
+    
+    cal <- fit(obj, alpha = alpha, B = 1e2, refFamily = "Simes")    
+    cb1 <- bound(cal, all=TRUE)
+    
+    TP1 <- subset(cb1, stat == "TP")$bound
+    TP0 <- subset(cb0, stat == "TP" )$bound
+    diff <- TP1 - TP0
     expect_lte(min(diff), 0)
 })
 
-test_that("Vanilla test for 'plotConfidenceEnvelope'", {
+test_that("Vanilla test for 'plotConfCurve'", {
     sim <- gaussianSamples(m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
     rwt <- rowWelchTests(sim$X, categ = sim$categ, alternative = "greater")
     
-    ce <- confidenceEnvelope(rwt$p.value, refFamily = "Simes", param = 0.1)
-    p <- plotConfidenceEnvelope(ce, xmax = 200)
+    ce <- confCurveFromFam(rwt$p.value, refFamily = "Simes", param = 0.1)
+    p <- plotConfCurve(ce, xmax = 200)
     expect_true(inherits(p, "ggplot"))
 })
