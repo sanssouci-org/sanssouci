@@ -47,7 +47,7 @@ size <- function(rho, m, B, alpha=0.05) {
     X0 <- gaussianTestStatistics(m, B, dep = "equi", param = rho)$X0
     p0 <- pnorm(X0, lower.tail = FALSE)
     sk <- sansSouci::SimesThresholdFamily(m, kMax = m)
-    sansSouci:::empiricalCoverage(sk(alpha), X0)
+    sansSouci:::empiricalCoverage(sk(alpha), p0)
 }
 ```
 
@@ -82,7 +82,7 @@ rownames(tb) <- c("Achieved level/target level", "Standard error")
 knitr::kable(tb, digits = 2)
 ```
 
-This table illustrates the sharpness of the Simes test under independence ($\rho=0$), and the conservativeness of this test under positive dependence ($\rho>0$). For example, when $\rho=0.4$, the size od the Simes test is less than half the target level.
+This table illustrates the sharpness of the Simes test under independence ($\rho=0$), and the conservativeness of this test under positive dependence ($\rho>0$). For example, when $\rho=0.4$, the size of the Simes test is less than half the target level.
 
 ## Session information
 
