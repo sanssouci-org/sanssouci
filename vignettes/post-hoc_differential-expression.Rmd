@@ -201,7 +201,7 @@ res_Beta <- fit(res, B = B, alpha = alpha, refFamily = "Beta", K = K)
 ```
 
 
-As expected from the theory, the post hoc bounds obtained after calibration by these methods is much tighter than the $k_0$-Bonferroni and Simes bounds:
+As expected from the theory, the post hoc bounds obtained after calibration by these methods is much tighter than the Simes bound:
 
 ```{r tighter-bounds}
 resList <- list("Simes" = res_Simes,
@@ -227,12 +227,12 @@ In the absence of prior information on genes, a natural idea is to rank them by 
 
 We illustrate the use of post-hoc methods to provide this type of information. More specifcally, we build confidence statements on the number of true/false positives within the top $k$ most significant genes in a differential gene expression study, where $k$ may be defined by the user after seing the data, and multiple choices of $k$ are allowed. 
 
-The confidence curves obtained by calibration of the Simes and Beta families can be compared graphically to the (parametric) Simes curve of @GS2011:
+The confidence curves obtained by calibration of the Simes and Beta families can be compared graphically to the (parametric) Simes curve that can be obtained from @GS2011:
 
 ```{r, conf-env-plot}
-confBounds <- lapply(resList, bound, all = TRUE)
-cols <- RColorBrewer::brewer.pal(length(confBounds), "Dark2")
-p <- plotConfCurve(confBounds, xmax = 300, cols = cols)
+conf_bounds <- lapply(resList, bound, all = TRUE)
+cols <- RColorBrewer::brewer.pal(length(conf_bounds), "Dark2")
+p <- plotConfCurve(conf_bounds, xmax = 300, cols = cols)
 p + geom_vline(xintercept = nBH, color = "gray", linetype = "dotted", size = 1.5) +
   geom_line(size = 1.5)
 ```

@@ -57,14 +57,14 @@ set.seed(20200924)
 
 ```{r load-data}
 data(fMRI_localizer, package = "sansSouci.data")
-dat <- fMRI_localizer
+Y <- fMRI_localizer
 rm(fMRI_localizer)
 ```
 
 The samples are classified into two subgoups, These subgroups correspond to two different motor tasks the subjects were asked to perform, "left click" vs "right click":
 
 ```{r colnames}
-m <- nrow(dat)
+m <- nrow(Y)
 categ <- colnames(dat)
 knitr::kable(table(categ))
 ```
@@ -81,19 +81,19 @@ We set the target confidence level to $\alpha = `r alpha`$. The Simes bound may 
 
 
 ```{r simes-bound}
-categ <- ifelse(colnames(dat) == "left", 0, 1) # map to 0/1
-dex <- data.frame(rowWelchTests(dat, categ))
-rwt <- rowWelchTests(dat, categ=categ)
-pvals <- rwt$p.value
-ce_Simes <- confidenceEnvelope(pvals, refFamily = "Simes", param = alpha)
+groups <- ifelse(colnames(Y) == "left", 0, 1) # map to 0/1
+obj <- SansSouci(Y = Y, groups = groups)
+res_Simes <- fit(obj, B = 0, refFamily = "Simes", alpha = alpha) ## B=0 => no calibration!
+TP_Simes <- bound(res_Simes, what = "TP")
 ```
+
+The Simes bound implies that with probability larger than `r 1-alpha`, the number of voxels associated to the task of interest (among all `r nHyp(obj)` voxels) is at least  `r TP`.
 
 Disregarding (for now) the voxel locations in the brain, we plot confidence bounds on $p$-value level sets (corresponding to maps obtained by thresholding at a given test statistic):
 
 ```{r plot-conf-bounds-Simes}
-xmax <- 8*max(subset(ce_Simes, stat == "TP")$bound)
-plotConfidenceEnvelope(ce_Simes, xmax = xmax) +
-  ggtitle("Post hoc confidence envelopes: Simes/ARI")
+plot(res_Simes, xmax = 800) +
+  ggtitle("Post hoc confidence curves: Simes/ARI")
 ```
 
 # Tighter confidence bounds by adaptation to unknown dependence 
@@ -101,31 +101,54 @@ plotConfidenceEnvelope(ce_Simes, xmax = xmax) +
 As discussed in @blanchard20post-hoc, the above-described bound is known to be valid only under certain positive dependence assumptions (PRDS) on the joint $p$-value distribution. Although the PRDS assumption is widely accepted for fMRI studies (see @genovese2002thresholding, @nichols2003controlling), we argue (and demonstrate below) that this assumption yields overly conservative post hoc bounds. Indeed, the Simes bound is by construction not *adaptive* to the specific type of dependence at hand for a particular data set.
 
 
-To bypass these limitations, @blanchard20post-hoc have proposed a randomization-based procedure known as $\lambda$-calibration, which yields tighter bounds that are adapted to the dependency observed in the data set at hand. We note that a related approach has been proposed by @HSG2019. In the case of two-sample tests, this calibration can be achieved by permutation of class labels, which is readily available via the `calibrateJER` function of the sansSouci package:
+To bypass these limitations, @blanchard20post-hoc have proposed a randomization-based procedure known as $\lambda$-calibration, which yields tighter bounds that are adapted to the dependency observed in the data set at hand. We note that a related approach has been proposed by @HSG2019. In the case of two-sample tests, this calibration can be achieved by permutation of class labels, which is readily available via the `fit` function of the sansSouci package:
 
 
 ```{r post-hoc-calibration, cache=TRUE}
 B <- 1000
-cal <- calibrateJER(X = dat, categ, B = B, alpha = alpha, refFamily = "Simes")
+res <- fit(obj, alpha = alpha, B = B, refFamily = "Simes")
 ```
 
 An alternative to the Simes/Linear reference family is the Beta reference family:
 
 ```{r post-hoc-calibration-beta, cache=TRUE}
 K <- 500
-cal_beta <- calibrateJER(X = dat, categ, B = B, alpha = alpha, refFamily = "Beta", K = K)
+res_Beta <- fit(obj, alpha = alpha, B = B, refFamily = "Beta", K = K)
 ```
+
+As expected from the theory, the post hoc bounds obtained after calibration by these methods is much tighter than the Simes bound:
+
+```{r tighter-bounds}
+resList <- list("Simes/ARI" = res_Simes,
+            "Linear" = res,
+            "Beta" = res_Beta)
+names(resList)[3] <- sprintf("Beta (K=%s)", K)
+
+bounds <- sapply(resList, bound, what = "TP")
+knitr::kable(bounds, digits = 2, col.names = c("Lower bound on True Positives"))
+```
+
+In the next two sections we illustrate the use of these improved bounds in order to build
+
+- confidence curves for the true or false positives
+- confidence statements for brain atlases
+
+
+# Confidence curves on "top-$k$" lists
+
+In the absence of prior information on voxels, a natural idea is to rank them by decreasing statistical significance, and a natural question to ask is: 
+
+> Can we provide a lower confidence curve on the number (or proportion) of truly associated voxels among the most significant ones?
+
+We illustrate the use of post-hoc methods to provide this type of information. More specifcally, we build confidence statements on the number of true/false positives within the top $k$ most significant voxels, where $k$ may be defined by the user after seing the data, and multiple choices of $k$ are allowed. 
+
+The confidence curves obtained by calibration of the Simes and Beta families can be compared graphically to the (parametric) Simes curve that can be obtained from @GS2011:
 
 
 ```{r plot-conf-bounds}
-conf_envs <- list("Simes/ARI" = ce_Simes, 
-                "Linear"= cal$conf_env,
-                "Beta"= cal_beta$conf_env)
-names(conf_envs)[3] <- sprintf("Beta (K=%s)", K)
-
-
-cols <- RColorBrewer::brewer.pal(length(conf_envs), "Dark2")
-p <- plotConfidenceEnvelope(conf_envs, xmax = xmax, cols = cols)
+conf_bounds <- lapply(resList, bound, all = TRUE)
+cols <- RColorBrewer::brewer.pal(length(conf_bounds), "Dark2")
+p <- plotConfCurve(conf_bounds, xmax = xmax, cols = cols)
 p + geom_line(size=1.5)
 ```
 
