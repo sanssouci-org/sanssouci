@@ -1,6 +1,5 @@
 #' Confidence bounds on the true/false positives among most significant items
 #'
-#' @rdname bound
 #' @param p.values A vector containing the p-values for all m hypotheses, sorted
 #'   increasingly
 #'   

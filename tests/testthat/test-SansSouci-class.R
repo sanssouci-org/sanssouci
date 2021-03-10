@@ -2,7 +2,7 @@ test_that("Correctness of the constructor of SansSouci", {
     m <- 54
     n <- 13
     set.seed(0xBEEF)
-    obj1 <- SansSouciSamples(m = m, rho = 0, n = n, 
+    obj1 <- SansSouciSim(m = m, rho = 0, n = n, 
                              pi0 = 0.8, SNR = 0, prob = 0.4)
     set.seed(0xBEEF)
     sim <- gaussianSamples(m = m, rho = 0, n = n, 

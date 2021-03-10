@@ -1,4 +1,4 @@
-#' Create an object of class "SansSouci"
+#' Create an object of class 'SansSouci'
 #' 
 #' @param Y A matrix of \eqn{m} variables (hypotheses) by \eqn{n} observations
 #' @param groups A numeric vector of \eqn{n} values in \eqn{0, 1}, the groups of observations on which to perform two-sample tests
@@ -45,17 +45,16 @@ SansSouci <- function(Y, groups, truth = NULL) {
 }
 
 
-#' Create an object of class "SansSouci" from simulated data
+#' Create an object of class 'SansSouci' from simulations
 #' 
-#' Create an object of class "SansSouci" from simulated data in the Gaussian
+#' Create a 'SansSouci' object from simulation in the Gaussian 
 #' equi-correlated model
 #' 
-#' @rdname SansSouci
 #' @param ... Parameters to be passed to [gaussianSamples]
 #' @seealso [gaussianSamples]
 #' @export
 #' @examples
-#' obj <- SansSouciSamples(m = 543, rho = 0.4, n = 210,
+#' obj <- SansSouciSim(m = 543, rho = 0.4, n = 210,
 #'                         pi0 = 0.8, SNR = 3, prob = 0.5)
 #' alpha <- 0.1
 #' 
@@ -83,16 +82,13 @@ SansSouci <- function(Y, groups, truth = NULL) {
 #'               "Oracle" = bound(oracle, all = TRUE))
 #' plotConfCurve(confs)
 
-SansSouciSamples <- function(...) {
+SansSouciSim <- function(...) {
     sim <- gaussianSamples(...)
     SansSouci(Y = sim$X, groups = sim$categ, truth = sim$H)
 }
 
-#' Basic methods for class `SansSouci`:
+#' Basic methods for class `SansSouci`
 #' 
-#' - item 1
-#' - item 3
-#'
 #' @param object An object of class \code{SansSouci}
 #' @name SansSouci-methods
 #' @examples
@@ -114,6 +110,13 @@ SansSouciSamples <- function(...) {
 NULL
 #> NULL
 
+#' Generic functions for S3 class SansSouci
+#' 
+#' @rdname all-generics
+#' @param object An object. See individual methods for specifics
+#' @export
+NULL
+#> NULL
 
 #' `nHyp`: get the number of hypotheses
 #' 

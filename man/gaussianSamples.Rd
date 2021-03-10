@@ -79,7 +79,7 @@ legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
 
 }
 \seealso{
-\link{SansSouciSamples}
+\link{SansSouciSim}
 }
 \author{
 Gilles Blanchard, Pierre Neuvial and Etienne Roquain

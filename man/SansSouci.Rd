@@ -2,12 +2,9 @@
 % Please edit documentation in R/SansSouci-class.R
 \name{SansSouci}
 \alias{SansSouci}
-\alias{SansSouciSamples}
-\title{Create an object of class "SansSouci"}
+\title{Create an object of class 'SansSouci'}
 \usage{
 SansSouci(Y, groups, truth = NULL)
-
-SansSouciSamples(...)
 }
 \arguments{
 \item{Y}{A matrix of \eqn{m} variables (hypotheses) by \eqn{n} observations}
@@ -15,15 +12,12 @@ SansSouciSamples(...)
 \item{groups}{A numeric vector of \eqn{n} values in \eqn{0, 1}, the groups of observations on which to perform two-sample tests}
 
 \item{truth}{An optional numeric vector of $m$ values in ${0,1}$, the status of each null hypothesis (0 means H0 is true, 1 means H1 is true). Typically used in simulations.}
-
-\item{...}{Parameters to be passed to \link{gaussianSamples}}
 }
 \value{
 An object of class "SansSouci"
 }
 \description{
-Create an object of class "SansSouci" from simulated data in the Gaussian
-equi-correlated model
+Create an object of class 'SansSouci'
 }
 \examples{
 data(expr_ALL, package = "sansSouci.data")
@@ -41,34 +35,4 @@ label(res)
 res <- fit(a, B = 100, alpha = 0.1, refFamily="Beta", K=10)
 label(res)
 
-obj <- SansSouciSamples(m = 543, rho = 0.4, n = 210,
-                        pi0 = 0.8, SNR = 3, prob = 0.5)
-alpha <- 0.1
-
-# Adaptive Simes (lambda-calibration)
-res <- fit(obj, B = 100, alpha = alpha, refFamily = "Simes")
-res
-# upper bound on number of signals if the entire data set
-# (and corresponding lower bound on FDP)
-bound(res)
-
-# confidence curve 
-plot(res)
-
-# comparison to other confidence curves
-# Parametric Simes (no calibration -- assume positive dependence (PRDS))
-res0 <- fit(obj, B = 0, alpha = alpha, refFamily = "Simes")
-res0
-
-# Oracle
-oracle <- fit(obj, alpha = alpha, refFamily = "Oracle")
-oracle
-
-confs <- list(Simes = bound(res0, all = TRUE),
-              "Simes+calibration" = bound(res, all = TRUE),
-              "Oracle" = bound(oracle, all = TRUE))
-plotConfCurve(confs)
-}
-\seealso{
-\link{gaussianSamples}
 }

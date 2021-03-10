@@ -33,7 +33,7 @@
 #'   SNR*\sqrt(1/(n_0) + 1/n_1)}. The argument \code{p} is the probability of a
 #'   sample to belong to the non-zero-mean population.
 #'   
-#' @seealso [SansSouciSamples]
+#' @seealso [SansSouciSim]
 #'
 #' @export
 #' @importFrom stats rbinom

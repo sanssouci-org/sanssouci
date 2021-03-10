@@ -7,13 +7,49 @@
 \usage{
 volcanoPlot(x, ...)
 
-\method{volcanoPlot}{SansSouci}(x, ...)
+\method{volcanoPlot}{SansSouci}(
+  x,
+  p = 1,
+  q = 1,
+  r = 0,
+  cex = c(0.2, 0.6),
+  col = c("#33333333", "#FF0000", "#FF666633"),
+  pch = 19,
+  ylim = NULL,
+  ...
+)
 }
 \arguments{
 \item{x}{An object of class \code{SansSouci}}
 
 \item{...}{Other arguments to be passed to volcanoPlot.numeric}
+
+\item{p}{A numeric value, the p-value threshold under which genes are selected}
+
+\item{q}{A numeric value, the q-value (or FDR-adjusted p-value) threshold under which genes are selected}
+
+\item{r}{A numeric value, the absolute fold change above which genes are selected}
+
+\item{cex}{A numeric vector of length 2, the relative magnification factor for unselected (\code{cex[1]}) and unselected (\code{cex[2]}) genes.}
+
+\item{col}{A vector of length 3}
+
+\item{pch}{An integer or single character string specifying the plotting character, see \link{par}}
+
+\item{ylim}{A numeric vector of length 2, the \code{y} limits of the plot}
 }
 \description{
 Volcano plot
+}
+\examples{
+m <- 500
+pi0 <- 0.5
+m1 <- m-m*pi0
+SNR <- 5*(runif(m1)-0.5)
+obj <- SansSouciSim(m = m, rho = 0.2, n = 100,
+                       pi0 = pi0, SNR = SNR, prob = 0.5)
+alpha <- 0.2
+cal <- fit(obj, alpha = alpha, B = 1e2, refFamily="Simes")
+volcanoPlot(cal, q = 0.2, r = 0.2, ylim = c(0, 4))
+
 }

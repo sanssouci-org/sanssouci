@@ -5,7 +5,7 @@ test_that("Vanilla test for 'volcanoPlot'", {
     pi0 <- 0.5
     m1 <- m-m*pi0
     SNR <- 5*(runif(m1)-0.5)
-    obj <- SansSouciSamples(m = m, rho = 0.4, n = 100,
+    obj <- SansSouciSim(m = m, rho = 0.4, n = 100,
                            pi0 = pi0, SNR = SNR, prob = 0.5)
     alpha <- 0.2
     cal <- fit(obj, alpha = alpha, B = 1e2, refFamily="Simes")

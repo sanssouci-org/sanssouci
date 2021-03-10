@@ -7,9 +7,33 @@ volcanoPlot <- function(x, ...) UseMethod("volcanoPlot")
 
 #' @rdname volcanoPlot
 #' @param x An object of class `SansSouci`
+#' @param p A numeric value, the p-value threshold under which genes are selected
+#' @param q A numeric value, the q-value (or FDR-adjusted p-value) threshold under which genes are selected
+#' @param r A numeric value, the absolute fold change above which genes are selected
+#' @param cex A numeric vector of length 2, the relative magnification factor for unselected (`cex[1]`) and unselected (`cex[2]`) genes. 
+#' 
+#' @param col A vector of length 3
+#' @param pch An integer or single character string specifying the plotting character, see [par]
+#' @param ylim A numeric vector of length 2, the `y` limits of the plot
 #' @param ... Other arguments to be passed to volcanoPlot.numeric
 #' @export
-volcanoPlot.SansSouci <- function(x, ...) {
+#' 
+#' @examples
+#' m <- 500
+#' pi0 <- 0.5
+#' m1 <- m-m*pi0
+#' SNR <- 5*(runif(m1)-0.5)
+#' obj <- SansSouciSim(m = m, rho = 0.2, n = 100,
+#'                        pi0 = pi0, SNR = SNR, prob = 0.5)
+#' alpha <- 0.2
+#' cal <- fit(obj, alpha = alpha, B = 1e2, refFamily="Simes")
+#' volcanoPlot(cal, q = 0.2, r = 0.2, ylim = c(0, 4))
+#' 
+volcanoPlot.SansSouci <- function(x, 
+                                  p = 1, q = 1, r = 0,
+                                  cex = c(0.2, 0.6), 
+                                  col = c("#33333333", "#FF0000", "#FF666633"),
+                                  pch = 19, ylim = NULL, ...) {
     object <- x; rm(x);
     if (object$input$n_group == 1) {
         stop("Can't do a volcano plot for one-sample tests!")
@@ -17,7 +41,11 @@ volcanoPlot.SansSouci <- function(x, ...) {
     pval <- pValues(object)
     fc <- foldChanges(object)
     thr <- thresholds(object)
-    volcanoPlot(pval, fc = fc, thr = thr, ...)
+    volcanoPlot(pval, fc = fc, thr = thr, 
+                p = p, q = q, r = r,
+                cex = cex, 
+                col = col,
+                pch = pch, ylim = ylim, ...)
 }
 
 #' Volcano plot
@@ -27,7 +55,6 @@ volcanoPlot.SansSouci <- function(x, ...) {
 #' @param x A vector of p-values
 #' @param fc A vector of fold changes, of the same length as `x`
 #' @param thr A numeric vector of length K, a JER controlling family
-#' 
 #' @param p A numeric value, the p-value threshold under which genes are selected
 #' @param q A numeric value, the q-value (or FDR-adjusted p-value) threshold under which genes are selected
 #' @param r A numeric value, the absolute fold change above which genes are selected
@@ -44,29 +71,9 @@ volcanoPlot.SansSouci <- function(x, ...) {
 #'   (mean difference in log scale) between the two categories.
 #' @return The indices of selected genes (returned invisibly)
 #' 
-#' @export
 #' @importFrom graphics abline legend rect title
 #' @importFrom stats p.adjust
 #' @seealso Volcano plot shiny app at \url{https://pneuvial.shinyapps.io/volcano-plot/}
-#' 
-#' @examples
-#' m <- 500
-#' pi0 <- 0.5
-#' m1 <- m-m*pi0
-#' SNR <- 5*(runif(m1)-0.5)
-#' sim <- gaussianSamples(m = m, rho = 0.2, n = 100,
-#'                        pi0 = pi0, SNR = SNR, prob = 0.5)
-#' X <- sim$X
-#' categ <- sim$categ
-#' alpha <- 0.2
-#' cal <- calibrateJER(X = X, categ = categ, B = 1e2, alpha = alpha, refFamily="Simes")
-#' tests <- rowWelchTests(X, categ)
-#' sel <- volcanoPlot(tests$p.value, tests$meanDiff, thr = cal$thr, q = 0.2, r = 0.2, ylim = c(0, 6))
-#' 
-#' # Compare bound to reality
-#' TP <- sum(sim$H[sel])
-#' FP <- sum(1-sim$H[sel])
-#' FDP <- FP/length(sel)
 
 volcanoPlot.numeric <- function(x, fc, thr,
                         p = 1, q = 1, r = 0,
@@ -89,7 +96,7 @@ volcanoPlot.numeric <- function(x, fc, thr,
                        (pval <= p))        ##          or p-value
     y_thr <- Inf
     if (length(y_sel) > 0) {
-        y_thr <- min(logp[y_sel])              ## threshold on the log(p-value) scale
+        y_thr <- min(logp[y_sel])       ## threshold on the log(p-value) scale
     }
     
     ## gene selections

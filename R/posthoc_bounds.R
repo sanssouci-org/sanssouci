@@ -28,17 +28,28 @@ bound <- function(object, S, ...) UseMethod("bound")
 #' @examples
 #' 
 #' # Generate Gaussian data and perform multiple tests
-#' sim <- gaussianSamples(m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
-#' obj <- SansSouci(Y = sim$X, groups = sim$categ)
+#' obj <- SansSouciSim(m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
 #' res <- fit(obj, B = 100, alpha = 0.1)
-#' # calculate, print, and plot confidence bound
-#' ce <- bound(res, all = TRUE)
-#' head(ce)
 #' 
-#' ce <- bound(res, S=1:10, all = TRUE)
-#' head(ce)
+#' # post hoc bounds for all hypotheses
+#' bound(res)
+#'
+#' # confidence curve
+#' cb <- bound(res, all = TRUE)
+#' head(cb)
+#' plot(res)
 #' 
-#' plot(res, S=which(sim$H==1))
+#' # confidence curve for a subset
+#' S <- which(foldChanges(res) > 0.3)
+#' plot(res, S = S)
+#' 
+#' # plot two confidence curves
+#' res_beta <- fit(obj, B = 100, alpha = 0.1, refFamily = "Beta", K = 20)
+#' cb_beta <- bound(res_beta, all = TRUE)
+#' 
+#' bounds <- list("Simes"= cb, 
+#'                    "Beta" = cb_beta)
+#' plotConfCurve(bounds, xmax = 200)
 #' 
 #' @export
 bound.SansSouci <- function(object, S = 1:nHyp(object), 
@@ -59,10 +70,11 @@ bound.SansSouci <- function(object, S = 1:nHyp(object),
     return(bounds)
 }
 
-#' @rdname bound
-#' @inheritParams bound.SansSouci
-bound.numeric <- function(object, S, thr, lab, 
+bound.numeric <- function(object, S = seq_along(object), thr = NULL, lab = NULL, 
                      what = c("TP", "FDP"), all = FALSE) {
+    if (is.null(thr)) {
+        stop("Argument 'thr' must be non NULL")
+    }
     p.values <- object; rm(object);
     s <- length(S)
     idxs <- seq_len(s)
@@ -108,30 +120,6 @@ bound.numeric <- function(object, S, thr, lab,
 #' @references Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc confidence bounds on false positives using reference families. Annals of Statistics, 48(3), 1281-1303.
 #'
 #' @export
-#' @examples
-#' 
-#' # Generate Gaussian data and perform multiple tests
-#' sim <- gaussianSamples(m = 502, rho = 0.3, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
-#' dat <- sim$X
-#' categ <- sim$categ
-#' rwt <- rowWelchTests(dat, categ, alternative = "greater")
-#' 
-#' # calculate and plot confidence bound
-#' alpha <- 0.1
-#' ce <- confCurveFromFam(rwt$p.value, refFamily = "Simes", param = alpha)
-#' plotConfCurve(ce, xmax = 200) 
-#' 
-#' # calculate and plot several confidence bounds
-#' B <- 100
-#' cal <- calibrateJER(X = dat, categ = categ, B = B, alpha = alpha, refFamily = "Simes")
-#' cal_beta <- calibrateJER(X = dat, categ = categ, B = B, alpha = alpha, refFamily = "Beta", K = 20)
-#' cec <- confCurveFromFam(rwt$p.value, refFamily = "Simes", param = cal$lambda)
-
-#' all_bounds <- list("Simes" = ce, 
-#'                 "Simes + calibration"= cal$conf_bound, 
-#'                 "Beta + calibration" = cal_beta$conf_bound)
-#' plotConfCurve(all_bounds, xmax = 200)
-#' 
 plotConfCurve <- function(conf_bound, xmax, cols = NULL) {
     nb <- 1
     if (class(conf_bound) == "data.frame") {    # (assume) a single conf. bound
