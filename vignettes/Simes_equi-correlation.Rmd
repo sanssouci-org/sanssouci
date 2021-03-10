@@ -84,6 +84,12 @@ knitr::kable(tb, digits = 2)
 
 This table illustrates the sharpness of the Simes test under independence ($\rho=0$), and the conservativeness of this test under positive dependence ($\rho>0$). For example, when $\rho=0.4$, the size of the Simes test is less than half the target level.
 
+> This conservativeness is one of the motivations of the development of post hoc inference methods that use randomization to adapt to dependence. See the following vignettes:
+> 
+> - [Joint Error Rate Calibration](jointErrorRateCalibration_simulations.html)
+> - [Permutation-based post hoc inference for differential gene expression studies](post-hoc_differential-expression.html)
+> - [Permutation-based post hoc inference for fMRI studies](post-hoc_fMRI.html)
+
 ## Session information
 
 ```{r}
