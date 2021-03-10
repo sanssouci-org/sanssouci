@@ -65,7 +65,7 @@ The samples are classified into two subgoups, These subgroups correspond to two 
 
 ```{r colnames}
 m <- nrow(Y)
-categ <- colnames(dat)
+categ <- colnames(Y)
 knitr::kable(table(categ))
 ```
 
@@ -77,22 +77,29 @@ We start by calculating the Simes bound introduced by @GS2011. This bound has al
 alpha <- 0.1
 ```
 
-We set the target confidence level to $\alpha = `r alpha`$. The Simes bound may be obtained with the function 'curveSimes' of the R package 'cherry'. Here, we use the 'sansSouci' package, as follows:
+We set the target confidence level to $\alpha = `r alpha`$. The Simes bound is implemented in the package 'cherry'. Here, we use the 'sansSouci' package, as follows:
 
 
 ```{r simes-bound}
 groups <- ifelse(colnames(Y) == "left", 0, 1) # map to 0/1
 obj <- SansSouci(Y = Y, groups = groups)
 res_Simes <- fit(obj, B = 0, refFamily = "Simes", alpha = alpha) ## B=0 => no calibration!
-TP_Simes <- bound(res_Simes, what = "TP")
 ```
 
-The Simes bound implies that with probability larger than `r 1-alpha`, the number of voxels associated to the task of interest (among all `r nHyp(obj)` voxels) is at least  `r TP`.
+Post hoc bounds are obtained from the `bound` function:
+
+```{r}
+TP_Simes <- bound(res_Simes, what = "TP")
+TP_Simes
+```
+
+The Simes bound implies that with probability larger than `r 1-alpha`, the number of voxels associated to the task of interest (among all `r nHyp(obj)` voxels) is at least  `r TP_Simes`.
 
 Disregarding (for now) the voxel locations in the brain, we plot confidence bounds on $p$-value level sets (corresponding to maps obtained by thresholding at a given test statistic):
 
 ```{r plot-conf-bounds-Simes}
-plot(res_Simes, xmax = 800) +
+xmax <- 800
+plot(res_Simes, xmax = xmax) +
   ggtitle("Post hoc confidence curves: Simes/ARI")
 ```
 
@@ -162,50 +169,25 @@ The goal in this section is to calculate post hoc bound on user-defined brain re
 data(brainAtlas, package = "sansSouci.data")
 ```
 
-This atlas is made of `r nrow(brainAtlas)` areas. For each of these areas, we will calculate the three post hoc bounds obtained above. Note that by construction of post hoc bounds, these 48 bounds are valid simultaneously (in particular, no further multiple testing correction is required at this stage). 
-
-```{r thr}
-thrs <- list("Simes/ARI" = SimesThresholdFamily(nrow(dat))(alpha),
-             "Linear" = cal$thr,
-             "Beta" = cal_beta$thr)
-names(thrs)[3] <- sprintf("Beta (K=%s)", K)
-```
-
-For convenience we define a function to calculate these post hoc bounds for all areas from the chosen atlas:
-
-```{r get-posthoc-bounds}
-getPosthocBounds <- function(reg, pvals, thrList) {
-  nreg <- nrow(reg)
-  FP <- matrix(NA, ncol = length(thrList), nrow = nreg)
-  colnames(FP) <- names(thrList)
-  R <- numeric(nreg)
-  for (rr in 1:nreg) {
-    wpos <- which(reg[rr, ]>0)
-    pvalsRR <- pvals[wpos]  ## collapse all into one big region (good idea?)
-    for (kk in seq(along = thrList)) {
-      FP[rr, kk] <- maxFP(pvalsRR, thrList[[kk]])
-    }
-    R[rr] <- length(pvalsRR)
-  }
-  data.frame(area = rownames(reg), size = R, R - FP, check.names = FALSE)
-}
-```
-
+This atlas is made of `r nrow(brainAtlas)` areas. For each of these areas, we  calculate the three post hoc bounds obtained above. Note that by construction of post hoc bounds, these 48 bounds are valid simultaneously (in particular, no further multiple testing correction is required at this stage). 
 
 ```{r posthoc-bounds-atlas}
-bounds <- getPosthocBounds(brainAtlas, pvals, thrs)
+bounds <- apply(brainAtlas, 1, FUN = function(reg) {
+  S <- which(reg > 0)
+  c("Region size" = length(S), sapply(resList, bound, S, "TP"))
+})
 ```
 
-In this particular case, some signal is revealed by the post hoc bound for `r sum(rowSums(bounds[, 4:5])>0)` areas for permutation-based approaches:
+In this particular case, some signal is revealed by the post hoc bound for `r sum(colSums(bounds[3:4, ])>0)` areas for permutation-based approaches:
 
 ```{r posthoc-bounds-atlas-table}
-ww <- which(rowSums(bounds[, 4:5])>0)
+ww <- which(colSums(bounds[3:4, ])>0)
 cap <- sprintf("Lower bounds on the number of true positives in %s brain regions.",
                length(ww))
-knitr::kable(bounds[ww, ], caption = cap)
+knitr::kable(t(bounds[, ww]), caption = cap)
 ```
 
-Here again, ARI is outperformed by permutation-based approaches which are able to adapt to unknown dependency: for the same target risk level ($\alpha = `r alpha`$), both permutation-based bounds are much less conservative than the classical Simes/ARI bound.
+Here again, ARI is outperformed by permutation-based approaches which are able to adapt to unknown dependency: for the same target risk level ($\alpha = `r alpha`$) both permutation-based bounds are substantially less conservative than the classical Simes/ARI bound.
 
 # Session information
 
