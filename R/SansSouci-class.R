@@ -39,7 +39,6 @@ SansSouci <- function(Y, groups, truth = NULL) {
     input$truth <- truth
     obj <- structure(list(input = input,
                           parameters = NULL,
-                          alpha = NULL,
                           output = NULL), 
                      class = "SansSouci")
     obj
@@ -169,7 +168,7 @@ label.SansSouci <- function(object) {
         return(NULL)
     }
     lab <- param$family
-    if (lab %in% c("Beta") & (!is.null(param$K))) {
+    if (!(lab %in% c("Simes", "Oracle")) & (!is.null(param$K))) {
         lab <- sprintf("%s(K=%d)", lab, param$K)
     } 
     return(lab)
@@ -300,7 +299,7 @@ fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
                      funName = funName,
                      family = family, 
                      maxStepsDown = maxStepsDown, 
-                     K = nHyp(object))
+                     K = K)
     
     if (B > 0 && family != "Oracle") {
         cal <- calibrateJER(X = Y, categ = groups, B = B, alpha = alpha, 
