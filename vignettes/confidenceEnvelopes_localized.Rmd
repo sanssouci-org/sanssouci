@@ -102,20 +102,24 @@ The true number of false positives will be called "Oracle" bound in the plots be
 
 ```{r oracle}
 obj$input$truth <- as.numeric(mu != 0)
-
-if (FALSE) {
-  H0 <- which(mu == 0)
-  V <- cumsum(ord %in% H0)
-  V <- V[idxs]
-}
-
 res_Oracle <- fit(obj, alpha = alpha, p.values = pvalues, family = "Oracle")
 Vmat <- bound(res_Oracle, what = "FP", all = TRUE)
 V <- Vmat$bound[idxs]
 res[["Oracle"]] <- data.frame(idxs, V, method = "Oracle")
 ```
 
-### 2- DKWM-based confidence envelope
+### 2- Simes-based confidence envelope
+
+Here we use the @simes86improved inequality to bound the number of false positives in each node of the tree, as proposed by @GS2011 and further studied by @blanchard20post-hoc, both in a context where the signal is not localized. 
+
+```{r simes}
+res_Simes <- fit(obj, alpha = alpha, p.values = pvalues, family = "Simes")
+Vmat <- bound(res_Simes, what = "FP", all = TRUE)
+V <- Vmat$bound[idxs]
+res[["Simes"]] <- data.frame(idxs, V, method = "Simes")
+```
+
+### 3- DKWM-based confidence envelope
 
 Here we use the DKWM inequality (@dvoretzky1956asymptotic, @massart1990tight) to bound the number of false positives in each node of the tree, as suggested in @durand20post-hoc.
 
@@ -157,16 +161,6 @@ if (FALSE) {
 res[["Partition"]] <- data.frame(idxs, V, method = "Partition")
 ```
 
-### 3- Simes-based confidence envelope
-
-Here we use the @simes86improved inequality to bound the number of false positives in each node of the tree, as proposed by @GS2011 and further studied by @blanchard20post-hoc, both in a context where the signal is not localized. 
-
-```{r simes}
-res_Simes <- fit(obj, alpha = alpha, p.values = pvalues, family = "Simes")
-Vmat <- bound(res_Simes, what = "FP", all = TRUE)
-V <- Vmat$bound[idxs]
-res[["Simes"]] <- data.frame(idxs, V, method = "Simes")
-```
 
 
 ## Plot confidence curves

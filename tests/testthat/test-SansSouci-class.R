@@ -63,7 +63,9 @@ test_that("'fit.SansSouci' reproduces the results of 'calibrateJER'", {
                          pi0 = 0.8, SNR = 0, prob = 0.4)
     Y <- obj$input$Y
     groups <- obj$input$groups
-    
+    alpha <- 0.07
+    B <- 123
+    K <- m/2
     alt <- "greater"
     fam <- "Beta"
     configs <- expand.grid(alternative = c("two.sided", "less", 

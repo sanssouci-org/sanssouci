@@ -21,7 +21,6 @@ SansSouciStruct <- function(struct, leaves, truth = NULL) {
     input$truth <- truth
     obj <- structure(list(input = input,
                           parameters = NULL,
-                          alpha = NULL,
                           output = NULL), 
                      class = "SansSouciStruct")
     obj
@@ -102,6 +101,7 @@ fit.SansSouciStruct <- function(object, alpha, p.values,
             stop("'truth' should be available for 'Oracle'. See ?SansSouci")
         }
     }
+    m <- nHyp(object)
     params <- list(alpha = alpha, family = family, flavor = flavor)
     if (family %in% c("DKWM", "HB", "trivial")) {
         zeta <- switch(family,
