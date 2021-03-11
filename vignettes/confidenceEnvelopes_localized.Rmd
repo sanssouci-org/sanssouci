@@ -59,12 +59,9 @@ More precisely, quoting @durand20post-hoc:
 We start by creating a binary tree structure and generating the signal:
 
 ```{r simulation}
-dd <- dyadic.from.window.size(m, s, method = 2)
-leaf_list <- dd$leaf_list
-C <- dd$C
-
+obj <- SansSouciDyadic(m, s, flavor = "window.size", direction = "top-down")
 mu <- gen.mu.leaves(m = m, K1 = K1, d = r, grouped = TRUE, setting = "const", 
-                    barmu = barmu, leaf_list = leaf_list)
+                    barmu = barmu, leaf_list = obj$input$leaves)
 ```
 
 This construction is illustrated in the figure below (Figure 11 in @durand20post-hoc) in the case where $q=3$.
@@ -93,8 +90,8 @@ alpha <- 0.05
 
 ```{r ordered-p-values}
 ord <- order(pvalues)
-idxs <- c(seq(from = 1, to = 2*m1, length = 30),
-          seq(from = 2*m1, to = m, length = 10)[-1])
+idxs <- round(c(seq(from = 1, to = 2*m1, length = 30),
+                seq(from = 2*m1, to = m, length = 10)[-1]))
 res <- list()
 ```
 
@@ -104,43 +101,73 @@ res <- list()
 The true number of false positives will be called "Oracle" bound in the plots below.
 
 ```{r oracle}
-H0 <- which(mu == 0)
-V <- cumsum(ord %in% H0)
-V <- V[idxs]
+obj$input$truth <- as.numeric(mu != 0)
+
+if (FALSE) {
+  H0 <- which(mu == 0)
+  V <- cumsum(ord %in% H0)
+  V <- V[idxs]
+}
+
+res_Oracle <- fit(obj, alpha = alpha, p.values = pvalues, family = "Oracle")
+Vmat <- bound(res_Oracle, what = "FP", all = TRUE)
+V <- Vmat$bound[idxs]
 res[["Oracle"]] <- data.frame(idxs, V, method = "Oracle")
 ```
 
-### 2- Simes-based confidence envelope
-
-Here we use the @simes86improved inequality to bound the number of false positives in each node of the tree, as proposed by @GS2011 and further studied by @blanchard20post-hoc, both in a context where the signal is not localized. 
-
-```{r simes}
-V <- idxs - sapply(idxs, FUN = function(ii) {
-    posthocBySimes(pvalues, ord[1:ii], alpha)
-})
-res[["Simes"]] <- data.frame(idxs, V, method = "Simes")
-```
-
-### 3- DKWM-based confidence envelope
+### 2- DKWM-based confidence envelope
 
 Here we use the DKWM inequality (@dvoretzky1956asymptotic, @massart1990tight) to bound the number of false positives in each node of the tree, as suggested in @durand20post-hoc.
 
 ```{r tree}
-ZL <- zetas.tree(C, leaf_list, zeta.DKWM, pvalues, alpha = alpha)
+res_DKWM <- fit(obj, alpha, p.values = pvalues, 
+                family = "DKWM")
 V <- sapply(idxs, FUN = function(ii) {
-    V.star(ord[1:ii], C, ZL, leaf_list)
+  bound(res_DKWM, S = seq_len(ii), what = "FP")
 })
+ord <- order(pvalues)
+if (FALSE) {
+  VV <- sapply(idxs, FUN = function(ii) {
+    V.star(ord[1:ii], 
+           C = obj$input$struct, 
+           ZL = res_DKWM$output$ZL, 
+           leaf_list = obj$input$leaves)
+  })
+}
 res[["Tree"]] <- data.frame(idxs, V, method = "Tree")
 ```
 
+
 ```{r part}
-C0 <- C[length(C)]
-ZL <- zetas.tree(C0, leaf_list, zeta.DKWM, pvalues, alpha = alpha)
+res_DKWM_part <- fit(obj, alpha, p.values = pvalues, 
+                family = "DKWM", flavor = "partition")
+label(res_DKWM_part)
 V <- sapply(idxs, FUN = function(ii) {
-    V.star(ord[1:ii], C0, ZL, leaf_list)
+  bound(res_DKWM_part, S = seq_len(ii), what = "FP")
 })
+
+if (FALSE) {
+  C <- obj$input$struct
+  C0 <- C[length(C)]
+  ZL <- zetas.tree(C = C0, leaf_list = obj$input$leaves, zeta.DKWM, pvalues, alpha = alpha)
+  VV <- sapply(idxs, FUN = function(ii) {
+    V.star(ord[1:ii], C0, ZL, leaf_list = obj$input$leaves)
+  })
+}
 res[["Partition"]] <- data.frame(idxs, V, method = "Partition")
 ```
+
+### 3- Simes-based confidence envelope
+
+Here we use the @simes86improved inequality to bound the number of false positives in each node of the tree, as proposed by @GS2011 and further studied by @blanchard20post-hoc, both in a context where the signal is not localized. 
+
+```{r simes}
+res_Simes <- fit(obj, alpha = alpha, p.values = pvalues, family = "Simes")
+Vmat <- bound(res_Simes, what = "FP", all = TRUE)
+V <- Vmat$bound[idxs]
+res[["Simes"]] <- data.frame(idxs, V, method = "Simes")
+```
+
 
 ## Plot confidence curves
 
@@ -205,3 +232,4 @@ pS + xlim(1, xmax) + ylim(0, ymax)
 sessionInfo()
 ```
 
+## References

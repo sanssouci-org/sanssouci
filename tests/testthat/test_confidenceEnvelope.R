@@ -36,7 +36,7 @@ test_that("Consistency between outputs of 'fit', 'bound' and 'confCurveFromFam'"
     m <- 123
     alpha <- 0.1
     obj <- SansSouciSim(m = m, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
-    cal <- fit(obj, alpha = alpha, B = 1e2, refFamily = "Simes")    
+    cal <- fit(obj, alpha = alpha, B = 1e2, family = "Simes")    
     cb0 <- bound(cal, all=TRUE)
     cb1 <- cal$output$conf_bound
     expect_identical(cb0, cb1)
@@ -48,7 +48,7 @@ test_that("Consistency between outputs of 'fit', 'bound' and 'confCurveFromFam'"
     
     # using 'confCurveFromFam' and 'fit(..., B=0)' to bypass calibration
     cb0 <- confCurveFromFam(pValues(cal), "Simes", param = alpha)
-    cal0 <- fit(obj, alpha = alpha, B = 0, refFamily = "Simes")    
+    cal0 <- fit(obj, alpha = alpha, B = 0, family = "Simes")    
     cb00 <- bound(cal0, all = TRUE)
     expect_identical(cb0[, c("stat", "bound")], cb00[, c("stat", "bound")])
 })
@@ -58,9 +58,9 @@ test_that("Ordering of confidence curves with/without calibration", {
     alpha <- 0.1
     obj <- SansSouciSim(m = m, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
     
-    cal0 <- fit(obj, alpha = alpha, B = 0, refFamily = "Simes")    
+    cal0 <- fit(obj, alpha = alpha, B = 0, family = "Simes")    
     cb0 <- bound(cal0, all=TRUE)
-    cal <- fit(obj, alpha = alpha, B = 1e2, refFamily = "Simes")    
+    cal <- fit(obj, alpha = alpha, B = 1e2, family = "Simes")    
     cb1 <- bound(cal, all=TRUE)
     
     TP1 <- subset(cb1, stat == "TP")$bound

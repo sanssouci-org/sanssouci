@@ -32,7 +32,7 @@ res <- fit(a, B = 100, alpha = 0.1)
 print(res)
 label(res)
 
-res <- fit(a, B = 100, alpha = 0.1, refFamily="Beta", K=10)
+res <- fit(a, B = 100, alpha = 0.1, family="Beta", K=10)
 label(res)
 
 }

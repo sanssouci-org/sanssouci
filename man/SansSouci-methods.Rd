@@ -41,7 +41,7 @@ Basic methods for class \code{SansSouci}
 
 \code{nObs} Get the number of observations
 
-\code{label} Get the label of hypotheses tested
+\code{label} Get the label of a post hoc method
 
 \code{pValues}: get p-values
 

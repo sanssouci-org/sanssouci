@@ -7,7 +7,13 @@
 \usage{
 bound(object, S, ...)
 
-\method{bound}{SansSouci}(object, S = 1:nHyp(object), what = c("TP", "FDP"), all = FALSE, ...)
+\method{bound}{SansSouci}(
+  object,
+  S = seq_len(nHyp(object)),
+  what = c("TP", "FDP"),
+  all = FALSE,
+  ...
+)
 }
 \arguments{
 \item{object}{An object. See individual methods for specifics}
@@ -33,7 +39,7 @@ Defaults to \code{c("TP", "FDP")}}
 If \code{all} is \code{FALSE} (the default), only the value of the bound is returned. Otherwise, a \code{data.frame} is return, with |S| rows and 4 columns:
 \itemize{
 \item x: Number of most significant items selected
-\item label: Label for the procedure, typically of the form 'refFamily(param)'
+\item label: Label for the procedure, typically of the form 'family(param)'
 \item bound: Value of the post hoc bound
 \item stat: Type of post hoc bound, as specified by argument \code{bound}.
 }
@@ -60,7 +66,7 @@ S <- which(foldChanges(res) > 0.3)
 plot(res, S = S)
 
 # plot two confidence curves
-res_beta <- fit(obj, B = 100, alpha = 0.1, refFamily = "Beta", K = 20)
+res_beta <- fit(obj, B = 100, alpha = 0.1, family = "Beta", K = 20)
 cb_beta <- bound(res_beta, all = TRUE)
 
 bounds <- list("Simes"= cb, 

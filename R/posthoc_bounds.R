@@ -20,7 +20,7 @@ bound <- function(object, S, ...) UseMethod("bound")
 #' 
 #' @return If `all` is `FALSE` (the default), only the value of the bound is returned. Otherwise, a `data.frame` is return, with |S| rows and 4 columns:
 #' - x: Number of most significant items selected
-#' - label: Label for the procedure, typically of the form 'refFamily(param)'
+#' - label: Label for the procedure, typically of the form 'family(param)'
 #' - bound: Value of the post hoc bound
 #' - stat: Type of post hoc bound, as specified by argument `bound`.
 #' 
@@ -44,7 +44,7 @@ bound <- function(object, S, ...) UseMethod("bound")
 #' plot(res, S = S)
 #' 
 #' # plot two confidence curves
-#' res_beta <- fit(obj, B = 100, alpha = 0.1, refFamily = "Beta", K = 20)
+#' res_beta <- fit(obj, B = 100, alpha = 0.1, family = "Beta", K = 20)
 #' cb_beta <- bound(res_beta, all = TRUE)
 #' 
 #' bounds <- list("Simes"= cb, 
@@ -52,7 +52,7 @@ bound <- function(object, S, ...) UseMethod("bound")
 #' plotConfCurve(bounds, xmax = 200)
 #' 
 #' @export
-bound.SansSouci <- function(object, S = 1:nHyp(object), 
+bound.SansSouci <- function(object, S = seq_len(nHyp(object)), 
                             what = c("TP", "FDP"), all = FALSE, ...) {
     p.values <- pValues(object)
     thr <- thresholds(object)
@@ -78,7 +78,7 @@ bound.numeric <- function(object, S = seq_along(object), thr = NULL, lab = NULL,
     p.values <- object; rm(object);
     s <- length(S)
     idxs <- seq_len(s)
-    maxFP <- rep(NA_integer_, s)
+    max_FP <- rep(NA_integer_, s)
     pS <- p.values[S]
     o <- order(pS)
     sorted_p <- pS[o]
@@ -90,6 +90,14 @@ bound.numeric <- function(object, S = seq_along(object), thr = NULL, lab = NULL,
     } else {
         max_FP <- curveMaxFP(sorted_p, thr) ## Would be faster to do 'thr[length(S)]' here. Is it correct?
     }
+    bounds <- formatBounds(max_FP, idxs = idxs, lab = lab, what = what, all = all)
+    bounds
+}
+
+
+formatBounds <- function(max_FP, idxs = seq_len(max_FP), lab = NULL, 
+                         what = c("TP", "FDP"), all = FALSE) {
+    stopifnot(length(max_FP) == length(idxs))
     max_FDP <- max_FP/idxs
     what0 <- c("FP", "TP", "FDP", "TDP")
     if (!all(what %in% what0)) {
@@ -105,10 +113,9 @@ bound.numeric <- function(object, S = seq_along(object), thr = NULL, lab = NULL,
         TDP = cbind(annot, stat = "TDP", bound = 1 - max_FDP))
     boundsList <- boundsList[what]
     if (!all) {
-        boundsList <- lapply(boundsList, FUN = function(x) x[s, ])
+        boundsList <- lapply(boundsList, FUN = function(x) x[length(idxs), ])
     }
-    bounds <- Reduce(rbind, boundsList)
-    return(bounds)
+    Reduce(rbind, boundsList)
 }
 
 #' Plot confidence bound

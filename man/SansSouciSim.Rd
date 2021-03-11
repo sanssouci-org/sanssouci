@@ -19,7 +19,7 @@ obj <- SansSouciSim(m = 543, rho = 0.4, n = 210,
 alpha <- 0.1
 
 # Adaptive Simes (lambda-calibration)
-res <- fit(obj, B = 100, alpha = alpha, refFamily = "Simes")
+res <- fit(obj, B = 100, alpha = alpha, family = "Simes")
 res
 # upper bound on number of signals if the entire data set
 # (and corresponding lower bound on FDP)
@@ -30,11 +30,11 @@ plot(res)
 
 # comparison to other confidence curves
 # Parametric Simes (no calibration -- assume positive dependence (PRDS))
-res0 <- fit(obj, B = 0, alpha = alpha, refFamily = "Simes")
+res0 <- fit(obj, B = 0, alpha = alpha, family = "Simes")
 res0
 
 # Oracle
-oracle <- fit(obj, alpha = alpha, refFamily = "Oracle")
+oracle <- fit(obj, alpha = alpha, family = "Oracle")
 oracle
 
 confs <- list(Simes = bound(res0, all = TRUE),

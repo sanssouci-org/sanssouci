@@ -3,11 +3,14 @@
 \name{nHyp.SansSouciStruct}
 \alias{nHyp.SansSouciStruct}
 \alias{nLeaves.SansSouciStruct}
+\alias{label.SansSouciStruct}
 \title{\code{nHyp}: get the number of hypotheses}
 \usage{
 \method{nHyp}{SansSouciStruct}(object)
 
 \method{nLeaves}{SansSouciStruct}(object)
+
+\method{label}{SansSouciStruct}(object)
 }
 \arguments{
 \item{object}{An object of class \code{SansSouciStruct}}
@@ -16,4 +19,6 @@
 \code{nHyp}: get the number of hypotheses
 
 \code{nLeaves}: get the number of leaves
+
+\code{label} Get the label of a post hoc method
 }

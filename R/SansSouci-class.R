@@ -19,7 +19,7 @@
 #' print(res)
 #' label(res)
 #' 
-#' res <- fit(a, B = 100, alpha = 0.1, refFamily="Beta", K=10)
+#' res <- fit(a, B = 100, alpha = 0.1, family="Beta", K=10)
 #' label(res)
 #' 
 SansSouci <- function(Y, groups, truth = NULL) {
@@ -34,7 +34,8 @@ SansSouci <- function(Y, groups, truth = NULL) {
     }
     input = list(Y = Y, 
                  groups = groups, 
-                 n_groups = n_groups)
+                 n_groups = n_groups,
+                 m = nrow(Y))
     input$truth <- truth
     obj <- structure(list(input = input,
                           parameters = NULL,
@@ -59,7 +60,7 @@ SansSouci <- function(Y, groups, truth = NULL) {
 #' alpha <- 0.1
 #' 
 #' # Adaptive Simes (lambda-calibration)
-#' res <- fit(obj, B = 100, alpha = alpha, refFamily = "Simes")
+#' res <- fit(obj, B = 100, alpha = alpha, family = "Simes")
 #' res
 #' # upper bound on number of signals if the entire data set
 #' # (and corresponding lower bound on FDP)
@@ -70,11 +71,11 @@ SansSouci <- function(Y, groups, truth = NULL) {
 #' 
 #' # comparison to other confidence curves
 #' # Parametric Simes (no calibration -- assume positive dependence (PRDS))
-#' res0 <- fit(obj, B = 0, alpha = alpha, refFamily = "Simes")
+#' res0 <- fit(obj, B = 0, alpha = alpha, family = "Simes")
 #' res0
 #' 
 #' # Oracle
-#' oracle <- fit(obj, alpha = alpha, refFamily = "Oracle")
+#' oracle <- fit(obj, alpha = alpha, family = "Oracle")
 #' oracle
 #' 
 #' confs <- list(Simes = bound(res0, all = TRUE),
@@ -131,7 +132,7 @@ nHyp <- function(object) UseMethod("nHyp")
 #' @param object An object of class `SansSouci`
 #' @export
 nHyp.SansSouci <- function(object) {
-    nrow(object$input$Y)
+    object$input$m
 }
 
 #' `nObs` Get the number of observations
@@ -157,7 +158,7 @@ nObs.SansSouci <- function(object) {
 #' @export
 label <- function(object) UseMethod("label")
 
-#' `label` Get the label of hypotheses tested
+#' `label` Get the label of a post hoc method
 #' 
 #' @rdname SansSouci-methods
 #' @param object An object of class `SansSouci`
@@ -167,8 +168,8 @@ label.SansSouci <- function(object) {
     if (is.null(param)) {
         return(NULL)
     }
-    lab <- param$refFamily
-    if (param$K < nHyp(object)) {
+    lab <- param$family
+    if (lab %in% c("Beta") & (!is.null(param$K))) {
         lab <- sprintf("%s(K=%d)", lab, param$K)
     } 
     return(lab)
@@ -210,7 +211,7 @@ print.SansSouci <- function(x, ..., verbose = FALSE) {
         cat("\tTest function:", params$funName, "\n")
         cat("\tNumber of permutations: B=", params$B, "\n", sep = "")
         cat("\tSignificance level: alpha=", params$alpha, "\n", sep = "")
-        cat("\tReference family:", params$refFam, "\n")
+        cat("\tReference family:", params$fam, "\n")
         cat("\t(of size: K=", params$K, ")", "\n", sep = "")
         cat("\n")
     }
@@ -242,17 +243,27 @@ generics::fit
 
 #' @describeIn calibrateJER Fit SansSouci object
 #' @param object An object of class `SansSouci`
+#' @param family A character value which can be \describe{
+#'   \item{Simes}{The classical family of thresholds introduced by Simes (1986):
+#'   \eqn{\alpha*k/m}. This family yields joint FWER control if the test
+#'   statistics are positively dependent (PRDS) under H0.}
+#'
+#'    \item{Beta}{A family of thresholds that achieves "balanced" joint error
+#'    rate (JER) control under independence}
+#'
+#'   \item{Oracle}{A family such that the associated bounds correspond to the true numbers/proportions of true/false positives. "truth" must be available in object$input$truth.}
+#'   }
 #' @param ... Not used
 #' @export
 fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
                            alternative = c("two.sided", "less", "greater"),
                            rowTestFUN = NULL, 
-                           refFamily = c("Simes", "Beta", "Oracle"), 
+                           family = c("Simes", "Beta", "Oracle"), 
                            maxStepsDown = 10L, K = nHyp(object), 
                            verbose = TRUE, ...) {
     alternative <- match.arg(alternative)
-    refFamily <- match.arg(refFamily)
-    if (refFamily == "Oracle") {
+    family <- match.arg(family)
+    if (family == "Oracle") {
         truth <- object$input$truth
         if (is.null(truth)) {
             stop("'truth' should be available for 'Oracle'. See ?SansSouci")
@@ -287,15 +298,15 @@ fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
                      alternative = alternative, 
                      rowTestFUN = rowTestFUN, 
                      funName = funName,
-                     refFamily = refFamily, 
+                     family = family, 
                      maxStepsDown = maxStepsDown, 
-                     K = nHyp(object), verbose = verbose)
+                     K = nHyp(object))
     
-    if (B > 0 && refFamily != "Oracle") {
+    if (B > 0 && family != "Oracle") {
         cal <- calibrateJER(X = Y, categ = groups, B = B, alpha = alpha, 
                         alternative = alternative, 
                         rowTestFUN = rowTestFUN, 
-                        refFamily = refFamily, 
+                        refFamily = family, 
                         maxStepsDown = maxStepsDown, 
                         K = K, verbose = verbose)
     } else {
@@ -304,11 +315,11 @@ fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
         p.values <- rwt$p.value
         fc <- rwt$meanDiff
         lambda <- alpha
-        if (refFamily %in% c("Simes", "Linear")) {
+        if (family %in% c("Simes", "Linear")) {
             thr <- SimesThresholdFamily(m, kMax = K)(alpha)
-        } else if (refFamily == "Beta") {
+        } else if (family == "Beta") {
             thr <- BetaThresholdFamily(m, kMax = K)(alpha)
-        } else if (refFamily == "Oracle") {
+        } else if (family == "Oracle") {
             lambda <- 0  # 100% confidence -- should it be set to alpha for consistency?
             thr <- object$input$truth
         }

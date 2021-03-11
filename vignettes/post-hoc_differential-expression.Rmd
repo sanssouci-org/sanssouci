@@ -170,7 +170,7 @@ A more refined post hoc bound has been proposed by @GS2011 under the PRDS assump
 
 ```{r, Simes}
 obj <- SansSouci(Y = dat, groups = categ)
-res_Simes <- fit(obj, B = 0, refFamily = "Simes", alpha = alpha) ## B=0 => no calibration!
+res_Simes <- fit(obj, B = 0, family = "Simes", alpha = alpha) ## B=0 => no calibration!
 FP_Simes <- bound(res_Simes, S_BH, what = "FP")
 ```
 
@@ -189,7 +189,7 @@ To bypass these limitations, @blanchard20post-hoc have proposed a randomization-
 
 ```{r calibration, cache=TRUE}
 B <- 1000
-res <- fit(obj, B = B, alpha = alpha, refFamily = "Simes")
+res <- fit(obj, B = B, alpha = alpha, family = "Simes")
 ```
 
 
@@ -197,7 +197,7 @@ An alternative to the Simes/Linear reference family is the Beta reference family
 
 ```{r calibration-beta, cache=TRUE}
 K <- 50
-res_Beta <- fit(res, B = B, alpha = alpha, refFamily = "Beta", K = K)
+res_Beta <- fit(res, B = B, alpha = alpha, family = "Beta", K = K)
 ```
 
 

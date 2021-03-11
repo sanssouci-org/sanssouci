@@ -11,7 +11,7 @@
   B = ceiling(10/alpha),
   alternative = c("two.sided", "less", "greater"),
   rowTestFUN = NULL,
-  refFamily = c("Simes", "Beta", "Oracle"),
+  family = c("Simes", "Beta", "Oracle"),
   maxStepsDown = 10L,
   K = nHyp(object),
   verbose = TRUE,
@@ -44,8 +44,7 @@ Must be one of "two.sided" (default), "greater" or "less".}
 \item{rowTestFUN}{A (vectorized) test function. Defaults to
 \code{\link{rowWelchTests}}}
 
-\item{refFamily}{A character value which can be \describe{
-
+\item{family}{A character value which can be \describe{
 \item{Simes}{The classical family of thresholds introduced by Simes (1986):
 \eqn{\alpha*k/m}. This family yields joint FWER control if the test
 statistics are positively dependent (PRDS) under H0.}
@@ -53,8 +52,8 @@ statistics are positively dependent (PRDS) under H0.}
 \item{Beta}{A family of thresholds that achieves "balanced" joint error
 rate (JER) control under independence}
 
-\item{kFWER}{A family \eqn{(t_k)} calibrated so that for each k,
-\eqn{(t_k)} controls the (marginal) k-FWER.}}}
+\item{Oracle}{A family such that the associated bounds correspond to the true numbers/proportions of true/false positives. "truth" must be available in object$input$truth.}
+}}
 
 \item{maxStepsDown}{Maximum number of steps down to be performed.}
 
@@ -70,6 +69,18 @@ rate (JER) control under independence}
 \item{categ}{An optional numeric vector of \eqn{n} values in \eqn{0, 1}
 specifying the column indices of the first and second samples. If not
 provided, a one-sample test is performed.}
+
+\item{refFamily}{A character value which can be \describe{
+
+\item{Simes}{The classical family of thresholds introduced by Simes (1986):
+\eqn{\alpha*k/m}. This family yields joint FWER control if the test
+statistics are positively dependent (PRDS) under H0.}
+
+\item{Beta}{A family of thresholds that achieves "balanced" joint error
+rate (JER) control under independence}
+
+\item{kFWER}{A family \eqn{(t_k)} calibrated so that for each k,
+\eqn{(t_k)} controls the (marginal) k-FWER.}}}
 }
 \value{
 A list with elements: \describe{

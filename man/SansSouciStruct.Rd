@@ -4,10 +4,10 @@
 \alias{SansSouciStruct}
 \title{Create an object of class 'SansSouciStruct'}
 \usage{
-SansSouciStruct(structure, leaves, truth = NULL)
+SansSouciStruct(struct, leaves, truth = NULL)
 }
 \arguments{
-\item{structure}{A (dyadic) structure}
+\item{struct}{A (dyadic) structure}
 
 \item{leaves}{A list of leaves}
 
@@ -22,8 +22,6 @@ q <- 7
 m <- s*2^q
 
 dd <- dyadic.from.window.size(m, s, method = 2)
-leaf_list <- dd$leaf_list
-C <- dd$C
-obj1 <- SansSouciStruct(C, leaf_list)
+obj1 <- SansSouciStruct(dd$C, dd$leaf_list)
 obj <- SansSouciDyadic(m, s, flavor = "window.size", direction = "top-down")
 }

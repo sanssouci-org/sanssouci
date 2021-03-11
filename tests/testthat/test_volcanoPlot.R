@@ -8,7 +8,7 @@ test_that("Vanilla test for 'volcanoPlot'", {
     obj <- SansSouciSim(m = m, rho = 0.4, n = 100,
                            pi0 = pi0, SNR = SNR, prob = 0.5)
     alpha <- 0.2
-    cal <- fit(obj, alpha = alpha, B = 1e2, refFamily="Simes")
+    cal <- fit(obj, alpha = alpha, B = 1e2, family="Simes")
     
     vp <- volcanoPlot(cal, p = 1, q = 1, r = 0)
     expect_equal(vp, seq_len(m))     ## no active filter: all genes selected
