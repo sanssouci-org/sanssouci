@@ -13,12 +13,6 @@ test_that("JER calibration and get_pivotal_stat yield identical pivotal statisti
     cal0 <- calibrateJER(X, categ, B, 
                                      maxStepsDown = 0, alpha = 1)
     set.seed(0xBEEF)
-<<<<<<< HEAD
-    cal0_B <- calibrateJER(X, categ, B, 
-                           refFamily = "Beta",
-                           maxStepsDown = 0, alpha = 1)
-
-=======
     system.time(cal0_B <- calibrateJER(X, categ, B, 
                                       refFamily = "Beta",
                                       maxStepsDown = 0, alpha = 1))
@@ -48,17 +42,10 @@ test_that("JER calibration and get_pivotal_stat yield identical pivotal statisti
     expect_equal(cal0$piv_stat, pivStat_fast)
     expect_equal(cal0_B$piv_stat, pivStat_fast_B)
     
->>>>>>> develop
     set.seed(0xBEEF)
     p0 <- get_perm_p(X, categ, B)
     pivStat <- get_pivotal_stat(p0)
     pivStat_B <- get_pivotal_stat(p0, t_inv = t_inv_beta)  # here we don't need to reset the seed!
-<<<<<<< HEAD
-
-    expect_equal(cal0$pivStat, pivStat)
-    expect_equal(cal0_B$pivStat, pivStat_B)
-})
-=======
     Rprof(NULL)
     summaryRprof(tf)
     
@@ -115,4 +102,3 @@ test_that("get_pivotal_stat* and get_one_pivotal_stat* yield identical results",
     
     max(abs(cal0$piv_stat-pivStat))
 })
->>>>>>> develop

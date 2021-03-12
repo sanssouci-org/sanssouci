@@ -22,16 +22,10 @@ export(SansSouciSim)
 export(SansSouciStruct)
 export(SimesThresholdFamily)
 export(V.star)
-<<<<<<< HEAD
+export(bound)
 export(calibrate)
 export(calibrateJER)
-export(confidenceEnvelope)
-export(curveMaxFP)
-=======
-export(bound)
-export(calibrateJER)
 export(confCurveFromFam)
->>>>>>> develop
 export(curveVstar_tree)
 export(dyadic.from.height)
 export(dyadic.from.max.height)
@@ -43,17 +37,10 @@ export(gaussianTestStatistics)
 export(gen.mu.leaves)
 export(gen.mu.noleaves)
 export(gen.p.values)
-<<<<<<< HEAD
 export(get_calibrated_thresholds)
-export(get_max_FDP)
-export(get_max_FP)
-export(get_min_TDP)
-export(get_min_TP)
 export(get_perm_p)
 export(get_pivotal_stat)
-=======
 export(label)
->>>>>>> develop
 export(maxFP)
 export(minTP)
 export(nHyp)
@@ -96,9 +83,5 @@ importFrom(stats,qbeta)
 importFrom(stats,rbinom)
 importFrom(stats,rnorm)
 importFrom(stats,rpois)
-<<<<<<< HEAD
-=======
-importFrom(stats,t.test)
 importFrom(utils,str)
->>>>>>> develop
 useDynLib(sansSouci)

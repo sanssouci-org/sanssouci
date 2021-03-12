@@ -112,13 +112,8 @@ To bypass these limitations, @blanchard20post-hoc have proposed a randomization-
 
 
 ```{r post-hoc-calibration, cache=TRUE}
-<<<<<<< HEAD
-B <- 100
-cal <- calibrateJER(X = dat, categ, B = B, alpha = alpha, refFamily = "Simes")
-=======
 B <- 1000
 res <- fit(obj, alpha = alpha, B = B, refFamily = "Simes")
->>>>>>> develop
 ```
 
 An alternative to the Simes/Linear reference family is the Beta reference family:

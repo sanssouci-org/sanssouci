@@ -188,13 +188,8 @@ As discussed in @blanchard20post-hoc, the above-described bound has two major li
 To bypass these limitations, @blanchard20post-hoc have proposed a randomization-based procedure known as $\lambda$-calibration, which yields tighter bounds that are adapted to the dependency observed in the data set at hand^[A related approach has been proposed by @HSG2019, but no implementation is currently available for this approach.]. In the case of two-sample tests, this calibration can be achieved by permutation of class labels:
 
 ```{r calibration, cache=TRUE}
-<<<<<<< HEAD
-B <- 100
-cal <- calibrateJER(X = dat, categ, B = B, alpha = alpha, refFamily = "Simes")
-=======
 B <- 1000
 res <- fit(obj, B = B, alpha = alpha, family = "Simes")
->>>>>>> develop
 ```
 
 
@@ -235,26 +230,11 @@ We illustrate the use of post-hoc methods to provide this type of information. M
 The confidence curves obtained by calibration of the Simes and Beta families can be compared graphically to the (parametric) Simes curve that can be obtained from @GS2011:
 
 ```{r, conf-env-plot}
-<<<<<<< HEAD
-conf_envs <- list("Simes" = ce_Simes,
-                  "Linear" = cal$conf_env,
-                  "Beta" = cal_beta$conf_env)
-#conf_envs <- lapply(conf_envs, subset, stat == "FDP")
-names(conf_envs)[3] <- sprintf("Beta (K=%s)", K)
-cols <- RColorBrewer::brewer.pal(length(conf_envs), "Dark2")
-p <- plotConfidenceEnvelope(conf_envs, xmax = 300, cols = cols)
-p <- p + geom_vline(xintercept = nBH, color = "gray", linetype = "dotted", size = 1.5) +
-  geom_line(size = 1.5)  +
-  # geom_line(size = 1.5)  +
-  # ylab("False Discovery Proportion")
-ggsave(p, file = "conf-env.pdf", scale = 0.5, width=16)
-=======
 conf_bounds <- lapply(resList, bound, all = TRUE)
 cols <- RColorBrewer::brewer.pal(length(conf_bounds), "Dark2")
 p <- plotConfCurve(conf_bounds, xmax = 300, cols = cols)
 p + geom_vline(xintercept = nBH, color = "gray", linetype = "dotted", size = 1.5) +
   geom_line(size = 1.5)
->>>>>>> develop
 ```
 
 Both calibrated curves outperform the Simes curve in this example. 
@@ -281,14 +261,7 @@ This type of plot is called a "volcano plot" @CC2003. Post hoc inference makes i
 The substantial gain in power offered by the above-described calibration is illustrated as follows for the Simes reference family:
 
 ```{r volcano-plot-Simes-calibrated}
-<<<<<<< HEAD
-thr <- thrs[["Linear"]]
-pdf("volcano-plot")
-volcanoPlot(dat, categ = categ, thr = thr, q = q, r = r, ylim = ylim)
-dev.off()
-=======
 volcanoPlot(res, q = q, r = r, ylim = ylim)
->>>>>>> develop
 ```
 
 and for the Beta reference family.

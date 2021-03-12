@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-#' @title Low-level calibration functions
-=======
 t_inv_linear <- function(y, k, m) {
     y * m / k;
 }
@@ -9,10 +6,8 @@ t_inv_beta <- function(y, k, m) {
     pbeta(y, k, m + 1 - k);
 }
 
-#' @describeIn get_pivotal_stat Get pivotal statistic (slow version)
-#' @inheritParams get_pivotal_stat_fast
-#' @param testFUN A function with the same I/O as \code{t.test}
->>>>>>> develop
+
+#' @title Low-level calibration functions
 #' 
 #' @description Get a matrix of p-values under the null hypothesis obtained 
 #' by repeated permutation of class labels
@@ -48,7 +43,6 @@ get_perm_p <- function(X, categ, B,
     ## Step 2: sort each column
     return(colSort(pval0))
 }
-
 
 #' @description get_pivotal_stat: Get a vector of pivotal statistics associated to permutation p-values and to a reference family
 #' 
@@ -120,8 +114,8 @@ get_pivotal_stat <- function(p0,
 #' p <- rowWelchTests(X, categ)$p.value
 #' p0 <- sansSouci:::get_perm_p(X, categ, B)
 #' calib <- get_calibrated_thresholds(p0, alpha = 0.1, family = "Linear")
-#' Vbar <- get_max_FP(p, calib$thr)
-#' Vbar(1:m)
+#' #Vbar <- get_max_FP(p, calib$thr)
+#' #Vbar(1:m)
 #' 
 #' # Gene expression
 #' data(expr_ALL, package = "sansSouci.data")
@@ -134,8 +128,8 @@ get_pivotal_stat <- function(p0,
 #' p <- rowWelchTests(expr_ALL, categ)$p.value
 #' 
 #' ## post hoc bounds (these are functions!)
-#' FP <- get_max_FP(p, calib_L$thr)  ## upper bound on false positives
-#' FDP <- get_max_FDP(p, calib_L$thr) ## upper bound on FDP
+#' #FP <- get_max_FP(p, calib_L$thr)  ## upper bound on false positives
+#' #FDP <- get_max_FDP(p, calib_L$thr) ## upper bound on FDP
 #' 
 #' ## example of user selection: rejections of BH(0.05) procedure
 
@@ -143,14 +137,14 @@ get_pivotal_stat <- function(p0,
 #' sel <- which(adjp < 0.05)
 #' length(sel)
 #' 
-#' FP(sel)
-#' FDP(sel)
+#' #FP(sel)
+#' #FDP(sel)
 #' 
 #' # confidence envelope on the FDP
-#' FDP_env <- FDP(seq_along(p), envelope = TRUE)
-#' plot(head(FDP_env, 300), t = 's', 
-#'   xlab = "Number of features",
-#'   ylab = "Upper bound on FDP")
+#' #FDP_env <- FDP(seq_along(p), envelope = TRUE)
+#' #plot(head(FDP_env, 300), t = 's', 
+#' #  xlab = "Number of features",
+#' #  ylab = "Upper bound on FDP")
 #' 
 #' 
 get_calibrated_thresholds <- function(p0, alpha, 
@@ -207,8 +201,8 @@ get_calibrated_thresholds <- function(p0, alpha,
 #' cal <- calibrate(X, categ, B = 1e2, alpha = 0.1, family = "Simes")
 #' 
 #' # Lower bound on number of true DEG in entire data set
-#' TP <- get_min_TP(pval, cal$thr)
-#' TP(1:m)
+#' #TP <- get_min_TP(pval, cal$thr)
+#' #TP(1:m)
 #' 
 #' # 2. Gene expression
 #' data(expr_ALL, package = "sansSouci.data")
@@ -220,34 +214,34 @@ get_calibrated_thresholds <- function(p0, alpha,
 #' cal <- calibrate(X, categ, B = 1e2, alpha = 0.1, family = "Simes")
 #' 
 #' ## post hoc bounds (these are functions!)
-#' FP <- get_max_FP(p, cal$thr)  ## upper bound on false positives
-#' FDP <- get_max_FDP(p, cal$thr) ## upper bound on FDP
+#' #FP <- get_max_FP(p, cal$thr)  ## upper bound on false positives
+#' #FDP <- get_max_FDP(p, cal$thr) ## upper bound on FDP
 #' 
 #' ## example of user selection: rejections of BH(0.05) procedure
 #' adjp <- p.adjust(p, method = "BH") 
 #' sel <- which(adjp < 0.05)
 #' length(sel)
 #' 
-#' FP(sel)
-#' FDP(sel)
+#' #FP(sel)
+#' #FDP(sel)
 #' 
 #' # confidence envelope on the FDP
-#' FDP_env <- FDP(seq_along(p), envelope = TRUE)
-#' plot(head(FDP_env, 300), t = 's', 
-#'   xlab = "Number of features",
-#'   ylab = "Upper bound on FDP")
+#' #FDP_env <- FDP(seq_along(p), envelope = TRUE)
+#' #plot(head(FDP_env, 300), t = 's', 
+#' #  xlab = "Number of features",
+#' #  ylab = "Upper bound on FDP")
 #'   
 #' # Lower bound on number of true DEG in entire data set
-#' TP <- get_min_TP(p, cal$thr)
-#' TP(1:m)
+#' #TP <- get_min_TP(p, cal$thr)
+#' #TP(1:m)
 #' 
-#' FP <- get_max_FP(p, cal$thr)
-#' FP(1:m)
+#' #FP <- get_max_FP(p, cal$thr)
+#' #FP(1:m)
 #' 
 #' # Compare to Simes (without calibration)
-#' FDP_Simes <- get_max_FDP(p, alpha*1:m/m)
-#' bound <- FDP_Simes(1:m, envelope = TRUE)
-#' lines(head(bound, 300), t = "s", lty = 2)
+#' #FDP_Simes <- get_max_FDP(p, alpha*1:m/m)
+#' #bound <- FDP_Simes(1:m, envelope = TRUE)
+#' #lines(head(bound, 300), t = "s", lty = 2)
 #' 
 calibrate <- function(X, categ, B, alpha,
                       rowTestFUN = rowWelchTests, 
@@ -262,6 +256,3 @@ calibrate <- function(X, categ, B, alpha,
                 lambda = calib$lambda)
     return(res)
 }
-
-
-

@@ -21,3 +21,6 @@ An integer value, upper bound on the number false positives in S
 \description{
 Post hoc bound on the number of false positives
 }
+\references{
+Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
+}

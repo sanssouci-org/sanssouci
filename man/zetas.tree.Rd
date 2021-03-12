@@ -38,3 +38,6 @@ pvalues<-gen.p.values(m, mu, rho = 0)
 C <- dd$C 
 ZL<-zetas.tree(C, leaf_list, zeta.DKWM, pvalues, alpha = 0.05)
 }
+\references{
+Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
+}

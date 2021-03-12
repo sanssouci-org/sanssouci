@@ -17,6 +17,3 @@ A Lower bound on the number of true discoveries in the selection
 \description{
 (Slow) Lower bound for the number of true discoveries in a selection
 }
-\seealso{
-get_min_TP
-}
