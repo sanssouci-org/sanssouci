@@ -72,17 +72,17 @@ test_that("'fit.SansSouci' reproduces the results of 'calibrateJER'", {
                                            "greater"), 
                            family = c("Simes", "Beta"), 
                            stringsAsFactors = FALSE)
-    for (cc in seq_len(nrow(configs))) {
-        alt <- configs[cc, "alternative"]
-        fam <- configs[cc, "family"]
-        set.seed(20210311)
-        res <- fit(obj, alpha = alpha, B = B, K = K, 
-                   alternative = alt, family = fam)
-        set.seed(20210311)
-        cal <- calibrateJER(Y, groups, B = B, alpha = alpha, K = K, 
-                            alternative = alt, refFamily = fam)
-        expect_identical(cal, res$output)
-    }
+    cc <- sample(nrow(configs), 1)   ## perform just one at random at each execution
+    print(cc)
+    alt <- configs[cc, "alternative"]
+    fam <- configs[cc, "family"]
+    set.seed(20210311)
+    res <- fit(obj, alpha = alpha, B = B, K = K, 
+               alternative = alt, family = fam)
+    set.seed(20210311)
+    cal <- calibrateJER(Y, groups, B = B, alpha = alpha, K = K, 
+                        alternative = alt, refFamily = fam)
+    expect_identical(cal, res$output)
 })
 
 test_that("Consistency of output of 'bound.SansSouci'", {

@@ -56,6 +56,7 @@ test_that("'fit.SansSouciStruct' reproduces the results of 'Vstar'", {
     H0 <- which(mu == 0)
     V <- cumsum(ord %in% H0)
     V <- V[idxs]
+    
     # Oracle 2
     res <- fit(obj, alpha = alpha, p.values = pvalues, family = "Oracle")
     expect_s3_class(res, "SansSouci")
@@ -64,25 +65,30 @@ test_that("'fit.SansSouciStruct' reproduces the results of 'Vstar'", {
     expect_identical(VV, V)
     
     # Simes 1
-    skip("DBNR::Simes test not available")
+    Vmat <- confCurveFromFam(p.values = pvalues, refFamily = "Simes", 
+                          param = alpha, what = "FP")
+    V <- Vmat$bound[idxs]
     
     # Simes 2
     res_Simes <- fit(obj, alpha = alpha, p.values = pvalues, family = "Simes")
     Vmat <- bound(res_Simes, what = "FP", all = TRUE)
-    V <- Vmat$bound[idxs]
+    VV <- Vmat$bound[idxs]
+    expect_identical(VV, V)
+
+    idxs1 <- head(idxs, 10)
 
     # DKWM 1 (tree)
     res_DKWM <- fit(obj, alpha, p.values = pvalues, 
                     family = "DKWM")
-    V <- sapply(idxs, FUN = function(ii) {
+    V <- sapply(idxs1, FUN = function(ii) {
         bound(res_DKWM, S = seq_len(ii), what = "FP")
     })
 
     # DKWM 2 (tree)
     struct <- obj$input$struct
     leaves <- obj$input$leaves
-    ZL <- zetas.tree(struct, leaves, zeta.DKWM, pvalues, alpha = 0.05)
-    VV <- sapply(idxs, FUN = function(ii) {
+    ZL <- zetas.tree(struct, leaves, zeta.DKWM, pvalues, alpha = alpha)
+    VV <- sapply(idxs1, FUN = function(ii) {
         V.star(ord[1:ii], 
                C = struct, 
                ZL = ZL, 
@@ -93,7 +99,7 @@ test_that("'fit.SansSouciStruct' reproduces the results of 'Vstar'", {
     # DKWM 1 (part)
     res_DKWM <- fit(obj, alpha, p.values = pvalues, 
                     family = "DKWM", flavor = "partition")
-    V <- sapply(idxs, FUN = function(ii) {
+    V <- sapply(idxs1, FUN = function(ii) {
         bound(res_DKWM, S = seq_len(ii), what = "FP")
     })
     
@@ -101,9 +107,9 @@ test_that("'fit.SansSouciStruct' reproduces the results of 'Vstar'", {
     struct <- obj$input$struct
     CC <- struct[length(struct)]
     leaves <- obj$input$leaves
-    ZL <- zetas.tree(CC, leaves, zeta.DKWM, pvalues, alpha = 0.05)
+    ZL <- zetas.tree(CC, leaves, zeta.DKWM, pvalues, alpha = alpha)
 
-    VV <- sapply(idxs, FUN = function(ii) {
+    VV <- sapply(idxs1, FUN = function(ii) {
         V.star(ord[1:ii], 
                C = CC, 
                ZL = ZL, 

@@ -27,7 +27,7 @@ volcanoPlot <- function(x, ...) UseMethod("volcanoPlot")
 #'                        pi0 = pi0, SNR = SNR, prob = 0.5)
 #' alpha <- 0.2
 #' cal <- fit(obj, alpha = alpha, B = 1e2, refFamily="Simes")
-#' volcanoPlot(cal, q = 0.2, r = 0.2, ylim = c(0, 4))
+#' volcanoPlot(cal, q = 0.2, r = 0.2, ylim = c(0, 4), bounds=FALSE)
 #' 
 volcanoPlot.SansSouci <- function(x, 
                                   p = 1, q = 1, r = 0,
@@ -79,9 +79,9 @@ volcanoPlot.numeric <- function(x, fc, thr,
                         p = 1, q = 1, r = 0,
                         cex = c(0.2, 0.6), 
                         col = c("#33333333", "#FF0000", "#FF666633"),
-                        pch = 19, ylim = NULL, ...) {
+                        pch = 19, ylim = NULL, bounds = TRUE, ...) {
     pval <- x; rm(x);
-    if (p <1 && q < 1) {
+    if (p < 1 && q < 1) {
         warning("Filtering both on p-values and BH-adjusted p-values")
     }
     m <- length(pval)
@@ -144,15 +144,18 @@ volcanoPlot.numeric <- function(x, fc, thr,
          col = col[3], border = NA, lwd = 2)
     abline(h = y_thr, col = "gray")
     abline(v = c(-1, 1)*r, col = "gray")
-    bq <- bquote(atop(.(n1) ~ "genes", 
-                      "TP"  >= .(TP1) ~ ";  FDP" <= .(FDP1)))
-    legend("topright", legend = bq, border = "white", bty = "n", text.col = 1)
-    bq <- bquote(atop(.(n2) ~ "genes", 
-                       "TP"  >= .(TP2) ~ "; FDP" <= .(FDP2)))
-    legend("topleft", legend = bq, border = "white", bty = "n", text.col = 1)
-    
-    bq <- bquote(atop(.(n12) ~ "genes selected", 
-                      "At least" ~ .(TP12) ~ "true positives (FDP" <= .(FDP12) ~")"))
-    title(bq)
+
+    if (bounds) {
+        bq <- bquote(atop(.(n1) ~ "genes", 
+                          "TP"  >= .(TP1) ~ ";  FDP" <= .(FDP1)))
+        legend("topright", legend = bq, border = "white", bty = "n", text.col = 1)
+        bq <- bquote(atop(.(n2) ~ "genes",
+                          "TP"  >= .(TP2) ~ "; FDP" <= .(FDP2)))
+        legend("topleft", legend = bq, border = "white", bty = "n", text.col = 1)
+        
+        bq <- bquote(atop(.(n12) ~ "genes selected",
+                          "At least" ~ .(TP12) ~ "true positives (FDP" <= .(FDP12) ~")"))
+        title(bq)
+    }
     invisible(sel12)
 }
