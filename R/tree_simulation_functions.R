@@ -149,7 +149,7 @@ gen.p.values <- function(m, mu = rep(0, length(mu)), rho = 0) {
 #' Vp <- curveVstar_tree(treeFam, op)
 #'
 #' # Simes
-#' ce <- confidenceEnvelope(pvals, refFamily = "Simes", param = alpha, what = "FP")
+#' ce <- confCurveFromFam(pvals, refFamily = "Simes", param = alpha, what = "FP")
 #' VpS <- ce$bound
 #'
 #' plot(1:m, 1:m-Vp, t = 's',
