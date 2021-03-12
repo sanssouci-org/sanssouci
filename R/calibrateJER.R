@@ -130,7 +130,7 @@ calibrateJER <- function(X, categ, B, alpha,
     #     proc <- sprintf("%s (K = %s)", proc, K)
     # }
     # conf_bound$procedure <- proc
-    cb <- bound(pval, S = seq(along = pval), thr = res$thr, 
+    cb <- posthoc_bound(pval, S = seq(along = pval), thr = res$thr, 
                 lab = refFamily, all = TRUE)    
     calib <- list(p.values = pval, 
                   fold_changes = fc,

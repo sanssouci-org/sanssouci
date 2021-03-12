@@ -101,20 +101,20 @@ test_that("Consistency of output of 'bound.SansSouci'", {
     what0 <- c("FP", "TP", "FDP", "TDP")
     
     # 'all=FALSE' => return a vector
-    b <- bound(res, what = what0)
+    b <- predict(res, what = what0)
     expect_type(b, "double")
     expect_identical(names(b), what0)
     expect_equal(b[["FDP"]] + b[["TDP"]], 1)
     expect_equal(b[["FP"]] + b[["TP"]], m)
     
     # 'all=FALSE' => return a data.frame
-    b <- bound(res, what = what0, all = TRUE)
+    b <- predict(res, what = what0, all = TRUE)
     expect_s3_class(b, "data.frame")
     expect_equal(nrow(b), m * length(what0))
     
     # strict subset
     S <- order(pValues(res))[seq_len(m-10)]
-    bb <- bound(res, S, what = what0, all = TRUE)
+    bb <- predict(res, S, what = what0, all = TRUE)
     expect_s3_class(bb, "data.frame")
     expect_equal(nrow(bb), length(S) * length(what0))
     names(bb)
@@ -144,6 +144,6 @@ test_that("'bound.SansSouci' reproduces the results of 'curveMaxFP'", {
     pvals <- sort(pValues(res))
     FP <- sansSouci:::curveMaxFP(p.values = pvals, 
                                  thr = thresholds(res))
-    FPb <- bound(res, what = "FP", all = TRUE)$bound
+    FPb <- predict(res, what = "FP", all = TRUE)$bound
     expect_identical(FPb, FP)
 })

@@ -5,7 +5,7 @@
 \alias{calibrateJER}
 \title{Calibration of joint Family-Wise Error Rate thresholds}
 \usage{
-\method{fit}{SansSouci}(
+fit.SansSouci(
   object,
   alpha,
   B = ceiling(10/alpha),
@@ -110,9 +110,9 @@ Calibration of of JER thresholds using one or two-sample tests
 \details{
 See \code{\link{testByRandomization}} for a description of the tests performed for calibration.
 }
-\section{Methods (by generic)}{
+\section{Functions}{
 \itemize{
-\item \code{fit}: Fit SansSouci object
+\item \code{fit.SansSouci}: Fit SansSouci object
 }}
 
 \examples{

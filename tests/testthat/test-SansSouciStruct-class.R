@@ -60,7 +60,7 @@ test_that("'fit.SansSouciStruct' reproduces the results of 'Vstar'", {
     # Oracle 2
     res <- fit(obj, alpha = alpha, p.values = pvalues, family = "Oracle")
     expect_s3_class(res, "SansSouci")
-    Vmat <- bound(res, what = "FP", all = TRUE)
+    Vmat <- predict(res, what = "FP", all = TRUE)
     VV <- Vmat$bound[idxs]
     expect_identical(VV, V)
     
@@ -71,7 +71,7 @@ test_that("'fit.SansSouciStruct' reproduces the results of 'Vstar'", {
     
     # Simes 2
     res_Simes <- fit(obj, alpha = alpha, p.values = pvalues, family = "Simes")
-    Vmat <- bound(res_Simes, what = "FP", all = TRUE)
+    Vmat <- predict(res_Simes, what = "FP", all = TRUE)
     VV <- Vmat$bound[idxs]
     expect_identical(VV, V)
 
@@ -81,7 +81,7 @@ test_that("'fit.SansSouciStruct' reproduces the results of 'Vstar'", {
     res_DKWM <- fit(obj, alpha, p.values = pvalues, 
                     family = "DKWM")
     V <- sapply(idxs1, FUN = function(ii) {
-        bound(res_DKWM, S = seq_len(ii), what = "FP")
+        predict(res_DKWM, S = seq_len(ii), what = "FP")
     })
 
     # DKWM 2 (tree)
@@ -100,7 +100,7 @@ test_that("'fit.SansSouciStruct' reproduces the results of 'Vstar'", {
     res_DKWM <- fit(obj, alpha, p.values = pvalues, 
                     family = "DKWM", flavor = "partition")
     V <- sapply(idxs1, FUN = function(ii) {
-        bound(res_DKWM, S = seq_len(ii), what = "FP")
+        predict(res_DKWM, S = seq_len(ii), what = "FP")
     })
     
     # DKWM 2 (part)

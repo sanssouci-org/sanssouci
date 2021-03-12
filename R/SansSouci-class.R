@@ -65,7 +65,7 @@ SansSouci <- function(Y, groups, truth = NULL) {
 #' res
 #' # upper bound on number of signals if the entire data set
 #' # (and corresponding lower bound on FDP)
-#' bound(res)
+#' predict(res)
 #' 
 #' # confidence curve 
 #' plot(res)
@@ -79,9 +79,9 @@ SansSouci <- function(Y, groups, truth = NULL) {
 #' oracle <- fit(obj, alpha = alpha, family = "Oracle")
 #' oracle
 #' 
-#' confs <- list(Simes = bound(res0, all = TRUE),
-#'               "Simes+calibration" = bound(res, all = TRUE),
-#'               "Oracle" = bound(oracle, all = TRUE))
+#' confs <- list(Simes = predict(res0, all = TRUE),
+#'               "Simes+calibration" = predict(res, all = TRUE),
+#'               "Oracle" = predict(oracle, all = TRUE))
 #' plotConfCurve(confs)
 SansSouciSim <- function(...) {
     sim <- gaussianSamples(...)
@@ -378,7 +378,7 @@ thresholds.SansSouci <- function(object) object$output$thr
 #' @param ... Further arguments to be passed to \code{bound}
 #' @export
 plot.SansSouci <- function(x, y, xmax = nHyp(x), ...) {
-    cb <- bound(x, all = TRUE, ...)
+    cb <- predict(x, all = TRUE, ...)
     plotConfCurve(cb, xmax = xmax)
 }
 
