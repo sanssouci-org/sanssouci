@@ -7,6 +7,7 @@ t_inv_beta <- function(y, k, m) {
 }
 
 #' @describeIn get_pivotal_stat Get pivotal statistic (slow version)
+#' @inheritParams get_pivotal_stat_fast
 #' @param testFUN A function with the same I/O as \code{t.test}
 #' 
 #' @importFrom stats t.test

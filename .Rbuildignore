@@ -16,6 +16,8 @@ appveyor.yml
 ^results$
 ^data/.*\.rds$
 ^nilearn_cache/
+^vignettes/.*_cache
+^inst/shiny-examples/volcano-plot/.*\.rds$
 
 TODO*.txt
 ^doc$
