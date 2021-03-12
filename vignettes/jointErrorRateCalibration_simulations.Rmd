@@ -36,14 +36,14 @@ rho <- 0.3
 SNR <- 2
 ```
 
-We use the function `SansSouciSamples` to generate Gaussian equi-correlated samples. We then 'fit' the resulting SansSouci object
+We use the function `SansSouciSim` to generate Gaussian equi-correlated samples. We then 'fit' the resulting SansSouci object
 
 ## Two-sample tests
 
 ### Simulation
 
 ```{r simulation}
-obj <- SansSouciSamples(m, rho, n, pi0, SNR = SNR, prob = 0.5)
+obj <- SansSouciSim(m, rho, n, pi0, SNR = SNR, prob = 0.5)
 obj
 ```
 
@@ -111,7 +111,7 @@ plotConfCurve(confs)
 The code is identical, except for the line to generate the observations (where we do not specify a probability of belonging to one of the two populations using the `prob` argument); moreover it is not necessary to specify a vector of categories 'categ' in 'calibrateJER'.
 
 ```{r, sim-one-sampla}
-obj <- SansSouciSamples(m, rho, n, pi0, SNR = SNR)
+obj <- SansSouciSim(m, rho, n, pi0, SNR = SNR)
 obj
 ```
 
