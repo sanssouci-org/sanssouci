@@ -1,5 +1,5 @@
 ---
-title: "Confidence envelopes for spatially structured hypotheses"
+title: "Confidence curves for structured hypotheses"
 author: "G. Durand, G. Blanchard, P. Neuvial, E. Roquain"
 date: "`r Sys.Date()`"
 output:
@@ -9,7 +9,7 @@ output:
     keep_tex: true
 bibliography: sansSouci.bib
 vignette: >
-  %\VignetteIndexEntry{Confidence envelopes for spatially structured hypotheses}
+  %\VignetteIndexEntry{Confidence curves for structured hypotheses}
   %\VignetteEngine{knitr::knitr}
 ---
 
@@ -78,7 +78,7 @@ We generate $p$-values according to the simulation setup in @durand20post-hoc:
 pvalues <- gen.p.values(m = m, mu = mu, rho = 0)
 ```
 
-## Calculate confidence envelopes
+## Calculate confidence curves
 
 The confidence level for post hoc inference is set to $\alpha = 0.05$.
 
@@ -86,7 +86,7 @@ The confidence level for post hoc inference is set to $\alpha = 0.05$.
 alpha <- 0.05
 ```
 
-> Below, we will be considering confidence envelopes of the form $(k, V(S_k))_{1 \leq k \leq m}$, where $S_k$ is the set of the $k$ smallest $p$-values (regardless of the ordering given by the partition). Note that focusing on such sets is a priori favorable to the Simes bound, for which the elements of the reference family are among the $S_k$.
+> Below, we will be considering confidence curves of the form $(k, V(S_k))_{1 \leq k \leq m}$, where $S_k$ is the set of the $k$ smallest $p$-values (regardless of the ordering given by the partition). Note that focusing on such sets is a priori favorable to the Simes bound, for which the elements of the reference family are among the $S_k$.
 
 ```{r ordered-p-values}
 ord <- order(pvalues)
@@ -108,7 +108,7 @@ V <- Vmat$bound[idxs]
 res[["Oracle"]] <- data.frame(idxs, V, method = "Oracle")
 ```
 
-### 2- Simes-based confidence envelope
+### 2- Simes-based confidence curve
 
 Here we use the @simes86improved inequality to bound the number of false positives in each node of the tree, as proposed by @GS2011 and further studied by @blanchard20post-hoc, both in a context where the signal is not localized. 
 
@@ -119,7 +119,7 @@ V <- Vmat$bound[idxs]
 res[["Simes"]] <- data.frame(idxs, V, method = "Simes")
 ```
 
-### 3- DKWM-based confidence envelope
+### 3- DKWM-based confidence curve
 
 Here we use the DKWM inequality (@dvoretzky1956asymptotic, @massart1990tight) to bound the number of false positives in each node of the tree, as suggested in @durand20post-hoc.
 
@@ -175,7 +175,7 @@ names(cols) <- lvls
 
 ### Upper bound on the number of false positives
 
-```{r plot-confidence-envelope}
+```{r plot-confidence-curve}
 xymax <- m1;
 pV <- ggplot(dat, aes(idxs, V, colour = method)) + 
     geom_line() +
