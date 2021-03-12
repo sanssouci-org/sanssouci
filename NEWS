@@ -3,6 +3,10 @@
 Package: sansSouci
 ==================
 
+Version 0.10.1 [2021-03-12]
+
+* Merged simple_calibration functions
+
 Version 0.10.0 [2021-03-12]
 
 * Updated documentation, vignettes and test scripts

@@ -44,15 +44,16 @@ get_perm_p <- function(X, categ, B,
     return(colSort(pval0))
 }
 
-#' @description get_pivotal_stat: Get a vector of pivotal statistics associated to permutation p-values and to a reference family
-#' 
+#' @description get_pivotal_stat: Get a vector of pivotal statistics associated
+#'   to permutation p-values and to a reference family
+#'
 #' @rdname calibrate_low-level
 #' @inheritParams calibrate
 #' @param p0 A \eqn{m \times B} matrix. The j-th ow corresponds to a permutation
 #'   of the input \code{categ}: for each hypothesis i, \code{p0[i,j]} is the
 #'   p-value of the test of the i-th null hypothesis on the permuted categories
 #' @param t_inv  An inverse threshold function (same I/O as \code{t_inv_linear})
-#'   
+#'
 #' @return A vector of length \eqn{B} pivotal statitics, whose j-th entry
 #'   corresponds to \eqn{\psi(g_j.X)} with notation of the AoS 2020 paper cited
 #'   below (section 4.5)
@@ -60,9 +61,9 @@ get_perm_p <- function(X, categ, B,
 #' @references Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc
 #'   confidence bounds on false positives using reference families. Annals of
 #'   Statistics, 48(3), 1281-1303.
-#'   
+#'
 #' @export
-#' 
+#'
 #' @importFrom matrixStats colMins
 #' @examples
 #'
@@ -121,7 +122,7 @@ get_pivotal_stat <- function(p0,
 #' data(expr_ALL, package = "sansSouci.data")
 #' categ <- ifelse(colnames(expr_ALL) == "BCR/ABL", 1, 0) # map to 0/1
 #' 
-#' p0 <- sansSouci:::get_perm_p(expr_ALL, categ, B = 100)
+#' system.time(p0 <- sansSouci:::get_perm_p(expr_ALL, categ, B = 100))
 #' alpha <- 0.1
 #' calib_L <- get_calibrated_thresholds(p0, alpha, family = "Linear")
 #' calib_B <- get_calibrated_thresholds(p0, alpha, family = "Beta")
