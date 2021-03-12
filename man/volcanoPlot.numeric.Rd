@@ -15,6 +15,7 @@
   col = c("#33333333", "#FF0000", "#FF666633"),
   pch = 19,
   ylim = NULL,
+  bounds = TRUE,
   ...
 )
 }
@@ -38,6 +39,8 @@
 \item{pch}{An integer or single character string specifying the plotting character, see \code{\link{par}}}
 
 \item{ylim}{A numeric vector of length 2, the \eqn{y} limits of the plot}
+
+\item{bounds}{A boolean value: should the post hoc bounds be displayed on the plot? Defaults to TRUE}
 
 \item{...}{Not used}
 }

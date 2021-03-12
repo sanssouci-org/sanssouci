@@ -63,6 +63,7 @@ volcanoPlot.SansSouci <- function(x,
 #' @param col A vector of length 3
 #' @param pch An integer or single character string specifying the plotting character, see \code{\link{par}}
 #' @param ylim A numeric vector of length 2, the \eqn{y} limits of the plot
+#' @param bounds A boolean value: should the post hoc bounds be displayed on the plot? Defaults to TRUE
 #' @param ... Not used
 #'
 #' @details A Welch T-test of differential expression between the two categories

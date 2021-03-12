@@ -34,7 +34,7 @@ calibrateJER(
 \arguments{
 \item{object}{An object of class \code{SansSouci}}
 
-\item{alpha}{Target JER level}
+\item{alpha}{Target risk (JER) level}
 
 \item{B}{A numeric value, the number of permutations to be performed}
 
@@ -46,11 +46,10 @@ Must be one of "two.sided" (default), "greater" or "less".}
 
 \item{family}{A character value which can be \describe{
 \item{Simes}{The classical family of thresholds introduced by Simes (1986):
-\eqn{\alpha*k/m}. This family yields joint FWER control if the test
+\eqn{\alpha*k/m}. This family yields JER control if the test
 statistics are positively dependent (PRDS) under H0.}
 
-\item{Beta}{A family of thresholds that achieves "balanced" joint error
-rate (JER) control under independence}
+\item{Beta}{A family of thresholds that achieves "balanced" JER control under independence}
 
 \item{Oracle}{A family such that the associated bounds correspond to the true numbers/proportions of true/false positives. "truth" must be available in object$input$truth.}
 }}
@@ -83,6 +82,13 @@ rate (JER) control under independence}
 \eqn{(t_k)} controls the (marginal) k-FWER.}}}
 }
 \value{
+A 'fitted' object of class 'SansSouci'. It is a list of three elements
+\itemize{
+\item input: see \link{SansSouci}
+\item param: the input parameters, given as a list
+\item output: the outputs of the calibration, see \link{calibrateJER}
+}
+
 A list with elements: \describe{
 
 \item{p.values}{A numeric vector of \code{m} p-values}

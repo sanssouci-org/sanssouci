@@ -7,7 +7,7 @@
 #'   specifying the column indices of the first and second samples. If not
 #'   provided, a one-sample test is performed.
 #' @param B A numeric value, the number of permutations to be performed
-#' @param alpha Target JER level
+#' @param alpha Target risk (JER) level
 #' @param alternative A character string specifying the alternative hypothesis.
 #'   Must be one of "two.sided" (default), "greater" or "less".
 #' @param rowTestFUN A (vectorized) test function. Defaults to

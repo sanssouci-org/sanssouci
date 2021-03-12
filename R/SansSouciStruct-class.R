@@ -1,18 +1,20 @@
 #' Create an object of class 'SansSouciStruct'
 #' 
-#' 
 #' @param struct A (dyadic) structure
 #' @param leaves A list of leaves
 #' @param truth An optional numeric vector of $m$ values in ${0,1}$, the status of each null hypothesis (0 means H0 is true, 1 means H1 is true). Typically used in simulations.
+#' @return An object of class 'SansSouciStruct'
 #' @export
+#' @seealso SansSouciDyadic
+#' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
 #' @examples
 #' s <- 100
 #' q <- 7
 #' m <- s*2^q
 #' 
 #' dd <- dyadic.from.window.size(m, s, method = 2)
-#' obj1 <- SansSouciStruct(dd$C, dd$leaf_list)
-#' obj <- SansSouciDyadic(m, s, flavor = "window.size", direction = "top-down")
+#' obj <- SansSouciStruct(dd$C, dd$leaf_list)
+#' 
 SansSouciStruct <- function(struct, leaves, truth = NULL) {
     m <- length(unlist(leaves))
     input = list(struct = struct, 
@@ -26,7 +28,31 @@ SansSouciStruct <- function(struct, leaves, truth = NULL) {
     obj
 }
 
+#' Create an object of class 'SansSouciStruct' with a dyadic structure
+#'
+#' @param m A numeric value, the number of hypotheses
+#' @param leafSize A numeric value, the number of hypotheses in each leaf
+#' @param maxHeight A numeric value, the maximum height (or depth) of the tree
+#' @param flavor A character value defining the type of tree building function
+#'   to be used. Must be one of window.size", "height", or "max.height"
+#' @param direction A character value, the direction used for building the tree
+#'   Must be one of "bottom-up" or "top-down"
+#' @param ... Arguments to be passed to `SansSouciStruct`
+#' @return An object of class 'SansSouciStruct'
+#' @seealso dyadic.from.leave.list dyadic.from.window.size dyadic.from.height
+#'   dyadic.from.max.height
+#' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020).
+#'   Post hoc false positive control for structured hypotheses. Scandinavian
+#'   Journal of Statistics, 47(4), 1114-1148.
 #' @export
+#' @examples
+#' s <- 100
+#' q <- 7
+#' m <- s*2^q
+#' 
+#' dd <- dyadic.from.window.size(m, s, method = 2)
+#' obj <- SansSouciDyadic(m, s, flavor = "window.size", direction = "top-down")
+#' 
 SansSouciDyadic <- function(m, leafSize = NULL, maxHeight = NULL,
                             flavor = c("window.size", "height", "max.height"), 
                             direction = c("bottom-up", "top-down"),
@@ -57,9 +83,7 @@ nHyp.SansSouciStruct <- function(object) {
     object$input$m
 }
 
-#' `nLeaves`: get the number of leaves
-#' 
-#' @rdname all-generics
+#' @describeIn all-generics Get the number of leaves
 #' @param object An object. See individual methods for specifics
 #' @export
 nLeaves <- function(object) UseMethod("nLeaves")
@@ -76,6 +100,31 @@ nLeaves.SansSouciStruct <- function(object) {
 
 #' Fit SansSouciStruct object
 #' 
+#' @param object An object of class `SansSouciStruct`
+#' @param alpha Target risk (JER) level
+#' @param p.values A vector of length `nHyp(object)`, 
+#' @param family A character value describing how the number of true nulls in a set is estimated. Can be either:
+#' - "DKWM": estimation by the Dvoretzky-Kiefer-Wolfowitz-Massart inequality (related to the Storey estimator of the proportion of true nulls), valid for independent p-values
+#' - "HB": estimation by the Holm-Bonferroni method, always valid
+#' - "trivial": dummy estimation as the the size of the set
+#' - "Simes": estimation via the Simes inequality, valid for positively-dependent (PRDS) p-values
+#' - "Oracle": true number of true null hypotheses Truth" must be available in `object$input$truth`
+#' @param flavor A character value which can be 
+#' - "tree" (default value): the reference family is the entire tree structure
+#' - "partition": the reference family is the partition corresponding to the leaves of the tree
+#' @param ... Not used
+#' @return A 'fitted' object of class 'SansSouciStruct'. It is a list of three elements
+#'  - input: see [SansSouciStruct]
+#'  - param: the input parameters, given as a list
+#'  - output: a list of two elements
+#'    - p.values: the input argument 'p.values'
+#'    - ZL: the output of the "zeta function" associated to the input parameter 'family', see e.g. [zeta.DKWM]
+#' @details In the particular case where `family=="Simes"` or `family=="Oracle"`, the return value is actually of class `SansSouci` and not `SansSouciStruct`
+#' @seealso zeta.DKWM zeta.HB, zeta.tricial
+#' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
+#' @references Dvoretzky, A., Kiefer, J., and Wolfowitz, J. (1956). Asymptotic minimax character of the sample distribution function and of the classical multinomial estimator. The Annals of Mathematical Statistics, pages 642-669.
+#' @references Holm, S. A simple sequentially rejective multiple test procedure. Scandinavian Journal of Statistics 6 (1979), pp. 65-70.
+#' @references Massart, P. (1990). The tight constant in the Dvoretzky-Kiefer-Wolfowitz inequality. The Annals of Probability, pages 1269-1283.
 #' @export
 #' @examples 
 #' s <- 100
@@ -102,6 +151,7 @@ fit.SansSouciStruct <- function(object, alpha, p.values,
         }
     }
     m <- nHyp(object)
+    stopifnot(length(p.values) == m)
     params <- list(alpha = alpha, family = family, flavor = flavor)
     if (family %in% c("DKWM", "HB", "trivial")) {
         zeta <- switch(family,

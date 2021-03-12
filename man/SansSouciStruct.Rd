@@ -13,6 +13,9 @@ SansSouciStruct(struct, leaves, truth = NULL)
 
 \item{truth}{An optional numeric vector of $m$ values in ${0,1}$, the status of each null hypothesis (0 means H0 is true, 1 means H1 is true). Typically used in simulations.}
 }
+\value{
+An object of class 'SansSouciStruct'
+}
 \description{
 Create an object of class 'SansSouciStruct'
 }
@@ -22,6 +25,12 @@ q <- 7
 m <- s*2^q
 
 dd <- dyadic.from.window.size(m, s, method = 2)
-obj1 <- SansSouciStruct(dd$C, dd$leaf_list)
-obj <- SansSouciDyadic(m, s, flavor = "window.size", direction = "top-down")
+obj <- SansSouciStruct(dd$C, dd$leaf_list)
+
+}
+\references{
+Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
+}
+\seealso{
+SansSouciDyadic
 }

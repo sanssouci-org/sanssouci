@@ -1,11 +1,13 @@
 #' Create an object of class 'SansSouci'
-#' 
+#'
 #' @param Y A matrix of \eqn{m} variables (hypotheses) by \eqn{n} observations
-#' @param groups A numeric vector of \eqn{n} values in \eqn{0, 1}, the groups of observations on which to perform two-sample tests
-#' @param truth An optional numeric vector of $m$ values in ${0,1}$, the status of each null hypothesis (0 means H0 is true, 1 means H1 is true). Typically used in simulations.
+#' @param groups A numeric vector of \eqn{n} values in \eqn{0, 1}, the groups of
+#'   observations on which to perform two-sample tests
+#' @param truth An optional numeric vector of $m$ values in ${0,1}$, the status
+#'   of each null hypothesis (0 means H0 is true, 1 means H1 is true). Typically
+#'   used in simulations.
 #' @return An object of class "SansSouci"
 #' @export
-#' 
 #' @examples
 #' data(expr_ALL, package = "sansSouci.data")
 #' groups <- ifelse(colnames(expr_ALL)=="NEG", 0, 1)
@@ -14,11 +16,11 @@
 #' print(a)
 #' nHyp(a)
 #' nObs(a)
-#' 
+#'
 #' res <- fit(a, B = 100, alpha = 0.1)
 #' print(res)
 #' label(res)
-#' 
+#'
 #' res <- fit(a, B = 100, alpha = 0.1, family="Beta", K=10)
 #' label(res)
 #' 
@@ -81,7 +83,6 @@ SansSouci <- function(Y, groups, truth = NULL) {
 #'               "Simes+calibration" = bound(res, all = TRUE),
 #'               "Oracle" = bound(oracle, all = TRUE))
 #' plotConfCurve(confs)
-
 SansSouciSim <- function(...) {
     sim <- gaussianSamples(...)
     SansSouci(Y = sim$X, groups = sim$categ, truth = sim$H)
@@ -112,15 +113,12 @@ NULL
 
 #' Generic functions for S3 class SansSouci
 #' 
-#' @rdname all-generics
+#' @name all-generics
 #' @param object An object. See individual methods for specifics
-#' @export
 NULL
 #> NULL
 
-#' `nHyp`: get the number of hypotheses
-#' 
-#' @rdname all-generics
+#' @describeIn all-generics ' Get the number of hypotheses
 #' @param object An object. See individual methods for specifics
 #' @export
 nHyp <- function(object) UseMethod("nHyp")
@@ -134,9 +132,7 @@ nHyp.SansSouci <- function(object) {
     object$input$m
 }
 
-#' `nObs` Get the number of observations
-#' 
-#' @rdname all-generics
+#' @describeIn all-generics Get the number of observations
 #' @param object An object. See individual methods for specifics
 #' @export
 nObs <- function(object) UseMethod("nObs")
@@ -150,9 +146,7 @@ nObs.SansSouci <- function(object) {
     ncol(object$input$Y)
 }
 
-#' `label` Get the label of hypotheses tested
-#' 
-#' @rdname all-generics
+#' @describeIn all-generics Get the label of hypotheses tested
 #' @param object An object. See individual methods for specifics
 #' @export
 label <- function(object) UseMethod("label")
@@ -174,6 +168,8 @@ label.SansSouci <- function(object) {
     return(lab)
 }
 
+#' Print 'SansSouci' objects
+#' 
 #' @rdname SansSouci-methods
 #' @param x An object of class `SansSouci`
 #' @param ... Not used
@@ -244,15 +240,18 @@ generics::fit
 #' @param object An object of class `SansSouci`
 #' @param family A character value which can be \describe{
 #'   \item{Simes}{The classical family of thresholds introduced by Simes (1986):
-#'   \eqn{\alpha*k/m}. This family yields joint FWER control if the test
+#'   \eqn{\alpha*k/m}. This family yields JER control if the test
 #'   statistics are positively dependent (PRDS) under H0.}
 #'
-#'    \item{Beta}{A family of thresholds that achieves "balanced" joint error
-#'    rate (JER) control under independence}
-#'
+#'    \item{Beta}{A family of thresholds that achieves "balanced" JER control under independence}
+#'    
 #'   \item{Oracle}{A family such that the associated bounds correspond to the true numbers/proportions of true/false positives. "truth" must be available in object$input$truth.}
 #'   }
 #' @param ... Not used
+#' @return A 'fitted' object of class 'SansSouci'. It is a list of three elements
+#'  - input: see [SansSouci]
+#'  - param: the input parameters, given as a list
+#'  - output: the outputs of the calibration, see [calibrateJER]
 #' @export
 fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
                            alternative = c("two.sided", "less", "greater"),
@@ -333,9 +332,7 @@ fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
     object
 }
 
-#' `pValues`: get p-values
-#' 
-#' @rdname all-generics
+#' @describeIn all-generics Get p-values
 #' @param object An object. See individual methods for specifics
 #' @export
 pValues <- function(object) UseMethod("pValues")
@@ -349,15 +346,11 @@ pValues.SansSouci <- function(object) {
     object$output$p.values
 }
 
-#' `foldChanges`: get fold changes
-#' 
-#' @rdname all-generics
+#' @describeIn all-generics Get fold changes
 #' @param object An object. See individual methods for specifics
 #' @export
 foldChanges <- function(object) UseMethod("foldChanges")
 
-#' `foldChanges`: get fold changes
-#' 
 #' @rdname SansSouci-methods
 #' @param object An object of class `SansSouci`
 #' @export
@@ -365,9 +358,7 @@ foldChanges.SansSouci <- function(object) {
     object$output$fold_changes
 }
 
-#' `thresholds`: get thresholds
-#' 
-#' @rdname all-generics
+#' @describeIn all-generics Get thresholds
 #' @param object An object. See individual methods for specifics
 #' @export
 thresholds <- function(object) UseMethod("thresholds")

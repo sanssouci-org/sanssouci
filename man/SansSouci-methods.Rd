@@ -43,9 +43,9 @@ Basic methods for class \code{SansSouci}
 
 \code{label} Get the label of a post hoc method
 
-\code{pValues}: get p-values
+Print 'SansSouci' objects
 
-\code{foldChanges}: get fold changes
+\code{pValues}: get p-values
 
 \code{thresholds}: get thresholds
 }
