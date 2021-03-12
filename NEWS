@@ -3,6 +3,17 @@
 Package: sansSouci
 ==================
 
+Version 0.10.0 [2021-03-12]
+
+* Updated documentation, vignettes and test scripts
+* Vocabulary: confidence envelopes are now called confidence curves
+* Added S3 class 'SansSouciStruct' (DBNR framework)
+* Implemented method 'SansSouci.fit' 
+* Implemented method 'SansSouci.bound'
+* Added S3 class 'SansSouci' (generic BNR framework)
+* Implemented method 'SansSouci.fit' (wrapper around 'calibrateJER')
+* Implemented method 'SansSouci.bound' (wrapper around 'curveMaxFP')
+
 Version 0.9.5 [2021-02-11]
 
 * cleanups in simple calibration functions: the low-level functions are 'get_perm_p', 'get_pivotal_stat' and 'get_calibrated_thresholds'; the high-level function is 'calibrate'

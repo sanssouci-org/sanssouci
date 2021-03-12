@@ -28,14 +28,14 @@ class 1 is shifted to the right of class 0.}
 }
 \value{
 A list with class "htest" containing the following components:
-  \describe{ \item{statistic}{the value of the statistics} \item{p.value}{the
-  p-values for the tests}}
+\describe{ \item{statistic}{the value of the statistics} \item{p.value}{the
+p-values for the tests}}
 
 A data.frame with columns \describe{ \item{stat}{A vector of \code{m}
-  Wilcoxon sum rank test statistics of association between \code{X} and
-  \code{y}.} \item{stat0Mat}{An \code{m} x \code{B} matrix of \code{B}
-  realizations of a \code{m}-dimensional vector of test statistics under the
-  null hypothesis of no association between \code{X} and \code{y}.}}
+Wilcoxon sum rank test statistics of association between \code{X} and
+\code{y}.} \item{stat0Mat}{An \code{m} x \code{B} matrix of \code{B}
+realizations of a \code{m}-dimensional vector of test statistics under the
+null hypothesis of no association between \code{X} and \code{y}.}}
 }
 \description{
 Vectorized version of the binomial test

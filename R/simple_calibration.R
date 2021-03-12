@@ -1,4 +1,18 @@
+<<<<<<< HEAD
 #' @title Low-level calibration functions
+=======
+t_inv_linear <- function(y, k, m) {
+    y * m / k;
+}
+
+t_inv_beta <- function(y, k, m) {
+    pbeta(y, k, m + 1 - k);
+}
+
+#' @describeIn get_pivotal_stat Get pivotal statistic (slow version)
+#' @inheritParams get_pivotal_stat_fast
+#' @param testFUN A function with the same I/O as \code{t.test}
+>>>>>>> develop
 #' 
 #' @description Get a matrix of p-values under the null hypothesis obtained 
 #' by repeated permutation of class labels

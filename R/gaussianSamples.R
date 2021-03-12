@@ -32,6 +32,8 @@
 #'   from a \eqn{\mathcal{N}(\mu, 1)} distribution, where \eqn{\mu =
 #'   SNR*\sqrt(1/(n_0) + 1/n_1)}. The argument \code{p} is the probability of a
 #'   sample to belong to the non-zero-mean population.
+#'   
+#' @seealso [SansSouciSim]
 #'
 #' @export
 #' @importFrom stats rbinom
