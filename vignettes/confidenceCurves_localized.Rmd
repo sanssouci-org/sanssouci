@@ -103,7 +103,7 @@ The true number of false positives will be called "Oracle" bound in the plots be
 ```{r oracle}
 obj$input$truth <- as.numeric(mu != 0)
 res_Oracle <- fit(obj, alpha = alpha, p.values = pvalues, family = "Oracle")
-Vmat <- bound(res_Oracle, what = "FP", all = TRUE)
+Vmat <- predict(res_Oracle, what = "FP", all = TRUE)
 V <- Vmat$bound[idxs]
 res[["Oracle"]] <- data.frame(idxs, V, method = "Oracle")
 ```
@@ -114,7 +114,7 @@ Here we use the @simes86improved inequality to bound the number of false positiv
 
 ```{r simes}
 res_Simes <- fit(obj, alpha = alpha, p.values = pvalues, family = "Simes")
-Vmat <- bound(res_Simes, what = "FP", all = TRUE)
+Vmat <- predict(res_Simes, what = "FP", all = TRUE)
 V <- Vmat$bound[idxs]
 res[["Simes"]] <- data.frame(idxs, V, method = "Simes")
 ```
@@ -127,7 +127,7 @@ Here we use the DKWM inequality (@dvoretzky1956asymptotic, @massart1990tight) to
 res_DKWM <- fit(obj, alpha, p.values = pvalues, 
                 family = "DKWM")
 V <- sapply(idxs, FUN = function(ii) {
-  bound(res_DKWM, S = seq_len(ii), what = "FP")
+  predict(res_DKWM, S = seq_len(ii), what = "FP")
 })
 ord <- order(pvalues)
 if (FALSE) {
@@ -147,7 +147,7 @@ res_DKWM_part <- fit(obj, alpha, p.values = pvalues,
                 family = "DKWM", flavor = "partition")
 label(res_DKWM_part)
 V <- sapply(idxs, FUN = function(ii) {
-  bound(res_DKWM_part, S = seq_len(ii), what = "FP")
+  predict(res_DKWM_part, S = seq_len(ii), what = "FP")
 })
 
 if (FALSE) {

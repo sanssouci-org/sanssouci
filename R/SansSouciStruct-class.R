@@ -138,7 +138,7 @@ nLeaves.SansSouciStruct <- function(object) {
 #' 
 #' alpha <- 0.05
 #' res <- fit(obj, alpha, pvalues, "DKWM")
-#' bound(res)
+#' predict(res)
 fit.SansSouciStruct <- function(object, alpha, p.values, 
                                 family = c("DKWM", "HB", "trivial", "Simes", "Oracle"), 
                                 flavor = c("tree", "partition"), ...) {
@@ -203,7 +203,7 @@ pValues.SansSouciStruct <- function(object) {
 }
 
 #' @export
-bound.SansSouciStruct <- function(object, S = seq_len(nHyp(object)), 
+predict.SansSouciStruct <- function(object, S = seq_len(nHyp(object)), 
                             what = c("TP", "FDP"), ...) {
     p.values <- pValues(object)
     if (max(S) > nHyp(object)) {

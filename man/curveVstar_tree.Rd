@@ -62,3 +62,6 @@ plot(1:m, 1:m-Vmu, t = 's',
      xlim = c(0, 2*m1), ylim = c(0, m1))
 lines(1:m, SmuS, t = 's', col = 3)
 }
+\references{
+Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
+}

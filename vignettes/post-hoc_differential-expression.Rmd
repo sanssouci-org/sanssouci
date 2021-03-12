@@ -171,7 +171,7 @@ A more refined post hoc bound has been proposed by @GS2011 under the PRDS assump
 ```{r, Simes}
 obj <- SansSouci(Y = dat, groups = categ)
 res_Simes <- fit(obj, B = 0, family = "Simes", alpha = alpha) ## B=0 => no calibration!
-FP_Simes <- bound(res_Simes, S_BH, what = "FP")
+FP_Simes <- predict(res_Simes, S_BH, what = "FP")
 ```
 
 The Simes bound implies that with probability larger than `r 1-alpha`, the false discovery proportion among the genes selected by the BH procedure at level $q= `r q`$ is upper bounded by `r ceiling(FP_Simes/nBH*100)/100`. The Simes bound is sharper than the $k_0$-Bonferroni bound because it is obtained from a *joint* control of all $k$-FWER for all $k=1, \dots, m$.  The $k_0$-Bonferroni bound will therefore not be considered further in this vignette.
@@ -209,7 +209,7 @@ resList <- list("Simes" = res_Simes,
             "Beta" = res_Beta)
 names(resList)[3] <- sprintf("Beta (K=%s)", K)
 
-bounds <- sapply(resList, bound, S_BH)
+bounds <- sapply(resList, predict, S_BH)
 rownames(bounds) <- c("Lower bound on True Positives", "Upper bound on False Discovery Proportion")
 knitr::kable(t(bounds), digits = 2)
 ```
@@ -230,7 +230,7 @@ We illustrate the use of post-hoc methods to provide this type of information. M
 The confidence curves obtained by calibration of the Simes and Beta families can be compared graphically to the (parametric) Simes curve that can be obtained from @GS2011:
 
 ```{r, conf-env-plot}
-conf_bounds <- lapply(resList, bound, all = TRUE)
+conf_bounds <- lapply(resList, predict, all = TRUE)
 cols <- RColorBrewer::brewer.pal(length(conf_bounds), "Dark2")
 p <- plotConfCurve(conf_bounds, xmax = 300, cols = cols)
 p + geom_vline(xintercept = nBH, color = "gray", linetype = "dotted", size = 1.5) +
@@ -279,7 +279,7 @@ S_neg <- which(fc <= -r & adjp_BH <= q)
 S_all <- union(S_pos, S_neg)
 
 all_bounds <- function(S, resList) {
-  c(length(S), sapply(resList, bound, S, "TP"))
+  c(length(S), sapply(resList, predict, S, "TP"))
 }
 tab <- rbind(all_bounds(S_pos, resList), 
              all_bounds(S_neg, resList),

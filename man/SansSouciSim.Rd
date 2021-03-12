@@ -23,7 +23,7 @@ res <- fit(obj, B = 100, alpha = alpha, family = "Simes")
 res
 # upper bound on number of signals if the entire data set
 # (and corresponding lower bound on FDP)
-bound(res)
+predict(res)
 
 # confidence curve 
 plot(res)
@@ -37,9 +37,9 @@ res0
 oracle <- fit(obj, alpha = alpha, family = "Oracle")
 oracle
 
-confs <- list(Simes = bound(res0, all = TRUE),
-              "Simes+calibration" = bound(res, all = TRUE),
-              "Oracle" = bound(oracle, all = TRUE))
+confs <- list(Simes = predict(res0, all = TRUE),
+              "Simes+calibration" = predict(res, all = TRUE),
+              "Oracle" = predict(oracle, all = TRUE))
 plotConfCurve(confs)
 }
 \seealso{

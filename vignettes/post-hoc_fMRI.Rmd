@@ -89,7 +89,7 @@ res_Simes <- fit(obj, B = 0, refFamily = "Simes", alpha = alpha) ## B=0 => no ca
 Post hoc bounds are obtained from the `bound` function:
 
 ```{r}
-TP_Simes <- bound(res_Simes, what = "TP")
+TP_Simes <- predict(res_Simes, what = "TP")
 TP_Simes
 ```
 
@@ -131,7 +131,7 @@ resList <- list("Simes/ARI" = res_Simes,
             "Beta" = res_Beta)
 names(resList)[3] <- sprintf("Beta (K=%s)", K)
 
-bounds <- sapply(resList, bound, what = "TP")
+bounds <- sapply(resList, predict, what = "TP")
 knitr::kable(bounds, digits = 2, col.names = c("Lower bound on True Positives"))
 ```
 
@@ -153,7 +153,7 @@ The confidence curves obtained by calibration of the Simes and Beta families can
 
 
 ```{r plot-conf-bounds}
-conf_bounds <- lapply(resList, bound, all = TRUE)
+conf_bounds <- lapply(resList, predict, all = TRUE)
 cols <- RColorBrewer::brewer.pal(length(conf_bounds), "Dark2")
 p <- plotConfCurve(conf_bounds, xmax = xmax, cols = cols)
 p + geom_line(size=1.5)
@@ -174,7 +174,7 @@ This atlas is made of `r nrow(brainAtlas)` areas. For each of these areas, we  c
 ```{r posthoc-bounds-atlas}
 bounds <- apply(brainAtlas, 1, FUN = function(reg) {
   S <- which(reg > 0)
-  c("Region size" = length(S), sapply(resList, bound, S, "TP"))
+  c("Region size" = length(S), sapply(resList, predict, S, "TP"))
 })
 ```
 

@@ -65,7 +65,7 @@ confCurveFromFam <- function(p.values, refFamily, param, K = length(p.values), w
         thr <- param
     }
     proc <- sprintf("%s(%s)", refFamily, param)
-    bound(p.values, S = 1:m, thr, lab = proc, what = what, all = TRUE)
+    posthoc_bound(p.values, S = 1:m, thr, lab = proc, what = what, all = TRUE)
 }
 
 

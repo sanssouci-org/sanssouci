@@ -86,7 +86,7 @@ cal$output$lambda > alpha
 The fitted `SansSouci` object contains post hoc confidence bounds:
 
 ```{r confidence-bounds}
-env <- bound(cal, all = TRUE)
+env <- predict(cal, all = TRUE)
 head(env)
 ```
 
@@ -96,9 +96,9 @@ We compare it to the true number of false positives among the most significant i
 cal0 <- fit(obj, alpha = alpha, B = 0, refFamily = "Simes")
 oracle <- fit(obj, alpha = alpha, refFamily = "Oracle")
 
-confs <- list(Simes = bound(cal0, all = TRUE),
-              "Simes+calibration" = bound(cal, all = TRUE),
-              "Oracle" = bound(oracle, all = TRUE))
+confs <- list(Simes = predict(cal0, all = TRUE),
+              "Simes+calibration" = predict(cal, all = TRUE),
+              "Oracle" = predict(oracle, all = TRUE))
 ```
 
 ```{r plot-conf-env}
@@ -131,9 +131,9 @@ The associated confidence curves are displayed below:
 cal0 <- fit(obj, alpha = alpha, B = 0, refFamily = "Simes")
 oracle <- fit(obj, alpha = alpha, refFamily = "Oracle")
 
-confs <- list(Simes = bound(cal0, all = TRUE),
-              "Simes+calibration" = bound(cal, all = TRUE),
-              "Oracle" = bound(oracle, all = TRUE))
+confs <- list(Simes = predict(cal0, all = TRUE),
+              "Simes+calibration" = predict(cal, all = TRUE),
+              "Oracle" = predict(oracle, all = TRUE))
 ```
 
 ```{r plot-conf-env-one-sample}

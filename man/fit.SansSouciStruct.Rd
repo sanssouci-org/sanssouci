@@ -67,7 +67,7 @@ pvalues <- gen.p.values(m = m, mu = mu, rho = 0)
 
 alpha <- 0.05
 res <- fit(obj, alpha, pvalues, "DKWM")
-bound(res)
+predict(res)
 }
 \references{
 Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
