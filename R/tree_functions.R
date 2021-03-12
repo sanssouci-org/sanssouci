@@ -164,6 +164,7 @@ NULL
 #' \item{\code{zeta.HB}}{Holm-Bonferroni test with parameter \code{lambda}}
 #' \item{\code{zeta.trivial}}{the size of the p-value set (\eqn{lambda} is not used)}
 #' }
+#' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
 #' @references Dvoretzky, A., Kiefer, J., and Wolfowitz, J. (1956). Asymptotic minimax character of the sample distribution function and of the classical multinomial estimator. The Annals of Mathematical Statistics, pages 642-669.
 #' @references Holm, S. A simple sequentially rejective multiple test procedure. Scandinavian Journal of Statistics 6 (1979), pp. 65-70.
 #' @references Massart, P. (1990). The tight constant in the Dvoretzky-Kiefer-Wolfowitz inequality. The Annals of Probability, pages 1269-1283.
@@ -229,6 +230,7 @@ nb.elements <- function(C) {
 #' @param pvalues A vector of \eqn{p}-values
 #' @param alpha A target level
 #' @details The proportion of true nulls in each node is estimated by an union bound on the regions. That is, the provided method is applied at level \code{alpha/nR} where \code{nR} is the number of regions.
+#' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
 #' @export
 #' @examples
 #' 
@@ -545,6 +547,7 @@ tree.expand <- function(C, ZL, leaf_list) {
 #' @param ZL Zeta tree
 #' @param leaf_list List of leaves
 #' @return An integer value, upper bound on the number false positives in S
+#' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
 #' @export
 V.star <- function(S, C, ZL, leaf_list) {
     all_leaves <- tree.expand(C, ZL, leaf_list)
