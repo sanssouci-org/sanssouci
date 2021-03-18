@@ -258,10 +258,11 @@ fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
                           rowTestFUN = NULL, 
                           family = c("Simes", "Beta", "Oracle"), 
                           maxStepsDown = 10L, K = nHyp(object), 
-                          
+                          flavor = c("v0", "v1"),
                           verbose = TRUE, ...) {
     alternative <- match.arg(alternative)
     family <- match.arg(family)
+    flavor <- match.arg(flavor)
     if (family == "Oracle") {
         truth <- object$input$truth
         if (is.null(truth)) {
@@ -301,33 +302,63 @@ fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
         maxStepsDown = maxStepsDown, 
         K = K)
     
-    if (B > 0 && family != "Oracle") {
-        cal <- calibrateJER(X = Y, categ = groups, B = B, alpha = alpha, 
-                            alternative = alternative, 
-                            rowTestFUN = rowTestFUN, 
-                            refFamily = family, 
-                            maxStepsDown = maxStepsDown, 
-                            K = K, verbose = verbose)
-    } else {
-        # no calibration!
-        rwt <- rowTestFUN(mat = Y, categ = groups, alternative = alternative)
-        p.values <- rwt$p.value
-        fc <- rwt$meanDiff
-        lambda <- alpha
-        if (family %in% c("Simes", "Linear")) {
-            thr <- SimesThresholdFamily(m, kMax = K)(alpha)
-        } else if (family == "Beta") {
-            thr <- BetaThresholdFamily(m, kMax = K)(alpha)
-        } else if (family == "Oracle") {
-            lambda <- 0  # 100% confidence -- should it be set to alpha for consistency?
-            thr <- object$input$truth
+    if (flavor == "v0") {
+        if (B > 0 && family != "Oracle") {
+            cal <- calibrateJER(X = Y, categ = groups, B = B, alpha = alpha, 
+                                alternative = alternative, 
+                                rowTestFUN = rowTestFUN, 
+                                refFamily = family, 
+                                maxStepsDown = maxStepsDown, 
+                                K = K, verbose = verbose)
+        } 
+        else {
+            # no calibration!
+            rwt <- rowTestFUN(mat = Y, categ = groups, alternative = alternative)
+            p.values <- rwt$p.value
+            fc <- rwt$meanDiff
+            lambda <- alpha
+            if (family %in% c("Simes", "Linear")) {
+                thr <- SimesThresholdFamily(m, kMax = K)(alpha)
+            } else if (family == "Beta") {
+                thr <- BetaThresholdFamily(m, kMax = K)(alpha)
+            } else if (family == "Oracle") {
+                lambda <- 0  # 100% confidence -- should it be set to alpha for consistency?
+                thr <- object$input$truth
+            }
+            cal <- list(p.values = p.values,
+                        fold_changes = fc,
+                        piv_stat = NULL,
+                        thr = thr,
+                        lambda = alpha,
+                        conf_bound = NULL)
         }
+    } else if (flavor == "v1") {
+        rwt <- rowWelchTests(X, groups)
+        p.values <- rwt$p.value
         cal <- list(p.values = p.values,
-                    fold_changes = fc,
-                    piv_stat = NULL,
-                    thr = thr,
-                    lambda = alpha,
-                    conf_bound = NULL)
+                    fold_changes = rwt$meanDiff)
+        if (B > 0 && family != "Oracle") {
+            p0 <- sansSouci:::get_perm_p2(X = X, categ = groups, 
+                                          B = B, rowTestFUN = rowTestFUN)
+            
+            calib <- get_calibrated_thresholds_sd(p0 = p0, m = m, alpha = alpha, 
+                                                  family = family, K = K, 
+                                                  p = p.values, maxStepsDown = maxStepsDown)
+            cal$piv_stat <- calib$pivStat
+            cal$thr <- calib$thr
+            cal$lambda <- calib$lambda
+        } else {
+            lambda <- alpha
+            if (family == "Linear") {
+                thr <- t_linear(alpha, seq_len(m), m)
+            } else if (family == "Beta") {
+                thr <- t_beta(alpha, seq_len(m), m)
+            } else if (family == "Oracle") {
+                lambda <- 0  # 100% confidence -- should it be set to alpha for consistency?
+                thr <- object$input$truth
+            }
+            cal$thr <- cal
+        }
     }
     object$output <- cal
     object

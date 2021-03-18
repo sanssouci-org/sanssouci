@@ -26,7 +26,10 @@ t_inv_beta <- function(y, k, m) {
 #' X <- matrix(rnorm(m*n), ncol = n, nrow = m)
 #' categ <- rbinom(n, 1, 0.4)
 #' B <- 10
+#' set.seed(123)
 #' p0 <- sansSouci:::get_perm_p(X, categ, B)
+#' set.seed(123)
+#' p02 <- sansSouci:::get_perm_p2(X, categ, B)
 get_perm_p <- function(X, categ, B, 
                        rowTestFUN = rowWelchTests) {
     m <- nrow(X)
@@ -42,6 +45,26 @@ get_perm_p <- function(X, categ, B,
     
     ## Step 2: sort each column
     return(colSort(pval0))
+}
+
+#' @rdname calibrate_low-level
+#' @inheritParams get_perm_p
+#' @importFrom matrixStats colRanks
+#' @export
+get_perm_p2 <- function(X, categ, B, 
+                       rowTestFUN = rowWelchTests) {
+    m <- nrow(X)
+    
+    ## Step 1: calculate $p$-values for B permutations of the class assignments
+    pval0 <- matrix(NA_real_, nrow = m, ncol = B) ## parametric p-values
+    for (bb in 1:B) {
+        #        categ_perm <- sample(categ, length(categ))
+        categ_perm <- sample(categ)
+        rwt <- rowTestFUN(X, categ = categ_perm)
+        pval0[, bb] <- rwt$p.value
+    }
+    
+    return(pval0)
 }
 
 #' @description get_pivotal_stat: Get a vector of pivotal statistics associated
@@ -73,15 +96,39 @@ get_perm_p <- function(X, categ, B,
 #' X <- matrix(rnorm(m*n), ncol = n, nrow = m)
 #' categ <- rbinom(n, 1, 0.4)
 #' B <- 10
+#' set.seed(123)
 #' p0 <- sansSouci:::get_perm_p(X, categ, B)
 #' pivStat <- sansSouci:::get_pivotal_stat(p0)
 #' 
+#' set.seed(123)
+#' p02 <- sansSouci:::get_perm_p2(X, categ, B)
+#' pivStat2 <- sansSouci:::get_pivotal_stat2(p02)
+
 get_pivotal_stat <- function(p0,
                              t_inv = t_inv_linear,
                              K = nrow(p0)) {
     m <- nrow(p0)
     B <- ncol(p0)
 
+    ## Step 3: apply template function
+    tkInv <- matrix(nrow = K, ncol = B)
+    for (kk in 1:K) {
+        tkInv[kk, ] <- t_inv(p0[kk, ], kk, m)
+    }
+    
+    ## Step 4: report min for each column
+    matrixStats::colMins(tkInv)
+}
+
+#' @export
+get_pivotal_stat2 <- function(p0,
+                             t_inv = t_inv_linear,
+                             m = nrow(p0),
+                             K = m) {
+    ## Step 2: order each column
+    p0 <- colSort(p0)
+    B <- ncol(p0)
+    
     ## Step 3: apply template function
     tkInv <- matrix(nrow = K, ncol = B)
     for (kk in 1:K) {
@@ -113,8 +160,16 @@ get_pivotal_stat <- function(p0,
 #' categ <- rbinom(n, 1, 0.4)
 #' B <- 100
 #' p <- rowWelchTests(X, categ)$p.value
+#' 
+#' set.seed(123)
 #' p0 <- sansSouci:::get_perm_p(X, categ, B)
 #' calib <- get_calibrated_thresholds(p0, alpha = 0.1, family = "Linear")
+#' 
+#' set.seed(123)
+#' p02 <- sansSouci:::get_perm_p2(X, categ, B)
+#' calib2 <- get_calibrated_thresholds2(p02, alpha = 0.1, family = "Linear")
+#' identical(calib, calib2)
+#' 
 #' #Vbar <- get_max_FP(p, calib$thr)
 #' #Vbar(1:m)
 #' 
@@ -168,6 +223,74 @@ get_calibrated_thresholds <- function(p0, alpha,
     return(res)
 }
 
+#' @export
+get_calibrated_thresholds2 <- function(p0, alpha, 
+                                      family = c("Linear", "Beta", "Simes"), 
+                                      m = nrow(p0),
+                                      K = m) {
+    family <- match.arg(family)
+    if (family %in% c("Linear", "Simes")) {
+        t_inv <- t_inv_linear
+        t_ <- t_linear
+    } else if (family == "Beta") {
+        t_inv <- t_inv_beta
+        t_ <- t_beta
+    }
+    pivStat <- get_pivotal_stat2(p0, t_inv, m, min(nrow(p0), K))
+    lambda <- stats::quantile(pivStat, alpha, type = 1)
+    thr <- t_(lambda, 1:K, m)
+    res <- list(thr = thr,
+                pivStat = pivStat,
+                lambda = lambda)
+    return(res)
+}
+
+#' @export
+get_calibrated_thresholds_sd <- function(p0, alpha, 
+                                         family = c("Linear", "Beta", "Simes"), 
+                                         m = nrow(p0),
+                                         K = m,
+                                         p = NULL, maxStepsDown = 10L) {
+    step <- 0
+    cal <- get_calibrated_thresholds2(p0, alpha, 
+                                      family = family, 
+                                      m = m,
+                                      K = K)
+    thr1 <- cal$thr[1]   ## (1-)FWER threshold
+    R1 <- integer(0)
+    if (!is.null(p)) {
+        R1 <- which(p <= thr1)
+    }
+
+    ## force 'convergence' if nothing to gain) or nothing left to be rejected
+    converged <- (length(R1) == 0L)  | (length(R1) == m)
+    
+    while (!converged && step < maxStepsDown) {
+        step <- step + 1
+        
+        p1 <- p0[-R1, ]
+        cal <- get_calibrated_thresholds2(p1, alpha, 
+                                          family = family, 
+                                          m = m,
+                                          K = K)
+        R1_new <- which(p < cal$thr[1])
+
+        noNewRejection <- all(R1_new %in% R1)          ## convergence reached?
+        if (noNewRejection) {
+            if (!identical(R1_new, R1)) {              ## can this actually happen???
+                print("Rejecting less hypotheses at next step!")
+                ## not a 'TRUE' convergence: override the last step down!
+                cal$thr <- thr
+                cal$lambda <- lambda
+            }
+            converged <- TRUE ## stop the step-down process
+            cal$steps_down <- step
+        } else {
+            R1 <- R1_new
+        }
+    }
+    cal
+}
 
 #' Calibrate 
 #' @param X A matrix of \eqn{m} variables (hypotheses) by \eqn{n} observations
