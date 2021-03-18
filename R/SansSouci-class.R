@@ -259,6 +259,7 @@ fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
                           family = c("Simes", "Beta", "Oracle"), 
                           maxStepsDown = 10L, K = nHyp(object), 
                           flavor = c("v0", "v1"),
+                          force = FALSE,
                           verbose = TRUE, ...) {
     alternative <- match.arg(alternative)
     family <- match.arg(family)
@@ -292,6 +293,17 @@ fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
     }  else {
         funName <- as.character(substitute(rowTestFUN))
     }
+    
+    ## should we re-calculate p0?
+    params <- object$parameters
+    p0 <- object$output$p0
+    do_p0 <- TRUE
+    if (!is.null(params) && !force) {  
+        if (!is.null(p0)) {
+            do_p0 <- (params$B != B || !all.equal(params$rowTestFUN, rowTestFUN))
+        }
+    }
+    
     object$parameters <- list(
         alpha = alpha,
         B = B,
@@ -333,17 +345,21 @@ fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
                         conf_bound = NULL)
         }
     } else if (flavor == "v1") {
-        rwt <- rowWelchTests(X, groups)
+        rwt <- rowWelchTests(Y, groups)
         p.values <- rwt$p.value
         cal <- list(p.values = p.values,
                     fold_changes = rwt$meanDiff)
         if (B > 0 && family != "Oracle") {
-            p0 <- sansSouci:::get_perm_p2(X = X, categ = groups, 
-                                          B = B, rowTestFUN = rowTestFUN)
-            
+            if (do_p0) {
+                p0 <- sansSouci:::get_perm_p2(X = Y, categ = groups, 
+                                              B = B, rowTestFUN = rowTestFUN)
+            } else {
+                cat("Permutation p-values already calculated... skipping\n")
+            }
             calib <- get_calibrated_thresholds_sd(p0 = p0, m = m, alpha = alpha, 
                                                   family = family, K = K, 
                                                   p = p.values, maxStepsDown = maxStepsDown)
+            cal$p0 <- p0
             cal$piv_stat <- calib$pivStat
             cal$thr <- calib$thr
             cal$lambda <- calib$lambda
