@@ -254,11 +254,12 @@ generics::fit
 #'  - output: the outputs of the calibration, see [calibrateJER]
 #' @export
 fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
-                           alternative = c("two.sided", "less", "greater"),
-                           rowTestFUN = NULL, 
-                           family = c("Simes", "Beta", "Oracle"), 
-                           maxStepsDown = 10L, K = nHyp(object), 
-                           verbose = TRUE, ...) {
+                          alternative = c("two.sided", "less", "greater"),
+                          rowTestFUN = NULL, 
+                          family = c("Simes", "Beta", "Oracle"), 
+                          maxStepsDown = 10L, K = nHyp(object), 
+                          
+                          verbose = TRUE, ...) {
     alternative <- match.arg(alternative)
     family <- match.arg(family)
     if (family == "Oracle") {
@@ -277,9 +278,9 @@ fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
             rowTestFUN <- function(mat, categ, alternative) {
                 T <- rowSums(mat)/sqrt(length(categ))
                 p <- switch(alternative, 
-                             "two.sided" = 2*(pnorm(abs(T), lower.tail = FALSE)),
-                             "greater" = pnorm(T, lower.tail = FALSE),
-                             "less" = pnorm(T, lower.tail = TRUE))
+                            "two.sided" = 2*(pnorm(abs(T), lower.tail = FALSE)),
+                            "greater" = pnorm(T, lower.tail = FALSE),
+                            "less" = pnorm(T, lower.tail = TRUE))
                 data.frame(statistic = T, parameter = NA, p.value = p)
             }
             funName <- "testBySignFlipping"
@@ -291,22 +292,22 @@ fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
         funName <- as.character(substitute(rowTestFUN))
     }
     object$parameters <- list(
-                     alpha = alpha,
-                     B = B,
-                     alternative = alternative, 
-                     rowTestFUN = rowTestFUN, 
-                     funName = funName,
-                     family = family, 
-                     maxStepsDown = maxStepsDown, 
-                     K = K)
+        alpha = alpha,
+        B = B,
+        alternative = alternative, 
+        rowTestFUN = rowTestFUN, 
+        funName = funName,
+        family = family, 
+        maxStepsDown = maxStepsDown, 
+        K = K)
     
     if (B > 0 && family != "Oracle") {
         cal <- calibrateJER(X = Y, categ = groups, B = B, alpha = alpha, 
-                        alternative = alternative, 
-                        rowTestFUN = rowTestFUN, 
-                        refFamily = family, 
-                        maxStepsDown = maxStepsDown, 
-                        K = K, verbose = verbose)
+                            alternative = alternative, 
+                            rowTestFUN = rowTestFUN, 
+                            refFamily = family, 
+                            maxStepsDown = maxStepsDown, 
+                            K = K, verbose = verbose)
     } else {
         # no calibration!
         rwt <- rowTestFUN(mat = Y, categ = groups, alternative = alternative)
