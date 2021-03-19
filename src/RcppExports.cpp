@@ -65,6 +65,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// partialColSortCpp
+arma::mat partialColSortCpp(arma::mat X, int k);
+RcppExport SEXP _sansSouci_partialColSortCpp(SEXP XSEXP, SEXP kSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    rcpp_result_gen = Rcpp::wrap(partialColSortCpp(X, k));
+    return rcpp_result_gen;
+END_RCPP
+}
 // posthocBySimes0Rcpp
 double posthocBySimes0Rcpp(NumericVector p, NumericVector select, double alpha);
 RcppExport SEXP _sansSouci_posthocBySimes0Rcpp(SEXP pSEXP, SEXP selectSEXP, SEXP alphaSEXP) {
@@ -108,6 +120,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_sansSouci_marginalKFWER", (DL_FUNC) &_sansSouci_marginalKFWER, 2},
     {"_sansSouci_minPseudoRanks", (DL_FUNC) &_sansSouci_minPseudoRanks, 2},
     {"_sansSouci_partialColSortDescCpp", (DL_FUNC) &_sansSouci_partialColSortDescCpp, 2},
+    {"_sansSouci_partialColSortCpp", (DL_FUNC) &_sansSouci_partialColSortCpp, 2},
     {"_sansSouci_posthocBySimes0Rcpp", (DL_FUNC) &_sansSouci_posthocBySimes0Rcpp, 3},
     {"_sansSouci_rowSortDesc", (DL_FUNC) &_sansSouci_rowSortDesc, 1},
     {"_sansSouci_testBySignFlipping", (DL_FUNC) &_sansSouci_testBySignFlipping, 2},

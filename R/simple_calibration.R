@@ -126,7 +126,8 @@ get_pivotal_stat2 <- function(p0,
                              m = nrow(p0),
                              K = m) {
     ## Step 2: order each column
-    p0 <- colSort(p0)
+    # p0 <- colSort(p0)
+    p0 <- partialColSort(p0, K)
     B <- ncol(p0)
     
     ## Step 3: apply template function
@@ -227,7 +228,8 @@ get_calibrated_thresholds <- function(p0, alpha,
 get_calibrated_thresholds2 <- function(p0, alpha, 
                                       family = c("Linear", "Beta", "Simes"), 
                                       m = nrow(p0),
-                                      K = m) {
+                                      K = m,
+                                      pivStat0 = NULL) {
     family <- match.arg(family)
     if (family %in% c("Linear", "Simes")) {
         t_inv <- t_inv_linear
@@ -236,7 +238,10 @@ get_calibrated_thresholds2 <- function(p0, alpha,
         t_inv <- t_inv_beta
         t_ <- t_beta
     }
-    pivStat <- get_pivotal_stat2(p0, t_inv, m, min(nrow(p0), K))
+    pivStat <- pivStat0
+    if (is.null(pivStat)) {
+        pivStat <- get_pivotal_stat2(p0, t_inv, m, min(nrow(p0), K))
+    }
     lambda <- stats::quantile(pivStat, alpha, type = 1)
     thr <- t_(lambda, 1:K, m)
     res <- list(thr = thr,
@@ -250,12 +255,15 @@ get_calibrated_thresholds_sd <- function(p0, alpha,
                                          family = c("Linear", "Beta", "Simes"), 
                                          m = nrow(p0),
                                          K = m,
-                                         p = NULL, maxStepsDown = 10L) {
+                                         p = NULL, 
+                                         maxStepsDown = 10L,
+                                         pivStat0 = NULL) {
     step <- 0
     cal <- get_calibrated_thresholds2(p0, alpha, 
                                       family = family, 
                                       m = m,
-                                      K = K)
+                                      K = K, 
+                                      pivStat0 = pivStat0)
     thr1 <- cal$thr[1]   ## (1-)FWER threshold
     R1 <- integer(0)
     if (!is.null(p)) {
@@ -272,7 +280,8 @@ get_calibrated_thresholds_sd <- function(p0, alpha,
         cal <- get_calibrated_thresholds2(p1, alpha, 
                                           family = family, 
                                           m = m,
-                                          K = K)
+                                          K = K,
+                                          pivStat0 = NULL) ## force piv stat calc
         R1_new <- which(p < cal$thr[1])
 
         noNewRejection <- all(R1_new %in% R1)          ## convergence reached?

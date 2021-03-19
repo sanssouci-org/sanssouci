@@ -304,7 +304,22 @@ fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
     do_p0 <- TRUE
     if (!is.null(params) && !force) {  
         if (!is.null(p0)) {
-            do_p0 <- (params$B != B || !all.equal(params$rowTestFUN, rowTestFUN))
+            cond_B <- (params$B == B)
+            cond_F <- all.equal(params$rowTestFUN, rowTestFUN)
+            cond_A <- (params$alternative == alternative)
+            do_p0 <- (!cond_B) || (!cond_F) || (!cond_A)
+        }
+    }
+    
+    ## should we re-calculate the (first) pivotal statistic ?
+    params <- object$parameters
+    pivStat0 <- NULL
+    if (!is.null(params) && !force) {  
+        cond_F <- (params$family == family)
+        cond_K <- (params$K == K)
+        cond_P <- (!do_p0) 
+        if (cond_F && cond_K && cond_P) {
+            pivStat0 <- object$output$piv_stat
         }
     }
     
@@ -360,9 +375,14 @@ fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
             } else {
                 cat("Permutation p-values already calculated... skipping\n")
             }
+            if (!is.null(pivStat0)) {
+                cat("Pivotal statistic already calculated... skipping\n")
+            }
             calib <- get_calibrated_thresholds_sd(p0 = p0, m = m, alpha = alpha, 
                                                   family = family, K = K, 
-                                                  p = p.values, maxStepsDown = maxStepsDown)
+                                                  p = p.values, 
+                                                  maxStepsDown = maxStepsDown,
+                                                  pivStat0 = pivStat0)
             cal$p0 <- p0
             cal$piv_stat <- calib$pivStat
             cal$thr <- calib$thr
