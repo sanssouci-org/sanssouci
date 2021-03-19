@@ -247,6 +247,10 @@ generics::fit
 #'    
 #'   \item{Oracle}{A family such that the associated bounds correspond to the true numbers/proportions of true/false positives. "truth" must be available in object$input$truth.}
 #'   }
+#' @param flavor A character value (for internal use)
+#' @param force A boolean value: should the permutation p-values be
+#'   re-calculated if parameters `B` and `rowTestFUN` are identical? Defaults
+#'   to `TRUE`
 #' @param ... Not used
 #' @return A 'fitted' object of class 'SansSouci'. It is a list of three elements
 #'  - input: see [SansSouci]

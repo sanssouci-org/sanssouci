@@ -5,7 +5,7 @@
 \alias{calibrateJER}
 \title{Calibration of joint Family-Wise Error Rate thresholds}
 \usage{
-fit.SansSouci(
+\method{fit}{SansSouci}(
   object,
   alpha,
   B = ceiling(10/alpha),
@@ -14,6 +14,8 @@ fit.SansSouci(
   family = c("Simes", "Beta", "Oracle"),
   maxStepsDown = 10L,
   K = nHyp(object),
+  flavor = c("v0", "v1"),
+  force = FALSE,
   verbose = TRUE,
   ...
 )
@@ -58,6 +60,12 @@ statistics are positively dependent (PRDS) under H0.}
 
 \item{K}{For JER control over \code{1:K}, ie joint control of all
 \eqn{k}-FWER, \eqn{k \le K}. Defaults to \eqn{m}.}
+
+\item{flavor}{A character value (for internal use)}
+
+\item{force}{A boolean value: should the permutation p-values be
+re-calculated if parameters \code{B} and \code{rowTestFUN} are identical? Defaults
+to \code{TRUE}}
 
 \item{verbose}{A boolean value: should extra info be printed?}
 
@@ -110,9 +118,9 @@ Calibration of of JER thresholds using one or two-sample tests
 \details{
 See \code{\link{testByRandomization}} for a description of the tests performed for calibration.
 }
-\section{Functions}{
+\section{Methods (by generic)}{
 \itemize{
-\item \code{fit.SansSouci}: Fit SansSouci object
+\item \code{fit}: Fit SansSouci object
 }}
 
 \examples{

@@ -4,7 +4,7 @@
 \alias{fit.SansSouciStruct}
 \title{Fit SansSouciStruct object}
 \usage{
-fit.SansSouciStruct(
+\method{fit}{SansSouciStruct}(
   object,
   alpha,
   p.values,
