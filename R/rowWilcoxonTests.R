@@ -1,11 +1,9 @@
 #' Wilcoxon rank sum tests for each row of a matrix
 #'
-#' Vectorized version of two-sample Wilcoxon rank sum tests
-#'
-#' @param mat A numeric matrix whose rows correspond to variables and columns to
+#' @param mat A \code{m x n} numeric matrix whose rows correspond to variables and columns to
 #'   observations
 #'
-#' @param categ A numeric vector of \code{ncol(mat)} categories in \eqn{0, 1} for the
+#' @param categ A numeric vector of \code{n} categories in \eqn{0, 1} for the
 #'   observations
 #'
 #' @param alternative A character string specifying the alternative hypothesis.
@@ -16,42 +14,95 @@
 #' @param correct A logical indicating whether to apply continuity correction in
 #'   the normal approximation for the p-value.
 #'
-#' @return A list with class "htest" containing the following components:
+#' @return A list containing the following components:
 #'   \describe{ \item{statistic}{the value of the statistics} \item{p.value}{the
 #'   p-values for the tests}} 
 #'
+#' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
+#' @seealso wilcox.test
+#' 
+#' @return A list containing the following components:
+#' \describe{ 
+#'   \item{statistic}{the value of the statistics}
+#'   \item{parameter}{the degrees of freedom for the statistics}
+#'   \item{p.value}{the p-values for the tests} 
+#'   \item{estimate}{the median difference between groups}}
+#'   Each of these elements is a matrix of size \code{m x B}, coerced to a vector of length \code{nrow(mat)} if \code{B=1}
+#'   
+#' @importFrom matrixStats rowRanks rowTabulates
+#' 
+#' @details This function performs \code{m x B} Wilcoxon T tests on
+#'   \code{n} observations. It is vectorized along the rows of \code{mat}. This
+#'   makes the code much faster than using loops of 'apply' functions,
+#'   especially for high-dimensional problems (small n and large m) because the
+#'   overhead of the call to the 'wilcox.test' function is avoided. Note that it
+#'   is not vectorized along the columns of \code{categ} (if any), as a basic
+#'   'for' loop is used.
+#'   
 #' @details The p-values are computed using the normal approximation as
 #'   described in the \code{\link{wilcox.test}} function. The exact p-values
 #'   (which can be useful for small samples with no ties) are not implemented
 #'   (yet).
 #'
-#' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
-#' @seealso wilcox.test
-#' @return A data.frame with columns \describe{ \item{stat}{A vector of \code{m}
-#'   Wilcoxon sum rank test statistics of association between \code{X} and
-#'   \code{y}.} \item{stat0Mat}{An \code{m} x \code{B} matrix of \code{B}
-#'   realizations of a \code{m}-dimensional vector of test statistics under the
-#'   null hypothesis of no association between \code{X} and \code{y}.}}
-#' @importFrom matrixStats rowRanks rowTabulates
+#' @details For simplicity, 'estimate' returns the difference between the group medians, which does not match the component 'estimate' output by \code{wilcox.test}
+#'   
+
+#'
 #' @export
 #' @examples
-#'
-#' p <- 100
-#' n <- 120
+#' 
+#' p <- 200
+#' n <- 50
 #' mat <- matrix(rnorm(p*n), ncol = n)
 #' cls <- rep(c(0, 1), times = c(n/2, n/2))
-#' fwt <- rowWilcoxonTests(mat, categ = cls, alternative = "two.sided")
+#' system.time(fwt <- rowWilcoxonTests(mat, categ = cls, alternative = "two.sided"))
 #' str(fwt)
 #' 
 #' # compare with ordinary wilcox.test:
-#' pwt <- t(sapply(1:p, FUN=function(ii) {
+#' system.time(pwt <- t(sapply(1:p, FUN=function(ii) {
 #'   wt <- wilcox.test(mat[ii, cls==1], mat[ii, cls==0], alternative = "two.sided")
 #'   c(statistic = wt[["statistic"]], p.value = wt[["p.value"]])
-#' }))
+#' })))
 #' all(abs(fwt$p.value-pwt[, "p.value"]) < 1e-10)  ## same results
 #' all(abs(fwt$statistic-pwt[, "statistic.W"]) < 1e-10)  ## same results
 #' 
-rowWilcoxonTests <- function(mat, categ, alternative = c("two.sided", "less", "greater"), correct = TRUE) {
+#' # with several permutations
+#' B <- 50
+#' cls_perm <- replicate(B, sample(cls))
+#' system.time(fwt <- rowWilcoxonTests(mat, categ = cls_perm, alternative = "two.sided"))
+#' 
+rowWilcoxonTests <- function(mat, categ, 
+                              alternative = c("two.sided", "less", "greater"), 
+                              correct = TRUE) {
+    alternative <- match.arg(alternative)
+    stopifnot(all(categ %in% c(0, 1)))
+    
+    if (is.vector(categ)) {
+        return(rowWilcoxonTests1(mat, categ, 
+                                 alternative = alternative, 
+                                 correct = correct))
+    } 
+    stopifnot(is.matrix(categ))
+    B <- ncol(categ)
+    m <- nrow(mat)
+
+    pval0 <- matrix(NA_real_, nrow = m, ncol = B) 
+    stat0 <- matrix(NA_real_, nrow = m, ncol = B) 
+    for (bb in 1:B) {
+        rwt <- rowWilcoxonTests1(mat, categ[, bb], 
+                                 alternative = alternative, 
+                                 correct = correct)
+        pval0[, bb] <- rwt$p.value
+        stat0[, bb] <- rwt$statistic
+    }
+    list(p.value = pval0,
+         statistic = stat0)
+}
+
+#' @importFrom matrixStats rowMedians
+rowWilcoxonTests1 <- function(mat, categ, 
+                              alternative = c("two.sided", "less", "greater"), 
+                              correct = TRUE) {
     alternative <- match.arg(alternative)
     categCheck(categ, ncol(mat))
 
@@ -83,6 +134,8 @@ rowWilcoxonTests <- function(mat, categ, alternative = c("two.sided", "less", "g
                 greater = pnorm(z, lower.tail = FALSE), 
                 two.sided = 2 * pmin(pnorm(z), pnorm(z, lower.tail = FALSE)))
 
-    data.frame(statistic = stat,
-                p.value = p)
+    est <- rowMedians(mat[, wx]) - rowMedians(mat[, -wx])
+    list(statistic = stat,
+         p.value = p, 
+         estimate = est)
 }

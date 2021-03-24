@@ -12,10 +12,10 @@ rowWilcoxonTests(
 )
 }
 \arguments{
-\item{mat}{A numeric matrix whose rows correspond to variables and columns to
+\item{mat}{A \code{m x n} numeric matrix whose rows correspond to variables and columns to
 observations}
 
-\item{categ}{A numeric vector of \code{ncol(mat)} categories in \eqn{0, 1} for the
+\item{categ}{A numeric vector of \code{n} categories in \eqn{0, 1} for the
 observations}
 
 \item{alternative}{A character string specifying the alternative hypothesis.
@@ -27,41 +27,58 @@ class 1 is shifted to the right of class 0.}
 the normal approximation for the p-value.}
 }
 \value{
-A list with class "htest" containing the following components:
+A list containing the following components:
 \describe{ \item{statistic}{the value of the statistics} \item{p.value}{the
 p-values for the tests}}
 
-A data.frame with columns \describe{ \item{stat}{A vector of \code{m}
-Wilcoxon sum rank test statistics of association between \code{X} and
-\code{y}.} \item{stat0Mat}{An \code{m} x \code{B} matrix of \code{B}
-realizations of a \code{m}-dimensional vector of test statistics under the
-null hypothesis of no association between \code{X} and \code{y}.}}
+A list containing the following components:
+\describe{
+\item{statistic}{the value of the statistics}
+\item{parameter}{the degrees of freedom for the statistics}
+\item{p.value}{the p-values for the tests}
+\item{estimate}{the median difference between groups}}
+Each of these elements is a matrix of size \code{m x B}, coerced to a vector of length \code{nrow(mat)} if \code{B=1}
 }
 \description{
-Vectorized version of two-sample Wilcoxon rank sum tests
+Wilcoxon rank sum tests for each row of a matrix
 }
 \details{
+This function performs \code{m x B} Wilcoxon T tests on
+\code{n} observations. It is vectorized along the rows of \code{mat}. This
+makes the code much faster than using loops of 'apply' functions,
+especially for high-dimensional problems (small n and large m) because the
+overhead of the call to the 'wilcox.test' function is avoided. Note that it
+is not vectorized along the columns of \code{categ} (if any), as a basic
+'for' loop is used.
+
 The p-values are computed using the normal approximation as
 described in the \code{\link{wilcox.test}} function. The exact p-values
 (which can be useful for small samples with no ties) are not implemented
 (yet).
+
+For simplicity, 'estimate' returns the difference between the group medians, which does not match the component 'estimate' output by \code{wilcox.test}
 }
 \examples{
 
-p <- 100
-n <- 120
+p <- 200
+n <- 50
 mat <- matrix(rnorm(p*n), ncol = n)
 cls <- rep(c(0, 1), times = c(n/2, n/2))
-fwt <- rowWilcoxonTests(mat, categ = cls, alternative = "two.sided")
+system.time(fwt <- rowWilcoxonTests(mat, categ = cls, alternative = "two.sided"))
 str(fwt)
 
 # compare with ordinary wilcox.test:
-pwt <- t(sapply(1:p, FUN=function(ii) {
+system.time(pwt <- t(sapply(1:p, FUN=function(ii) {
   wt <- wilcox.test(mat[ii, cls==1], mat[ii, cls==0], alternative = "two.sided")
   c(statistic = wt[["statistic"]], p.value = wt[["p.value"]])
-}))
+})))
 all(abs(fwt$p.value-pwt[, "p.value"]) < 1e-10)  ## same results
 all(abs(fwt$statistic-pwt[, "statistic.W"]) < 1e-10)  ## same results
+
+# with several permutations
+B <- 50
+cls_perm <- replicate(B, sample(cls))
+system.time(fwt <- rowWilcoxonTests(mat, categ = cls_perm, alternative = "two.sided"))
 
 }
 \seealso{

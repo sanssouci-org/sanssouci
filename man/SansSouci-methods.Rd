@@ -65,4 +65,6 @@ print(res)
 str(pValues(res))
 str(foldChanges(res)) 
 str(thresholds(res))
+volcanoPlot(res, q = 0.05, r = 0.5)
+
 }

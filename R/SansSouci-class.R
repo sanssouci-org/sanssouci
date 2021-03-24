@@ -17,14 +17,23 @@
 #' nHyp(a)
 #' nObs(a)
 #'
-#' res <- fit(a, B = 100, alpha = 0.1)
+#' set.seed(234)
+#' system.time(res <- fit(a, B = 100, alpha = 0.1))
 #' print(res)
 #' label(res)
 #'
+#' set.seed(234)
+#' system.time(res <- fit(a, B = 100, alpha = 0.1, flavor = "v1"))
+#' print(res)
+#' label(res)
+
 #' res <- fit(a, B = 100, alpha = 0.1, family="Beta", K=10)
 #' label(res)
 #' 
 SansSouci <- function(Y, groups, truth = NULL) {
+    if (missing(groups)) {  # one-sample tests
+        groups <- rep(1, ncol(Y))
+    }
     ugroups <- unique(groups)
     n_groups <- length(ugroups)
     
@@ -61,8 +70,11 @@ SansSouci <- function(Y, groups, truth = NULL) {
 #' alpha <- 0.1
 #' 
 #' # Adaptive Simes (lambda-calibration)
-#' res <- fit(obj, B = 100, alpha = alpha, family = "Simes")
-#' res
+#' set.seed(542)
+#' res1 <- fit(obj, B = 100, alpha = alpha, family = "Simes", flavor = "v1")
+#' plot(res1)
+#' volcanoPlot(res1, q = 0.05, r = 0.2)
+#' 
 #' # upper bound on number of signals if the entire data set
 #' # (and corresponding lower bound on FDP)
 #' predict(res)
@@ -83,6 +95,11 @@ SansSouci <- function(Y, groups, truth = NULL) {
 #'               "Simes+calibration" = predict(res, all = TRUE),
 #'               "Oracle" = predict(oracle, all = TRUE))
 #' plotConfCurve(confs)
+#' 
+#' # Use wilcoxon tests instead of Welch tests
+#' res <- fit(obj, B = 100, alpha = 0.1, rowTestFUN = rowWilcoxonTests)
+#' volcanoPlot(res, q = 0.05, r = 0.2)
+
 SansSouciSim <- function(...) {
     sim <- gaussianSamples(...)
     SansSouci(Y = sim$X, groups = sim$categ, truth = sim$H)
@@ -108,6 +125,9 @@ SansSouciSim <- function(...) {
 #' str(pValues(res))
 #' str(foldChanges(res)) 
 #' str(thresholds(res))
+#' volcanoPlot(res, q = 0.05, r = 0.5)
+#' 
+
 NULL
 #> NULL
 
@@ -181,7 +201,10 @@ print.SansSouci <- function(x, ..., verbose = FALSE) {
     cat("'SansSouci' object:\n")
     input <- object$input
     if (!is.null(input)) {
-        cat("\tNumber of hypotheses: ", nHyp(object), "\n")
+        cat("\tNumber of hypotheses:\t", nHyp(object), "\n")
+        if (!is.null(nObs(object))) {
+            cat("\tNumber of observations:\t", nObs(object), "\n")
+        }
         cat("\t", input$n_group, "-sample data", "\n", sep="")
         cat("\n")
         if (verbose) {
@@ -203,11 +226,11 @@ print.SansSouci <- function(x, ..., verbose = FALSE) {
     params <- object$parameters
     if (!is.null(params)) {
         cat("Parameters:", "\n")
-        cat("\tTest function:", params$funName, "\n")
-        cat("\tNumber of permutations: B=", params$B, "\n", sep = "")
-        cat("\tSignificance level: alpha=", params$alpha, "\n", sep = "")
-        cat("\tReference family:", params$fam, "\n")
-        cat("\t(of size: K=", params$K, ")", "\n", sep = "")
+        cat("\tTest function:\t\t", params$funName, "\n", sep = "")
+        cat("\tNumber of permutations:\tB=", params$B, "\n", sep = "")
+        cat("\tSignificance level:\talpha=", params$alpha, "\n", sep = "")
+        cat("\tReference family:\t", params$fam, "\n", sep = "")
+        cat("\t\t(of size:\tK=", params$K, ")", "\n", sep = "")
         cat("\n")
     }
     output <- object$output
@@ -227,7 +250,7 @@ print.SansSouci <- function(x, ..., verbose = FALSE) {
             }
             cat("\n")
         }
-        cat("\tCalibration parameter: lambda=", output$lambda, "\n", sep = "")
+        cat("\tCalibration parameter:\tlambda=", output$lambda, "\n", sep = "")
     }
     invisible(object)
 }
@@ -248,9 +271,8 @@ generics::fit
 #'   \item{Oracle}{A family such that the associated bounds correspond to the true numbers/proportions of true/false positives. "truth" must be available in object$input$truth.}
 #'   }
 #' @param flavor A character value (for internal use)
-#' @param force A boolean value: should the permutation p-values be
-#'   re-calculated if parameters `B` and `rowTestFUN` are identical? Defaults
-#'   to `TRUE`
+#' @param force A boolean value: should the permutation p-values and pivotal statistics be re-calculated ? Defaults to `FALSE`
+#' @param verbose A boolean value: should extra info be printed? Defaults to `FALSE`
 #' @param ... Not used
 #' @return A 'fitted' object of class 'SansSouci'. It is a list of three elements
 #'  - input: see [SansSouci]
@@ -258,13 +280,13 @@ generics::fit
 #'  - output: the outputs of the calibration, see [calibrateJER]
 #' @export
 fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
-                          alternative = c("two.sided", "less", "greater"),
                           rowTestFUN = NULL, 
+                          alternative = c("two.sided", "less", "greater"),
                           family = c("Simes", "Beta", "Oracle"), 
-                          maxStepsDown = 10L, K = nHyp(object), 
-                          flavor = c("v0", "v1"),
+                          max_steps_down = 10L, K = nHyp(object), 
+                          flavor = c("v1", "v0"),
                           force = FALSE,
-                          verbose = TRUE, ...) {
+                          verbose = FALSE, ...) {
     alternative <- match.arg(alternative)
     family <- match.arg(family)
     flavor <- match.arg(flavor)
@@ -278,18 +300,13 @@ fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
     groups <- object$input$groups
     n_groups <- object$input$n_groups
     m <- nHyp(object)
+    n <- nObs(object)
     funName <- NA_character_
+    
     if (is.null(rowTestFUN)) {
         if (n_groups == 1) {
-            rowTestFUN <- function(mat, categ, alternative) {
-                T <- rowSums(mat)/sqrt(length(categ))
-                p <- switch(alternative, 
-                            "two.sided" = 2*(pnorm(abs(T), lower.tail = FALSE)),
-                            "greater" = pnorm(T, lower.tail = FALSE),
-                            "less" = pnorm(T, lower.tail = TRUE))
-                data.frame(statistic = T, parameter = NA, p.value = p)
-            }
-            funName <- "testBySignFlipping"
+            rowTestFUN <- rowZTests
+            funName <- "rowZTests"
         } else if (n_groups == 2) {
             rowTestFUN <- rowWelchTests
             funName <- "rowWelchTests"
@@ -322,15 +339,16 @@ fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
             pivStat0 <- object$output$piv_stat
         }
     }
-    
+    ttype <- sprintf("%s-sample", n_groups)
     object$parameters <- list(
         alpha = alpha,
         B = B,
         alternative = alternative, 
         rowTestFUN = rowTestFUN, 
         funName = funName,
+        type = ttype,
         family = family, 
-        maxStepsDown = maxStepsDown, 
+        max_steps_down = max_steps_down, 
         K = K)
     
     if (flavor == "v0") {
@@ -339,65 +357,75 @@ fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
                                 alternative = alternative, 
                                 rowTestFUN = rowTestFUN, 
                                 refFamily = family, 
-                                maxStepsDown = maxStepsDown, 
+                                maxStepsDown = max_steps_down,
                                 K = K, verbose = verbose)
         } 
-        else {
-            # no calibration!
+        else { # no calibration!
             rwt <- rowTestFUN(mat = Y, categ = groups, alternative = alternative)
             p.values <- rwt$p.value
-            fc <- rwt$meanDiff
+            fc <- rwt$estimate
             lambda <- alpha
             if (family %in% c("Simes", "Linear")) {
                 thr <- SimesThresholdFamily(m, kMax = K)(alpha)
             } else if (family == "Beta") {
                 thr <- BetaThresholdFamily(m, kMax = K)(alpha)
             } else if (family == "Oracle") {
-                lambda <- 0  # 100% confidence -- should it be set to alpha for consistency?
                 thr <- object$input$truth
             }
             cal <- list(p.values = p.values,
-                        fold_changes = fc,
                         piv_stat = NULL,
                         thr = thr,
                         lambda = alpha,
                         conf_bound = NULL)
+            if (n_groups > 1) {
+                cal$estimate <- fc
+            }
         }
     } else if (flavor == "v1") {
-        rwt <- rowWelchTests(Y, groups)
-        p.values <- rwt$p.value
-        cal <- list(p.values = p.values,
-                    fold_changes = rwt$meanDiff)
+        cal <- rowTestFUN(Y, groups, alternative = alternative)
+        p.values <- cal$p.value
         if (B > 0 && family != "Oracle") {
+            t0 <- Sys.time()
+            if (verbose) {
+                cat("Randomization p-values...")
+            }
             if (do_p0) {
-                p0 <- sansSouci:::get_perm_p2(X = Y, categ = groups, 
-                                              B = B, rowTestFUN = rowTestFUN)
-            } else {
-                cat("Permutation p-values already calculated... skipping\n")
+                null_groups <- switch(n_groups,
+                                     replicate(B, rbinom(n, 1, 0.5)*2 - 1), # sign-flipping
+                                     replicate(B, sample(groups)))          # permutation
+                rwt0 <- rowTestFUN(Y, null_groups, alternative = alternative)
+                p0 <- rwt0$p.value
+                if (verbose) {
+                    dt <- Sys.time()-t0
+                    cat("done (", format(dt), ")\n", sep="")
+                }
+            } else if (verbose) {
+                cat("skipped computation (already done)\n")
             }
-            if (!is.null(pivStat0)) {
-                cat("Pivotal statistic already calculated... skipping\n")
+            t0 <- Sys.time()
+            if (verbose) {
+                cat("Calibration...")
             }
-            calib <- get_calibrated_thresholds_sd(p0 = p0, m = m, alpha = alpha, 
+            calib <- get_calibrated_thresholds_sd(p0 = p0, m = m, alpha = alpha,
                                                   family = family, K = K, 
                                                   p = p.values, 
-                                                  maxStepsDown = maxStepsDown,
-                                                  pivStat0 = pivStat0)
-            cal$p0 <- p0
-            cal$piv_stat <- calib$pivStat
-            cal$thr <- calib$thr
-            cal$lambda <- calib$lambda
-        } else {
-            lambda <- alpha
-            if (family == "Linear") {
-                thr <- t_linear(alpha, seq_len(m), m)
-            } else if (family == "Beta") {
-                thr <- t_beta(alpha, seq_len(m), m)
-            } else if (family == "Oracle") {
-                lambda <- 0  # 100% confidence -- should it be set to alpha for consistency?
-                thr <- object$input$truth
+                                                  max_steps_down = max_steps_down,
+                                                  piv_stat0 = pivStat0)
+            if (verbose) {
+                dt <- Sys.time()-t0
+                cat("done (", format(dt), ")\n", sep="")
             }
-            cal$thr <- cal
+            
+            cal$p0 <- p0
+            cal <- c(cal, calib)
+        } else { # no calibration!
+            cal$lambda <- alpha
+            thr <- switch(family,
+                          "Linear" = t_linear(alpha, seq_len(m), m),
+                          "Simes" = t_linear(alpha, seq_len(m), m),
+                          "Beta" = t_beta(alpha, seq_len(m), m),
+                          "Oracle" = object$input$truth)
+            cal$thr <- thr
         }
     }
     object$output <- cal
@@ -415,7 +443,7 @@ pValues <- function(object) UseMethod("pValues")
 #' @param object An object of class `SansSouci`
 #' @export
 pValues.SansSouci <- function(object) {
-    object$output$p.values
+    object$output$p.value
 }
 
 #' @describeIn all-generics Get fold changes
@@ -427,7 +455,7 @@ foldChanges <- function(object) UseMethod("foldChanges")
 #' @param object An object of class `SansSouci`
 #' @export
 foldChanges.SansSouci <- function(object) {
-    object$output$fold_changes
+    object$output$estimate
 }
 
 #' @describeIn all-generics Get thresholds

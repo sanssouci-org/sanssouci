@@ -1,7 +1,5 @@
 #' Binomial proportion tests for each row of a matrix
 #'
-#' Vectorized version of the binomial test
-#'
 #' @param mat A numeric matrix whose rows correspond to variables and columns to
 #'   observations
 #'
@@ -16,17 +14,15 @@
 #' @param warn A boolean value indicating whether to issue a warning if
 #'   \code{alternative=="two-sided"}. Defaults to \code{TRUE}.
 #'
-#' @return A list with class "htest" containing the following components:
-#'   \describe{ \item{statistic}{the value of the statistics} \item{p.value}{the
-#'   p-values for the tests}}
-#'
+#' @return A list containing the following components:
+#' \describe{ 
+#'   \item{statistic}{the value of the statistics}
+#'   \item{p.value}{the p-values for the tests} 
+#'   \item{estimate}{the difference between observed group proportions}}
+#'   Each of these elements is a matrix of size \code{nrow(mat) x B}, coerced to a vector of length \code{nrow(mat)} if \code{B=1}
+#'   
 #' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 #' @seealso binom.test
-#' @return A data.frame with columns \describe{ \item{stat}{A vector of \code{m}
-#'   Wilcoxon sum rank test statistics of association between \code{X} and
-#'   \code{y}.} \item{stat0Mat}{An \code{m} x \code{B} matrix of \code{B}
-#'   realizations of a \code{m}-dimensional vector of test statistics under the
-#'   null hypothesis of no association between \code{X} and \code{y}.}}
 #' @importFrom matrixStats rowRanks rowTabulates
 #' @export
 #' @examples
@@ -67,11 +63,12 @@ rowBinomialTests <- function(mat, categ, alternative = c("two.sided", "less", "g
                 less = pbinom(x, nx, py), 
                 greater = pbinom(x - 1, nx, py, lower.tail = FALSE), 
                 two.sided = rowBinomialP_2s(x = x, n = nx, p = py, relErr = 1 + 1e-07))
-    data.frame(statistic = x,
-                p.value = p)
+    list(statistic = x,
+         p.value = p,
+         estimate = x/nx - py)
 }
 
-# taken from the source code of stats::binomial.test
+# taken from the source code of stats::binom.test
 rowBinomialP_2s <- function(x, n, p, relErr = 1 + 1e-07) {
     #stopifnot(length(x) == length(p) || (length(x) == 1) || length(p) == 1)
     stopifnot(length(x) == length(p))

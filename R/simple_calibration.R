@@ -30,6 +30,10 @@ t_inv_beta <- function(y, k, m) {
 #' p0 <- sansSouci:::get_perm_p(X, categ, B)
 #' set.seed(123)
 #' p02 <- sansSouci:::get_perm_p2(X, categ, B)
+#' all.equal(p0, colSort(p02))
+#' set.seed(123)
+#' p03 <- sansSouci:::get_perm_p3(X, categ, B)
+#' all.equal(p0, colSort(p03))
 get_perm_p <- function(X, categ, B, 
                        rowTestFUN = rowWelchTests) {
     m <- nrow(X)
@@ -65,6 +69,18 @@ get_perm_p2 <- function(X, categ, B,
     }
     
     return(pval0)
+}
+
+#' @rdname calibrate_low-level
+#' @inheritParams get_perm_p
+#' @importFrom matrixStats colRanks
+#' @export
+get_perm_p3 <- function(X, categ, B, 
+                        rowTestFUN = rowWelchTests2,
+                        alternative = c("two.sided", "less", "greater")) {
+    categs <- replicate(B, sample(categ))
+    rwt <- rowTestFUN(X, categs = categs, alternative = alternative)
+    rwt$p.value
 }
 
 #' @description get_pivotal_stat: Get a vector of pivotal statistics associated
@@ -219,7 +235,7 @@ get_calibrated_thresholds <- function(p0, alpha,
     lambda <- stats::quantile(pivStat, alpha, type = 1)
     thr <- t_(lambda, 1:K, nrow(p0))
     res <- list(thr = thr,
-                pivStat = pivStat,
+                piv_stat = pivStat,
                 lambda = lambda)
     return(res)
 }
@@ -229,7 +245,7 @@ get_calibrated_thresholds2 <- function(p0, alpha,
                                       family = c("Linear", "Beta", "Simes"), 
                                       m = nrow(p0),
                                       K = m,
-                                      pivStat0 = NULL) {
+                                      piv_stat0 = NULL) {
     family <- match.arg(family)
     if (family %in% c("Linear", "Simes")) {
         t_inv <- t_inv_linear
@@ -238,14 +254,14 @@ get_calibrated_thresholds2 <- function(p0, alpha,
         t_inv <- t_inv_beta
         t_ <- t_beta
     }
-    pivStat <- pivStat0
+    pivStat <- piv_stat0
     if (is.null(pivStat)) {
         pivStat <- get_pivotal_stat2(p0, t_inv, m, min(nrow(p0), K))
     }
     lambda <- stats::quantile(pivStat, alpha, type = 1)
     thr <- t_(lambda, 1:K, m)
     res <- list(thr = thr,
-                pivStat = pivStat,
+                piv_stat = pivStat,
                 lambda = lambda)
     return(res)
 }
@@ -256,48 +272,50 @@ get_calibrated_thresholds_sd <- function(p0, alpha,
                                          m = nrow(p0),
                                          K = m,
                                          p = NULL, 
-                                         maxStepsDown = 10L,
-                                         pivStat0 = NULL) {
+                                         max_steps_down = 10L,
+                                         piv_stat0 = NULL) {
     step <- 0
     cal <- get_calibrated_thresholds2(p0, alpha, 
                                       family = family, 
                                       m = m,
                                       K = K, 
-                                      pivStat0 = pivStat0)
-    thr1 <- cal$thr[1]   ## (1-)FWER threshold
+                                      piv_stat0 = piv_stat0)
+    thr <- cal$thr[1]   ## (1-)FWER threshold
     R1 <- integer(0)
     if (!is.null(p)) {
-        R1 <- which(p <= thr1)
+        R1 <- which(p <= thr)
     }
 
     ## force 'convergence' if nothing to gain) or nothing left to be rejected
     converged <- (length(R1) == 0L)  | (length(R1) == m)
     
-    while (!converged && step < maxStepsDown) {
+    while (!converged && step < max_steps_down) {
         step <- step + 1
         
         p1 <- p0[-R1, ]
+        thr <- cal$thr
+        lambda <- cal$lambda
         cal <- get_calibrated_thresholds2(p1, alpha, 
                                           family = family, 
                                           m = m,
                                           K = K,
-                                          pivStat0 = NULL) ## force piv stat calc
+                                          piv_stat0 = NULL) ## force piv stat calc
         R1_new <- which(p < cal$thr[1])
 
         noNewRejection <- all(R1_new %in% R1)          ## convergence reached?
         if (noNewRejection) {
-            if (!identical(R1_new, R1)) {              ## can this actually happen???
+            if (!identical(R1_new, R1)) {              ## can this happen?? covr check
                 print("Rejecting less hypotheses at next step!")
                 ## not a 'TRUE' convergence: override the last step down!
                 cal$thr <- thr
                 cal$lambda <- lambda
             }
             converged <- TRUE ## stop the step-down process
-            cal$steps_down <- step
         } else {
             R1 <- R1_new
         }
     }
+    cal$steps_down <- step
     cal
 }
 

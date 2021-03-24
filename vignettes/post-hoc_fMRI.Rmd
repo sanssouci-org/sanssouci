@@ -83,7 +83,7 @@ We set the target confidence level to $\alpha = `r alpha`$. The Simes bound is i
 ```{r simes-bound}
 groups <- ifelse(colnames(Y) == "left", 0, 1) # map to 0/1
 obj <- SansSouci(Y = Y, groups = groups)
-res_Simes <- fit(obj, B = 0, refFamily = "Simes", alpha = alpha) ## B=0 => no calibration!
+res_Simes <- fit(obj, B = 0, family = "Simes", alpha = alpha) ## B=0 => no calibration!
 ```
 
 Post hoc bounds are obtained from the `bound` function:
@@ -112,15 +112,15 @@ To bypass these limitations, @blanchard20post-hoc have proposed a randomization-
 
 
 ```{r post-hoc-calibration, cache=TRUE}
-B <- 1000
-res <- fit(obj, alpha = alpha, B = B, refFamily = "Simes")
+B <- 200
+res <- fit(obj, alpha = alpha, B = B, family = "Simes")
 ```
 
 An alternative to the Simes/Linear reference family is the Beta reference family:
 
 ```{r post-hoc-calibration-beta, cache=TRUE}
 K <- 500
-res_Beta <- fit(obj, alpha = alpha, B = B, refFamily = "Beta", K = K)
+res_Beta <- fit(res, alpha = alpha, B = B, family = "Beta", K = K)
 ```
 
 As expected from the theory, the post hoc bounds obtained after calibration by these methods is much tighter than the Simes bound:

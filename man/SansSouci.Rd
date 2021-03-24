@@ -31,10 +31,15 @@ print(a)
 nHyp(a)
 nObs(a)
 
-res <- fit(a, B = 100, alpha = 0.1)
+set.seed(234)
+system.time(res <- fit(a, B = 100, alpha = 0.1))
 print(res)
 label(res)
 
+set.seed(234)
+system.time(res <- fit(a, B = 100, alpha = 0.1, flavor = "v1"))
+print(res)
+label(res)
 res <- fit(a, B = 100, alpha = 0.1, family="Beta", K=10)
 label(res)
 

@@ -9,14 +9,14 @@
   object,
   alpha,
   B = ceiling(10/alpha),
-  alternative = c("two.sided", "less", "greater"),
   rowTestFUN = NULL,
+  alternative = c("two.sided", "less", "greater"),
   family = c("Simes", "Beta", "Oracle"),
-  maxStepsDown = 10L,
+  max_steps_down = 10L,
   K = nHyp(object),
-  flavor = c("v0", "v1"),
+  flavor = c("v1", "v0"),
   force = FALSE,
-  verbose = TRUE,
+  verbose = FALSE,
   ...
 )
 
@@ -40,11 +40,11 @@ calibrateJER(
 
 \item{B}{A numeric value, the number of permutations to be performed}
 
-\item{alternative}{A character string specifying the alternative hypothesis.
-Must be one of "two.sided" (default), "greater" or "less".}
-
 \item{rowTestFUN}{A (vectorized) test function. Defaults to
 \code{\link{rowWelchTests}}}
+
+\item{alternative}{A character string specifying the alternative hypothesis.
+Must be one of "two.sided" (default), "greater" or "less".}
 
 \item{family}{A character value which can be \describe{
 \item{Simes}{The classical family of thresholds introduced by Simes (1986):
@@ -56,16 +56,12 @@ statistics are positively dependent (PRDS) under H0.}
 \item{Oracle}{A family such that the associated bounds correspond to the true numbers/proportions of true/false positives. "truth" must be available in object$input$truth.}
 }}
 
-\item{maxStepsDown}{Maximum number of steps down to be performed.}
-
 \item{K}{For JER control over \code{1:K}, ie joint control of all
 \eqn{k}-FWER, \eqn{k \le K}. Defaults to \eqn{m}.}
 
 \item{flavor}{A character value (for internal use)}
 
-\item{force}{A boolean value: should the permutation p-values be
-re-calculated if parameters \code{B} and \code{rowTestFUN} are identical? Defaults
-to \code{TRUE}}
+\item{force}{A boolean value: should the permutation p-values and pivotal statistics be re-calculated ? Defaults to \code{FALSE}}
 
 \item{verbose}{A boolean value: should extra info be printed?}
 
@@ -88,6 +84,8 @@ rate (JER) control under independence}
 
 \item{kFWER}{A family \eqn{(t_k)} calibrated so that for each k,
 \eqn{(t_k)} controls the (marginal) k-FWER.}}}
+
+\item{maxStepsDown}{Maximum number of steps down to be performed.}
 }
 \value{
 A 'fitted' object of class 'SansSouci'. It is a list of three elements

@@ -2,54 +2,63 @@
 % Please edit documentation in R/rowWelchTests.R
 \name{rowWelchTests}
 \alias{rowWelchTests}
-\title{Welch t-tests for rows of a matrix}
+\title{Welch T-tests for rows of a matrix}
 \usage{
-rowWelchTests(mat, categ, alternative = c("two.sided", "less", "greater"))
+rowWelchTests(X, categ, alternative = c("two.sided", "less", "greater"))
 }
 \arguments{
-\item{mat}{A numeric matrix whose rows correspond to variables and columns to
-observations}
-
-\item{categ}{A numeric vector of \code{ncol(mat)} categories in \eqn{0, 1} for the
-observations}
+\item{categ}{Either a numeric vector of \code{n} categories in \eqn{0, 1} for
+the observations, or a \code{n x B} matrix stacking \code{B} such vectors
+(typically permutations of an original vector of size \code{n})}
 
 \item{alternative}{A character string specifying the alternative hypothesis.
 Must be one of "two.sided" (default), "greater" or "less". As in
-\code{\link{t.test}}, alternative = "greater" is the alternative that
-class 1 has a larger mean than class 0.}
+\code{\link{t.test}}, alternative = "greater" is the alternative that class
+1 has a larger mean than class 0.}
+
+\item{mat}{A \code{m x n} numeric matrix whose rows correspond to variables
+and columns to observations}
 }
 \value{
-A data.frame with containing the following columns:
-\describe{ \item{statistic}{the value of the t-statistics}
+A list containing the following components:
+\describe{
+\item{statistic}{the value of the t-statistics}
 \item{parameter}{the degrees of freedom for the t-statistics}
-\item{p.value}{the p-values for the tests}} \item{meanDiff}{the mean
-difference}
+\item{p.value}{the p-values for the tests}
+\item{estimate}{the mean difference between groups}}
+Each of these elements is a matrix of size \code{m x B}, coerced to a vector of length \code{m} if \code{B=1}
 }
 \description{
-Welch t-tests for each row of a matrix, intended to be speed efficient
+Welch T-tests for rows of a matrix
 }
 \details{
-Other functions to perform t-tests on each row of a matrix include:
-\code{\link[genefilter]{fastT}}: this function only calculates the test
-statistics and not the corresponding degrees of freedom or p-value;
-\code{\link[genefilter]{rowttests}}: this function calculates the test
-statistics, degrees of freedom and associated p-value, but only in the case
-of equal group variances (standard t-test and not Welch t-test)
+This function performs \code{m x B} Welch T tests on
+\code{n} observations using matrix operations. Its time complexity is
+\code{O(mBn)}. The code is much faster than using loops of 'apply'
+functions, especially for high-dimensional problems (small n and large m)
+because the overhead of the call to the 't.test' function is avoided and
+the code is vectorized
 }
 \examples{
 
-p <- 1e3
+m <- 300
 n <- 38
-mat <- matrix(rnorm(p*n), ncol=n)
+mat <- matrix(rnorm(m*n), ncol=n)
 categ <- rep(c(0, 1), times=c(27, n-27))
-fwt <- rowWelchTests(mat, categ, alternative = "greater")
+system.time(fwt <- rowWelchTests(mat, categ, alternative = "greater"))
 str(fwt)
 
 # compare with ordinary t.test:
-pwt <- apply(mat, 1, FUN=function(x) {
+system.time(pwt <- apply(mat, 1, FUN=function(x) {
    t.test(x[categ==1], x[categ==0], alternative = "greater")$p.value
-})
+}))
 all(abs(fwt$p.value-pwt) < 1e-10)  ## same results
+
+# with several contrasts/permutations
+B <- 100
+categ_perm <- replicate(B, sample(categ))
+system.time(fwt_perm <- rowWelchTests(mat, categ_perm, alternative = "greater"))
+str(fwt_perm)
 
 }
 \references{

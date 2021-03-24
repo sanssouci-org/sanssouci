@@ -3,9 +3,12 @@
 Package: sansSouci
 ==================
 
-Version 0.10.1 [2021-03-12]
+Version 0.10.1 [2021-03-24]
 
-* Merged simple_calibration functions
+* 'fit.SansSouci(flavor="v1")' uses simple_calibration functions for 1-sample
+  and 2-sample tests
+* Harmonized 1-sample vs 2-sample calibration: added 'rowZTests' for sign flipping
+* Speedup in 'rowWelchTests': vectorization of permutation step
 
 Version 0.10.0 [2021-03-12]
 
