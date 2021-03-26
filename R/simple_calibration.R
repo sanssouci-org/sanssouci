@@ -30,10 +30,10 @@ t_inv_beta <- function(y, k, m) {
 #' p0 <- sansSouci:::get_perm_p(X, categ, B)
 #' set.seed(123)
 #' p02 <- sansSouci:::get_perm_p2(X, categ, B)
-#' all.equal(p0, colSort(p02))
+#' all.equal(p0, sansSouci:::colSort(p02))
 #' set.seed(123)
 #' p03 <- sansSouci:::get_perm_p3(X, categ, B)
-#' all.equal(p0, colSort(p03))
+#' all.equal(p0, sansSouci:::colSort(p03))
 get_perm_p <- function(X, categ, B, 
                        rowTestFUN = rowWelchTests) {
     m <- nrow(X)
@@ -76,10 +76,10 @@ get_perm_p2 <- function(X, categ, B,
 #' @importFrom matrixStats colRanks
 #' @export
 get_perm_p3 <- function(X, categ, B, 
-                        rowTestFUN = rowWelchTests2,
+                        rowTestFUN = rowWelchTests,
                         alternative = c("two.sided", "less", "greater")) {
     categs <- replicate(B, sample(categ))
-    rwt <- rowTestFUN(X, categs = categs, alternative = alternative)
+    rwt <- rowTestFUN(X, categs, alternative = alternative)
     rwt$p.value
 }
 

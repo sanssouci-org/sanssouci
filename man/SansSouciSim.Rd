@@ -20,9 +20,9 @@ alpha <- 0.1
 
 # Adaptive Simes (lambda-calibration)
 set.seed(542)
-res1 <- fit(obj, B = 100, alpha = alpha, family = "Simes", flavor = "v1")
-plot(res1)
-volcanoPlot(res1, q = 0.05, r = 0.2)
+res <- fit(obj, B = 100, alpha = alpha, family = "Simes", flavor = "v1")
+plot(res)
+volcanoPlot(res, q = 0.05, r = 0.2)
 
 # upper bound on number of signals if the entire data set
 # (and corresponding lower bound on FDP)

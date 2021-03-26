@@ -63,8 +63,8 @@ rowWelchTests <- function(X, categ,
     categ0 <- as.matrix(categ)
     categ1 <- 1 - categ0
     
-    nX <- colSums(categ0)
-    nY <- colSums(categ1)
+    nX <- as.matrix(colSums(categ0))
+    nY <- as.matrix(colSums(categ1))
     
     sumX <- X %*% categ0
     sumY <- X %*% categ1
@@ -120,19 +120,40 @@ rowWelchTests <- function(X, categ,
 #' y <- rnorm(34, mean = 1)
 #' target <- t.test(x, y)
 #' swt <- suffWelchTests(mean(x), mean(y), sd(x), sd(y), length(x), length(y))
-#' print(swt$statistic - target$statistic)
-#' print(swt$p.value - target$p.value)
-#' print(swt$parameter-target$parameter)
+#' all.equal(swt$statistic, target$statistic, check.attributes = FALSE)
+#' all.equal(swt$p.value, target$p.value, check.attributes = FALSE)
+#' all.equal(swt$parameter, target$parameter, check.attributes = FALSE)
 #' 
 #' target <- t.test(x, y, alternative = "greater")
 #' swt <- suffWelchTests(mean(x), mean(y), sd(x), sd(y), length(x), length(y), alternative = "greater")
-#' print(swt$statistic - target$statistic)
-#' print(swt$p.value - target$p.value)
-#' print(swt$parameter-target$parameter)
+#' all.equal(swt$statistic, target$statistic, check.attributes = FALSE)
+#' all.equal(swt$p.value, target$p.value, check.attributes = FALSE)
+#' all.equal(swt$parameter, target$parameter, check.attributes = FALSE)
+#' 
 suffWelchTests <- function(mx, my, sx, sy, nx, ny, 
                           alternative = c("two.sided", "less", "greater")) {
     alternative <- match.arg(alternative)
     
+    
+    if (is.vector(mx)) {
+        if (!all(is.vector(my), is.vector(sx), is.vector(sy),
+                      is.vector(nx), is.vector(ny))) {
+            stop("All numeric inputs should be of the same type (either vector or matrix)")
+        }
+        mx <- as.matrix(mx)
+        my <- as.matrix(my)
+        sx <- as.matrix(sx)
+        sy <- as.matrix(sy)
+        nx <- as.matrix(nx)
+        ny <- as.matrix(ny)
+    } else if (is.matrix(mx)) {
+        if (!all(is.matrix(my), is.matrix(sx), is.matrix(sy),
+                 is.matrix(nx), is.matrix(ny))) {
+            stop("All numeric inputs should be of the same type (either vector or matrix)")
+        }
+    } else {
+        stop("Numeric inputs should be vectors or matrices")
+    }
     sse.x <- divide_cols(sx^2, nx)  ## sc <-> sqrt((sum2c - sumc^2/nc)/(nc-1))
     sse.y <- divide_cols(sy^2, ny)
     

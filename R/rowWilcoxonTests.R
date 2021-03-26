@@ -76,6 +76,7 @@ rowWilcoxonTests <- function(mat, categ,
                               correct = TRUE) {
     alternative <- match.arg(alternative)
     stopifnot(all(categ %in% c(0, 1)))
+    levels(categ) <- NULL
     
     if (is.vector(categ)) {
         return(rowWilcoxonTests1(mat, categ, 

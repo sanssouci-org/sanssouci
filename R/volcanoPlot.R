@@ -26,7 +26,7 @@ volcanoPlot <- function(x, ...) UseMethod("volcanoPlot")
 #' obj <- SansSouciSim(m = m, rho = 0.2, n = 100,
 #'                        pi0 = pi0, SNR = SNR, prob = 0.5)
 #' alpha <- 0.2
-#' cal <- fit(obj, alpha = alpha, B = 1e2, refFamily="Simes")
+#' cal <- fit(obj, alpha = alpha, B = 1e2)
 #' volcanoPlot(cal, q = 0.2, r = 0.2, ylim = c(0, 4), bounds=FALSE)
 #' 
 volcanoPlot.SansSouci <- function(x, 
