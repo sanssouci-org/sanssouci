@@ -305,7 +305,6 @@ rowWelchTests1 <- function(mat, categ, alternative = c("two.sided", "less", "gre
                           X[["sd"]], Y[["sd"]],
                           X[["n"]], Y[["n"]],
                           alternative = alternative)
-    swt$meanDiff <- X[["mean"]] - Y[["mean"]]
     swt
 }
 

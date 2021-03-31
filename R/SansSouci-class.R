@@ -351,6 +351,10 @@ fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
         max_steps_down = max_steps_down, 
         K = K)
     
+    if (family == "Beta" && K == m) {
+        warning("For the 'Beta' family we recommend choosing K < m")
+    } 
+    
     if (flavor == "v0") {
         if (B > 0 && family != "Oracle") {
             cal <- calibrateJER(X = Y, categ = groups, B = B, alpha = alpha, 
@@ -406,11 +410,11 @@ fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
             if (verbose) {
                 cat("Calibration...")
             }
-            calib <- get_calibrated_thresholds_sd(p0 = p0, m = m, alpha = alpha,
-                                                  family = family, K = K, 
-                                                  p = p.values, 
-                                                  max_steps_down = max_steps_down,
-                                                  piv_stat0 = pivStat0)
+            calib <- calibrate(p0 = p0, m = m, alpha = alpha,
+                               family = family, K = K, 
+                               p = p.values, 
+                               max_steps_down = max_steps_down,
+                               piv_stat0 = pivStat0)
             if (verbose) {
                 dt <- Sys.time()-t0
                 cat("done (", format(dt), ")\n", sep="")

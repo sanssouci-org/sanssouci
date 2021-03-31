@@ -3,6 +3,10 @@
 Package: sansSouci
 ==================
 
+Version 0.10.2 [2021-03-31]
+
+* major cleanup in simple_calibration functions (to be described)
+
 Version 0.10.1 [2021-03-24]
 
 * 'fit.SansSouci(flavor="v1")' uses simple_calibration functions for 1-sample

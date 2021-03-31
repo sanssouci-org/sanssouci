@@ -96,6 +96,7 @@ rowWilcoxonTests <- function(mat, categ,
         pval0[, bb] <- rwt$p.value
         stat0[, bb] <- rwt$statistic
     }
+    
     list(p.value = pval0,
          statistic = stat0)
 }

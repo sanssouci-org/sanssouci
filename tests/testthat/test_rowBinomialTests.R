@@ -1,7 +1,6 @@
 context("Calculation of Binomial test statistics and p-values")
 
 test_that("rowBinomialTests <=> binom.test", {
-    
     p <- 250
     n0 <- 40; n1 <- 60
     mat0 <- matrix(rbinom(p*n0, size = 1, prob = 0.05), ncol = n0)
