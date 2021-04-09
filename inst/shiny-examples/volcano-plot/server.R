@@ -56,11 +56,11 @@ shinyServer(function(input, output, session) {
   exampleData <- reactive({
     withProgress(value = 0, message = "Preparation for downloaded data ...", {
       
-      setProgress(value = 0.3, detail ="Download data ... ")
+      setProgress(value = 0.1, detail ="Download data ... ")
       data <- list()
       data$matrix <- expr_ALL
       
-      setProgress(value = 0.5, detail = "Cleaning data ... ")
+      setProgress(value = 0.4, detail = "Cleaning data ... ")
       
       categ <- colnames(data$matrix)
       data$categ <- rep(1, length(categ))
@@ -70,7 +70,13 @@ shinyServer(function(input, output, session) {
       
       data$geneNames <- base::rownames(data$matrix)
       
-      setProgress(value = 0.6, detail = "Preparation of gene set data ...  ")
+      setProgress(value = 0.4, detail = "Fc and p.value matrix ... ")
+      
+      dex <- rowWelchTests(data$matrix, data$categ)
+      data$degrade = data.frame("p.value"=dex[["p.value"]], "fc"=dex$meanDiff)
+      rm(dex)
+      
+      setProgress(value = 0.7, detail = "Preparation of gene set data ...  ")
       # data$biologicalFunc <- defaultBiologicalFunc(expr_ALL, expr_ALL_annotation)
       bioFun <- expr_ALL_GO
       stopifnot(nrow(bioFun) == nrow(data$matrix))  ## sanity check: dimensions
@@ -93,9 +99,10 @@ shinyServer(function(input, output, session) {
       fs <- c()
       tmpdir <- tempdir()
       setwd(tempdir())
-      paths <- c("expressData.csv", "biologicalFunction.csv")
+      paths <- c("expressData.csv", "biologicalFunction.csv", "degradedData.csv")
       write.csv(exampleData()$matrix, paths[1])
       write.csv(exampleData()$biologicalFunc, paths[2])
+      write.csv(exampleData()$degrade, paths[3])
       zip(zipfile=fname, files=paths)
     },
     contentType = "application/zip"
@@ -166,7 +173,7 @@ shinyServer(function(input, output, session) {
                           
                           data$boolValidation <- TRUE
                           
-                          print(input$choiceGSEA)
+                          # print(input$choiceGSEA)
                         }
                         
                       } else { # if user use his own data
@@ -276,6 +283,21 @@ shinyServer(function(input, output, session) {
         return(matrix)
       }
     )
+  
+  urlDataSet <- 
+    # reactive (
+    eventReactive(input$buttonValidate, {
+      req(geo2kegg)
+      req(input$choiceGSEA)
+      req(geo2kegg()[[input$choiceGSEA]])
+      return(a("URL link to data set description", href=geo2kegg()[[input$choiceGSEA]]@experimentData@url))
+      
+    })
+  
+  output$msgURLds <- renderUI({
+    req(urlDataSet)
+    tagList(urlDataSet())
+  })
   
   output$errorInput <- renderUI({
     tags$span(style= req(data()$matrix.color), paste(req(data()$matrix.text)))
@@ -600,7 +622,9 @@ shinyServer(function(input, output, session) {
     
     tableResult()
     
-  }, selection = list(mode = 'single', selectable = -(1)) , escape = FALSE )
+  }, selection = list(mode = 'single', selectable = -(1)) , escape = FALSE
+  # , options = list(scrollX = TRUE) 
+  )
   
   
   lineAdjp <- reactive({ # value for 
@@ -848,6 +872,15 @@ shinyServer(function(input, output, session) {
     }
   )
   
+  output$downloadPHBTable <- downloadHandler( #download csv of user selection
+    filename = function() {
+      paste("PostHocBoundsTable", Sys.Date(), ".csv", sep="")
+    },
+    content = function(file) {
+      write.csv(tableResult(), file)
+    }
+  )
+  
   output$curveMaxFPBoth <- renderPlotly({
     plotMaxFP(pval = df()$pval[selectedGenes()$sel12], thr = thr()) + 
       ggtitle("Upper Left + right")
@@ -921,6 +954,15 @@ shinyServer(function(input, output, session) {
     return(table)
   })
   
+  output$downloadPHBTableGroup <- downloadHandler( #download csv of user selection
+    filename = function() {
+      paste("PostHocBoundsTable", Sys.Date(), ".csv", sep="")
+    },
+    content = function(file) {
+      write.csv(tableBoundsGroup(), file)
+    }
+  )
+  
   # output$sorti <- renderPrint({filteredTableBoundsGroup()})
   
   filteredTableBoundsGroup  <- reactive({
@@ -963,7 +1005,7 @@ shinyServer(function(input, output, session) {
     table[["FDP≤"]] <- round(table[["FDP≤"]], 2)
     table
     
-  }, selection = 'single' , escape = FALSE )
+  }, selection = 'single' , escape = FALSE , options = list(scrollX = TRUE))
   
   # output$choiceGroupUI <- renderUI({
   #   selectInput("choiceGroup", label = "Gene set", 
@@ -975,9 +1017,9 @@ shinyServer(function(input, output, session) {
     req(filteredTableBoundsGroup())
     req(input$tableBoundsGroup_rows_selected)
     href <- filteredTableBoundsGroup()[input$tableBoundsGroup_rows_selected,"Name"]
-    print(href)
+    # print(href)
     name <- str_remove_all(str_remove_all(href, "<a(.*?)>"), "(</a>)")
-    print(name)
+    # print(name)
     return(name)
   })
   

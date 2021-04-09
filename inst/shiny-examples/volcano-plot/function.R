@@ -209,19 +209,19 @@ calcBounds <- function(listPval, thr){
 # }
 
 boundGroup <- function(df, bioFun, thr){
-  print(class(bioFun))
+  # create data frame
   table <- data.frame("Name" = c(), "# genes" = c(), "TP≥" = c(), "FDP≤"=c(), check.names = FALSE)
-  print(class(bioFun))
-  if(class(bioFun)=="list"){
+  # class of biofun
+  if(class(bioFun)=="list"){ 
     nameFunctions <- names(bioFun)
     for (func in nameFunctions){
       incProgress(1/length(nameFunctions))
       ids <- bioFun[[func]]
-      if (length(ids)>5){
+      if (length(ids)>5){ #on ne prend que des groupes avec plus de 5 gènes
         listPval <- df$pval[ids]
-        listPval <- listPval[!is.na(listPval)]
+        listPval <- listPval[!is.na(listPval)] #Calcul de la pvalue
         if(length(listPval)>1){
-          bounds <- calcBounds(listPval = listPval, thr = thr)
+          bounds <- calcBounds(listPval = listPval, thr = thr) #calcul des bornes PH
           table <- rbind(table, data.frame(
             "Name" = addUrlLink(func), 
             "# genes" = bounds$n, 
@@ -248,13 +248,13 @@ boundGroup <- function(df, bioFun, thr){
     }
   }
   table <- table[order(table["FDP≤"]),]
-  print("boundGroup OK")
+  # print("boundGroup OK")
   return(table)
   
 }
 
 addUrlLink <- function(name){
-  if(grepl("GO:\\d+", name)){
+  if(grepl("GO:\\d+", name)){ # met ce lien spécifique si la structure GO:000000000... est dans le nom
     url <- paste("https://www.ebi.ac.uk/QuickGO/term/",str_extract_all(name, "GO:\\d+"), sep="")
     url <- paste('<a target="_blanck" href="', url, '" >',name, '</a>', sep="")
     return(url)

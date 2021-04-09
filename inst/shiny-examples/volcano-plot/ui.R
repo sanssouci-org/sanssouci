@@ -37,7 +37,7 @@ shinyUI(fluidPage(
       splitLayout(
         htmlOutput("help"),
         checkboxInput("checkboxDemo", 
-                      label = "Use demo data", 
+                      label = "Use public data", 
                       value = TRUE),
         
         # uiOutput("CheckData"),
@@ -130,7 +130,13 @@ shinyUI(fluidPage(
                    tabPanel("User selections", value = 1,
                             
                             uiOutput("OutQtableBounds"),
-                            DTOutput("tableBounds")),
+                            fluidRow(
+                              column(
+                                DTOutput("tableBounds"), width=12
+                              )
+                            ),
+                            downloadButton("downloadPHBTable", "Download post hoc bound table")
+                   ),
                    tabPanel("Gene sets", value = 2,
                             selectInput("buttonSEA", label = "Simultaneous Enrichment Analysis",
                                         choices = list("All gene sets" = "nothing", 
@@ -139,7 +145,8 @@ shinyUI(fluidPage(
                             
                             uiOutput("OutQtableBoundsGroup"),
                             uiOutput("errorMatch"),
-                            DTOutput("tableBoundsGroup") )
+                            DTOutput("tableBoundsGroup"),
+                            downloadButton("downloadPHBTableGroup", "Download post hoc bound table") )
                    
       ),
       # )
@@ -165,7 +172,8 @@ shinyUI(fluidPage(
                     selected = "thr"),
         checkboxInput("symetric", 
                       label = "Symmetric fold change threshold", 
-                      value = FALSE)),
+                      value = FALSE),
+        uiOutput("msgURLds")),
       conditionalPanel(condition = "input.tabSelected==1",
                        plotly::plotlyOutput("volcanoplotPosteriori", height = "600px"), 
                        
