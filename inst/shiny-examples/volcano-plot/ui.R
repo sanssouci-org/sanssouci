@@ -76,7 +76,7 @@ shinyUI(fluidPage(
                        # ),
                        # bsTooltip(id = "QfileAnnotation", title = 'Upload a CSV file containing matrix within two columns. One called "Id" contains index label from matrix and the other, called "nameGene", contains names of associated genes.', placement = "bottom",  options = list(container = "body"), trigger = "focus"),
                        bsTooltip(id = "QfileGroup", 
-                                 title = 'Upload a RDS file containing matrix within nameGenes in line index. Binary vector composed this matrix for each gene set.', 
+                                 title = 'Upload a csv file containing matrix within nameGenes in line index. Binary vector composed this matrix for each gene set.', 
                                  placement = "bottom", 
                                  trigger = "hover", 
                                  options = NULL),
@@ -111,19 +111,26 @@ shinyUI(fluidPage(
       #           trigger = c("click", "hover"),
       #           options = NULL),
       conditionalPanel(condition = "input.checkboxAdvancedParam",
+                       shinyjs::hidden(uiOutput("msgDegraded")),
                        splitLayout(
                          selectInput("alternative", label = "Alternative", 
                                      choices = list("Two sided" = "two.sided", 
                                                     "Less" = "less", 
                                                     "Greater" = "greater"),
                                      selected = "two.sided"),
-                         numericInput("numB", label = "Number of permutations", value = 1000, min = 10)
+                         numericInput("numB", label = "Number of permutations", value = 500, min = 10)
                        ),
                        splitLayout(
                          selectInput("refFamily", label = "Reference family", 
                                      choices = list("Simes" = "Simes", "Beta" = "Beta"), 
                                      selected = "Simes"),
                          uiOutput("inputK")#)
+                       # ), 
+                       # splitLayout(
+                       #   shinyjs::hidden(selectInput("refFamilyFAKE", label = "Reference family", 
+                       #                               choices = list("Simes" = "Simes", "Beta" = "Beta"), 
+                       #                               selected = "Simes")),
+                       #   shinyjs::hidden(uiOutput("inputKFAKE"))
                        )),
       verbatimTextOutput("sorti"),
       tabsetPanel( id = "tabSelected",
@@ -135,7 +142,7 @@ shinyUI(fluidPage(
                                 DTOutput("tableBounds"), width=12
                               )
                             ),
-                            downloadButton("downloadPHBTable", "Download post hoc bound table")
+                            shinyjs::hidden(downloadButton("downloadPHBTable", "Download post hoc bound table"))
                    ),
                    tabPanel("Gene sets", value = 2,
                             selectInput("buttonSEA", label = "Simultaneous Enrichment Analysis",
@@ -146,7 +153,7 @@ shinyUI(fluidPage(
                             uiOutput("OutQtableBoundsGroup"),
                             uiOutput("errorMatch"),
                             DTOutput("tableBoundsGroup"),
-                            downloadButton("downloadPHBTableGroup", "Download post hoc bound table") )
+                            shinyjs::hidden(downloadButton("downloadPHBTableGroup", "Download post hoc bound table") ))
                    
       ),
       # )
@@ -178,8 +185,8 @@ shinyUI(fluidPage(
                        plotly::plotlyOutput("volcanoplotPosteriori", height = "600px"), 
                        
                        fluidRow(
-                         actionButton("resetCSV", "Reset Selections"), 
-                         downloadButton("downloadData", "Download csv file with user selection")
+                         shinyjs::hidden(actionButton("resetCSV", "Reset Selections")), 
+                         shinyjs::hidden(downloadButton("downloadData", "Download csv file with user selection"))
                          # bsButton("Qdownload", label = "", icon = icon("question"), style = "info", size = "extra-small"),
                          # bsTooltip("Qdownload", "Delete your select manual selection from the post hoc bounds and downloadable csv file. Download a csv file containing matrix with binary vector of your User selection",
                          #           "right", options = list(container = "body"), trigger = "focus"),
