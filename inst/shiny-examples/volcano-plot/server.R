@@ -616,7 +616,7 @@ shinyServer(function(input, output, session) {
     vectorGene <- names(df()$pval[manuelSelected()])
     url <- UrlStringdbGrah(vectorGene)
     n <- dim(tableResult())[1]
-    newValue <- rbind(tableResult(), c(paste('<a target="_blanck" href="', url, '" >User selection ',n, '</a>', sep=""), 
+    newValue <- rbind(tableResult(), c(paste('<a target="_blank" href="', url, '" >User selection ',n, '</a>', sep=""), 
                                        calcBoundSelection()$n, 
                                        calcBoundSelection()$TP,
                                        round(calcBoundSelection()$FDP, 2)))
@@ -891,7 +891,8 @@ shinyServer(function(input, output, session) {
   
   output$downloadData <- downloadHandler( #download csv of user selection
     filename = function() {
-      paste("SelectionList", Sys.Date(), ".csv", sep="")
+      tag <- format(Sys.time(), "%Y-%M-%d_%H-%m-%S")
+      sprintf("volcano-plot_gene-selections_%s.csv", tag)
     },
     content = function(file) {
       write.csv(tableCSV(), file)
@@ -900,7 +901,8 @@ shinyServer(function(input, output, session) {
   
   output$downloadPHBTable <- downloadHandler( #download csv of user selection
     filename = function() {
-      paste("PostHocBoundsTable", Sys.Date(), ".csv", sep="")
+      tag <- format(Sys.time(), "%Y-%M-%d_%H-%m-%S")
+      sprintf("volcano-plot_bounds_%s.csv", tag)
     },
     content = function(file) {
       write.csv(tableResult(), file)
@@ -988,7 +990,8 @@ shinyServer(function(input, output, session) {
   
   output$downloadPHBTableGroup <- downloadHandler( #download csv of user selection
     filename = function() {
-      paste("GeneSets_PostHocBoundsTable", Sys.Date(), ".csv", sep="")
+      tag <- format(Sys.time(), "%Y-%M-%d_%H-%m-%S")
+      sprintf("gene-set_bounds_%s.csv", tag)
     },
     content = function(file) {
       write.csv(tableBoundsGroup(), file)

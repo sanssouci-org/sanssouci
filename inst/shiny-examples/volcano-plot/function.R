@@ -5,7 +5,7 @@ namedGeo2kegg <- function(geo2kegg){
     ed <- Biobase::experimentData(x)
     if(!any(ed@name == c('GSE781','GSE32676'))){
       disease <- ed@other$disease
-      namesData[paste(disease, ed@name)] = ed@name
+      namesData[sprintf("%s (%s)", disease, ed@name)] = ed@name
     }
   }
   return(namesData)
