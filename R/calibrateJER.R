@@ -7,7 +7,7 @@
 #'   specifying the column indices of the first and second samples. If not
 #'   provided, a one-sample test is performed.
 #' @param B A numeric value, the number of permutations to be performed
-#' @param alpha Target JER level
+#' @param alpha Target risk (JER) level
 #' @param alternative A character string specifying the alternative hypothesis.
 #'   Must be one of "two.sided" (default), "greater" or "less".
 #' @param rowTestFUN A (vectorized) test function. Defaults to
@@ -43,8 +43,9 @@
 #'
 #'   \item{lambda}{A numeric value, the result of the calibration} 
 #'   
-#'   \item{FP}{A numeric vector of length \code{m}, a 1-alpha confidence envelope on the number of false positives} 
+#'   \item{FP}{A numeric vector of length \code{m}, a 1-alpha confidence bound on the number of false positives} 
 #'   }
+#' @references Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc confidence bounds on false positives using reference families. Annals of Statistics, 48(3), 1281-1303.
 #'
 #' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 #' @export
@@ -60,19 +61,19 @@
 #' cal <- calibrateJER(X, categ, B = 1e2, alpha = alpha, refFamily="Simes")
 #' cal$lambda # > alpha (whp) if rho > 0
 #' 
-#' # Application 1: confidence envelope
+#' # Application 1: confidence bounds
 #' #   ie upper confidence bound for the number of false positives 
 #' #   among the k most significant items for all k
-#' env <- cal$conf_env
-#' plotConfidenceEnvelope(env, xmax = 200)
+#' cb <- cal$conf_bound
+#' plotConfCurve(cb, xmax = 200)
 #'   
 #' ## Compare to Simes (without calibration) and "Oracle" (ie truth from the simulation settings)
-#' env_Simes <- confidenceEnvelope(cal$p.values, refFamily = "Simes", param = alpha)
-#' env_Oracle <- confidenceEnvelope(cal$p.values, refFamily = "Oracle", param = (sim$H == 0))
-#' all_env <- list("Simes + calibration" = env, 
-#'                 "Simes"= env_Simes, 
-#'                 "Oracle" = env_Oracle)
-#' plotConfidenceEnvelope(all_env, xmax = 200)
+#' cb_Simes <- confCurveFromFam(cal$p.values, refFamily = "Simes", param = alpha)
+#' cb_Oracle <- confCurveFromFam(cal$p.values, refFamily = "Oracle", param = (sim$H == 1))
+#' all_cb <- list("Simes + calibration" = cb, 
+#'                 "Simes"= cb_Simes, 
+#'                 "Oracle" = cb_Oracle)
+#' plotConfCurve(all_cb, xmax = 200)
 #' 
 #' # Application 2a: bound on the number of false positives in one or 
 #' #    more user-defined selections
@@ -110,18 +111,32 @@ calibrateJER <- function(X, categ, B, alpha,
     tests <- testByRandomization(X, categ = categ, B = B, alternative = alternative, rowTestFUN = rowTestFUN)
     pval0 <- tests$p0
     pval <- tests$p
-
-    rm(tests)
+    n_categ <- length(unique(categ))
+    fc <- NULL
+    if (n_categ == 2) { # two-sample tests: apply rowTestFUN to get fold changes...
+        rwt <- rowTestFUN(X, categ = categ, alternative = alternative)
+        fc <- rwt$meanDiff
+        stopifnot(identical(rwt$p.value, pval)) ## sanity check
+    }
     res <- calibrateJER0(pval0, refFamily = refFamily, alpha = alpha, 
                          p.values = pval, maxStepsDown = maxStepsDown, kMax = K)
+    rm(tests)
     # fam <- toFamily(refFamily, res$lambda)
-    conf_env <- confidenceEnvelope(p.values = pval, refFamily = refFamily, param = res$lambda, K = K)
-    proc <- sprintf("%s + calibration", refFamily)
-    if (K < m) {
-        proc <- sprintf("%s (K = %s)", proc, K)
-    }
-    conf_env$procedure <- proc
-    
-    calib <- list(p.values = pval, pivStat = res$pivStat, thr = res$thr, lambda = res$lambda, conf_env = conf_env) 
+    # conf_bound <- confCurveFromFam(p.values = pval, 
+    #                                refFamily = refFamily, 
+    #                                param = res$lambda, K = K)
+    # proc <- sprintf("%s + calibration", refFamily)
+    # if (K < m) {
+    #     proc <- sprintf("%s (K = %s)", proc, K)
+    # }
+    # conf_bound$procedure <- proc
+    cb <- bound(pval, S = seq(along = pval), thr = res$thr, 
+                lab = refFamily, all = TRUE)    
+    calib <- list(p.values = pval, 
+                  fold_changes = fc,
+                  piv_stat = res$pivStat, 
+                  thr = res$thr, 
+                  lambda = res$lambda, 
+                  conf_bound = cb) 
     return(calib)
 }

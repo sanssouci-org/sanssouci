@@ -14,7 +14,6 @@ Version 0.10.1 [2021-04-14]
 * Add time and progress bar
 * Use R.cache to memoize calibration results
 
-
 Version 0.10.0 [2021-03-12]
 
 * Updated documentation, vignettes and test scripts
@@ -30,7 +29,6 @@ Version 0.9.4 [2020-12-24]
 
 * Added IIDEA vignette (for volcano plot shiny app)
 * Volcano plot shiny app: improved user interface
-
 
 
 Version 0.9.3 [2020-11-25]

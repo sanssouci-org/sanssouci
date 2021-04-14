@@ -14,6 +14,7 @@ License: GPL-3
 Description: Post hoc inference based on the control of a dedicated risk called the Joint (Family-Wise) Error Rate.
 Depends: R (>= 3.5.0)
 Imports:
+    generics,
     Matrix,
     matrixStats,
     Rcpp (>= 0.12.3)
@@ -29,6 +30,7 @@ Suggests:
     testthat,
     covr
 VignetteBuilder: knitr
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 LazyData: true
 Encoding: UTF-8

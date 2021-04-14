@@ -15,8 +15,8 @@ curveVstar_tree(treeFam, ordering)
 }
 \value{
 A vector of length \eqn{m}, whose \eqn{k}-th element is a lower
-  bound \eqn{V^*(S_k)} on the number of true positives in the set \eqn{S_k}
-  of the first \eqn{k} hypotheses according to the specified ordering
+bound \eqn{V^*(S_k)} on the number of true positives in the set \eqn{S_k}
+of the first \eqn{k} hypotheses according to the specified ordering
 }
 \description{
 Generate one-sided p-values associated to a given signal with equi-correlated
@@ -43,7 +43,7 @@ op <- order(pvals)
 Vp <- curveVstar_tree(treeFam, op)
 
 # Simes
-ce <- confidenceEnvelope(pvals, refFamily = "Simes", param = alpha, what = "FP")
+ce <- confCurveFromFam(pvals, refFamily = "Simes", param = alpha, what = "FP")
 VpS <- ce$bound
 
 plot(1:m, 1:m-Vp, t = 's',
