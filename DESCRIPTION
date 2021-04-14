@@ -22,6 +22,7 @@ Suggests:
     cherry,
     ggplot2,
     knitr,
+    markdown,
     rmarkdown,
     RColorBrewer,
     sansSouci.data,
