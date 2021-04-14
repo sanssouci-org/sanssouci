@@ -7,6 +7,7 @@ t_inv_beta <- function(y, k, m) {
 }
 
 #' @describeIn get_pivotal_stat Get pivotal statistic (slow version)
+#' @inheritParams get_pivotal_stat_fast
 #' @param testFUN A function with the same I/O as \code{t.test}
 #' 
 #' @importFrom stats t.test
@@ -68,6 +69,11 @@ get_pivotal_stat_slow <- function(X, categ, B,
 #' 
 #' @examples
 #' 
+#' m <- 5
+#' n <- 45
+#' X <- matrix(rnorm(m*n), ncol = n, nrow = m)
+#' categ <- rbinom(n, 1, 0.4)
+#' B <- 60
 #' pivStat <- sansSouci:::get_pivotal_stat_fast(X, categ, B)
 get_pivotal_stat_fast <- function(X, categ, B, 
                                   rowTestFUN = rowWelchTests,
@@ -182,9 +188,17 @@ get_one_pivotal_stat <- function(X, categ,
 #'   provided, a one-sample test is performed.
 #' @param B A numeric value, the number of permutations to be performed
 #' @param rowTestFUN a testing function with the same I/O as \code{rowWelchTests}
-#' @return A \eqn{m \times B} matrix
+#' @return A \eqn{m \times B} matrix whose entry i,j corresponds to \eqn{p_{(i)}(g_j.X)} with notation of the AoS 2020 paper cited below (section 4.5) 
+#'
+#' @references Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc confidence bounds on false positives using reference families. Annals of Statistics, 48(3), 1281-1303.
 #' @examples
 #' 
+#' set.seed(0xBEEF)
+#' m <- 5
+#' n <- 45
+#' X <- matrix(rnorm(m*n), ncol = n, nrow = m)
+#' categ <- rbinom(n, 1, 0.4)
+#' B <- 10
 #' p0 <- sansSouci:::get_perm_p(X, categ, B)
 get_perm_p <- function(X, categ, B, 
                        rowTestFUN = rowWelchTests) {
@@ -204,17 +218,27 @@ get_perm_p <- function(X, categ, B,
 
 
 #' Get pivotal statistic
+#' 
+#' 
 #' @param p0 A \eqn{m \times B} matrix of null p-values obtained from \eqn{B} 
 #' permutations for \eqn{m} hypotheses
 #' @param t_inv A function with the same I/O as \code{t_inv_linear}
 #' @param K For JER control over \code{1:K}, ie joint control of all
 #'   \eqn{k}-FWER, \eqn{k \le K}. Defaults to \eqn{m}.
-#' @return A vector of length \eqn{B} pivotal statitics
+#' @return A vector of length \eqn{B} pivotal statitics, whose j-th entry corresponds to \eqn{\psi(g_j.X)} with notation of the AoS 2020 paper cited below (section 4.5) 
+#'
+#' @references Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc confidence bounds on false positives using reference families. Annals of Statistics, 48(3), 1281-1303.
 #' 
 #' @examples
 #' 
+#' set.seed(0xBEEF)
+#' m <- 5
+#' n <- 45
+#' X <- matrix(rnorm(m*n), ncol = n, nrow = m)
+#' categ <- rbinom(n, 1, 0.4)
+#' B <- 10
 #' p0 <- sansSouci:::get_perm_p(X, categ, B)
-#' pivStat <- get_pivotal_stat(p0)
+#' pivStat <- sansSouci:::get_pivotal_stat(p0)
 get_pivotal_stat <- function(p0,
                              t_inv = t_inv_linear,
                              K = nrow(p0)) {

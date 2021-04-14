@@ -27,8 +27,8 @@ test_that("JER calibration and get_pivotal_stat* yield identical pivotal statist
     Rprof(NULL)
     summaryRprof(tf_slow)
     
-    expect_equal(cal0$pivStat, pivStat_slow)
-    expect_equal(cal0_B$pivStat, pivStat_slow_B)
+    expect_equal(cal0$piv_stat, pivStat_slow)
+    expect_equal(cal0_B$piv_stat, pivStat_slow_B)
     
     set.seed(0xBEEF)
     tf <- tempfile()
@@ -39,8 +39,8 @@ test_that("JER calibration and get_pivotal_stat* yield identical pivotal statist
     Rprof(NULL)
     summaryRprof(tf)
     
-    expect_equal(cal0$pivStat, pivStat_fast)
-    expect_equal(cal0_B$pivStat, pivStat_fast_B)
+    expect_equal(cal0$piv_stat, pivStat_fast)
+    expect_equal(cal0_B$piv_stat, pivStat_fast_B)
     
     set.seed(0xBEEF)
     tf <- tempfile()
@@ -51,8 +51,8 @@ test_that("JER calibration and get_pivotal_stat* yield identical pivotal statist
     Rprof(NULL)
     summaryRprof(tf)
     
-    expect_equal(cal0$pivStat, pivStat)
-    expect_equal(cal0_B$pivStat, pivStat_B)
+    expect_equal(cal0$piv_stat, pivStat)
+    expect_equal(cal0_B$piv_stat, pivStat_B)
 })
 
 test_that("get_pivotal_stat* and get_one_pivotal_stat* yield identical results", {
@@ -102,5 +102,5 @@ test_that("get_pivotal_stat* and get_one_pivotal_stat* yield identical results",
     set.seed(0xBEEF)
     pivStat <- replicate(B, get_one_pivotal_stat_slow(X, sample(categ)))
     
-    max(abs(cal0$pivStat-pivStat))
+    max(abs(cal0$piv_stat-pivStat))
 })

@@ -35,3 +35,6 @@ maxFP(tail(pval), thr)
 maxFP(c(head(pval), tail(pval)), thr)
 
 }
+\references{
+Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc confidence bounds on false positives using reference families. Annals of Statistics, 48(3), 1281-1303.
+}

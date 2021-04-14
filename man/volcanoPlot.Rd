@@ -2,28 +2,27 @@
 % Please edit documentation in R/volcanoPlot.R
 \name{volcanoPlot}
 \alias{volcanoPlot}
+\alias{volcanoPlot.SansSouci}
 \title{Volcano plot}
 \usage{
-volcanoPlot(
-  X,
-  categ,
-  thr,
+volcanoPlot(x, ...)
+
+\method{volcanoPlot}{SansSouci}(
+  x,
   p = 1,
   q = 1,
   r = 0,
   cex = c(0.2, 0.6),
   col = c("#33333333", "#FF0000", "#FF666633"),
   pch = 19,
-  ylim = NULL
+  ylim = NULL,
+  ...
 )
 }
 \arguments{
-\item{X}{A matrix of \eqn{m} variables (hypotheses) by \eqn{n} observations}
+\item{x}{An object of class \code{SansSouci}}
 
-\item{categ}{A numeric vector of \code{n} categories in \eqn{0, 1} for the
-observations}
-
-\item{thr}{A numeric vector of length K, a JER controlling family}
+\item{...}{Other arguments to be passed to volcanoPlot.numeric}
 
 \item{p}{A numeric value, the p-value threshold under which genes are selected}
 
@@ -35,40 +34,22 @@ observations}
 
 \item{col}{A vector of length 3}
 
-\item{pch}{An integer or single character string specifying the plotting character, see \code{\link{par}}}
+\item{pch}{An integer or single character string specifying the plotting character, see \link{par}}
 
-\item{ylim}{A numeric vector of length 2, the \eqn{y} limits of the plot}
-}
-\value{
-The indices of selected genes (returned invisibly)
+\item{ylim}{A numeric vector of length 2, the \code{y} limits of the plot}
 }
 \description{
-Volcano plot for differential expression studies
-}
-\details{
-A Welch T-test of differential expression between the two categories
-  defined by \code{categ} are applied for each gene using the
-  \code{\link{rowWelchTests}} function, which also outputs the "fold change"
-  (mean difference in log scale) between the two categories.
+Volcano plot
 }
 \examples{
 m <- 500
 pi0 <- 0.5
 m1 <- m-m*pi0
 SNR <- 5*(runif(m1)-0.5)
-sim <- gaussianSamples(m = m, rho = 0.2, n = 100,
+obj <- SansSouciSim(m = m, rho = 0.2, n = 100,
                        pi0 = pi0, SNR = SNR, prob = 0.5)
-X <- sim$X
-categ <- sim$categ
 alpha <- 0.2
-cal <- calibrateJER(X = X, categ = categ, B = 1e2, alpha = alpha, refFamily="Simes")
-sel <- volcanoPlot(X = X, categ = categ, thr = cal$thr, q = 0.2, r = 0.2, ylim = c(0, 6))
+cal <- fit(obj, alpha = alpha, B = 1e2, refFamily="Simes")
+volcanoPlot(cal, q = 0.2, r = 0.2, ylim = c(0, 4), bounds=FALSE)
 
-# Compare bound to reality
-TP <- sum(sim$H[sel])
-FP <- sum(1-sim$H[sel])
-FDP <- FP/length(sel)
-}
-\seealso{
-Volcano plot shiny app at \url{https://pneuvial.shinyapps.io/volcano-plot/}
 }

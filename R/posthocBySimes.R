@@ -17,6 +17,8 @@
 #' @return A integer value, Simes's lower bound on the number of
 #'  correct rejections within the selected hypotheses
 #' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
+#' @references Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc confidence bounds on false positives using reference families. Annals of Statistics, 48(3), 1281-1303.
+#' @references Goeman, J. J., & Solari, A. (2011). Multiple testing for exploratory research. Statistical Science, 26(4), 584-597.
 #' @export
 #' @describeIn posthocBySimes R version
 #' 

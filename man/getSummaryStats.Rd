@@ -14,14 +14,14 @@ observations}
 }
 \value{
 A list of \code{ncol(mat)} elements containing the above-described
-  summary statistics for each category
+summary statistics for each category
 }
 \description{
-Convert a matrix of observations labelled into categories into summary 
+Convert a matrix of observations labelled into categories into summary
 statistics for each category
 }
 \details{
-The following statistics are calculated: sums, sums of squares, means, 
+The following statistics are calculated: sums, sums of squares, means,
 standard deviations, sample sizes
 }
 \examples{

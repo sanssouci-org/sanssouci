@@ -37,17 +37,17 @@ Currently only "two.sided" is implemented}
 }
 \value{
 A list with elements:
-  \describe{ \item{statistic}{the value of the t-statistic}
-  \item{parameter}{the degrees of freedom for the t-statistic}
-  \item{p.value}{the p-value for the test} }
+\describe{ \item{statistic}{the value of the t-statistic}
+\item{parameter}{the degrees of freedom for the t-statistic}
+\item{p.value}{the p-value for the test} }
 }
 \description{
 Welch test from sufficient statistics
 }
 \details{
 In accordance with the implementation of \code{\link[stats]{t.test}} and friends, we
-  follow the rule that 'alternative = "greater"' is the alternative that 'x'
-  has a larger  mean than 'y'.
+follow the rule that 'alternative = "greater"' is the alternative that 'x'
+has a larger  mean than 'y'.
 }
 \examples{
 

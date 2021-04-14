@@ -32,25 +32,19 @@ Parameters:
 m <- 1e3
 n <- 124
 pi0 <- 0.8
-B <- 500
 rho <- 0.3
 SNR <- 2
-
-alpha <- 0.25
 ```
 
-We use the function `gaussianSamples` to generate Gaussian equi-correlated samples. We then use the function `calibrateJER` to perform the calibration.
+We use the function `SansSouciSim` to generate Gaussian equi-correlated samples. We then 'fit' the resulting SansSouci object
 
 ## Two-sample tests
 
 ### Simulation
 
 ```{r simulation}
-sim <- gaussianSamples(m, rho, n, pi0, SNR = SNR, prob = 0.5)
-str(sim)
-X <- sim$X
-categ <- sim$categ
-table(categ)
+obj <- SansSouciSim(m, rho, n, pi0, SNR = SNR, prob = 0.5)
+obj
 ```
 
 We perform JER calibration using the linear (Simes) template $\mathfrak{R(\lambda)}=(R_1(\lambda),$ $\ldots,R_K(\lambda)$, where for $1 \leq k \leq K$
@@ -62,48 +56,53 @@ where $\bar{\Phi}$ is the cdf of the $\mathcal{N}(0,1)$ distribution. Note that 
 ### Calibration
 
 ```{r calibration}
-cal <- calibrateJER(X, categ, B = B, alpha = alpha, refFamily = "Simes")
+B <- 500
+alpha <- 0.2
+cal <- fit(obj, alpha = alpha, B = B, refFamily = "Simes")
 ```
 
-The output of the calibration is as follows:
+The output of the calibration is the following `SansSouci` object:
 
 ```{r cal-output}
 str(cal)
 ```
 
-* `p.values`: $m$ test statistics calculated by permutation
-* `thr` : A JER-controlling family of $K$ (here $K=m$) elements
-* `lambda`: the $\lambda$-calibration parameter
-* `conf_env`: confidence envelopes on the true/false positives (see graphical illustration in the next section)
+- `cal$input` contains the input simulated data (and the associated truth)
+-  `cal$param` contains the calibration parameters
+- `cal$output` contains the output of the calibration, including
+   -  `p.values`: $m$ test statistics calculated by permutation
+   - `thr` : A JER-controlling family of $K$ (here $K=m$) elements
+   - `lambda`: the $\lambda$-calibration parameter
+   - `conf_env`: confidence envelopes on the true/false positives (see graphical illustration in the next section)
 
 Because we are under positive equi-correlation, we expect $\lambda > \alpha$ for the Simes family. 
 ```{r cal-Simes}
-cal$lambda > alpha
+cal$output$lambda
+cal$output$lambda > alpha
 ```
 
 ### Post hoc confidence bounds
 
-The `calibrateJER` function outputs post hoc confidence envelopes:
+The fitted `SansSouci` object contains post hoc confidence bounds:
 
 ```{r confidence-bounds}
-env <- cal$conf_env
+env <- bound(cal, all = TRUE)
 head(env)
 ```
 
 We compare it to the true number of false positives among the most significant items, and to the Simes bound without calibration 
 
 ```{r other-conf-env}
-env_Simes <- confidenceEnvelope(cal$p.values, refFamily = "Simes", param = alpha)
-env_Oracle <- confidenceEnvelope(cal$p.values, refFamily = "Oracle", param = (sim$H == 0))
-all_env <- rbind(env, env_Simes, env_Oracle)
+cal0 <- fit(obj, alpha = alpha, B = 0, refFamily = "Simes")
+oracle <- fit(obj, alpha = alpha, refFamily = "Oracle")
+
+confs <- list(Simes = bound(cal0, all = TRUE),
+              "Simes+calibration" = bound(cal, all = TRUE),
+              "Oracle" = bound(oracle, all = TRUE))
 ```
 
 ```{r plot-conf-env}
-ggplot(subset(all_env, x <= 200), 
-       aes(x = x, y = bound, color = procedure, group = procedure)) +
-    geom_line() + 
-    facet_wrap(~ stat, scales = "free_y") + 
-    labs(x = "# top genes called significant", y = "Post hoc confidence bounds")
+plotConfCurve(confs)
 ```
 
 
@@ -112,36 +111,35 @@ ggplot(subset(all_env, x <= 200),
 The code is identical, except for the line to generate the observations (where we do not specify a probability of belonging to one of the two populations using the `prob` argument); moreover it is not necessary to specify a vector of categories 'categ' in 'calibrateJER'.
 
 ```{r, sim-one-sampla}
-sim <- gaussianSamples(m, rho, n, pi0, SNR = SNR)
-str(sim)
-X <- sim$X
-categ <- sim$categ
+obj <- SansSouciSim(m, rho, n, pi0, SNR = SNR)
+obj
 ```
 
 ```{r cal-one-sample}
-cal <- calibrateJER(X, categ, B = B, alpha = alpha, refFamily = "Simes")
-str(cal)
+cal <- fit(obj, alpha = alpha, B = B, refFamily = "Simes")
+cal
 ```
 
 Again we expect $\lambda > \alpha$.
 
-### Confidence envelopes
+### Confidence curves
 
-The associated confidence envelopes are displayed below:
+The associated confidence curves are displayed below:
+
 
 ```{r other-conf-env-one-sample}
-env_Simes <- confidenceEnvelope(cal$p.values, refFamily = "Simes", param = alpha)
-env_Oracle <- confidenceEnvelope(cal$p.values, refFamily = "Oracle", param = (sim$H == 0))
-all_env <- rbind(env, env_Simes, env_Oracle)
+cal0 <- fit(obj, alpha = alpha, B = 0, refFamily = "Simes")
+oracle <- fit(obj, alpha = alpha, refFamily = "Oracle")
+
+confs <- list(Simes = bound(cal0, all = TRUE),
+              "Simes+calibration" = bound(cal, all = TRUE),
+              "Oracle" = bound(oracle, all = TRUE))
 ```
 
 ```{r plot-conf-env-one-sample}
-ggplot(subset(all_env, x <= 200), 
-       aes(x = x, y = bound, color = procedure, group = procedure)) +
-    geom_line() + 
-    facet_wrap(~ stat, scales = "free_y") + 
-    labs(x = "# top genes called significant", y = "Post hoc confidence bounds")
+plotConfCurve(confs)
 ```
+
 
 ## Session information
 

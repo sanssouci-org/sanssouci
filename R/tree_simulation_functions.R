@@ -127,6 +127,7 @@ gen.p.values <- function(m, mu = rep(0, length(mu)), rho = 0) {
 #' @return A vector of length \eqn{m}, whose \eqn{k}-th element is a lower
 #'   bound \eqn{V^*(S_k)} on the number of true positives in the set \eqn{S_k}
 #'   of the first \eqn{k} hypotheses according to the specified ordering
+#' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
 #' @export
 #' @examples
 #' m <- 500
@@ -149,7 +150,7 @@ gen.p.values <- function(m, mu = rep(0, length(mu)), rho = 0) {
 #' Vp <- curveVstar_tree(treeFam, op)
 #'
 #' # Simes
-#' ce <- confidenceEnvelope(pvals, refFamily = "Simes", param = alpha, what = "FP")
+#' ce <- confCurveFromFam(pvals, refFamily = "Simes", param = alpha, what = "FP")
 #' VpS <- ce$bound
 #'
 #' plot(1:m, 1:m-Vp, t = 's',

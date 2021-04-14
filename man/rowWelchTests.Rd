@@ -20,10 +20,10 @@ class 1 has a larger mean than class 0.}
 }
 \value{
 A data.frame with containing the following columns:
-  \describe{ \item{statistic}{the value of the t-statistics}
-  \item{parameter}{the degrees of freedom for the t-statistics}
-  \item{p.value}{the p-values for the tests}} \item{meanDiff}{the mean
-  difference}
+\describe{ \item{statistic}{the value of the t-statistics}
+\item{parameter}{the degrees of freedom for the t-statistics}
+\item{p.value}{the p-values for the tests}} \item{meanDiff}{the mean
+difference}
 }
 \description{
 Welch t-tests for each row of a matrix, intended to be speed efficient
@@ -54,7 +54,7 @@ all(abs(fwt$p.value-pwt) < 1e-10)  ## same results
 }
 \references{
 B. L. Welch (1951), On the comparison of several mean values: an
-  alternative approach. Biometrika, *38*, 330-336
+alternative approach. Biometrika, \emph{38}, 330-336
 }
 \author{
 Pierre Neuvial

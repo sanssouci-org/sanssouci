@@ -34,24 +34,24 @@ calculated and returned? Defaults to @FALSE}
 \value{
 a list with elements: \describe{
 
-  \item{T}{A vector of \eqn{m} test statistics}
+\item{T}{A vector of \eqn{m} test statistics}
 
-  \item{T0}{A \eqn{m \times B} matrix of randomized test statistics}
+\item{T0}{A \eqn{m \times B} matrix of randomized test statistics}
 
-  \item{p}{A vector of \eqn{m} parametric \eqn{p}-values}
+\item{p}{A vector of \eqn{m} parametric \eqn{p}-values}
 
-  \item{p0}{A \eqn{m \times B} matrix of parametric \eqn{p}-values on
-  randomized data}
+\item{p0}{A \eqn{m \times B} matrix of parametric \eqn{p}-values on
+randomized data}
 
-  \item{flavor}{A character value, the type of randomization performed:
-  "perm" for permutation-based randomization in two-sample tests, and "flip"
-  for sign-flipping-based randomization in one sample tests. See Details.}
+\item{flavor}{A character value, the type of randomization performed:
+"perm" for permutation-based randomization in two-sample tests, and "flip"
+for sign-flipping-based randomization in one sample tests. See Details.}
 
-  \item{rand.p}{A vector of \eqn{m} \eqn{p}-values (only if
-  \code{rand.p.value} is \code{TRUE} )}
+\item{rand.p}{A vector of \eqn{m} \eqn{p}-values (only if
+\code{rand.p.value} is \code{TRUE} )}
 
-  \item{rand}{A \eqn{m \times B} matrix of randomization \eqn{p}-values (only
-  if \code{rand.p.value} is \code{TRUE} )}
+\item{rand}{A \eqn{m \times B} matrix of randomization \eqn{p}-values (only
+if \code{rand.p.value} is \code{TRUE} )}
 }
 }
 \description{
@@ -59,26 +59,26 @@ Randomization-based testing using permutation or sign-flipping
 }
 \details{
 The type of randomization is determined by the column names of
-  \code{X}. If these column names have exactly two distinct values, the
-  corresponding columns are interpreted as two samples and a two-sample
-  permutation-based test  is performed (flavor "perm"). Otherwise (including
-  if \code{X} does not have column names), a one-sample test is performed
-  using sign-flipping (flavor "flip").
+\code{X}. If these column names have exactly two distinct values, the
+corresponding columns are interpreted as two samples and a two-sample
+permutation-based test  is performed (flavor "perm"). Otherwise (including
+if \code{X} does not have column names), a one-sample test is performed
+using sign-flipping (flavor "flip").
 
-  For permutation, we test the null hypothesis: "both groups have the same
-  mean" against the alternative specified by parameter \code{alternative}. By
-  default, the test is Welch's two-sample test for unequal variances, but
-  other tests may be used via the argument \code{rowTestFUN}.  Permuted test
-  statistics are calculated by B permutations of the group labels.
-  Corresponding observed and permuted p-values are calculated as the
-  proportion of permutations (including the identity) for which the permuted
-  test statistic is larger than the observed test statistic.
+For permutation, we test the null hypothesis: "both groups have the same
+mean" against the alternative specified by parameter \code{alternative}. By
+default, the test is Welch's two-sample test for unequal variances, but
+other tests may be used via the argument \code{rowTestFUN}.  Permuted test
+statistics are calculated by B permutations of the group labels.
+Corresponding observed and permuted p-values are calculated as the
+proportion of permutations (including the identity) for which the permuted
+test statistic is larger than the observed test statistic.
 
-  For sign-flipping, we test the null hypothesis: "the mean is 0" against the
-  alternative specified by parameter \code{alternative}. We use the
-  (rescaled) empirical mean of the observations as a test statistic.
-  Sign-flipped test statistics are calculated by flipping the sign of each
-  observation with probability 1/2.
+For sign-flipping, we test the null hypothesis: "the mean is 0" against the
+alternative specified by parameter \code{alternative}. We use the
+(rescaled) empirical mean of the observations as a test statistic.
+Sign-flipped test statistics are calculated by flipping the sign of each
+observation with probability 1/2.
 }
 \examples{
 
@@ -120,5 +120,7 @@ legend("topleft", c("H0", "H1"), pch = pch, col = 1:2)
 }
 \references{
 Ge, Y., Dudoit, S. and Speed, T.P., 2003. Resampling-based
-  multiple testing for microarray data analysis. _Test_, 12(1), pp.1-77.
+multiple testing for microarray data analysis. \emph{Test}, 12(1), pp.1-77.
+
+Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc confidence bounds on false positives using reference families. Annals of Statistics, 48(3), 1281-1303.
 }
