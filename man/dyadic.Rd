@@ -4,14 +4,11 @@
 \alias{dyadic}
 \alias{dyadic.from.window.size}
 \alias{dyadic.from.height}
-\alias{dyadic.from.max.height}
 \title{Create a complete dyadic tree structure}
 \usage{
 dyadic.from.window.size(m, s, method)
 
-dyadic.from.height(m, H, method)
-
-dyadic.from.max.height(m, method)
+dyadic.from.height(m, H = NULL, method)
 }
 \arguments{
 \item{m}{An integer value, the number of elements in the structure}

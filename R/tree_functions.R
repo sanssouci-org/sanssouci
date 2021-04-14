@@ -114,7 +114,10 @@ dyadic.from.window.size <- function(m, s, method) {
 #' @export
 #' @rdname dyadic
 
-dyadic.from.height <- function(m, H, method) {
+dyadic.from.height <- function(m, H = NULL, method) {
+    if (is.null(H)) {
+        H <- ifelse(m == 1, 1, floor(2 + log2(m - 1)))
+    }
     if (m <= 2^(H - 2)) {
         oldH <- H
         H <- ifelse(m == 1, 1, floor(2 + log2(m - 1)))
@@ -135,15 +138,6 @@ dyadic.from.height <- function(m, H, method) {
     }
     C <- dyadic.from.leaf_list(leaf_list, method)
     return(list(leaf_list = leaf_list, C = C))
-}
-
-#' @inheritParams dyadic.from.height
-#' @export
-#' @rdname dyadic
-
-dyadic.from.max.height <- function(m, method) {
-    H <- ifelse(m == 1, 1, floor(2 + log2(m - 1)))
-    return(dyadic.from.height(m, H, method))
 }
 
 #' Estimate the number of true null hypotheses among a set of p-values

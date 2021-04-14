@@ -6,19 +6,14 @@
 \usage{
 SansSouciDyadic(
   m,
-  leafSize = NULL,
-  maxHeight = NULL,
-  flavor = c("window.size", "height", "max.height"),
+  param = NULL,
+  flavor = c("window.size", "height"),
   direction = c("bottom-up", "top-down"),
   ...
 )
 }
 \arguments{
 \item{m}{A numeric value, the number of hypotheses}
-
-\item{leafSize}{A numeric value, the number of hypotheses in each leaf}
-
-\item{maxHeight}{A numeric value, the maximum height (or depth) of the tree}
 
 \item{flavor}{A character value defining the type of tree building function
 to be used. Must be one of window.size", "height", or "max.height"}
@@ -27,6 +22,10 @@ to be used. Must be one of window.size", "height", or "max.height"}
 Must be one of "bottom-up" or "top-down"}
 
 \item{...}{Arguments to be passed to \code{SansSouciStruct}}
+
+\item{leafSize}{A numeric value, the number of hypotheses in each leaf}
+
+\item{maxHeight}{A numeric value, the maximum height (or depth) of the tree}
 }
 \value{
 An object of class 'SansSouciStruct'
@@ -39,8 +38,9 @@ s <- 100
 q <- 7
 m <- s*2^q
 
-dd <- dyadic.from.window.size(m, s, method = 2)
-obj <- SansSouciDyadic(m, s, flavor = "window.size", direction = "top-down")
+obj <- SansSouciDyadic(m, param = s, flavor = "window.size", direction = "top-down")
+
+obj <- SansSouciDyadic(m, param = 6, flavor = "max.height", direction = "top-down")
 
 }
 \references{

@@ -31,12 +31,9 @@ SansSouciStruct <- function(struct, leaves, truth = NULL) {
 #' Create an object of class 'SansSouciStruct' with a dyadic structure
 #'
 #' @param m A numeric value, the number of hypotheses
-#' @param leafSize A numeric value, the number of hypotheses in each leaf
-#' @param maxHeight A numeric value, the maximum height (or depth) of the tree
-#' @param flavor A character value defining the type of tree building function
-#'   to be used. Must be one of window.size", "height", or "max.height"
-#' @param direction A character value, the direction used for building the tree
-#'   Must be one of "bottom-up" or "top-down"
+#' @param flavor A character value defining the type of tree building function to be used. Must be one of window.size", "height" 
+#' @param param A value for the parameter, should be the number of hypotheses in each leaf for flavor "window.size", and the maximal  maximum height (or depth) of the tree for flavor "height"
+#' @param direction A character value, the direction used for building the tree. Must be one of "bottom-up" or "top-down"
 #' @param ... Arguments to be passed to `SansSouciStruct`
 #' @return An object of class 'SansSouciStruct'
 #' @seealso dyadic.from.leave.list dyadic.from.window.size dyadic.from.height
@@ -50,11 +47,12 @@ SansSouciStruct <- function(struct, leaves, truth = NULL) {
 #' q <- 7
 #' m <- s*2^q
 #' 
-#' dd <- dyadic.from.window.size(m, s, method = 2)
-#' obj <- SansSouciDyadic(m, s, flavor = "window.size", direction = "top-down")
+#' obj <- SansSouciDyadic(m, param = s, flavor = "window.size", direction = "top-down")
 #' 
-SansSouciDyadic <- function(m, leafSize = NULL, maxHeight = NULL,
-                            flavor = c("window.size", "height", "max.height"), 
+#' obj <- SansSouciDyadic(m, param = 6, flavor = "max.height", direction = "top-down")
+#' 
+SansSouciDyadic <- function(m, param = NULL,
+                            flavor = c("window.size", "height"), 
                             direction = c("bottom-up", "top-down"),
                             ...) {
     flavor <- match.arg(flavor)
@@ -64,11 +62,9 @@ SansSouciDyadic <- function(m, leafSize = NULL, maxHeight = NULL,
                      "top-down" = 2)
     dd <- NULL
     if (flavor == "window.size") {
-        dd <- dyadic.from.window.size(m, leafSize, method)
+        dd <- dyadic.from.window.size(m, s = param, method)
     } else if (flavor == "height") {
-        dd <- dyadic.from.height(m, maxHeight, method)
-    } else if (flavor == "max.height") {
-        dd <- dyadic.from.max.height(m, method)
+        dd <- dyadic.from.height(m, H = param, method)
     }
     SansSouciStruct(struct = dd$C, leaves = dd$leaf_list, ...)
 }
