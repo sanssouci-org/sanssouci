@@ -335,7 +335,7 @@ shinyServer(function(input, output, session) {
   })
   
   # number of permutation
-  numB <- reactiveVal(1000) #Initialization
+  numB <- reactiveVal(500) #Initialization
   observeEvent(input$buttonValidate, { # When Run is clicked : we get the input value
     newValue <- req(input$numB)
     numB(newValue)
@@ -361,18 +361,26 @@ shinyServer(function(input, output, session) {
     req(matrixChosen())
     numericInput("valueK", 
                  label = "K (size of reference family)", 
-                 value = numK(),
+                 value = numKI(),
                  min = 1,
                  max = nrow(matrixChosen()$matrix))
   })
-  numK <- reactiveVal()
+  numKI <- reactiveVal()
   observe({ #Initialization, if refFamily == 'Beta' or not 
     req(matrixChosen())
     newValue <- ifelse(input$refFamily == "Beta", 
                        round(2*req(nrow(matrixChosen()$matrix))/100),
                        req(nrow(matrixChosen()$matrix)))
+    numKI(newValue)
+  })
+  
+  numK <- reactiveVal()
+  observe({
+    req(matrixChosen())
+    newValue <- req(nrow(matrixChosen()$matrix))
     numK(newValue)
   })
+  # isolate( numK(req( nrow(matrixChosen()$matrix))))
   observeEvent(input$buttonValidate, { # When Run is clicked : we get the input value
     newValue <- req(input$valueK)
     numK(newValue)
@@ -415,10 +423,16 @@ shinyServer(function(input, output, session) {
   
   
   ## JER calibration on available expression gene matrix
-  cal <- eventReactive(input$buttonValidate, {
+  cal <- reactive({
+    # eventReactive(input$buttonValidate, {
     withProgress(value = 0, message = "Perform calibration ... ", {
       incProgress(amount = 0.3)
       t1 <- Sys.time()
+      # print(paste("alpha ", alpha()))
+      # print(paste('b = ', numB()))
+      # print(paste("alternative = ", alternative()))
+      # print(paste("ref framily = ", refFamily()))
+      # print(paste("k = ", numK()))
       cal <- R.cache::memoizedCall(calibrateJER,
                                    req(data()$matrix), # if data()$matrix == NULL, not perform [-> not available matrix or degraded matrix]
                                    categ = data()$categ, 
@@ -661,6 +675,7 @@ shinyServer(function(input, output, session) {
   
   
   lineAdjp <- reactive({ # value for 
+    req(df())
     listLog <- c()
     for (i in c(0.5,0.25,0.1,0.05,0.025,0.01,0.001,0.0001)){
       min05 <- which.min(abs(df()$adjp-i))
@@ -670,9 +685,9 @@ shinyServer(function(input, output, session) {
     return(listLog)
   })
   
-  output$lineAdjp <- renderPrint({list(lineAdjp(), class(lineAdjp()))})
   
   thr_yaxis <- reactive({
+    req(alpha())
     req(thr())
     req(df())
     thrYaxis(thr = thr(), maxlogp=max(df()$logp))
@@ -683,7 +698,6 @@ shinyServer(function(input, output, session) {
       size = 14,
       color = "#000000"
     )
-    
     yaxis <- switch(input$choiceYaxis, 
                     "pval" = list(
                       title = "p-value (-log[10] scale)", 
@@ -748,7 +762,6 @@ shinyServer(function(input, output, session) {
   posteriori <- 
     reactive({
       # eventReactive(input$buttonValidate, {
-      
       setProgress(value = 0.9, detail = "posteriori Reactive ... ")
       f <- list(
         size = 14,
@@ -781,30 +794,7 @@ shinyServer(function(input, output, session) {
           shapes = isolate(thrLine()),
           dragmode = "select",
           showlegend = FALSE) %>%
-        # add_annotations(
-        #     x = 0,
-        #     y = 1,
-        #     xref = "paper",
-        #     yref = "paper",
-        #     text = paste(c(sprintf(
-        #         "<b>%s genes\nTP %s %s\nFDP %s %s</b>", 
-        #         req(TP_FDP()$n2), gte,
-        #         req(TP_FDP()$TP2), lte, 
-        #         req(TP_FDP()$FDP2)))),
-        #     showarrow = F
-      # ) %>% add_annotations(
-      #     x = 1,
-      #     y = 1,
-      #     xref = "paper",
-      #     yref = "paper",
-      #     text = paste(c(sprintf(
-      #         "<b>%s genes\nTP %s %s\nFDP %s %s</b>", 
-      #         req(TP_FDP()$n1), gte,
-      #         req(TP_FDP()$TP1), lte, 
-      #         req(TP_FDP()$FDP1)))),
-      #     showarrow = FALSE
-      # ) %>% 
-      onRender("
+        onRender("
                   function(el) {
                       el.on('plotly_click', function(d) {
                           var url = d.points[0].customdata;
@@ -850,12 +840,15 @@ shinyServer(function(input, output, session) {
   })
   
   
-  observeEvent(input$choiceYaxis, { #when we choose a different y axis 
-    plotlyProxy("volcanoplotPosteriori", session) %>%
-      plotlyProxyInvoke("relayout", list(yaxis = yaxis()))
-    
-    
-  })
+  observeEvent(
+    {input$choiceYaxis
+      yaxis()}
+    , { #when we choose a different y axis 
+      plotlyProxy("volcanoplotPosteriori", session) %>%
+        plotlyProxyInvoke("relayout", list(yaxis = yaxis()))
+      
+      
+    })
   
   observeEvent(vertical(), {  # for moving of orange threshold
     plotlyProxy("volcanoplotPosteriori", session)%>%
@@ -1007,7 +1000,6 @@ shinyServer(function(input, output, session) {
     shinyjs::show("downloadPHBTableGroup")
   })
   
-  # output$sorti <- renderPrint({filteredTableBoundsGroup()})
   
   filteredTableBoundsGroup  <- reactive({
     req(input$buttonSEA)
@@ -1061,9 +1053,7 @@ shinyServer(function(input, output, session) {
     req(filteredTableBoundsGroup())
     req(input$tableBoundsGroup_rows_selected)
     href <- filteredTableBoundsGroup()[input$tableBoundsGroup_rows_selected,"Name"]
-    # print(href)
     name <- str_remove_all(str_remove_all(href, "<a(.*?)>"), "(</a>)")
-    # print(name)
     return(name)
   })
   
