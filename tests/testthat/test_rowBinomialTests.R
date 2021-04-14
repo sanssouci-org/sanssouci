@@ -8,26 +8,28 @@ test_that("rowBinomialTests <=> binom.test", {
     mat <- cbind(mat0, mat1)
     cls <- rep(c(0, 1), times = c(n0, n1))
 
-    for (alt in c("two.sided", "greater", "less")) {
-        if (alt == "two.sided") {
-            expect_warning(fbt <- rowBinomialTests(mat = mat, categ = cls, alternative = alt))
-        } else {
-            fbt <- rowBinomialTests(mat = mat, categ = cls, alternative = alt)
-        }
-        
-        # Ordinary Binomial test (reasonably fast for 200 tests)
-        pbt <- t(sapply(1:p, FUN=function(ii) {
-          x1 <- mat[ii, cls == 1]
-          x0 <- mat[ii, cls == 0]
-          bt <- binom.test(sum(x1), length(x1), mean(x0), alternative = alt)
-          c(statistic = bt[["statistic"]], p.value = bt[["p.value"]])
-        }))
-
-        pbt <- as.data.frame(pbt)
-        names(pbt) <- c("statistic", "p.value")
-        expect_equal(fbt$p.value, pbt$p.value, tolerance = 1e-12)
-        expect_equal(fbt$statistic, pbt$statistic, tolerance = 1e-12)
+    alt <- sample(c("two.sided", "greater", "less"), 1)
+    if (alt == "two.sided") {
+        expect_warning(fbt <- rowBinomialTests(mat = mat, categ = cls, alternative = alt))
+    } else {
+        fbt <- rowBinomialTests(mat = mat, categ = cls, alternative = alt)
     }
+    
+    # Ordinary Binomial test (reasonably fast for small number of tests)
+    pbt <- t(sapply(1:p, FUN = function(ii) {
+        x1 <- mat[ii, cls == 1]
+        x0 <- mat[ii, cls == 0]
+        bt <- binom.test(sum(x1), length(x1), mean(x0), alternative = alt)
+        c(statistic = bt[["statistic"]], 
+          p.value = bt[["p.value"]],
+          estimate = bt[["estimate"]])
+    }))
+    pbt <- as.data.frame(pbt)
+    names(pbt) <- c("statistic", "p.value", "estimate")
+    expect_equal(fbt$p.value, pbt$p.value)
+    expect_equal(fbt$statistic, pbt$statistic)
+    py <- rowMeans(mat[, cls == 0])
+    expect_equal(fbt$estimate, pbt$estimate - py)
 })
 
 

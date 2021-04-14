@@ -3,8 +3,9 @@
 #' @param mat A numeric matrix whose rows correspond to variables and columns to
 #'   observations
 #'
-#' @param categ A numeric vector of \code{ncol(mat)} categories in \eqn{0,1} for the
-#'   observations
+#' @param categ Either a numeric vector of \code{n} categories in \eqn{0, 1} for
+#'   the observations, or a \code{n x B} matrix stacking \code{B} such vectors
+#'   (typically permutations of an original vector of size \code{n})
 #'
 #' @param alternative A character string specifying the alternative hypothesis.
 #'   Must be one of "two.sided" (default), "greater" or "less". As in
@@ -20,6 +21,11 @@
 #'   \item{p.value}{the p-values for the tests} 
 #'   \item{estimate}{the difference between observed group proportions}}
 #'   Each of these elements is a matrix of size \code{nrow(mat) x B}, coerced to a vector of length \code{nrow(mat)} if \code{B=1}
+#' 
+#' @details  Note that the return element 'estimate' is inconsistent with the
+#'   element 'estimate' returned by 'binomial.test', which is "the estimated
+#'   probability of success". We find it more sensible to return an estimate of
+#'   the effect size (as e.g. done by 't.test'))
 #'   
 #' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 #' @seealso binom.test
@@ -48,6 +54,42 @@
 #' all(abs(fbt$p.value-pbt[, "p.value"]) < 1e-10)  ## same results
 #' all(abs(fbt$statistic-pbt[, "statistic.number of successes"]) < 1e-10)  ## same results
 #' 
+#' 
+#' 
+rowBinomialTests <- function(mat, categ, 
+                             alternative = c("two.sided", "less", "greater"), 
+                             warn = TRUE) {
+    alternative <- match.arg(alternative)
+    stopifnot(all(categ %in% c(0, 1)))
+    levels(categ) <- NULL
+    
+    if (is.vector(categ)) {
+        return(rowBinomialTests1(mat, categ, 
+                                 alternative = alternative, 
+                                 warn = warn))
+    } 
+    stopifnot(is.matrix(categ))
+    B <- ncol(categ)
+    m <- nrow(mat)
+    
+    pval0 <- matrix(NA_real_, nrow = m, ncol = B) 
+    stat0 <- matrix(NA_real_, nrow = m, ncol = B) 
+    est0 <- matrix(NA_real_, nrow = m, ncol = B) 
+    for (bb in 1:B) {
+        rwt <- rowBinomialTests1(mat, categ[, bb], 
+                                 alternative = alternative, 
+                                 warn = warn)
+        pval0[, bb] <- rwt$p.value
+        stat0[, bb] <- rwt$statistic
+        est[, bb] <- rwt$estimate
+    }
+    
+    list(p.value = pval0,
+         statistic = stat0,
+         estimate = est0)
+}
+
+
 #' @importFrom stats pbinom dbinom
 rowBinomialTests1 <- function(mat, categ, alternative = c("two.sided", "less", "greater"), warn = TRUE) {
     alternative <- match.arg(alternative)

@@ -15,8 +15,9 @@ rowWilcoxonTests(
 \item{mat}{A \code{m x n} numeric matrix whose rows correspond to variables and columns to
 observations}
 
-\item{categ}{A numeric vector of \code{n} categories in \eqn{0, 1} for the
-observations}
+\item{categ}{Either a numeric vector of \code{n} categories in \eqn{0, 1} for
+the observations, or a \code{n x B} matrix stacking \code{B} such vectors
+(typically permutations of an original vector of size \code{n})}
 
 \item{alternative}{A character string specifying the alternative hypothesis.
 Must be one of "two.sided" (default), "greater" or "less". As in
