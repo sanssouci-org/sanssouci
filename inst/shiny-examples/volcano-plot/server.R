@@ -150,129 +150,128 @@ shinyServer(function(input, output, session) {
   
   ## Cleaning data
   data <- 
-    eventReactive(input$buttonValidate,
-                  {
-                    withProgress(value = 0, message = "Upload Data... ", {
-                      data <- list()
-                      if (input$checkboxDemo){ #if example data set
-                        if(req(input$choiceGSEA)=='OurData'){ # cleaning for data from sanssouci.data
-                          setProgress(value = 0.4, detail = "SansSoucis data set ...")
-                          data$matrix <- expr_ALL #read data from sansSouci.data
-                          
-                          ### cleaning categories 
-                          categ <- colnames(data$matrix)
-                          data$categ <- rep(1, length(categ))
-                          data$categ[which(categ == "NEG")] <- 0
-                          
-                          data$geneNames <- rownames(data$matrix)
-                          
-                          setProgress(value = 0.7, detail = "Preparation of gene set data ...  ")
-                          
-                          bioFun <- expr_ALL_GO
-                          stopifnot(nrow(bioFun) == nrow(data$matrix))  ## sanity check: dimensions
-                          mm <- match(base::rownames(bioFun), base::rownames(data$matrix))
-                          stopifnot(!any(is.na(mm)))
-                          data$biologicalFunc <- bioFun[mm, ]
-                          rm(bioFun)
-                          data$boolValidation <- TRUE 
-                        } else { # cleaning data set from GSEA data set
-                          setProgress(value = 0.4, detail = "GSEA data set ...")
-                          rawData <- R.cache::memoizedCall(maPreproc,geo2kegg()[input$choiceGSEA])[[1]]
-                          
-                          data$matrix <- SummarizedExperiment::assays(rawData)$exprs
-                          
-                          cats <- SummarizedExperiment::colData(rawData)
-                          ww <- match(cats$Sample, base::colnames(data$matrix))
-                          categ <- cats$GROUP[ww]
-                          data$categ <- categ
-                          setProgress(value = 0.7, detail = "GSEA data set ...")
-                          
-                          data$geneNames <- base::rownames(data$matrix)
-                          
-                          data$biologicalFunc <- go.gs() #On a laissé sous forme de liste car on a adapté les fonctions qui en ont besoin. Plus rapide qu'en la transformant en matrice binaire
-                          
-                          data$boolValidation <- TRUE
-                        }
-                        
-                      } else { # if user use his own data
-                        req(input$fileData)
-                        req(fileData())
-                        file <- req(fileData())
-                        setProgress(value = 0.1, detail = "Read csv ...")
-                        data$matrix <- read.csv(file = file$datapath, row.names = 1, check.names=FALSE)
-                        
-                        data$boolDegrade <- (length(data$matrix) == 2 & all(sort(colnames(data$matrix)) == sort(c("fc","p.value")))) #est ce que la matrice est dégradée
-                        setProgress(value = 0.2, detail = "Test data ...")
-                        if (data$boolDegrade){ #cleaning degraded matrix
-                          setProgress(value = 0.4)
-                          data$df <- data$matrix
-                          data$geneNames <- base::rownames(data$matrix)
-                        } else { #cleaning expression matrix
-                          setProgress(value = 0.4, detail = "Clean data set ...")
-                          clean <- cleanMatrix(data$matrix) #see cleanMatrix function : 
-                          ### gve specific issue for non available matrix
-                          
-                          ### if matrix is not available, data$matrix == NULL allows to block the calibration JER and the printing  
-                          if(clean$boolValidation){ #if matrix is ok
-                            data$matrix = clean$data
-                          }else{ #if isn't 
-                            data$matrix=NULL
-                          }
-                          
-                          data$matrix.color <- clean$color #color of error message
-                          data$matrix.text <- clean$text #eroor message
-                          
-                          data$categ <- colnames(data$matrix)
-                          
-                          
-                          data$geneNames <- base::rownames(data$matrix)
-                          data$boolValidation <- clean$boolValidation
-                        }
-                        
-                        setProgress(value = 0.7, detail = "Preparation of gene set data ...")
-                        
-                        ## cleaning of gene set matrix
-                        fileGroup <- fileGroup()
-                        if (!is.null(fileGroup)){
-                          setProgress(value = 0.75, detail = "Read gene set data ...")
-                          T1 <- Sys.time()
-                          bioFun <- read.csv(file = fileGroup$datapath, row.names = 1, check.names=FALSE)
-                          T2 <- Sys.time()
-                          print(paste("read gene set", T2-T1))
-                          setProgress(value = 0.8, detail = "Cleaning of gene set data ...")
-                          cleanBio <- cleanBiofun(bioFun) # cleaning and message error
-                          
-                          data$bioFun.color <- cleanBio$color
-                          data$bioFun.text <- cleanBio$text
-                          
-                          bioFun <- cleanBio$biofun
-                          setProgress(value = 0.9, detail = "Matching ...")
-                          
-                          matchBio <- matchMatrixBiofun(matrixFunc = data$matrix, biofun = bioFun) #verification compatibility between the two matrices
-                          if(matchBio$boolValidation & cleanBio$boolValidation){ #if ok
-                            data$biologicalFunc <- matchBio$biofun
-                          } else { #if not ok
-                            data$biologicalFunc <- NULL
-                          }
-                          
-                          data$match.color <- matchBio$color
-                          data$match.text <- matchBio$text
-                          
-                          rm(bioFun)
-                        }
-                        
-                        # if matrix is not available (here degraded matrix), data$matrix == NULL allows to block the calibration JER and the thr is calculate with simes and k=m 
-                        if (data$boolDegrade){
-                          data$matrix <- NULL 
-                        } 
-                        
-                        
-                        
-                      }
-                      setProgress(value = 1, detail = "Done")
-                      return(data)
-                    })
-                  }
+    eventReactive(input$buttonValidate, {
+      withProgress(value = 0, message = "Upload Data... ", {
+        data <- list()
+        if (input$checkboxDemo){ #if example data set
+          if(req(input$choiceGSEA)=='OurData'){ # cleaning for data from sanssouci.data
+            setProgress(value = 0.4, detail = "SansSoucis data set ...")
+            data$matrix <- expr_ALL #read data from sansSouci.data
+            
+            ### cleaning categories 
+            categ <- colnames(data$matrix)
+            data$categ <- rep(1, length(categ))
+            data$categ[which(categ == "NEG")] <- 0
+            
+            data$geneNames <- rownames(data$matrix)
+            
+            setProgress(value = 0.7, detail = "Preparation of gene set data ...  ")
+            
+            bioFun <- expr_ALL_GO
+            stopifnot(nrow(bioFun) == nrow(data$matrix))  ## sanity check: dimensions
+            mm <- match(base::rownames(bioFun), base::rownames(data$matrix))
+            stopifnot(!any(is.na(mm)))
+            data$biologicalFunc <- bioFun[mm, ]
+            rm(bioFun)
+            data$boolValidation <- TRUE 
+          } else { # cleaning data set from GSEA data set
+            setProgress(value = 0.4, detail = "GSEA data set ...")
+            rawData <- R.cache::memoizedCall(maPreproc,geo2kegg()[input$choiceGSEA])[[1]]
+            
+            data$matrix <- SummarizedExperiment::assays(rawData)$exprs
+            
+            cats <- SummarizedExperiment::colData(rawData)
+            ww <- match(cats$Sample, base::colnames(data$matrix))
+            categ <- cats$GROUP[ww]
+            data$categ <- categ
+            setProgress(value = 0.7, detail = "GSEA data set ...")
+            
+            data$geneNames <- base::rownames(data$matrix)
+            
+            data$biologicalFunc <- go.gs() #On a laissé sous forme de liste car on a adapté les fonctions qui en ont besoin. Plus rapide qu'en la transformant en matrice binaire
+            
+            data$boolValidation <- TRUE
+          }
+          
+        } else { # if user use his own data
+          req(input$fileData)
+          req(fileData())
+          file <- req(fileData())
+          setProgress(value = 0.1, detail = "Read csv ...")
+          data$matrix <- read.csv(file = file$datapath, row.names = 1, check.names=FALSE)
+          
+          data$boolDegrade <- (length(data$matrix) == 2 & all(sort(colnames(data$matrix)) == sort(c("fc","p.value")))) #est ce que la matrice est dégradée
+          setProgress(value = 0.2, detail = "Test data ...")
+          if (data$boolDegrade){ #cleaning degraded matrix
+            setProgress(value = 0.4)
+            data$df <- data$matrix
+            data$geneNames <- base::rownames(data$matrix)
+          } else { #cleaning expression matrix
+            setProgress(value = 0.4, detail = "Clean data set ...")
+            clean <- cleanMatrix(data$matrix) #see cleanMatrix function : 
+            ### gve specific issue for non available matrix
+            
+            ### if matrix is not available, data$matrix == NULL allows to block the calibration JER and the printing  
+            if(clean$boolValidation){ #if matrix is ok
+              data$matrix = clean$data
+            }else{ #if isn't 
+              data$matrix=NULL
+            }
+            
+            data$matrix.color <- clean$color #color of error message
+            data$matrix.text <- clean$text #eroor message
+            
+            data$categ <- colnames(data$matrix)
+            
+            
+            data$geneNames <- base::rownames(data$matrix)
+            data$boolValidation <- clean$boolValidation
+          }
+          
+          setProgress(value = 0.7, detail = "Preparation of gene set data ...")
+          
+          ## cleaning of gene set matrix
+          fileGroup <- fileGroup()
+          if (!is.null(fileGroup)){
+            setProgress(value = 0.75, detail = "Read gene set data ...")
+            T1 <- Sys.time()
+            bioFun <- read.csv(file = fileGroup$datapath, row.names = 1, check.names=FALSE)
+            T2 <- Sys.time()
+            print(paste("read gene set", T2-T1))
+            setProgress(value = 0.8, detail = "Cleaning of gene set data ...")
+            cleanBio <- cleanBiofun(bioFun) # cleaning and message error
+            
+            data$bioFun.color <- cleanBio$color
+            data$bioFun.text <- cleanBio$text
+            
+            bioFun <- cleanBio$biofun
+            setProgress(value = 0.9, detail = "Matching ...")
+            
+            matchBio <- matchMatrixBiofun(matrixFunc = data$matrix, biofun = bioFun) #verification compatibility between the two matrices
+            if(matchBio$boolValidation & cleanBio$boolValidation){ #if ok
+              data$biologicalFunc <- matchBio$biofun
+            } else { #if not ok
+              data$biologicalFunc <- NULL
+            }
+            
+            data$match.color <- matchBio$color
+            data$match.text <- matchBio$text
+            
+            rm(bioFun)
+          }
+          
+          # if matrix is not available (here degraded matrix), data$matrix == NULL allows to block the calibration JER and the thr is calculate with simes and k=m 
+          if (data$boolDegrade){
+            data$matrix <- NULL 
+          } 
+          
+          
+          
+        }
+        setProgress(value = 1, detail = "Done")
+        return(data)
+      })
+    }
     )
   
   matrixChosen <- reactive ({ ## to keep nrow of the chosen matrix
@@ -385,8 +384,8 @@ shinyServer(function(input, output, session) {
   
   output$msgDegraded <- renderUI({
     tags$span(style= "color:grey", paste("A matrix containing p-values and fold change is detected.", 
-                                           "Thus, you cannot change the following advanced parameters:\n",
-                                           "Reference family = 'Simes',\n K = ", nrow(matrixChosen()$matrix)))
+                                         "Thus, you cannot change the following advanced parameters:\n",
+                                         "Reference family = 'Simes',\n K = ", nrow(matrixChosen()$matrix)))
   })
   
   observe({
@@ -1141,7 +1140,7 @@ shinyServer(function(input, output, session) {
   })
   
   
-    
+  
   observeEvent(userDTselectPrio(), {
     if(length(userDTselectPrio()) == 1){
       plotlyProxy("volcanoplotPriori", session) %>%

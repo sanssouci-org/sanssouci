@@ -125,12 +125,12 @@ shinyUI(fluidPage(
                                      choices = list("Simes" = "Simes", "Beta" = "Beta"), 
                                      selected = "Simes"),
                          uiOutput("inputK")#)
-                       # ), 
-                       # splitLayout(
-                       #   shinyjs::hidden(selectInput("refFamilyFAKE", label = "Reference family", 
-                       #                               choices = list("Simes" = "Simes", "Beta" = "Beta"), 
-                       #                               selected = "Simes")),
-                       #   shinyjs::hidden(uiOutput("inputKFAKE"))
+                         # ), 
+                         # splitLayout(
+                         #   shinyjs::hidden(selectInput("refFamilyFAKE", label = "Reference family", 
+                         #                               choices = list("Simes" = "Simes", "Beta" = "Beta"), 
+                         #                               selected = "Simes")),
+                         #   shinyjs::hidden(uiOutput("inputKFAKE"))
                        )),
       verbatimTextOutput("sorti"),
       tabsetPanel( id = "tabSelected",
