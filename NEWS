@@ -3,6 +3,17 @@
 Package: sansSouci
 ==================
 
+Version 0.10.1 [2021-04-14]
+
+* Update IIDEA vignette
+* Increased security and control of data insertion
+* Add possibility to upload csv containing only p.value and fold-change
+* Add gene set analysis for GSEAbenchmarkeR data set + vignette
+* Add example data sets from package GSEABenchmarkeR (issue #42)
+* Add self contained and competitive methods for enrichment analyses (issue #44)
+* Add time and progress bar
+* Use R.cache to memoize calibration results
+
 Version 0.10.0 [2021-03-12]
 
 * Updated documentation, vignettes and test scripts
