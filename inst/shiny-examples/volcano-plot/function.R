@@ -1,12 +1,47 @@
+namedGeo2kegg <- function(geo2kegg){
+  namesData <- list()
+  for (i in 1:length(geo2kegg)){
+    x <- geo2kegg[[i]]
+    ed <- Biobase::experimentData(x)
+    if(!any(ed@name == c('GSE781','GSE32676'))){
+      disease <- ed@other$disease
+      namesData[sprintf("%s (%s)", disease, ed@name)] = ed@name
+    }
+  }
+  return(namesData)
+}
+
+cleanGo.GS <- function(go.gs){
+  for(i in names(go.gs)){
+    incProgress(1/length(go.gs))
+    if(length(go.gs[[i]])<6){
+      go.gs[i] <- NULL
+    }
+  }
+  return(go.gs)
+  
+  # longueur3 <- function(x){
+  #   if(length(x)<6){
+  #     NULL
+  #   } else {
+  #     x
+  #   }
+  #   # ifelse(test = length(x) > 4, x, NULL)
+  # }
+  # 
+  # go.gs <- lapply(go.gs, longueur3)
+  # return(go.gs)
+}
+
 VolcanoPlotNico <- function (X, categ, thr, p = 1, q = 1, r = 0, cex = c(0.2, 0.6), 
-          col = c("#33333333", "#FF0000", "#FF666633"), pch = 19, ylim = NULL) 
+                             col = c("#33333333", "#FF0000", "#FF666633"), pch = 19, ylim = NULL) 
 {
   if (p < 1 && q < 1) {
     warning("Filtering both on p-values and BH-adjusted p-values")
   }
   m <- nrow(X)
   dex <- rowWelchTests(X, categ)
-
+  
   
   pval <- dex[["p.value"]]
   logp <- -log10(pval)
@@ -45,11 +80,11 @@ VolcanoPlotNico <- function (X, categ, thr, p = 1, q = 1, r = 0, cex = c(0.2, 0.
   lte <- "≤"
   gte <- "≥"
   title <- paste(c(sprintf("%s genes selected\nAt least %s true positives (FDP %s %s)",
-                     n12, TP12, lte, FDP12)))
+                           n12, TP12, lte, FDP12)))
   txtLeft <- paste(c(sprintf("%s genes\nTP %s %s\nFDP %s %s", n2, gte,
-                   TP2, lte, FDP2)))
+                             TP2, lte, FDP2)))
   txtRight <- paste(c(sprintf("%s genes\nTP %s %s\nFDP %s %s", n1, gte,
-                   TP1, lte, FDP1)))
+                              TP1, lte, FDP1)))
   
   ggplot(data= data.frame(pvalue=logp, fc=fc, color=cols, size=cexs, stringsAsFactors=TRUE), 
          aes(x=fc, y=logp, color=as.factor(color), size = as.factor(size))) + 
@@ -67,32 +102,170 @@ VolcanoPlotNico <- function (X, categ, thr, p = 1, q = 1, r = 0, cex = c(0.2, 0.
   
 }
 
+
+cleanMatrix <- function(matrixFunc){
+  text = ""
+  boolValidation = TRUE
+  color = "color:blue"
+  
+  for (i in 1:length(matrixFunc)){
+    if(!is.numeric(matrixFunc[,i])){
+      text <- "The matrix contains textual variable. We cannot use them."
+      boolValidation <- FALSE
+      color <- "color:red"
+      return(list(data = matrixFunc, text = text, boolValidation = boolValidation, color = color))
+    }
+  }
+  
+  colnam <- colnames(matrixFunc) #Control colnames(matrix)
+  valueColnam <- sort(unique(colnam))
+  if(length(valueColnam)==2){
+    if(any(valueColnam != c("0","1"))){
+      colnam[ colnam == valueColnam[1] ] <- 0
+      colnam[ colnam == valueColnam[2] ] <- 1
+      colnames(matrixFunc) <- colnam
+      text <- paste("The colnames of your matrix does not contains 0 or 1.We consider that", valueColnam[1] ,"becomes 0 and ", valueColnam[2]," becomes 1")
+      boolValidation <- TRUE
+      color <- "color:orange"
+    }
+  }else{
+    boolValidation <- FALSE
+    color <- "color:red"
+    text <- "The column names of your data contains more (or less) than 2 categories. Please use {0, 1} for the colnames of your matrix."
+  }
+  return(list(data = matrixFunc, text = text, boolValidation = boolValidation, color = color))
+}
+
+cleanBiofun <- function(biofun){
+  
+  text = ""
+  boolValidation = TRUE
+  color = "color:blue"
+  
+  # if biofun cotains at least one textual variable
+  for (i in 1:length(biofun)){
+    if(!is.numeric(biofun[,i])){
+      text <- "The gene set matrix contains textual variable. We cannot use them."
+      boolValidation <- FALSE
+      color <- "color:red"
+      return(list(biofun = biofun, text = text, boolValidation = boolValidation, color = color))
+    }
+  }
+  
+  if(!all(biofun == 0 | biofun==1)){
+    text <- "The gene set matrix contains other values than 0 or 1"
+    boolValidation <- FALSE
+    color <- "color:red"
+  }
+  
+  return(list(biofun = biofun, text = text, boolValidation = boolValidation, color = color))
+}
+
+matchMatrixBiofun <- function(matrixFunc, biofun){
+  text = ""
+  boolValidation = TRUE
+  color = "color:blue"
+  
+  mm <- match(rownames(biofun), rownames(matrixFunc))
+  biofun <- biofun[mm, ]
+  if(all(is.na(mm))){
+    text = "None of the lines of the gene set matrix correspond to the lines of the gene expression data matrix."
+    boolValidation = FALSE
+    color = "color:green"
+  }
+  
+  return(list(biofun = biofun, text = text, boolValidation = boolValidation, color = color))
+  
+}
+
 calcBounds <- function(listPval, thr){
   n <- length(listPval)
-  FP <- maxFP(listPval, thr = thr)
+  # curve_max_FP <- curveMaxFP(sort(listPval), sort(thr), "BNR2016")
+  # FP <- curve_max_FP[length(curve_max_FP)]
+  FP <- maxFP(sort(listPval), thr = sort(thr))
   TP <- n - FP
-  FDP <- round(FP/max(n, 1), 2)
+  FDP <- FP/max(n, 1)
   return(list(n=n, FP=FP, TP=TP, FDP=FDP))
+  
 }
 
 
-boundGroup <- function(df, bioFun, nameFunctions, thr){
+# boundGroup <- function(df, bioFun, nameFunctions, thr){
+#   table <- data.frame("Name" = c(), "# genes" = c(), "TP≥" = c(), "FDP≤"=c(), check.names = FALSE)
+#   for (func in nameFunctions){
+#     ids <- which(bioFun[, func] == 1)
+#     listPval <- df$pval[ids]
+#     bounds <- calcBounds(listPval = listPval, thr = thr)
+#     table <- rbind(table, data.frame(
+#       "Name" = addUrlLink(func), 
+#       "# genes" = bounds$n, 
+#       "TP≥" = as.integer(bounds$TP),
+#       "FDP≤" = bounds$FDP,
+#       check.names = FALSE))
+#   }
+#   table <- table[order(table["FDP≤"]),]
+#   return(table)
+#   
+# }
+
+boundGroup <- function(df, bioFun, thr){
+  # create data frame
   table <- data.frame("Name" = c(), "# genes" = c(), "TP≥" = c(), "FDP≤"=c(), check.names = FALSE)
-  for (func in nameFunctions){
-    ids <- which(bioFun[, func] == 1)
-    listPval <- df$pval[ids]
-    bounds <- calcBounds(listPval = listPval, thr = thr)
-    table <- rbind(table, data.frame(
-      "Name" = func, 
-      "# genes" = bounds$n, 
-      "TP≥" = as.integer(bounds$TP),
-      "FDP≤" = bounds$FDP,
-      check.names = FALSE))
+  # class of biofun
+  if(class(bioFun)=="list"){ 
+    nameFunctions <- names(bioFun)
+    for (func in nameFunctions){
+      incProgress(1/length(nameFunctions))
+      ids <- bioFun[[func]]
+      if (length(ids)>5){ #on ne prend que des groupes avec plus de 5 gènes
+        listPval <- df$pval[ids]
+        listPval <- listPval[!is.na(listPval)] #Calcul de la pvalue
+        if(length(listPval)>1){
+          bounds <- calcBounds(listPval = listPval, thr = thr) #calcul des bornes PH
+          table <- rbind(table, data.frame(
+            "Name" = addUrlLink(func), 
+            "# genes" = bounds$n, 
+            "TP≥" = as.integer(bounds$TP),
+            "FDP≤" = bounds$FDP,
+            check.names = FALSE))
+        }
+      } else {
+        print("length(ids)>2")
+      }
+    }
+  } else {
+    nameFunctions <- colnames(bioFun)
+    for (func in nameFunctions){
+      ids <- which(bioFun[, func] == 1)
+      listPval <- df$pval[ids]
+      bounds <- calcBounds(listPval = listPval, thr = thr)
+      table <- rbind(table, data.frame(
+        "Name" = addUrlLink(func), 
+        "# genes" = bounds$n, 
+        "TP≥" = as.integer(bounds$TP),
+        "FDP≤" = bounds$FDP,
+        check.names = FALSE))
+    }
   }
   table <- table[order(table["FDP≤"]),]
+  # print("boundGroup OK")
   return(table)
   
 }
+
+addUrlLink <- function(name){
+  if(grepl("GO:\\d+", name)){ # met ce lien spécifique si la structure GO:000000000... est dans le nom
+    url <- paste("https://www.ebi.ac.uk/QuickGO/term/",str_extract_all(name, "GO:\\d+"), sep="")
+    url <- paste('<a target="_blanck" href="', url, '" >',name, '</a>', sep="")
+    return(url)
+  } else {
+    return(name)
+  }
+}
+
+
+
+
 
 
 
@@ -159,6 +332,9 @@ boundGroup <- function(df, bioFun, nameFunctions, thr){
 # }
 
 thrYaxis <- function(thr, maxlogp){
+  if(maxlogp == Inf){
+    maxlogp <- 16
+  }
   df1 <- data.frame(num = 1:length(thr)-1, pvalue=-log10(thr))
   df2 <- data.frame(df1[c(1),])
   valeurTest <- df2[c(dim(df2)[1]),"pvalue"]
