@@ -7,6 +7,9 @@
 rowWelchTests(X, categ, alternative = c("two.sided", "less", "greater"))
 }
 \arguments{
+\item{X}{A \code{m x n} numeric matrix whose rows correspond to variables
+and columns to observations}
+
 \item{categ}{Either a numeric vector of \code{n} categories in \eqn{0, 1} for
 the observations, or a \code{n x B} matrix stacking \code{B} such vectors
 (typically permutations of an original vector of size \code{n})}
@@ -15,9 +18,6 @@ the observations, or a \code{n x B} matrix stacking \code{B} such vectors
 Must be one of "two.sided" (default), "greater" or "less". As in
 \code{\link{t.test}}, alternative = "greater" is the alternative that class
 1 has a larger mean than class 0.}
-
-\item{mat}{A \code{m x n} numeric matrix whose rows correspond to variables
-and columns to observations}
 }
 \value{
 A list containing the following components:

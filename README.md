@@ -7,13 +7,6 @@
  
 The goal of sansSouci is to perform *post hoc inference*: in a multiple testing context, sansSouci provides statistical guarantees on possibly user-defined and/or data-driven sets of hypotheses. 
 
-# Installation
-
-```r
-# install.packages("remotes")
-remotes::install_github("pneuvial/sanssouci@develop")
-```
-
 # Typical use cases in genomics and neuromaging
 
 - Differential gene expression studies in genomics: see  [differential expression vignette](https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html) and run [volcano plot shiny app](https://pneuvial.shinyapps.io/volcano-plot/)
@@ -31,4 +24,12 @@ Run [volcano plot shiny app](https://pneuvial.shinyapps.io/volcano-plot/)
 
 ![Volcano plot](man/figures/volcano-plot_leukemia_linear.png)
 
+# Installation
+
+```r
+# install.packages("remotes")
+remotes::install_github("pneuvial/sanssouci@develop")
+```
+
 This package is developed within the [SansSouci project](https://www.math.univ-toulouse.fr/~pneuvial/sanssouci).
+

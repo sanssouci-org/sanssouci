@@ -16,8 +16,6 @@ provided, a one-sample test is performed.}
 \item{B}{An integer value, the number of permutations to be performed}
 
 \item{rowTestFUN}{a vectorized testing function (same I/O as \link{rowWelchTests})}
-
-\item{alpha}{A numeric value in \verb{[0,1]}, the target risk}
 }
 \description{
 Get a matrix of statistics and p-values under the null hypothesis obtained by repeated permutation of class labels (two-sample tests)

@@ -30,14 +30,18 @@ calibrate0(
 of the input \code{categ}: for each hypothesis i, \code{p0[i,j]} is the
 p-value of the test of the i-th null hypothesis on the permuted categories}
 
-\item{alpha}{A numeric value in \verb{[0,1]}, the target risk}
+\item{alpha}{A numeric value in \verb{[0,1]}, the target (JER) risk}
 
-\item{family}{A character vector, the name of the reference family. Should be
-either "Simes" (aka "Linear") or "Beta"}
+\item{family}{A character value, the name of a threshold family. Should be
+one of "Linear", "Beta" and "Simes", or "Oracle". "Linear" and "Simes" families are
+identical.}
 
 \item{m}{The total numer of tested hypotheses. Defaults to \code{p0}}
 
 \item{K}{An integer value in \verb{[1,m]}, the number of elements in the reference family. Defaults to \code{m}}
+
+\item{p}{A vector of 'm' p.values, used for step-down control. If not
+provided, single step control is performed.}
 
 \item{max_steps_down}{A numeric value, the maximum number of steps down to
 perform. Defaults to 10 (but the algorithm generally converges in 1 or 2
@@ -48,7 +52,9 @@ steps).}
 \value{
 A list with elements
 \itemize{
-\item thr: A numeric vector of length K, such that the estimated probability that there exists an index k between 1 and K such that the k-th maximum of the test statistics of is greater than \code{thr[k]}, is less than alpha
+\item thr: A numeric vector of length K, such that the estimated probability that
+there exists an index k between 1 and K such that the k-th maximum of the
+test statistics of is greater than \code{thr[k]}, is less than alpha
 \item piv_stat: A vector of \code{B} pivotal statitics
 \item lambda: A numeric value, the result of the calibration
 }

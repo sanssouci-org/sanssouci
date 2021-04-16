@@ -23,6 +23,8 @@ Defaults to NULL.}
 
 \item{direction}{A character value, the direction used for building the tree.
 Must be one of  "bottom-up" or "top-down"}
+
+\item{...}{Further arguments to be passed to 'SansSouciStruct'}
 }
 \value{
 An object of class 'SansSouciStruct'

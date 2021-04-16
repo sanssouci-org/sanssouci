@@ -42,6 +42,7 @@ SansSouciStruct <- function(struct, leaves, truth = NULL) {
 #'   is built with the desired leaf size.
 #' @param direction A character value, the direction used for building the tree.
 #'   Must be one of  "bottom-up" or "top-down"
+#' @param ... Further arguments to be passed to 'SansSouciStruct'
 #' @seealso dyadic.from.leave.list dyadic.from.window.size dyadic.from.height
 #'   dyadic.from.max.height
 #' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020).
@@ -85,11 +86,7 @@ SansSouciDyadic <- function(m, leaf_size = NULL, height = NULL,
 #' q <- 7
 #' m <- s*2^q
 #'
-#' obj <- SansSouciDyadic(m, param = s, flavor = "window.size", direction = "top-down")
-#' s <- 100
-#' q <- 7
-#' m <- s*2^q
-#' obj <- SansSouciDyadic(m, s, flavor = "window.size", direction = "top-down")
+#' obj <- SansSouciDyadic(m, leaf_size = s, direction = "top-down")
 #' nHyp(obj)
 #' nLeaves(obj)
 #' mu <- gen.mu.leaves(m = m, K1 = 8, d = 0.9, grouped = TRUE, 
@@ -161,7 +158,7 @@ nLeaves.SansSouciStruct <- function(object) {
 #' s <- 100
 #' q <- 7
 #' m <- s*2^q
-#' obj <- SansSouciDyadic(m, s, flavor = "window.size", direction = "top-down")
+#' obj <- SansSouciDyadic(m, leaf_size = s, direction = "top-down")
 #' 
 #' mu <- gen.mu.leaves(m = m, K1 = 8, d = 0.9, grouped = TRUE, 
 #'   setting = "const", barmu = 3, leaf_list = obj$input$leaves)

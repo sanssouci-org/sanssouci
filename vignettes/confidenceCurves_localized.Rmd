@@ -59,7 +59,7 @@ More precisely, quoting @durand20post-hoc:
 We start by creating a binary tree structure and generating the signal:
 
 ```{r simulation}
-obj <- SansSouciDyadic(m, s, flavor = "window.size", direction = "top-down")
+obj <- SansSouciDyadic(m, leaf_size = s, direction = "top-down")
 mu <- gen.mu.leaves(m = m, K1 = K1, d = r, grouped = TRUE, setting = "const", 
                     barmu = barmu, leaf_list = obj$input$leaves)
 ```

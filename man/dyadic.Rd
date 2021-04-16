@@ -46,7 +46,7 @@ str(dd)
 dd <- dyadic.from.height(m, H = 3, method = 2)
 str(dd)
 
-dd <- dyadic.from.max.height(m, method=2)
+dd <- dyadic.from.height(m, method=2)
 str(dd)
 
 leaf_list <- dd$leaf_list

@@ -35,11 +35,7 @@ s <- 100
 q <- 7
 m <- s*2^q
 
-obj <- SansSouciDyadic(m, param = s, flavor = "window.size", direction = "top-down")
-s <- 100
-q <- 7
-m <- s*2^q
-obj <- SansSouciDyadic(m, s, flavor = "window.size", direction = "top-down")
+obj <- SansSouciDyadic(m, leaf_size = s, direction = "top-down")
 nHyp(obj)
 nLeaves(obj)
 mu <- gen.mu.leaves(m = m, K1 = 8, d = 0.9, grouped = TRUE, 

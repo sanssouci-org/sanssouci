@@ -1,6 +1,6 @@
 #' Welch T-tests for rows of a matrix
 #'
-#' @param mat A \code{m x n} numeric matrix whose rows correspond to variables
+#' @param X A \code{m x n} numeric matrix whose rows correspond to variables
 #'   and columns to observations
 #'
 #' @param categ Either a numeric vector of \code{n} categories in \eqn{0, 1} for
@@ -110,7 +110,7 @@ rowWelchTests <- function(X, categ,
 #'   follow the rule that 'alternative = "greater"' is the alternative that 'x'
 #'   has a larger  mean than 'y'.
 #'
-#' @export
+#' @noRd
 #' @importFrom stats pt
 #' @examples
 #'
@@ -125,7 +125,8 @@ rowWelchTests <- function(X, categ,
 #' all.equal(swt$parameter, target$parameter, check.attributes = FALSE)
 #' 
 #' target <- t.test(x, y, alternative = "greater")
-#' swt <- suffWelchTests(mean(x), mean(y), sd(x), sd(y), length(x), length(y), alternative = "greater")
+#' swt <- suffWelchTests(mean(x), mean(y), sd(x), sd(y), 
+#'   length(x), length(y), alternative = "greater")
 #' all.equal(swt$statistic, target$statistic, check.attributes = FALSE)
 #' all.equal(swt$p.value, target$p.value, check.attributes = FALSE)
 #' all.equal(swt$parameter, target$parameter, check.attributes = FALSE)
@@ -232,10 +233,9 @@ categCheck <- function(categ, n) {
 #'   follow the rule that 'alternative = "greater"' is the alternative that 'x'
 #'   has a larger  mean than 'y'.
 #'
-#' @export
 #' @importFrom stats pt
+#' @noRd
 #' @examples
-#' \dontrun{
 #' # Reproducing the results of the 't.test' function
 #'
 #' x <- rnorm(100)
@@ -247,12 +247,13 @@ categCheck <- function(categ, n) {
 #' all.equal(swt$parameter-target$parameter, check.attributes = FALSE)
 #' 
 #' target <- t.test(x, y, alternative = "greater")
-#' swt <- suffWelchTests1(mean(x), mean(y), sd(x), sd(y), length(x), length(y), alternative = "greater")
+#' swt <- suffWelchTests1(mean(x), mean(y), sd(x), sd(y), 
+#'   length(x), length(y), alternative = "greater")
 #' all.equal(swt$statistic, target$statistic, check.attributes = FALSE)
 #' all.equal(swt$p.value, target$p.value, check.attributes = FALSE)
 #' all.equal(swt$parameter, target$parameter, check.attributes = FALSE)
-#' }
 
+#' @noRd
 suffWelchTests1 <- function(mx, my, sx, sy, nx, ny, 
                           alternative = c("two.sided", "less", "greater")) {
     alternative <- match.arg(alternative)
@@ -326,14 +327,12 @@ rowWelchTests1 <- function(mat, categ, alternative = c("two.sided", "less", "gre
 #' 
 #' @author Pierre Neuvial
 #'   
+#' @noRd
 #' @examples
 #' 
-#' \dontrun{
-#' # not exported
 #' mat <- matrix(rnorm(3051*38), ncol = 38)
 #' cls <- rep(c(0, 1), times = c(27, 11))
 #' stats <- getSummaryStats(mat, categ = cls) 
-#' }
 getSummaryStats <- function(mat, categ) {
     stopifnot(ncol(mat) == length(categ))
     cats <- sort(unique(categ))

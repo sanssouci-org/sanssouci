@@ -12,17 +12,11 @@ get_pivotal_stat(p0, t_inv = t_inv_linear, m = nrow(p0), K = m)
 of the input \code{categ}: for each hypothesis i, \code{p0[i,j]} is the
 p-value of the test of the i-th null hypothesis on the permuted categories}
 
-\item{t_inv}{An inverse threshold function (same I/O as \link{t_inv_linear})}
+\item{t_inv}{An inverse threshold function (same I/O as 't_inv_linear')}
 
 \item{m}{The total numer of tested hypotheses. Defaults to \code{p0}}
 
 \item{K}{An integer value in \verb{[1,m]}, the number of elements in the reference family. Defaults to \code{m}}
-
-\item{alpha}{A numeric value in \verb{[0,1]}, the target risk}
-
-\item{family}{A character value, the name of a threshold family. Should be
-one of "Linear", "Beta" and "Simes". "Linear" and "Simes" families are
-identical.}
 }
 \value{
 A vector of length \code{B} pivotal statitics, whose j-th entry

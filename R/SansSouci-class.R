@@ -22,11 +22,6 @@
 #' print(res)
 #' label(res)
 #'
-#' set.seed(234)
-#' system.time(res <- fit(a, B = 100, alpha = 0.1, flavor = "v1"))
-#' print(res)
-#' label(res)
-
 #' res <- fit(a, B = 100, alpha = 0.1, family="Beta", K=10)
 #' label(res)
 #' 
@@ -71,7 +66,7 @@ SansSouci <- function(Y, groups, truth = NULL) {
 #' 
 #' # Adaptive Simes (lambda-calibration)
 #' set.seed(542)
-#' res <- fit(obj, B = 100, alpha = alpha, family = "Simes", flavor = "v1")
+#' res <- fit(obj, B = 100, alpha = alpha, family = "Simes")
 #' plot(res)
 #' volcanoPlot(res, q = 0.05, r = 0.2)
 #' 
@@ -96,9 +91,11 @@ SansSouci <- function(Y, groups, truth = NULL) {
 #'               "Oracle" = predict(oracle, all = TRUE))
 #' plotConfCurve(confs)
 #' 
+#' \dontrun{
 #' # Use wilcoxon tests instead of Welch tests
 #' res <- fit(obj, B = 100, alpha = 0.1, rowTestFUN = rowWilcoxonTests)
 #' volcanoPlot(res, q = 0.05, r = 0.2)
+#' }
 
 SansSouciSim <- function(...) {
     sim <- gaussianSamples(...)
@@ -259,18 +256,35 @@ print.SansSouci <- function(x, ..., verbose = FALSE) {
 #' @export 
 generics::fit
 
-#' @describeIn calibrateJER Fit SansSouci object
+#' Fit SansSouci object
 #' @param object An object of class `SansSouci`
-#' @param family A character value which can be \describe{
-#'   \item{Simes}{The classical family of thresholds introduced by Simes (1986):
-#'   \eqn{\alpha*k/m}. This family yields JER control if the test
-#'   statistics are positively dependent (PRDS) under H0.}
+#' @param alpha A numeric value in `[0,1]`, the target (JER) risk
+#' @param B An integer value, the number of permutations to be performed
+#' @param alternative A character string specifying the alternative hypothesis.
+#'   Must be one of "two.sided" (default), "greater" or "less".
+#' @param rowTestFUN A (vectorized) test function. Defaults to [rowWelchTests].
+#' @param family A character value, the name of a threshold family. Should be
+#'   one of "Linear", "Beta" and "Simes", or "Oracle". "Linear" and "Simes" families are
+#'   identical.
+#'   
+#'   - Simes/Linear: The classical family of thresholds introduced by Simes (1986).
+#'   This family yields JER control if the test statistics are positively
+#'   dependent (PRDS) under H0.
 #'
-#'    \item{Beta}{A family of thresholds that achieves "balanced" JER control under independence}
-#'    
-#'   \item{Oracle}{A family such that the associated bounds correspond to the true numbers/proportions of true/false positives. "truth" must be available in object$input$truth.}
-#'   }
+#'   - Beta: A family of thresholds that achieves "balanced" JER control under
+#'   independence
+#'
+#'   - Oracle A family such that the associated bounds correspond to the true
+#'   numbers/proportions of true/false positives. "truth" must be available in
+#'   object$input$truth.
+#'   
+#' @param max_steps_down A numeric value, the maximum number of steps down to
+#'   perform. Defaults to 10 (but the algorithm generally converges in 1 or 2
+#'   steps).
+#' @param K An integer value in `[1,m]`, the number of elements in the 
+#'   reference family. Defaults to m
 #' @param flavor A character value (for internal use)
+#' 
 #' @param force A boolean value: should the permutation p-values and pivotal statistics be re-calculated ? Defaults to `FALSE`
 #' @param verbose A boolean value: should extra info be printed? Defaults to `FALSE`
 #' @param ... Not used
@@ -282,7 +296,7 @@ generics::fit
 fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
                           rowTestFUN = NULL, 
                           alternative = c("two.sided", "less", "greater"),
-                          family = c("Simes", "Beta", "Oracle"), 
+                          family = c("Simes", "Linear", "Beta", "Oracle"), 
                           max_steps_down = 10L, K = nHyp(object), 
                           flavor = c("v1", "v0"),
                           force = FALSE,
@@ -353,39 +367,39 @@ fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
     
     if (family == "Beta" && K == m) {
         warning("For the 'Beta' family we recommend choosing K < m")
-    } 
+    }
     
-    if (flavor == "v0") {
-        if (B > 0 && family != "Oracle") {
-            cal <- calibrateJER(X = Y, categ = groups, B = B, alpha = alpha, 
-                                alternative = alternative, 
-                                rowTestFUN = rowTestFUN, 
-                                refFamily = family, 
-                                maxStepsDown = max_steps_down,
-                                K = K, verbose = verbose)
-        } 
-        else { # no calibration!
-            rwt <- rowTestFUN(mat = Y, categ = groups, alternative = alternative)
-            p.values <- rwt$p.value
-            fc <- rwt$estimate
-            lambda <- alpha
-            if (family %in% c("Simes", "Linear")) {
-                thr <- SimesThresholdFamily(m, kMax = K)(alpha)
-            } else if (family == "Beta") {
-                thr <- BetaThresholdFamily(m, kMax = K)(alpha)
-            } else if (family == "Oracle") {
-                thr <- object$input$truth
-            }
-            cal <- list(p.values = p.values,
-                        piv_stat = NULL,
-                        thr = thr,
-                        lambda = alpha,
-                        conf_bound = NULL)
-            if (n_groups > 1) {
-                cal$estimate <- fc
-            }
-        }
-    } else if (flavor == "v1") {
+    # if (flavor == "v0") {
+    #     if (B > 0 && family != "Oracle") {
+    #         cal <- calibrateJER(X = Y, categ = groups, B = B, alpha = alpha, 
+    #                             alternative = alternative, 
+    #                             rowTestFUN = rowTestFUN, 
+    #                             refFamily = family, 
+    #                             maxStepsDown = max_steps_down,
+    #                             K = K, verbose = verbose)
+    #     } 
+    #     else { # no calibration!
+    #         rwt <- rowTestFUN(mat = Y, categ = groups, alternative = alternative)
+    #         p.values <- rwt$p.value
+    #         fc <- rwt$estimate
+    #         lambda <- alpha
+    #         if (family %in% c("Simes", "Linear")) {
+    #             thr <- SimesThresholdFamily(m, kMax = K)(alpha)
+    #         } else if (family == "Beta") {
+    #             thr <- BetaThresholdFamily(m, kMax = K)(alpha)
+    #         } else if (family == "Oracle") {
+    #             thr <- object$input$truth
+    #         }
+    #         cal <- list(p.values = p.values,
+    #                     piv_stat = NULL,
+    #                     thr = thr,
+    #                     lambda = alpha,
+    #                     conf_bound = NULL)
+    #         if (n_groups > 1) {
+    #             cal$estimate <- fc
+    #         }
+    #     }
+    # } else if (flavor == "v1") {
         cal <- rowTestFUN(Y, groups, alternative = alternative)
         p.values <- cal$p.value
         if (B > 0 && family != "Oracle") {
@@ -431,7 +445,7 @@ fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
                           "Oracle" = object$input$truth)
             cal$thr <- thr
         }
-    }
+    # }
     object$output <- cal
     object
 }

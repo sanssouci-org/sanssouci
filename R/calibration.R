@@ -7,7 +7,6 @@
 #'   specifying the column indices of the first and second samples. If not
 #'   provided, a one-sample test is performed.
 #' @param B An integer value, the number of permutations to be performed
-#' @param alpha A numeric value in `[0,1]`, the target risk
 #' @param rowTestFUN a vectorized testing function (same I/O as [rowWelchTests])
 #' 
 #' @details The element 'p.value' of the output is a `m x B` matrix whose entry i,j corresponds to `p_{(i)}(g_j.X)` with notation of the AoS 2020 paper cited below (section 4.5).
@@ -57,14 +56,10 @@ get_perm <- function(X, categ, B,
 #' Get a vector of pivotal statistics associated
 #'   to permutation p-values and to a reference family
 #'
-#' @param alpha A numeric value in `[0,1]`, the target risk
-#' @param family A character value, the name of a threshold family. Should be
-#'   one of "Linear", "Beta" and "Simes". "Linear" and "Simes" families are
-#'   identical.
 #' @param p0 A `m x B` matrix. The j-th ow corresponds to a permutation
 #'   of the input `categ`: for each hypothesis i, `p0[i,j]` is the
 #'   p-value of the test of the i-th null hypothesis on the permuted categories
-#' @param t_inv  An inverse threshold function (same I/O as [t_inv_linear])
+#' @param t_inv  An inverse threshold function (same I/O as 't_inv_linear')
 #' @param m The total numer of tested hypotheses. Defaults to `p0`
 #' @param K An integer value in `[1,m]`, the number of elements in the reference family. Defaults to `m`
 #' 
@@ -119,17 +114,23 @@ get_pivotal_stat <- function(p0,
 
 
 #' Perform JER calibration from randomization p-values
-#' 
+#'
 #' @inheritParams get_pivotal_stat
-#' @param family A character vector, the name of the reference family. Should be
-#'   either "Simes" (aka "Linear") or "Beta"
-#' @param piv_stat0 Don't use! Should be removed soon...
+#' @param alpha A numeric value in `[0,1]`, the target (JER) risk
+#' @param family A character value, the name of a threshold family. Should be
+#'   one of "Linear", "Beta" and "Simes", or "Oracle". "Linear" and "Simes" families are
+#'   identical.
+#' @param p A vector of 'm' p.values, used for step-down control. If not
+#'   provided, single step control is performed.
 #' @param max_steps_down A numeric value, the maximum number of steps down to
 #'   perform. Defaults to 10 (but the algorithm generally converges in 1 or 2
 #'   steps).
+#' @param piv_stat0 Don't use! Should be removed soon...
 #' 
 #' @return A list with elements
-#' - thr: A numeric vector of length K, such that the estimated probability that there exists an index k between 1 and K such that the k-th maximum of the test statistics of is greater than `thr[k]`, is less than alpha
+#' - thr: A numeric vector of length K, such that the estimated probability that
+#' there exists an index k between 1 and K such that the k-th maximum of the
+#' test statistics of is greater than `thr[k]`, is less than alpha
 #' - piv_stat: A vector of `B` pivotal statitics
 #' - lambda: A numeric value, the result of the calibration
 #' 
