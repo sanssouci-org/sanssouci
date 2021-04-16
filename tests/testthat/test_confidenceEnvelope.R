@@ -38,9 +38,7 @@ test_that("Consistency between outputs of 'fit', 'bound' and 'confCurveFromFam'"
     obj <- SansSouciSim(m = m, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
     cal <- fit(obj, alpha = alpha, B = 1e2, family = "Simes")    
     cb0 <- predict(cal, all=TRUE)
-    cb1 <- cal$output$conf_bound
-    expect_identical(cb0, cb1)
-    
+
     # using 'confCurveFromFam'
     lambda <- cal$output$lambda
     cb2 <- confCurveFromFam(pValues(cal), "Simes", param = lambda)

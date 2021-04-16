@@ -23,8 +23,8 @@ Generate one-sided p-values associated to a given signal with equi-correlated
 noise
 }
 \examples{
-m <- 500
-s <- 50
+m <- 250
+s <- 25
 K1 <- floor(m/(s * 4))
 d <- 1
 m1 <- s*K1*d
@@ -43,23 +43,23 @@ op <- order(pvals)
 Vp <- curveVstar_tree(treeFam, op)
 
 # Simes
+VpS <- sapply(1:m, FUN=function(kk) posthocBySimes(pvals, op[1:kk], alpha))
 ce <- confCurveFromFam(pvals, refFamily = "Simes", param = alpha, what = "FP")
-VpS <- ce$bound
 
 plot(1:m, 1:m-Vp, t = 's',
-     xlim = c(0, 2*m1), ylim = c(0, m1))
+     xlim = c(0, 2*m1), ylim = c(0, m1), 
+     ylab = "Lower bound on true positives")
 lines(1:m, 1:m-VpS, t = 's', col = 3)
 
 # order by 'mu' (favorable to DKWM)
 omu <- order(mu, decreasing = TRUE)
 Vmu <- curveVstar_tree(treeFam, omu)
 thrSimes <- SimesThresholdFamily(m)(alpha)
-#VmuS <- curveMaxFP(pvals[omu], thrSimes) # does not work as pvals[omu] can be non-increasing ??
-#VmuS <- curveMaxFP(pvals[omu], thrSimes, flavor = "BNR2014") # works but is slow!
 SmuS <- sapply(1:m, FUN=function(kk) posthocBySimes(pvals, omu[1:kk], alpha))
 
 plot(1:m, 1:m-Vmu, t = 's',
-     xlim = c(0, 2*m1), ylim = c(0, m1))
+     xlim = c(0, 2*m1), ylim = c(0, m1),
+     ylab = "Lower bound on true positives")
 lines(1:m, SmuS, t = 's', col = 3)
 }
 \references{
