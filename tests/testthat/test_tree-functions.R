@@ -9,12 +9,13 @@ test_that("Vanilla test for tree functions", {
         expect_identical(names(dd), c("leaf_list", "C"))
     }
 
-    dd <- dyadic.from.window.size(m, s = 2, method = 2)
+    meth <- sample(2, 1)
+    dd <- dyadic.from.window.size(m, s = 2, method = meth)
     check_tree(dd)
     
-    dd <- dyadic.from.height(m, H = 3, method = 2)
+    dd <- dyadic.from.height(m, H = 3, method = meth)
     check_tree(dd)
     
-    dd <- dyadic.from.max.height(m, method=2)
+    dd <- dyadic.from.height(m, method = meth)
     check_tree(dd)
 })

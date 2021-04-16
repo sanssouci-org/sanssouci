@@ -66,8 +66,14 @@ mu <- gen.mu.leaves(m = m, K1 = 8, d = 0.9, grouped = TRUE,
 pvalues <- gen.p.values(m = m, mu = mu, rho = 0)
 
 alpha <- 0.05
-res <- fit(obj, alpha, pvalues, "DKWM")
-predict(res)
+S1 <- which(mu != 0)
+
+res_DKWM <- fit(obj, alpha, pvalues, "DKWM")
+predict(res_DKWM, S = S1, what = "FP")
+
+res_Simes <- fit(obj, alpha, pvalues, "Simes")
+predict(res_Simes, S = S1, what = "FP")
+
 }
 \references{
 Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.

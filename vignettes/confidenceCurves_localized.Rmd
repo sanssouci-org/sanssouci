@@ -130,14 +130,6 @@ V <- sapply(idxs, FUN = function(ii) {
   predict(res_DKWM, S = seq_len(ii), what = "FP")
 })
 ord <- order(pvalues)
-if (FALSE) {
-  VV <- sapply(idxs, FUN = function(ii) {
-    V.star(ord[1:ii], 
-           C = obj$input$struct, 
-           ZL = res_DKWM$output$ZL, 
-           leaf_list = obj$input$leaves)
-  })
-}
 res[["Tree"]] <- data.frame(idxs, V, method = "Tree")
 ```
 
@@ -149,15 +141,6 @@ label(res_DKWM_part)
 V <- sapply(idxs, FUN = function(ii) {
   predict(res_DKWM_part, S = seq_len(ii), what = "FP")
 })
-
-if (FALSE) {
-  C <- obj$input$struct
-  C0 <- C[length(C)]
-  ZL <- zetas.tree(C = C0, leaf_list = obj$input$leaves, zeta.DKWM, pvalues, alpha = alpha)
-  VV <- sapply(idxs, FUN = function(ii) {
-    V.star(ord[1:ii], C0, ZL, leaf_list = obj$input$leaves)
-  })
-}
 res[["Partition"]] <- data.frame(idxs, V, method = "Partition")
 ```
 

@@ -3,16 +3,31 @@ test_that("Correctness of the constructor of SansSouciStruct", {
     q <- 7
     m <- s*2^q
 
-    obj <- SansSouciDyadic(m, s, flavor = "window.size", direction = "top-down")
+    dirs <- c("bottom-up", "top-down")
+    direction <- sample(dirs, 1)
+    dir12 <- switch(direction, "bottom-up" = 1, "top-down" = 2)
+    
+    expect_warning(SansSouciDyadic(m, leaf_size = s, height = 8, direction = direction))
+    obj <- SansSouciDyadic(m, leaf_size = s, direction = direction)
     expect_s3_class(obj, "SansSouciStruct")
 
-    dd <- dyadic.from.window.size(m, s, method = 2)
+    dd <- dyadic.from.window.size(m, s, method = dir12)
     obj1 <- SansSouciStruct(dd$C, dd$leaf_list)
     expect_s3_class(obj, "SansSouciStruct")
 
     expect_identical(obj1, obj)
     rm(obj1)
     
+    obj <- SansSouciDyadic(m, height = 8, direction = direction)
+    expect_s3_class(obj, "SansSouciStruct")
+    
+    dd <- dyadic.from.height(m, 8, method = dir12)
+    obj1 <- SansSouciStruct(dd$C, dd$leaf_list)
+    expect_s3_class(obj, "SansSouciStruct")
+    
+    expect_identical(obj1, obj)
+    rm(obj1)
+
     expect_equal(names(obj), c("input", "parameters", "output"))
     expect_null(obj$parameters)
     expect_null(obj$output)
@@ -34,7 +49,7 @@ test_that("'fit.SansSouciStruct' reproduces the results of 'Vstar'", {
     q <- 7
     m <- s*2^q
     
-    obj <- SansSouciDyadic(m, s, flavor = "window.size", direction = "top-down")
+    obj <- SansSouciDyadic(m, leaf_size = s, direction = "top-down")
     
     K1 <- 8
     r <- 0.9

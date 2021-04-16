@@ -486,3 +486,70 @@ plot.SansSouci <- function(x, y, xmax = nHyp(x), ...) {
     plotConfCurve(cb, xmax = xmax)
 }
 
+#' Post hoc confidence bounds on the true/false positives
+#' 
+#' @param object An object of class 'SansSouci'
+#' @param S A subset of indices
+#' @param what A character vector, the names of the post hoc bounds to be
+#'   computed, among:
+#' 
+#' - FP: Upper bound on the number of false positives in the 'x' most significant items
+#' - TP: Lower bound on the number of true positives in the 'x' most significant items
+#' - FDP: Upper bound on the proportion of false positives in the 'x' most significant items
+#' - TP: Lower bound on the proportion of true positives in the 'x' most significant items
+#' 
+#' Defaults to `c("TP", "FDP")`
+#' @param all A logical value: should the bounds for all ordered subsets of `S` be returned? If `FALSE` (the default), only the bound for `S` is returned
+#' @param ... Not used
+#' 
+#' @return If `all` is `FALSE` (the default), only the value of the bound is returned. Otherwise, a `data.frame` is return, with |S| rows and 4 columns:
+#' - x: Number of most significant items selected
+#' - label: Label for the procedure, typically of the form 'family(param)'
+#' - bound: Value of the post hoc bound
+#' - stat: Type of post hoc bound, as specified by argument `bound`.
+#' 
+#' @importFrom stats predict
+#' @export
+#' @examples
+#' 
+#' # Generate Gaussian data and perform multiple tests
+#' obj <- SansSouciSim(m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
+#' res <- fit(obj, B = 100, alpha = 0.1)
+#' 
+#' # post hoc bounds for all hypotheses
+#' predict(res)
+#'
+#' # confidence curve
+#' cb <- predict(res, all = TRUE)
+#' head(cb)
+#' plot(res)
+#' 
+#' # confidence curve for a subset
+#' S <- which(foldChanges(res) > 0.3)
+#' plot(res, S = S)
+#' 
+#' # plot two confidence curves
+#' res_beta <- fit(obj, B = 100, alpha = 0.1, family = "Beta", K = 20)
+#' cb_beta <- predict(res_beta, all = TRUE)
+#' 
+#' bounds <- list("Simes"= cb, 
+#'                    "Beta" = cb_beta)
+#' plotConfCurve(bounds, xmax = 200)
+#' 
+predict.SansSouci <- function(object, S = seq_len(nHyp(object)), 
+                              what = c("TP", "FDP"), all = FALSE, ...) {
+    p.values <- pValues(object)
+    thr <- thresholds(object)
+    lab <- label(object)
+    if (max(S) > nHyp(object)) {
+        stop("'S' is not a subset of hypotheses")
+    }
+    bounds <- posthoc_bound(p.values, S = S, thr = thr, lab = lab, what = what, all = all)
+    if (!all) {
+        bounds <- bounds[, "bound"]
+        if (length(bounds) > 1) {
+            names(bounds) <- what
+        }
+    }
+    return(bounds)
+}
