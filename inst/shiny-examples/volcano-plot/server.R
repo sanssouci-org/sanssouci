@@ -375,9 +375,9 @@ shinyServer(function(input, output, session) {
   })
   
   numK <- reactiveVal()
-  observe({
-    req(matrixChosen())
-    newValue <- req(nrow(matrixChosen()$matrix))
+  observeEvent(data(),{   #si les paramètres ne sont pas activés, input$valueK n'existe pas et donc on a pas le bon résultat ... pourquoi ? CalibrateJER devrait gérer si K est null non ? 
+    req(data())
+    newValue <- req(nrow(data()$matrix))
     numK(newValue)
   })
   # isolate( numK(req( nrow(matrixChosen()$matrix))))
@@ -385,7 +385,6 @@ shinyServer(function(input, output, session) {
     newValue <- req(input$valueK)
     numK(newValue)
   })
-  
   
   
   # If degraded matrix is available 
@@ -432,7 +431,7 @@ shinyServer(function(input, output, session) {
       # print(paste('b = ', numB()))
       # print(paste("alternative = ", alternative()))
       # print(paste("ref framily = ", refFamily()))
-      # print(paste("k = ", numK()))
+      # print(paste("cal : k = ", numK()))
       cal <- R.cache::memoizedCall(calibrateJER,
                                    req(data()$matrix), # if data()$matrix == NULL, not perform [-> not available matrix or degraded matrix]
                                    categ = data()$categ, 
@@ -1021,6 +1020,7 @@ shinyServer(function(input, output, session) {
   })
   
   output$OutQtableBoundsGroup <- renderUI({
+    req(tableBoundsGroup())
     popify(el = bsButton("QtableBoundsGroup", label = "", icon = icon("question"), style = "info", size = "extra-small"), 
            title = "Data", content = paste("This table prints your post-hoc bounds for your selections."  ,
                                            "FDP : False discovery Proportion.",
@@ -1125,7 +1125,8 @@ shinyServer(function(input, output, session) {
     })
   })
   
-  observeEvent(input$choiceYaxis, { #when we choose a different y axis 
+  observeEvent({input$choiceYaxis
+    yaxis()}, { #when we choose a different y axis 
     plotlyProxy("volcanoplotPriori", session) %>%
       plotlyProxyInvoke("relayout", list(yaxis = yaxis()))
     
