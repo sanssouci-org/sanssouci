@@ -74,7 +74,7 @@ volcanoPlot.SansSouci <- function(x,
 #' 
 #' @importFrom graphics abline legend rect title
 #' @importFrom stats p.adjust
-#' @seealso Volcano plot shiny app at \url{https://pneuvial.shinyapps.io/volcano-plot/}
+#' @seealso Volcano plot shiny app at \url{ https://shiny-iidea-sanssouci.apps.math.cnrs.fr/}
 
 volcanoPlot.numeric <- function(x, fc, thr,
                         p = 1, q = 1, r = 0,

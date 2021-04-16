@@ -30,7 +30,7 @@ Then, we introduce more powerful post hoc methods (introduced by @blanchard20pos
 - confidence curves (envelopes) for the true or false positives
 - statistical inference on volcano plots
 
-The methods described in this vignette are described in detail in the book chapter @BNR:chap and in the paper @blanchard20post-hoc. A shiny application for volcano plots is also available from https://pneuvial.shinyapps.io/volcano-plot/.
+The methods described in this vignette are described in detail in the book chapter @BNR:chap and in the paper @blanchard20post-hoc. A shiny application for volcano plots is also available from  https://shiny-iidea-sanssouci.apps.math.cnrs.fr/.
 
 ```{r install-r-packages, results='hide', message=FALSE, eval=FALSE}
 require("ggplot2") || install.packages("ggplot2")
@@ -241,7 +241,7 @@ Both calibrated curves outperform the Simes curve in this example.
 
 # Volcano plots
 
-For an interactive volcano plot, see the [volcano plot shiny application](https://pneuvial.shinyapps.io/volcano-plot/).
+For an interactive volcano plot, see the [volcano plot shiny application]( https://shiny-iidea-sanssouci.apps.math.cnrs.fr/).
 
 ```{r volcano-setup}
 q <- 0.05
@@ -251,7 +251,7 @@ r <-  0.3
 Let us assume that we are interested in genes selected by the BH procedure at level $q = `r q`$ and whose fold change is larger than $r = `r r`$ in absolute value.  The "fold change" is defined as the difference between the expression means of the two groups compared; it is an estimate of the effect size of a gene. This double selection corresponds to two sets of genes, with positive/negative fold change, which can be represented in the following plot:
 
 
-```{r volcano-plot-Simes}
+```{r volcano-Simes}
 ylim <- c(0, 6)
 volcanoPlot(res_Simes, q = q, r = r, ylim = ylim)
 ```
@@ -260,13 +260,13 @@ This type of plot is called a "volcano plot" @CC2003. Post hoc inference makes i
 
 The substantial gain in power offered by the above-described calibration is illustrated as follows for the Simes reference family:
 
-```{r volcano-plot-Simes-calibrated}
+```{r volcano-Simes-cal}
 volcanoPlot(res, q = q, r = r, ylim = ylim)
 ```
 
 and for the Beta reference family.
 
-```{r volcano-plot-Beta-calibrated}
+```{r volcano-Beta-cal}
 volcanoPlot(res_Beta, q = q, r = r, ylim = ylim)
 ```
 
