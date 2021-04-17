@@ -90,8 +90,7 @@ alpha <- 0.05
 
 ```{r ordered-p-values}
 ord <- order(pvalues)
-idxs <- round(c(seq(from = 1, to = 2*m1, length = 30),
-                seq(from = 2*m1, to = m, length = 10)[-1]))
+idxs <- seq_len(nHyp(obj))
 res <- list()
 ```
 
@@ -103,9 +102,8 @@ The true number of false positives will be called "Oracle" bound in the plots be
 ```{r oracle}
 obj$input$truth <- as.numeric(mu != 0)
 res_Oracle <- fit(obj, alpha = alpha, p.values = pvalues, family = "Oracle")
-Vmat <- predict(res_Oracle, what = "FP", all = TRUE)
-V <- Vmat$bound[idxs]
-res[["Oracle"]] <- data.frame(idxs, V, method = "Oracle")
+res[["Oracle"]] <- predict(res_Oracle, what = "FP", all = TRUE)
+res[["Oracle"]]$method <- "Oracle"
 ```
 
 ### 2- Simes-based confidence curve
@@ -114,9 +112,8 @@ Here we use the @simes86improved inequality to bound the number of false positiv
 
 ```{r simes}
 res_Simes <- fit(obj, alpha = alpha, p.values = pvalues, family = "Simes")
-Vmat <- predict(res_Simes, what = "FP", all = TRUE)
-V <- Vmat$bound[idxs]
-res[["Simes"]] <- data.frame(idxs, V, method = "Simes")
+res[["Simes"]] <- predict(res_Simes, what = "FP", all = TRUE)
+res[["Simes"]]$method <- "Simes"
 ```
 
 ### 3- DKWM-based confidence curve
@@ -124,27 +121,18 @@ res[["Simes"]] <- data.frame(idxs, V, method = "Simes")
 Here we use the DKWM inequality (@dvoretzky1956asymptotic, @massart1990tight) to bound the number of false positives in each node of the tree, as suggested in @durand20post-hoc.
 
 ```{r tree}
-res_DKWM <- fit(obj, alpha, p.values = pvalues, 
-                family = "DKWM")
-V <- sapply(idxs, FUN = function(ii) {
-  predict(res_DKWM, S = seq_len(ii), what = "FP")
-})
-ord <- order(pvalues)
-res[["Tree"]] <- data.frame(idxs, V, method = "Tree")
+res_DKWM <- fit(obj, alpha, p.values = pvalues, family = "DKWM")
+res[["Tree"]] <- predict(res_DKWM, what = "FP", n_out = 40)
+res[["Tree"]]$method <- "Tree"
 ```
 
 
 ```{r part}
 res_DKWM_part <- fit(obj, alpha, p.values = pvalues, 
                 family = "DKWM", flavor = "partition")
-label(res_DKWM_part)
-V <- sapply(idxs, FUN = function(ii) {
-  predict(res_DKWM_part, S = seq_len(ii), what = "FP")
-})
-res[["Partition"]] <- data.frame(idxs, V, method = "Partition")
+res[["Partition"]] <- predict(res_DKWM_part, what = "FP", n_out = 40)
+res[["Partition"]]$method <- "Partition"
 ```
-
-
 
 ## Plot confidence curves
 
@@ -160,7 +148,7 @@ names(cols) <- lvls
 
 ```{r plot-confidence-curve}
 xymax <- m1;
-pV <- ggplot(dat, aes(idxs, V, colour = method)) + 
+pV <- ggplot(dat, aes(x, bound, colour = method)) + 
     geom_line() +
     ylab("Upper bound on the number of false positives") +
     xlab("sorted hypotheses") +
@@ -173,7 +161,8 @@ The "Tree" and "Partition" bounds are sharper than the "Simes" bound as soon as 
 Zooming on the first `r xymax` null hypotheses (in the order of the $p$-values):
 
 ```{r zoom-plot-confidence-curve, warning=FALSE}
-pV + xlim(1, xymax) + ylim(0, xymax)
+pV + coord_cartesian(xlim = c(1, xymax),
+                     ylim = c(0, xymax))
 ```
 
 ## Lower bound on the number of true positives
@@ -181,13 +170,13 @@ pV + xlim(1, xymax) + ylim(0, xymax)
 The same information can be displayed as a lower bound on the number of true positives, defined for any $S \subset \{1 \dots m\}$ by $|S| - V(S)$:
 
 ```{r lower-bound}
-dat$S <- dat$idxs - dat$V
+dat$S <- dat$x - dat$bound
 ```
 
 ```{r plot-lower-bound}
 xmax <- m1;
 ymax <- max(dat$S);
-pS <- ggplot(dat, aes(idxs, S, colour = method)) + 
+pS <- ggplot(dat, aes(x, S, colour = method)) + 
     geom_line() +
     ylab("Lower bound on the number of true positives") +
     xlab("sorted hypotheses") +

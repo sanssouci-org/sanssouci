@@ -244,8 +244,14 @@ pValues.SansSouciStruct <- function(object) {
 
 #' @export
 predict.SansSouciStruct <- function(object, S = seq_len(nHyp(object)), 
-                            what = c("TP", "FDP"), ...) {
-    p.values <- pValues(object)
+                            what = c("TP", "FDP"), n_out = 1, 
+                            order_by_p = TRUE, ...) {
+    lab <- label(object)
+    if (order_by_p) {
+        ordering <- order(pValues(object))
+        S <- ordering[S]
+    }
+    
     if (max(S) > nHyp(object)) {
         stop("'S' is not a subset of hypotheses")
     }
@@ -257,7 +263,23 @@ predict.SansSouciStruct <- function(object, S = seq_len(nHyp(object)),
         struct <- struct[length(struct)]
     }
     
-    ord <- order(p.values)
-    max_FP <- V.star(ord[S], C = struct, ZL, leaf_list = leaves)
-    max_FP    
-}
+    idxs <- length(S)
+    if (n_out > 1) {
+        # idxs <- as.integer(seq(from = 1, to = length(S), length.out = n_out))
+        idxs <- 10^seq(from = log10(1), to = log10(length(S)), length.out = n_out)
+        idxs <- unique(as.integer(idxs))
+    }
+    max_FP <- numeric(length(idxs))
+    for (ii in seq(along = idxs)) {
+        max_FP[ii] <- V.star(S[1:idxs[ii]], C = struct, 
+                             ZL = ZL, leaf_list = leaves)
+    }
+    bounds <- formatBounds(max_FP, idxs = idxs, lab = lab, what = what, all = TRUE)
+    if (n_out == 1) {
+        bounds <- bounds[, "bound"]
+        if (length(bounds) > 1) {
+            names(bounds) <- what
+        }
+    }
+    bounds
+} 
