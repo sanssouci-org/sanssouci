@@ -7,16 +7,40 @@
     <loc>https://pneuvial.github.io/sanssouci/reference/BetaThresholdFamily.html</loc>
   </url>
   <url>
+    <loc>https://pneuvial.github.io/sanssouci/reference/SansSouci-methods.html</loc>
+  </url>
+  <url>
+    <loc>https://pneuvial.github.io/sanssouci/reference/SansSouci.html</loc>
+  </url>
+  <url>
+    <loc>https://pneuvial.github.io/sanssouci/reference/SansSouciDyadic.html</loc>
+  </url>
+  <url>
+    <loc>https://pneuvial.github.io/sanssouci/reference/SansSouciSim.html</loc>
+  </url>
+  <url>
+    <loc>https://pneuvial.github.io/sanssouci/reference/SansSouciStruct-methods.html</loc>
+  </url>
+  <url>
+    <loc>https://pneuvial.github.io/sanssouci/reference/SansSouciStruct.html</loc>
+  </url>
+  <url>
     <loc>https://pneuvial.github.io/sanssouci/reference/SimesThresholdFamily.html</loc>
   </url>
   <url>
     <loc>https://pneuvial.github.io/sanssouci/reference/V.star.html</loc>
   </url>
   <url>
+    <loc>https://pneuvial.github.io/sanssouci/reference/all-generics.html</loc>
+  </url>
+  <url>
+    <loc>https://pneuvial.github.io/sanssouci/reference/calibrate.html</loc>
+  </url>
+  <url>
     <loc>https://pneuvial.github.io/sanssouci/reference/calibrateJER.html</loc>
   </url>
   <url>
-    <loc>https://pneuvial.github.io/sanssouci/reference/confidenceEnvelope.html</loc>
+    <loc>https://pneuvial.github.io/sanssouci/reference/confCurveFromFam.html</loc>
   </url>
   <url>
     <loc>https://pneuvial.github.io/sanssouci/reference/curveMaxFP.html</loc>
@@ -28,7 +52,10 @@
     <loc>https://pneuvial.github.io/sanssouci/reference/dyadic.html</loc>
   </url>
   <url>
-    <loc>https://pneuvial.github.io/sanssouci/reference/dyadic.from.leaf_list.html</loc>
+    <loc>https://pneuvial.github.io/sanssouci/reference/fit.SansSouci.html</loc>
+  </url>
+  <url>
+    <loc>https://pneuvial.github.io/sanssouci/reference/fit.SansSouciStruct.html</loc>
   </url>
   <url>
     <loc>https://pneuvial.github.io/sanssouci/reference/gauss_bloc.html</loc>
@@ -49,7 +76,10 @@
     <loc>https://pneuvial.github.io/sanssouci/reference/gen.p.values.html</loc>
   </url>
   <url>
-    <loc>https://pneuvial.github.io/sanssouci/reference/getSummaryStats.html</loc>
+    <loc>https://pneuvial.github.io/sanssouci/reference/get_perm.html</loc>
+  </url>
+  <url>
+    <loc>https://pneuvial.github.io/sanssouci/reference/get_pivotal_stat.html</loc>
   </url>
   <url>
     <loc>https://pneuvial.github.io/sanssouci/reference/maxFP.html</loc>
@@ -58,10 +88,19 @@
     <loc>https://pneuvial.github.io/sanssouci/reference/minTP.html</loc>
   </url>
   <url>
-    <loc>https://pneuvial.github.io/sanssouci/reference/plotConfidenceEnvelope.html</loc>
+    <loc>https://pneuvial.github.io/sanssouci/reference/plot.SansSouci.html</loc>
+  </url>
+  <url>
+    <loc>https://pneuvial.github.io/sanssouci/reference/plotConfCurve.html</loc>
   </url>
   <url>
     <loc>https://pneuvial.github.io/sanssouci/reference/posthocBySimes.html</loc>
+  </url>
+  <url>
+    <loc>https://pneuvial.github.io/sanssouci/reference/predict.SansSouci.html</loc>
+  </url>
+  <url>
+    <loc>https://pneuvial.github.io/sanssouci/reference/reexports.html</loc>
   </url>
   <url>
     <loc>https://pneuvial.github.io/sanssouci/reference/rowBinomialTests.html</loc>
@@ -73,16 +112,16 @@
     <loc>https://pneuvial.github.io/sanssouci/reference/rowWilcoxonTests.html</loc>
   </url>
   <url>
-    <loc>https://pneuvial.github.io/sanssouci/reference/suffWelchTest.html</loc>
+    <loc>https://pneuvial.github.io/sanssouci/reference/rowZTests.html</loc>
   </url>
   <url>
     <loc>https://pneuvial.github.io/sanssouci/reference/testByRandomization.html</loc>
   </url>
   <url>
-    <loc>https://pneuvial.github.io/sanssouci/reference/volcano.html</loc>
+    <loc>https://pneuvial.github.io/sanssouci/reference/volcanoPlot.html</loc>
   </url>
   <url>
-    <loc>https://pneuvial.github.io/sanssouci/reference/volcanoPlot.html</loc>
+    <loc>https://pneuvial.github.io/sanssouci/reference/volcanoPlot.numeric.html</loc>
   </url>
   <url>
     <loc>https://pneuvial.github.io/sanssouci/reference/zeta.html</loc>
@@ -97,7 +136,7 @@
     <loc>https://pneuvial.github.io/sanssouci/articles/Simes_equi-correlation.html</loc>
   </url>
   <url>
-    <loc>https://pneuvial.github.io/sanssouci/articles/confidenceEnvelopes_localized.html</loc>
+    <loc>https://pneuvial.github.io/sanssouci/articles/confidenceCurves_localized.html</loc>
   </url>
   <url>
     <loc>https://pneuvial.github.io/sanssouci/articles/jointErrorRateCalibration_simulations.html</loc>
@@ -107,8 +146,5 @@
   </url>
   <url>
     <loc>https://pneuvial.github.io/sanssouci/articles/post-hoc_fMRI.html</loc>
-  </url>
-  <url>
-    <loc>https://pneuvial.github.io/sanssouci/articles/stepDownControl.html</loc>
   </url>
 </urlset>

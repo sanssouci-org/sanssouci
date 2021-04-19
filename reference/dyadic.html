@@ -40,7 +40,8 @@
 
 
 <meta property="og:title" content="Create a complete dyadic tree structure — dyadic" />
-<meta property="og:description" content="Create a complete dyadic tree structure" />
+<meta property="og:description" content="Create a complete dyadic tree structure
+Create a complete dyadic tree structure" />
 
 
 
@@ -72,7 +73,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.3</span>
       </span>
     </div>
 
@@ -101,7 +102,7 @@
       <a href="../articles/Simes_equi-correlation.html">Conservativeness of the Simes inequality under positive dependence</a>
     </li>
     <li>
-      <a href="../articles/confidenceEnvelopes_localized.html">Confidence envelopes for spatially structured hypotheses</a>
+      <a href="../articles/confidenceCurves_localized.html">Confidence curves for structured hypotheses</a>
     </li>
     <li>
       <a href="../articles/jointErrorRateCalibration_simulations.html">Joint Error Rate calibration</a>
@@ -111,9 +112,6 @@
     </li>
     <li>
       <a href="../articles/post-hoc_fMRI.html">Permutation-based post hoc inference for fMRI studies</a>
-    </li>
-    <li>
-      <a href="../articles/stepDownControl.html">Step-down joint Family-Wise Error Rate control</a>
     </li>
   </ul>
 </li>
@@ -145,24 +143,21 @@
 
     <div class="ref-description">
     <p>Create a complete dyadic tree structure</p>
+<p>Create a complete dyadic tree structure</p>
     </div>
 
-    <pre class="usage"><span class='fu'>dyadic.from.window.size</span><span class='op'>(</span><span class='va'>m</span>, <span class='va'>s</span>, <span class='va'>method</span><span class='op'>)</span>
+    <pre class="usage"><span class='fu'>dyadic.from.leaf_list</span><span class='op'>(</span><span class='va'>leaf_list</span>, <span class='va'>method</span><span class='op'>)</span>
 
-<span class='fu'>dyadic.from.height</span><span class='op'>(</span><span class='va'>m</span>, <span class='va'>H</span>, <span class='va'>method</span><span class='op'>)</span>
+<span class='fu'>dyadic.from.window.size</span><span class='op'>(</span><span class='va'>m</span>, <span class='va'>s</span>, <span class='va'>method</span><span class='op'>)</span>
 
-<span class='fu'>dyadic.from.max.height</span><span class='op'>(</span><span class='va'>m</span>, <span class='va'>method</span><span class='op'>)</span></pre>
+<span class='fu'>dyadic.from.height</span><span class='op'>(</span><span class='va'>m</span>, H <span class='op'>=</span> <span class='cn'>NULL</span>, <span class='va'>method</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>m</th>
-      <td><p>An integer value, the number of elements in the structure</p></td>
-    </tr>
-    <tr>
-      <th>s</th>
-      <td><p>An integer value, the number of elements in each leaf</p></td>
+      <th>leaf_list</th>
+      <td><p>A list of leaves</p></td>
     </tr>
     <tr>
       <th>method</th>
@@ -172,6 +167,14 @@ and group nodes of a same height 2 by 2 as long as possible. If
 size as long as possible</p></td>
     </tr>
     <tr>
+      <th>m</th>
+      <td><p>An integer value, the number of elements in the structure</p></td>
+    </tr>
+    <tr>
+      <th>s</th>
+      <td><p>An integer value, the number of elements in each leaf</p></td>
+    </tr>
+    <tr>
       <th>H</th>
       <td><p>An integer value, the desired maximal height of the tree</p></td>
     </tr>
@@ -179,7 +182,8 @@ size as long as possible</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A list with two elements:</p><dl>
+    <p>A list of lists containing the dyadic structure</p>
+<p>A list with two elements:</p><dl>
 <dt>leaf_list</dt><dd><p>A list of leaves</p></dd>
 <dt>C</dt><dd><p>A list of lists containing the dyadic structure</p></dd>
 
@@ -234,7 +238,7 @@ size as long as possible</p></td>
 #&gt;   .. ..$ : num [1:2] 2 2
 #&gt;   .. ..$ : num [1:2] 3 3
 #&gt;   .. ..$ : num [1:2] 4 4</div><div class='input'>
-<span class='va'>dd</span> <span class='op'>&lt;-</span> <span class='fu'>dyadic.from.max.height</span><span class='op'>(</span><span class='va'>m</span>, method<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span>
+<span class='va'>dd</span> <span class='op'>&lt;-</span> <span class='fu'>dyadic.from.height</span><span class='op'>(</span><span class='va'>m</span>, method<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>dd</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; List of 2
 #&gt;  $ leaf_list:List of 6
@@ -275,7 +279,7 @@ size as long as possible</p></td>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Gilles Blanchard, Guillermo Durand, <a href='https://www.math.univ-toulouse.fr/~pneuvial/'>Pierre Neuvial</a>, <a href='https://etienneroquain-81.webself.net/'>Etienne Roquain</a>.</p>
+  <p>Developed by <a href='https://www.math.univ-toulouse.fr/~pneuvial/'>Pierre Neuvial</a>, <a href='https://durandg12.github.io/'>Guillermo Durand</a>, Nicolas Enjalbert-Courrech, <a href='https://marie-perrotdockes.github.io/'>Marie Perrot-Dockès</a>.</p>
 </div>
 
 <div class="pkgdown">

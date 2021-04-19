@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Welch t-tests for rows of a matrix — rowWelchTests • sansSouci</title>
+<title>Welch T-tests for rows of a matrix — rowWelchTests • sansSouci</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Welch t-tests for rows of a matrix — rowWelchTests" />
-<meta property="og:description" content="Welch t-tests for each row of a matrix, intended to be speed efficient" />
+<meta property="og:title" content="Welch T-tests for rows of a matrix — rowWelchTests" />
+<meta property="og:description" content="Welch T-tests for rows of a matrix" />
 
 
 
@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.3</span>
       </span>
     </div>
 
@@ -101,7 +101,7 @@
       <a href="../articles/Simes_equi-correlation.html">Conservativeness of the Simes inequality under positive dependence</a>
     </li>
     <li>
-      <a href="../articles/confidenceEnvelopes_localized.html">Confidence envelopes for spatially structured hypotheses</a>
+      <a href="../articles/confidenceCurves_localized.html">Confidence curves for structured hypotheses</a>
     </li>
     <li>
       <a href="../articles/jointErrorRateCalibration_simulations.html">Joint Error Rate calibration</a>
@@ -111,9 +111,6 @@
     </li>
     <li>
       <a href="../articles/post-hoc_fMRI.html">Permutation-based post hoc inference for fMRI studies</a>
-    </li>
-    <li>
-      <a href="../articles/stepDownControl.html">Step-down joint Family-Wise Error Rate control</a>
     </li>
   </ul>
 </li>
@@ -138,84 +135,96 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Welch t-tests for rows of a matrix</h1>
+    <h1>Welch T-tests for rows of a matrix</h1>
     <small class="dont-index">Source: <a href='https://github.com/pneuvial/sanssouci/blob/master/R/rowWelchTests.R'><code>R/rowWelchTests.R</code></a></small>
     <div class="hidden name"><code>rowWelchTests.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Welch t-tests for each row of a matrix, intended to be speed efficient</p>
+    <p>Welch T-tests for rows of a matrix</p>
     </div>
 
-    <pre class="usage"><span class='fu'>rowWelchTests</span><span class='op'>(</span><span class='va'>mat</span>, <span class='va'>categ</span>, alternative <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"two.sided"</span>, <span class='st'>"less"</span>, <span class='st'>"greater"</span><span class='op'>)</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>rowWelchTests</span><span class='op'>(</span><span class='va'>X</span>, <span class='va'>categ</span>, alternative <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"two.sided"</span>, <span class='st'>"less"</span>, <span class='st'>"greater"</span><span class='op'>)</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>mat</th>
-      <td><p>A numeric matrix whose rows correspond to variables and columns to
-observations</p></td>
+      <th>X</th>
+      <td><p>A <code>m x n</code> numeric matrix whose rows correspond to variables
+and columns to observations</p></td>
     </tr>
     <tr>
       <th>categ</th>
-      <td><p>A numeric vector of <code><a href='https://rdrr.io/r/base/nrow.html'>ncol(mat)</a></code> categories in \(0, 1\) for the
-observations</p></td>
+      <td><p>Either a numeric vector of <code>n</code> categories in \(0, 1\) for
+the observations, or a <code>n x B</code> matrix stacking <code>B</code> such vectors
+(typically permutations of an original vector of size <code>n</code>)</p></td>
     </tr>
     <tr>
       <th>alternative</th>
       <td><p>A character string specifying the alternative hypothesis.
 Must be one of "two.sided" (default), "greater" or "less". As in
-<code><a href='https://rdrr.io/r/stats/t.test.html'>t.test</a></code>, alternative = "greater" is the alternative that
-class 1 has a larger mean than class 0.</p></td>
+<code><a href='https://rdrr.io/r/stats/t.test.html'>t.test</a></code>, alternative = "greater" is the alternative that class
+1 has a larger mean than class 0.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A data.frame with containing the following columns:</p><dl>
+    <p>A list containing the following components:</p><dl>
 <dt>statistic</dt><dd><p>the value of the t-statistics</p></dd>
-  <dt>parameter</dt><dd><p>the degrees of freedom for the t-statistics</p></dd>
-  <dt>p.value</dt><dd><p>the p-values for the tests</p></dd>
-</dl><p></p>
-<dt>meanDiff</dt><dd><p>the mean
-  difference</p></dd>
-
+<dt>parameter</dt><dd><p>the degrees of freedom for the t-statistics</p></dd>
+<dt>p.value</dt><dd><p>the p-values for the tests</p></dd>
+<dt>estimate</dt><dd><p>the mean difference between groups</p></dd>
+</dl><p>Each of these elements is a matrix of size <code>m x B</code>, coerced to a vector of length <code>m</code> if <code>B=1</code></p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Other functions to perform t-tests on each row of a matrix include:
-<code>fastT</code>: this function only calculates the test
-statistics and not the corresponding degrees of freedom or p-value;
-<code>rowttests</code>: this function calculates the test
-statistics, degrees of freedom and associated p-value, but only in the case
-of equal group variances (standard t-test and not Welch t-test)</p>
+    <p>This function performs <code>m x B</code> Welch T tests on
+<code>n</code> observations using matrix operations. Its time complexity is
+<code>O(mBn)</code>. The code is much faster than using loops of 'apply'
+functions, especially for high-dimensional problems (small n and large m)
+because the overhead of the call to the 't.test' function is avoided and
+the code is vectorized</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>B. L. Welch (1951), On the comparison of several mean values: an
-  alternative approach. Biometrika, *38*, 330-336</p>
+alternative approach. Biometrika, <em>38</em>, 330-336</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Pierre Neuvial</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fl'>1e3</span>
+<span class='va'>m</span> <span class='op'>&lt;-</span> <span class='fl'>300</span>
 <span class='va'>n</span> <span class='op'>&lt;-</span> <span class='fl'>38</span>
-<span class='va'>mat</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='va'>p</span><span class='op'>*</span><span class='va'>n</span><span class='op'>)</span>, ncol<span class='op'>=</span><span class='va'>n</span><span class='op'>)</span>
+<span class='va'>mat</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='va'>m</span><span class='op'>*</span><span class='va'>n</span><span class='op'>)</span>, ncol<span class='op'>=</span><span class='va'>n</span><span class='op'>)</span>
 <span class='va'>categ</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>1</span><span class='op'>)</span>, times<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>27</span>, <span class='va'>n</span><span class='op'>-</span><span class='fl'>27</span><span class='op'>)</span><span class='op'>)</span>
-<span class='va'>fwt</span> <span class='op'>&lt;-</span> <span class='fu'>rowWelchTests</span><span class='op'>(</span><span class='va'>mat</span>, <span class='va'>categ</span>, alternative <span class='op'>=</span> <span class='st'>"greater"</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>fwt</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/system.time.html'>system.time</a></span><span class='op'>(</span><span class='va'>fwt</span> <span class='op'>&lt;-</span> <span class='fu'>rowWelchTests</span><span class='op'>(</span><span class='va'>mat</span>, <span class='va'>categ</span>, alternative <span class='op'>=</span> <span class='st'>"greater"</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;    user  system elapsed 
+#&gt;   0.001   0.000   0.001 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>fwt</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; List of 4
-#&gt;  $ statistic: num [1:1000] 1.1429 -1.6283 -0.0639 0.4768 -0.9417 ...
-#&gt;  $ parameter: num [1:1000] 16.6 33 25.2 17.9 16.2 ...
-#&gt;  $ p.value  : num [1:1000] 0.135 0.944 0.525 0.32 0.82 ...
-#&gt;  $ meanDiff : num [1:1000] 0.3664 -0.4551 -0.0194 0.1886 -0.3804 ...</div><div class='input'>
+#&gt;  $ statistic: num [1:300] 0.575 -0.53 -1.096 0.726 0.37 ...
+#&gt;  $ parameter: num [1:300] 18.2 25.3 28.7 26 21.5 ...
+#&gt;  $ p.value  : num [1:300] 0.286 0.7 0.859 0.237 0.358 ...
+#&gt;  $ estimate : num [1:300] 0.219 -0.169 -0.372 0.22 0.129 ...</div><div class='input'>
 <span class='co'># compare with ordinary t.test:</span>
-<span class='va'>pwt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/apply.html'>apply</a></span><span class='op'>(</span><span class='va'>mat</span>, <span class='fl'>1</span>, FUN<span class='op'>=</span><span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='fu'><a href='https://rdrr.io/r/base/system.time.html'>system.time</a></span><span class='op'>(</span><span class='va'>pwt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/apply.html'>apply</a></span><span class='op'>(</span><span class='va'>mat</span>, <span class='fl'>1</span>, FUN<span class='op'>=</span><span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>{</span>
    <span class='fu'><a href='https://rdrr.io/r/stats/t.test.html'>t.test</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>[</span><span class='va'>categ</span><span class='op'>==</span><span class='fl'>1</span><span class='op'>]</span>, <span class='va'>x</span><span class='op'>[</span><span class='va'>categ</span><span class='op'>==</span><span class='fl'>0</span><span class='op'>]</span>, alternative <span class='op'>=</span> <span class='st'>"greater"</span><span class='op'>)</span><span class='op'>$</span><span class='va'>p.value</span>
-<span class='op'>}</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>abs</a></span><span class='op'>(</span><span class='va'>fwt</span><span class='op'>$</span><span class='va'>p.value</span><span class='op'>-</span><span class='va'>pwt</span><span class='op'>)</span> <span class='op'>&lt;</span> <span class='fl'>1e-10</span><span class='op'>)</span>  <span class='co'>## same results</span>
+<span class='op'>}</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;    user  system elapsed 
+#&gt;   0.077   0.000   0.076 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>abs</a></span><span class='op'>(</span><span class='va'>fwt</span><span class='op'>$</span><span class='va'>p.value</span><span class='op'>-</span><span class='va'>pwt</span><span class='op'>)</span> <span class='op'>&lt;</span> <span class='fl'>1e-10</span><span class='op'>)</span>  <span class='co'>## same results</span>
 </div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
+<span class='co'># with several contrasts/permutations</span>
+<span class='va'>B</span> <span class='op'>&lt;-</span> <span class='fl'>100</span>
+<span class='va'>categ_perm</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>replicate</a></span><span class='op'>(</span><span class='va'>B</span>, <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='va'>categ</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/system.time.html'>system.time</a></span><span class='op'>(</span><span class='va'>fwt_perm</span> <span class='op'>&lt;-</span> <span class='fu'>rowWelchTests</span><span class='op'>(</span><span class='va'>mat</span>, <span class='va'>categ_perm</span>, alternative <span class='op'>=</span> <span class='st'>"greater"</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;    user  system elapsed 
+#&gt;   0.020   0.002   0.022 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>fwt_perm</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; List of 4
+#&gt;  $ statistic: num [1:300, 1:100] -0.6992 -0.4196 1.5878 -2.0978 -0.0863 ...
+#&gt;  $ parameter: num [1:300, 1:100] 15 13.6 28.8 16.5 17.3 ...
+#&gt;  $ p.value  : num [1:300, 1:100] 0.7524 0.6593 0.0616 0.9742 0.5339 ...
+#&gt;  $ estimate : num [1:300, 1:100] -0.2948 -0.1822 0.5312 -0.7336 -0.0333 ...</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -228,7 +237,7 @@ of equal group variances (standard t-test and not Welch t-test)</p>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Gilles Blanchard, Guillermo Durand, <a href='https://www.math.univ-toulouse.fr/~pneuvial/'>Pierre Neuvial</a>, <a href='https://etienneroquain-81.webself.net/'>Etienne Roquain</a>.</p>
+  <p>Developed by <a href='https://www.math.univ-toulouse.fr/~pneuvial/'>Pierre Neuvial</a>, <a href='https://durandg12.github.io/'>Guillermo Durand</a>, Nicolas Enjalbert-Courrech, <a href='https://marie-perrotdockes.github.io/'>Marie Perrot-Dockès</a>.</p>
 </div>
 
 <div class="pkgdown">

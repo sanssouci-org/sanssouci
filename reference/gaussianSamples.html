@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.3</span>
       </span>
     </div>
 
@@ -101,7 +101,7 @@
       <a href="../articles/Simes_equi-correlation.html">Conservativeness of the Simes inequality under positive dependence</a>
     </li>
     <li>
-      <a href="../articles/confidenceEnvelopes_localized.html">Confidence envelopes for spatially structured hypotheses</a>
+      <a href="../articles/confidenceCurves_localized.html">Confidence curves for structured hypotheses</a>
     </li>
     <li>
       <a href="../articles/jointErrorRateCalibration_simulations.html">Joint Error Rate calibration</a>
@@ -111,9 +111,6 @@
     </li>
     <li>
       <a href="../articles/post-hoc_fMRI.html">Permutation-based post hoc inference for fMRI studies</a>
-    </li>
-    <li>
-      <a href="../articles/stepDownControl.html">Step-down joint Family-Wise Error Rate control</a>
     </li>
   </ul>
 </li>
@@ -190,24 +187,27 @@ equi-correlation</p></td>
 
     <p>A list with three elements:</p><dl>
 
-  <dt>X</dt><dd><p>An \(m x n\) matrix of \(m\)-dimensional Gaussian observations,
-  where \(m1\) rows are under H1, and \(m0\) rows are under H0, with
-  \(m0/m = pi0\)</p></dd>
-  
-  <dt>categ</dt><dd><p>A numeric vector of length \(n\) matching each observation
-  to a sample (in 0 or 1)</p></dd>
-  
-  <dt>H</dt><dd><p>A vector of length \(m\), the status of each hypothesis: 0 for
-  true null hypothesis, and 1 for true alternative hypothesis</p></dd>
+<dt>X</dt><dd><p>An \(m x n\) matrix of \(m\)-dimensional Gaussian observations,
+where \(m1\) rows are under H1, and \(m0\) rows are under H0, with
+\(m0/m = pi0\)</p></dd>
+
+<dt>categ</dt><dd><p>A numeric vector of length \(n\) matching each observation
+to a sample (in 0 or 1)</p></dd>
+
+<dt>H</dt><dd><p>A vector of length \(m\), the status of each hypothesis: 0 for
+true null hypothesis, and 1 for true alternative hypothesis</p></dd>
 </dl><p>.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>If <code>prob = 1</code>, each of \(m_1\) variables under \(H_1\) has
-  mean \(SNR/\sqrt(n)\). If <code>0 &lt; p &lt; 1</code>, then \(n_0\) samples are
-  drawn from a \(\mathcal{N}(0,1)\) distribution while \(n_1\) are drawn
-  from a \(\mathcal{N}(\mu, 1)\) distribution, where \(\mu =
+mean \(SNR/\sqrt(n)\). If <code>0 &lt; p &lt; 1</code>, then \(n_0\) samples are
+drawn from a \(\mathcal{N}(0,1)\) distribution while \(n_1\) are drawn
+from a \(\mathcal{N}(\mu, 1)\) distribution, where \(\mu =
   SNR*\sqrt(1/(n_0) + 1/n_1)\). The argument <code>p</code> is the probability of a
-  sample to belong to the non-zero-mean population.</p>
+sample to belong to the non-zero-mean population.</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><a href='SansSouciSim.html'>SansSouciSim</a></p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Gilles Blanchard, Pierre Neuvial and Etienne Roquain</p>
@@ -252,7 +252,7 @@ equi-correlation</p></td>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Gilles Blanchard, Guillermo Durand, <a href='https://www.math.univ-toulouse.fr/~pneuvial/'>Pierre Neuvial</a>, <a href='https://etienneroquain-81.webself.net/'>Etienne Roquain</a>.</p>
+  <p>Developed by <a href='https://www.math.univ-toulouse.fr/~pneuvial/'>Pierre Neuvial</a>, <a href='https://durandg12.github.io/'>Guillermo Durand</a>, Nicolas Enjalbert-Courrech, <a href='https://marie-perrotdockes.github.io/'>Marie Perrot-Dockès</a>.</p>
 </div>
 
 <div class="pkgdown">

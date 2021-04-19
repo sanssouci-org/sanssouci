@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.3</span>
       </span>
     </div>
 
@@ -100,7 +100,7 @@
       <a href="../articles/Simes_equi-correlation.html">Conservativeness of the Simes inequality under positive dependence</a>
     </li>
     <li>
-      <a href="../articles/confidenceEnvelopes_localized.html">Confidence envelopes for spatially structured hypotheses</a>
+      <a href="../articles/confidenceCurves_localized.html">Confidence curves for structured hypotheses</a>
     </li>
     <li>
       <a href="../articles/jointErrorRateCalibration_simulations.html">Joint Error Rate calibration</a>
@@ -110,9 +110,6 @@
     </li>
     <li>
       <a href="../articles/post-hoc_fMRI.html">Permutation-based post hoc inference for fMRI studies</a>
-    </li>
-    <li>
-      <a href="../articles/stepDownControl.html">Step-down joint Family-Wise Error Rate control</a>
     </li>
   </ul>
 </li>
@@ -163,39 +160,21 @@
       <tr>
         
         <td>
-          <p><code><a href="calibrateJER.html">calibrateJER()</a></code> </p>
+          <p><code><a href="SansSouci.html">SansSouci()</a></code> </p>
         </td>
-        <td><p>Calibration of joint Family-Wise Error Rate thresholds</p></td>
+        <td><p>Create an object of class 'SansSouci'</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="confidenceEnvelope.html">confidenceEnvelope()</a></code> </p>
+          <p><code><a href="SansSouci-methods.html">nHyp(<i>&lt;SansSouci&gt;</i>)</a></code> <code><a href="SansSouci-methods.html">nObs(<i>&lt;SansSouci&gt;</i>)</a></code> <code><a href="SansSouci-methods.html">label(<i>&lt;SansSouci&gt;</i>)</a></code> <code><a href="SansSouci-methods.html">print(<i>&lt;SansSouci&gt;</i>)</a></code> <code><a href="SansSouci-methods.html">pValues(<i>&lt;SansSouci&gt;</i>)</a></code> <code><a href="SansSouci-methods.html">foldChanges(<i>&lt;SansSouci&gt;</i>)</a></code> <code><a href="SansSouci-methods.html">thresholds(<i>&lt;SansSouci&gt;</i>)</a></code> </p>
         </td>
-        <td><p>Confidence envelope on the true/false positives among most significant items</p></td>
+        <td><p>Basic methods for class <code>SansSouci</code></p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="volcanoPlot.html">volcanoPlot()</a></code> </p>
+          <p><code><a href="SansSouciSim.html">SansSouciSim()</a></code> </p>
         </td>
-        <td><p>Volcano plot</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="maxFP.html">maxFP()</a></code> </p>
-        </td>
-        <td><p>Upper bound for the number of false discoveries in a selection</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="minTP.html">minTP()</a></code> </p>
-        </td>
-        <td><p>Lower bound for the number of true discoveries in a selection</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="curveMaxFP.html">curveMaxFP()</a></code> </p>
-        </td>
-        <td><p>Upper bound for the number of false discoveries among most significant items</p></td>
+        <td><p>Create an object of class 'SansSouci' from simulations</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -212,15 +191,15 @@
       <tr>
         
         <td>
-          <p><code><a href="V.star.html">V.star()</a></code> </p>
+          <p><code><a href="SansSouciStruct.html">SansSouciStruct()</a></code> </p>
         </td>
-        <td><p>Post hoc bound on the number of false positives</p></td>
+        <td><p>Create an object of class 'SansSouciStruct'</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="zetas.tree.html">zetas.tree()</a></code> <code><a href="zetas.tree.html">zetas.tree.refined()</a></code> </p>
+          <p><code><a href="SansSouciStruct-methods.html">nHyp(<i>&lt;SansSouciStruct&gt;</i>)</a></code> <code><a href="SansSouciStruct-methods.html">nLeaves(<i>&lt;SansSouciStruct&gt;</i>)</a></code> <code><a href="SansSouciStruct-methods.html">label(<i>&lt;SansSouciStruct&gt;</i>)</a></code> <code><a href="SansSouciStruct-methods.html">pValues(<i>&lt;SansSouciStruct&gt;</i>)</a></code> </p>
         </td>
-        <td><p>Estimate of the proportion of true nulls in each node of a tree</p></td>
+        <td><p>Basic methods for class <code>SansSouciStruct</code></p></td>
       </tr>
     </tbody>
     </table>
@@ -236,7 +215,7 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by Gilles Blanchard, Guillermo Durand, <a href='https://www.math.univ-toulouse.fr/~pneuvial/'>Pierre Neuvial</a>, <a href='https://etienneroquain-81.webself.net/'>Etienne Roquain</a>.</p>
+  <p>Developed by <a href='https://www.math.univ-toulouse.fr/~pneuvial/'>Pierre Neuvial</a>, <a href='https://durandg12.github.io/'>Guillermo Durand</a>, Nicolas Enjalbert-Courrech, <a href='https://marie-perrotdockes.github.io/'>Marie Perrot-Dockès</a>.</p>
 </div>
 
 <div class="pkgdown">

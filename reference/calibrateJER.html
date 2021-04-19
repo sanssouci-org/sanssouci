@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.3</span>
       </span>
     </div>
 
@@ -101,7 +101,7 @@
       <a href="../articles/Simes_equi-correlation.html">Conservativeness of the Simes inequality under positive dependence</a>
     </li>
     <li>
-      <a href="../articles/confidenceEnvelopes_localized.html">Confidence envelopes for spatially structured hypotheses</a>
+      <a href="../articles/confidenceCurves_localized.html">Confidence curves for structured hypotheses</a>
     </li>
     <li>
       <a href="../articles/jointErrorRateCalibration_simulations.html">Joint Error Rate calibration</a>
@@ -111,9 +111,6 @@
     </li>
     <li>
       <a href="../articles/post-hoc_fMRI.html">Permutation-based post hoc inference for fMRI studies</a>
-    </li>
-    <li>
-      <a href="../articles/stepDownControl.html">Step-down joint Family-Wise Error Rate control</a>
     </li>
   </ul>
 </li>
@@ -179,7 +176,7 @@ provided, a one-sample test is performed.</p></td>
     </tr>
     <tr>
       <th>alpha</th>
-      <td><p>Target JER level</p></td>
+      <td><p>Target risk (JER) level</p></td>
     </tr>
     <tr>
       <th>alternative</th>
@@ -195,15 +192,15 @@ Must be one of "two.sided" (default), "greater" or "less".</p></td>
       <th>refFamily</th>
       <td><p>A character value which can be</p><dl>
 
-  <dt>Simes</dt><dd><p>The classical family of thresholds introduced by Simes (1986):
-  \(\alpha*k/m\). This family yields joint FWER control if the test
-  statistics are positively dependent (PRDS) under H0.</p></dd>
+<dt>Simes</dt><dd><p>The classical family of thresholds introduced by Simes (1986):
+\(\alpha*k/m\). This family yields joint FWER control if the test
+statistics are positively dependent (PRDS) under H0.</p></dd>
 
-   <dt>Beta</dt><dd><p>A family of thresholds that achieves "balanced" joint error
-   rate (JER) control under independence</p></dd>
+<dt>Beta</dt><dd><p>A family of thresholds that achieves "balanced" joint error
+rate (JER) control under independence</p></dd>
 
-  <dt>kFWER</dt><dd><p>A family \((t_k)\) calibrated so that for each k,
-  \((t_k)\) controls the (marginal) k-FWER.</p></dd>
+<dt>kFWER</dt><dd><p>A family \((t_k)\) calibrated so that for each k,
+\((t_k)\) controls the (marginal) k-FWER.</p></dd>
 </dl></td>
     </tr>
     <tr>
@@ -225,18 +222,18 @@ Must be one of "two.sided" (default), "greater" or "less".</p></td>
 
     <p>A list with elements:</p><dl>
 
-  <dt>p.values</dt><dd><p>A numeric vector of <code>m</code> p-values</p></dd>
-  <dt>pivStat</dt><dd><p>A numeric vector of length <code>B</code>, the values of the pivotal
-         statistic whose quantile of order \(alpha\) is \(lambda\).</p></dd>
-  <dt>thr</dt><dd><p>A numeric vector of length <code>K</code>, such that the estimated
-  probability that there exists an index \(k\) between 1 and \(K\) such
-  that the \(k\)-th maximum of the test statistics of is greater than
-  \(thr[k]\), is less than \(\alpha\)</p></dd>
+<dt>p.values</dt><dd><p>A numeric vector of <code>m</code> p-values</p></dd>
+<dt>pivStat</dt><dd><p>A numeric vector of length <code>B</code>, the values of the pivotal
+statistic whose quantile of order \(alpha\) is \(lambda\).</p></dd>
+<dt>thr</dt><dd><p>A numeric vector of length <code>K</code>, such that the estimated
+probability that there exists an index \(k\) between 1 and \(K\) such
+that the \(k\)-th maximum of the test statistics of is greater than
+\(thr[k]\), is less than \(\alpha\)</p></dd>
 
-  <dt>lambda</dt><dd><p>A numeric value, the result of the calibration</p></dd> 
-  
-  <dt>FP</dt><dd><p>A numeric vector of length <code>m</code>, a 1-alpha confidence envelope on the number of false positives</p></dd> 
-  
+<dt>lambda</dt><dd><p>A numeric value, the result of the calibration</p></dd>
+
+<dt>FP</dt><dd><p>A numeric vector of length <code>m</code>, a 1-alpha confidence bound on the number of false positives</p></dd>
+
 </dl>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
@@ -260,21 +257,21 @@ Must be one of "two.sided" (default), "greater" or "less".</p></td>
 <span class='va'>alpha</span> <span class='op'>&lt;-</span> <span class='fl'>0.1</span>
 <span class='va'>cal</span> <span class='op'>&lt;-</span> <span class='fu'>calibrateJER</span><span class='op'>(</span><span class='va'>X</span>, <span class='va'>categ</span>, B <span class='op'>=</span> <span class='fl'>1e2</span>, alpha <span class='op'>=</span> <span class='va'>alpha</span>, refFamily<span class='op'>=</span><span class='st'>"Simes"</span><span class='op'>)</span>
 <span class='va'>cal</span><span class='op'>$</span><span class='va'>lambda</span> <span class='co'># &gt; alpha (whp) if rho &gt; 0</span>
-</div><div class='output co'>#&gt;      10% 
-#&gt; 0.229451 </div><div class='input'>
-<span class='co'># Application 1: confidence envelope</span>
+</div><div class='output co'>#&gt;       10% 
+#&gt; 0.1099349 </div><div class='input'>
+<span class='co'># Application 1: confidence bounds</span>
 <span class='co'>#   ie upper confidence bound for the number of false positives </span>
 <span class='co'>#   among the k most significant items for all k</span>
-<span class='va'>env</span> <span class='op'>&lt;-</span> <span class='va'>cal</span><span class='op'>$</span><span class='va'>conf_env</span>
-<span class='fu'><a href='plotConfidenceEnvelope.html'>plotConfidenceEnvelope</a></span><span class='op'>(</span><span class='va'>env</span>, xmax <span class='op'>=</span> <span class='fl'>200</span><span class='op'>)</span>
+<span class='va'>cb</span> <span class='op'>&lt;-</span> <span class='va'>cal</span><span class='op'>$</span><span class='va'>conf_bound</span>
+<span class='fu'><a href='plotConfCurve.html'>plotConfCurve</a></span><span class='op'>(</span><span class='va'>cb</span>, xmax <span class='op'>=</span> <span class='fl'>200</span><span class='op'>)</span>
 </div><div class='img'><img src='calibrateJER-1.png' alt='' width='700' height='433' /></div><div class='input'>  
 <span class='co'>## Compare to Simes (without calibration) and "Oracle" (ie truth from the simulation settings)</span>
-<span class='va'>env_Simes</span> <span class='op'>&lt;-</span> <span class='fu'><a href='confidenceEnvelope.html'>confidenceEnvelope</a></span><span class='op'>(</span><span class='va'>cal</span><span class='op'>$</span><span class='va'>p.values</span>, refFamily <span class='op'>=</span> <span class='st'>"Simes"</span>, param <span class='op'>=</span> <span class='va'>alpha</span><span class='op'>)</span>
-<span class='va'>env_Oracle</span> <span class='op'>&lt;-</span> <span class='fu'><a href='confidenceEnvelope.html'>confidenceEnvelope</a></span><span class='op'>(</span><span class='va'>cal</span><span class='op'>$</span><span class='va'>p.values</span>, refFamily <span class='op'>=</span> <span class='st'>"Oracle"</span>, param <span class='op'>=</span> <span class='op'>(</span><span class='va'>sim</span><span class='op'>$</span><span class='va'>H</span> <span class='op'>==</span> <span class='fl'>0</span><span class='op'>)</span><span class='op'>)</span>
-<span class='va'>all_env</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"Simes + calibration"</span> <span class='op'>=</span> <span class='va'>env</span>, 
-                <span class='st'>"Simes"</span><span class='op'>=</span> <span class='va'>env_Simes</span>, 
-                <span class='st'>"Oracle"</span> <span class='op'>=</span> <span class='va'>env_Oracle</span><span class='op'>)</span>
-<span class='fu'><a href='plotConfidenceEnvelope.html'>plotConfidenceEnvelope</a></span><span class='op'>(</span><span class='va'>all_env</span>, xmax <span class='op'>=</span> <span class='fl'>200</span><span class='op'>)</span>
+<span class='va'>cb_Simes</span> <span class='op'>&lt;-</span> <span class='fu'><a href='confCurveFromFam.html'>confCurveFromFam</a></span><span class='op'>(</span><span class='va'>cal</span><span class='op'>$</span><span class='va'>p.values</span>, refFamily <span class='op'>=</span> <span class='st'>"Simes"</span>, param <span class='op'>=</span> <span class='va'>alpha</span><span class='op'>)</span>
+<span class='va'>cb_Oracle</span> <span class='op'>&lt;-</span> <span class='fu'><a href='confCurveFromFam.html'>confCurveFromFam</a></span><span class='op'>(</span><span class='va'>cal</span><span class='op'>$</span><span class='va'>p.values</span>, refFamily <span class='op'>=</span> <span class='st'>"Oracle"</span>, param <span class='op'>=</span> <span class='op'>(</span><span class='va'>sim</span><span class='op'>$</span><span class='va'>H</span> <span class='op'>==</span> <span class='fl'>1</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>all_cb</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"Simes + calibration"</span> <span class='op'>=</span> <span class='va'>cb</span>, 
+                <span class='st'>"Simes"</span><span class='op'>=</span> <span class='va'>cb_Simes</span>, 
+                <span class='st'>"Oracle"</span> <span class='op'>=</span> <span class='va'>cb_Oracle</span><span class='op'>)</span>
+<span class='fu'><a href='plotConfCurve.html'>plotConfCurve</a></span><span class='op'>(</span><span class='va'>all_cb</span>, xmax <span class='op'>=</span> <span class='fl'>200</span><span class='op'>)</span>
 </div><div class='img'><img src='calibrateJER-2.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'># Application 2a: bound on the number of false positives in one or </span>
 <span class='co'>#    more user-defined selections</span>
@@ -282,17 +279,17 @@ Must be one of "two.sided" (default), "greater" or "less".</p></td>
 <span class='va'>spval</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/sort.html'>sort</a></span><span class='op'>(</span><span class='va'>cal</span><span class='op'>$</span><span class='va'>p.values</span><span class='op'>)</span>
 <span class='va'>sel</span> <span class='op'>&lt;-</span> <span class='va'>spval</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span><span class='op'>)</span><span class='op'>]</span>
 <span class='fu'><a href='maxFP.html'>maxFP</a></span><span class='op'>(</span><span class='va'>sel</span>, <span class='va'>cal</span><span class='op'>$</span><span class='va'>thr</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] 0</div><div class='input'>
+</div><div class='output co'>#&gt; [1] 1</div><div class='input'>
 <span class='va'>sel</span> <span class='op'>&lt;-</span> <span class='va'>spval</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>, <span class='fl'>35</span><span class='op'>:</span><span class='fl'>40</span><span class='op'>)</span><span class='op'>]</span>
 <span class='fu'><a href='maxFP.html'>maxFP</a></span><span class='op'>(</span><span class='va'>sel</span>, <span class='va'>cal</span><span class='op'>$</span><span class='va'>thr</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] 6</div><div class='input'>
+</div><div class='output co'>#&gt; [1] 7</div><div class='input'>
 <span class='va'>sel</span> <span class='op'>&lt;-</span> <span class='va'>spval</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>30</span><span class='op'>:</span><span class='fl'>50</span><span class='op'>)</span><span class='op'>]</span>
 <span class='fu'><a href='maxFP.html'>maxFP</a></span><span class='op'>(</span><span class='va'>sel</span>, <span class='va'>cal</span><span class='op'>$</span><span class='va'>thr</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] 13</div><div class='input'>
+</div><div class='output co'>#&gt; [1] 21</div><div class='input'>
 <span class='co'># Application 2b: bound on pi0, the proportion of false positives in H</span>
 
 <span class='fu'><a href='maxFP.html'>maxFP</a></span><span class='op'>(</span><span class='va'>spval</span>, <span class='va'>cal</span><span class='op'>$</span><span class='va'>thr</span><span class='op'>)</span><span class='op'>/</span><span class='va'>m</span>
-</div><div class='output co'>#&gt; [1] 0.9189687</div><div class='input'><span class='va'>pi0</span>
+</div><div class='output co'>#&gt; [1] 0.9539595</div><div class='input'><span class='va'>pi0</span>
 </div><div class='output co'>#&gt; [1] 0.8</div><div class='input'>
 </div></pre>
   </div>
@@ -306,7 +303,7 @@ Must be one of "two.sided" (default), "greater" or "less".</p></td>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Gilles Blanchard, Guillermo Durand, <a href='https://www.math.univ-toulouse.fr/~pneuvial/'>Pierre Neuvial</a>, <a href='https://etienneroquain-81.webself.net/'>Etienne Roquain</a>.</p>
+  <p>Developed by <a href='https://www.math.univ-toulouse.fr/~pneuvial/'>Pierre Neuvial</a>, <a href='https://durandg12.github.io/'>Guillermo Durand</a>, Nicolas Enjalbert-Courrech, <a href='https://marie-perrotdockes.github.io/'>Marie Perrot-Dockès</a>.</p>
 </div>
 
 <div class="pkgdown">

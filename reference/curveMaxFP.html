@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.3</span>
       </span>
     </div>
 
@@ -101,7 +101,7 @@
       <a href="../articles/Simes_equi-correlation.html">Conservativeness of the Simes inequality under positive dependence</a>
     </li>
     <li>
-      <a href="../articles/confidenceEnvelopes_localized.html">Confidence envelopes for spatially structured hypotheses</a>
+      <a href="../articles/confidenceCurves_localized.html">Confidence curves for structured hypotheses</a>
     </li>
     <li>
       <a href="../articles/jointErrorRateCalibration_simulations.html">Joint Error Rate calibration</a>
@@ -111,9 +111,6 @@
     </li>
     <li>
       <a href="../articles/post-hoc_fMRI.html">Permutation-based post hoc inference for fMRI studies</a>
-    </li>
-    <li>
-      <a href="../articles/stepDownControl.html">Step-down joint Family-Wise Error Rate control</a>
     </li>
   </ul>
 </li>
@@ -139,7 +136,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Upper bound for the number of false discoveries among most significant items</h1>
-    <small class="dont-index">Source: <a href='https://github.com/pneuvial/sanssouci/blob/master/R/confidenceEnvelope.R'><code>R/confidenceEnvelope.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/pneuvial/sanssouci/blob/master/R/posthoc_bounds.R'><code>R/posthoc_bounds.R</code></a></small>
     <div class="hidden name"><code>curveMaxFP.Rd</code></div>
     </div>
 
@@ -173,8 +170,8 @@ and much much faster than 'BNR2014'.</p></td>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A vector of size \(m\) giving an joint upper confidence bound on
-  the number of false discoveries among the \(k\) most significant items
-  for all \(k \in \{1\ldots m\}\).</p>
+the number of false discoveries among the \(k\) most significant items
+for all \(k \in \{1\ldots m\}\).</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Gilles Blanchard, Pierre Neuvial and Etienne Roquain</p>
@@ -190,7 +187,7 @@ and much much faster than 'BNR2014'.</p></td>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Gilles Blanchard, Guillermo Durand, <a href='https://www.math.univ-toulouse.fr/~pneuvial/'>Pierre Neuvial</a>, <a href='https://etienneroquain-81.webself.net/'>Etienne Roquain</a>.</p>
+  <p>Developed by <a href='https://www.math.univ-toulouse.fr/~pneuvial/'>Pierre Neuvial</a>, <a href='https://durandg12.github.io/'>Guillermo Durand</a>, Nicolas Enjalbert-Courrech, <a href='https://marie-perrotdockes.github.io/'>Marie Perrot-Dockès</a>.</p>
 </div>
 
 <div class="pkgdown">

@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.3</span>
       </span>
     </div>
 
@@ -100,7 +100,7 @@
       <a href="articles/Simes_equi-correlation.html">Conservativeness of the Simes inequality under positive dependence</a>
     </li>
     <li>
-      <a href="articles/confidenceEnvelopes_localized.html">Confidence envelopes for spatially structured hypotheses</a>
+      <a href="articles/confidenceCurves_localized.html">Confidence curves for structured hypotheses</a>
     </li>
     <li>
       <a href="articles/jointErrorRateCalibration_simulations.html">Joint Error Rate calibration</a>
@@ -110,9 +110,6 @@
     </li>
     <li>
       <a href="articles/post-hoc_fMRI.html">Permutation-based post hoc inference for fMRI studies</a>
-    </li>
-    <li>
-      <a href="articles/stepDownControl.html">Step-down joint Family-Wise Error Rate control</a>
     </li>
   </ul>
 </li>
@@ -141,21 +138,21 @@
       <small class="dont-index">Source: <a href='https://github.com/pneuvial/sanssouci/blob/master/inst/CITATION'><code>inst/CITATION</code></a></small>
     </div>
 
-    <p>Pierre Neuvial, Benjamin Sadacca, Gilles Blanchard, Guillermo Durand and Etienne Roquain (2020). sansSouci: Post Hoc Multiple Testing Inference. R package version 0.9.4. https://github.com/pneuvial/sanssouci</p>
+    <p>Pierre Neuvial, Guillermo Durand, Nicolas Enjalbert-Courrech and Marie Perrot-Dockès (2021). sansSouci: Post Hoc Multiple Testing Inference. R package version 0.10.3. https://pneuvial.github.io/sanssouci</p>
     <pre>@Manual{,
   title = {sansSouci: Post Hoc Multiple Testing Inference},
-  author = {Pierre Neuvial and Benjamin Sadacca and Gilles Blanchard and Guillermo Durand and Etienne Roquain},
-  year = {2020},
-  note = {R package version 0.9.4},
-  url = {https://github.com/pneuvial/sanssouci},
+  author = {Pierre Neuvial and Guillermo Durand and Nicolas Enjalbert-Courrech and Marie Perrot-Dockès},
+  year = {2021},
+  note = {R package version 0.10.3},
+  url = {https://pneuvial.github.io/sanssouci},
 }</pre>
-    <p>Blanchard, G., Neuvial, P., & Roquain, E. (2020). On agnostic post hoc approaches to false positive control. Book chapter in revision for Handbook of Multiple Comparisons.</p>
+    <p>Blanchard, G., Neuvial, P., & Roquain, E. (2020). On agnostic post hoc approaches to false positive control. To appear in Handbook of Multiple Comparisons.</p>
     <pre>@Misc{,
   title = {On agnostic post hoc approaches to false positive control},
   author = {Gilles Blanchard and Pierre Neuvial and Etienne Roquain},
-  year = {2020},
+  year = {2021},
   url = {https://hal.archives-ouvertes.fr/hal-02320543},
-  note = {Book chapter in revision for Handbook of Multiple Comparisons},
+  note = {To appear in Handbook of Multiple Comparisons},
 }</pre>
     <p>Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc confidence bounds on false positives using reference families. Annals of Statistics, 48(3), 1281-1303.</p>
     <pre>@Article{,
@@ -168,7 +165,7 @@
   pages = {1281--1303},
   url = {https://projecteuclid.org/euclid.aos/1594972818},
 }</pre>
-    <p>Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics.</p>
+    <p>Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.</p>
     <pre>@Article{,
   title = {Post hoc false positive control for structured hypotheses},
   author = {Guillermo Durand and Gilles Blanchard and Pierre Neuvial and Etienne Roquain},
@@ -183,27 +180,19 @@
 
     <ul class="list-unstyled">
       <li>
-        <p><strong>Gilles Blanchard</strong>. Author. 
-        </p>
-      </li>
-      <li>
-        <p><strong>Guillermo Durand</strong>. Author. 
-        </p>
-      </li>
-      <li>
         <p><strong><a href='https://www.math.univ-toulouse.fr/~pneuvial/'>Pierre Neuvial</a></strong>. Author, maintainer. <a href='https://orcid.org/0000-0003-3584-9998' target='orcid.widget' aria-label='ORCID'><span class='fab fa-orcid orcid' aria-hidden='true'></span></a>
         </p>
       </li>
       <li>
-        <p><strong><a href='https://etienneroquain-81.webself.net/'>Etienne Roquain</a></strong>. Author. 
+        <p><strong><a href='https://durandg12.github.io/'>Guillermo Durand</a></strong>. Author. <a href='https://orcid.org/https://orcid.org/0000-0003-4056-5631' target='orcid.widget' aria-label='ORCID'><span class='fab fa-orcid orcid' aria-hidden='true'></span></a>
         </p>
       </li>
       <li>
-        <p><strong>Benjamin Sadacca</strong>. Contributor. 
+        <p><strong>Nicolas Enjalbert-Courrech</strong>. Author. 
         </p>
       </li>
       <li>
-        <p><strong>Nicolas Enjalbert-Courrech</strong>. Contributor. 
+        <p><strong><a href='https://marie-perrotdockes.github.io/'>Marie Perrot-Dockès</a></strong>. Author. 
         </p>
       </li>
     </ul>
@@ -216,7 +205,7 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by Gilles Blanchard, Guillermo Durand, <a href='https://www.math.univ-toulouse.fr/~pneuvial/'>Pierre Neuvial</a>, <a href='https://etienneroquain-81.webself.net/'>Etienne Roquain</a>.</p>
+  <p>Developed by <a href='https://www.math.univ-toulouse.fr/~pneuvial/'>Pierre Neuvial</a>, <a href='https://durandg12.github.io/'>Guillermo Durand</a>, Nicolas Enjalbert-Courrech, <a href='https://marie-perrotdockes.github.io/'>Marie Perrot-Dockès</a>.</p>
 </div>
 
 <div class="pkgdown">

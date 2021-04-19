@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Upper bound for the number of false discoveries in a selection — maxFP • sansSouci</title>
+<title>(Slow) Upper bound for the number of false discoveries in a selection — maxFP • sansSouci</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Upper bound for the number of false discoveries in a selection — maxFP" />
-<meta property="og:description" content="Upper bound for the number of false discoveries in a selection" />
+<meta property="og:title" content="(Slow) Upper bound for the number of false discoveries in a selection — maxFP" />
+<meta property="og:description" content="(Slow) Upper bound for the number of false discoveries in a selection" />
 
 
 
@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.3</span>
       </span>
     </div>
 
@@ -101,7 +101,7 @@
       <a href="../articles/Simes_equi-correlation.html">Conservativeness of the Simes inequality under positive dependence</a>
     </li>
     <li>
-      <a href="../articles/confidenceEnvelopes_localized.html">Confidence envelopes for spatially structured hypotheses</a>
+      <a href="../articles/confidenceCurves_localized.html">Confidence curves for structured hypotheses</a>
     </li>
     <li>
       <a href="../articles/jointErrorRateCalibration_simulations.html">Joint Error Rate calibration</a>
@@ -111,9 +111,6 @@
     </li>
     <li>
       <a href="../articles/post-hoc_fMRI.html">Permutation-based post hoc inference for fMRI studies</a>
-    </li>
-    <li>
-      <a href="../articles/stepDownControl.html">Step-down joint Family-Wise Error Rate control</a>
     </li>
   </ul>
 </li>
@@ -138,13 +135,13 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Upper bound for the number of false discoveries in a selection</h1>
+    <h1>(Slow) Upper bound for the number of false discoveries in a selection</h1>
     <small class="dont-index">Source: <a href='https://github.com/pneuvial/sanssouci/blob/master/R/posthoc_bounds.R'><code>R/posthoc_bounds.R</code></a></small>
     <div class="hidden name"><code>maxFP.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Upper bound for the number of false discoveries in a selection</p>
+    <p>(Slow) Upper bound for the number of false discoveries in a selection</p>
     </div>
 
     <pre class="usage"><span class='fu'>maxFP</span><span class='op'>(</span><span class='va'>p.values</span>, <span class='va'>thr</span><span class='op'>)</span></pre>
@@ -181,11 +178,11 @@
 
 <span class='va'>M0</span> <span class='op'>&lt;-</span> <span class='fu'>maxFP</span><span class='op'>(</span><span class='va'>pval</span>, <span class='va'>cal</span><span class='op'>$</span><span class='va'>thr</span><span class='op'>)</span> <span class='co'>## upper bound on m0...</span>
 <span class='va'>M0</span><span class='op'>/</span><span class='va'>m</span>
-</div><div class='output co'>#&gt; [1] 0.9430894</div><div class='input'>
+</div><div class='output co'>#&gt; [1] 0.902439</div><div class='input'>
 <span class='fu'>maxFP</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>pval</span><span class='op'>)</span>, <span class='va'>thr</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] 1</div><div class='input'><span class='fu'>maxFP</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>tail</a></span><span class='op'>(</span><span class='va'>pval</span><span class='op'>)</span>, <span class='va'>thr</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] 0</div><div class='input'><span class='fu'>maxFP</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>tail</a></span><span class='op'>(</span><span class='va'>pval</span><span class='op'>)</span>, <span class='va'>thr</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] 6</div><div class='input'><span class='fu'>maxFP</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>pval</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>tail</a></span><span class='op'>(</span><span class='va'>pval</span><span class='op'>)</span><span class='op'>)</span>, <span class='va'>thr</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] 7</div><div class='input'>
+</div><div class='output co'>#&gt; [1] 6</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -198,7 +195,7 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by Gilles Blanchard, Guillermo Durand, <a href='https://www.math.univ-toulouse.fr/~pneuvial/'>Pierre Neuvial</a>, <a href='https://etienneroquain-81.webself.net/'>Etienne Roquain</a>.</p>
+  <p>Developed by <a href='https://www.math.univ-toulouse.fr/~pneuvial/'>Pierre Neuvial</a>, <a href='https://durandg12.github.io/'>Guillermo Durand</a>, Nicolas Enjalbert-Courrech, <a href='https://marie-perrotdockes.github.io/'>Marie Perrot-Dockès</a>.</p>
 </div>
 
 <div class="pkgdown">

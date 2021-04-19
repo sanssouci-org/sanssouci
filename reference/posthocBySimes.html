@@ -73,7 +73,7 @@ family" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.3</span>
       </span>
     </div>
 
@@ -102,7 +102,7 @@ family" />
       <a href="../articles/Simes_equi-correlation.html">Conservativeness of the Simes inequality under positive dependence</a>
     </li>
     <li>
-      <a href="../articles/confidenceEnvelopes_localized.html">Confidence envelopes for spatially structured hypotheses</a>
+      <a href="../articles/confidenceCurves_localized.html">Confidence curves for structured hypotheses</a>
     </li>
     <li>
       <a href="../articles/jointErrorRateCalibration_simulations.html">Joint Error Rate calibration</a>
@@ -112,9 +112,6 @@ family" />
     </li>
     <li>
       <a href="../articles/post-hoc_fMRI.html">Permutation-based post hoc inference for fMRI studies</a>
-    </li>
-    <li>
-      <a href="../articles/stepDownControl.html">Step-down joint Family-Wise Error Rate control</a>
     </li>
   </ul>
 </li>
@@ -182,7 +179,7 @@ screen. Defaults to <code>FALSE</code>.</p></td>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A integer value, Simes's lower bound on the number of
- correct rejections within the selected hypotheses</p>
+correct rejections within the selected hypotheses</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>If (R_k)_k provides jFWER control at level \(\alpha\) then with
@@ -214,8 +211,8 @@ probability greater than \(1-\alpha\), \(|H_0 cap R| \leq \min_k {|R
   <span class='va'>hom</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/cherry/man/hommelFast.html'>hommelFast</a></span><span class='op'>(</span><span class='va'>p</span><span class='op'>)</span>
   <span class='fu'><a href='https://rdrr.io/pkg/cherry/man/shortcuts.html'>pickSimes</a></span><span class='op'>(</span><span class='va'>hom</span>, <span class='va'>R</span>, silent<span class='op'>=</span><span class='cn'>TRUE</span>, alpha <span class='op'>=</span> <span class='va'>alpha</span><span class='op'>)</span>
 <span class='op'>}</span>
-</div><div class='output co'>#&gt; <span class='message'>Loading required package: cherry</span></div><div class='output co'>#&gt; [1] 9</div><div class='input'><span class='fu'>posthocBySimes</span><span class='op'>(</span><span class='va'>p</span>, <span class='va'>R</span>, alpha<span class='op'>=</span><span class='va'>alpha</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] 9</div><div class='input'>
+</div><div class='output co'>#&gt; <span class='message'>Loading required package: cherry</span></div><div class='output co'>#&gt; [1] 7</div><div class='input'><span class='fu'>posthocBySimes</span><span class='op'>(</span><span class='va'>p</span>, <span class='va'>R</span>, alpha<span class='op'>=</span><span class='va'>alpha</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] 7</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -228,7 +225,7 @@ probability greater than \(1-\alpha\), \(|H_0 cap R| \leq \min_k {|R
 
       <footer>
       <div class="copyright">
-  <p>Developed by Gilles Blanchard, Guillermo Durand, <a href='https://www.math.univ-toulouse.fr/~pneuvial/'>Pierre Neuvial</a>, <a href='https://etienneroquain-81.webself.net/'>Etienne Roquain</a>.</p>
+  <p>Developed by <a href='https://www.math.univ-toulouse.fr/~pneuvial/'>Pierre Neuvial</a>, <a href='https://durandg12.github.io/'>Guillermo Durand</a>, Nicolas Enjalbert-Courrech, <a href='https://marie-perrotdockes.github.io/'>Marie Perrot-Dockès</a>.</p>
 </div>
 
 <div class="pkgdown">

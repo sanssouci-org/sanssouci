@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.3</span>
       </span>
     </div>
 
@@ -101,7 +101,7 @@
       <a href="../articles/Simes_equi-correlation.html">Conservativeness of the Simes inequality under positive dependence</a>
     </li>
     <li>
-      <a href="../articles/confidenceEnvelopes_localized.html">Confidence envelopes for spatially structured hypotheses</a>
+      <a href="../articles/confidenceCurves_localized.html">Confidence curves for structured hypotheses</a>
     </li>
     <li>
       <a href="../articles/jointErrorRateCalibration_simulations.html">Joint Error Rate calibration</a>
@@ -111,9 +111,6 @@
     </li>
     <li>
       <a href="../articles/post-hoc_fMRI.html">Permutation-based post hoc inference for fMRI studies</a>
-    </li>
-    <li>
-      <a href="../articles/stepDownControl.html">Step-down joint Family-Wise Error Rate control</a>
     </li>
   </ul>
 </li>
@@ -194,52 +191,52 @@ calculated and returned? Defaults to @FALSE</p></td>
 
     <p>a list with elements:</p><dl>
 
-  <dt>T</dt><dd><p>A vector of \(m\) test statistics</p></dd>
+<dt>T</dt><dd><p>A vector of \(m\) test statistics</p></dd>
 
-  <dt>T0</dt><dd><p>A \(m \times B\) matrix of randomized test statistics</p></dd>
+<dt>T0</dt><dd><p>A \(m \times B\) matrix of randomized test statistics</p></dd>
 
-  <dt>p</dt><dd><p>A vector of \(m\) parametric \(p\)-values</p></dd>
+<dt>p</dt><dd><p>A vector of \(m\) parametric \(p\)-values</p></dd>
 
-  <dt>p0</dt><dd><p>A \(m \times B\) matrix of parametric \(p\)-values on
-  randomized data</p></dd>
+<dt>p0</dt><dd><p>A \(m \times B\) matrix of parametric \(p\)-values on
+randomized data</p></dd>
 
-  <dt>flavor</dt><dd><p>A character value, the type of randomization performed:
-  "perm" for permutation-based randomization in two-sample tests, and "flip"
-  for sign-flipping-based randomization in one sample tests. See Details.</p></dd>
+<dt>flavor</dt><dd><p>A character value, the type of randomization performed:
+"perm" for permutation-based randomization in two-sample tests, and "flip"
+for sign-flipping-based randomization in one sample tests. See Details.</p></dd>
 
-  <dt>rand.p</dt><dd><p>A vector of \(m\) \(p\)-values (only if
-  <code>rand.p.value</code> is <code>TRUE</code> )</p></dd>
+<dt>rand.p</dt><dd><p>A vector of \(m\) \(p\)-values (only if
+<code>rand.p.value</code> is <code>TRUE</code> )</p></dd>
 
-  <dt>rand</dt><dd><p>A \(m \times B\) matrix of randomization \(p\)-values (only
-  if <code>rand.p.value</code> is <code>TRUE</code> )</p></dd>
+<dt>rand</dt><dd><p>A \(m \times B\) matrix of randomization \(p\)-values (only
+if <code>rand.p.value</code> is <code>TRUE</code> )</p></dd>
 
 </dl>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>The type of randomization is determined by the column names of
-  <code>X</code>. If these column names have exactly two distinct values, the
-  corresponding columns are interpreted as two samples and a two-sample
-  permutation-based test  is performed (flavor "perm"). Otherwise (including
-  if <code>X</code> does not have column names), a one-sample test is performed
-  using sign-flipping (flavor "flip").</p>
+<code>X</code>. If these column names have exactly two distinct values, the
+corresponding columns are interpreted as two samples and a two-sample
+permutation-based test  is performed (flavor "perm"). Otherwise (including
+if <code>X</code> does not have column names), a one-sample test is performed
+using sign-flipping (flavor "flip").</p>
 <p>For permutation, we test the null hypothesis: "both groups have the same
-  mean" against the alternative specified by parameter <code>alternative</code>. By
-  default, the test is Welch's two-sample test for unequal variances, but
-  other tests may be used via the argument <code>rowTestFUN</code>.  Permuted test
-  statistics are calculated by B permutations of the group labels.
-  Corresponding observed and permuted p-values are calculated as the
-  proportion of permutations (including the identity) for which the permuted
-  test statistic is larger than the observed test statistic.</p>
+mean" against the alternative specified by parameter <code>alternative</code>. By
+default, the test is Welch's two-sample test for unequal variances, but
+other tests may be used via the argument <code>rowTestFUN</code>.  Permuted test
+statistics are calculated by B permutations of the group labels.
+Corresponding observed and permuted p-values are calculated as the
+proportion of permutations (including the identity) for which the permuted
+test statistic is larger than the observed test statistic.</p>
 <p>For sign-flipping, we test the null hypothesis: "the mean is 0" against the
-  alternative specified by parameter <code>alternative</code>. We use the
-  (rescaled) empirical mean of the observations as a test statistic.
-  Sign-flipped test statistics are calculated by flipping the sign of each
-  observation with probability 1/2.</p>
+alternative specified by parameter <code>alternative</code>. We use the
+(rescaled) empirical mean of the observations as a test statistic.
+Sign-flipped test statistics are calculated by flipping the sign of each
+observation with probability 1/2.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Ge, Y., Dudoit, S. and Speed, T.P., 2003. Resampling-based
-  multiple testing for microarray data analysis. _Test_, 12(1), pp.1-77.</p>
+multiple testing for microarray data analysis. <em>Test</em>, 12(1), pp.1-77.</p>
 <p>Blanchard, G., Neuvial, P., &amp; Roquain, E. (2020). Post hoc confidence bounds on false positives using reference families. Annals of Statistics, 48(3), 1281-1303.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -291,7 +288,7 @@ calculated and returned? Defaults to @FALSE</p></td>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Gilles Blanchard, Guillermo Durand, <a href='https://www.math.univ-toulouse.fr/~pneuvial/'>Pierre Neuvial</a>, <a href='https://etienneroquain-81.webself.net/'>Etienne Roquain</a>.</p>
+  <p>Developed by <a href='https://www.math.univ-toulouse.fr/~pneuvial/'>Pierre Neuvial</a>, <a href='https://durandg12.github.io/'>Guillermo Durand</a>, Nicolas Enjalbert-Courrech, <a href='https://marie-perrotdockes.github.io/'>Marie Perrot-Dockès</a>.</p>
 </div>
 
 <div class="pkgdown">
