@@ -44,7 +44,6 @@ Vp <- curveVstar_tree(treeFam, op)
 
 # Simes
 VpS <- sapply(1:m, FUN=function(kk) posthocBySimes(pvals, op[1:kk], alpha))
-ce <- confCurveFromFam(pvals, refFamily = "Simes", param = alpha, what = "FP")
 
 plot(1:m, 1:m-Vp, t = 's',
      xlim = c(0, 2*m1), ylim = c(0, m1), 

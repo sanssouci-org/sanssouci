@@ -224,6 +224,7 @@ nb.elements <- function(C) {
 #' @param alpha A target level
 #' @details The proportion of true nulls in each node is estimated by an union bound on the regions. That is, the provided method is applied at level \code{alpha/nR} where \code{nR} is the number of regions.
 #' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
+#' @export
 #' @examples
 #' 
 #' m <- 1000 
