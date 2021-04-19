@@ -33,14 +33,12 @@ shinyUI(fluidPage(
   # Sidebar with panel
   sidebarLayout(
     sidebarPanel(
-      # wellPanel(
       splitLayout(
         htmlOutput("help"),
         checkboxInput("checkboxDemo", 
                       label = "Use public data", 
                       value = TRUE),
         
-        # uiOutput("CheckData"),
         actionButton("buttonValidate", "Run!", )),
       conditionalPanel(condition = "input.checkboxDemo",
                        uiOutput("choiceGSEAUI")
@@ -84,18 +82,8 @@ shinyUI(fluidPage(
       ), 
       sliderInput("sliderConfLevel", 
                   "Confidence level", 
-                  # label = p("Confidence level", 
-                  #           bsButton("QconfLevel", 
-                  #                    label = "", 
-                  #                    icon = icon("question"), 
-                  #                    style = "info", 
-                  #                    size = "extra-small")),
                   min = 0, 
                   max = 100, value = 90, post = " %"),
-      # bsTooltip("QconfLevel", "Confidence level",
-      #           "right", 
-      #           options = list(container = "body"), 
-      #           trigger = "hover"),
       checkboxInput("checkboxAdvancedParam", 
                     label = p("Advanced parameters"),
                     # bsButton("Qparam", 
@@ -125,12 +113,6 @@ shinyUI(fluidPage(
                                      choices = list("Simes" = "Simes", "Beta" = "Beta"), 
                                      selected = "Simes"),
                          uiOutput("inputK")#)
-                         # ), 
-                         # splitLayout(
-                         #   shinyjs::hidden(selectInput("refFamilyFAKE", label = "Reference family", 
-                         #                               choices = list("Simes" = "Simes", "Beta" = "Beta"), 
-                         #                               selected = "Simes")),
-                         #   shinyjs::hidden(uiOutput("inputKFAKE"))
                        )),
       verbatimTextOutput("sorti"),
       tabsetPanel( id = "tabSelected",
@@ -156,7 +138,6 @@ shinyUI(fluidPage(
                             shinyjs::hidden(downloadButton("downloadPHBTableGroup", "Download post hoc bound table") ))
                    
       ),
-      # )
     ),
     
     # Main panel
@@ -187,11 +168,6 @@ shinyUI(fluidPage(
                        fluidRow(
                          shinyjs::hidden(actionButton("resetCSV", "Reset Selections")), 
                          shinyjs::hidden(downloadButton("downloadData", "Download csv file with user selection"))
-                         # bsButton("Qdownload", label = "", icon = icon("question"), style = "info", size = "extra-small"),
-                         # bsTooltip("Qdownload", "Delete your select manual selection from the post hoc bounds and downloadable csv file. Download a csv file containing matrix with binary vector of your User selection",
-                         #           "right", options = list(container = "body"), trigger = "focus"),
-                         # bsTooltip(id = "resetCSV", title = "Delete you box select manual selection from the post hoc bounds and downloadable csv file.", placement = "bottom", trigger = "hover", options = NULL),
-                         # bsTooltip(id = "downloadData", title = "Download a csv file containing matrix with binary vector of your User selection", placement = "bottom", trigger = "hover", options = NULL)
                        )),
       
       # splitLayout(
