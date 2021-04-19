@@ -7,20 +7,18 @@ title <- meta$Title
 citEntry(entry="Manual",
          title = paste("sansSouci:", title),
          author   = personList(as.person("Pierre Neuvial"),
-                               as.person("Benjamin Sadacca"),
-                               as.person("Gilles Blanchard"),
                                as.person("Guillermo Durand"),
-                               as.person("Etienne Roquain")),
+                               as.person("Nicolas Enjalbert-Courrech"),
+                               as.person("Marie Perrot-Dockès")),
          year = year,
          note = vers,
-	 url =  "https://github.com/pneuvial/sanssouci",
-
+         url =  "https://pneuvial.github.io/sanssouci",
          textVersion =
-         paste("Pierre Neuvial, Benjamin Sadacca, Gilles Blanchard, Guillermo Durand and Etienne Roquain (",
+         paste("Pierre Neuvial, Guillermo Durand, Nicolas Enjalbert-Courrech and Marie Perrot-Dockès (",
                year,
                "). sansSouci: ",
                title, ". ",
-               vers, ". https://github.com/pneuvial/sanssouci", sep=""))
+               vers, ". https://pneuvial.github.io/sanssouci", sep=""))
 
 
 citEntry(
@@ -29,10 +27,10 @@ citEntry(
   author   = personList(as.person("Gilles Blanchard"),
                              as.person("Pierre Neuvial"),
                              as.person("Etienne Roquain")),
-  year     = 2020,
+  year     = 2021,
   url      = "https://hal.archives-ouvertes.fr/hal-02320543",
-  note     = "Book chapter in revision for Handbook of Multiple Comparisons",
-  textVersion = "Blanchard, G., Neuvial, P., & Roquain, E. (2020). On agnostic post hoc approaches to false positive control. Book chapter in revision for Handbook of Multiple Comparisons."
+  note     = "To appear in Handbook of Multiple Comparisons",
+  textVersion = "Blanchard, G., Neuvial, P., & Roquain, E. (2020). On agnostic post hoc approaches to false positive control. To appear in Handbook of Multiple Comparisons."
   )
 
 citEntry(

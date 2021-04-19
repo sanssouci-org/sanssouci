@@ -57,5 +57,5 @@ defined by \code{categ} are applied for each gene using the
 (mean difference in log scale) between the two categories.
 }
 \seealso{
-Volcano plot shiny app at \url{https://pneuvial.shinyapps.io/volcano-plot/}
+Volcano plot shiny app at \url{ https://shiny-iidea-sanssouci.apps.math.cnrs.fr/}
 }

@@ -26,13 +26,13 @@ fig.height=6
 
 # Introduction
 
-This vignette provides guidelines for using the [IIDEA shiny application](https://pneuvial.shinyapps.io/volcano-plot/). In the context of differential gene expression studies, this interactive application combines volcano plots with enrichment analyses. 
+This vignette provides guidelines for using the [IIDEA shiny application](https://shiny-iidea-sanssouci.apps.math.cnrs.fr/). In the context of differential gene expression studies, this interactive application combines volcano plots with enrichment analyses. 
 
 The main distinctive feature of this app is that it makes it possible for users to interactively select genes of interest (either from a volcano plot or corresponding to a particular gene set) and obtain valid statistical guarantees regarding the number of true/false positives among these genes (see Methods section below).
 
 # Quick start
 
-- Open the [IIDEA shiny application](https://pneuvial.shinyapps.io/volcano-plot/)
+- Open the [IIDEA shiny application](https://shiny-iidea-sanssouci.apps.math.cnrs.fr/)
 - Click on 'Run!'
 
 > This launches the analysis of an example data set (described below): a volcano plot is displayed in the right panel, together with a table at the bottom of the left panel. 

@@ -7,8 +7,7 @@
 plotConfCurve(conf_bound, xmax, cols = NULL)
 }
 \arguments{
-\item{conf_bound}{A data.frame or a list of data.frames as output by
-\code{\link{bound}}}
+\item{conf_bound}{A data.frame or a list of data.frames as output by \link{predict}}
 
 \item{xmax}{Right limit of the plot}
 

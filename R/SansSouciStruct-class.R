@@ -31,14 +31,18 @@ SansSouciStruct <- function(struct, leaves, truth = NULL) {
 #' Create an object of class 'SansSouciStruct' with a dyadic structure
 #'
 #' @param m A numeric value, the number of hypotheses
-#' @param leafSize A numeric value, the number of hypotheses in each leaf
-#' @param maxHeight A numeric value, the maximum height (or depth) of the tree
-#' @param flavor A character value defining the type of tree building function
-#'   to be used. Must be one of window.size", "height", or "max.height"
-#' @param direction A character value, the direction used for building the tree
-#'   Must be one of "bottom-up" or "top-down"
-#' @param ... Arguments to be passed to `SansSouciStruct`
+#' @param leaf_size An integer value, the number of hypotheses in each leaf.
+#'   Defaults to NULL.
+#' @param height An integer value, the desired maximal height of the tree.
+#'   Defaults to NULL.
 #' @return An object of class 'SansSouciStruct'
+#' @details If both 'leaf_size' and 'height' are NULL then a binary tree with
+#'   maximal height given the total number of hypotheses is built. If both
+#'   'leaf_size' and 'height' are non NULL, then 'height' is ignored and a tree
+#'   is built with the desired leaf size.
+#' @param direction A character value, the direction used for building the tree.
+#'   Must be one of  "bottom-up" or "top-down"
+#' @param ... Further arguments to be passed to 'SansSouciStruct'
 #' @seealso dyadic.from.leave.list dyadic.from.window.size dyadic.from.height
 #'   dyadic.from.max.height
 #' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020).
@@ -49,31 +53,54 @@ SansSouciStruct <- function(struct, leaves, truth = NULL) {
 #' s <- 100
 #' q <- 7
 #' m <- s*2^q
+#'
+#' obj <- SansSouciDyadic(m, leaf_size = s, direction = "top-down")
+#' obj <- SansSouciDyadic(m, height = 8, direction = "top-down")
 #' 
-#' dd <- dyadic.from.window.size(m, s, method = 2)
-#' obj <- SansSouciDyadic(m, s, flavor = "window.size", direction = "top-down")
-#' 
-SansSouciDyadic <- function(m, leafSize = NULL, maxHeight = NULL,
-                            flavor = c("window.size", "height", "max.height"), 
+SansSouciDyadic <- function(m, leaf_size = NULL, height = NULL,
                             direction = c("bottom-up", "top-down"),
                             ...) {
-    flavor <- match.arg(flavor)
     direction <- match.arg(direction)
     method <- switch(direction, 
                      "bottom-up" = 1,
                      "top-down" = 2)
     dd <- NULL
-    if (flavor == "window.size") {
-        dd <- dyadic.from.window.size(m, leafSize, method)
-    } else if (flavor == "height") {
-        dd <- dyadic.from.height(m, maxHeight, method)
-    } else if (flavor == "max.height") {
-        dd <- dyadic.from.max.height(m, method)
+    if (!is.null(leaf_size)) {
+        if (!is.null(height)) {
+            warning("Both 'leaf_size' and 'height' provided: ignoring 'height'")
+        }
+        dd <- dyadic.from.window.size(m, s = leaf_size, method)
+    } else {
+        dd <- dyadic.from.height(m, H = height, method)
     }
     SansSouciStruct(struct = dd$C, leaves = dd$leaf_list, ...)
 }
 
 
+#' Basic methods for class `SansSouciStruct`
+#' 
+#' @param object An object of class \code{SansSouciStruct}
+#' @name SansSouciStruct-methods
+#' @examples
+#' s <- 100
+#' q <- 7
+#' m <- s*2^q
+#'
+#' obj <- SansSouciDyadic(m, leaf_size = s, direction = "top-down")
+#' nHyp(obj)
+#' nLeaves(obj)
+#' mu <- gen.mu.leaves(m = m, K1 = 8, d = 0.9, grouped = TRUE, 
+#'   setting = "const", barmu = 3, leaf_list = obj$input$leaves)
+#' pvalues <- gen.p.values(m = m, mu = mu, rho = 0)
+#' 
+#' alpha <- 0.05
+#' res <- fit(obj, alpha, pvalues, "DKWM")
+#' label(res)
+#' str(pValues(res))
+#' 
+
+NULL
+#> NULL
 #' `nHyp`: get the number of hypotheses
 #' 
 #' @rdname SansSouciStruct-methods
@@ -126,19 +153,26 @@ nLeaves.SansSouciStruct <- function(object) {
 #' @references Holm, S. A simple sequentially rejective multiple test procedure. Scandinavian Journal of Statistics 6 (1979), pp. 65-70.
 #' @references Massart, P. (1990). The tight constant in the Dvoretzky-Kiefer-Wolfowitz inequality. The Annals of Probability, pages 1269-1283.
 #' @export
+#' 
 #' @examples 
 #' s <- 100
 #' q <- 7
 #' m <- s*2^q
-#' obj <- SansSouciDyadic(m, s, flavor = "window.size", direction = "top-down")
+#' obj <- SansSouciDyadic(m, leaf_size = s, direction = "top-down")
 #' 
 #' mu <- gen.mu.leaves(m = m, K1 = 8, d = 0.9, grouped = TRUE, 
 #'   setting = "const", barmu = 3, leaf_list = obj$input$leaves)
 #' pvalues <- gen.p.values(m = m, mu = mu, rho = 0)
 #' 
 #' alpha <- 0.05
-#' res <- fit(obj, alpha, pvalues, "DKWM")
-#' bound(res)
+#' S1 <- which(mu != 0)
+#' 
+#' res_DKWM <- fit(obj, alpha, pvalues, "DKWM")
+#' predict(res_DKWM, S = S1, what = "FP")
+#' 
+#' res_Simes <- fit(obj, alpha, pvalues, "Simes")
+#' predict(res_Simes, S = S1, what = "FP")
+#' 
 fit.SansSouciStruct <- function(object, alpha, p.values, 
                                 family = c("DKWM", "HB", "trivial", "Simes", "Oracle"), 
                                 flavor = c("tree", "partition"), ...) {
@@ -198,14 +232,26 @@ label.SansSouciStruct <- function(object) {
     } 
     return(lab)
 }
+
+#' `pValues`: get p-values
+#' 
+#' @rdname SansSouciStruct-methods
+#' @param object An object of class `SansSouci`
+#' @export
 pValues.SansSouciStruct <- function(object) {
     object$output$p.values
 }
 
 #' @export
-bound.SansSouciStruct <- function(object, S = seq_len(nHyp(object)), 
-                            what = c("TP", "FDP"), ...) {
-    p.values <- pValues(object)
+predict.SansSouciStruct <- function(object, S = seq_len(nHyp(object)), 
+                            what = c("TP", "FDP"), n_out = 1, 
+                            order_by_p = TRUE, ...) {
+    lab <- label(object)
+    if (order_by_p) {
+        ordering <- order(pValues(object))
+        S <- ordering[S]
+    }
+    
     if (max(S) > nHyp(object)) {
         stop("'S' is not a subset of hypotheses")
     }
@@ -217,7 +263,23 @@ bound.SansSouciStruct <- function(object, S = seq_len(nHyp(object)),
         struct <- struct[length(struct)]
     }
     
-    ord <- order(p.values)
-    max_FP <- V.star(ord[S], C = struct, ZL, leaf_list = leaves)
-    max_FP    
-}
+    idxs <- length(S)
+    if (n_out > 1) {
+        # idxs <- as.integer(seq(from = 1, to = length(S), length.out = n_out))
+        idxs <- 10^seq(from = log10(1), to = log10(length(S)), length.out = n_out)
+        idxs <- unique(as.integer(idxs))
+    }
+    max_FP <- numeric(length(idxs))
+    for (ii in seq(along = idxs)) {
+        max_FP[ii] <- V.star(S[1:idxs[ii]], C = struct, 
+                             ZL = ZL, leaf_list = leaves)
+    }
+    bounds <- formatBounds(max_FP, idxs = idxs, lab = lab, what = what, all = TRUE)
+    if (n_out == 1) {
+        bounds <- bounds[, "bound"]
+        if (length(bounds) > 1) {
+            names(bounds) <- what
+        }
+    }
+    bounds
+} 

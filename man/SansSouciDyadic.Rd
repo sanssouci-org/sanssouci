@@ -6,9 +6,8 @@
 \usage{
 SansSouciDyadic(
   m,
-  leafSize = NULL,
-  maxHeight = NULL,
-  flavor = c("window.size", "height", "max.height"),
+  leaf_size = NULL,
+  height = NULL,
   direction = c("bottom-up", "top-down"),
   ...
 )
@@ -16,17 +15,16 @@ SansSouciDyadic(
 \arguments{
 \item{m}{A numeric value, the number of hypotheses}
 
-\item{leafSize}{A numeric value, the number of hypotheses in each leaf}
+\item{leaf_size}{An integer value, the number of hypotheses in each leaf.
+Defaults to NULL.}
 
-\item{maxHeight}{A numeric value, the maximum height (or depth) of the tree}
+\item{height}{An integer value, the desired maximal height of the tree.
+Defaults to NULL.}
 
-\item{flavor}{A character value defining the type of tree building function
-to be used. Must be one of window.size", "height", or "max.height"}
+\item{direction}{A character value, the direction used for building the tree.
+Must be one of  "bottom-up" or "top-down"}
 
-\item{direction}{A character value, the direction used for building the tree
-Must be one of "bottom-up" or "top-down"}
-
-\item{...}{Arguments to be passed to \code{SansSouciStruct}}
+\item{...}{Further arguments to be passed to 'SansSouciStruct'}
 }
 \value{
 An object of class 'SansSouciStruct'
@@ -34,13 +32,19 @@ An object of class 'SansSouciStruct'
 \description{
 Create an object of class 'SansSouciStruct' with a dyadic structure
 }
+\details{
+If both 'leaf_size' and 'height' are NULL then a binary tree with
+maximal height given the total number of hypotheses is built. If both
+'leaf_size' and 'height' are non NULL, then 'height' is ignored and a tree
+is built with the desired leaf size.
+}
 \examples{
 s <- 100
 q <- 7
 m <- s*2^q
 
-dd <- dyadic.from.window.size(m, s, method = 2)
-obj <- SansSouciDyadic(m, s, flavor = "window.size", direction = "top-down")
+obj <- SansSouciDyadic(m, leaf_size = s, direction = "top-down")
+obj <- SansSouciDyadic(m, height = 8, direction = "top-down")
 
 }
 \references{

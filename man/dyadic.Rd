@@ -2,36 +2,42 @@
 % Please edit documentation in R/tree_functions.R
 \name{dyadic}
 \alias{dyadic}
+\alias{dyadic.from.leaf_list}
 \alias{dyadic.from.window.size}
 \alias{dyadic.from.height}
-\alias{dyadic.from.max.height}
 \title{Create a complete dyadic tree structure}
 \usage{
+dyadic.from.leaf_list(leaf_list, method)
+
 dyadic.from.window.size(m, s, method)
 
-dyadic.from.height(m, H, method)
-
-dyadic.from.max.height(m, method)
+dyadic.from.height(m, H = NULL, method)
 }
 \arguments{
-\item{m}{An integer value, the number of elements in the structure}
-
-\item{s}{An integer value, the number of elements in each leaf}
+\item{leaf_list}{A list of leaves}
 
 \item{method}{A numeric value. If \code{method == 1}, start from the leaves
 and group nodes of a same height 2 by 2 as long as possible. If
 \code{method==2}, start from the root and divide nodes in 2 nodes of equal
 size as long as possible}
 
+\item{m}{An integer value, the number of elements in the structure}
+
+\item{s}{An integer value, the number of elements in each leaf}
+
 \item{H}{An integer value, the desired maximal height of the tree}
 }
 \value{
+A list of lists containing the dyadic structure
+
 A list with two elements:\describe{
 \item{leaf_list}{A list of leaves}
 \item{C}{A list of lists containing the dyadic structure}
 }
 }
 \description{
+Create a complete dyadic tree structure
+
 Create a complete dyadic tree structure
 }
 \details{
@@ -49,7 +55,7 @@ str(dd)
 dd <- dyadic.from.height(m, H = 3, method = 2)
 str(dd)
 
-dd <- dyadic.from.max.height(m, method=2)
+dd <- dyadic.from.height(m, method=2)
 str(dd)
 
 leaf_list <- dd$leaf_list

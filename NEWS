@@ -3,6 +3,15 @@
 Package: sansSouci
 ==================
 
+Version 0.10.2 [2021-04-16]
+
+* SansSouciStruct: update doc and tests
+* major cleanup in simple_calibration functions (to be described)
+* 'fit.SansSouci(flavor="v1")' uses simple_calibration functions for 1-sample
+  and 2-sample tests
+* Harmonized 1-sample vs 2-sample calibration: added 'rowZTests' for sign flipping
+* Speedup in 'rowWelchTests': vectorization of permutation step
+
 Version 0.10.1 [2021-04-14]
 
 * Update IIDEA vignette
@@ -13,6 +22,7 @@ Version 0.10.1 [2021-04-14]
 * Add self contained and competitive methods for enrichment analyses (issue #44)
 * Add time and progress bar
 * Use R.cache to memoize calibration results
+>>>>>>> develop
 
 Version 0.10.0 [2021-03-12]
 
@@ -24,6 +34,12 @@ Version 0.10.0 [2021-03-12]
 * Added S3 class 'SansSouci' (generic BNR framework)
 * Implemented method 'SansSouci.fit' (wrapper around 'calibrateJER')
 * Implemented method 'SansSouci.bound' (wrapper around 'curveMaxFP')
+
+Version 0.9.5 [2021-02-11]
+
+* cleanups in simple calibration functions: the low-level functions are 'get_perm_p', 'get_pivotal_stat' and 'get_calibrated_thresholds'; the high-level function is 'calibrate'
+* cleanups in interpolation functions: 'get_min_TP', 'get_max_FP', 'get_min_TDP', 'get_max_FDP' return *functions* of a set of hypotheses. Added parameter 'envelope' to possibly return the entire confidence envelope.
+* updated tests to reproduce the results of calibrateJER using new functions
 
 Version 0.9.4 [2020-12-24]
 

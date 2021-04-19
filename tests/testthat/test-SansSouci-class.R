@@ -45,6 +45,7 @@ test_that("Correctness of elements of fitted  'SansSouci' object", {
     res <- fit(obj, alpha = alpha, B = B, K = K, alternative = alt, family = fam)
     expect_s3_class(res, "SansSouci")
     expect_identical(names(res), names(obj))
+
     params <- res$parameters
     names(params)
     expect_equal(params$alpha, alpha)
@@ -53,6 +54,24 @@ test_that("Correctness of elements of fitted  'SansSouci' object", {
     expect_equal(params$family, fam)
     expect_equal(params$K, K)
     
+    output <- res$output
+    nms <- c("statistic", "parameter", "p.value", "estimate", "p0", "thr",
+             "piv_stat", "lambda", "steps_down")
+    expect_identical(names(output), nms)
+    expect_length(output$statistic, m)
+    expect_length(output$parameter, m)
+    expect_length(output$p.value, m)
+    expect_length(output$estimate, m)
+    p0 <- output$p0
+    expect_equal(nrow(p0), m)
+    expect_equal(ncol(p0), B)
+    expect_lte(max(p0), 1)
+    expect_gte(min(p0), 0)
+    expect_length(output$thr, K)
+    expect_length(output$piv_stat, B)
+    expect_gte(output$lambda, 0)
+    expect_lte(output$lambda, 1)
+    expect_gte(output$steps_down, 0)
 })
 
 
@@ -73,7 +92,6 @@ test_that("'fit.SansSouci' reproduces the results of 'calibrateJER'", {
                            family = c("Simes", "Beta"), 
                            stringsAsFactors = FALSE)
     cc <- sample(nrow(configs), 1)   ## perform just one at random at each execution
-    print(cc)
     alt <- configs[cc, "alternative"]
     fam <- configs[cc, "family"]
     set.seed(20210311)
@@ -82,7 +100,11 @@ test_that("'fit.SansSouci' reproduces the results of 'calibrateJER'", {
     set.seed(20210311)
     cal <- calibrateJER(Y, groups, B = B, alpha = alpha, K = K, 
                         alternative = alt, refFamily = fam)
-    expect_identical(cal, res$output)
+    reso <- res$output
+    expect_identical(cal$p.values, reso$p.value)
+    expect_identical(cal$piv_stat, reso$piv_stat)
+    expect_identical(cal$lambda,   reso$lambda)
+    expect_identical(cal$thr,      reso$thr)
 })
 
 test_that("Consistency of output of 'bound.SansSouci'", {
@@ -101,20 +123,20 @@ test_that("Consistency of output of 'bound.SansSouci'", {
     what0 <- c("FP", "TP", "FDP", "TDP")
     
     # 'all=FALSE' => return a vector
-    b <- bound(res, what = what0)
+    b <- predict(res, what = what0)
     expect_type(b, "double")
     expect_identical(names(b), what0)
     expect_equal(b[["FDP"]] + b[["TDP"]], 1)
     expect_equal(b[["FP"]] + b[["TP"]], m)
     
     # 'all=FALSE' => return a data.frame
-    b <- bound(res, what = what0, all = TRUE)
+    b <- predict(res, what = what0, all = TRUE)
     expect_s3_class(b, "data.frame")
     expect_equal(nrow(b), m * length(what0))
     
     # strict subset
     S <- order(pValues(res))[seq_len(m-10)]
-    bb <- bound(res, S, what = what0, all = TRUE)
+    bb <- predict(res, S, what = what0, all = TRUE)
     expect_s3_class(bb, "data.frame")
     expect_equal(nrow(bb), length(S) * length(what0))
     names(bb)
@@ -144,6 +166,6 @@ test_that("'bound.SansSouci' reproduces the results of 'curveMaxFP'", {
     pvals <- sort(pValues(res))
     FP <- sansSouci:::curveMaxFP(p.values = pvals, 
                                  thr = thresholds(res))
-    FPb <- bound(res, what = "FP", all = TRUE)$bound
+    FPb <- predict(res, what = "FP", all = TRUE)$bound
     expect_identical(FPb, FP)
 })

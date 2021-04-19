@@ -1,81 +1,8 @@
-#' Post hoc confidence bounds on the true/false positives
-#' 
-#' @param object An object. See individual methods for specifics
-#' @param S A subset of indices
-#' @param ... Further arguments to be passed to other methods
-#' @export
-bound <- function(object, S, ...) UseMethod("bound")
-
-#' @rdname bound
-#' @param what A character vector, the names of the post hoc bounds to be
-#'   computed, among:
-#' 
-#' - FP: Upper bound on the number of false positives in the 'x' most significant items
-#' - TP: Lower bound on the number of true positives in the 'x' most significant items
-#' - FDP: Upper bound on the proportion of false positives in the 'x' most significant items
-#' - TP: Lower bound on the proportion of true positives in the 'x' most significant items.
-#' 
-#' Defaults to `c("TP", "FDP")`
-#' @param all A logical value: should the bounds for all ordered subsets of `S` be returned? If `FALSE` (the default), only the bound for `S` is returned.
-#' 
-#' @return If `all` is `FALSE` (the default), only the value of the bound is returned. Otherwise, a `data.frame` is return, with |S| rows and 4 columns:
-#' - x: Number of most significant items selected
-#' - label: Label for the procedure, typically of the form 'family(param)'
-#' - bound: Value of the post hoc bound
-#' - stat: Type of post hoc bound, as specified by argument `bound`.
-#' 
-#' @export
-#' @examples
-#' 
-#' # Generate Gaussian data and perform multiple tests
-#' obj <- SansSouciSim(m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
-#' res <- fit(obj, B = 100, alpha = 0.1)
-#' 
-#' # post hoc bounds for all hypotheses
-#' bound(res)
-#'
-#' # confidence curve
-#' cb <- bound(res, all = TRUE)
-#' head(cb)
-#' plot(res)
-#' 
-#' # confidence curve for a subset
-#' S <- which(foldChanges(res) > 0.3)
-#' plot(res, S = S)
-#' 
-#' # plot two confidence curves
-#' res_beta <- fit(obj, B = 100, alpha = 0.1, family = "Beta", K = 20)
-#' cb_beta <- bound(res_beta, all = TRUE)
-#' 
-#' bounds <- list("Simes"= cb, 
-#'                    "Beta" = cb_beta)
-#' plotConfCurve(bounds, xmax = 200)
-#' 
-#' @export
-bound.SansSouci <- function(object, S = seq_len(nHyp(object)), 
-                            what = c("TP", "FDP"), all = FALSE, ...) {
-    p.values <- pValues(object)
-    thr <- thresholds(object)
-    lab <- label(object)
-    if (max(S) > nHyp(object)) {
-        stop("'S' is not a subset of hypotheses")
-    }
-    bounds <- bound(object = p.values, S = S, thr = thr, lab = lab, what = what, all = all)
-    if (!all) {
-        bounds <- bounds[, "bound"]
-        if (length(bounds) > 1) {
-            names(bounds) <- what
-        }
-    }
-    return(bounds)
-}
-
-bound.numeric <- function(object, S = seq_along(object), thr = NULL, lab = NULL, 
+posthoc_bound <- function(p.values, S = seq_along(p.values), thr = NULL, lab = NULL, 
                      what = c("TP", "FDP"), all = FALSE) {
     if (is.null(thr)) {
         stop("Argument 'thr' must be non NULL")
     }
-    p.values <- object; rm(object);
     s <- length(S)
     idxs <- seq_len(s)
     max_FP <- rep(NA_integer_, s)
@@ -120,8 +47,7 @@ formatBounds <- function(max_FP, idxs = seq_len(max_FP), lab = NULL,
 
 #' Plot confidence bound
 #' 
-#' @param conf_bound A data.frame or a list of data.frames as output by 
-#'   \code{\link{bound}}
+#' @param conf_bound A data.frame or a list of data.frames as output by [predict]
 #' @param xmax Right limit of the plot
 #' @param cols A vector of colors of the same length as `conf_bound`
 #' @references Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc confidence bounds on false positives using reference families. Annals of Statistics, 48(3), 1281-1303.
@@ -165,7 +91,7 @@ plotConfCurve <- function(conf_bound, xmax, cols = NULL) {
         ggplot2::scale_color_manual(values = cols) 
 }    
 
-#' Upper bound for the number of false discoveries in a selection
+#' (Slow) Upper bound for the number of false discoveries in a selection
 #' 
 #' @param p.values A vector of p-values for the selected items
 #' @param thr A vector of non-decreasing k-FWER-controlling thresholds
@@ -209,7 +135,7 @@ maxFP <- function(p.values, thr) {
 }
 
 
-#' Lower bound for the number of true discoveries in a selection
+#' (Slow) Lower bound for the number of true discoveries in a selection
 #' 
 #' @inheritParams maxFP
 #' @return A Lower bound on the number of true discoveries in the selection
@@ -217,6 +143,7 @@ maxFP <- function(p.values, thr) {
 minTP <- function(p.values, thr) {
     length(p.values) - maxFP(p.values, thr)
 }
+
 
 #' Upper bound for the number of false discoveries among most significant items
 #'
@@ -307,3 +234,4 @@ curveMaxFP <- function(p.values, thr, flavor=c("BNR2016", "Mein2006", "BNR2014")
 ## 2014-05-22
 ## o Created.
 ############################################################################
+

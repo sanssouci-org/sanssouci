@@ -130,8 +130,8 @@ gen.p.values <- function(m, mu = rep(0, length(mu)), rho = 0) {
 #' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
 #' @export
 #' @examples
-#' m <- 500
-#' s <- 50
+#' m <- 250
+#' s <- 25
 #' K1 <- floor(m/(s * 4))
 #' d <- 1
 #' m1 <- s*K1*d
@@ -150,23 +150,22 @@ gen.p.values <- function(m, mu = rep(0, length(mu)), rho = 0) {
 #' Vp <- curveVstar_tree(treeFam, op)
 #'
 #' # Simes
-#' ce <- confCurveFromFam(pvals, refFamily = "Simes", param = alpha, what = "FP")
-#' VpS <- ce$bound
+#' VpS <- sapply(1:m, FUN=function(kk) posthocBySimes(pvals, op[1:kk], alpha))
 #'
 #' plot(1:m, 1:m-Vp, t = 's',
-#'      xlim = c(0, 2*m1), ylim = c(0, m1))
+#'      xlim = c(0, 2*m1), ylim = c(0, m1), 
+#'      ylab = "Lower bound on true positives")
 #' lines(1:m, 1:m-VpS, t = 's', col = 3)
 #'
 #' # order by 'mu' (favorable to DKWM)
 #' omu <- order(mu, decreasing = TRUE)
 #' Vmu <- curveVstar_tree(treeFam, omu)
 #' thrSimes <- SimesThresholdFamily(m)(alpha)
-#' #VmuS <- curveMaxFP(pvals[omu], thrSimes) # does not work as pvals[omu] can be non-increasing ??
-#' #VmuS <- curveMaxFP(pvals[omu], thrSimes, flavor = "BNR2014") # works but is slow!
 #' SmuS <- sapply(1:m, FUN=function(kk) posthocBySimes(pvals, omu[1:kk], alpha))
 #'
 #' plot(1:m, 1:m-Vmu, t = 's',
-#'      xlim = c(0, 2*m1), ylim = c(0, m1))
+#'      xlim = c(0, 2*m1), ylim = c(0, m1),
+#'      ylab = "Lower bound on true positives")
 #' lines(1:m, SmuS, t = 's', col = 3)
 curveVstar_tree <- function(treeFam, ordering) {
     C <- treeFam$tree

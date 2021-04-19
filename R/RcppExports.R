@@ -21,6 +21,10 @@ partialColSortDescCpp <- function(X, k) {
     .Call('_sansSouci_partialColSortDescCpp', PACKAGE = 'sansSouci', X, k)
 }
 
+partialColSortCpp <- function(X, k) {
+    .Call('_sansSouci_partialColSortCpp', PACKAGE = 'sansSouci', X, k)
+}
+
 #' @describeIn posthocBySimes Rcpp version
 #' @export
 posthocBySimes0Rcpp <- function(p, select, alpha) {

@@ -2,7 +2,7 @@
 % Please edit documentation in R/posthoc_bounds.R
 \name{maxFP}
 \alias{maxFP}
-\title{Upper bound for the number of false discoveries in a selection}
+\title{(Slow) Upper bound for the number of false discoveries in a selection}
 \usage{
 maxFP(p.values, thr)
 }
@@ -15,7 +15,7 @@ maxFP(p.values, thr)
 A post hoc upper bound on the number of false discoveries in the selection
 }
 \description{
-Upper bound for the number of false discoveries in a selection
+(Slow) Upper bound for the number of false discoveries in a selection
 }
 \examples{
 
