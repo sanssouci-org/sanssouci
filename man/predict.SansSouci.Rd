@@ -50,24 +50,14 @@ Post hoc confidence bounds on the true/false positives
 obj <- SansSouciSim(m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
 res <- fit(obj, B = 100, alpha = 0.1)
 
-# post hoc bounds for all hypotheses
+# post hoc bound on the set of hypotheses
 predict(res)
 
-# confidence curve
-cb <- predict(res, all = TRUE)
-head(cb)
-plot(res)
+# idem for all possible subsets (sorted by p-value)
+bounds <- predict(res, all=TRUE)
+head(bounds)
 
-# confidence curve for a subset
-S <- which(foldChanges(res) > 0.3)
-plot(res, S = S)
-
-# plot two confidence curves
-res_beta <- fit(obj, B = 100, alpha = 0.1, family = "Beta", K = 20)
-cb_beta <- predict(res_beta, all = TRUE)
-
-bounds <- list("Simes"= cb, 
-                   "Beta" = cb_beta)
-plotConfCurve(bounds, xmax = 200)
-
+# post hoc bound on a subset
+S <- which(pValues(res) < 0.01)
+predict(res, S)
 }

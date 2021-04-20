@@ -70,3 +70,24 @@ A 'fitted' object of class 'SansSouci'. It is a list of three elements
 \description{
 Fit SansSouci object
 }
+\examples{
+# Generate Gaussian data and perform multiple tests
+obj <- SansSouciSim(m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
+res <- fit(obj, B = 100, alpha = 0.1)
+
+# confidence curve
+plot(res)
+
+# confidence curve for a subset
+S <- which(pValues(res) < 0.01 & foldChanges(res) > 0.3)
+plot(res, S = S)
+
+# plot two confidence curves
+res_beta <- fit(obj, B = 100, alpha = 0.1, family = "Beta", K = 20)
+cb_beta <- predict(res_beta, all = TRUE)
+
+bounds <- list("Simes"= cb, 
+                   "Beta" = cb_beta)
+plotConfCurve(bounds, xmax = 200)
+
+}

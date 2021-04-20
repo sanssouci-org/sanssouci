@@ -99,10 +99,10 @@ calibrateJER <- function(X, categ, B, alpha,
                          refFamily = c("Simes", "kFWER", "Beta"),
                          maxStepsDown = 10L,
                          K = nrow(X), verbose=TRUE) {
+    .Deprecated("fit.SansSouci")
     alternative <- match.arg(alternative)
     ## sanity checks
     n <- ncol(X)
-    m <- nrow(X)
     rownames(X) <- NULL ## make it explicit that rownames are not considered
     stopifnot(length(categ) == n)
     stopifnot(all(categ %in% c(0,1)))
