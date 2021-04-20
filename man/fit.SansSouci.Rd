@@ -13,7 +13,6 @@
   family = c("Simes", "Linear", "Beta", "Oracle"),
   max_steps_down = 10L,
   K = nHyp(object),
-  flavor = c("v1", "v0"),
   force = FALSE,
   verbose = FALSE,
   ...
@@ -52,13 +51,13 @@ steps).}
 \item{K}{An integer value in \verb{[1,m]}, the number of elements in the
 reference family. Defaults to m}
 
-\item{flavor}{A character value (for internal use)}
-
 \item{force}{A boolean value: should the permutation p-values and pivotal statistics be re-calculated ? Defaults to \code{FALSE}}
 
 \item{verbose}{A boolean value: should extra info be printed? Defaults to \code{FALSE}}
 
 \item{...}{Not used}
+
+\item{flavor}{A character value (for internal use)}
 }
 \value{
 A 'fitted' object of class 'SansSouci'. It is a list of three elements
