@@ -102,13 +102,16 @@ plotConfCurve <- function(conf_bound, xmax, cols = NULL) {
 #' 
 #' m <- 123
 #' sim <- gaussianSamples(m = m, rho = 0.2, n = 100, 
-#'                        pi0 = 0.8, SNR = 2.5, prob = 0.5)
+#'                        pi0 = 0.8, SNR = 3, prob = 0.5)
 #' X <- sim$X
-#' cal <- calibrateJER(X, sim$categ, B = 1e3, alpha = 0.2, refFamily="Simes", )
-#' thr <- sort(cal$thr)
-#' pval <- sort(cal$p.values)
+#' groups <- sim$categ
+#' p <- rowWelchTests(X, groups)$p.value
 #' 
-#' M0 <- maxFP(pval, cal$thr) ## upper bound on m0...
+#' null_groups <- replicate(100, sample(groups))
+#' p0 <- rowWelchTests(X, null_groups)$p.value
+#' calib <- calibrate(p0, alpha = 0.1)
+#' 
+#' M0 <- maxFP(p, calib$thr)
 #' M0/m
 #' 
 #' maxFP(head(pval), thr)
