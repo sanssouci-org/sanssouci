@@ -8,7 +8,8 @@ reference:
     BNR (2020) paper
 - contents:
   - SansSouci
-  - SansSouci-methods
+  - fit.SansSouci
+  - predict.SansSouci
   - SansSouciSim
 - title: "Structured hypotheses"
   desc: > 
@@ -16,7 +17,9 @@ reference:
     hypotheses as described in the Durand et al. (2020) paper
 - contents:
   - SansSouciStruct
-  - SansSouciStruct-methods
+  - fit.SansSouciStruct
+  - predict.SansSouciStruct
+  - SansSouciDyadic
 - exclude:
   - gaussianSamples
   - gaussianTestStatistics
