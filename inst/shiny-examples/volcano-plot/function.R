@@ -208,50 +208,92 @@ calcBounds <- function(listPval, thr){
 #   
 # }
 
-boundGroup <- function(df, bioFun, thr){
+# boundGroup <- function(df, bioFun, thr){
+#   # create data frame
+#   table <- data.frame("Name" = c(), "# genes" = c(), "TP≥" = c(), "FDP≤"=c(), check.names = FALSE)
+#   # class of biofun
+#   if(class(bioFun)=="list"){ 
+#     nameFunctions <- names(bioFun)
+#     for (func in nameFunctions){
+#       incProgress(1/length(nameFunctions))
+#       ids <- bioFun[[func]]
+#       if (length(ids)>5){ #on ne prend que des groupes avec plus de 5 gènes
+#         listPval <- df$pval[ids]
+#         listPval <- listPval[!is.na(listPval)] #Calcul de la pvalue
+#         if(length(listPval)>1){
+#           bounds <- calcBounds(listPval = listPval, thr = thr) #calcul des bornes PH
+#           table <- rbind(table, data.frame(
+#             "Name" = addUrlLink(func), 
+#             "# genes" = bounds$n, 
+#             "TP≥" = as.integer(bounds$TP),
+#             "FDP≤" = bounds$FDP,
+#             check.names = FALSE))
+#         }
+#       } else {
+#         print("length(ids)>2")
+#       }
+#     }
+#   } else {
+#     nameFunctions <- colnames(bioFun)
+#     for (func in nameFunctions){
+#       ids <- which(bioFun[, func] == 1)
+#       listPval <- df$pval[ids]
+#       bounds <- calcBounds(listPval = listPval, thr = thr)
+#       table <- rbind(table, data.frame(
+#         "Name" = addUrlLink(func), 
+#         "# genes" = bounds$n, 
+#         "TP≥" = as.integer(bounds$TP),
+#         "FDP≤" = bounds$FDP,
+#         check.names = FALSE))
+#     }
+#   }
+#   table <- table[order(table["FDP≤"]),]
+#   # print("boundGroup OK")
+#   return(table)
+#   
+# }
+
+boundGroup <- function(object){
   # create data frame
   table <- data.frame("Name" = c(), "# genes" = c(), "TP≥" = c(), "FDP≤"=c(), check.names = FALSE)
-  # class of biofun
-  if(class(bioFun)=="list"){ 
+  bioFun <- object$input$biologicalFunc
+  if(class(bioFun)[1]=="list"){ 
     nameFunctions <- names(bioFun)
     for (func in nameFunctions){
       incProgress(1/length(nameFunctions))
-      ids <- bioFun[[func]]
+      name <- bioFun[[func]]
+      ids <- which(is.element(rownames(object$input$Y),name)) 
+      #le traitement des éléments de groupe non contenu dans Y est pris en compte dans is.element
       if (length(ids)>5){ #on ne prend que des groupes avec plus de 5 gènes
-        listPval <- df$pval[ids]
-        listPval <- listPval[!is.na(listPval)] #Calcul de la pvalue
-        if(length(listPval)>1){
-          bounds <- calcBounds(listPval = listPval, thr = thr) #calcul des bornes PH
-          table <- rbind(table, data.frame(
-            "Name" = addUrlLink(func), 
-            "# genes" = bounds$n, 
-            "TP≥" = as.integer(bounds$TP),
-            "FDP≤" = bounds$FDP,
-            check.names = FALSE))
-        }
-      } else {
-        print("length(ids)>2")
-      }
+        bounds <- predict(object, S=ids)
+        table <- rbind(table, data.frame(
+          "Name" = addUrlLink(func),
+          "# genes" = length(ids), 
+          "TP≥" = as.integer(bounds['TP']),
+          "FDP≤" = bounds['FDP'],
+          check.names = FALSE))
+      } 
     }
+    
   } else {
     nameFunctions <- colnames(bioFun)
     for (func in nameFunctions){
       ids <- which(bioFun[, func] == 1)
-      listPval <- df$pval[ids]
-      bounds <- calcBounds(listPval = listPval, thr = thr)
+      listPval <- pValues(object)[ids]
+      bounds <- predict(object, S=ids)
       table <- rbind(table, data.frame(
-        "Name" = addUrlLink(func), 
-        "# genes" = bounds$n, 
-        "TP≥" = as.integer(bounds$TP),
-        "FDP≤" = bounds$FDP,
+        "Name" = addUrlLink(func),
+        "# genes" = length(ids), 
+        "TP≥" = as.integer(bounds['TP']),
+        "FDP≤" = bounds['FDP'],
         check.names = FALSE))
     }
   }
   table <- table[order(table["FDP≤"]),]
-  # print("boundGroup OK")
   return(table)
   
 }
+
 
 addUrlLink <- function(name){
   if(grepl("GO:\\d+", name)){ # met ce lien spécifique si la structure GO:000000000... est dans le nom

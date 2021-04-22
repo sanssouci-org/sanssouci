@@ -142,6 +142,7 @@ shinyUI(fluidPage(
     
     # Main panel
     mainPanel(
+      # verbatimTextOutput("watch"),
       uiOutput("errorInput"),
       h2("Volcano plot", 
          bsButton("Qparam1", label = "", icon = icon("question"), style = "info", size = "extra-small"),  
