@@ -50,7 +50,7 @@ Post hoc confidence bounds on the true/false positives
 obj <- SansSouciSim(m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
 res <- fit(obj, B = 100, alpha = 0.1)
 
-# post hoc bound on the set of hypotheses
+# post hoc bound on the set of all hypotheses
 predict(res)
 
 # idem for all possible subsets (sorted by p-value)

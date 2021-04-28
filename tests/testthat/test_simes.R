@@ -27,11 +27,6 @@ test_that("posthocBySimes is cherry::pickSimes on 'NAEP' data", {
         res_cherry <- cherry::pickSimes(hom, R, alpha = alpha, silent=TRUE)
         res_BNR <- posthocBySimes(p, R, alpha = alpha)
         expect_equal(res_cherry, res_BNR) 
-        
-        # artisanal way
-        pi0_hat <-  1 - posthocBySimes0(p, 1:m, alpha = alpha)/m  ## in theory one should iterate this
-        res_BNR0 <- posthocBySimes0(p, R, alpha = alpha/pi0_hat)
-        expect_equal(res_cherry, res_BNR0) 
     })
 })
 
