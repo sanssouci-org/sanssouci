@@ -56,8 +56,6 @@ reference family. Defaults to m}
 \item{verbose}{A boolean value: should extra info be printed? Defaults to \code{FALSE}}
 
 \item{...}{Not used}
-
-\item{flavor}{A character value (for internal use)}
 }
 \value{
 A 'fitted' object of class 'SansSouci'. It is a list of three elements

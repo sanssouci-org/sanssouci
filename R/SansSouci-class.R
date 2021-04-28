@@ -277,8 +277,6 @@ generics::fit
 #'   steps).
 #' @param K An integer value in `[1,m]`, the number of elements in the 
 #'   reference family. Defaults to m
-#' @param flavor A character value (for internal use)
-#' 
 #' @param force A boolean value: should the permutation p-values and pivotal statistics be re-calculated ? Defaults to `FALSE`
 #' @param verbose A boolean value: should extra info be printed? Defaults to `FALSE`
 #' @param ... Not used
