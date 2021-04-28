@@ -2,6 +2,10 @@
 Package: sansSouci
 ==================
 
+Version 0.11.1 [2021-04-28]
+
+* Add README.Rmd with code example
+
 Version 0.11.0 [2021-04-20]
 
 * Updates in high-level documentation and pkgdown reference page
