@@ -294,15 +294,14 @@ generics::fit
 #' plot(res)
 #' 
 #' # confidence curve for a subset
-#' S <- which(pValues(res) < 0.01 & foldChanges(res) > 0.3)
+#' S <- which(pValues(res) < 0.1 & foldChanges(res) > 0.3)
 #' plot(res, S = S)
 #' 
 #' # plot two confidence curves
-#' res_beta <- fit(obj, B = 100, alpha = 0.1, family = "Beta", K = 20)
-#' cb_beta <- predict(res_beta, all = TRUE)
+#' res_beta <- fit(res, B = 100, alpha = 0.1, family = "Beta", K = 20)
 #' 
-#' bounds <- list("Simes"= cb, 
-#'                    "Beta" = cb_beta)
+#' resList <- list("Linear" = res, "Beta" = res_beta)
+#' bounds <- lapply(resList, predict, all = TRUE)
 #' plotConfCurve(bounds, xmax = 200)
 #' 
 fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),

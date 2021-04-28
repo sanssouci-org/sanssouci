@@ -125,13 +125,14 @@ plotConfCurve <- function(conf_bound, xmax, cols = NULL) {
 #' null_groups <- replicate(100, sample(groups))
 #' p0 <- rowWelchTests(X, null_groups)$p.value
 #' calib <- calibrate(p0, alpha = 0.1)
+#' thr <- calib$thr
 #' 
-#' M0 <- maxFP(p, calib$thr)
+#' M0 <- maxFP(p, thr)
 #' M0/m
 #' 
-#' maxFP(head(pval), thr)
-#' maxFP(tail(pval), thr)
-#' maxFP(c(head(pval), tail(pval)), thr)
+#' maxFP(head(p), thr)
+#' maxFP(tail(p), thr)
+#' maxFP(c(head(p), tail(p)), thr)
 #' 
 maxFP <- function(p.values, thr) {
     stopifnot(identical(sort(thr), thr))
