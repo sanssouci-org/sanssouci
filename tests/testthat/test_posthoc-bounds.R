@@ -4,7 +4,7 @@ m <- 123
 sim <- gaussianSamples(m = m, rho = 0.2, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
 X <- sim$X
 categ <- sim$categ
-thr <- SimesThresholdFamily(m)(alpha = 0.2)
+thr <- t_linear(0.2, seq_len(m), m)
 tests <- rowWelchTests(X, categ)
 pval <- sort(tests$p.value)
 

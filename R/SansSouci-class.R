@@ -283,7 +283,7 @@ generics::fit
 #' @return A 'fitted' object of class 'SansSouci'. It is a list of three elements
 #'  - input: see [SansSouci]
 #'  - param: the input parameters, given as a list
-#'  - output: the outputs of the calibration, see [calibrateJER]
+#'  - output: the outputs of the calibration, see [calibrate]
 #' @export
 #' @examples
 #' # Generate Gaussian data and perform multiple tests

@@ -171,6 +171,7 @@ calibrate0 <- function(p0, alpha,
 #'   provided, a one-sample test is performed.
 #' @param B An integer value, the number of permutations to be performed
 #' @param rowTestFUN a vectorized testing function (same I/O as [rowWelchTests])
+#' @param alternative A character string specifying the alternative hypothesis, to be passed to `rowTestFUN`. Must be one of "two.sided" (default), "greater" or "less".
 #' 
 #' @details The element 'p.value' of the output is a `m x B` matrix whose entry i,j corresponds to `p_{(i)}(g_j.X)` with notation of the AoS 2020 paper cited below (section 4.5).
 #' 
@@ -200,14 +201,15 @@ calibrate0 <- function(p0, alpha,
 #' identical(perm0$p.value, perm$p.value)
 #' identical(perm0$statistic, perm$statistic)
 get_perm <- function(X, categ, B, 
-                     rowTestFUN = rowWelchTests) {
+                     rowTestFUN = rowWelchTests, 
+                     alternative = c("two.sided", "less", "greater")) {
     m <- nrow(X)
     
     pval0 <- matrix(NA_real_, nrow = m, ncol = B) 
     stat0 <- matrix(NA_real_, nrow = m, ncol = B) 
     for (bb in 1:B) {
         categ_perm <- sample(categ)
-        rwt <- rowTestFUN(X, categ = categ_perm)
+        rwt <- rowTestFUN(X, categ = categ_perm, alternative = alternative)
         pval0[, bb] <- rwt$p.value
         stat0[, bb] <- rwt$statistic
     }

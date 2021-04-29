@@ -1,16 +1,43 @@
+#' Reference families
+#'
+#' @param alpha numeric value in (0,1)
+#' @param y numeric value
+#' @param k integer value in `[1,m]`
+#' @param m integer value
+#' @name reference-families
+#' @examples
+#' m <- 10
+#' alpha <- 0.05
+#' thr <- t_linear(alpha, 1:m, m)
+#' t_inv_linear(thr[3], 3, m)
+#' 
+#' thr <- t_beta(alpha, 1:m, m)
+#' t_inv_beta(thr[3], 3, m)
+NULL
+#> NULL
+
+#' @name reference-families
+#' @export
 t_inv_linear <- function(y, k, m) {
     y * m / k;
 }
 
+#' @name reference-families
+#' @export
 t_linear <- function(alpha, k, m) {
     alpha * k / m;
 }
 
-
+#' @name reference-families
+#' @importFrom stats pbeta
+#' @export
 t_inv_beta <- function(y, k, m) {
     pbeta(y, k, m + 1 - k);
 }
 
+#' @name reference-families
+#' @importFrom stats qbeta
+#' @export
 t_beta <- function(alpha, k, m) {
     qbeta(alpha, k, m + 1 - k);
 }

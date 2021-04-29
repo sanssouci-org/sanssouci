@@ -21,7 +21,7 @@ test_that("posthocBySimes is cherry::pickSimes on 'NAEP' data", {
     p <- NAEP
     
     test <- replicate(10, {
-        nR <- round(runif(1)*m)
+        nR <- ceiling(runif(1)*m)
         R <- sample(nms, nR)
         alpha <- 0.1
         res_cherry <- cherry::pickSimes(hom, R, alpha = alpha, silent=TRUE)
@@ -40,7 +40,7 @@ test_that("posthocBySimes is cherry::pickSimes on simulated data", {
     test <- replicate(10, {
         p <- 1 - pnorm(c(rnorm(m1, mean = 4), rnorm(m - m1, mean = 0)))
         hom <- cherry::hommelFast(p)
-        nR <- round(runif(1)*m)
+        nR <- ceiling(runif(1)*m)
         R <- sample(nR)
 
         alpha <- 0.1
@@ -108,7 +108,7 @@ test_that("posthocBySimes0 can be reproduced by minTP", {
     nR <- round(runif(1)*m)
     R <- sample(nR)
     for (alpha in alphas) {
-        thrSimes <- SimesThresholdFamily(m)(alpha)
+        thrSimes <- t_linear(alpha, seq_len(m), m)
         ubSimes <- minTP(p[R], thrSimes)
         expect_equal(posthocBySimes0(p, R, alpha = alpha), 
                      ubSimes)
