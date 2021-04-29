@@ -57,9 +57,9 @@ confCurveFromFam <- function(p.values, refFamily, param, K = length(p.values), w
     }
     thr <- NULL
     if (refFamily %in% c("Simes", "Linear")) {
-        thr <- SimesThresholdFamily(m, kMax = K)(param)
+        thr <- t_linear(param, seq_len(K), m)
     } else if (refFamily == "Beta") {
-        thr <- BetaThresholdFamily(m, kMax = K)(param)
+        thr <- t_linear(param, seq_len(K), m)
     } else if (refFamily == "Oracle") {
         stopifnot(length(param) == m && all(param %in% c(0,1)))
         thr <- param

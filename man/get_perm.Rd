@@ -4,7 +4,13 @@
 \alias{get_perm}
 \title{Get permutation statistics and p-values}
 \usage{
-get_perm(X, categ, B, rowTestFUN = rowWelchTests)
+get_perm(
+  X,
+  categ,
+  B,
+  rowTestFUN = rowWelchTests,
+  alternative = c("two.sided", "less", "greater")
+)
 }
 \arguments{
 \item{X}{A matrix of \code{m} variables (hypotheses) by \code{n} observations}
@@ -16,6 +22,8 @@ provided, a one-sample test is performed.}
 \item{B}{An integer value, the number of permutations to be performed}
 
 \item{rowTestFUN}{a vectorized testing function (same I/O as \link{rowWelchTests})}
+
+\item{alternative}{A character string specifying the alternative hypothesis, to be passed to \code{rowTestFUN}. Must be one of "two.sided" (default), "greater" or "less".}
 }
 \description{
 Get a matrix of statistics and p-values under the null hypothesis obtained by repeated permutation of class labels (two-sample tests)

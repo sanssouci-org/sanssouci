@@ -201,7 +201,7 @@ fit.SansSouciStruct <- function(object, alpha, p.values,
                          method = zeta, pvalues = p.values, alpha = alpha)
         output <- list(p.values = p.values, ZL = ZL)
     } else if (family == "Simes") {
-        thr <- SimesThresholdFamily(m, kMax =  m)(alpha) ## NB: we force K=m
+        thr <- t_linear(alpha, seq_len(m), m) ## NB: we are forcing K=m
         output <- list(p.values = p.values, thr = thr)
         class(object) <- "SansSouci" ## so that bound.SansSouci is called...
     } else if (family == "Oracle") {

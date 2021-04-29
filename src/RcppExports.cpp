@@ -17,18 +17,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// empiricalCoverageO
-NumericVector empiricalCoverageO(NumericVector thr, arma::mat Z);
-RcppExport SEXP _sansSouci_empiricalCoverageO(SEXP thrSEXP, SEXP ZSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type thr(thrSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type Z(ZSEXP);
-    rcpp_result_gen = Rcpp::wrap(empiricalCoverageO(thr, Z));
-    return rcpp_result_gen;
-END_RCPP
-}
 // marginalKFWER
 NumericVector marginalKFWER(NumericVector thr, arma::mat Z);
 RcppExport SEXP _sansSouci_marginalKFWER(SEXP thrSEXP, SEXP ZSEXP) {
@@ -38,18 +26,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type thr(thrSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type Z(ZSEXP);
     rcpp_result_gen = Rcpp::wrap(marginalKFWER(thr, Z));
-    return rcpp_result_gen;
-END_RCPP
-}
-// minPseudoRanks
-Rcpp::NumericVector minPseudoRanks(arma::mat X, arma::mat Y);
-RcppExport SEXP _sansSouci_minPseudoRanks(SEXP XSEXP, SEXP YSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type Y(YSEXP);
-    rcpp_result_gen = Rcpp::wrap(minPseudoRanks(X, Y));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -116,9 +92,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_sansSouci_colSort", (DL_FUNC) &_sansSouci_colSort, 1},
-    {"_sansSouci_empiricalCoverageO", (DL_FUNC) &_sansSouci_empiricalCoverageO, 2},
     {"_sansSouci_marginalKFWER", (DL_FUNC) &_sansSouci_marginalKFWER, 2},
-    {"_sansSouci_minPseudoRanks", (DL_FUNC) &_sansSouci_minPseudoRanks, 2},
     {"_sansSouci_partialColSortDescCpp", (DL_FUNC) &_sansSouci_partialColSortDescCpp, 2},
     {"_sansSouci_partialColSortCpp", (DL_FUNC) &_sansSouci_partialColSortCpp, 2},
     {"_sansSouci_posthocBySimes0Rcpp", (DL_FUNC) &_sansSouci_posthocBySimes0Rcpp, 3},

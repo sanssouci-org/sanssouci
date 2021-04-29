@@ -5,16 +5,8 @@ colSort <- function(X) {
     .Call('_sansSouci_colSort', PACKAGE = 'sansSouci', X)
 }
 
-empiricalCoverageO <- function(thr, Z) {
-    .Call('_sansSouci_empiricalCoverageO', PACKAGE = 'sansSouci', thr, Z)
-}
-
 marginalKFWER <- function(thr, Z) {
     .Call('_sansSouci_marginalKFWER', PACKAGE = 'sansSouci', thr, Z)
-}
-
-minPseudoRanks <- function(X, Y) {
-    .Call('_sansSouci_minPseudoRanks', PACKAGE = 'sansSouci', X, Y)
 }
 
 partialColSortDescCpp <- function(X, k) {

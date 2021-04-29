@@ -62,7 +62,7 @@ A 'fitted' object of class 'SansSouci'. It is a list of three elements
 \itemize{
 \item input: see \link{SansSouci}
 \item param: the input parameters, given as a list
-\item output: the outputs of the calibration, see \link{calibrateJER}
+\item output: the outputs of the calibration, see \link{calibrate}
 }
 }
 \description{
