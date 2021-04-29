@@ -17,18 +17,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// marginalKFWER
-NumericVector marginalKFWER(NumericVector thr, arma::mat Z);
-RcppExport SEXP _sansSouci_marginalKFWER(SEXP thrSEXP, SEXP ZSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type thr(thrSEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type Z(ZSEXP);
-    rcpp_result_gen = Rcpp::wrap(marginalKFWER(thr, Z));
-    return rcpp_result_gen;
-END_RCPP
-}
 // partialColSortDescCpp
 arma::mat partialColSortDescCpp(arma::mat X, int k);
 RcppExport SEXP _sansSouci_partialColSortDescCpp(SEXP XSEXP, SEXP kSEXP) {
@@ -66,17 +54,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// rowSortDesc
-arma::mat rowSortDesc(arma::mat X);
-RcppExport SEXP _sansSouci_rowSortDesc(SEXP XSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
-    rcpp_result_gen = Rcpp::wrap(rowSortDesc(X));
-    return rcpp_result_gen;
-END_RCPP
-}
 // testBySignFlipping
 arma::mat testBySignFlipping(arma::mat X, double B);
 RcppExport SEXP _sansSouci_testBySignFlipping(SEXP XSEXP, SEXP BSEXP) {
@@ -92,11 +69,9 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_sansSouci_colSort", (DL_FUNC) &_sansSouci_colSort, 1},
-    {"_sansSouci_marginalKFWER", (DL_FUNC) &_sansSouci_marginalKFWER, 2},
     {"_sansSouci_partialColSortDescCpp", (DL_FUNC) &_sansSouci_partialColSortDescCpp, 2},
     {"_sansSouci_partialColSortCpp", (DL_FUNC) &_sansSouci_partialColSortCpp, 2},
     {"_sansSouci_posthocBySimes0Rcpp", (DL_FUNC) &_sansSouci_posthocBySimes0Rcpp, 3},
-    {"_sansSouci_rowSortDesc", (DL_FUNC) &_sansSouci_rowSortDesc, 1},
     {"_sansSouci_testBySignFlipping", (DL_FUNC) &_sansSouci_testBySignFlipping, 2},
     {NULL, NULL, 0}
 };
