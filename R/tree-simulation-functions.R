@@ -160,7 +160,7 @@ gen.p.values <- function(m, mu = rep(0, length(mu)), rho = 0) {
 #' # order by 'mu' (favorable to DKWM)
 #' omu <- order(mu, decreasing = TRUE)
 #' Vmu <- curveVstar_tree(treeFam, omu)
-#' thrSimes <- SimesThresholdFamily(m)(alpha)
+#' thrSimes <- t_linear(alpha, seq_len(m), m)
 #' SmuS <- sapply(1:m, FUN=function(kk) posthocBySimes(pvals, omu[1:kk], alpha))
 #'
 #' plot(1:m, 1:m-Vmu, t = 's',

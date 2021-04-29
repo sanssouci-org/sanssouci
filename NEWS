@@ -1,7 +1,18 @@
-
 ==================
 Package: sansSouci
 ==================
+
+
+Version 0.12.0 [2021-04-30]
+
+* Major cleanup: removed 'calibrateJER' and friends. 
+
+Version 0.11.0 [2021-04-20]
+
+* Add README.Rmd with code example
+* Updates in high-level documentation and pkgdown reference page
+* 'calibrateJER' deprecated in favor of 'fit.SansSouci'.
+* Dropped (unused) argument 'flavor' in 'fit.SansSouci'.
 
 Version 0.10.2 [2021-04-16]
 
@@ -22,7 +33,6 @@ Version 0.10.1 [2021-04-14]
 * Add self contained and competitive methods for enrichment analyses (issue #44)
 * Add time and progress bar
 * Use R.cache to memoize calibration results
->>>>>>> develop
 
 Version 0.10.0 [2021-03-12]
 

@@ -51,8 +51,23 @@ formatBounds <- function(max_FP, idxs = seq_len(max_FP), lab = NULL,
 #' @param xmax Right limit of the plot
 #' @param cols A vector of colors of the same length as `conf_bound`
 #' @references Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc confidence bounds on false positives using reference families. Annals of Statistics, 48(3), 1281-1303.
-#'
 #' @export
+#' @examples
+#' # Generate Gaussian data and perform multiple tests
+#' obj <- SansSouciSim(m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
+#' res <- fit(obj, B = 100, alpha = 0.1)
+#' cb <- predict(res, all = TRUE)
+#' plotConfCurve(cb, xmax = 200)  ## equivalent to 'plot(res, xmax = 200)'
+#' 
+#' # plot two confidence curves
+#' res_beta <- fit(res, B = 100, alpha = 0.1, family = "Beta", K = 20)
+#' cb_beta <- predict(res_beta, all = TRUE)
+#' 
+#' bounds <- list("Simes"= cb, 
+#'                 "Beta" = cb_beta)
+#' plotConfCurve(bounds, xmax = 200)
+#' 
+
 plotConfCurve <- function(conf_bound, xmax, cols = NULL) {
     nb <- 1
     if (class(conf_bound) == "data.frame") {    # (assume) a single conf. bound
@@ -102,18 +117,22 @@ plotConfCurve <- function(conf_bound, xmax, cols = NULL) {
 #' 
 #' m <- 123
 #' sim <- gaussianSamples(m = m, rho = 0.2, n = 100, 
-#'                        pi0 = 0.8, SNR = 2.5, prob = 0.5)
+#'                        pi0 = 0.8, SNR = 3, prob = 0.5)
 #' X <- sim$X
-#' cal <- calibrateJER(X, sim$categ, B = 1e3, alpha = 0.2, refFamily="Simes", )
-#' thr <- sort(cal$thr)
-#' pval <- sort(cal$p.values)
+#' groups <- sim$categ
+#' p <- rowWelchTests(X, groups)$p.value
 #' 
-#' M0 <- maxFP(pval, cal$thr) ## upper bound on m0...
+#' null_groups <- replicate(100, sample(groups))
+#' p0 <- rowWelchTests(X, null_groups)$p.value
+#' calib <- calibrate(p0, alpha = 0.1)
+#' thr <- calib$thr
+#' 
+#' M0 <- maxFP(p, thr)
 #' M0/m
 #' 
-#' maxFP(head(pval), thr)
-#' maxFP(tail(pval), thr)
-#' maxFP(c(head(pval), tail(pval)), thr)
+#' maxFP(head(p), thr)
+#' maxFP(tail(p), thr)
+#' maxFP(c(head(p), tail(p)), thr)
 #' 
 maxFP <- function(p.values, thr) {
     stopifnot(identical(sort(thr), thr))

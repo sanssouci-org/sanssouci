@@ -75,7 +75,7 @@ test_that("Correctness of elements of fitted  'SansSouci' object", {
 })
 
 
-test_that("'fit.SansSouci' reproduces the results of 'calibrateJER'", {
+test_that("'fit.SansSouci' reproduces the results of 'calibrate'", {
     m <- 54
     n <- 132
     obj <- SansSouciSim(m = m, rho = 0, n = n, 
@@ -96,15 +96,16 @@ test_that("'fit.SansSouci' reproduces the results of 'calibrateJER'", {
     fam <- configs[cc, "family"]
     set.seed(20210311)
     res <- fit(obj, alpha = alpha, B = B, K = K, 
-               alternative = alt, family = fam)
+               alternative = alt, family = fam, max_steps_down = 0)
     set.seed(20210311)
-    cal <- calibrateJER(Y, groups, B = B, alpha = alpha, K = K, 
-                        alternative = alt, refFamily = fam)
-    reso <- res$output
-    expect_identical(cal$p.values, reso$p.value)
-    expect_identical(cal$piv_stat, reso$piv_stat)
-    expect_identical(cal$lambda,   reso$lambda)
-    expect_identical(cal$thr,      reso$thr)
+    p0 <- get_perm(obj$input$Y, obj$input$groups, B, alternative = alt)$p.value
+    expect_equal(p0, res$output$p0)
+    t_inv <- ifelse(fam == "Simes", t_inv_linear,  t_inv_beta)
+    t_ <- ifelse(fam == "Simes", t_linear,  t_beta)
+    pivStat <- get_pivotal_stat(p0, t_inv, K = K)
+    expect_equal(pivStat, res$output$piv_stat)
+#    expect_equal(quantile(pivStat, alpha), res$output$lambda)
+#    expect_identical(cal$thr,      reso$thr)
 })
 
 test_that("Consistency of output of 'bound.SansSouci'", {
