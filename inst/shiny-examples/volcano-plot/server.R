@@ -15,42 +15,43 @@ shinyServer(function(input, output, session) {
   
   
   ## loading example of exression gene matrix from GSEABenchmarkeR::loadEData,"geo2kegg"
-  geo2kegg <- reactive({
-    withProgress(message = "Load GSEABenchmarkeR data set ... ", {
-      t1 <- Sys.time()
-      data <- R.cache::memoizedCall(GSEABenchmarkeR::loadEData,"geo2kegg")
-      
-      t2 <- Sys.time()
-      print(paste("Load GSEABenchmarkeR data set:",difftime(t2, t1)))
-      setProgress(value = 1, detail = "Done")
-      return(data)
-    })
-  })
+  # geo2kegg <- reactive({
+  #   withProgress(message = "Load GSEABenchmarkeR data set ... ", {
+  #     t1 <- Sys.time()
+  #     data <- R.cache::memoizedCall(GSEABenchmarkeR::loadEData,"geo2kegg")
+  #     
+  #     t2 <- Sys.time()
+  #     print(paste("Load GSEABenchmarkeR data set:",difftime(t2, t1)))
+  #     setProgress(value = 1, detail = "Done")
+  #     return(data)
+  #   })
+  # })
   
   ## Loading gene set from EnrichmentBrowser::getGenesets for geo2kegg
-  go.gs <- reactive({
-    withProgress(message = "Load EnrichmentBrowser getGenesets ... ", {
-      t1 <- Sys.time()
-      go.gs <- R.cache::memoizedCall(EnrichmentBrowser::getGenesets,
-                                     org = "hsa", db = "go", onto = "BP", mode = "GO.db")
-      T3 <- Sys.time()
-      go.gs <- R.cache::memoizedCall(cleanGo.GS, go.gs) # our func
-      t2 <- Sys.time()
-      print(paste("Load EnrichmentBrowser getGenesets:",difftime(t2, t1)))
-      print(paste("T3-T1:",difftime(T3, t1)))
-      print(paste("T2-T3:", difftime(t2, T3)))
-      setProgress(value = 1, detail = "Done")
-      return(go.gs)
-    })
-  })
+  # go.gs <- reactive({
+  #   withProgress(message = "Load EnrichmentBrowser getGenesets ... ", {
+  #     t1 <- Sys.time()
+  #     go.gs <- R.cache::memoizedCall(EnrichmentBrowser::getGenesets,
+  #                                    org = "hsa", db = "go", onto = "BP", mode = "GO.db")
+  #     T3 <- Sys.time()
+  #     go.gs <- R.cache::memoizedCall(cleanGo.GS, go.gs) # our func
+  #     t2 <- Sys.time()
+  #     print(paste("Load EnrichmentBrowser getGenesets:",difftime(t2, t1)))
+  #     print(paste("T3-T1:",difftime(T3, t1)))
+  #     print(paste("T2-T3:", difftime(t2, T3)))
+  #     setProgress(value = 1, detail = "Done")
+  #     return(go.gs)
+  #   })
+  # })
   
   ## button run 
   
   isolate({shinyjs::disable("buttonValidate")}) #while geo2kegg is not loaded, user cannot "run" #Initialization
   
-  isolate(go.gs())
+  # isolate(go.gs())
   
-  observeEvent(geo2kegg(),{ # geo2kegg is loaded, user can "run"
+  # observeEvent(geo2kegg(),{ # geo2kegg is loaded, user can "run"
+  observeEvent(object_I(),{ # object is loaded, user can "run"
     shinyjs::enable("buttonValidate")
     
   })
@@ -58,53 +59,26 @@ shinyServer(function(input, output, session) {
   
   ## input for example data sets
   
-  nameGeo2kegg <- reactive({namedGeo2kegg(geo2kegg())}) # get names of data sets
+  # nameGeo2kegg <- reactive({namedGeo2kegg(geo2kegg())}) # get names of data sets
   
   output$choiceGSEAUI <- renderUI({ #create input 
     selectInput("choiceGSEA", label = "Choose a gene data set", 
-                choices = c('Leukemia (ALL): BCR/ABL mutated vs wild type'='OurData', nameGeo2kegg()))
+                # choices = c('Leukemia (ALL): BCR/ABL mutated vs wild type'='OurData', nameGeo2kegg()))
+                choices = c('Leukemia (ALL): BCR/ABL mutated vs wild type'='OurData', 
+                            "Alzheimer's Disease" = "GSE1297", 
+                            "Renal Cancer" = "GSE14762", 
+                            "Pancreatic Cancer" = "GSE15471", 
+                            "Pancreatic Cancer" = "GSE16515", 
+                            "Non Small Cell Lung Cancer" = "GSE18842",
+                            "Glioma" = "GSE19728",
+                            "Colorectal cancer" = "GSE23878",
+                            "Thyroid Cancer" = "GSE3467", 
+                            "Alzheimer's Disease" = "GSE5281_EC",
+                            "Endometrial cancer" = "GSE7305", 
+                            "Acute myeloid leukemia" = "GSE9476"))
   })
   
   ## Download our example data set, loaded from sansSouci.data
-  
-  ### cleaning of data set
-  exampleData <- reactive({
-    withProgress(value = 0, message = "Preparation for downloaded data ...", {
-      
-      #### expression matrix
-      setProgress(value = 0.1, detail ="Download data ... ")
-      data <- list()
-      data$matrix <- expr_ALL
-      
-      setProgress(value = 0.4, detail = "Cleaning data ... ")
-      
-      categ <- colnames(data$matrix)
-      data$categ <- rep(1, length(categ))
-      data$categ[which(categ == "NEG")] <- 0
-      
-      colnames(data$matrix) <- data$categ
-      
-      data$geneNames <- base::rownames(data$matrix)
-      
-      setProgress(value = 0.4, detail = "Fc and p.value matrix ... ")
-      
-      #### degraded matrix
-      dex <- rowWelchTests(data$matrix, data$categ)
-      data$degrade = data.frame("p.value"=dex[["p.value"]], "fc"=dex$meanDiff)
-      rm(dex)
-      
-      #gene set matrix
-      setProgress(value = 0.7, detail = "Preparation of gene set data ...  ")
-      bioFun <- expr_ALL_GO
-      stopifnot(nrow(bioFun) == nrow(data$matrix))  ## sanity check: dimensions
-      mm <- match(base::rownames(bioFun), base::rownames(data$matrix))
-      stopifnot(!any(is.na(mm)))
-      data$biologicalFunc <- bioFun[mm, ]
-      rm(bioFun)
-      setProgress(value = 1, detail = "Done")
-      return(data)
-    })
-  })
   
   ### load data sets in the button : save in three csv file containing in a zip file
   output$downloadExampleData <- downloadHandler(
@@ -112,13 +86,14 @@ shinyServer(function(input, output, session) {
       paste("ExampleData", "zip", sep=".")
     },
     content = function(fname) {
+      exampleData <- exampleData()
       fs <- c()
       tmpdir <- tempdir()
       setwd(tempdir())
       paths <- c("expressData.csv", "biologicalFunction.csv", "degradedData.csv")
-      write.csv(exampleData()$matrix, paths[1])
-      write.csv(exampleData()$biologicalFunc, paths[2])
-      write.csv(exampleData()$degrade, paths[3])
+      write.csv(exampleData$matrix, paths[1])
+      write.csv(exampleData$biologicalFunc, paths[2])
+      write.csv(exampleData$degrade, paths[3])
       zip(zipfile=fname, files=paths)
     },
     contentType = "application/zip"
@@ -134,6 +109,7 @@ shinyServer(function(input, output, session) {
   })
   observeEvent(input$resetInputData, { #to delete input file (clicking bin incon)
     fileData(NULL) # delete serveur variable
+    data(NULL)
     reset("fileData") #delete UI variable (in fileInput)
   })
   
@@ -145,6 +121,7 @@ shinyServer(function(input, output, session) {
   })
   observeEvent(input$resetInputGroup, {
     fileGroup(NULL)
+    data(NULL)
     reset("fileGroup")
   })
   
@@ -173,6 +150,7 @@ shinyServer(function(input, output, session) {
             mm <- match(base::rownames(bioFun), base::rownames(matrix))
             stopifnot(!any(is.na(mm)))
             object$input$biologicalFunc <- bioFun[mm, ]
+            print(dim(object$input$biologicalFunc)[1])
             rm(bioFun)
             object$bool$validation <- TRUE 
             object$bool$degrade <- FALSE
@@ -180,7 +158,8 @@ shinyServer(function(input, output, session) {
             rm(categ)
           } else { # cleaning data set from GSEA data set
             setProgress(value = 0.4, detail = "GSEA data set ...")
-            rawData <- R.cache::memoizedCall(maPreproc,geo2kegg()[input$choiceGSEA])[[1]]
+            rawData <- readRDS(paste("Example-data-set/express-data-set/", input$choiceGSEA, ".RDS", sep=""))
+            # rawData <- R.cache::memoizedCall(maPreproc,geo2kegg()[input$choiceGSEA])[[1]]
             
             matrix <- SummarizedExperiment::assays(rawData)$exprs
             
@@ -192,7 +171,10 @@ shinyServer(function(input, output, session) {
             
             object$input$geneNames <- base::rownames(matrix)
             
-            object$input$biologicalFunc <- go.gs() #On a laissé sous forme de liste car on a adapté les fonctions qui en ont besoin. Plus rapide qu'en la transformant en matrice binaire
+            object$input$biologicalFunc <- readRDS("Example-data-set/gene-set/go.gs.RDS")
+            #On a laissé sous forme de liste car on a adapté les fonctions qui en ont besoin. Plus rapide qu'en la transformant en matrice binaire
+            print(length(object$input$biologicalFunc))
+            object$bool$url <- rawData@metadata$experimentData@url
             
             object$bool$validation <- TRUE
             object$bool$degrade <- FALSE
@@ -214,7 +196,7 @@ shinyServer(function(input, output, session) {
             input <- list(m = m, geneNames = base::rownames(matrix))
             alpha = 0.1
             parameters <- list(
-              # alpha = alpha,
+              B = 0,
               family = 'Simes', k=m)
             output <- list(p.value = matrix[["p.value"]], estimate = matrix[["fc"]])
             
@@ -274,21 +256,20 @@ shinyServer(function(input, output, session) {
             
             setProgress(value = 0.9, detail = "Matching ...")
             
-            matchBio <- matchMatrixBiofun(matrixFunc = object$input$Y, biofun = cleanBio$biofun) #verification compatibility between the two matrices
+            matchBio <- matchMatrixBiofun(geneNames = object$input$geneNames, biofun = cleanBio$biofun) #verification compatibility between the two matrices
             if(matchBio$boolValidation & cleanBio$boolValidation){ #if ok
-              object$input$biologicalFunc <- matchBio$biofun
+              object$input$biologicalFunc <- as.matrix(matchBio$biofun)
             } else { #if not ok
               object$input$biologicalFunc <- NULL
             }
-            
             object$bool$match.color <- matchBio$color
             object$bool$match.text <- matchBio$text
             
+            rm(matchBio)
+            rm(cleanBio)
             
           }
           
-          rm(matchBIo)
-          rm(cleanBio)
           rm(matrix)
           
           
@@ -313,33 +294,15 @@ shinyServer(function(input, output, session) {
   #   req(object_I())
   # })
   
-  # matrixChosen <- reactive ({ ## to take nrow of the chosen matrix
-  #   boolDegrade <- FALSE
-  #   if (input$checkboxDemo){
-  #     if(req(input$choiceGSEA)=='OurData'){
-  #       matrix <- expr_ALL
-  #       
-  #     } else {
-  #       rawData <- R.cache::memoizedCall(maPreproc,geo2kegg()[input$choiceGSEA])[[1]]
-  #       matrix <- SummarizedExperiment::assays(rawData)$exprs
-  #     }
-  #     
-  #   } else { # if user use his own data
-  #     req(input$fileData)
-  #     req(fileData())
-  #     file <- req(fileData())
-  #     matrix <- read.csv(file = file$datapath, row.names = 1, check.names=FALSE)
-  #     boolDegrade <- (length(matrix) == 2 & all(sort(colnames(matrix)) == sort(c("fc","p.value")))) #est ce que la matrice est dégradée
-  #   }
-  #   return(list(matrix = matrix, boolDegrade = boolDegrade))
-  # })
   
   
   urlDataSet <- eventReactive(input$buttonValidate, { #give link to description of geo2kegg data sets
-    req(geo2kegg())
+    # req(geo2kegg())
     req(input$choiceGSEA)
-    req(geo2kegg()[[input$choiceGSEA]])
-    return(a("URL link to data set description", href=geo2kegg()[[input$choiceGSEA]]@experimentData@url))
+    # req(geo2kegg()[[input$choiceGSEA]])
+    req(object_I()$bool$url)
+    # return(a("URL link to data set description", href=geo2kegg()[[input$choiceGSEA]]@experimentData@url))
+    return(a("URL link to data set description", href=object_I()$bool$url))
     
   })
   output$msgURLds <- renderUI({ 
@@ -360,7 +323,7 @@ shinyServer(function(input, output, session) {
   })
   
   
-  output$watch <- renderPrint({str(object_I())})
+  output$watch <- renderPrint({str(data())})
   
   
   
@@ -489,7 +452,7 @@ shinyServer(function(input, output, session) {
   ## JER calibration on available expression gene matrix
   observeEvent(input$buttonValidate, {
     req(data()$bool$validation)
-    if(!data()$bool$degrade){ #non degrade version
+    if(!data()$bool$degrade){ #non degraded version
       withProgress(value = 0, message = "Perform calibration ... ", {
         incProgress(amount = 0.3)
         t1 <- Sys.time()
@@ -498,7 +461,7 @@ shinyServer(function(input, output, session) {
                       B = numB(),
                       alternative = alternative(),
                       family = refFamily(),
-                      K = numK(),
+                      K = numK()
         )
         
         
@@ -507,13 +470,22 @@ shinyServer(function(input, output, session) {
         setProgress(value = 0.7, detail = "Done")
         data(object)
       })
-    } else { #degrade version #if degraded matrix is used
-      # if the gene expression matrix is available 
-      #les matrices pval et fc sont déjà rentré dans l'objet lors que la création de l'objet
+    } else { #degraded version #if degraded matrix is used
+      #les matrices pval et fc sont déjà rentrées dans l'objet lors que la création de l'objet
+      
+      # object <- fit(data(),   #Non utilisable car nécessite Y
+      #               alpha = req(alpha()),
+      #               B = 0,
+      #               alternative = alternative(),
+      #               family = refFamily(),
+      #               K = numK()
+      # )
+      
       m = nHyp(data())
-      newValue <- SimesThresholdFamily(m, kMax = m)(alpha()) # force using of Simes and k=m
+      thr <- t_linear(alpha(), seq_len(m), m) # force using of Simes and k=m # IMPORT FROM FUNCTION.R
       object <- data()
-      object$output$thr <- newValue
+      object$output$thr <- thr
+      object$output$lambda <- alpha()
       object$parameters$alpha <- alpha()
       data(object)
     }
@@ -557,6 +529,7 @@ shinyServer(function(input, output, session) {
   observe({ # If gene expression matrix is available
     req(data())
     req(pValues(data()))
+    req(thresholds(data()))
     object <- req(data()) # on récupère l'objet
     object$output$logp <- -log10(pValues(object))
     object$output$adjp <- p.adjust(pValues(object), method = "BH")
@@ -628,6 +601,7 @@ shinyServer(function(input, output, session) {
   ## threshold pval
   yint <- reactiveVal()
   observeEvent(data()$output$p.value, { # initialisation : adjusted p-value == 0.1
+    req(data())
     min0.1 <- which.min(abs(data()$output$adjp-0.1))
     y0.1 <- data()$output$logp[[min0.1]]
     # print(paste("min0.1 = ",min0.1," y0.1 = ", y0.1))
@@ -693,7 +667,7 @@ shinyServer(function(input, output, session) {
     # TP12 <- n12 - FP12
     # FDP12 <- round(FP12/max(n12, 1), 2)
     
-    
+    req(thresholds(data()))
     n12 <- length(selectedGenes()$sel12)
     pred <- predict(object = data(), S = selectedGenes()$sel12, what = c("TP", "FDP"))
     
@@ -705,7 +679,8 @@ shinyServer(function(input, output, session) {
   # calculate PHB for lasso box selection
   calcBoundSelection <- reactive({ # 
     req(manuelSelected())
-    c(n = length(maneulSelected()), predict(data(), S=manuelSelected(), what = c("TP", "FDP")))
+    req(thresholds(data()))
+    c(n = length(manuelSelected()), predict(data(), S=manuelSelected(), what = c("TP", "FDP")))
     # calcBounds(df()$pval[manuelSelected()], thr = thr()) #return(list(n=n, FP=FP, TP=TP, FDP=FDP))
   })
   
@@ -725,7 +700,7 @@ shinyServer(function(input, output, session) {
     data.frame(`Selection` = c("Threshold selection"), 
                "# genes" = c(TP_FDP()$n12),
                "TP≥" = as.integer(c(TP_FDP()$TP12)), 
-               "FDP≤" = c(TP_FDP()$FDP12),
+               "FDP≤" = c(round(TP_FDP()$FDP12, 2)),
                check.names = FALSE)
   })
   
@@ -805,13 +780,15 @@ shinyServer(function(input, output, session) {
   
   #value for adjusted p-values yaxis
   lineAdjp <- reactive({ 
-    req(data()$adjp)
+    req(data()$output$adjp)
+    print("ici dans lineAdjp()")
     listLog <- c()
     for (i in c(0.5,0.25,0.1,0.05,0.025,0.01,0.001,0.0001)){ #selected line on yaxis /!\ if you change it you have to change in yaxis()
       min05 <- which.min(abs(data()$output$adjp-i)) #to take the gene with the nearest adjpvalue to i 
       y05 <- data()$output$logp[[min05]] # take the equivalent in logpvalue to print it on VP
       listLog <- c(listLog, y05)
     }
+    print(listLog)
     return(listLog)
   })
   
@@ -830,6 +807,7 @@ shinyServer(function(input, output, session) {
       size = 14,
       color = "#000000"
     )
+    print(input$choiceYaxis)
     yaxis <- switch(input$choiceYaxis, 
                     "pval" = list(
                       title = "p-value (-log[10] scale)", 
@@ -896,12 +874,11 @@ shinyServer(function(input, output, session) {
   
   # Intialisation of volcano plot for threshold selection (part 1)
   posteriori <- reactive({
-    req(data())
+    req(data()$bool$validation)
     
-    # req(foldChanges(data()))
+    req(foldChanges(data()))
     # req(data()$output$logp)
-    print(length(foldChanges(data())))
-    print(length(data()$output$logp))
+    print('posteriori()')
     setProgress(value = 0.9, detail = "posteriori Reactive ... ")
     f <- list(
       size = 14,
@@ -1139,8 +1116,9 @@ shinyServer(function(input, output, session) {
   tableBoundsGroup <- reactive({
     withProgress(message = "tableBoundsGroup", {
       T1 <- Sys.time()
-      req(data())
-      req(thresholds(data()), data()$input$biologicalFunc)
+      req(thresholds(req(data())), data()$input$biologicalFunc)
+      print('tableBoundsGroup()')
+      # print(str(data()))
       # req(data()$input$biologicalFunc)
       table <- boundGroup(req(data())
       )
@@ -1153,7 +1131,9 @@ shinyServer(function(input, output, session) {
   # calculate vounds for all features to compare with each gene sets (competitive methods)
   boundsW <- reactive({ #calcul bounds for all features
     req(pValues(data()))
-    c(n=length(nHyp(data()), predict(object = data())))
+    req(thresholds(data()))
+    print("boundsW()")
+    c(n=length(nHyp(data())), predict(object = data()))
   })
   
   

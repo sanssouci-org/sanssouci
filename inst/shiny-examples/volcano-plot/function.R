@@ -20,18 +20,41 @@ cleanGo.GS <- function(go.gs){
   }
   return(go.gs)
   
-  # longueur3 <- function(x){
-  #   if(length(x)<6){
-  #     NULL
-  #   } else {
-  #     x
-  #   }
-  #   # ifelse(test = length(x) > 4, x, NULL)
-  # }
-  # 
-  # go.gs <- lapply(go.gs, longueur3)
-  # return(go.gs)
 }
+
+
+exampleData <- function(){
+  
+  #### expression matrix
+  data <- list()
+  data$matrix <- expr_ALL
+  
+  setProgress(value = 0.4, detail = "Cleaning data ... ")
+  
+  categ <- colnames(data$matrix)
+  data$categ <- rep(1, length(categ))
+  data$categ[which(categ == "NEG")] <- 0
+  
+  colnames(data$matrix) <- data$categ
+  
+  
+  setProgress(value = 0.4, detail = "Fc and p.value matrix ... ")
+  
+  #### degraded matrix
+  dex <- rowWelchTests(data$matrix, data$categ)
+  data$degrade = data.frame("p.value"=dex[["p.value"]], "fc"=dex$estimate)
+  rm(dex)
+  
+  #gene set matrix
+  bioFun <- expr_ALL_GO
+  mm <- match(base::rownames(bioFun), base::rownames(data$matrix))
+  data$biologicalFunc <- bioFun[mm, ]
+  rm(bioFun)
+  return(data)
+}
+
+
+
 
 VolcanoPlotNico <- function (X, categ, thr, p = 1, q = 1, r = 0, cex = c(0.2, 0.6), 
                              col = c("#33333333", "#FF0000", "#FF666633"), pch = 19, ylim = NULL) 
@@ -161,12 +184,12 @@ cleanBiofun <- function(biofun){
   return(list(biofun = biofun, text = text, boolValidation = boolValidation, color = color))
 }
 
-matchMatrixBiofun <- function(matrixFunc, biofun){
+matchMatrixBiofun <- function(geneNames, biofun){
   text = ""
   boolValidation = TRUE
   color = "color:blue"
   
-  mm <- match(rownames(biofun), rownames(matrixFunc))
+  mm <- match(rownames(biofun), geneNames)
   biofun <- biofun[mm, ]
   if(all(is.na(mm))){
     text = "None of the lines of the gene set matrix correspond to the lines of the gene expression data matrix."
@@ -176,6 +199,10 @@ matchMatrixBiofun <- function(matrixFunc, biofun){
   
   return(list(biofun = biofun, text = text, boolValidation = boolValidation, color = color))
   
+}
+
+t_linear <- function(alpha, k, m) {
+  alpha * k / m;
 }
 
 calcBounds <- function(listPval, thr){
@@ -279,14 +306,15 @@ boundGroup <- function(object){
     nameFunctions <- colnames(bioFun)
     for (func in nameFunctions){
       ids <- which(bioFun[, func] == 1)
-      listPval <- pValues(object)[ids]
-      bounds <- predict(object, S=ids)
-      table <- rbind(table, data.frame(
-        "Name" = addUrlLink(func),
-        "# genes" = length(ids), 
-        "TP≥" = as.integer(bounds['TP']),
-        "FDP≤" = bounds['FDP'],
-        check.names = FALSE))
+      if (length(ids)>1){
+        bounds <- predict(object, S=ids)
+        table <- rbind(table, data.frame(
+          "Name" = addUrlLink(func),
+          "# genes" = length(ids), 
+          "TP≥" = as.integer(bounds['TP']),
+          "FDP≤" = bounds['FDP'],
+          check.names = FALSE))
+      }
     }
   }
   table <- table[order(table["FDP≤"]),]
