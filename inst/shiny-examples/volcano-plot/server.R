@@ -302,7 +302,7 @@ shinyServer(function(input, output, session) {
     # req(geo2kegg()[[input$choiceGSEA]])
     req(object_I()$bool$url)
     # return(a("URL link to data set description", href=geo2kegg()[[input$choiceGSEA]]@experimentData@url))
-    return(a("URL link to data set description", href=object_I()$bool$url))
+    return(a("URL link to data set description", href=object_I()$bool$url, target="_blank"))
     
   })
   output$msgURLds <- renderUI({ 
