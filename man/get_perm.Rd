@@ -10,8 +10,7 @@ get_perm(X, categ, B, rowTestFUN = rowWelchTests)
 \item{X}{A matrix of \code{m} variables (hypotheses) by \code{n} observations}
 
 \item{categ}{An numeric vector of \code{n} values in \verb{0,1}
-specifying the column indices of the first and second samples. If not
-provided, a one-sample test is performed.}
+specifying the column indices of the first and second samples.}
 
 \item{B}{An integer value, the number of permutations to be performed}
 

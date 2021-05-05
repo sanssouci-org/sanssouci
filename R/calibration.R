@@ -4,8 +4,7 @@
 #' 
 #' @param X A matrix of `m` variables (hypotheses) by `n` observations
 #' @param categ An numeric vector of `n` values in `0,1`
-#'   specifying the column indices of the first and second samples. If not
-#'   provided, a one-sample test is performed.
+#'   specifying the column indices of the first and second samples.
 #' @param B An integer value, the number of permutations to be performed
 #' @param rowTestFUN a vectorized testing function (same I/O as [rowWelchTests])
 #' 
