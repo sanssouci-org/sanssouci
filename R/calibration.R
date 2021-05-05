@@ -1,117 +1,3 @@
-#' Get permutation statistics and p-values
-#' 
-#' Get a matrix of statistics and p-values under the null hypothesis obtained by repeated permutation of class labels (two-sample tests)
-#' 
-#' @param X A matrix of `m` variables (hypotheses) by `n` observations
-#' @param categ An numeric vector of `n` values in `0,1`
-#'   specifying the column indices of the first and second samples.
-#' @param B An integer value, the number of permutations to be performed
-#' @param rowTestFUN a vectorized testing function (same I/O as [rowWelchTests])
-#' 
-#' @details The element 'p.value' of the output is a `m x B` matrix whose entry i,j corresponds to `p_{(i)}(g_j.X)` with notation of the AoS 2020 paper cited below (section 4.5).
-#' 
-#' @export
-#' 
-#' @examples
-#' m <- 50
-#' n <- 45
-#' X <- matrix(rnorm(m*n), ncol = n, nrow = m)
-#' categ <- rbinom(n, 1, 0.4)
-#' 
-#' B <- 10
-#' set.seed(123)
-#' perm0 <- sansSouci:::get_perm(X, categ, B, rowWelchTests)
-#' 
-#' # for this particular test 'get_perm' can be bypassed
-#' set.seed(123)
-#' null_groups <- replicate(B, sample(categ))
-#' perm <- rowWelchTests(X, null_groups)
-#' identical(perm0$p.value, perm$p.value)
-#' identical(perm0$statistic, perm$statistic)
-
-#' # Wilcoxon tests
-#' set.seed(123)
-#' perm0 <- sansSouci:::get_perm(X, categ, B, rowWilcoxonTests)
-#' perm <- rowWilcoxonTests(X, null_groups)
-#' identical(perm0$p.value, perm$p.value)
-#' identical(perm0$statistic, perm$statistic)
-get_perm <- function(X, categ, B, 
-                       rowTestFUN = rowWelchTests) {
-    m <- nrow(X)
-    
-    pval0 <- matrix(NA_real_, nrow = m, ncol = B) 
-    stat0 <- matrix(NA_real_, nrow = m, ncol = B) 
-    for (bb in 1:B) {
-        categ_perm <- sample(categ)
-        rwt <- rowTestFUN(X, categ = categ_perm)
-        pval0[, bb] <- rwt$p.value
-        stat0[, bb] <- rwt$statistic
-    }
-    
-    list(p.value = pval0,
-         statistic = stat0)
-}
-
-#' Get a vector of pivotal statistics associated
-#'   to permutation p-values and to a reference family
-#'
-#' @param p0 A `m x B` matrix. The j-th ow corresponds to a permutation
-#'   of the input `categ`: for each hypothesis i, `p0[i,j]` is the
-#'   p-value of the test of the i-th null hypothesis on the permuted categories
-#' @param t_inv  An inverse threshold function (same I/O as 't_inv_linear')
-#' @param m The total numer of tested hypotheses. Defaults to `p0`
-#' @param K An integer value in `[1,m]`, the number of elements in the reference family. Defaults to `m`
-#' 
-#' @return A vector of length `B` pivotal statitics, whose j-th entry
-#'   corresponds to `psi(g_j.X)` with notation of the AoS 2020 paper cited
-#'   below (section 4.5)
-#'
-#' @references Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc
-#'   confidence bounds on false positives using reference families. *Annals of
-#'   Statistics*, 48(3), 1281-1303.
-#'
-#' @export
-#'
-#' @importFrom matrixStats colMins
-#' @examples
-#'
-#' m <- 50
-#' n <- 45
-#' X <- matrix(rnorm(m*n), ncol = n, nrow = m)
-#' categ <- rbinom(n, 1, 0.4)
-#' B <- 10
-#' null_groups <- replicate(B, sample(categ))
-#' p0 <- rowWelchTests(X, null_groups)$p.value
-#' pivStat <- get_pivotal_stat(p0)
-#' quantile(pivStat, 0.2)
-#' 
-#' 
-#' @export
-get_pivotal_stat <- function(p0,
-                             t_inv = t_inv_linear,
-                             m = nrow(p0),
-                             K = m) {
-    m <- force(m)
-    K <- force(K)
-    stopifnot(m >= nrow(p0))
-    stopifnot(K <= m)
-    
-    ## Step 2: order each column
-    # p0 <- colSort(p0)
-    p0s <- partialColSort(p0, K)
-    B <- ncol(p0s)
-    
-    ## Step 3: apply template function
-    tkInv <- matrix(nrow = K, ncol = B)
-    for (kk in 1:K) {
-        tkInv[kk, ] <- t_inv(p0s[kk, ], kk, m)
-    }
-    
-    ## Step 4: report min for each column
-    matrixStats::colMins(tkInv)
-}
-
-
 #' Perform JER calibration from randomization p-values
 #'
 #' @inheritParams get_pivotal_stat
@@ -274,6 +160,122 @@ calibrate0 <- function(p0, alpha,
                 lambda = lambda)
     return(res)
 }
+
+#' Get permutation statistics and p-values
+#' 
+#' Get a matrix of statistics and p-values under the null hypothesis obtained by repeated permutation of class labels (two-sample tests)
+#' 
+#' @param X A matrix of `m` variables (hypotheses) by `n` observations
+#' @param categ An numeric vector of `n` values in `0,1`
+#'   specifying the column indices of the first and second samples. 
+#' @param B An integer value, the number of permutations to be performed
+#' @param rowTestFUN a vectorized testing function (same I/O as [rowWelchTests])
+#' @param alternative A character string specifying the alternative hypothesis, to be passed to `rowTestFUN`. Must be one of "two.sided" (default), "greater" or "less".
+#' 
+#' @details The element 'p.value' of the output is a `m x B` matrix whose entry i,j corresponds to `p_{(i)}(g_j.X)` with notation of the AoS 2020 paper cited below (section 4.5).
+#' 
+#' @export
+#' 
+#' @examples
+#' m <- 50
+#' n <- 45
+#' X <- matrix(rnorm(m*n), ncol = n, nrow = m)
+#' categ <- rbinom(n, 1, 0.4)
+#' 
+#' B <- 10
+#' set.seed(123)
+#' perm0 <- sansSouci:::get_perm(X, categ, B, rowWelchTests)
+#' 
+#' # for this particular test 'get_perm' can be bypassed
+#' set.seed(123)
+#' null_groups <- replicate(B, sample(categ))
+#' perm <- rowWelchTests(X, null_groups)
+#' identical(perm0$p.value, perm$p.value)
+#' identical(perm0$statistic, perm$statistic)
+
+#' # Wilcoxon tests
+#' set.seed(123)
+#' perm0 <- sansSouci:::get_perm(X, categ, B, rowWilcoxonTests)
+#' perm <- rowWilcoxonTests(X, null_groups)
+#' identical(perm0$p.value, perm$p.value)
+#' identical(perm0$statistic, perm$statistic)
+get_perm <- function(X, categ, B, 
+                     rowTestFUN = rowWelchTests, 
+                     alternative = c("two.sided", "less", "greater")) {
+    m <- nrow(X)
+    
+    pval0 <- matrix(NA_real_, nrow = m, ncol = B) 
+    stat0 <- matrix(NA_real_, nrow = m, ncol = B) 
+    for (bb in 1:B) {
+        categ_perm <- sample(categ)
+        rwt <- rowTestFUN(X, categ = categ_perm, alternative = alternative)
+        pval0[, bb] <- rwt$p.value
+        stat0[, bb] <- rwt$statistic
+    }
+    
+    list(p.value = pval0,
+         statistic = stat0)
+}
+
+#' Get a vector of pivotal statistics associated
+#'   to permutation p-values and to a reference family
+#'
+#' @param p0 A `m x B` matrix. The j-th ow corresponds to a permutation
+#'   of the input `categ`: for each hypothesis i, `p0[i,j]` is the
+#'   p-value of the test of the i-th null hypothesis on the permuted categories
+#' @param t_inv  An inverse threshold function (same I/O as 't_inv_linear')
+#' @param m The total numer of tested hypotheses. Defaults to `p0`
+#' @param K An integer value in `[1,m]`, the number of elements in the reference family. Defaults to `m`
+#' 
+#' @return A vector of length `B` pivotal statitics, whose j-th entry
+#'   corresponds to `psi(g_j.X)` with notation of the AoS 2020 paper cited
+#'   below (section 4.5)
+#'
+#' @references Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc
+#'   confidence bounds on false positives using reference families. *Annals of
+#'   Statistics*, 48(3), 1281-1303.
+#'
+#' @export
+#'
+#' @importFrom matrixStats colMins
+#' @examples
+#'
+#' m <- 50
+#' n <- 45
+#' X <- matrix(rnorm(m*n), ncol = n, nrow = m)
+#' categ <- rbinom(n, 1, 0.4)
+#' B <- 10
+#' null_groups <- replicate(B, sample(categ))
+#' p0 <- rowWelchTests(X, null_groups)$p.value
+#' pivStat <- get_pivotal_stat(p0)
+#' quantile(pivStat, 0.2)
+#' 
+#' 
+#' @export
+get_pivotal_stat <- function(p0,
+                             t_inv = t_inv_linear,
+                             m = nrow(p0),
+                             K = m) {
+    m <- force(m)
+    K <- force(K)
+    stopifnot(m >= nrow(p0))
+    stopifnot(K <= m)
+    
+    ## Step 2: order each column
+    # p0 <- colSort(p0)
+    p0s <- partialColSort(p0, K)
+    B <- ncol(p0s)
+    
+    ## Step 3: apply template function
+    tkInv <- matrix(nrow = K, ncol = B)
+    for (kk in 1:K) {
+        tkInv[kk, ] <- t_inv(p0s[kk, ], kk, m)
+    }
+    
+    ## Step 4: report min for each column
+    matrixStats::colMins(tkInv)
+}
+
 
 t_inv_linear <- function(y, k, m) {
     y * m / k;

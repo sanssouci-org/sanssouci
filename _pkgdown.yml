@@ -8,15 +8,23 @@ reference:
     BNR (2020) paper
 - contents:
   - SansSouci
-  - SansSouci-methods
+  - fit.SansSouci
+  - predict.SansSouci
+  - volcanoPlot.SansSouci
   - SansSouciSim
+  - SansSouci-methods
+
 - title: "Structured hypotheses"
   desc: > 
     Functions to perform post hoc inference for structured 
     hypotheses as described in the Durand et al. (2020) paper
 - contents:
   - SansSouciStruct
-  - SansSouciStruct-methods
+  - fit.SansSouciStruct
+  - predict.SansSouciStruct
+  - SansSouciDyadic
+- SansSouciStruct-methods
+
 - exclude:
   - gaussianSamples
   - gaussianTestStatistics

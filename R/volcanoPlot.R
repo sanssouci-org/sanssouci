@@ -19,16 +19,12 @@ volcanoPlot <- function(x, ...) UseMethod("volcanoPlot")
 #' @export
 #' 
 #' @examples
-#' m <- 500
-#' pi0 <- 0.5
-#' m1 <- m-m*pi0
-#' SNR <- 5*(runif(m1)-0.5)
-#' obj <- SansSouciSim(m = m, rho = 0.2, n = 100,
-#'                        pi0 = pi0, SNR = SNR, prob = 0.5)
-#' alpha <- 0.2
-#' cal <- fit(obj, alpha = alpha, B = 1e2)
-#' volcanoPlot(cal, q = 0.2, r = 0.2, ylim = c(0, 4), bounds=FALSE)
+#' data(expr_ALL, package = "sansSouci.data")
+#' groups <- ifelse(colnames(expr_ALL)=="NEG", 0, 1)
+#' a <- SansSouci(Y = expr_ALL, groups = groups)
 #' 
+#' res <- fit(a, B = 100, alpha = 0.1)
+#' volcanoPlot(res, q = 0.2, r = 0.2, ylim = c(0, 4))
 volcanoPlot.SansSouci <- function(x, 
                                   p = 1, q = 1, r = 0,
                                   cex = c(0.2, 0.6), 
@@ -75,7 +71,6 @@ volcanoPlot.SansSouci <- function(x,
 #' @importFrom graphics abline legend rect title
 #' @importFrom stats p.adjust
 #' @seealso Volcano plot shiny app at \url{ https://shiny-iidea-sanssouci.apps.math.cnrs.fr/}
-
 volcanoPlot.numeric <- function(x, fc, thr,
                         p = 1, q = 1, r = 0,
                         cex = c(0.2, 0.6), 

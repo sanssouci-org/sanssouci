@@ -13,7 +13,6 @@
   family = c("Simes", "Linear", "Beta", "Oracle"),
   max_steps_down = 10L,
   K = nHyp(object),
-  flavor = c("v1", "v0"),
   force = FALSE,
   verbose = FALSE,
   ...
@@ -52,8 +51,6 @@ steps).}
 \item{K}{An integer value in \verb{[1,m]}, the number of elements in the
 reference family. Defaults to m}
 
-\item{flavor}{A character value (for internal use)}
-
 \item{force}{A boolean value: should the permutation p-values and pivotal statistics be re-calculated ? Defaults to \code{FALSE}}
 
 \item{verbose}{A boolean value: should extra info be printed? Defaults to \code{FALSE}}
@@ -65,9 +62,29 @@ A 'fitted' object of class 'SansSouci'. It is a list of three elements
 \itemize{
 \item input: see \link{SansSouci}
 \item param: the input parameters, given as a list
-\item output: the outputs of the calibration, see \link{calibrateJER}
+\item output: the outputs of the calibration, see \link{calibrate}
 }
 }
 \description{
 Fit SansSouci object
+}
+\examples{
+# Generate Gaussian data and perform multiple tests
+obj <- SansSouciSim(m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
+res <- fit(obj, B = 100, alpha = 0.1)
+
+# confidence curve
+plot(res)
+
+# confidence curve for a subset
+S <- which(pValues(res) < 0.1 & foldChanges(res) > 0.3)
+plot(res, S = S)
+
+# plot two confidence curves
+res_beta <- fit(res, B = 100, alpha = 0.1, family = "Beta", K = 20)
+
+resList <- list("Linear" = res, "Beta" = res_beta)
+bounds <- lapply(resList, predict, all = TRUE)
+plotConfCurve(bounds, xmax = 200)
+
 }
