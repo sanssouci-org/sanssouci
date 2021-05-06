@@ -11,7 +11,7 @@ library("DT")
 library("shinyBS")
 library("stringr")
 library("R.cache")
-library("GSEABenchmarkeR")
+# library("GSEABenchmarkeR")
 
 
 
@@ -135,13 +135,17 @@ shinyUI(fluidPage(
                             uiOutput("OutQtableBoundsGroup"),
                             uiOutput("errorMatch"),
                             DTOutput("tableBoundsGroup"),
-                            shinyjs::hidden(downloadButton("downloadPHBTableGroup", "Download post hoc bound table") ))
+                            # shinyjs::hidden(downloadButton("downloadPHBTableGroup", "Download post hoc bound table") ))
+                            downloadButton("downloadPHBTableGroup", "Download post hoc bound table") )
                    
       ),
     ),
     
     # Main panel
     mainPanel(
+      # verbatimTextOutput("outThresholds"),
+      # verbatimTextOutput("outbioFun"), 
+      # verbatimTextOutput("outThrBioFun"),
       # verbatimTextOutput("watch"),
       uiOutput("errorInput"),
       h2("Volcano plot", 

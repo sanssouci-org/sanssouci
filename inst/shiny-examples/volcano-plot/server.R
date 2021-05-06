@@ -150,7 +150,7 @@ shinyServer(function(input, output, session) {
             mm <- match(base::rownames(bioFun), base::rownames(matrix))
             stopifnot(!any(is.na(mm)))
             object$input$biologicalFunc <- bioFun[mm, ]
-            print(dim(object$input$biologicalFunc)[1])
+            # print(dim(object$input$biologicalFunc)[1])
             rm(bioFun)
             object$bool$validation <- TRUE 
             object$bool$degrade <- FALSE
@@ -173,7 +173,7 @@ shinyServer(function(input, output, session) {
             
             object$input$biologicalFunc <- readRDS("Example-data-set/gene-set/go.gs.RDS")
             #On a laissé sous forme de liste car on a adapté les fonctions qui en ont besoin. Plus rapide qu'en la transformant en matrice binaire
-            print(length(object$input$biologicalFunc))
+            # print(length(object$input$biologicalFunc))
             object$bool$url <- rawData@metadata$experimentData@url
             
             object$bool$validation <- TRUE
@@ -450,6 +450,7 @@ shinyServer(function(input, output, session) {
   #   })
   # })
   ## JER calibration on available expression gene matrix
+  # observe({
   observeEvent(input$buttonValidate, {
     req(data()$bool$validation)
     if(!data()$bool$degrade){ #non degraded version
@@ -468,7 +469,7 @@ shinyServer(function(input, output, session) {
         t2 <- Sys.time()
         print(paste("calibration :",difftime(t2, t1)))
         setProgress(value = 0.7, detail = "Done")
-        data(object)
+        # data(object)
       })
     } else { #degraded version #if degraded matrix is used
       #les matrices pval et fc sont déjà rentrées dans l'objet lors que la création de l'objet
@@ -487,10 +488,12 @@ shinyServer(function(input, output, session) {
       object$output$thr <- thr
       object$output$lambda <- alpha()
       object$parameters$alpha <- alpha()
-      data(object)
+      # data(object)
     }
-    
-    
+    #calcul des logp et adjp
+    object$output$logp <- -log10(pValues(object))
+    object$output$adjp <- p.adjust(pValues(object), method = "BH")
+    data(object)
   })
   
   ###### dire ce qui est calculé dans cette partie ci dessus
@@ -526,24 +529,24 @@ shinyServer(function(input, output, session) {
   
   # df <- reactiveVal() #creation
   
-  observe({ # If gene expression matrix is available
-    req(data())
-    req(pValues(data()))
-    req(thresholds(data()))
-    object <- req(data()) # on récupère l'objet
-    object$output$logp <- -log10(pValues(object))
-    object$output$adjp <- p.adjust(pValues(object), method = "BH")
-    data(object)
-    # req(data()$matrix) #active observe cell
-    # dex <- rowWelchTests(req(data()$matrix), data()$categ) # make a test
-    # print(dex)
-    # pval <- dex[["p.value"]]
-    # logp <- -log10(pval)
-    # fc <- dex$estimate
-    # adjp <- p.adjust(pval, method = "BH")
-    # newValue <- list(logp = logp, fc = fc, adjp = adjp, pval = pval)
-    # df(newValue) #update df()
-  })
+  # observe({ # If gene expression matrix is available
+  #   req(data())
+  #   req(pValues(data()))
+  #   req(thresholds(data()))
+  #   object <- req(data()) # on récupère l'objet
+  #   object$output$logp <- -log10(pValues(object))
+  #   object$output$adjp <- p.adjust(pValues(object), method = "BH")
+  #   data(object)
+  #   # req(data()$matrix) #active observe cell
+  #   # dex <- rowWelchTests(req(data()$matrix), data()$categ) # make a test
+  #   # print(dex)
+  #   # pval <- dex[["p.value"]]
+  #   # logp <- -log10(pval)
+  #   # fc <- dex$estimate
+  #   # adjp <- p.adjust(pval, method = "BH")
+  #   # newValue <- list(logp = logp, fc = fc, adjp = adjp, pval = pval)
+  #   # df(newValue) #update df()
+  # })
   
   # observe({ # if degraded version
   #   req(data()$df) #active observe cell
@@ -767,7 +770,6 @@ shinyServer(function(input, output, session) {
   # output for PHB table 
   output$tableBounds <- renderDT({
     req(TP_FDP())
-    
     tableResult()
     
   }, selection = list(mode = 'single', selectable = -(1))  # can select only one row and not the first one
@@ -781,14 +783,12 @@ shinyServer(function(input, output, session) {
   #value for adjusted p-values yaxis
   lineAdjp <- reactive({ 
     req(data()$output$adjp)
-    print("ici dans lineAdjp()")
     listLog <- c()
     for (i in c(0.5,0.25,0.1,0.05,0.025,0.01,0.001,0.0001)){ #selected line on yaxis /!\ if you change it you have to change in yaxis()
       min05 <- which.min(abs(data()$output$adjp-i)) #to take the gene with the nearest adjpvalue to i 
       y05 <- data()$output$logp[[min05]] # take the equivalent in logpvalue to print it on VP
       listLog <- c(listLog, y05)
     }
-    print(listLog)
     return(listLog)
   })
   
@@ -807,7 +807,6 @@ shinyServer(function(input, output, session) {
       size = 14,
       color = "#000000"
     )
-    print(input$choiceYaxis)
     yaxis <- switch(input$choiceYaxis, 
                     "pval" = list(
                       title = "p-value (-log[10] scale)", 
@@ -878,7 +877,7 @@ shinyServer(function(input, output, session) {
     
     req(foldChanges(data()))
     # req(data()$output$logp)
-    print('posteriori()')
+    # print('posteriori()')
     setProgress(value = 0.9, detail = "posteriori Reactive ... ")
     f <- list(
       size = 14,
@@ -1112,12 +1111,31 @@ shinyServer(function(input, output, session) {
   # PART 2 : gene set analyses
   ###################
   
+  # output$outThresholds <- renderPrint({
+  #   print("Thresholds(data()")
+  #   
+  #   print(req(thresholds(req(data())))[1])
+  # })
+  # output$outbioFun <- renderPrint({
+  #   print("data()$input$biologicalFunc")
+  #   
+  #   print(req(data()$input$biologicalFunc)[1])
+  # })
+  # 
+  # output$outThrBioFun <- renderPrint({
+  #   print("data()$input$biologicalFunc")
+  #   req(thresholds(req(data())), data()$input$biologicalFunc)
+  #   print(req(thresholds(req(data())))[1])
+  #   print(req(data()$input$biologicalFunc)[1])
+  # })
+  
   # PHB for all gene sets
   tableBoundsGroup <- reactive({
     withProgress(message = "tableBoundsGroup", {
       T1 <- Sys.time()
-      req(thresholds(req(data())), data()$input$biologicalFunc)
-      print('tableBoundsGroup()')
+      req(thresholds(req(data())))
+      req(data()$input$biologicalFunc)
+      # print('tableBoundsGroup()')
       # print(str(data()))
       # req(data()$input$biologicalFunc)
       table <- boundGroup(req(data())
@@ -1132,7 +1150,6 @@ shinyServer(function(input, output, session) {
   boundsW <- reactive({ #calcul bounds for all features
     req(pValues(data()))
     req(thresholds(data()))
-    print("boundsW()")
     c(n=length(nHyp(data())), predict(object = data()))
   })
   
@@ -1148,14 +1165,15 @@ shinyServer(function(input, output, session) {
     }
   )
   
-  observe({ # show the download button when 
-    req(tableBoundsGroup())
-    shinyjs::show("downloadPHBTableGroup")
-  })
+  # observe({ # show the download button when 
+  #   req(tableBoundsGroup())
+  #   shinyjs::show("downloadPHBTableGroup")
+  # })
   
   # If user choose SEA alternative
   filteredTableBoundsGroup  <- reactive({
     req(input$buttonSEA)
+    req(tableBoundsGroup())
     if (input$buttonSEA == "competitive"){
       table <- tableBoundsGroup()
       sel <- which(table[["FDP≤"]] < boundsW()['FDP'])
@@ -1226,6 +1244,7 @@ shinyServer(function(input, output, session) {
     )
     lte <- "≤"
     gte <- "≥"
+    print("Priori()")
     plot_ly(data.frame(x = foldChanges(data()), y=data()$output$logp), 
             x = ~x, y = ~y, 
             marker = list(size = 2,
