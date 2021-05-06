@@ -59,23 +59,29 @@ shinyServer(function(input, output, session) {
   
   ## input for example data sets
   
-  # nameGeo2kegg <- reactive({namedGeo2kegg(geo2kegg())}) # get names of data sets
+  namesExampleFile <- reactive({
+    filenames <- (list.files("Example-data-set/express-data-set", pattern="*.RDS", full.names=TRUE))
+    ldf <- lapply(filenames[2:length(filenames)], readRDS)
+    lID <- sapply(ldf,function(l){l@metadata$dataId})
+    names(lID) <- paste(sapply(ldf,function(l){l@metadata$experimentData@other$disease})," (", (lID),")", sep="")
+    return(lID)
+  }) # get names of data sets
   
   output$choiceGSEAUI <- renderUI({ #create input 
     selectInput("choiceGSEA", label = "Choose a gene data set", 
-                # choices = c('Leukemia (ALL): BCR/ABL mutated vs wild type'='OurData', nameGeo2kegg()))
-                choices = c('Leukemia (ALL): BCR/ABL mutated vs wild type'='OurData', 
-                            "Alzheimer's Disease" = "GSE1297", 
-                            "Renal Cancer" = "GSE14762", 
-                            "Pancreatic Cancer" = "GSE15471", 
-                            "Pancreatic Cancer" = "GSE16515", 
-                            "Non Small Cell Lung Cancer" = "GSE18842",
-                            "Glioma" = "GSE19728",
-                            "Colorectal cancer" = "GSE23878",
-                            "Thyroid Cancer" = "GSE3467", 
-                            "Alzheimer's Disease" = "GSE5281_EC",
-                            "Endometrial cancer" = "GSE7305", 
-                            "Acute myeloid leukemia" = "GSE9476"))
+                choices = c('Leukemia (ALL): BCR/ABL mutated vs wild type'='OurData', namesExampleFile()))
+                # choices = c('Leukemia (ALL): BCR/ABL mutated vs wild type'='OurData', 
+                #             "Alzheimer's Disease" = "GSE1297", 
+                #             "Renal Cancer" = "GSE14762", 
+                #             "Pancreatic Cancer" = "GSE15471", 
+                #             "Pancreatic Cancer" = "GSE16515", 
+                #             "Non Small Cell Lung Cancer" = "GSE18842",
+                #             "Glioma" = "GSE19728",
+                #             "Colorectal cancer" = "GSE23878",
+                #             "Thyroid Cancer" = "GSE3467", 
+                #             "Alzheimer's Disease" = "GSE5281_EC",
+                #             "Endometrial cancer" = "GSE7305", 
+                #             "Acute myeloid leukemia" = "GSE9476"))
   })
   
   ## Download our example data set, loaded from sansSouci.data
