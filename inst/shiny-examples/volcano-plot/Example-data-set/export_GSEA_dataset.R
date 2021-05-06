@@ -1,5 +1,12 @@
 library(GSEABenchmarkeR)
 
+if (!dir.exists("express-data-set")){
+  dir.create("express-data-set")
+}
+if (!dir.exists("gene-set")){
+  dir.create("gene-set")
+}
+
 nameGSE <- c("GSE14762", "GSE15471", "GSE18842", "GSE19728", "GSE5281_EC",
              "GSE23878", "GSE7305", "GSE3467", "GSE9476", "GSE38666_epithelia")
 data <- R.cache::memoizedCall(GSEABenchmarkeR::loadEData,"geo2kegg")
