@@ -29,7 +29,7 @@ exampleData <- function(){
   data <- list()
   data$matrix <- expr_ALL
   
-  setProgress(value = 0.4, detail = "Cleaning data ... ")
+  # setProgress(value = 0.4, detail = "Cleaning data ... ")
   
   categ <- colnames(data$matrix)
   data$categ <- rep(1, length(categ))
@@ -38,7 +38,7 @@ exampleData <- function(){
   colnames(data$matrix) <- data$categ
   
   
-  setProgress(value = 0.4, detail = "Fc and p.value matrix ... ")
+  # setProgress(value = 0.4, detail = "Fc and p.value matrix ... ")
   
   #### degraded matrix
   dex <- rowWelchTests(data$matrix, data$categ)
@@ -332,6 +332,129 @@ addUrlLink <- function(name){
     return(name)
   }
 }
+
+
+
+
+
+boundGroup2 <- function(object){
+  # create data frame
+  table <- data.frame("Name" = c(), "# genes" = c(), "TP≥" = c(), "FDP≤"=c(), check.names = FALSE)
+  bioFun <- object$input$biologicalFunc
+  if(class(bioFun)[1]=="list"){ 
+    print("on passe ici")
+    nameFunctions <- names(bioFun)
+    for (func in nameFunctions){ 
+      # incProgress(1/length(nameFunctions))
+      name <- bioFun[[func]]
+      ids <- which(is.element(rownames(object$input$Y),name)) 
+      # ids <- sapply(go.gs, function(x){which(is.element(rownames(object$input$Y),x))})
+      #le traitement des éléments de groupe non contenu dans Y est pris en compte dans is.element
+      #ids <- ids[sapply(ids, function(x){length(x)>5})]
+      if (length(ids)>5){ #on ne prend que des groupes avec plus de 5 gènes
+        bounds <- predict2(object, S=ids)
+        table <- rbind(table, data.frame(
+          "Name" = addUrlLink(func),
+          "# genes" = length(ids), 
+          "TP≥" = as.integer(bounds['TP']),
+          "FDP≤" = bounds['FDP'],
+          check.names = FALSE))
+      } 
+    }
+    
+  } else {
+    nameFunctions <- colnames(bioFun)
+    for (func in nameFunctions){
+      ids <- which(bioFun[, func] == 1)
+      if (length(ids)>1){
+        bounds <- predict2(object, S=ids)
+        table <- rbind(table, data.frame(
+          "Name" = addUrlLink(func),
+          "# genes" = length(ids), 
+          "TP≥" = as.integer(bounds['TP']),
+          "FDP≤" = bounds['FDP'],
+          check.names = FALSE))
+      }
+    }
+  }
+  table <- table[order(table["FDP≤"]),]
+  return(table)
+  
+}
+
+predict2 <- function(object, S = seq_len(nHyp(object)), 
+                     what = c("TP", "FDP"), all = FALSE, ...) {
+  p.values <- pValues(object)
+  thr <- thresholds(object)
+  lab <- label(object)
+  if (max(S) > nHyp(object)) {
+    stop("'S' is not a subset of hypotheses")
+  }
+  bounds <- posthoc_bound2(p.values, S = S, thr = thr, lab = lab, what = what, all = all)
+  if (!all) {
+    bounds <- bounds[, "bound"]
+    if (length(bounds) > 1) {
+      names(bounds) <- what
+    }
+  }
+  return(bounds)
+}
+
+
+posthoc_bound2 <- function (p.values, S = seq_along(p.values), thr = NULL, lab = NULL, 
+                            what = c("TP", "FDP"), all = FALSE) 
+{
+  if (is.null(thr)) {
+    stop("Argument 'thr' must be non NULL")
+  }
+  s <- length(S)
+  idxs <- seq_len(s)
+  max_FP <- rep(NA_integer_, s)
+  pS <- p.values[S]
+  o <- order(pS)
+  sorted_p <- pS[o]
+  if (length(thr) == length(p.values) && all(thr %in% c(0, 
+                                                        1))) {
+    max_FP <- cumsum(thr[o] == 0)
+    
+  }
+  else {
+    if (s <= 5*sqrt(length(thr))){
+      max_FP <- maxFP(sorted_p, thr)
+      idxs <- length(idxs)
+    } else {
+      max_FP <- sansSouci:::curveMaxFP(sorted_p, thr)
+    }
+  }
+  bounds <- sansSouci:::formatBounds(max_FP, idxs = idxs, lab = lab, what = what, 
+                                     all = all)
+  bounds
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
