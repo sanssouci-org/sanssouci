@@ -25,7 +25,7 @@ go.gs <- R.cache::memoizedCall(EnrichmentBrowser::getGenesets,
 
 cleanGo.GS <- function(go.gs){
   for(i in names(go.gs)){
-    if(length(go.gs[[i]])<6){
+    if(length(go.gs[[i]])<10){
       go.gs[i] <- NULL
     }
   }
