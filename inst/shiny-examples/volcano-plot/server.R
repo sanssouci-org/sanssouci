@@ -1005,7 +1005,7 @@ shinyServer(function(input, output, session) {
   
   #take the list of gene selected by user 
   selectionUserRe <- reactive({
-    vect <- tableCSV()[,userDTselectPost()] 
+    vect <- tableCSV()[,req(userDTselectPost())] 
     sel <- which(vect == 1)
     list(sel = sel)
   })
