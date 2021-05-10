@@ -1046,6 +1046,7 @@ shinyServer(function(input, output, session) {
   observeEvent({
     input$resetCSV
     data()$input$Y
+    input$buttonValidate
   },{
     req(data()$input$Y)
     req(selectedGenes())
@@ -1055,7 +1056,7 @@ shinyServer(function(input, output, session) {
     tableCSV(newValue)
   })
   
-  #When user want to 
+  #When user want to change thresholds
   observeEvent(selectedGenes(),{
     req(data()$input$Y)
     req(selectedGenes())
@@ -1240,7 +1241,7 @@ output$tableBoundsGroup <- renderDT({
 # name of gene set selected by user  
 userDTselectPrio <- reactive({
   req(filteredTableBoundsGroup())
-  req(input$tableBoundsGroup_rows_selected)
+  # req(input$tableBoundsGroup_rows_selected)
   href <- filteredTableBoundsGroup()[input$tableBoundsGroup_rows_selected,"Name"]
   name <- str_remove_all(str_remove_all(href, "<a(.*?)>"), "(</a>)")
   return(name)
@@ -1264,6 +1265,8 @@ selectionGroup <- reactive({
 #VP2
 priori <- reactive({
   req(data())
+  req(foldChanges(data()))
+  req(data()$output$logp)
   f <- list(
     size = 14,
     color = "#000000"

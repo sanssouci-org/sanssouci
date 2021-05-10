@@ -345,7 +345,7 @@ boundGroup2 <- function(object){
     print("on passe ici")
     nameFunctions <- names(bioFun)
     for (func in nameFunctions){ 
-      # incProgress(1/length(nameFunctions))
+      incProgress(1/length(nameFunctions))
       name <- bioFun[[func]]
       ids <- which(is.element(rownames(object$input$Y),name)) 
       # ids <- sapply(go.gs, function(x){which(is.element(rownames(object$input$Y),x))})
@@ -365,6 +365,7 @@ boundGroup2 <- function(object){
   } else {
     nameFunctions <- colnames(bioFun)
     for (func in nameFunctions){
+      incProgress(1/length(nameFunctions))
       ids <- which(bioFun[, func] == 1)
       if (length(ids)>1){
         bounds <- predict2(object, S=ids)
