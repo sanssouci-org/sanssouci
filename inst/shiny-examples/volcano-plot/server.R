@@ -329,7 +329,7 @@ shinyServer(function(input, output, session) {
   })
   
   
-  output$watch <- renderPrint({str(data())})
+  output$watch <- renderPrint({tableCSV()})
   
   
   
@@ -1043,24 +1043,42 @@ shinyServer(function(input, output, session) {
   tableCSV <- reactiveVal() #creation of reactive variable
   
   #initialize table when data() change
-  observe({
-    newValue <- data.frame(row.names = req(data()$input$geneNames)) #a dataframe with rowname without features
+  observeEvent({
+    input$resetCSV
+    data()$input$Y
+  },{
+    req(data()$input$Y)
+    req(selectedGenes())
+    vecteur <- rep(0, dim(data()$input$Y)[1])
+    vecteur[selectedGenes()$sel12] <- 1
+    newValue <- data.frame(Thresholds_selection = vecteur, row.names = req(data()$input$geneNames)) #a dataframe with rowname without features
     tableCSV(newValue)
   })
   
   #When user want to 
-  observeEvent(input$resetCSV,{
-    tableCSV(data.frame(row.names = req(data()$input$geneNames)))
+  observeEvent(selectedGenes(),{
+    req(data()$input$Y)
+    req(selectedGenes())
+    req(tableCSV())
+    vecteur <- rep(0, dim(data()$input$Y)[1])
+    vecteur[selectedGenes()$sel12] <- 1
+    
+    rigthTable <- tableCSV() %>% 
+      select(-Thresholds_selection)
+    df <- cbind(data.frame(Thresholds_selection = vecteur, row.names = req(data()$input$geneNames)), 
+                rigthTable)
+    tableCSV(df)
   })
   
   #When user selected ne gene set from lasso/box [d() activate]
   observeEvent(d(), { 
     req(data()$input$Y)
+    req(tableCSV())
     vecteur <- rep(0, dim(data()$input$Y)[1])
     vecteur[manuelSelected()] <- 1
     nameCol <- colnames(tableCSV())
     df <- cbind(tableCSV(), selection2=vecteur)
-    colnames(df) <- c(nameCol, paste("User selection", length(nameCol)+1))
+    colnames(df) <- c(nameCol, paste("User selection", length(nameCol)))
     tableCSV(df)
   })
   
