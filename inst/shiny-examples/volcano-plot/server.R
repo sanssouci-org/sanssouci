@@ -404,7 +404,7 @@ shinyServer(function(input, output, session) {
   output$msgDegraded <- renderUI({
     tags$span(style= "color:grey", paste("A matrix containing p-values and fold change is detected.", 
                                          "Thus, you cannot change the following advanced parameters:\n",
-                                         "Reference family = 'Simes',\n K = ", nrow(object_I()$input$Y)))
+                                         "Reference family = 'Simes',\n K = ", length(object_I()$output$p.value)))
   })
   
   observe({
@@ -1103,7 +1103,9 @@ shinyServer(function(input, output, session) {
       sprintf("volcano-plot_bounds_%s.csv", tag)
     },
     content = function(file) {
-      write.csv(tableResult(), file)
+      table <- tableResult()
+      table$`Selection` <- str_remove_all(str_remove_all(table$`Selection`, "<a(.*?)>"), "(</a>)")
+      write.csv(table, file)
     }
   )
   
@@ -1188,7 +1190,9 @@ output$downloadPHBTableGroup <- downloadHandler( #download csv of user selection
     sprintf("gene-set_bounds_%s.csv", tag)
   },
   content = function(file) {
-    write.csv(tableBoundsGroup(), file)
+    table <- tableBoundsGroup()
+    table$Name <- str_remove_all(str_remove_all(table$Name, "<a(.*?)>"), "(</a>)")
+    write.csv(table, file)
   }
 )
 
