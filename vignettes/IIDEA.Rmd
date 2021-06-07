@@ -35,7 +35,7 @@ The main distinctive feature of this app is that it makes it possible for users 
 - Open the [IIDEA shiny application](https://pneuvial.shinyapps.io/volcano-plot/)
 - Click on 'Run!'
 
-> This launches the analysis of an example data set (described below): a volcano plot is displayed in the right panel, together with a table at the bottom of the left panel. 
+- This launches the analysis of an example data set (described below): a volcano plot is displayed in the right panel, together with a table at the bottom of the left panel. 
 
 ```{r IIDEA_overview, out.width="600px", echo=FALSE}
 knitr::include_graphics("img/IIDEA_overview.png")
@@ -50,34 +50,33 @@ knitr::include_graphics("img/IIDEA_overview.png")
 knitr::include_graphics("img/IIDEA_post-hoc-table.png")
 ```
 
-The table displays, for each user selection of a set of genes, the following statistical gaurantees:
+The table displays, for each user selection of a set of genes, the following statistical guarantees:
 
 - **TP$\geq$**: there are at least 57 truly differentially expressed genes (True Positives, TP) among the 70 genes selected in the volcano plot. 
-- **FDP$\leq$**: the proportion of genes erroneously called differentially expressed among those selected (False Discovery Proportion, FDP) is less than 19%
+- **FDP$\leq$**: the proportion of genes erroneously called differentially expressed among those selected (False Discovery Proportion, FDP) is less than 19%.
 
 
 ## User selections
 
 - Select a set of genes of interest by dragging and dropping the horizonal and vertical bars, or by making a rectangular or a "lasso" selection. 
-
-> - The table is updated with this selection. 
-> - Clicking on the line corresponding to a gene selection highlights the corresponding genes in the volcano plot
-> - Clicking on the name of a gene selection in the table opens a new window with the corresponding set of genes displayed by [StringDB](https://string-db.org/)
-> - User selections can be downloaded as a CSV file
+- The table is updated with this selection. 
+- Clicking on the line corresponding to a gene selection highlights the corresponding genes in the volcano plot.
+- Clicking on the name of a gene selection in the table opens a new window with the corresponding set of genes displayed by [StringDB](https://string-db.org/).
+- User selections and post hoc bounds can be downloaded as CSV files.
 
 
 # Enrichment analyses
 
 - Click on the 'Gene sets' tab in the left panel. 
-
-> - The table at the bottom of the left panel now displays statistical guarantees obtained by post hoc bounds for a list of GO terms
-> - Clicking on the line corresponding to GO a term highlights the corresponding genes in the volcano plot (see next Figure)
-> - Clicking on a GO term opens the associated QuickGO page (@binns2009quickgo), e.g. https://www.ebi.ac.uk/QuickGO/term/GO:0002576.
+- The table at the bottom of the left panel now displays statistical guarantees obtained by post hoc bounds for a list of GO terms.
+- Clicking on the line corresponding to GO a term highlights the corresponding genes in the volcano plot (see next Figure).
+- Clicking on a GO term opens the associated QuickGO page (@binns2009quickgo), e.g. https://www.ebi.ac.uk/QuickGO/term/GO:0002576.
+- Post hoc bounds can be downloaded as CSV file. 
 
 By default, all available gene sets are listed. As noted by @ebrahimpoor2020simultaneous, post hoc inference makes it possible to perform enrichment analyses for both the "self-contained" and "competitive" hypotheses. Quoting @ebrahimpoor2020simultaneous:
 
-> - Methods testing the competitive null test whether features in the feature set of interest are more often active than features outside the feature set. 
-> - Methods testing the self-contained null test whether there are any active features in the feature set of interest.
+- Methods testing the competitive null test whether features in the feature set of interest are more often active than features outside the feature set.
+-  Methods testing the self-contained null test whether there are any active features in the feature set of interest.
 
 Both approaches are readily avialable via a drop-down menu, which makes it possible to display only those gene sets that are significant for the "self-contained" or "competitive" null hypotheses.
 
@@ -93,7 +92,7 @@ knitr::include_graphics("img/IIDEA_GO-0002576.png")
 
 ## Example data
 
-By default (i.e. when "Use demo data" is checked), we consider a data set studied in @BGH2010.
+By default (i.e. when "Use public data" is checked), we consider a data set studied in @BGH2010.
 
 ```{r load-data, echo=FALSE}
 data(expr_ALL, package = "sansSouci.data")
@@ -107,16 +106,16 @@ This data set is available from the R package [`sansSouci.data`](https://github.
 
 ## GSEAbenchmarkeR data
 
-40 other data sets from  [`GSEABenchmarkeR`](https://bioconductor.org/packages/release/bioc/html/GSEABenchmarkeR.html) package are also available.  These  data sets contain gene expression measurements from microarray experiments for various diseases (several cancer types, Alzheimer’s disease, Parkinson’s disease, cardiomyopathy, Huntington’s disease, diabetes). Each of these data sets can be choosen for analysis via 'Choose a gene data set' dropdown menu. 
+10 other data sets from  [`GSEABenchmarkeR`](https://bioconductor.org/packages/release/bioc/html/GSEABenchmarkeR.html) package are also available.  These  data sets contain gene expression measurements from microarray experiments for various diseases (several cancer types, Alzheimer’s disease). Each of these data sets can be choosen for analysis via 'Choose a gene data set' dropdown menu. 
 
 With the package [`EnrichmentBrowser`](https://bioconductor.org/packages/release/bioc/html/EnrichmentBrowser.html), an enrichement analysis of gene sets based on GeneOntology gene sets (Biological Process) is available.
 
 ## User data
 
-- Uncheck "Use demo data": you will be able to upload your own gene expression data, and optionally a file containing gene sets of interest (for example obtained from Gene Ontology). The data should be of the following form:
+- Uncheck "Use public data": you will be able to upload your own gene expression data, and optionally a file containing gene sets of interest (for example obtained from Gene Ontology). The data should be of the following form:
 
- - [gene expression matrix] a csv file where each row is a gene and each column is a biological sample. The first row of this matrix is a header containing category labels 0 or 1. The first column contains an unique gene identifier per row. 
-  \item[gene set matrix] a csv file where each row is a gene and each column is a gene set. It is a binary matrix specifying which gene is contained in each gene set. The first row should be a header containing the gene set names. The first row must contain the same gene identifiers as the gene expression matrix. 
+  + **gene expression matrix** a csv file where each row is a gene and each column is a biological sample. The first row of this matrix is a header containing category labels 0 or 1. The first column contains an unique gene identifier per row. 
+  + **gene set matrix** a csv file where each row is a gene and each column is a gene set. It is a binary matrix specifying which gene is contained in each gene set. The first row should be a header containing the gene set names. The first row must contain the same gene identifiers as the gene expression matrix. 
 
 While only the gene expression matrix is mandatory to obtain interactive volcano plots, uploading the gene set matrix is required for gene set analyses. Sample input data files can be downloaded as an example of the expected file structure. These files correspond to the public data set @CLGV+2005.
 
