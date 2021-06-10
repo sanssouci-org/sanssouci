@@ -26,7 +26,7 @@ fig.height=6
 
 # Introduction
 
-This vignette provides guidelines for using the [IIDEA shiny application](https://pneuvial.shinyapps.io/volcano-plot/). In the context of differential gene expression studies, this interactive application combines volcano plots with enrichment analyses. 
+This vignette provides guidelines for using the [IIDEA shiny application](https://shiny-iidea-sanssouci.apps.math.cnrs.fr). In the context of differential gene expression studies, this interactive application combines volcano plots with enrichment analyses. 
 
 The main distinctive feature of this app is that it makes it possible for users to interactively select genes of interest (either from a volcano plot or corresponding to a particular gene set) and obtain valid statistical guarantees regarding the number of true/false positives among these genes (see Methods section below).
 
@@ -128,6 +128,26 @@ Gene expression data data must be in of the two following formats (see also the 
 Gene set information must be a CSV file where each row is a gene and each column is a gene set. It is a binary matrix specifying which gene is contained in each gene set. The first row must be a header containing the gene set names, and it must contain the same gene identifiers as the gene expression matrix.
 
 While only the gene expression matrix is mandatory to obtain interactive volcano plots, uploading the gene set matrix is required for gene set analyses. Sample input data files can be downloaded as an example of the expected file structure. These files correspond to the public data set @CLGV+2005.
+
+# Running the app on a local computer
+
+IIDEA is deployed at \url{https://shiny-iidea-sanssouci.apps.math.cnrs.fr/}. No login is required, and the data sets uploaded by users are not stored on the server side. 
+The source code of the R package \texttt{sansSouci} which contains the source files for IIDEA, is available at \url{https://github.com/pneuvial/sanssouci}. This allows users to run IIDEA on a local machine or deploy it on their own servers if desired. Once the 'remotes' package is installed, IIDEA can be run locally from an R session by executing the following commands:
+
+```{r local, eval=FALSE}
+remotes::install_github("pneuvial/sanssouci")
+shiny::runApp(system.file("shiny-examples/volcano-plot", package = "sansSouci"))
+```
+
+By default, only the Leukemia data set is available for a local installation. To add the nine other public data sets, you may run the following code:
+
+```{r local-add-GSEABenchmarkeR, eval=FALSE}
+source(system.file("shiny-examples/volcano-plot/GSEABenchmarkeR/export-data.R", 
+                   package = "sansSouci"))
+```
+
+This code uses functions of the [GSEABenchmarkeR](https://bioconductor.org/packages/release/bioc/html/GSEABenchmarkeR.html) package to normalize and store locally gene expression data sets and corresponding gene annotation from GO Biological Process. Please note that it may take several minutes to run (but it only needs to be run once).
+
 
 # Methods
 
