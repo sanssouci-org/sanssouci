@@ -61,6 +61,9 @@ shinyServer(function(input, output, session) {
   
   namesExampleFile <- reactive({
     filenames <- (list.files("Example-data-set/express-data-set", pattern="*.RDS", full.names=TRUE))
+    if(length(filenames) == 0){
+      return(NULL)
+    }
     ldf <- lapply(filenames[2:length(filenames)], readRDS)
     lID <- sapply(ldf,function(l){l@metadata$dataId})
     names(lID) <- paste(sapply(ldf,function(l){l@metadata$experimentData@other$disease})," (", (lID),")", sep="")
@@ -679,7 +682,6 @@ shinyServer(function(input, output, session) {
     req(thresholds(data()))
     n12 <- length(selectedGenes()$sel12)
     pred <- predict(object = data(), S = selectedGenes()$sel12, what = c("TP", "FDP"))
-    
     return(list(
       n12 = n12, TP12 = pred["TP"], FDP12 = pred["FDP"]))
     
@@ -710,11 +712,12 @@ shinyServer(function(input, output, session) {
                "# genes" = c(TP_FDP()$n12),
                "TP≥" = as.integer(c(TP_FDP()$TP12)), 
                "FDP≤" = c(round(TP_FDP()$FDP12, 2)),
-               check.names = FALSE)
+               check.names = FALSE, row.names = NULL)
   })
   
   # updating PHB table when thresholds change
   observeEvent(TP_FDP(),{ # When threshold change
+    
     
     bottomTable <- tableResult() %>%  #keep box/lasso selection
       filter(Selection != "Threshold selection") #remove row named "Threshold selection"
