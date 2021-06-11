@@ -60,7 +60,7 @@ shinyServer(function(input, output, session) {
   ## input for example data sets
   
   namesExampleFile <- reactive({
-    filenames <- (list.files("Example-data-set/express-data-set", pattern="*.RDS", full.names=TRUE))
+    filenames <- (list.files("GSEABenchmarkeR/express-data-set", pattern="*.RDS", full.names=TRUE))
     if(length(filenames) == 0){
       return(NULL)
     }
@@ -167,7 +167,7 @@ shinyServer(function(input, output, session) {
             rm(categ)
           } else { # cleaning data set from GSEA data set
             setProgress(value = 0.4, detail = "GSEA data set ...")
-            rawData <- readRDS(paste("Example-data-set/express-data-set/", input$choiceGSEA, ".RDS", sep=""))
+            rawData <- readRDS(paste("GSEABenchmarkeR/express-data-set/", input$choiceGSEA, ".RDS", sep=""))
             # rawData <- R.cache::memoizedCall(maPreproc,geo2kegg()[input$choiceGSEA])[[1]]
             
             matrix <- SummarizedExperiment::assays(rawData)$exprs
@@ -180,7 +180,7 @@ shinyServer(function(input, output, session) {
             
             object$input$geneNames <- base::rownames(matrix)
             
-            object$input$biologicalFunc <- readRDS("Example-data-set/gene-set/go.gs.RDS")
+            object$input$biologicalFunc <- readRDS("GSEABenchmarkeR/gene-set/go.gs.RDS")
             #On a laissé sous forme de liste car on a adapté les fonctions qui en ont besoin. Plus rapide qu'en la transformant en matrice binaire
             # print(length(object$input$biologicalFunc))
             object$bool$url <- rawData@metadata$experimentData@url

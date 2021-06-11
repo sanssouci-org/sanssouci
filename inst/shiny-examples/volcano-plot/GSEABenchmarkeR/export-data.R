@@ -2,7 +2,7 @@ library(GSEABenchmarkeR)
 
 # change work directory to create Example data set (work also with deployed version)
 orwd <- getwd()
-newwd <- dir(".", "Example-data-set", all.files = TRUE, recursive=TRUE, full.names=TRUE, include.dirs=TRUE)
+newwd <- dir(".", "GSEABenchmarkeR", all.files = TRUE, recursive=TRUE, full.names=TRUE, include.dirs=TRUE)
 setwd(paste0(getwd(),'/', newwd))
 
 if (!dir.exists("express-data-set")){
