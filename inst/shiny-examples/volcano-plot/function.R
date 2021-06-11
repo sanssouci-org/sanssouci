@@ -20,18 +20,41 @@ cleanGo.GS <- function(go.gs){
   }
   return(go.gs)
   
-  # longueur3 <- function(x){
-  #   if(length(x)<6){
-  #     NULL
-  #   } else {
-  #     x
-  #   }
-  #   # ifelse(test = length(x) > 4, x, NULL)
-  # }
-  # 
-  # go.gs <- lapply(go.gs, longueur3)
-  # return(go.gs)
 }
+
+
+exampleData <- function(){
+  
+  #### expression matrix
+  data <- list()
+  data$matrix <- expr_ALL
+  
+  # setProgress(value = 0.4, detail = "Cleaning data ... ")
+  
+  categ <- colnames(data$matrix)
+  data$categ <- rep(1, length(categ))
+  data$categ[which(categ == "NEG")] <- 0
+  
+  colnames(data$matrix) <- data$categ
+  
+  
+  # setProgress(value = 0.4, detail = "Fc and p.value matrix ... ")
+  
+  #### degraded matrix
+  dex <- rowWelchTests(data$matrix, data$categ)
+  data$degrade = data.frame("p.value"=dex[["p.value"]], "fc"=dex$estimate)
+  rm(dex)
+  
+  #gene set matrix
+  bioFun <- expr_ALL_GO
+  mm <- match(base::rownames(bioFun), base::rownames(data$matrix))
+  data$biologicalFunc <- bioFun[mm, ]
+  rm(bioFun)
+  return(data)
+}
+
+
+
 
 VolcanoPlotNico <- function (X, categ, thr, p = 1, q = 1, r = 0, cex = c(0.2, 0.6), 
                              col = c("#33333333", "#FF0000", "#FF666633"), pch = 19, ylim = NULL) 
@@ -161,12 +184,12 @@ cleanBiofun <- function(biofun){
   return(list(biofun = biofun, text = text, boolValidation = boolValidation, color = color))
 }
 
-matchMatrixBiofun <- function(matrixFunc, biofun){
+matchMatrixBiofun <- function(geneNames, biofun){
   text = ""
   boolValidation = TRUE
   color = "color:blue"
   
-  mm <- match(rownames(biofun), rownames(matrixFunc))
+  mm <- match(rownames(biofun), geneNames)
   biofun <- biofun[mm, ]
   if(all(is.na(mm))){
     text = "None of the lines of the gene set matrix correspond to the lines of the gene expression data matrix."
@@ -176,6 +199,10 @@ matchMatrixBiofun <- function(matrixFunc, biofun){
   
   return(list(biofun = biofun, text = text, boolValidation = boolValidation, color = color))
   
+}
+
+t_linear <- function(alpha, k, m) {
+  alpha * k / m;
 }
 
 calcBounds <- function(listPval, thr){
@@ -208,50 +235,93 @@ calcBounds <- function(listPval, thr){
 #   
 # }
 
-boundGroup <- function(df, bioFun, thr){
+# boundGroup <- function(df, bioFun, thr){
+#   # create data frame
+#   table <- data.frame("Name" = c(), "# genes" = c(), "TP≥" = c(), "FDP≤"=c(), check.names = FALSE)
+#   # class of biofun
+#   if(class(bioFun)=="list"){ 
+#     nameFunctions <- names(bioFun)
+#     for (func in nameFunctions){
+#       incProgress(1/length(nameFunctions))
+#       ids <- bioFun[[func]]
+#       if (length(ids)>5){ #on ne prend que des groupes avec plus de 5 gènes
+#         listPval <- df$pval[ids]
+#         listPval <- listPval[!is.na(listPval)] #Calcul de la pvalue
+#         if(length(listPval)>1){
+#           bounds <- calcBounds(listPval = listPval, thr = thr) #calcul des bornes PH
+#           table <- rbind(table, data.frame(
+#             "Name" = addUrlLink(func), 
+#             "# genes" = bounds$n, 
+#             "TP≥" = as.integer(bounds$TP),
+#             "FDP≤" = bounds$FDP,
+#             check.names = FALSE))
+#         }
+#       } else {
+#         print("length(ids)>2")
+#       }
+#     }
+#   } else {
+#     nameFunctions <- colnames(bioFun)
+#     for (func in nameFunctions){
+#       ids <- which(bioFun[, func] == 1)
+#       listPval <- df$pval[ids]
+#       bounds <- calcBounds(listPval = listPval, thr = thr)
+#       table <- rbind(table, data.frame(
+#         "Name" = addUrlLink(func), 
+#         "# genes" = bounds$n, 
+#         "TP≥" = as.integer(bounds$TP),
+#         "FDP≤" = bounds$FDP,
+#         check.names = FALSE))
+#     }
+#   }
+#   table <- table[order(table["FDP≤"]),]
+#   # print("boundGroup OK")
+#   return(table)
+#   
+# }
+
+boundGroup <- function(object){
   # create data frame
   table <- data.frame("Name" = c(), "# genes" = c(), "TP≥" = c(), "FDP≤"=c(), check.names = FALSE)
-  # class of biofun
-  if(class(bioFun)=="list"){ 
+  bioFun <- object$input$biologicalFunc
+  if(class(bioFun)[1]=="list"){ 
     nameFunctions <- names(bioFun)
     for (func in nameFunctions){
       incProgress(1/length(nameFunctions))
-      ids <- bioFun[[func]]
+      name <- bioFun[[func]]
+      ids <- which(is.element(rownames(object$input$Y),name)) 
+      #le traitement des éléments de groupe non contenu dans Y est pris en compte dans is.element
       if (length(ids)>5){ #on ne prend que des groupes avec plus de 5 gènes
-        listPval <- df$pval[ids]
-        listPval <- listPval[!is.na(listPval)] #Calcul de la pvalue
-        if(length(listPval)>1){
-          bounds <- calcBounds(listPval = listPval, thr = thr) #calcul des bornes PH
-          table <- rbind(table, data.frame(
-            "Name" = addUrlLink(func), 
-            "# genes" = bounds$n, 
-            "TP≥" = as.integer(bounds$TP),
-            "FDP≤" = bounds$FDP,
-            check.names = FALSE))
-        }
-      } else {
-        print("length(ids)>2")
-      }
+        bounds <- predict(object, S=ids)
+        table <- rbind(table, data.frame(
+          "Name" = addUrlLink(func),
+          "# genes" = length(ids), 
+          "TP≥" = as.integer(bounds['TP']),
+          "FDP≤" = bounds['FDP'],
+          check.names = FALSE))
+      } 
     }
+    
   } else {
     nameFunctions <- colnames(bioFun)
     for (func in nameFunctions){
       ids <- which(bioFun[, func] == 1)
-      listPval <- df$pval[ids]
-      bounds <- calcBounds(listPval = listPval, thr = thr)
-      table <- rbind(table, data.frame(
-        "Name" = addUrlLink(func), 
-        "# genes" = bounds$n, 
-        "TP≥" = as.integer(bounds$TP),
-        "FDP≤" = bounds$FDP,
-        check.names = FALSE))
+      if (length(ids)>1){
+        bounds <- predict(object, S=ids)
+        table <- rbind(table, data.frame(
+          "Name" = addUrlLink(func),
+          "# genes" = length(ids), 
+          "TP≥" = as.integer(bounds['TP']),
+          "FDP≤" = bounds['FDP'],
+          check.names = FALSE))
+      }
     }
   }
   table <- table[order(table["FDP≤"]),]
-  # print("boundGroup OK")
   return(table)
   
 }
+
 
 addUrlLink <- function(name){
   if(grepl("GO:\\d+", name)){ # met ce lien spécifique si la structure GO:000000000... est dans le nom
@@ -262,6 +332,130 @@ addUrlLink <- function(name){
     return(name)
   }
 }
+
+
+
+
+
+boundGroup2 <- function(object){
+  # create data frame
+  table <- data.frame("Name" = c(), "# genes" = c(), "TP≥" = c(), "FDP≤"=c(), check.names = FALSE)
+  bioFun <- object$input$biologicalFunc
+  if(class(bioFun)[1]=="list"){ 
+    print("on passe ici")
+    nameFunctions <- names(bioFun)
+    for (func in nameFunctions){ 
+      incProgress(1/length(nameFunctions))
+      name <- bioFun[[func]]
+      ids <- which(is.element(rownames(object$input$Y),name)) 
+      # ids <- sapply(go.gs, function(x){which(is.element(rownames(object$input$Y),x))})
+      #le traitement des éléments de groupe non contenu dans Y est pris en compte dans is.element
+      #ids <- ids[sapply(ids, function(x){length(x)>5})]
+      if (length(ids)>5){ #on ne prend que des groupes avec plus de 5 gènes
+        bounds <- predict2(object, S=ids)
+        table <- rbind(table, data.frame(
+          "Name" = addUrlLink(func),
+          "# genes" = length(ids), 
+          "TP≥" = as.integer(bounds['TP']),
+          "FDP≤" = bounds['FDP'],
+          check.names = FALSE, row.names = NULL))
+      } 
+    }
+    
+  } else {
+    nameFunctions <- colnames(bioFun)
+    for (func in nameFunctions){
+      incProgress(1/length(nameFunctions))
+      ids <- which(bioFun[, func] == 1)
+      if (length(ids)>1){
+        bounds <- predict2(object, S=ids)
+        table <- rbind(table, data.frame(
+          "Name" = addUrlLink(func),
+          "# genes" = length(ids), 
+          "TP≥" = as.integer(bounds['TP']),
+          "FDP≤" = bounds['FDP'],
+          check.names = FALSE, row.names = NULL))
+      }
+    }
+  }
+  table <- table[order(table["FDP≤"]),]
+  return(table)
+  
+}
+
+predict2 <- function(object, S = seq_len(nHyp(object)), 
+                     what = c("TP", "FDP"), all = FALSE, ...) {
+  p.values <- pValues(object)
+  thr <- thresholds(object)
+  lab <- label(object)
+  if (max(S) > nHyp(object)) {
+    stop("'S' is not a subset of hypotheses")
+  }
+  bounds <- posthoc_bound2(p.values, S = S, thr = thr, lab = lab, what = what, all = all)
+  if (!all) {
+    bounds <- bounds[, "bound"]
+    if (length(bounds) > 1) {
+      names(bounds) <- what
+    }
+  }
+  return(bounds)
+}
+
+
+posthoc_bound2 <- function (p.values, S = seq_along(p.values), thr = NULL, lab = NULL, 
+                            what = c("TP", "FDP"), all = FALSE) 
+{
+  if (is.null(thr)) {
+    stop("Argument 'thr' must be non NULL")
+  }
+  s <- length(S)
+  idxs <- seq_len(s)
+  max_FP <- rep(NA_integer_, s)
+  pS <- p.values[S]
+  o <- order(pS)
+  sorted_p <- pS[o]
+  if (length(thr) == length(p.values) && all(thr %in% c(0, 
+                                                        1))) {
+    max_FP <- cumsum(thr[o] == 0)
+    
+  }
+  else {
+    if (s <= 5*sqrt(length(thr))){
+      max_FP <- maxFP(sorted_p, thr)
+      idxs <- length(idxs)
+    } else {
+      max_FP <- sansSouci:::curveMaxFP(sorted_p, thr)
+    }
+  }
+  bounds <- sansSouci:::formatBounds(max_FP, idxs = idxs, lab = lab, what = what, 
+                                     all = all)
+  bounds
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
