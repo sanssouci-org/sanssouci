@@ -358,7 +358,7 @@ boundGroup2 <- function(object){
           "# genes" = length(ids), 
           "TP≥" = as.integer(bounds['TP']),
           "FDP≤" = bounds['FDP'],
-          check.names = FALSE))
+          check.names = FALSE, row.names = NULL))
       } 
     }
     
@@ -374,7 +374,7 @@ boundGroup2 <- function(object){
           "# genes" = length(ids), 
           "TP≥" = as.integer(bounds['TP']),
           "FDP≤" = bounds['FDP'],
-          check.names = FALSE))
+          check.names = FALSE, row.names = NULL))
       }
     }
   }

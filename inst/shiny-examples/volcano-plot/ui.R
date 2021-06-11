@@ -13,14 +13,11 @@ library("stringr")
 library("R.cache")
 # library("GSEABenchmarkeR")
 
+# library("hgu133plus2.db")
 
 
 
 data(expr_ALL, package = "sansSouci.data")
-#data(expr_ALL_annotation, package = "sansSouci.data")
-# data(hgu95av2_GO_BP, package = "sansSouci.data")
-# data(hgu95av2_GO_MF, package = "sansSouci.data")
-# data(hgu95av2_GO_CC, package = "sansSouci.data")
 data(expr_ALL_GO, package = "sansSouci.data")
 
 shinyUI(fluidPage(
@@ -33,13 +30,20 @@ shinyUI(fluidPage(
   # Sidebar with panel
   sidebarLayout(
     sidebarPanel(
-      splitLayout(
-        htmlOutput("help"),
-        checkboxInput("checkboxDemo", 
-                      label = "Use public data", 
-                      value = TRUE),
-        
-        actionButton("buttonValidate", "Run!", )),
+      tags$table(style = "width: 100%",
+                 tags$tr(
+                   tags$td(#style = "width: 50%",
+                     align = "center",
+                     htmlOutput("help")),
+                   tags$td(
+                     align = "center",
+                     checkboxInput("checkboxDemo", 
+                                   label = "Use public data",
+                                   value = TRUE)),
+                   tags$td(
+                     align = "center",
+                     actionButton("buttonValidate", "Run!" ))
+                 )),
       conditionalPanel(condition = "input.checkboxDemo",
                        uiOutput("choiceGSEAUI")
       ),
@@ -115,29 +119,30 @@ shinyUI(fluidPage(
                          uiOutput("inputK")#)
                        )),
       verbatimTextOutput("sorti"),
-      tabsetPanel( id = "tabSelected",
-                   tabPanel("User selections", value = 1,
-                            
-                            uiOutput("OutQtableBounds"),
-                            fluidRow(
-                              column(
-                                DTOutput("tableBounds"), width=12
-                              )
-                            ),
-                            shinyjs::hidden(downloadButton("downloadPHBTable", "Download post hoc bound table"))
-                   ),
-                   tabPanel("Gene sets", value = 2,
-                            selectInput("buttonSEA", label = "Simultaneous Enrichment Analysis",
-                                        choices = list("All gene sets" = "nothing", 
-                                                       "Significant for self-contained method" = "self", 
-                                                       "Significant for competitive method" = "competitive")),
-                            
-                            uiOutput("OutQtableBoundsGroup"),
-                            uiOutput("errorMatch"),
-                            DTOutput("tableBoundsGroup"),
-                            # shinyjs::hidden(downloadButton("downloadPHBTableGroup", "Download post hoc bound table") ))
-                            downloadButton("downloadPHBTableGroup", "Download post hoc bound table") )
-                   
+      conditionalPanel( condition = "input.buttonValidate != 0",
+                        tabsetPanel( id = "tabSelected",
+                                     tabPanel("User selections", value = 1,
+                                              
+                                              uiOutput("OutQtableBounds"),
+                                              fluidRow(
+                                                column(
+                                                  DTOutput("tableBounds"), width=12
+                                                )
+                                              ),
+                                              shinyjs::hidden(downloadButton("downloadPHBTable", "Download post hoc bound table"))
+                                     ),
+                                     tabPanel("Gene sets", value = 2,
+                                              uiOutput("OutQtableBoundsGroup"),
+                                              selectInput("buttonSEA", label = "Simultaneous Enrichment Analysis",
+                                                          choices = list("All gene sets" = "nothing", 
+                                                                         "Significant for self-contained method" = "self", 
+                                                                         "Significant for competitive method" = "competitive")),
+                                              uiOutput("errorMatch"),
+                                              DTOutput("tableBoundsGroup"),
+                                              # shinyjs::hidden(downloadButton("downloadPHBTableGroup", "Download post hoc bound table") ))
+                                              downloadButton("downloadPHBTableGroup", "Download post hoc bound table") )
+                                     
+                        )
       ),
     ),
     
@@ -148,25 +153,27 @@ shinyUI(fluidPage(
       # verbatimTextOutput("outThrBioFun"),
       # verbatimTextOutput("watch"),
       uiOutput("errorInput"),
-      h2("Volcano plot", 
-         bsButton("Qparam1", label = "", icon = icon("question"), style = "info", size = "extra-small"),  
-         align = "center"),
-      bsPopover(id = "Qparam1", 
-                title = "VolcanoPlot", 
-                content = paste('Select genes by dragging horizontal or vertical bars, of using "box select" or "lasso select" from the plot menu. The table in the left panel gives post-hoc bounds for these selections.'), 
-                placement = "bottom", 
-                trigger = "hover", 
-                options = NULL),
-      flowLayout(
-        selectInput("choiceYaxis", label = "'y' axis label", 
-                    choices = list("p-values" = "pval", 
-                                   "Adjusted p-values" = "adjPval",
-                                   "Number of false positves" = "thr"), 
-                    selected = "thr"),
-        checkboxInput("symetric", 
-                      label = "Symmetric fold change threshold", 
-                      value = FALSE),
-        uiOutput("msgURLds")),
+      conditionalPanel( condition = "input.buttonValidate != 0",
+                        h2("Volcano plot", 
+                           bsButton("Qparam1", label = "", icon = icon("question"), style = "info", size = "extra-small"),  
+                           align = "center"),
+                        bsPopover(id = "Qparam1", 
+                                  title = "VolcanoPlot", 
+                                  content = paste('Select genes by dragging horizontal or vertical bars, of using "box select" or "lasso select" from the plot menu. The table in the left panel gives post-hoc bounds for these selections.'), 
+                                  placement = "bottom", 
+                                  trigger = "hover", 
+                                  options = NULL),
+                        flowLayout(
+                          selectInput("choiceYaxis", label = "'y' axis label", 
+                                      choices = list("p-values" = "pval", 
+                                                     "Adjusted p-values" = "adjPval",
+                                                     "Number of false positves" = "thr"), 
+                                      selected = "thr"),
+                          checkboxInput("symetric", 
+                                        label = "Symmetric fold change threshold", 
+                                        value = FALSE),
+                          uiOutput("msgURLds"))
+      ),
       conditionalPanel(condition = "input.tabSelected==1",
                        plotly::plotlyOutput("volcanoplotPosteriori", height = "600px"), 
                        

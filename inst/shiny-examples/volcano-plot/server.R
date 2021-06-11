@@ -60,7 +60,10 @@ shinyServer(function(input, output, session) {
   ## input for example data sets
   
   namesExampleFile <- reactive({
-    filenames <- (list.files("Example-data-set/express-data-set", pattern="*.RDS", full.names=TRUE))
+    filenames <- (list.files("GSEABenchmarkeR/express-data-set", pattern="*.RDS", full.names=TRUE))
+    if(length(filenames) == 0){
+      return(NULL)
+    }
     ldf <- lapply(filenames[2:length(filenames)], readRDS)
     lID <- sapply(ldf,function(l){l@metadata$dataId})
     names(lID) <- paste(sapply(ldf,function(l){l@metadata$experimentData@other$disease})," (", (lID),")", sep="")
@@ -96,7 +99,7 @@ shinyServer(function(input, output, session) {
       fs <- c()
       tmpdir <- tempdir()
       setwd(tempdir())
-      paths <- c("expressData.csv", "biologicalFunction.csv", "degradedData.csv")
+      paths <- c("expressData.csv", "biologicalFunction.csv", "volcanoData.csv")
       write.csv(exampleData$matrix, paths[1])
       write.csv(exampleData$biologicalFunc, paths[2])
       write.csv(exampleData$degrade, paths[3])
@@ -164,7 +167,7 @@ shinyServer(function(input, output, session) {
             rm(categ)
           } else { # cleaning data set from GSEA data set
             setProgress(value = 0.4, detail = "GSEA data set ...")
-            rawData <- readRDS(paste("Example-data-set/express-data-set/", input$choiceGSEA, ".RDS", sep=""))
+            rawData <- readRDS(paste("GSEABenchmarkeR/express-data-set/", input$choiceGSEA, ".RDS", sep=""))
             # rawData <- R.cache::memoizedCall(maPreproc,geo2kegg()[input$choiceGSEA])[[1]]
             
             matrix <- SummarizedExperiment::assays(rawData)$exprs
@@ -177,7 +180,7 @@ shinyServer(function(input, output, session) {
             
             object$input$geneNames <- base::rownames(matrix)
             
-            object$input$biologicalFunc <- readRDS("Example-data-set/gene-set/go.gs.RDS")
+            object$input$biologicalFunc <- readRDS("GSEABenchmarkeR/gene-set/go.gs.RDS")
             #On a laissé sous forme de liste car on a adapté les fonctions qui en ont besoin. Plus rapide qu'en la transformant en matrice binaire
             # print(length(object$input$biologicalFunc))
             object$bool$url <- rawData@metadata$experimentData@url
@@ -291,14 +294,6 @@ shinyServer(function(input, output, session) {
   observe({
     data(req(object_I()))
   })
-  # observeEvent(input$buttonValidate, {
-  #   newValue <- req(object_I())
-  #   data(newValue)
-  # })
-  
-  # data <- eventReactive(input$buttonValidate,{
-  #   req(object_I())
-  # })
   
   
   
@@ -404,7 +399,7 @@ shinyServer(function(input, output, session) {
   output$msgDegraded <- renderUI({
     tags$span(style= "color:grey", paste("A matrix containing p-values and fold change is detected.", 
                                          "Thus, you cannot change the following advanced parameters:\n",
-                                         "Reference family = 'Simes',\n K = ", nrow(object_I()$input$Y)))
+                                         "Reference family = 'Simes',\n K = ", length(object_I()$output$p.value)))
   })
   
   observe({
@@ -463,7 +458,15 @@ shinyServer(function(input, output, session) {
       withProgress(value = 0, message = "Perform calibration ... ", {
         incProgress(amount = 0.3)
         t1 <- Sys.time()
-        object <- fit(data(), 
+        # object <- memoizedCall(fit, 
+        #                        object = data(), 
+        #                        alpha = req(alpha()),
+        #                        B = numB(),
+        #                        alternative = alternative(),
+        #                        family = refFamily(),
+        #                        K = numK()
+        # )
+        object <- fit(data(),
                       alpha = req(alpha()),
                       B = numB(),
                       alternative = alternative(),
@@ -679,7 +682,6 @@ shinyServer(function(input, output, session) {
     req(thresholds(data()))
     n12 <- length(selectedGenes()$sel12)
     pred <- predict(object = data(), S = selectedGenes()$sel12, what = c("TP", "FDP"))
-    
     return(list(
       n12 = n12, TP12 = pred["TP"], FDP12 = pred["FDP"]))
     
@@ -710,11 +712,12 @@ shinyServer(function(input, output, session) {
                "# genes" = c(TP_FDP()$n12),
                "TP≥" = as.integer(c(TP_FDP()$TP12)), 
                "FDP≤" = c(round(TP_FDP()$FDP12, 2)),
-               check.names = FALSE)
+               check.names = FALSE, row.names = NULL)
   })
   
   # updating PHB table when thresholds change
   observeEvent(TP_FDP(),{ # When threshold change
+    
     
     bottomTable <- tableResult() %>%  #keep box/lasso selection
       filter(Selection != "Threshold selection") #remove row named "Threshold selection"
@@ -1103,7 +1106,9 @@ shinyServer(function(input, output, session) {
       sprintf("volcano-plot_bounds_%s.csv", tag)
     },
     content = function(file) {
-      write.csv(tableResult(), file)
+      table <- tableResult()
+      table$`Selection` <- str_remove_all(str_remove_all(table$`Selection`, "<a(.*?)>"), "(</a>)")
+      write.csv(table, file)
     }
   )
   
@@ -1170,127 +1175,129 @@ shinyServer(function(input, output, session) {
       print("post hoc bounds on gene set:")
       print(difftime(T2, T1))
     })
-  return(table)
+    return(table)
   })
-
-# calculate vounds for all features to compare with each gene sets (competitive methods)
-boundsW <- reactive({ #calcul bounds for all features
-  req(pValues(data()))
-  req(thresholds(data()))
-  c(n=length(nHyp(data())), predict(object = data()))
-})
-
-
-# dowload csv file containing PHB table of gene sets
-output$downloadPHBTableGroup <- downloadHandler( #download csv of user selection
-  filename = function() {
-    tag <- format(Sys.time(), "%Y-%M-%d_%H-%m-%S")
-    sprintf("gene-set_bounds_%s.csv", tag)
-  },
-  content = function(file) {
-    write.csv(tableBoundsGroup(), file)
-  }
-)
-
-# observe({ # show the download button when 
-#   req(tableBoundsGroup())
-#   shinyjs::show("downloadPHBTableGroup")
-# })
-
-# If user choose SEA alternative
-filteredTableBoundsGroup  <- reactive({
-  req(input$buttonSEA)
-  req(tableBoundsGroup())
-  if (input$buttonSEA == "competitive"){
-    table <- tableBoundsGroup()
-    sel <- which(table[["FDP≤"]] < boundsW()['FDP'])
-    newValue <- table[sel,]
-    return(newValue)
-  } else if (input$buttonSEA == "self"){
-    table <- tableBoundsGroup()
-    sel <- which(table[["TP≥"]] > 0)
-    return(table[sel,])
-  } else {
-    return(tableBoundsGroup())
-  }
-})
-
-# reactive popify to explain PHB table
-output$OutQtableBoundsGroup <- renderUI({
-  req(tableBoundsGroup())
-  popify(el = bsButton("QtableBoundsGroup", label = "", icon = icon("question"), style = "info", size = "extra-small"), 
-         title = "Data", content = paste("This table prints your post-hoc bounds for your selections."  ,
-                                         "FDP : False discovery Proportion.",
-                                         "TP : True positive", 
-                                         "For example, the selection called Upper Left have at leat", 
-                                         tableBoundsGroup()[1, "TP≥"],
-                                         " true positives and max ",
-                                         tableBoundsGroup()[1, "FDP≤"]*100,
-                                         "% False discovery proportion.")
-         , trigger='focus')
-})
-
-# formatRound(DT::datatable(genesInputGvsG(),options=list(pageLength=10)),columns=c(2,3,4,5,6,7),digits=3)
-output$tableBoundsGroup <- renderDT({
-  table <- filteredTableBoundsGroup()
-  table[["FDP≤"]] <- round(table[["FDP≤"]], 2)
-  table
   
-}, selection = 'single' , escape = FALSE , options = list(scrollX = TRUE))
-
-# name of gene set selected by user  
-userDTselectPrio <- reactive({
-  req(filteredTableBoundsGroup())
-  # req(input$tableBoundsGroup_rows_selected)
-  href <- filteredTableBoundsGroup()[input$tableBoundsGroup_rows_selected,"Name"]
-  name <- str_remove_all(str_remove_all(href, "<a(.*?)>"), "(</a>)")
-  return(name)
-})
-
-#list of genes selected by user
-selectionGroup <- reactive({
-  req(data()$input$biologicalFunc)
+  # calculate vounds for all features to compare with each gene sets (competitive methods)
+  boundsW <- reactive({ #calcul bounds for all features
+    req(pValues(data()))
+    req(thresholds(data()))
+    c(n=length(nHyp(data())), predict(object = data()))
+  })
   
-  group <- req(userDTselectPrio())
-  bioFun <- data()$input$biologicalFunc
-  if (class(bioFun)=="list"){
-    ids <- bioFun[[group]]
-  }else{
-    ids <- which(bioFun[, group] == 1)
-  }
-  list(sel = ids)
-})
-
-# 'reactive" plot : as the plot before, this one should be activate once. See posteriori() for details
-#VP2
-priori <- reactive({
-  req(data())
-  req(foldChanges(data()))
-  req(data()$output$logp)
-  f <- list(
-    size = 14,
-    color = "#000000"
+  
+  # dowload csv file containing PHB table of gene sets
+  output$downloadPHBTableGroup <- downloadHandler( #download csv of user selection
+    filename = function() {
+      tag <- format(Sys.time(), "%Y-%M-%d_%H-%m-%S")
+      sprintf("gene-set_bounds_%s.csv", tag)
+    },
+    content = function(file) {
+      table <- tableBoundsGroup()
+      table$Name <- str_remove_all(str_remove_all(table$Name, "<a(.*?)>"), "(</a>)")
+      write.csv(table, file)
+    }
   )
-  lte <- "≤"
-  gte <- "≥"
-  print("Priori()")
-  plot_ly(data.frame(x = foldChanges(data()), y=data()$output$logp), 
-          x = ~x, y = ~y, 
-          marker = list(size = 2,
-                        color = 'grey'), 
-          name = 'genes',
-          type='scattergl', mode = "markers", source='B'
-          ,
-          text = data()$input$geneNames,
-          customdata = paste0("http://www.ensembl.org/Homo_sapiens/Gene/Summary?g=", data()$input$geneNames)
-  )%>% 
-    layout(
-      showlegend = TRUE,
-      xaxis = list(title = "Fold change (log scale)", titlefont = f),
-      yaxis = isolate(yaxis()),
-      title = "",
-      dragmode = "select" )%>%
-    onRender("
+  
+  # observe({ # show the download button when 
+  #   req(tableBoundsGroup())
+  #   shinyjs::show("downloadPHBTableGroup")
+  # })
+  
+  # If user choose SEA alternative
+  filteredTableBoundsGroup  <- reactive({
+    req(input$buttonSEA)
+    req(tableBoundsGroup())
+    if (input$buttonSEA == "competitive"){
+      table <- tableBoundsGroup()
+      sel <- which(table[["FDP≤"]] < boundsW()['FDP'])
+      newValue <- table[sel,]
+      return(newValue)
+    } else if (input$buttonSEA == "self"){
+      table <- tableBoundsGroup()
+      sel <- which(table[["TP≥"]] > 0)
+      return(table[sel,])
+    } else {
+      return(tableBoundsGroup())
+    }
+  })
+  
+  # reactive popify to explain PHB table
+  output$OutQtableBoundsGroup <- renderUI({
+    req(tableBoundsGroup())
+    popify(el = bsButton("QtableBoundsGroup", label = "", icon = icon("question"), style = "info", size = "extra-small"), 
+           title = "Data", content = paste("This table prints your post-hoc bounds for your gene sets."  ,
+                                           "For example, the selection called",
+                                           tableBoundsGroup()[1, "Name"],
+                                           "contains at leat", 
+                                           tableBoundsGroup()[1, "TP≥"],
+                                           " true positives (TP) and its False Discovery Proportion (FDP) is less than ",
+                                           round(tableBoundsGroup()[1, "FDP≤"]*100, 2), "%"
+           ), 
+           trigger='hover')
+  })
+  
+  # formatRound(DT::datatable(genesInputGvsG(),options=list(pageLength=10)),columns=c(2,3,4,5,6,7),digits=3)
+  output$tableBoundsGroup <- renderDT({
+    table <- filteredTableBoundsGroup()
+    table[["FDP≤"]] <- round(table[["FDP≤"]], 2)
+    table
+    
+  }, selection = 'single' , escape = FALSE , options = list(scrollX = TRUE))
+  
+  # name of gene set selected by user  
+  userDTselectPrio <- reactive({
+    req(filteredTableBoundsGroup())
+    # req(input$tableBoundsGroup_rows_selected)
+    href <- filteredTableBoundsGroup()[input$tableBoundsGroup_rows_selected,"Name"]
+    name <- str_remove_all(str_remove_all(href, "<a(.*?)>"), "(</a>)")
+    return(name)
+  })
+  
+  #list of genes selected by user
+  selectionGroup <- reactive({
+    req(data()$input$biologicalFunc)
+    
+    group <- req(userDTselectPrio())
+    bioFun <- data()$input$biologicalFunc
+    if (class(bioFun)=="list"){
+      ids <- bioFun[[group]]
+    }else{
+      ids <- which(bioFun[, group] == 1)
+    }
+    list(sel = ids)
+  })
+  
+  # 'reactive" plot : as the plot before, this one should be activate once. See posteriori() for details
+  #VP2
+  priori <- reactive({
+    req(data())
+    req(foldChanges(data()))
+    req(data()$output$logp)
+    f <- list(
+      size = 14,
+      color = "#000000"
+    )
+    lte <- "≤"
+    gte <- "≥"
+    print("Priori()")
+    plot_ly(data.frame(x = foldChanges(data()), y=data()$output$logp), 
+            x = ~x, y = ~y, 
+            marker = list(size = 2,
+                          color = 'grey'), 
+            name = 'genes',
+            type='scattergl', mode = "markers", source='B'
+            ,
+            text = data()$input$geneNames,
+            customdata = paste0("http://www.ensembl.org/Homo_sapiens/Gene/Summary?g=", data()$input$geneNames)
+    )%>% 
+      layout(
+        showlegend = TRUE,
+        xaxis = list(title = "Fold change (log scale)", titlefont = f),
+        yaxis = isolate(yaxis()),
+        title = "",
+        dragmode = "select" )%>%
+      onRender("
                   function(el) {
                       el.on('plotly_click', function(d) {
                           var url = d.points[0].customdata;
@@ -1298,61 +1305,61 @@ priori <- reactive({
                       });
                   }
               ") %>%
-    event_register("plotly_selecting") %>%
-    config(editable = TRUE) %>%
-    toWebGL() 
+      event_register("plotly_selecting") %>%
+      config(editable = TRUE) %>%
+      toWebGL() 
+    
+  })
   
-})
-
-#output of priori()
-output$volcanoplotPriori <- renderPlotly({
-  withProgress( message = "Plot", {
-    p <- priori()
-    shiny::setProgress(value = 1, detail = "Done")
-    return(p)
+  #output of priori()
+  output$volcanoplotPriori <- renderPlotly({
+    withProgress( message = "Plot", {
+      p <- priori()
+      shiny::setProgress(value = 1, detail = "Done")
+      return(p)
+    })
   })
-})
-
-#when yaxis change
-observeEvent({input$choiceYaxis
-  yaxis()}, { #when we choose a different y axis 
-    plotlyProxy("volcanoplotPriori", session) %>%
-      plotlyProxyInvoke("relayout", list(yaxis = yaxis()))
-    
-    
-  })
-
-
-#when user select a gen set to print it on VP2
-#here, there are not red points : stack is composed of 0 :points ; 1 : blue points (gene set selected)
-observeEvent(userDTselectPrio(), {
-  if(length(userDTselectPrio()) == 1){
-    plotlyProxy("volcanoplotPriori", session) %>%
-      plotlyProxyInvoke("deleteTraces", 1)
-    plotlyProxy("volcanoplotPriori", session) %>%
-      plotlyProxyInvoke(
-        "addTraces",
-        list(
-          x = unname(foldChanges(data())[selectionGroup()$sel]),
-          y = unname(data()$output$logp[selectionGroup()$sel]),
-          type = "scattergl",
-          mode = "markers",
-          line = list(color = "blue"),
-          name = userDTselectPrio()
+  
+  #when yaxis change
+  observeEvent({input$choiceYaxis
+    yaxis()}, { #when we choose a different y axis 
+      plotlyProxy("volcanoplotPriori", session) %>%
+        plotlyProxyInvoke("relayout", list(yaxis = yaxis()))
+      
+      
+    })
+  
+  
+  #when user select a gen set to print it on VP2
+  #here, there are not red points : stack is composed of 0 :points ; 1 : blue points (gene set selected)
+  observeEvent(userDTselectPrio(), {
+    if(length(userDTselectPrio()) == 1){
+      plotlyProxy("volcanoplotPriori", session) %>%
+        plotlyProxyInvoke("deleteTraces", 1)
+      plotlyProxy("volcanoplotPriori", session) %>%
+        plotlyProxyInvoke(
+          "addTraces",
+          list(
+            x = unname(foldChanges(data())[selectionGroup()$sel]),
+            y = unname(data()$output$logp[selectionGroup()$sel]),
+            type = "scattergl",
+            mode = "markers",
+            line = list(color = "blue"),
+            name = userDTselectPrio()
+          )
         )
-      )
-  } else {
-    plotlyProxy("volcanoplotPriori", session) %>%
-      plotlyProxyInvoke("deleteTraces",1)
-  }
-})
-
-# output$curveMaxFPGroup <- renderPlotly({
-#   req(selectionGroup())
-#   plotMaxFP(pval = df()$pval[selectionGroup()$sel], thr = thr()) + 
-#     ggtitle(userDTselectPrio()) 
-# })
-
-
-
+    } else {
+      plotlyProxy("volcanoplotPriori", session) %>%
+        plotlyProxyInvoke("deleteTraces",1)
+    }
+  })
+  
+  # output$curveMaxFPGroup <- renderPlotly({
+  #   req(selectionGroup())
+  #   plotMaxFP(pval = df()$pval[selectionGroup()$sel], thr = thr()) + 
+  #     ggtitle(userDTselectPrio()) 
+  # })
+  
+  
+  
 })
