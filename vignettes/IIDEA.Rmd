@@ -32,7 +32,7 @@ The main distinctive feature of this app is that it makes it possible for users 
 
 # Quick start
 
-- Open the [IIDEA shiny application](https://pneuvial.shinyapps.io/volcano-plot/)
+- Open the [IIDEA shiny application](https://shiny-iidea-sanssouci.apps.math.cnrs.fr/)
 - Click on 'Run!'
 
 - This launches the analysis of an example data set (described below): a volcano plot is displayed in the right panel, together with a table at the bottom of the left panel. 

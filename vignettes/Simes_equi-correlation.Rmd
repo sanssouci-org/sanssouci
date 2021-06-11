@@ -46,8 +46,11 @@ We write a small function to estimate the size of the Simes test, that is, the l
 size <- function(rho, m, B, alpha=0.05) {
     X0 <- gaussianTestStatistics(m, B, dep = "equi", param = rho)$X0
     p0 <- pnorm(X0, lower.tail = FALSE)
-    sk <- sansSouci::SimesThresholdFamily(m, kMax = m)
-    sansSouci:::empiricalCoverage(sk(alpha), p0)
+    thr <- t_linear(alpha, 1:m, m)
+    p0s <- sansSouci:::colSort(p0);
+    isAbove <- sweep(p0s, 1, thr,  "<")
+    nAbove <- colSums(isAbove)
+    mean(nAbove > 0)
 }
 ```
 
@@ -57,7 +60,7 @@ Our simulation parameters are set as follows:
 m <- 1e3
 rhos <- c(0, 0.1, 0.2, 0.4, 0.8)
 alpha <- 0.2
-B <- 10000
+B <- 1000
 ```
 
 That is:

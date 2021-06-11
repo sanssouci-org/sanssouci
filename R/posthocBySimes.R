@@ -46,14 +46,17 @@ posthocBySimes <- function(p, select, alpha, Rcpp = FALSE, verbose = FALSE) {
 }
 
 posthocBySimes0 <- function(p, select, alpha, verbose=FALSE) {
+    if (length(select) == 0L) {
+        return(0)
+    }
     m <- length(p)
     nR <- length(select)
-    tSimes <- alpha*1:nR/m
+    tSimes <- alpha*seq_len(nR)/m
     pR <- p[select]
     card <- sapply(tSimes, FUN=function(thr) {
                        sum(pR>thr)
                    })
-    bounds <- pmin(card + 1:nR-1, nR)
+    bounds <- pmin(card + seq_len(nR)-1, nR)
     maxFalseRej <- min(bounds)
     minCorrRej <- nR - maxFalseRej
     minCorrRej

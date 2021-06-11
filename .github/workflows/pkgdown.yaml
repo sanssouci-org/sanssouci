@@ -1,11 +1,14 @@
 on:
   push:
-    branches: master
+    branches: 
+    - master 
+    - develop
 
 name: pkgdown
 
 jobs:
   pkgdown:
+    if: "contains(github.event.head_commit.message, '[build-site]')"
     runs-on: macOS-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
