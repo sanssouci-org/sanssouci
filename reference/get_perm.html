@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.1</span>
       </span>
     </div>
 
@@ -144,7 +144,13 @@
     <p>Get a matrix of statistics and p-values under the null hypothesis obtained by repeated permutation of class labels (two-sample tests)</p>
     </div>
 
-    <pre class="usage"><span class='fu'>get_perm</span><span class='op'>(</span><span class='va'>X</span>, <span class='va'>categ</span>, <span class='va'>B</span>, rowTestFUN <span class='op'>=</span> <span class='va'>rowWelchTests</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>get_perm</span><span class='op'>(</span>
+  <span class='va'>X</span>,
+  <span class='va'>categ</span>,
+  <span class='va'>B</span>,
+  rowTestFUN <span class='op'>=</span> <span class='va'>rowWelchTests</span>,
+  alternative <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"two.sided"</span>, <span class='st'>"less"</span>, <span class='st'>"greater"</span><span class='op'>)</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -156,8 +162,7 @@
     <tr>
       <th>categ</th>
       <td><p>An numeric vector of <code>n</code> values in <code>0,1</code>
-specifying the column indices of the first and second samples. If not
-provided, a one-sample test is performed.</p></td>
+specifying the column indices of the first and second samples.</p></td>
     </tr>
     <tr>
       <th>B</th>
@@ -166,6 +171,10 @@ provided, a one-sample test is performed.</p></td>
     <tr>
       <th>rowTestFUN</th>
       <td><p>a vectorized testing function (same I/O as <a href='rowWelchTests.html'>rowWelchTests</a>)</p></td>
+    </tr>
+    <tr>
+      <th>alternative</th>
+      <td><p>A character string specifying the alternative hypothesis, to be passed to <code>rowTestFUN</code>. Must be one of "two.sided" (default), "greater" or "less".</p></td>
     </tr>
     </table>
 

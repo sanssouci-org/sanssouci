@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.1</span>
       </span>
     </div>
 
@@ -212,9 +212,9 @@ the effect size (as e.g. done by 't.test'))</p>
 <span class='va'>fbt</span> <span class='op'>&lt;-</span> <span class='fu'>rowBinomialTests</span><span class='op'>(</span><span class='va'>mat</span>, categ <span class='op'>=</span> <span class='va'>cls</span>, alternative <span class='op'>=</span> <span class='va'>alt</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='warning'>Warning: Two-sided p-value not vectorized yet! Looping for now.</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>fbt</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; List of 3
-#&gt;  $ statistic: num [1:100] 0 2 0 1 1 0 1 1 1 1 ...
-#&gt;  $ p.value  : num [1:100] 0.0762 1 1 0.4895 1 ...
-#&gt;  $ estimate : num [1:100] -0.08333 0 -0.01667 0.00833 -0.00833 ...</div><div class='input'>
+#&gt;  $ statistic: num [1:100] 2 1 1 1 1 1 0 0 3 0 ...
+#&gt;  $ p.value  : num [1:100] 1 1 0.5201 0.0819 0.4895 ...
+#&gt;  $ estimate : num [1:100] 0 -0.00833 -0.04167 -0.09167 0.00833 ...</div><div class='input'>
 <span class='co'># compare with ordinary binom.test:</span>
 <span class='va'>pbt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/t.html'>t</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>sapply</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='va'>p</span>, FUN<span class='op'>=</span><span class='kw'>function</span><span class='op'>(</span><span class='va'>ii</span><span class='op'>)</span> <span class='op'>{</span>
   <span class='va'>x1</span> <span class='op'>&lt;-</span> <span class='va'>mat</span><span class='op'>[</span><span class='va'>ii</span>, <span class='va'>cls</span><span class='op'>==</span><span class='fl'>1</span><span class='op'>]</span>

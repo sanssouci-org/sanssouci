@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.1</span>
       </span>
     </div>
 
@@ -177,36 +177,12 @@ used in simulations.</p></td>
 </div><div class='output co'>#&gt; groups
 #&gt;  0  1 
 #&gt; 42 37 </div><div class='input'><span class='va'>a</span> <span class='op'>&lt;-</span> <span class='fu'>SansSouci</span><span class='op'>(</span>Y <span class='op'>=</span> <span class='va'>expr_ALL</span>, groups <span class='op'>=</span> <span class='va'>groups</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>a</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; 'SansSouci' object:
-#&gt; 	Number of hypotheses:	 9038 
-#&gt; 	Number of observations:	 79 
-#&gt; 	2-sample data
-#&gt; </div><div class='input'><span class='fu'><a href='all-generics.html'>nHyp</a></span><span class='op'>(</span><span class='va'>a</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] 9038</div><div class='input'><span class='fu'><a href='all-generics.html'>nObs</a></span><span class='op'>(</span><span class='va'>a</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] 79</div><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>234</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/system.time.html'>system.time</a></span><span class='op'>(</span><span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://generics.r-lib.org/reference/fit.html'>fit</a></span><span class='op'>(</span><span class='va'>a</span>, B <span class='op'>=</span> <span class='fl'>100</span>, alpha <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;    user  system elapsed 
-#&gt;   1.205   0.077   1.292 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; 'SansSouci' object:
-#&gt; 	Number of hypotheses:	 9038 
-#&gt; 	Number of observations:	 79 
-#&gt; 	2-sample data
-#&gt; 
-#&gt; Parameters: 
-#&gt; 	Test function:		rowWelchTests
-#&gt; 	Number of permutations:	B=100
-#&gt; 	Significance level:	alpha=0.1
-#&gt; 	Reference family:	Simes
-#&gt; 		(of size:	K=9038)
-#&gt; 
-#&gt; Output:
-#&gt; 	Calibration parameter:	lambda=0.3891723</div><div class='input'><span class='fu'><a href='all-generics.html'>label</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "Simes"</div><div class='input'>
-<span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://generics.r-lib.org/reference/fit.html'>fit</a></span><span class='op'>(</span><span class='va'>a</span>, B <span class='op'>=</span> <span class='fl'>100</span>, alpha <span class='op'>=</span> <span class='fl'>0.1</span>, family<span class='op'>=</span><span class='st'>"Beta"</span>, K<span class='op'>=</span><span class='fl'>10</span><span class='op'>)</span>
-<span class='fu'><a href='all-generics.html'>label</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "Beta(K=10)"</div><div class='input'>
+
+<span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://generics.r-lib.org/reference/fit.html'>fit</a></span><span class='op'>(</span><span class='va'>a</span>, B <span class='op'>=</span> <span class='fl'>100</span>, alpha <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>res</span>, xmax <span class='op'>=</span> <span class='fl'>500</span><span class='op'>)</span>
+</div><div class='img'><img src='SansSouci-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='va'>res_beta</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://generics.r-lib.org/reference/fit.html'>fit</a></span><span class='op'>(</span><span class='va'>res</span>, B <span class='op'>=</span> <span class='fl'>100</span>, alpha <span class='op'>=</span> <span class='fl'>0.1</span>, family<span class='op'>=</span><span class='st'>"Beta"</span>, K<span class='op'>=</span><span class='fl'>10</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>res_beta</span>, xmax <span class='op'>=</span> <span class='fl'>500</span><span class='op'>)</span>
+</div><div class='img'><img src='SansSouci-2.png' alt='' width='700' height='433' /></div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

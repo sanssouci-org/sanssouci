@@ -4,9 +4,6 @@
     <loc>https://pneuvial.github.io/sanssouci/index.html</loc>
   </url>
   <url>
-    <loc>https://pneuvial.github.io/sanssouci/reference/BetaThresholdFamily.html</loc>
-  </url>
-  <url>
     <loc>https://pneuvial.github.io/sanssouci/reference/SansSouci-methods.html</loc>
   </url>
   <url>
@@ -25,9 +22,6 @@
     <loc>https://pneuvial.github.io/sanssouci/reference/SansSouciStruct.html</loc>
   </url>
   <url>
-    <loc>https://pneuvial.github.io/sanssouci/reference/SimesThresholdFamily.html</loc>
-  </url>
-  <url>
     <loc>https://pneuvial.github.io/sanssouci/reference/V.star.html</loc>
   </url>
   <url>
@@ -35,9 +29,6 @@
   </url>
   <url>
     <loc>https://pneuvial.github.io/sanssouci/reference/calibrate.html</loc>
-  </url>
-  <url>
-    <loc>https://pneuvial.github.io/sanssouci/reference/calibrateJER.html</loc>
   </url>
   <url>
     <loc>https://pneuvial.github.io/sanssouci/reference/confCurveFromFam.html</loc>
@@ -101,6 +92,9 @@
   </url>
   <url>
     <loc>https://pneuvial.github.io/sanssouci/reference/reexports.html</loc>
+  </url>
+  <url>
+    <loc>https://pneuvial.github.io/sanssouci/reference/reference-families.html</loc>
   </url>
   <url>
     <loc>https://pneuvial.github.io/sanssouci/reference/rowBinomialTests.html</loc>

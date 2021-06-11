@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.1</span>
       </span>
     </div>
 
@@ -202,34 +202,25 @@ computed, among:</p><ul>
 <span class='va'>obj</span> <span class='op'>&lt;-</span> <span class='fu'><a href='SansSouciSim.html'>SansSouciSim</a></span><span class='op'>(</span>m <span class='op'>=</span> <span class='fl'>502</span>, rho <span class='op'>=</span> <span class='fl'>0.5</span>, n <span class='op'>=</span> <span class='fl'>100</span>, pi0 <span class='op'>=</span> <span class='fl'>0.8</span>, SNR <span class='op'>=</span> <span class='fl'>3</span>, prob <span class='op'>=</span> <span class='fl'>0.5</span><span class='op'>)</span>
 <span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://generics.r-lib.org/reference/fit.html'>fit</a></span><span class='op'>(</span><span class='va'>obj</span>, B <span class='op'>=</span> <span class='fl'>100</span>, alpha <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span>
 
-<span class='co'># post hoc bounds for all hypotheses</span>
+<span class='co'># post hoc bound on the set of all hypotheses</span>
 <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;         TP        FDP 
-#&gt; 83.0000000  0.8346614 </div><div class='input'>
-<span class='co'># confidence curve</span>
-<span class='va'>cb</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>res</span>, all <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>cb</span><span class='op'>)</span>
+#&gt; 58.0000000  0.8844622 </div><div class='input'>
+<span class='co'># idem for all possible subsets (sorted by p-value)</span>
+<span class='va'>bounds</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>res</span>, all<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>bounds</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;   x label stat bound
 #&gt; 1 1 Simes   TP     1
 #&gt; 2 2 Simes   TP     2
 #&gt; 3 3 Simes   TP     3
 #&gt; 4 4 Simes   TP     4
 #&gt; 5 5 Simes   TP     5
-#&gt; 6 6 Simes   TP     6</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span>
-</div><div class='img'><img src='predict.SansSouci-1.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='co'># confidence curve for a subset</span>
-<span class='va'>S</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/which.html'>which</a></span><span class='op'>(</span><span class='fu'><a href='all-generics.html'>foldChanges</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span> <span class='op'>&gt;</span> <span class='fl'>0.3</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>res</span>, S <span class='op'>=</span> <span class='va'>S</span><span class='op'>)</span>
-</div><div class='img'><img src='predict.SansSouci-2.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='co'># plot two confidence curves</span>
-<span class='va'>res_beta</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://generics.r-lib.org/reference/fit.html'>fit</a></span><span class='op'>(</span><span class='va'>obj</span>, B <span class='op'>=</span> <span class='fl'>100</span>, alpha <span class='op'>=</span> <span class='fl'>0.1</span>, family <span class='op'>=</span> <span class='st'>"Beta"</span>, K <span class='op'>=</span> <span class='fl'>20</span><span class='op'>)</span>
-<span class='va'>cb_beta</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>res_beta</span>, all <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-
-<span class='va'>bounds</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='st'>"Simes"</span><span class='op'>=</span> <span class='va'>cb</span>, 
-                   <span class='st'>"Beta"</span> <span class='op'>=</span> <span class='va'>cb_beta</span><span class='op'>)</span>
-<span class='fu'><a href='plotConfCurve.html'>plotConfCurve</a></span><span class='op'>(</span><span class='va'>bounds</span>, xmax <span class='op'>=</span> <span class='fl'>200</span><span class='op'>)</span>
-</div><div class='img'><img src='predict.SansSouci-3.png' alt='' width='700' height='433' /></div><div class='input'>
-</div></pre>
+#&gt; 6 6 Simes   TP     6</div><div class='input'>
+<span class='co'># post hoc bound on a subset</span>
+<span class='va'>S</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/which.html'>which</a></span><span class='op'>(</span><span class='fu'><a href='all-generics.html'>pValues</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span> <span class='op'>&lt;</span> <span class='fl'>0.01</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>res</span>, <span class='va'>S</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;         TP        FDP 
+#&gt; 58.0000000  0.3333333 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.10.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.1</span>
       </span>
     </div>
 
@@ -97,7 +97,7 @@
       <h1 data-toc-skip>Conservativeness of the Simes inequality under positive dependence</h1>
                         <h4 class="author">P. Neuvial</h4>
             
-            <h4 class="date">2021-04-19</h4>
+            <h4 class="date">2021-06-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/pneuvial/sanssouci/blob/master/vignettes/Simes_equi-correlation.Rmd"><code>vignettes/Simes_equi-correlation.Rmd</code></a></small>
       <div class="hidden name"><code>Simes_equi-correlation.Rmd</code></div>
@@ -132,15 +132,18 @@
 <code class="sourceCode R"><span class="va">size</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">rho</span>, <span class="va">m</span>, <span class="va">B</span>, <span class="va">alpha</span><span class="op">=</span><span class="fl">0.05</span><span class="op">)</span> <span class="op">{</span>
     <span class="va">X0</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gaussianTestStatistics.html">gaussianTestStatistics</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">B</span>, dep <span class="op">=</span> <span class="st">"equi"</span>, param <span class="op">=</span> <span class="va">rho</span><span class="op">)</span><span class="op">$</span><span class="va">X0</span>
     <span class="va">p0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">pnorm</a></span><span class="op">(</span><span class="va">X0</span>, lower.tail <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-    <span class="va">sk</span> <span class="op">&lt;-</span> <span class="fu">sansSouci</span><span class="fu">::</span><span class="fu"><a href="../reference/SimesThresholdFamily.html">SimesThresholdFamily</a></span><span class="op">(</span><span class="va">m</span>, kMax <span class="op">=</span> <span class="va">m</span><span class="op">)</span>
-    <span class="fu">sansSouci</span><span class="fu">:::</span><span class="fu">empiricalCoverage</span><span class="op">(</span><span class="fu">sk</span><span class="op">(</span><span class="va">alpha</span><span class="op">)</span>, <span class="va">p0</span><span class="op">)</span>
+    <span class="va">thr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/reference-families.html">t_linear</a></span><span class="op">(</span><span class="va">alpha</span>, <span class="fl">1</span><span class="op">:</span><span class="va">m</span>, <span class="va">m</span><span class="op">)</span>
+    <span class="va">p0s</span> <span class="op">&lt;-</span> <span class="fu">sansSouci</span><span class="fu">:::</span><span class="fu">colSort</span><span class="op">(</span><span class="va">p0</span><span class="op">)</span>;
+    <span class="va">isAbove</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sweep.html">sweep</a></span><span class="op">(</span><span class="va">p0s</span>, <span class="fl">1</span>, <span class="va">thr</span>,  <span class="st">"&lt;"</span><span class="op">)</span>
+    <span class="va">nAbove</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html">colSums</a></span><span class="op">(</span><span class="va">isAbove</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">nAbove</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span>
 <span class="op">}</span></code></pre></div>
 <p>Our simulation parameters are set as follows:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fl">1e3</span>
 <span class="va">rhos</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.4</span>, <span class="fl">0.8</span><span class="op">)</span>
 <span class="va">alpha</span> <span class="op">&lt;-</span> <span class="fl">0.2</span>
-<span class="va">B</span> <span class="op">&lt;-</span> <span class="fl">10000</span></code></pre></div>
+<span class="va">B</span> <span class="op">&lt;-</span> <span class="fl">1000</span></code></pre></div>
 <p>That is:</p>
 <ul>
 <li>
@@ -150,7 +153,7 @@
 <li>target level of the Simes test: <span class="math inline">\(0.2\)</span>
 </li>
 <li>
-<span class="math inline">\(10^{4}\)</span> replications are used to estimate the size of the test</li>
+<span class="math inline">\(1000\)</span> replications are used to estimate the size of the test</li>
 </ul>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ahat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">sapply</a></span><span class="op">(</span><span class="va">rhos</span>, <span class="va">size</span>, <span class="va">m</span>, <span class="va">B</span>, alpha<span class="op">=</span><span class="va">alpha</span><span class="op">)</span>
@@ -173,19 +176,19 @@
 <tbody>
 <tr class="odd">
 <td align="left">Achieved level/target level</td>
-<td align="right">0.97</td>
-<td align="right">0.85</td>
+<td align="right">0.98</td>
+<td align="right">0.93</td>
 <td align="right">0.74</td>
-<td align="right">0.45</td>
-<td align="right">0.39</td>
+<td align="right">0.43</td>
+<td align="right">0.34</td>
 </tr>
 <tr class="even">
 <td align="left">Standard error</td>
-<td align="right">0.02</td>
-<td align="right">0.02</td>
-<td align="right">0.02</td>
-<td align="right">0.01</td>
-<td align="right">0.01</td>
+<td align="right">0.06</td>
+<td align="right">0.06</td>
+<td align="right">0.06</td>
+<td align="right">0.04</td>
+<td align="right">0.04</td>
 </tr>
 </tbody>
 </table>
@@ -204,13 +207,13 @@
 <a href="#session-information" class="anchor"></a>Session information</h2>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code>## R version 4.0.5 (2021-03-31)
+<pre><code>## R version 4.1.0 (2021-05-18)
 ## Platform: x86_64-apple-darwin17.0 (64-bit)
 ## Running under: macOS Catalina 10.15.7
 ## 
 ## Matrix products: default
-## BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
-## LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRblas.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRlapack.dylib
 ## 
 ## locale:
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -219,16 +222,16 @@
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] knitr_1.32         matrixStats_0.58.0 sansSouci_0.10.3  
+## [1] knitr_1.33         matrixStats_0.59.0 sansSouci_0.12.1  
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_1.0.6        magrittr_2.0.1    lattice_0.20-41   R6_2.5.0         
-##  [5] ragg_1.1.2        rlang_0.4.10      fastmap_1.1.0     highr_0.9        
-##  [9] stringr_1.4.0     tools_4.0.5       grid_4.0.5        xfun_0.22        
-## [13] htmltools_0.5.1.1 systemfonts_1.0.1 yaml_2.2.1        digest_0.6.27    
-## [17] rprojroot_2.0.2   pkgdown_1.6.1     crayon_1.4.1      textshaping_0.3.3
-## [21] Matrix_1.3-2      fs_1.5.0          memoise_2.0.0     cachem_1.0.4     
-## [25] evaluate_0.14     rmarkdown_2.7     stringi_1.5.3     compiler_4.0.5   
+##  [1] Rcpp_1.0.6        magrittr_2.0.1    lattice_0.20-44   R6_2.5.0         
+##  [5] ragg_1.1.3        rlang_0.4.11      fastmap_1.1.0     highr_0.9        
+##  [9] stringr_1.4.0     tools_4.1.0       grid_4.1.0        xfun_0.23        
+## [13] htmltools_0.5.1.1 systemfonts_1.0.2 yaml_2.2.1        digest_0.6.27    
+## [17] rprojroot_2.0.2   pkgdown_1.6.1     crayon_1.4.1      textshaping_0.3.5
+## [21] Matrix_1.3-3      fs_1.5.0          memoise_2.0.0     cachem_1.0.5     
+## [25] evaluate_0.14     rmarkdown_2.8     stringi_1.6.2     compiler_4.1.0   
 ## [29] desc_1.3.0        generics_0.1.0</code></pre>
 </div>
 <div id="references" class="section level2 unnumbered">
