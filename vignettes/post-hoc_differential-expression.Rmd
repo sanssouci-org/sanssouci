@@ -30,7 +30,7 @@ Then, we introduce more powerful post hoc methods (introduced by @blanchard20pos
 - confidence curves (envelopes) for the true or false positives
 - statistical inference on volcano plots
 
-The methods described in this vignette are described in detail in the book chapter @BNR:chap and in the paper @blanchard20post-hoc. A shiny application for volcano plots is also available from https://pneuvial.shinyapps.io/volcano-plot/.
+The methods described in this vignette are described in detail in the book chapter @BNR:chap and in the paper @blanchard20post-hoc. A shiny application for volcano plots is also available from  https://shiny-iidea-sanssouci.apps.math.cnrs.fr/.
 
 ```{r install-r-packages, results='hide', message=FALSE, eval=FALSE}
 require("ggplot2") || install.packages("ggplot2")
@@ -171,7 +171,7 @@ A more refined post hoc bound has been proposed by @GS2011 under the PRDS assump
 ```{r, Simes}
 obj <- SansSouci(Y = dat, groups = categ)
 res_Simes <- fit(obj, B = 0, family = "Simes", alpha = alpha) ## B=0 => no calibration!
-FP_Simes <- bound(res_Simes, S_BH, what = "FP")
+FP_Simes <- predict(res_Simes, S_BH, what = "FP")
 ```
 
 The Simes bound implies that with probability larger than `r 1-alpha`, the false discovery proportion among the genes selected by the BH procedure at level $q= `r q`$ is upper bounded by `r ceiling(FP_Simes/nBH*100)/100`. The Simes bound is sharper than the $k_0$-Bonferroni bound because it is obtained from a *joint* control of all $k$-FWER for all $k=1, \dots, m$.  The $k_0$-Bonferroni bound will therefore not be considered further in this vignette.
@@ -185,7 +185,7 @@ As discussed in @blanchard20post-hoc, the above-described bound has two major li
 
 - It is not *adaptive* to the specific type of dependence at hand for a particular data set.
 
-To bypass these limitations, @blanchard20post-hoc have proposed a randomization-based procedure known as $\lambda$-calibration, which yields tighter bounds that are adapted to the dependency observed in the data set at hand^[A related approach has been proposed by @HSG2019, but no implementation is currently available for this approach.]. In the case of two-sample tests, this calibration can be achieved by permutation of class labels:
+To bypass these limitations, @blanchard20post-hoc have proposed a randomization-based procedure known as $\lambda$-calibration, which yields tighter bounds that are adapted to the dependency observed in the data set at hand. A closely related approach has been proposed by @HSG2019. In the case of two-sample tests, this calibration can be achieved by permutation of class labels:
 
 ```{r calibration, cache=TRUE}
 B <- 1000
@@ -209,7 +209,7 @@ resList <- list("Simes" = res_Simes,
             "Beta" = res_Beta)
 names(resList)[3] <- sprintf("Beta (K=%s)", K)
 
-bounds <- sapply(resList, bound, S_BH)
+bounds <- sapply(resList, predict, S_BH)
 rownames(bounds) <- c("Lower bound on True Positives", "Upper bound on False Discovery Proportion")
 knitr::kable(t(bounds), digits = 2)
 ```
@@ -230,7 +230,7 @@ We illustrate the use of post-hoc methods to provide this type of information. M
 The confidence curves obtained by calibration of the Simes and Beta families can be compared graphically to the (parametric) Simes curve that can be obtained from @GS2011:
 
 ```{r, conf-env-plot}
-conf_bounds <- lapply(resList, bound, all = TRUE)
+conf_bounds <- lapply(resList, predict, all = TRUE)
 cols <- RColorBrewer::brewer.pal(length(conf_bounds), "Dark2")
 p <- plotConfCurve(conf_bounds, xmax = 300, cols = cols)
 p + geom_vline(xintercept = nBH, color = "gray", linetype = "dotted", size = 1.5) +
@@ -241,7 +241,7 @@ Both calibrated curves outperform the Simes curve in this example.
 
 # Volcano plots
 
-For an interactive volcano plot, see the [volcano plot shiny application](https://pneuvial.shinyapps.io/volcano-plot/).
+For an interactive volcano plot, see the [volcano plot shiny application]( https://shiny-iidea-sanssouci.apps.math.cnrs.fr/).
 
 ```{r volcano-setup}
 q <- 0.05
@@ -251,7 +251,7 @@ r <-  0.3
 Let us assume that we are interested in genes selected by the BH procedure at level $q = `r q`$ and whose fold change is larger than $r = `r r`$ in absolute value.  The "fold change" is defined as the difference between the expression means of the two groups compared; it is an estimate of the effect size of a gene. This double selection corresponds to two sets of genes, with positive/negative fold change, which can be represented in the following plot:
 
 
-```{r volcano-plot-Simes}
+```{r volcano-Simes}
 ylim <- c(0, 6)
 volcanoPlot(res_Simes, q = q, r = r, ylim = ylim)
 ```
@@ -260,13 +260,13 @@ This type of plot is called a "volcano plot" @CC2003. Post hoc inference makes i
 
 The substantial gain in power offered by the above-described calibration is illustrated as follows for the Simes reference family:
 
-```{r volcano-plot-Simes-calibrated}
+```{r volcano-Simes-cal}
 volcanoPlot(res, q = q, r = r, ylim = ylim)
 ```
 
 and for the Beta reference family.
 
-```{r volcano-plot-Beta-calibrated}
+```{r volcano-Beta-cal}
 volcanoPlot(res_Beta, q = q, r = r, ylim = ylim)
 ```
 
@@ -279,7 +279,7 @@ S_neg <- which(fc <= -r & adjp_BH <= q)
 S_all <- union(S_pos, S_neg)
 
 all_bounds <- function(S, resList) {
-  c(length(S), sapply(resList, bound, S, "TP"))
+  c(length(S), sapply(resList, predict, S, "TP"))
 }
 tab <- rbind(all_bounds(S_pos, resList), 
              all_bounds(S_neg, resList),

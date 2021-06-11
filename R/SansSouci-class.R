@@ -13,18 +13,16 @@
 #' groups <- ifelse(colnames(expr_ALL)=="NEG", 0, 1)
 #' table(groups)
 #' a <- SansSouci(Y = expr_ALL, groups = groups)
-#' print(a)
-#' nHyp(a)
-#' nObs(a)
-#'
+#' 
 #' res <- fit(a, B = 100, alpha = 0.1)
-#' print(res)
-#' label(res)
-#'
-#' res <- fit(a, B = 100, alpha = 0.1, family="Beta", K=10)
-#' label(res)
+#' plot(res, xmax = 500)
+#' res_beta <- fit(res, B = 100, alpha = 0.1, family="Beta", K=10)
+#' plot(res_beta, xmax = 500)
 #' 
 SansSouci <- function(Y, groups, truth = NULL) {
+    if (missing(groups)) {  # one-sample tests
+        groups <- rep(1, ncol(Y))
+    }
     ugroups <- unique(groups)
     n_groups <- length(ugroups)
     
@@ -61,11 +59,14 @@ SansSouci <- function(Y, groups, truth = NULL) {
 #' alpha <- 0.1
 #' 
 #' # Adaptive Simes (lambda-calibration)
+#' set.seed(542)
 #' res <- fit(obj, B = 100, alpha = alpha, family = "Simes")
-#' res
+#' plot(res)
+#' volcanoPlot(res, q = 0.05, r = 0.2)
+#' 
 #' # upper bound on number of signals if the entire data set
 #' # (and corresponding lower bound on FDP)
-#' bound(res)
+#' predict(res)
 #' 
 #' # confidence curve 
 #' plot(res)
@@ -79,10 +80,17 @@ SansSouci <- function(Y, groups, truth = NULL) {
 #' oracle <- fit(obj, alpha = alpha, family = "Oracle")
 #' oracle
 #' 
-#' confs <- list(Simes = bound(res0, all = TRUE),
-#'               "Simes+calibration" = bound(res, all = TRUE),
-#'               "Oracle" = bound(oracle, all = TRUE))
+#' confs <- list(Simes = predict(res0, all = TRUE),
+#'               "Simes+calibration" = predict(res, all = TRUE),
+#'               "Oracle" = predict(oracle, all = TRUE))
 #' plotConfCurve(confs)
+#' 
+#' \dontrun{
+#' # Use wilcoxon tests instead of Welch tests
+#' res <- fit(obj, B = 100, alpha = 0.1, rowTestFUN = rowWilcoxonTests)
+#' volcanoPlot(res, q = 0.05, r = 0.2)
+#' }
+
 SansSouciSim <- function(...) {
     sim <- gaussianSamples(...)
     SansSouci(Y = sim$X, groups = sim$categ, truth = sim$H)
@@ -108,6 +116,9 @@ SansSouciSim <- function(...) {
 #' str(pValues(res))
 #' str(foldChanges(res)) 
 #' str(thresholds(res))
+#' volcanoPlot(res, q = 0.05, r = 0.5)
+#' 
+
 NULL
 #> NULL
 
@@ -181,7 +192,10 @@ print.SansSouci <- function(x, ..., verbose = FALSE) {
     cat("'SansSouci' object:\n")
     input <- object$input
     if (!is.null(input)) {
-        cat("\tNumber of hypotheses: ", nHyp(object), "\n")
+        cat("\tNumber of hypotheses:\t", nHyp(object), "\n")
+        if (!is.null(nObs(object))) {
+            cat("\tNumber of observations:\t", nObs(object), "\n")
+        }
         cat("\t", input$n_group, "-sample data", "\n", sep="")
         cat("\n")
         if (verbose) {
@@ -203,11 +217,11 @@ print.SansSouci <- function(x, ..., verbose = FALSE) {
     params <- object$parameters
     if (!is.null(params)) {
         cat("Parameters:", "\n")
-        cat("\tTest function:", params$funName, "\n")
-        cat("\tNumber of permutations: B=", params$B, "\n", sep = "")
-        cat("\tSignificance level: alpha=", params$alpha, "\n", sep = "")
-        cat("\tReference family:", params$fam, "\n")
-        cat("\t(of size: K=", params$K, ")", "\n", sep = "")
+        cat("\tTest function:\t\t", params$funName, "\n", sep = "")
+        cat("\tNumber of permutations:\tB=", params$B, "\n", sep = "")
+        cat("\tSignificance level:\talpha=", params$alpha, "\n", sep = "")
+        cat("\tReference family:\t", params$fam, "\n", sep = "")
+        cat("\t\t(of size:\tK=", params$K, ")", "\n", sep = "")
         cat("\n")
     }
     output <- object$output
@@ -227,7 +241,7 @@ print.SansSouci <- function(x, ..., verbose = FALSE) {
             }
             cat("\n")
         }
-        cat("\tCalibration parameter: lambda=", output$lambda, "\n", sep = "")
+        cat("\tCalibration parameter:\tlambda=", output$lambda, "\n", sep = "")
     }
     invisible(object)
 }
@@ -236,29 +250,67 @@ print.SansSouci <- function(x, ..., verbose = FALSE) {
 #' @export 
 generics::fit
 
-#' @describeIn calibrateJER Fit SansSouci object
+#' Fit SansSouci object
 #' @param object An object of class `SansSouci`
-#' @param family A character value which can be \describe{
-#'   \item{Simes}{The classical family of thresholds introduced by Simes (1986):
-#'   \eqn{\alpha*k/m}. This family yields JER control if the test
-#'   statistics are positively dependent (PRDS) under H0.}
+#' @param alpha A numeric value in `[0,1]`, the target (JER) risk
+#' @param B An integer value, the number of permutations to be performed
+#' @param alternative A character string specifying the alternative hypothesis.
+#'   Must be one of "two.sided" (default), "greater" or "less".
+#' @param rowTestFUN A (vectorized) test function. Defaults to [rowWelchTests].
+#' @param family A character value, the name of a threshold family. Should be
+#'   one of "Linear", "Beta" and "Simes", or "Oracle". "Linear" and "Simes" families are
+#'   identical.
+#'   
+#'   - Simes/Linear: The classical family of thresholds introduced by Simes (1986).
+#'   This family yields JER control if the test statistics are positively
+#'   dependent (PRDS) under H0.
 #'
-#'    \item{Beta}{A family of thresholds that achieves "balanced" JER control under independence}
-#'    
-#'   \item{Oracle}{A family such that the associated bounds correspond to the true numbers/proportions of true/false positives. "truth" must be available in object$input$truth.}
-#'   }
+#'   - Beta: A family of thresholds that achieves "balanced" JER control under
+#'   independence
+#'
+#'   - Oracle A family such that the associated bounds correspond to the true
+#'   numbers/proportions of true/false positives. "truth" must be available in
+#'   object$input$truth.
+#'   
+#' @param max_steps_down A numeric value, the maximum number of steps down to
+#'   perform. Defaults to 10 (but the algorithm generally converges in 1 or 2
+#'   steps).
+#' @param K An integer value in `[1,m]`, the number of elements in the 
+#'   reference family. Defaults to m
+#' @param force A boolean value: should the permutation p-values and pivotal statistics be re-calculated ? Defaults to `FALSE`
+#' @param verbose A boolean value: should extra info be printed? Defaults to `FALSE`
 #' @param ... Not used
 #' @return A 'fitted' object of class 'SansSouci'. It is a list of three elements
 #'  - input: see [SansSouci]
 #'  - param: the input parameters, given as a list
-#'  - output: the outputs of the calibration, see [calibrateJER]
+#'  - output: the outputs of the calibration, see [calibrate]
 #' @export
+#' @examples
+#' # Generate Gaussian data and perform multiple tests
+#' obj <- SansSouciSim(m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
+#' res <- fit(obj, B = 100, alpha = 0.1)
+#' 
+#' # confidence curve
+#' plot(res)
+#' 
+#' # confidence curve for a subset
+#' S <- which(pValues(res) < 0.1 & foldChanges(res) > 0.3)
+#' plot(res, S = S)
+#' 
+#' # plot two confidence curves
+#' res_beta <- fit(res, B = 100, alpha = 0.1, family = "Beta", K = 20)
+#' 
+#' resList <- list("Linear" = res, "Beta" = res_beta)
+#' bounds <- lapply(resList, predict, all = TRUE)
+#' plotConfCurve(bounds, xmax = 200)
+#' 
 fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
-                           alternative = c("two.sided", "less", "greater"),
-                           rowTestFUN = NULL, 
-                           family = c("Simes", "Beta", "Oracle"), 
-                           maxStepsDown = 10L, K = nHyp(object), 
-                           verbose = TRUE, ...) {
+                          rowTestFUN = NULL, 
+                          alternative = c("two.sided", "less", "greater"),
+                          family = c("Simes", "Linear", "Beta", "Oracle"), 
+                          max_steps_down = 10L, K = nHyp(object), 
+                          force = FALSE,
+                          verbose = FALSE, ...) {
     alternative <- match.arg(alternative)
     family <- match.arg(family)
     if (family == "Oracle") {
@@ -271,18 +323,13 @@ fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
     groups <- object$input$groups
     n_groups <- object$input$n_groups
     m <- nHyp(object)
+    n <- nObs(object)
     funName <- NA_character_
+    
     if (is.null(rowTestFUN)) {
         if (n_groups == 1) {
-            rowTestFUN <- function(mat, categ, alternative) {
-                T <- rowSums(mat)/sqrt(length(categ))
-                p <- switch(alternative, 
-                             "two.sided" = 2*(pnorm(abs(T), lower.tail = FALSE)),
-                             "greater" = pnorm(T, lower.tail = FALSE),
-                             "less" = pnorm(T, lower.tail = TRUE))
-                data.frame(statistic = T, parameter = NA, p.value = p)
-            }
-            funName <- "testBySignFlipping"
+            rowTestFUN <- rowZTests
+            funName <- "rowZTests"
         } else if (n_groups == 2) {
             rowTestFUN <- rowWelchTests
             funName <- "rowWelchTests"
@@ -290,44 +337,93 @@ fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
     }  else {
         funName <- as.character(substitute(rowTestFUN))
     }
-    object$parameters <- list(
-                     alpha = alpha,
-                     B = B,
-                     alternative = alternative, 
-                     rowTestFUN = rowTestFUN, 
-                     funName = funName,
-                     family = family, 
-                     maxStepsDown = maxStepsDown, 
-                     K = K)
     
-    if (B > 0 && family != "Oracle") {
-        cal <- calibrateJER(X = Y, categ = groups, B = B, alpha = alpha, 
-                        alternative = alternative, 
-                        rowTestFUN = rowTestFUN, 
-                        refFamily = family, 
-                        maxStepsDown = maxStepsDown, 
-                        K = K, verbose = verbose)
-    } else {
-        # no calibration!
-        rwt <- rowTestFUN(mat = Y, categ = groups, alternative = alternative)
-        p.values <- rwt$p.value
-        fc <- rwt$meanDiff
-        lambda <- alpha
-        if (family %in% c("Simes", "Linear")) {
-            thr <- SimesThresholdFamily(m, kMax = K)(alpha)
-        } else if (family == "Beta") {
-            thr <- BetaThresholdFamily(m, kMax = K)(alpha)
-        } else if (family == "Oracle") {
-            lambda <- 0  # 100% confidence -- should it be set to alpha for consistency?
-            thr <- object$input$truth
+    ## should we re-calculate p0?
+    params <- object$parameters
+    p0 <- object$output$p0
+    do_p0 <- TRUE
+    if (!is.null(params) && !force) {  
+        if (!is.null(p0)) {
+            cond_B <- (params$B == B)
+            cond_F <- all.equal(params$rowTestFUN, rowTestFUN)
+            cond_A <- (params$alternative == alternative)
+            do_p0 <- (!cond_B) || (!cond_F) || (!cond_A)
         }
-        cal <- list(p.values = p.values,
-                    fold_changes = fc,
-                    piv_stat = NULL,
-                    thr = thr,
-                    lambda = alpha,
-                    conf_bound = NULL)
     }
+    
+    ## should we re-calculate the (first) pivotal statistic ?
+    params <- object$parameters
+    pivStat0 <- NULL
+    if (!is.null(params) && !force) {  
+        cond_F <- (params$family == family)
+        cond_K <- (params$K == K)
+        cond_P <- (!do_p0) 
+        if (cond_F && cond_K && cond_P) {
+            pivStat0 <- object$output$piv_stat
+        }
+    }
+    ttype <- sprintf("%s-sample", n_groups)
+    object$parameters <- list(
+        alpha = alpha,
+        B = B,
+        alternative = alternative, 
+        rowTestFUN = rowTestFUN, 
+        funName = funName,
+        type = ttype,
+        family = family, 
+        max_steps_down = max_steps_down, 
+        K = K)
+    
+    if (family == "Beta" && K == m) {
+        warning("For the 'Beta' family we recommend choosing K < m")
+    }
+    
+    cal <- rowTestFUN(Y, groups, alternative = alternative)
+    p.values <- cal$p.value
+    if (B > 0 && family != "Oracle") {
+        t0 <- Sys.time()
+        if (verbose) {
+            cat("Randomization p-values...")
+        }
+        if (do_p0) {
+            null_groups <- switch(n_groups,
+                                  replicate(B, rbinom(n, 1, 0.5)*2 - 1), # sign-flipping
+                                  replicate(B, sample(groups)))          # permutation
+            rwt0 <- rowTestFUN(Y, null_groups, alternative = alternative)
+            p0 <- rwt0$p.value
+            if (verbose) {
+                dt <- Sys.time()-t0
+                cat("done (", format(dt), ")\n", sep="")
+            }
+        } else if (verbose) {
+            cat("skipped computation (already done)\n")
+        }
+        t0 <- Sys.time()
+        if (verbose) {
+            cat("Calibration...")
+        }
+        calib <- calibrate(p0 = p0, m = m, alpha = alpha,
+                           family = family, K = K, 
+                           p = p.values, 
+                           max_steps_down = max_steps_down,
+                           piv_stat0 = pivStat0)
+        if (verbose) {
+            dt <- Sys.time()-t0
+            cat("done (", format(dt), ")\n", sep="")
+        }
+        
+        cal$p0 <- p0
+        cal <- c(cal, calib)
+    } else { # no calibration!
+        cal$lambda <- alpha
+        thr <- switch(family,
+                      "Linear" = t_linear(alpha, seq_len(m), m),
+                      "Simes" = t_linear(alpha, seq_len(m), m),
+                      "Beta" = t_beta(alpha, seq_len(m), m),
+                      "Oracle" = object$input$truth)
+        cal$thr <- thr
+    }
+    # }
     object$output <- cal
     object
 }
@@ -343,7 +439,7 @@ pValues <- function(object) UseMethod("pValues")
 #' @param object An object of class `SansSouci`
 #' @export
 pValues.SansSouci <- function(object) {
-    object$output$p.values
+    object$output$p.value
 }
 
 #' @describeIn all-generics Get fold changes
@@ -355,7 +451,7 @@ foldChanges <- function(object) UseMethod("foldChanges")
 #' @param object An object of class `SansSouci`
 #' @export
 foldChanges.SansSouci <- function(object) {
-    object$output$fold_changes
+    object$output$estimate
 }
 
 #' @describeIn all-generics Get thresholds
@@ -377,8 +473,76 @@ thresholds.SansSouci <- function(object) object$output$thr
 #' @param xmax Right limit of the plot
 #' @param ... Further arguments to be passed to \code{bound}
 #' @export
+#' @examples
+#' # Generate Gaussian data and perform multiple tests
+#' obj <- SansSouciSim(m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
+#' res <- fit(obj, B = 100, alpha = 0.1)
+#' 
+#' # confidence curve
+#' plot(res)
+#' 
+#' # confidence curve for a subset of hypotheses
+#' S <- which(pValues(res) < 0.1 & foldChanges(res) > 0.3)
+#' plot(res, S = S)
 plot.SansSouci <- function(x, y, xmax = nHyp(x), ...) {
-    cb <- bound(x, all = TRUE, ...)
+    cb <- predict(x, all = TRUE, ...)
     plotConfCurve(cb, xmax = xmax)
 }
 
+#' Post hoc confidence bounds on the true/false positives
+#' 
+#' @param object An object of class 'SansSouci'
+#' @param S A subset of indices
+#' @param what A character vector, the names of the post hoc bounds to be
+#'   computed, among:
+#' 
+#' - FP: Upper bound on the number of false positives in the 'x' most significant items
+#' - TP: Lower bound on the number of true positives in the 'x' most significant items
+#' - FDP: Upper bound on the proportion of false positives in the 'x' most significant items
+#' - TP: Lower bound on the proportion of true positives in the 'x' most significant items
+#' 
+#' Defaults to `c("TP", "FDP")`
+#' @param all A logical value: should the bounds for all ordered subsets of `S` be returned? If `FALSE` (the default), only the bound for `S` is returned
+#' @param ... Not used
+#' 
+#' @return If `all` is `FALSE` (the default), only the value of the bound is returned. Otherwise, a `data.frame` is return, with |S| rows and 4 columns:
+#' - x: Number of most significant items selected
+#' - label: Label for the procedure, typically of the form 'family(param)'
+#' - bound: Value of the post hoc bound
+#' - stat: Type of post hoc bound, as specified by argument `bound`.
+#' 
+#' @importFrom stats predict
+#' @export
+#' @examples
+#' 
+#' # Generate Gaussian data and perform multiple tests
+#' obj <- SansSouciSim(m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
+#' res <- fit(obj, B = 100, alpha = 0.1)
+#' 
+#' # post hoc bound on the set of all hypotheses
+#' predict(res)
+#'
+#' # idem for all possible subsets (sorted by p-value)
+#' bounds <- predict(res, all=TRUE)
+#' head(bounds)
+#' 
+#' # post hoc bound on a subset
+#' S <- which(pValues(res) < 0.01)
+#' predict(res, S)
+predict.SansSouci <- function(object, S = seq_len(nHyp(object)), 
+                              what = c("TP", "FDP"), all = FALSE, ...) {
+    p.values <- pValues(object)
+    thr <- thresholds(object)
+    lab <- label(object)
+    if (max(S) > nHyp(object)) {
+        stop("'S' is not a subset of hypotheses")
+    }
+    bounds <- posthoc_bound(p.values, S = S, thr = thr, lab = lab, what = what, all = all)
+    if (!all) {
+        bounds <- bounds[, "bound"]
+        if (length(bounds) > 1) {
+            names(bounds) <- what
+        }
+    }
+    return(bounds)
+}

@@ -149,7 +149,8 @@ testByRandomization <- function(X, categ, B,
         p0 <- matrix(nrow = m, ncol = B) ## parametric p-value
         # df0 <- matrix(nrow = m, ncol = B) 
         for (bb in 1:B) {
-            categ_perm <- sample(categ, length(categ))
+#             categ_perm <- sample(categ, length(categ))
+            categ_perm <- sample(categ)
             rwt <- rowTestFUN(X, categ = categ_perm, alternative = alternative)
             T0[, bb] <- rwt$statistic
             p0[, bb] <- rwt$p.value

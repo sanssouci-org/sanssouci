@@ -15,8 +15,9 @@ rowBinomialTests(
 \item{mat}{A numeric matrix whose rows correspond to variables and columns to
 observations}
 
-\item{categ}{A numeric vector of \code{ncol(mat)} categories in \eqn{0,1} for the
-observations}
+\item{categ}{Either a numeric vector of \code{n} categories in \eqn{0, 1} for
+the observations, or a \code{n x B} matrix stacking \code{B} such vectors
+(typically permutations of an original vector of size \code{n})}
 
 \item{alternative}{A character string specifying the alternative hypothesis.
 Must be one of "two.sided" (default), "greater" or "less". As in
@@ -27,18 +28,21 @@ class 1 is shifted to the right of class 0.}
 \code{alternative=="two-sided"}. Defaults to \code{TRUE}.}
 }
 \value{
-A list with class "htest" containing the following components:
-\describe{ \item{statistic}{the value of the statistics} \item{p.value}{the
-p-values for the tests}}
-
-A data.frame with columns \describe{ \item{stat}{A vector of \code{m}
-Wilcoxon sum rank test statistics of association between \code{X} and
-\code{y}.} \item{stat0Mat}{An \code{m} x \code{B} matrix of \code{B}
-realizations of a \code{m}-dimensional vector of test statistics under the
-null hypothesis of no association between \code{X} and \code{y}.}}
+A list containing the following components:
+\describe{
+\item{statistic}{the value of the statistics}
+\item{p.value}{the p-values for the tests}
+\item{estimate}{the difference between observed group proportions}}
+Each of these elements is a matrix of size \code{nrow(mat) x B}, coerced to a vector of length \code{nrow(mat)} if \code{B=1}
 }
 \description{
-Vectorized version of the binomial test
+Binomial proportion tests for each row of a matrix
+}
+\details{
+Note that the return element 'estimate' is inconsistent with the
+element 'estimate' returned by 'binomial.test', which is "the estimated
+probability of success". We find it more sensible to return an estimate of
+the effect size (as e.g. done by 't.test'))
 }
 \examples{
 
@@ -62,6 +66,8 @@ pbt <- t(sapply(1:p, FUN=function(ii) {
 }))
 all(abs(fbt$p.value-pbt[, "p.value"]) < 1e-10)  ## same results
 all(abs(fbt$statistic-pbt[, "statistic.number of successes"]) < 1e-10)  ## same results
+
+
 
 }
 \seealso{

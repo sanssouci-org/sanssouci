@@ -5,30 +5,18 @@ colSort <- function(X) {
     .Call('_sansSouci_colSort', PACKAGE = 'sansSouci', X)
 }
 
-empiricalCoverageO <- function(thr, Z) {
-    .Call('_sansSouci_empiricalCoverageO', PACKAGE = 'sansSouci', thr, Z)
-}
-
-marginalKFWER <- function(thr, Z) {
-    .Call('_sansSouci_marginalKFWER', PACKAGE = 'sansSouci', thr, Z)
-}
-
-minPseudoRanks <- function(X, Y) {
-    .Call('_sansSouci_minPseudoRanks', PACKAGE = 'sansSouci', X, Y)
-}
-
 partialColSortDescCpp <- function(X, k) {
     .Call('_sansSouci_partialColSortDescCpp', PACKAGE = 'sansSouci', X, k)
+}
+
+partialColSortCpp <- function(X, k) {
+    .Call('_sansSouci_partialColSortCpp', PACKAGE = 'sansSouci', X, k)
 }
 
 #' @describeIn posthocBySimes Rcpp version
 #' @export
 posthocBySimes0Rcpp <- function(p, select, alpha) {
     .Call('_sansSouci_posthocBySimes0Rcpp', PACKAGE = 'sansSouci', p, select, alpha)
-}
-
-rowSortDesc <- function(X) {
-    .Call('_sansSouci_rowSortDesc', PACKAGE = 'sansSouci', X)
 }
 
 testBySignFlipping <- function(X, B) {

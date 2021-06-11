@@ -7,22 +7,32 @@ reference:
     one- and two sample tests as described in the 
     BNR (2020) paper
 - contents:
-  - calibrateJER
-  - confidenceEnvelope
-  - volcanoPlot
-  - maxFP
-  - minTP
-  - curveMaxFP
+  - SansSouci
+  - fit.SansSouci
+  - predict.SansSouci
+  - volcanoPlot.SansSouci
+  - SansSouciSim
+  - SansSouci-methods
+
 - title: "Structured hypotheses"
   desc: > 
     Functions to perform post hoc inference for structured 
     hypotheses as described in the Durand et al. (2020) paper
 - contents:
-  - V.star
-  - zetas.tree
+  - SansSouciStruct
+  - fit.SansSouciStruct
+  - predict.SansSouciStruct
+  - SansSouciDyadic
+- SansSouciStruct-methods
+
 - exclude:
   - gaussianSamples
   - gaussianTestStatistics
+
+  - volcanoPlot
+  - maxFP
+  - minTP
+  - curveMaxFP
   
   - rowWilcoxonTests
   - rowWelchTests
@@ -40,12 +50,17 @@ reference:
 home:
   links:
   - text: Run volcano plot shiny app
-    href: https://pneuvial.shinyapps.io/volcano-plot/
+    href:  https://shiny-iidea-sanssouci.apps.math.cnrs.fr/
 
 authors:
   Gilles Blanchard:
+    href: https://www.imo.universite-paris-saclay.fr/~blanchard/
   Guillermo Durand:
+    href: https://durandg12.github.io/
+  Nicolas Enjalbert-Courrech:
   Pierre Neuvial:
     href: https://www.math.univ-toulouse.fr/~pneuvial/
+  Marie Perrot-Dockès: 
+    href: https://marie-perrotdockes.github.io/
   Etienne Roquain:
     href: https://etienneroquain-81.webself.net/

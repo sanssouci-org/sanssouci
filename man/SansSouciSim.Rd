@@ -19,11 +19,14 @@ obj <- SansSouciSim(m = 543, rho = 0.4, n = 210,
 alpha <- 0.1
 
 # Adaptive Simes (lambda-calibration)
+set.seed(542)
 res <- fit(obj, B = 100, alpha = alpha, family = "Simes")
-res
+plot(res)
+volcanoPlot(res, q = 0.05, r = 0.2)
+
 # upper bound on number of signals if the entire data set
 # (and corresponding lower bound on FDP)
-bound(res)
+predict(res)
 
 # confidence curve 
 plot(res)
@@ -37,10 +40,16 @@ res0
 oracle <- fit(obj, alpha = alpha, family = "Oracle")
 oracle
 
-confs <- list(Simes = bound(res0, all = TRUE),
-              "Simes+calibration" = bound(res, all = TRUE),
-              "Oracle" = bound(oracle, all = TRUE))
+confs <- list(Simes = predict(res0, all = TRUE),
+              "Simes+calibration" = predict(res, all = TRUE),
+              "Oracle" = predict(oracle, all = TRUE))
 plotConfCurve(confs)
+
+\dontrun{
+# Use wilcoxon tests instead of Welch tests
+res <- fit(obj, B = 100, alpha = 0.1, rowTestFUN = rowWilcoxonTests)
+volcanoPlot(res, q = 0.05, r = 0.2)
+}
 }
 \seealso{
 \link{gaussianSamples}
