@@ -258,7 +258,8 @@ generics::fit
 #'   Must be one of "two.sided" (default), "greater" or "less".
 #' @param rowTestFUN A (vectorized) test function. Defaults to [rowWelchTests].
 #' @param family A character value, the name of a threshold family. Should be
-#'   one of "Linear", "Beta" and "Simes", or "Oracle". "Linear" and "Simes" families are
+#'   one of "Linear", "
+#'    and "Simes", or "Oracle". "Linear" and "Simes" families are
 #'   identical.
 #'   
 #'   - Simes/Linear: The classical family of thresholds introduced by Simes (1986).
@@ -307,7 +308,7 @@ generics::fit
 fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
                           rowTestFUN = NULL, 
                           alternative = c("two.sided", "less", "greater"),
-                          family = c("Simes", "Linear", "Beta", "Oracle"), 
+                          family = c("Simes", "Linear", "Beta", "Beta-log", "Oracle"), 
                           max_steps_down = 10L, K = nHyp(object), 
                           force = FALSE,
                           verbose = FALSE, ...) {
@@ -420,6 +421,7 @@ fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
                       "Linear" = t_linear(alpha, seq_len(m), m),
                       "Simes" = t_linear(alpha, seq_len(m), m),
                       "Beta" = t_beta(alpha, seq_len(m), m),
+                      "Beta-log" = t_beta_log(alpha, seq_len(m), m),
                       "Oracle" = object$input$truth)
         cal$thr <- thr
     }

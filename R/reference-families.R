@@ -42,6 +42,18 @@ t_beta <- function(alpha, k, m) {
     qbeta(alpha, k, m + 1 - k);
 }
 
+#' @name reference-families
+#' @export
+t_inv_beta_log <- function(y, k, m) {
+    pbeta(y, k, m + 1 - k, log.p = TRUE);
+}
+
+#' @name reference-families
+#' @export
+t_beta_log <- function(alpha, k, m) {
+    qbeta(alpha, k, m + 1 - k, log.p = TRUE);
+}
+
 Simes <- list(name = "Simes",
               t = function(lambda, k, m) lambda * k / m,
               t_inv = function(y, k, m) y * m / k)
@@ -49,6 +61,10 @@ Simes <- list(name = "Simes",
 Beta <- list(name = "Beta", 
             t = function(lambda, k, m) qbeta(lambda, 1:m, m + 1 - k),
             t_inv = function(y, k, m) pbeta(y, k, m + 1 - k))
+
+Beta_log <- list(name = "Beta_log", 
+             t = function(lambda, k, m) qbeta(lambda, 1:m, m + 1 - k, log.p = TRUE),
+             t_inv = function(y, k, m) pbeta(y, k, m + 1 - k, log.p = TRUE))
 
 check_ref_fam <- function(fam) {
     ## check types

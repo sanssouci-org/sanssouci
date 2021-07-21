@@ -83,7 +83,7 @@
 #' 
 #' @export
 calibrate <- function(p0, alpha, 
-                      family = c("Linear", "Beta", "Simes"), 
+                      family = c("Linear", "Beta", "Beta-log", "Simes"), 
                       m = nrow(p0),
                       K = m,
                       p = NULL, 
@@ -137,7 +137,7 @@ calibrate <- function(p0, alpha,
 #' @rdname calibrate
 #' @export
 calibrate0 <- function(p0, alpha, 
-                       family = c("Linear", "Beta", "Simes"), 
+                       family = c("Linear", "Beta", "Beta-log", "Simes"), 
                        m = nrow(p0),
                        K = m,
                        piv_stat0 = NULL) {
@@ -148,6 +148,9 @@ calibrate0 <- function(p0, alpha,
     } else if (family == "Beta") {
         t_inv <- t_inv_beta
         t_ <- t_beta
+    } else if (family == "Beta-log") {
+        t_inv <- t_inv_beta_log
+        t_ <- t_beta_log
     }
     pivStat <- piv_stat0
     if (is.null(pivStat)) {
