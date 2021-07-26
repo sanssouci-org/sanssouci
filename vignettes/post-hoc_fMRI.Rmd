@@ -112,7 +112,7 @@ To bypass these limitations, @blanchard20post-hoc have proposed a randomization-
 
 
 ```{r post-hoc-calibration, cache=TRUE}
-B <- 200
+B <- 1000
 res <- fit(obj, alpha = alpha, B = B, family = "Simes")
 ```
 
@@ -154,8 +154,9 @@ The confidence curves obtained by calibration of the Simes and Beta families can
 
 ```{r plot-conf-bounds}
 conf_bounds <- lapply(resList, predict, all = TRUE)
+# cols <- c("lightgray", "black", "darkgray")
 cols <- RColorBrewer::brewer.pal(length(conf_bounds), "Dark2")
-p <- plotConfCurve(conf_bounds, xmax = xmax, cols = cols)
+p <- plotConfCurve(conf_bounds, xmax = 700, cols = cols)
 p + geom_line(size=1.5)
 ```
 
