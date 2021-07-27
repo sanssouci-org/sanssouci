@@ -30,7 +30,9 @@ SansSouci <- function(Y, groups, truth = NULL) {
         categCheck(groups, ncol(Y))
     }
     if (!is.null(truth)) {
-        if (!identical(truth, rep(0, nrow(Y)))) {
+        all_0 <- identical(truth, rep(0, nrow(Y)))
+        all_1 <- identical(truth, rep(1, nrow(Y)))
+        if (!all_0 & !all_1) {
             categCheck(truth, nrow(Y))
         }
     }
