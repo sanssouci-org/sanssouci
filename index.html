@@ -129,8 +129,8 @@
 <code class="sourceCode R"><span class="va">S</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="fu"><a href="reference/all-generics.html">pValues</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fl">1e-3</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">res</span>, <span class="va">S</span><span class="op">)</span>
 <span class="co">#&gt;          TP         FDP </span>
-<span class="co">#&gt; 119.0000000   0.2608696</span></code></pre></div>
-<p>The method ensures with <span class="math inline">1 − <em>α</em> = 90%</span> confidence that there are at least 119 truly differentially expressed genes (true positives, TP) among these 161 genes, corresponding to a false discovery proportion (FDP) less than 0.27.</p>
+<span class="co">#&gt; 123.0000000   0.2360248</span></code></pre></div>
+<p>The method ensures with <span class="math inline">1 − <em>α</em> = 90%</span> confidence that there are at least 123 truly differentially expressed genes (true positives, TP) among these 161 genes, corresponding to a false discovery proportion (FDP) less than 0.24.</p>
 </div>
 <div id="output-2---confidence-curves-for-top-k-feature-lists" class="section level3">
 <h3 class="hasAnchor">
@@ -142,7 +142,7 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">S</span><span class="op">)</span>, 
              color <span class="op">=</span> <span class="st">"gray"</span>, linetype <span class="op">=</span> <span class="st">"dotted"</span>, size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span></code></pre></div>
-<p><img src="README-conf-curve-1.png" width="100%"></p>
+<p><img src="reference/figures/README-conf-curve-1.png" width="100%"></p>
 </div>
 <div id="output-3---volcano-plots" class="section level3">
 <h3 class="hasAnchor">
@@ -150,7 +150,7 @@
 <p>A more refined user selection is obtained by selecting genes based on both significance (here, a FDR-adjusted <span class="math inline"><em>p</em></span>-value below 0.05) and fold change (here, fold change above 0.3). Such selections are generally represented by volcano plots:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/volcanoPlot.html">volcanoPlot</a></span><span class="op">(</span><span class="va">res</span>, q <span class="op">=</span> <span class="fl">0.05</span>, r <span class="op">=</span> <span class="fl">0.3</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">6</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p><img src="README-volcano-plot-1.png" width="100%"></p>
+<p><img src="reference/figures/README-volcano-plot-1.png" width="100%"></p>
 <p>Importantly, multiple such selections can be made without compromising the validity of the bounds. The <a href="https://shiny-iidea-sanssouci.apps.math.cnrs.fr/">IIDEA shiny app</a> makes it possible to perform such selections interactively and without programming.</p>
 </div>
 </div>

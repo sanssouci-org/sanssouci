@@ -97,7 +97,7 @@
       <h1 data-toc-skip>Permutation-based post hoc inference for differential gene expression studies</h1>
                         <h4 class="author">Gilles Blanchard, Pierre Neuvial and Etienne Roquain</h4>
             
-            <h4 class="date">2021-06-11</h4>
+            <h4 class="date">2021-07-27</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/pneuvial/sanssouci/blob/master/vignettes/post-hoc_differential-expression.Rmd"><code>vignettes/post-hoc_differential-expression.Rmd</code></a></small>
       <div class="hidden name"><code>post-hoc_differential-expression.Rmd</code></div>
@@ -297,6 +297,7 @@
 <p>The confidence curves obtained by calibration of the Simes and Beta families can be compared graphically to the (parametric) Simes curve that can be obtained from <span class="citation">Goeman and Solari (2011)</span>:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">conf_bounds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">resList</span>, <span class="va">predict</span>, all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="co"># cols &lt;- c("lightgray", "black", "darkgray")</span>
 <span class="va">cols</span> <span class="op">&lt;-</span> <span class="fu">RColorBrewer</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html">brewer.pal</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">conf_bounds</span><span class="op">)</span>, <span class="st">"Dark2"</span><span class="op">)</span>
 <span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plotConfCurve.html">plotConfCurve</a></span><span class="op">(</span><span class="va">conf_bounds</span>, xmax <span class="op">=</span> <span class="fl">300</span>, cols <span class="op">=</span> <span class="va">cols</span><span class="op">)</span>
 <span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="va">nBH</span>, color <span class="op">=</span> <span class="st">"gray"</span>, linetype <span class="op">=</span> <span class="st">"dotted"</span>, size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span> <span class="op">+</span>
@@ -400,21 +401,21 @@
 <span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; other attached packages:</span>
-<span class="co">#&gt; [1] sansSouci_0.12.1 ggplot2_3.3.3   </span>
+<span class="co">#&gt; [1] sansSouci_0.12.1 ggplot2_3.3.5   </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; loaded via a namespace (and not attached):</span>
-<span class="co">#&gt;  [1] Rcpp_1.0.6         RColorBrewer_1.1-2 highr_0.9          compiler_4.1.0    </span>
+<span class="co">#&gt;  [1] Rcpp_1.0.7         RColorBrewer_1.1-2 highr_0.9          compiler_4.1.0    </span>
 <span class="co">#&gt;  [5] pillar_1.6.1       tools_4.1.0        digest_0.6.27      lattice_0.20-44   </span>
-<span class="co">#&gt;  [9] evaluate_0.14      memoise_2.0.0      lifecycle_1.0.0    tibble_3.1.2      </span>
+<span class="co">#&gt;  [9] evaluate_0.14      memoise_2.0.0      lifecycle_1.0.0    tibble_3.1.3      </span>
 <span class="co">#&gt; [13] gtable_0.3.0       pkgconfig_2.0.3    rlang_0.4.11       Matrix_1.3-3      </span>
-<span class="co">#&gt; [17] yaml_2.2.1         pkgdown_1.6.1      xfun_0.23          fastmap_1.1.0     </span>
+<span class="co">#&gt; [17] yaml_2.2.1         pkgdown_1.6.1      xfun_0.24          fastmap_1.1.0     </span>
 <span class="co">#&gt; [21] withr_2.4.2        stringr_1.4.0      knitr_1.33         generics_0.1.0    </span>
 <span class="co">#&gt; [25] desc_1.3.0         fs_1.5.0           vctrs_0.3.8        systemfonts_1.0.2 </span>
 <span class="co">#&gt; [29] rprojroot_2.0.2    grid_4.1.0         glue_1.4.2         R6_2.5.0          </span>
-<span class="co">#&gt; [33] textshaping_0.3.5  fansi_0.5.0        rmarkdown_2.8      farver_2.1.0      </span>
-<span class="co">#&gt; [37] magrittr_2.0.1     codetools_0.2-18   matrixStats_0.59.0 scales_1.1.1      </span>
-<span class="co">#&gt; [41] htmltools_0.5.1.1  ellipsis_0.3.2     colorspace_2.0-1   labeling_0.4.2    </span>
-<span class="co">#&gt; [45] ragg_1.1.3         utf8_1.2.1         stringi_1.6.2      munsell_0.5.0     </span>
+<span class="co">#&gt; [33] textshaping_0.3.5  fansi_0.5.0        rmarkdown_2.9      farver_2.1.0      </span>
+<span class="co">#&gt; [37] magrittr_2.0.1     codetools_0.2-18   matrixStats_0.60.0 scales_1.1.1      </span>
+<span class="co">#&gt; [41] htmltools_0.5.1.1  ellipsis_0.3.2     colorspace_2.0-2   labeling_0.4.2    </span>
+<span class="co">#&gt; [45] ragg_1.1.3         utf8_1.2.2         stringi_1.7.3      munsell_0.5.0     </span>
 <span class="co">#&gt; [49] cachem_1.0.5       crayon_1.4.1</span></code></pre></div>
 </div>
 <div id="reproducibility" class="section level1">
