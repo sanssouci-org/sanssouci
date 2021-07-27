@@ -62,13 +62,13 @@ Let us assume that we are interested in genes with a \(p\)-value below
 S <- which(pValues(res) < 1e-3)
 predict(res, S)
 #>          TP         FDP 
-#> 119.0000000   0.2608696
+#> 123.0000000   0.2360248
 ```
 
 The method ensures with \(1-\alpha = 90\%\) confidence that there are at
-least 119 truly differentially expressed genes (true positives, TP)
+least 123 truly differentially expressed genes (true positives, TP)
 among these 161 genes, corresponding to a false discovery proportion
-(FDP) less than 0.27.
+(FDP) less than 0.24.
 
 ### Output 2 - Confidence curves for “top-k” feature lists
 
@@ -84,7 +84,7 @@ plot(res, xmax = 500) +
   geom_line(size = 1.5)
 ```
 
-<img src="README-conf-curve-1.png" width="100%" />
+<img src="man/figures/README-conf-curve-1.png" width="100%" />
 
 ### Output 3 - Volcano plots
 
@@ -97,7 +97,7 @@ represented by volcano plots:
 volcanoPlot(res, q = 0.05, r = 0.3, ylim = c(0, 6))
 ```
 
-<img src="README-volcano-plot-1.png" width="100%" />
+<img src="man/figures/README-volcano-plot-1.png" width="100%" />
 
 Importantly, multiple such selections can be made without compromising
 the validity of the bounds. The [IIDEA shiny
