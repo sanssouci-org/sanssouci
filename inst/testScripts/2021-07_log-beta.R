@@ -1,20 +1,3 @@
-K <- m # for m = 9038
-
-t_beta(res_Beta$output$lambda, m-10:0, m)
-t_beta_log(res_Beta_log$output$lambda, m-10:0, m)
-
-lambda <- res_Beta$output$lambda
-t_beta(lambda, m-5, m)
-qbeta(lambda, m-5, m + 1 - (m-5))
-1-qbeta(lambda, m-5, m + 1 - (m-5), lower.tail = FALSE);
-
-
-lambda_log <- res_Beta_log$output$lambda
-t_beta_log(lambda_log, m-5, m)
-qbeta(lambda_log, m-5, m + 1 - (m-5), log.p = TRUE)
-1-qbeta(lambda_log, m-5, m + 1 - (m-5), lower.tail = FALSE, log.p = TRUE)
-
-# TODO fMRI data! where does K break? m =20000
 library("sansSouci")
 data("fMRI_localizer", package = "sansSouci.data")
 Y <- fMRI_localizer
