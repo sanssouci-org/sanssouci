@@ -31,33 +31,46 @@ ggsave(p, filename = filename, scale = 0.75)
 
 # A few realizations under indep and equi-correlation
 B <- 100
-rho <- 0.0
-n_hyp <- 50000
 
-set.seed(20210729)
-obj <- SansSouciSim(m = n_hyp, rho = rho, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
-res <- fit(obj, B = B, alpha = 0.1)
-null_p <- res$output$p0
+for (rho in c(0, 0.2, 0.4)) {
+    for (n_hyp in c(500, 50000)) {
 
-frac_k <- c(1, 5, 8)/10
-seq_b <- sample(B, 6)
-
-filename <- sprintf("beta-template_m=%s_rho=%s.pdf", n_hyp, rho)
-pdf(filename, width = 4, height = 4)
-title_ <- ifelse(rho == 0, "Independence", paste("Equicorrelation", rho))
-plot(NA, xlim = c(0, 1), ylim = c(0, 1), 
-     xlab = expression(p[(k:H_0)]), 
-     ylab = expression(t_k(p[(k:H_0)])),
-     main = title_)
-for (k in frac_k*n_hyp)
-    curve(t_inv_beta(x, k, n_hyp), add = TRUE)
-for (i in seq(along = seq_b)) {
-    b <- seq_b[i]
-    x <- null_p[, b]
-    sx <- sort(x)
-    for (k in frac_k*n_hyp) {
-        points(sx[k], t_inv_beta(sx[k], k, n_hyp), 
-               col = i, pch = i)
+        set.seed(20210729)
+        obj <- SansSouciSim(m = n_hyp, rho = rho, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
+        res <- fit(obj, B = B, alpha = 0.1)
+        null_p <- res$output$p0
+        
+        frac_k <- c(1, 5, 8)/10
+        seq_b <- sample(B, 3)
+        
+        filename <- sprintf("beta-template_m=%s_rho=%s.pdf", n_hyp, rho)
+        pdf(filename, width = 8, height = 4)
+        title_ <- ifelse(rho == 0, "Independence", paste("Equicorrelation", rho))
+        
+        layout(t(1:2))
+        cs <- sansSouci:::colSort(null_p[, seq_b])
+        matplot(cs, t = 'l', xlab = "k", ylab = expression(p[(k:H[0])]))
+        abline(a = 0, b = 1/n_hyp, col = "lightgray")
+        for (i in seq(along = seq_b)) {
+            for (k in frac_k*n_hyp) {
+                points(k, cs[k, i], col = i, pch = i)
+            }
+        }
+        plot(NA, xlim = c(0, 1), ylim = c(0, 1), 
+             xlab = "y", 
+             ylab = expression(t_k^{-1}*(y)),
+             main = title_)
+        for (k in frac_k*n_hyp)
+            curve(t_inv_beta(x, k, n_hyp), add = TRUE)
+        for (i in seq(along = seq_b)) {
+            b <- seq_b[i]
+            x <- null_p[, b]
+            sx <- sort(x)
+            for (k in frac_k*n_hyp) {
+                points(sx[k], t_inv_beta(sx[k], k, n_hyp), 
+                       col = i, pch = i)
+            }
+        }
+        dev.off()
     }
 }
-dev.off()
