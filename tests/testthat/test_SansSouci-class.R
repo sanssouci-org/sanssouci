@@ -102,7 +102,7 @@ test_that("'fit.SansSouci' reproduces the results of 'calibrate'", {
     expect_equal(p0, res$output$p0)
     t_inv <- ifelse(fam == "Simes", t_inv_linear,  t_inv_beta)
     t_ <- ifelse(fam == "Simes", t_linear,  t_beta)
-    pivStat <- get_pivotal_stat(p0, t_inv, K = K)
+    pivStat <- get_pivotal_stat(p0, m, t_inv, K = K)
     expect_equal(pivStat, res$output$piv_stat)
 #    expect_equal(quantile(pivStat, alpha), res$output$lambda)
 #    expect_identical(cal$thr,      reso$thr)

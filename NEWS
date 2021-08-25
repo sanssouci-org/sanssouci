@@ -2,6 +2,11 @@
 Package: sansSouci
 ==================
 
+Version 0.12.2 [2021-08-25]
+
+* Remove default value for argument 'm' in 'calibrate' and 'get_pivotal_stat' to make sure that m is properly set.
+* Add unit test: the pivotal statistics are non-decreasing in the subset of hypotheses used for calibration (following feedback by Angela Andreella).
+
 Version 0.12.1 [2021-06-11]
 
 * [IIDEA] Speedup: data sets from the GSEABenchmarkeR package and associated gene sets are preprocessed on the deployment server. 

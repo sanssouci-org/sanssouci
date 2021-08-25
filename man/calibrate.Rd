@@ -7,10 +7,10 @@
 \usage{
 calibrate(
   p0,
+  m,
   alpha,
   family = c("Linear", "Beta", "Simes"),
-  m = nrow(p0),
-  K = m,
+  K = nrow(p0),
   p = NULL,
   max_steps_down = 10L,
   piv_stat0 = NULL
@@ -18,25 +18,23 @@ calibrate(
 
 calibrate0(
   p0,
+  m,
   alpha,
   family = c("Linear", "Beta", "Simes"),
-  m = nrow(p0),
-  K = m,
+  K = nrow(p0),
   piv_stat0 = NULL
 )
 }
 \arguments{
-\item{p0}{A \verb{m x B} matrix. The j-th ow corresponds to a permutation
-of the input \code{categ}: for each hypothesis i, \code{p0[i,j]} is the
-p-value of the test of the i-th null hypothesis on the permuted categories}
+\item{p0}{A matrix with B rows. Each row is a vector of null p-values}
+
+\item{m}{The total number of tested hypotheses}
 
 \item{alpha}{A numeric value in \verb{[0,1]}, the target (JER) risk}
 
 \item{family}{A character value, the name of a threshold family. Should be
 one of "Linear", "Beta" and "Simes", or "Oracle". "Linear" and "Simes" families are
 identical.}
-
-\item{m}{The total numer of tested hypotheses. Defaults to \code{p0}}
 
 \item{K}{An integer value in \verb{[1,m]}, the number of elements in the reference family. Defaults to \code{m}}
 
@@ -80,8 +78,8 @@ p <- rowWelchTests(X, categ)$p.value
 
 null_groups <- replicate(B, sample(categ))
 p0 <- rowWelchTests(X, null_groups)$p.value
-calib0 <- calibrate0(p0, alpha = 0.1) # single step
-calib <- calibrate(p0, alpha = 0.1)
+calib0 <- calibrate0(p0, m, alpha = 0.1) # single step
+calib <- calibrate(p0, m, alpha = 0.1)
 calib$lambda >= calib0$lambda # probably very close here (null data)
 
 maxFP(p, calib$thr)
@@ -97,8 +95,9 @@ perm <- rowWelchTests(X, null_groups)
 p0 <- perm$p.value
 
 alpha <- 0.1
-calib_L <- calibrate(p0, alpha, family = "Linear")
-calib_B <- calibrate(p0, alpha, family = "Beta", K = 100)
+m <- nrow(X)
+calib_L <- calibrate(p0, m, alpha, family = "Linear")
+calib_B <- calibrate(p0, m, alpha, family = "Beta", K = 100)
 p <- rowWelchTests(X, categ)$p.value
 
 ## post hoc bounds (these are functions!)
