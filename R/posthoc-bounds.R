@@ -124,7 +124,7 @@ plotConfCurve <- function(conf_bound, xmax, cols = NULL) {
 #' 
 #' null_groups <- replicate(100, sample(groups))
 #' p0 <- rowWelchTests(X, null_groups)$p.value
-#' calib <- calibrate(p0, alpha = 0.1)
+#' calib <- calibrate(p0, m, alpha = 0.1)
 #' thr <- calib$thr
 #' 
 #' M0 <- maxFP(p, thr)

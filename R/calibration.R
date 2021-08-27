@@ -41,8 +41,8 @@
 #' 
 #' null_groups <- replicate(B, sample(categ))
 #' p0 <- rowWelchTests(X, null_groups)$p.value
-#' calib0 <- calibrate0(p0, alpha = 0.1) # single step
-#' calib <- calibrate(p0, alpha = 0.1)
+#' calib0 <- calibrate0(p0, m, alpha = 0.1) # single step
+#' calib <- calibrate(p0, m, alpha = 0.1)
 #' calib$lambda >= calib0$lambda # probably very close here (null data)
 #' 
 #' maxFP(p, calib$thr)
@@ -58,8 +58,9 @@
 #' p0 <- perm$p.value
 #' 
 #' alpha <- 0.1
-#' calib_L <- calibrate(p0, alpha, family = "Linear")
-#' calib_B <- calibrate(p0, alpha, family = "Beta", K = 100)
+#' m <- nrow(X)
+#' calib_L <- calibrate(p0, m, alpha, family = "Linear")
+#' calib_B <- calibrate(p0, m, alpha, family = "Beta", K = 100)
 #' p <- rowWelchTests(X, categ)$p.value
 #' 
 #' ## post hoc bounds (these are functions!)
@@ -82,17 +83,15 @@
 #' }
 #' 
 #' @export
-calibrate <- function(p0, alpha, 
+calibrate <- function(p0, m, alpha, 
                       family = c("Linear", "Beta", "Simes"), 
-                      m = nrow(p0),
-                      K = m,
+                      K = nrow(p0),
                       p = NULL, 
                       max_steps_down = 10L,
                       piv_stat0 = NULL) {
     step <- 0
-    cal <- calibrate0(p0, alpha, 
+    cal <- calibrate0(p0, m, alpha, 
                       family = family, 
-                      m = m,
                       K = K, 
                       piv_stat0 = piv_stat0)
     thr <- cal$thr[1]   ## (1-)FWER threshold
@@ -110,9 +109,8 @@ calibrate <- function(p0, alpha,
         p1 <- p0[-R1, ]
         thr <- cal$thr
         lambda <- cal$lambda
-        cal <- calibrate(p1, alpha, 
+        cal <- calibrate(p1, m, alpha, 
                          family = family, 
-                         m = m,
                          K = K,
                          piv_stat0 = NULL) ## force piv stat calc
         R1_new <- which(p < cal$thr[1])
@@ -136,11 +134,11 @@ calibrate <- function(p0, alpha,
 
 #' @rdname calibrate
 #' @export
-calibrate0 <- function(p0, alpha, 
+calibrate0 <- function(p0, m, alpha, 
                        family = c("Linear", "Beta", "Simes"), 
-                       m = nrow(p0),
-                       K = m,
+                       K = nrow(p0),
                        piv_stat0 = NULL) {
+    K <- force(K)
     family <- match.arg(family)
     if (family %in% c("Linear", "Simes")) {
         t_inv <- t_inv_linear
@@ -151,7 +149,7 @@ calibrate0 <- function(p0, alpha,
     }
     pivStat <- piv_stat0
     if (is.null(pivStat)) {
-        pivStat <- get_pivotal_stat(p0, t_inv, m, min(nrow(p0), K))
+        pivStat <- get_pivotal_stat(p0, m, t_inv, min(nrow(p0), K))
     }
     lambda <- stats::quantile(pivStat, alpha, type = 1)
     thr <- t_(lambda, 1:K, m)
@@ -220,11 +218,9 @@ get_perm <- function(X, categ, B,
 #' Get a vector of pivotal statistics associated
 #'   to permutation p-values and to a reference family
 #'
-#' @param p0 A `m x B` matrix. The j-th ow corresponds to a permutation
-#'   of the input `categ`: for each hypothesis i, `p0[i,j]` is the
-#'   p-value of the test of the i-th null hypothesis on the permuted categories
+#' @param p0 A matrix with B rows. Each row is a vector of null p-values
+#' @param m The total number of tested hypotheses
 #' @param t_inv  An inverse threshold function (same I/O as 't_inv_linear')
-#' @param m The total numer of tested hypotheses. Defaults to `p0`
 #' @param K An integer value in `[1,m]`, the number of elements in the reference family. Defaults to `m`
 #' 
 #' @return A vector of length `B` pivotal statitics, whose j-th entry
@@ -247,16 +243,14 @@ get_perm <- function(X, categ, B,
 #' B <- 10
 #' null_groups <- replicate(B, sample(categ))
 #' p0 <- rowWelchTests(X, null_groups)$p.value
-#' pivStat <- get_pivotal_stat(p0)
+#' pivStat <- get_pivotal_stat(p0, m)
 #' quantile(pivStat, 0.2)
 #' 
 #' 
 #' @export
-get_pivotal_stat <- function(p0,
+get_pivotal_stat <- function(p0, m,
                              t_inv = t_inv_linear,
-                             m = nrow(p0),
-                             K = m) {
-    m <- force(m)
+                             K = nrow(p0)) {
     K <- force(K)
     stopifnot(m >= nrow(p0))
     stopifnot(K <= m)
