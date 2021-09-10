@@ -25,10 +25,9 @@
 #' @return A list containing the following components:
 #' \describe{ 
 #'   \item{statistic}{the value of the statistics}
-#'   \item{parameter}{the degrees of freedom for the statistics}
 #'   \item{p.value}{the p-values for the tests} 
-#'   \item{estimate}{the median difference between groups}}
-#'   Each of these elements is a matrix of size \code{m x B}, coerced to a vector of length \code{nrow(mat)} if \code{B=1}
+#'   \item{estimate}{the median difference between groups (only calculated if \code{B=1})}}
+#'   Each of these elements is a matrix of size \code{m x B}, coerced to a vector of length \code{m} if \code{B=1}
 #'   
 #' @importFrom matrixStats rowRanks rowTabulates
 #' 
@@ -81,7 +80,6 @@ rowWilcoxonTests <- function (mat, categ, alternative = c("two.sided", "less", "
     categ <- as.matrix(categ)
     levels(categ) <- NULL
     
-    
     rks <- rowRanks(mat, ties.method = "average")
     ny <- sum(categ[,1] == 0) 
     nx <- sum(categ[,1] == 1) 
@@ -103,17 +101,20 @@ rowWilcoxonTests <- function (mat, categ, alternative = c("two.sided", "less", "
     }
     
     z <- (z - CORRECTION)/sigma
-    p <- switch(alternative, less = pnorm(z), greater = pnorm(z, 
-                                                              lower.tail = FALSE), two.sided = 2 * pmin(pnorm(z), pnorm(z, 
-                                                                                                                        lower.tail = FALSE)))
+    p <- switch(alternative, 
+                less = pnorm(z), 
+                greater = pnorm(z, lower.tail = FALSE), 
+                two.sided = 2 * pmin(pnorm(z), pnorm(z, lower.tail = FALSE)))
+    
+    B <- ncol(categ)
+    m <- nrow(mat)
+    est <- matrix(NA_real_, nrow = m, ncol = B)
     if (dim(categ)[2] == 1){
         wx <- which(categ == 1)
         est <- rowMedians(mat[, wx]) - rowMedians(mat[, -wx])
-    } else {
-        B <- ncol(categ)
-        m <- nrow(mat)
-        est <- matrix(NA_real_, nrow = m, ncol = B)
-    }
+        stats <- as.vector(stats)
+        p <- as.vector(p)
+    } 
     list(p.value = p, statistic = stats, estimate = est)
 }
 
@@ -144,8 +145,11 @@ rowWilcoxonTestsV2 <- function (mat, categ, alternative = c("two.sided", "less",
     sigma <- sqrt((nx * ny/12) * ((ny + nx + 1) - ties/((ny +
                                                              nx) * (ny + nx - 1)))) 
     
-    if (is.vector(categ)) {
-        return(rowWilcoxonTests1V2(rks, categ, alternative = alternative, 
+    if (dim(categ)[2] == 1) {
+        categ <- as.vector(categ)
+        return(rowWilcoxonTests1V2(ranks = rks, mat = mat, categ = categ, alternative = alternative, 
+                                   min_stat = min_stat, nx = nx, ny = ny, 
+                                   sigma = sigma,
                                    correct = correct))
     }
     stopifnot(is.matrix(categ))
@@ -166,7 +170,6 @@ rowWilcoxonTestsV2 <- function (mat, categ, alternative = c("two.sided", "less",
 
 
 
-# > sansSouci:::
 rowWilcoxonTests1V2 <- function (ranks, mat, categ, alternative = c("two.sided", "less", "greater"), 
                                  min_stat, nx, ny, sigma, correct = TRUE) 
 {
@@ -187,7 +190,7 @@ rowWilcoxonTests1V2 <- function (ranks, mat, categ, alternative = c("two.sided",
                                                               lower.tail = FALSE), two.sided = 2 * pmin(pnorm(z), pnorm(z, 
                                                                                                                         lower.tail = FALSE)))
     est <- rowMedians(mat[, wx]) - rowMedians(mat[, -wx])
-    list(statistic = stat, p.value = p) # , estimate = est)
+    list(statistic = stat, p.value = p, estimate = est)
 }
 
 
