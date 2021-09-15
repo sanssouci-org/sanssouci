@@ -98,8 +98,11 @@ rowWilcoxonTests <- function (mat, categ, alternative = c("two.sided", "less", "
     n_ties <- rowTabulates(rks2) 
     ties <- rowSums(n_ties^3 - n_ties) 
     # sigma <- sqrt((nx * ny/12) * ((ny + nx + 1) - ties/((ny + nx) * (ny + nx - 1))))
-    sigma <- t(sqrt((nx * ny/12) * ((ny + nx + 1) - matrix(rep(ties, B), nrow = B, byrow = T)/((ny + nx) * (ny + nx - 1)))))
-
+    # sigma <- t(sqrt((nx * ny/12) * ((ny + nx + 1) - matrix(rep(ties, B), nrow = B, byrow = T)/((ny + nx) * (ny + nx - 1)))))
+    quotient <- sweep(matrix(rep(ties, B), ncol = B), MARGIN = 2, STATS = (ny + nx) * (ny + nx - 1), FUN = "/")
+    difference <- sweep(-quotient, MARGIN = 2, STATS = (ny + nx + 1), FUN = "+")
+    sigma <- sqrt(sweep(difference, MARGIN = 2, STATS = (nx * ny/12), FUN = "*"))
+    
     # z <- stats - ny * nx/2
     z <- sweep(stats, MARGIN = 2, STATS = ny * nx/2, FUN = "-")
     CORRECTION <- 0
