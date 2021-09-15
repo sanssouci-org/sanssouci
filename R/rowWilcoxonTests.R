@@ -60,12 +60,13 @@
 #' str(stats)
 #' 
 #' # permutation of class labels
-#' cls_perm <- replicate(10, sample(cls))
+#' cls_perm <- replicate(11, sample(cls))
 #' stats <- rowWilcoxonTests(mat, categ = cls_perm, alternative = "two.sided")
 #' str(stats)
 #' 
 #' # several unrelated contrasts
-#' cls2 <- rep(c(0, 1), times = n/2)
+#' cls2 <- cls
+#' cls[1:10] <- 1 # varying nx, ny
 #' cls_mat <- cbind(cls, cls2)
 #' stats <- rowWilcoxonTests(mat, categ = cls_mat, alternative = "two.sided")
 #' str(stats)
@@ -90,7 +91,7 @@ rowWilcoxonTests <- function (mat, categ, alternative = c("two.sided", "less", "
     
     stats <- rks %*% categ
     # stats <- stats - min_stat 
-    stats <- sweep(stats, MARGIN = 2, STATS = min_stat, FUN = "-") # t(t(stats) - min_stat) 
+    stats <- sweep(stats, MARGIN = 2, STATS = min_stat, FUN = "-")
     
     rks2 <- rks 
     mode(rks2) <- "integer"
@@ -98,7 +99,7 @@ rowWilcoxonTests <- function (mat, categ, alternative = c("two.sided", "less", "
     ties <- rowSums(n_ties^3 - n_ties) 
     # sigma <- sqrt((nx * ny/12) * ((ny + nx + 1) - ties/((ny + nx) * (ny + nx - 1))))
     sigma <- t(sqrt((nx * ny/12) * ((ny + nx + 1) - matrix(rep(ties, B), nrow = B, byrow = T)/((ny + nx) * (ny + nx - 1)))))
-    
+
     # z <- stats - ny * nx/2
     z <- sweep(stats, MARGIN = 2, STATS = ny * nx/2, FUN = "-")
     CORRECTION <- 0
