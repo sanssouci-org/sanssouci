@@ -79,21 +79,30 @@ rowWilcoxonTests <- function (mat, categ, alternative = c("two.sided", "less", "
     stopifnot(all(categ %in% c(0, 1)))
     categ <- as.matrix(categ)
     levels(categ) <- NULL
+    apply(categ, 2, sansSouci:::categCheck, n = ncol(mat))
+    B <- ncol(categ)
+    m <- nrow(mat)
+    n_obs <- nrow(categ)
     
     rks <- rowRanks(mat, ties.method = "average")
-    ny <- sum(categ[,1] == 0) 
-    nx <- sum(categ[,1] == 1) 
+    nx <- colSums(categ)
+    ny <- n_obs - nx
+    
     min_stat <- nx * (nx + 1)/2 
     
     stats <- rks %*% categ
-    stats <- stats - min_stat
+    # stats <- stats - min_stat 
+    stats <- sweep(stats, MARGIN = 2, STATS = min_stat, FUN = "-") # t(t(stats) - min_stat) 
     
     rks2 <- rks 
     mode(rks2) <- "integer"
     n_ties <- rowTabulates(rks2) 
     ties <- rowSums(n_ties^3 - n_ties) 
-    sigma <- sqrt((nx * ny/12) * ((ny + nx + 1) - ties/((ny + nx) * (ny + nx - 1)))) 
-    z <- stats - ny * nx/2
+    # sigma <- sqrt((nx * ny/12) * ((ny + nx + 1) - ties/((ny + nx) * (ny + nx - 1))))
+    sigma <- t(sqrt((nx * ny/12) * ((ny + nx + 1) - matrix(rep(ties, B), nrow = B, byrow = T)/((ny + nx) * (ny + nx - 1)))))
+    
+    # z <- stats - ny * nx/2
+    z <- sweep(stats, MARGIN = 2, STATS = ny * nx/2, FUN = "-")
     CORRECTION <- 0
     if (correct) {
         CORRECTION <- switch(alternative, two.sided = sign(z) * 
@@ -106,8 +115,6 @@ rowWilcoxonTests <- function (mat, categ, alternative = c("two.sided", "less", "
                 greater = pnorm(z, lower.tail = FALSE), 
                 two.sided = 2 * pmin(pnorm(z), pnorm(z, lower.tail = FALSE)))
     
-    B <- ncol(categ)
-    m <- nrow(mat)
     est <- matrix(NA_real_, nrow = m, ncol = B)
     if (dim(categ)[2] == 1){
         wx <- which(categ == 1)
@@ -116,81 +123,6 @@ rowWilcoxonTests <- function (mat, categ, alternative = c("two.sided", "less", "
         p <- as.vector(p)
     } 
     list(p.value = p, statistic = stats, estimate = est)
-}
-
-
-# Version 2 of Wilcoxon test. 
-# In this version, all calculations that can be done outside the loop for permutations are processed upstream.
-
-
-
-rowWilcoxonTestsV2 <- function (mat, categ, alternative = c("two.sided", "less", "greater"), 
-                                correct = TRUE) 
-{
-    alternative <- match.arg(alternative)
-    stopifnot(all(categ %in% c(0, 1)))
-    categ <- as.matrix(categ)
-    levels(categ) <- NULL
-    
-    
-    rks <- rowRanks(mat, ties.method = "average")
-    ny <- sum(categ[,1] == 0) 
-    nx <- sum(categ[,1] == 1) 
-    min_stat <- nx * (nx + 1)/2 
-    
-    rks2 <- rks 
-    mode(rks2) <- "integer"
-    n_ties <- rowTabulates(rks2) 
-    ties <- rowSums(n_ties^3 - n_ties) 
-    sigma <- sqrt((nx * ny/12) * ((ny + nx + 1) - ties/((ny +
-                                                             nx) * (ny + nx - 1)))) 
-    
-    if (dim(categ)[2] == 1) {
-        categ <- as.vector(categ)
-        return(rowWilcoxonTests1V2(ranks = rks, mat = mat, categ = categ, alternative = alternative, 
-                                   min_stat = min_stat, nx = nx, ny = ny, 
-                                   sigma = sigma,
-                                   correct = correct))
-    }
-    stopifnot(is.matrix(categ))
-    B <- ncol(categ)
-    m <- nrow(mat)
-    pval0 <- matrix(NA_real_, nrow = m, ncol = B)
-    stat0 <- matrix(NA_real_, nrow = m, ncol = B)
-    for (bb in 1:B) {
-        rwt <- rowWilcoxonTests1V2(ranks = rks, mat = mat, categ = categ[, bb], alternative = alternative, 
-                                   min_stat = min_stat, nx = nx, ny = ny, 
-                                   sigma = sigma,
-                                   correct = correct)
-        pval0[, bb] <- rwt$p.value
-        stat0[, bb] <- rwt$statistic
-    }
-    list(p.value = pval0, statistic = stat0)
-}
-
-
-
-rowWilcoxonTests1V2 <- function (ranks, mat, categ, alternative = c("two.sided", "less", "greater"), 
-                                 min_stat, nx, ny, sigma, correct = TRUE) 
-{
-    alternative <- match.arg(alternative)
-    
-    wx <- which(categ == 1)
-    stat <- rowSums(ranks[, wx])
-    stat <- stat - min_stat
-    
-    z <- stat - ny * nx/2
-    CORRECTION <- 0
-    if (correct) {
-        CORRECTION <- switch(alternative, two.sided = sign(z) * 
-                                 0.5, greater = 0.5, less = -0.5)
-    }
-    z <- (z - CORRECTION)/sigma
-    p <- switch(alternative, less = pnorm(z), greater = pnorm(z, 
-                                                              lower.tail = FALSE), two.sided = 2 * pmin(pnorm(z), pnorm(z, 
-                                                                                                                        lower.tail = FALSE)))
-    est <- rowMedians(mat[, wx]) - rowMedians(mat[, -wx])
-    list(statistic = stat, p.value = p, estimate = est)
 }
 
 
