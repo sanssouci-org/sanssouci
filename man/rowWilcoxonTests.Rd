@@ -35,10 +35,9 @@ p-values for the tests}}
 A list containing the following components:
 \describe{
 \item{statistic}{the value of the statistics}
-\item{parameter}{the degrees of freedom for the statistics}
 \item{p.value}{the p-values for the tests}
-\item{estimate}{the median difference between groups}}
-Each of these elements is a matrix of size \code{m x B}, coerced to a vector of length \code{nrow(mat)} if \code{B=1}
+\item{estimate}{the median difference between groups (only calculated if \code{B=1} for computational efficiency)}}
+Each of these elements is a matrix of size \code{m x B}, coerced to a vector of length \code{m} if \code{B=1}
 }
 \description{
 Wilcoxon rank sum tests for each row of a matrix
@@ -64,23 +63,21 @@ For simplicity, 'estimate' returns the difference between the group medians, whi
 p <- 200
 n <- 50
 mat <- matrix(rnorm(p*n), ncol = n)
-cls <- rep(c(0, 1), times = c(n/2, n/2))
-system.time(fwt <- rowWilcoxonTests(mat, categ = cls, alternative = "two.sided"))
-str(fwt)
+cls <- rep(c(0, 1), each = n/2)
 
-# compare with ordinary wilcox.test:
-system.time(pwt <- t(sapply(1:p, FUN=function(ii) {
-  wt <- wilcox.test(mat[ii, cls==1], mat[ii, cls==0], alternative = "two.sided")
-  c(statistic = wt[["statistic"]], p.value = wt[["p.value"]])
-})))
-all(abs(fwt$p.value-pwt[, "p.value"]) < 1e-10)  ## same results
-all(abs(fwt$statistic-pwt[, "statistic.W"]) < 1e-10)  ## same results
+stats <- rowWilcoxonTests(mat, categ = cls, alternative = "two.sided")
+str(stats)
 
-# with several permutations
-B <- 50
-cls_perm <- replicate(B, sample(cls))
-system.time(fwt <- rowWilcoxonTests(mat, categ = cls_perm, alternative = "two.sided"))
+# permutation of class labels
+cls_perm <- replicate(10, sample(cls))
+stats <- rowWilcoxonTests(mat, categ = cls_perm, alternative = "two.sided")
+str(stats)
 
+# several unrelated contrasts
+cls2 <- rep(c(0, 1), times = n/2)
+cls_mat <- cbind(cls, cls2)
+stats <- rowWilcoxonTests(mat, categ = cls_mat, alternative = "two.sided")
+str(stats)
 }
 \seealso{
 wilcox.test
