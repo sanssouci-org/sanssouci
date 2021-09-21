@@ -20,7 +20,7 @@ test_that("Consistency of 'get_perm'", {
     set.seed(123)
     perm0 <- get_perm(X, categ, B, rowWilcoxonTests)
     set.seed(123)
-    perm1 <- get_perm(X, categ, B, rowWilcoxonTests1)
+    perm1 <- get_perm(X, categ, B, rowWilcoxonTests1V1)
     expect_identical(perm0$p.value, perm1$p.value)
     expect_identical(perm0$statistic, perm1$statistic)
 

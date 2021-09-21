@@ -25,10 +25,9 @@
 #' @return A list containing the following components:
 #' \describe{ 
 #'   \item{statistic}{the value of the statistics}
-#'   \item{parameter}{the degrees of freedom for the statistics}
 #'   \item{p.value}{the p-values for the tests} 
-#'   \item{estimate}{the median difference between groups}}
-#'   Each of these elements is a matrix of size \code{m x B}, coerced to a vector of length \code{nrow(mat)} if \code{B=1}
+#'   \item{estimate}{the median difference between groups (only calculated if \code{B=1} for computational efficiency)}}
+#'   Each of these elements is a matrix of size \code{m x B}, coerced to a vector of length \code{m} if \code{B=1}
 #'   
 #' @importFrom matrixStats rowRanks rowTabulates
 #' 
@@ -55,43 +54,103 @@
 #' p <- 200
 #' n <- 50
 #' mat <- matrix(rnorm(p*n), ncol = n)
-#' cls <- rep(c(0, 1), times = c(n/2, n/2))
-#' system.time(fwt <- rowWilcoxonTests(mat, categ = cls, alternative = "two.sided"))
-#' str(fwt)
+#' cls <- rep(c(0, 1), each = n/2)
 #' 
-#' # compare with ordinary wilcox.test:
-#' system.time(pwt <- t(sapply(1:p, FUN=function(ii) {
-#'   wt <- wilcox.test(mat[ii, cls==1], mat[ii, cls==0], alternative = "two.sided")
-#'   c(statistic = wt[["statistic"]], p.value = wt[["p.value"]])
-#' })))
-#' all(abs(fwt$p.value-pwt[, "p.value"]) < 1e-10)  ## same results
-#' all(abs(fwt$statistic-pwt[, "statistic.W"]) < 1e-10)  ## same results
+#' stats <- rowWilcoxonTests(mat, categ = cls, alternative = "two.sided")
+#' str(stats)
 #' 
-#' # with several permutations
-#' B <- 50
-#' cls_perm <- replicate(B, sample(cls))
-#' system.time(fwt <- rowWilcoxonTests(mat, categ = cls_perm, alternative = "two.sided"))
+#' # permutation of class labels
+#' cls_perm <- replicate(11, sample(cls))
+#' stats <- rowWilcoxonTests(mat, categ = cls_perm, alternative = "two.sided")
+#' str(stats)
 #' 
-rowWilcoxonTests <- function(mat, categ, 
-                              alternative = c("two.sided", "less", "greater"), 
-                              correct = TRUE) {
+#' # several unrelated contrasts
+#' cls2 <- cls
+#' cls[1:10] <- 1 # varying nx, ny
+#' cls_mat <- cbind(cls, cls2)
+#' stats <- rowWilcoxonTests(mat, categ = cls_mat, alternative = "two.sided")
+#' str(stats)
+
+rowWilcoxonTests <- function (mat, categ, alternative = c("two.sided", "less", "greater"), 
+                                correct = TRUE) 
+{
+    alternative <- match.arg(alternative)
+    stopifnot(all(categ %in% c(0, 1)))
+    categ <- as.matrix(categ)
+    levels(categ) <- NULL
+    apply(categ, 2, sansSouci:::categCheck, n = ncol(mat))
+    B <- ncol(categ)
+    m <- nrow(mat)
+    n_obs <- nrow(categ)
+    
+    rks <- rowRanks(mat, ties.method = "average")
+    nx <- colSums(categ)
+    ny <- n_obs - nx
+    
+    min_stat <- nx * (nx + 1)/2 
+    
+    stats <- rks %*% categ
+    # stats <- stats - min_stat 
+    stats <- sweep(stats, MARGIN = 2, STATS = min_stat, FUN = "-")
+    
+    rks2 <- rks 
+    mode(rks2) <- "integer"
+    n_ties <- rowTabulates(rks2) 
+    ties <- rowSums(n_ties^3 - n_ties) 
+    # sigma <- sqrt((nx * ny/12) * ((ny + nx + 1) - ties/((ny + nx) * (ny + nx - 1))))
+    # sigma <- t(sqrt((nx * ny/12) * ((ny + nx + 1) - matrix(rep(ties, B), nrow = B, byrow = T)/((ny + nx) * (ny + nx - 1)))))
+    quotient <- sweep(matrix(rep(ties, B), ncol = B), MARGIN = 2, STATS = (ny + nx) * (ny + nx - 1), FUN = "/")
+    difference <- sweep(-quotient, MARGIN = 2, STATS = (ny + nx + 1), FUN = "+")
+    sigma <- sqrt(sweep(difference, MARGIN = 2, STATS = (nx * ny/12), FUN = "*"))
+    
+    # z <- stats - ny * nx/2
+    z <- sweep(stats, MARGIN = 2, STATS = ny * nx/2, FUN = "-")
+    CORRECTION <- 0
+    if (correct) {
+        CORRECTION <- switch(alternative, two.sided = sign(z) * 
+                                 0.5, greater = 0.5, less = -0.5)
+    }
+    
+    z <- (z - CORRECTION)/sigma
+    p <- switch(alternative, 
+                less = pnorm(z), 
+                greater = pnorm(z, lower.tail = FALSE), 
+                two.sided = 2 * pmin(pnorm(z), pnorm(z, lower.tail = FALSE)))
+    
+    est <- matrix(NA_real_, nrow = m, ncol = B)
+    if (dim(categ)[2] == 1){
+        wx <- which(categ == 1)
+        est <- rowMedians(mat[, wx]) - rowMedians(mat[, -wx])
+        stats <- as.vector(stats)
+        p <- as.vector(p)
+    } 
+    list(p.value = p, statistic = stats, estimate = est)
+}
+
+
+
+# first version
+
+rowWilcoxonTestsV1 <- function(mat, categ, 
+                             alternative = c("two.sided", "less", "greater"), 
+                             correct = TRUE) {
     alternative <- match.arg(alternative)
     stopifnot(all(categ %in% c(0, 1)))
     levels(categ) <- NULL
     
     if (is.vector(categ)) {
-        return(rowWilcoxonTests1(mat, categ, 
+        return(rowWilcoxonTests1V1(mat, categ, 
                                  alternative = alternative, 
                                  correct = correct))
     } 
     stopifnot(is.matrix(categ))
     B <- ncol(categ)
     m <- nrow(mat)
-
+    
     pval0 <- matrix(NA_real_, nrow = m, ncol = B) 
     stat0 <- matrix(NA_real_, nrow = m, ncol = B) 
     for (bb in 1:B) {
-        rwt <- rowWilcoxonTests1(mat, categ[, bb], 
+        rwt <- rowWilcoxonTests1V1(mat, categ[, bb], 
                                  alternative = alternative, 
                                  correct = correct)
         pval0[, bb] <- rwt$p.value
@@ -103,17 +162,17 @@ rowWilcoxonTests <- function(mat, categ,
 }
 
 #' @importFrom matrixStats rowMedians
-rowWilcoxonTests1 <- function(mat, categ, 
+rowWilcoxonTests1V1 <- function(mat, categ, 
                               alternative = c("two.sided", "less", "greater"), 
                               correct = TRUE) {
     alternative <- match.arg(alternative)
     categCheck(categ, ncol(mat))
-
+    
     rks <- rowRanks(mat, ties.method = "average")
     ny <- sum(categ == 0)
     nx <- sum(categ == 1)
     min_stat <- nx*(nx + 1)/2  ## mininmal rank sum
-
+    
     wx <- which(categ == 1)
     stat <- rowSums(rks[, wx])
     stat <- stat - min_stat
@@ -136,9 +195,10 @@ rowWilcoxonTests1 <- function(mat, categ,
                 less = pnorm(z), 
                 greater = pnorm(z, lower.tail = FALSE), 
                 two.sided = 2 * pmin(pnorm(z), pnorm(z, lower.tail = FALSE)))
-
+    
     est <- rowMedians(mat[, wx]) - rowMedians(mat[, -wx])
     list(statistic = stat,
          p.value = p, 
          estimate = est)
 }
+
