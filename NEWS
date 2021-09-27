@@ -2,8 +2,9 @@
 Package: sansSouci
 ==================
 
-Version 0.12.2 [2021-08-25]
+Version 0.12.2 [2021-09-21]
 
+* SPEEDUP: rowWilcoxonTests now completely vectorized (#64).
 * Remove default value for argument 'm' in 'calibrate' and 'get_pivotal_stat' to make sure that m is properly set.
 * Add unit test: the pivotal statistics are non-decreasing in the subset of hypotheses used for calibration (following feedback by Angela Andreella).
 
