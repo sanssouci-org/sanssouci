@@ -182,6 +182,11 @@ curveMaxFP <- function(p.values, thr, flavor=c("BNR2016", "Mein2006", "BNR2014")
     flavor <- match.arg(flavor)
     m <- length(p.values)
     kMax <- length(thr)
+    if (m < kMax){
+        seqK <- seq(from = 1, to = m, by = 1)
+        thr <- thr[seqK]
+        kMax <- length(thr) 
+    }
     if (kMax < m && flavor %in% c("Mein2006", "BNR2016")) {
         thr <- c(thr, rep(thr[kMax], m-kMax))
         kMax <- length(thr)
