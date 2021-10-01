@@ -112,7 +112,7 @@ To bypass these limitations, @blanchard20post-hoc have proposed a randomization-
 
 
 ```{r post-hoc-calibration, cache=TRUE}
-B <- 1000
+B <- 200
 res <- fit(obj, alpha = alpha, B = B, family = "Simes")
 ```
 
