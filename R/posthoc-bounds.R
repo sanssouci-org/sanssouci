@@ -166,17 +166,55 @@ minTP <- function(p.values, thr) {
 
 #' Upper bound for the number of false discoveries among most significant items
 #'
-#' @param p.values A vector containing all \eqn{m} p-values, sorted non-decreasingly
-#' @param thr A vector of \eqn{K} JER-controlling thresholds, sorted non-decreasingly
-#' @param flavor The algorithm to compute the bound 'BNR2014' and
-#' 'BNR2016' give identical results. Both should be slightly better
-#' than 'Mein2006' (example situation?). Flavor 'BNR2016' has a
-#' linear time complexity, hence it is much faster than 'Mein2006'
-#' and much much faster than 'BNR2014'.
-#' @return A vector of size \eqn{m} giving an joint upper confidence bound on
+#' @param p.values A vector containing s p-values
+#' @param thr A vector of \eqn{K} JER-controlling thresholds
+
+#' @return A vector of size \eqn{s} giving an joint upper confidence bound on
 #'   the number of false discoveries among the \eqn{k} most significant items
-#'   for all \eqn{k \in \{1\ldots m\}}.
-#' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
+#'   for all \eqn{i \in \{1\ldots s\}}.
+
+#' @author Gilles Blanchard, Nicolas Enjalbert-Courrech, Pierre Neuvial and
+#'   Etienne Roquain
+#' @details The time and space complexity of this function is O(s), which is
+#'   optimal since s is the length of the returned vector.
+
+curveMaxFP <- function(p.values, thr) {
+    p.values <- sort(p.values)
+    thr <- sort(thr)
+
+    s <- length(p.values)
+    kMax <- length(thr)
+    if (s < kMax){  # truncate thr to first 's' values
+        seqK <- seq(from = 1, to = s, by = 1)
+        thr <- thr[seqK]
+    } else { # complete 'thr' to length 's' with its last value
+        thr <- c(thr, rep(thr[kMax], s - kMax))
+    }
+    ## sanity checks
+    stopifnot(length(thr) == s)
+    rm(kMax)
+    
+    K <- rep(s, s) ## K[i] = number of k/ T[i] <= s[k]
+    Z <- rep(s, s) ## Z[k] = number of i/ T[i] >  s[k] = cardinal of R_k
+    ## 'K' and 'Z' are initialized to their largest possible value (both 's')
+    kk <- 1
+    ii <- 1
+    while ((kk <= s) && (ii <= s)) {
+        if (thr[kk] >= p.values[ii]) {
+            K[ii] <- kk-1
+            ii <- ii+1
+        } else {
+            Z[kk] <- ii-1
+            kk <- kk+1
+        }
+    }
+    Vbar <- numeric(s)
+    ww <- which(K > 0)
+    A <- Z - (1:s) + 1
+    cA <- cummax(A)[K[ww]]  # cA[i] = max_{k<K[i]} A[k]
+    Vbar[ww] <- pmin(ww - cA, K[ww])
+    Vbar
+}
 
 curveMaxFP_ECN <- function(p.values, thr) {
     m <- length(p.values)
@@ -223,7 +261,22 @@ curveMaxFP_ECN <- function(p.values, thr) {
     Vbar
 }
 
-curveMaxFP <- function(p.values, thr, 
+#' Upper bound for the number of false discoveries among most significant items (older version)
+#'
+#' @param p.values A vector containing all \eqn{m} p-values, sorted non-decreasingly
+#' @param thr A vector of \eqn{K} JER-controlling thresholds, sorted non-decreasingly
+#' @param flavor The algorithm to compute the bound 'BNR2014' and
+#' 'BNR2016' give identical results. Both should be slightly better
+#' than 'Mein2006' (example situation?). Flavor 'BNR2016' has a
+#' linear time complexity, hence it is much faster than 'Mein2006'
+#' and much much faster than 'BNR2014'.
+#' @return A vector of size \eqn{m} giving an joint upper confidence bound on
+#'   the number of false discoveries among the \eqn{k} most significant items
+#'   for all \eqn{k \in \{1\ldots m\}}.
+#' @author Gilles Blanchard, Nicolas Enjalbert-Courrech, Pierre Neuvial and Etienne Roquain
+#' @details These older implementations of 'curveMaxFP' are here for the purpose of testing that the current one yields consistent results.
+
+curveMaxFP_old <- function(p.values, thr, 
                        flavor = c("BNR2016", "Mein2006", "BNR2014")) {
     flavor <- match.arg(flavor)
     m <- length(p.values)
