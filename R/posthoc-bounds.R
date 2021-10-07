@@ -137,12 +137,12 @@ plotConfCurve <- function(conf_bound, xmax, cols = NULL) {
 
 
 maxFP <- function(p.values, thr) {
-    p.values <- sort(p.values)
-    thr <- sort(thr)
     size <- min(length(thr), length(p.values))
     if (size == 0) {
         return(0)
     }
+    p.values <- sort(p.values)
+    thr <- sort(thr)
     maxFP <- curveMaxFP(p.values, thr)[length(p.values)]
     return(maxFP)
 }
