@@ -143,7 +143,8 @@ maxFP <- function(p.values, thr) {
     }
     p.values <- sort(p.values)
     thr <- sort(thr)
-    maxFP <- curveMaxFP(p.values, thr)[length(p.values)]
+    all_maxFP <- curveMaxFP(p.values, thr)
+    maxFP <- all_maxFP[length(p.values)]
     return(maxFP)
 }
 
