@@ -1,5 +1,5 @@
 posthoc_bound <- function(p.values, S = seq_along(p.values), thr = NULL, lab = NULL, 
-                     what = c("TP", "FDP"), all = FALSE) {
+                          what = c("TP", "FDP"), all = FALSE) {
     if (is.null(thr)) {
         stop("Argument 'thr' must be non NULL")
     }
@@ -134,7 +134,16 @@ plotConfCurve <- function(conf_bound, xmax, cols = NULL) {
 #' maxFP(tail(p), thr)
 #' maxFP(c(head(p), tail(p)), thr)
 #' 
+
+
 maxFP <- function(p.values, thr) {
+    stopifnot(identical(sort(thr), thr))
+    maxFP <- curveMaxFP(p.values, thr)[length(p.values)]
+    return(maxFP)
+}
+
+
+maxFPslow <- function(p.values, thr) {
     stopifnot(identical(sort(thr), thr))
     nS <- length(p.values)
     K <- length(thr)
@@ -181,7 +190,7 @@ minTP <- function(p.values, thr) {
 curveMaxFP <- function(p.values, thr) {
     p.values <- sort(p.values)
     thr <- sort(thr)
-
+    
     s <- length(p.values)
     kMax <- length(thr)
     if (s < kMax){  # truncate thr to first 's' values
@@ -277,7 +286,7 @@ curveMaxFP_ECN <- function(p.values, thr) {
 #' @details These older implementations of 'curveMaxFP' are here for the purpose of testing that the current one yields consistent results.
 
 curveMaxFP_old <- function(p.values, thr, 
-                       flavor = c("BNR2016", "Mein2006", "BNR2014")) {
+                           flavor = c("BNR2016", "Mein2006", "BNR2014")) {
     flavor <- match.arg(flavor)
     m <- length(p.values)
     kMax <- length(thr)
