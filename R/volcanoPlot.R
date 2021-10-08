@@ -6,9 +6,9 @@
 volcanoPlot <- function(x, ...) UseMethod("volcanoPlot")
 
 #' @rdname volcanoPlot
-#' @param object An object of class `SansSouci`
-#' @param x A vector of fold changes, of the same length as `nHyp(object)`, use for volcanoPlot x-axis
-#' @param y A vector of p-values, of the same length as `nHyp(object)`, use for volcanoPlot x-axis
+#' @param x An object of class `SansSouci`
+#' @param fold_changes An optional vector of fold changes, of the same length as `nHyp(object)`, use for volcanoPlot x-axis. If not specified, 
+#' @param p_values A vector of p-values, of the same length as `nHyp(object)`, use for volcanoPlot x-axis
 #' @param p A numeric value, the p-value threshold under which genes are selected
 #' @param q A numeric value, the q-value (or FDR-adjusted p-value) threshold under which genes are selected
 #' @param r A numeric value, the absolute fold change above which genes are selected
@@ -27,22 +27,21 @@ volcanoPlot <- function(x, ...) UseMethod("volcanoPlot")
 #' 
 #' res <- fit(a, B = 100, alpha = 0.1)
 #' volcanoPlot(res, q = 0.2, r = 0.2, ylim = c(0, 4))
-volcanoPlot.SansSouci <- function(object, 
-                                  x = NULL, y = NULL, 
+volcanoPlot.SansSouci <- function(x, 
+                                  fold_changes = foldChanges(x), 
+                                  p_values = pValues(x), 
                                   p = 1, q = 1, r = 0,
                                   cex = c(0.2, 0.6), 
                                   col = c("#33333333", "#FF0000", "#FF666633"),
                                   pch = 19, ylim = NULL, ...) {
+    object <- x;
+    y <- force(p_values)
+    x <- force(fold_changes)
+
     if (object$input$n_group == 1) {
         stop("Can't do a volcano plot for one-sample tests!")
     }
     
-    if (is.null(x)){
-        x <- foldChanges(object)
-    }
-    if (is.null(y)){
-        y <- pValues(object)
-    }
     stopifnot(nHyp(object) == length(x))
     stopifnot(nHyp(object) == length(y))
     pval <- pValues(object)
@@ -59,10 +58,10 @@ volcanoPlot.SansSouci <- function(object,
 #' 
 #' Volcano plot for differential expression studies
 #' 
-#' @param x A vector of fold changes, use for x-axis of the volcanoPlot
-#' @param y A vector of p-values, use for y-axis of the volcanoPlot
+#' @param x A vector of fold changes (x axis of the volcano plot)
+#' @param y A vector of p-values (y axis of the volcano plot)
 #' @param pval A vector of p-values, of the same length as `x`, use to estimate post-hoc bounds
-#' @param thr A numeric vector of length K, a JER controlling family, use to estimate post-hoc bounds
+#' @param thr A numeric vector of length K, a JER controlling family, used to estimate post-hoc bounds
 #' @param p A numeric value, the p-value threshold under which genes are selected
 #' @param q A numeric value, the q-value (or FDR-adjusted p-value) threshold under which genes are selected
 #' @param r A numeric value, the absolute fold change above which genes are selected
