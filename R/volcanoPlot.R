@@ -25,7 +25,7 @@ volcanoPlot <- function(x, ...) UseMethod("volcanoPlot")
 #' 
 #' res <- fit(a, B = 100, alpha = 0.1)
 #' volcanoPlot(res, q = 0.2, r = 0.2, ylim = c(0, 4))
-volcanoPlot.SansSouci <- function(x, 
+volcanoPlot.SansSouci <- function(x, rowtestFUN_vp = NULL,
                                   p = 1, q = 1, r = 0,
                                   cex = c(0.2, 0.6), 
                                   col = c("#33333333", "#FF0000", "#FF666633"),
@@ -34,10 +34,27 @@ volcanoPlot.SansSouci <- function(x,
     if (object$input$n_group == 1) {
         stop("Can't do a volcano plot for one-sample tests!")
     }
+    
+    if(is.null(rowtestFUN_vp)){
+        name_rowtestFunVP <- object[["parameters"]][["funName"]]
+    } else {
+        name_rowtestFunVP <- as.character(substitute(rowtestFUN_vp))
+    }
+    
+    if (object[["parameters"]][["funName"]] == name_rowtestFunVP){
+        pval_y <- pValues(object)
+        fc_x <- foldChanges(object)
+        
+    } else {
+        alpha <- object[["parameters"]][["alpha"]]
+        res_FUN <- fit(object, alpha = alpha, rowTestFUN = rowtestFUN_vp, family = "Simes", B=0)
+        pval_y <- pValues(res_FUN)
+        fc_x <- foldChanges(res_FUN)
+    }
     pval <- pValues(object)
-    fc <- foldChanges(object)
     thr <- thresholds(object)
-    volcanoPlot(pval, fc = fc, thr = thr, 
+    
+    volcanoPlot(x = fc_x, y = pval_y, pval = pval, thr = thr, 
                 p = p, q = q, r = r,
                 cex = cex, 
                 col = col,
@@ -71,33 +88,34 @@ volcanoPlot.SansSouci <- function(x,
 #' @importFrom graphics abline legend rect title
 #' @importFrom stats p.adjust
 #' @seealso Volcano plot shiny app at \url{ https://shiny-iidea-sanssouci.apps.math.cnrs.fr/}
-volcanoPlot.numeric <- function(x, fc, thr,
+volcanoPlot.numeric <- function(x, y, pval, thr,
                         p = 1, q = 1, r = 0,
                         cex = c(0.2, 0.6), 
                         col = c("#33333333", "#FF0000", "#FF666633"),
                         pch = 19, ylim = NULL, bounds = TRUE, ...) {
-    pval <- x; rm(x);
+    # pval <- x; rm(x);
     if (p < 1 && q < 1) {
         warning("Filtering both on p-values and BH-adjusted p-values")
     }
     m <- length(pval)
     
     ## sanity checks
-    stopifnot(length(fc) == m)
+    stopifnot(length(y) == m)
     stopifnot(length(thr) <= m)
+    stopifnot(length(x) == m)
     
-    logp <- -log10(pval)
-    adjp <- p.adjust(pval, method = "BH")  ## adjusted p-values
+    logp <- -log10(y)
+    adjp <- p.adjust(y, method = "BH")  ## adjusted p-values
     y_sel <- which((adjp <= q) &           ## selected by q-value
-                       (pval <= p))        ##          or p-value
+                       (y <= p))        ##          or p-value
     y_thr <- Inf
     if (length(y_sel) > 0) {
         y_thr <- min(logp[y_sel])       ## threshold on the log(p-value) scale
     }
     
     ## gene selections
-    sel1 <- which(logp >= y_thr & fc >= r)
-    sel2 <- which(logp >= y_thr & fc <= -r)
+    sel1 <- which(logp >= y_thr & x >= r)
+    sel2 <- which(logp >= y_thr & x <= -r)
     sel12 <- sort(union(sel1, sel2))
     
     ## post hoc bounds in selections
@@ -129,7 +147,7 @@ volcanoPlot.numeric <- function(x, fc, thr,
     if (is.null(ylim)) {
         ylim <- c(0, max(logp))
     }
-    plot(fc, logp, pch = pch, cex = cexs, col = cols, 
+    plot(x, logp, pch = pch, cex = cexs, col = cols, 
          xlab = xlab, ylab = ylab, ylim = ylim)
     # axis4 <- thrYaxis(thr, max(ylim))
     # axis(side = 4, at = axis4$pvalue, labels = axis4$num, las = 1)
