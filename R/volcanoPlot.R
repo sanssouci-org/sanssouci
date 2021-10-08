@@ -6,8 +6,9 @@
 volcanoPlot <- function(x, ...) UseMethod("volcanoPlot")
 
 #' @rdname volcanoPlot
-#' @param x An object of class `SansSouci`
-#' @param rowtestFUN_vp A (vectorized) test function, use if the test use for volcanoPlot axis is different from calibration. Defaults to NULL.
+#' @param object An object of class `SansSouci`
+#' @param x A vector of fold changes, of the same length as `nHyp(object)`, use for volcanoPlot x-axis
+#' @param y A vector of p-values, of the same length as `nHyp(object)`, use for volcanoPlot x-axis
 #' @param p A numeric value, the p-value threshold under which genes are selected
 #' @param q A numeric value, the q-value (or FDR-adjusted p-value) threshold under which genes are selected
 #' @param r A numeric value, the absolute fold change above which genes are selected
@@ -26,36 +27,28 @@ volcanoPlot <- function(x, ...) UseMethod("volcanoPlot")
 #' 
 #' res <- fit(a, B = 100, alpha = 0.1)
 #' volcanoPlot(res, q = 0.2, r = 0.2, ylim = c(0, 4))
-volcanoPlot.SansSouci <- function(x, rowtestFUN_vp = NULL,
+volcanoPlot.SansSouci <- function(object, 
+                                  x = NULL, y = NULL, 
                                   p = 1, q = 1, r = 0,
                                   cex = c(0.2, 0.6), 
                                   col = c("#33333333", "#FF0000", "#FF666633"),
                                   pch = 19, ylim = NULL, ...) {
-    object <- x; rm(x);
     if (object$input$n_group == 1) {
         stop("Can't do a volcano plot for one-sample tests!")
     }
     
-    if(is.null(rowtestFUN_vp)){
-        name_rowtestFunVP <- object[["parameters"]][["funName"]]
-    } else {
-        name_rowtestFunVP <- as.character(substitute(rowtestFUN_vp))
+    if (is.null(x)){
+        x <- foldChanges(object)
     }
-    
-    if (object[["parameters"]][["funName"]] == name_rowtestFunVP){
-        pval_y <- pValues(object)
-        fc_x <- foldChanges(object)
-        
-    } else {
-        alpha <- object[["parameters"]][["alpha"]]
-        res_FUN <- fit(object, alpha = alpha, rowTestFUN = rowtestFUN_vp, family = "Simes", B=0)
-        pval_y <- pValues(res_FUN)
-        fc_x <- foldChanges(res_FUN)
+    if (is.null(y)){
+        y <- pValues(object)
     }
+    stopifnot(nHyp(object) == length(x))
+    stopifnot(nHyp(object) == length(y))
     pval <- pValues(object)
     thr <- thresholds(object)
     
-    volcanoPlot(x = fc_x, y = pval_y, pval = pval, thr = thr, 
+    volcanoPlot(x = x, y = y, pval = pval, thr = thr, 
                 p = p, q = q, r = r,
                 cex = cex, 
                 col = col,

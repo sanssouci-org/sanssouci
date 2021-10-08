@@ -8,7 +8,9 @@
 volcanoPlot(x, ...)
 
 \method{volcanoPlot}{SansSouci}(
-  x,
+  object,
+  x = NULL,
+  y = NULL,
   p = 1,
   q = 1,
   r = 0,
@@ -20,9 +22,13 @@ volcanoPlot(x, ...)
 )
 }
 \arguments{
-\item{x}{An object of class \code{SansSouci}}
+\item{x}{A vector of fold changes, of the same length as \code{nHyp(object)}, use for volcanoPlot x-axis}
 
 \item{...}{Other arguments to be passed to volcanoPlot.numeric}
+
+\item{object}{An object of class \code{SansSouci}}
+
+\item{y}{A vector of p-values, of the same length as \code{nHyp(object)}, use for volcanoPlot x-axis}
 
 \item{p}{A numeric value, the p-value threshold under which genes are selected}
 
