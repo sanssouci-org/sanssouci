@@ -7,6 +7,7 @@ volcanoPlot <- function(x, ...) UseMethod("volcanoPlot")
 
 #' @rdname volcanoPlot
 #' @param x An object of class `SansSouci`
+#' @param rowtestFUN_vp A (vectorized) test function, use if the test use for volcanoPlot axis is different from calibration. Defaults to NULL.
 #' @param p A numeric value, the p-value threshold under which genes are selected
 #' @param q A numeric value, the q-value (or FDR-adjusted p-value) threshold under which genes are selected
 #' @param r A numeric value, the absolute fold change above which genes are selected
@@ -65,9 +66,10 @@ volcanoPlot.SansSouci <- function(x, rowtestFUN_vp = NULL,
 #' 
 #' Volcano plot for differential expression studies
 #' 
-#' @param x A vector of p-values
-#' @param fc A vector of fold changes, of the same length as `x`
-#' @param thr A numeric vector of length K, a JER controlling family
+#' @param x A vector of fold changes, use for x-axis of the volcanoPlot
+#' @param y A vector of p-values, use for y-axis of the volcanoPlot
+#' @param pval A vector of p-values, of the same length as `x`, use to estimate post-hoc bounds
+#' @param thr A numeric vector of length K, a JER controlling family, use to estimate post-hoc bounds
 #' @param p A numeric value, the p-value threshold under which genes are selected
 #' @param q A numeric value, the q-value (or FDR-adjusted p-value) threshold under which genes are selected
 #' @param r A numeric value, the absolute fold change above which genes are selected
