@@ -2,7 +2,7 @@
 % Please edit documentation in R/posthoc-bounds.R
 \name{minTP}
 \alias{minTP}
-\title{(Slow) Lower bound for the number of true discoveries in a selection}
+\title{Lower bound for the number of true discoveries in a selection}
 \usage{
 minTP(p.values, thr)
 }
@@ -15,5 +15,5 @@ minTP(p.values, thr)
 A Lower bound on the number of true discoveries in the selection
 }
 \description{
-(Slow) Lower bound for the number of true discoveries in a selection
+Lower bound for the number of true discoveries in a selection
 }

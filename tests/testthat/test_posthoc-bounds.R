@@ -9,6 +9,7 @@ tests <- rowWelchTests(X, categ)
 pval <- sort(tests$p.value)
 
 test_that("Upper bound on the number of false positives", {
+    expect_error(maxFP_low(pval, rev(thr)))  ## thr is not sorted descendingly
     
     best <- head(pval)
     worse <- tail(pval)

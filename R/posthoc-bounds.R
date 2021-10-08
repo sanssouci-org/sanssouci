@@ -106,7 +106,7 @@ plotConfCurve <- function(conf_bound, xmax, cols = NULL) {
         ggplot2::scale_color_manual(values = cols) 
 }    
 
-#' (Slow) Upper bound for the number of false discoveries in a selection
+#' Upper bound for the number of false discoveries in a selection
 #' 
 #' @param p.values A vector of p-values for the selected items
 #' @param thr A vector of non-decreasing k-FWER-controlling thresholds
@@ -130,11 +130,10 @@ plotConfCurve <- function(conf_bound, xmax, cols = NULL) {
 #' M0 <- maxFP(p, thr)
 #' M0/m
 #' 
-#' maxFP(head(p), thr)
-#' maxFP(tail(p), thr)
-#' maxFP(c(head(p), tail(p)), thr)
-#' 
-
+#' sorted_p <- sort(p)
+#' maxFP(head(sorted_p, 20), thr) # some signal
+#' maxFP(tail(sorted_p), thr)     # no signal
+#' maxFP(c(head(sorted_p), tail(sorted_p)), thr)
 
 maxFP <- function(p.values, thr) {
     size <- min(length(thr), length(p.values))
@@ -149,7 +148,7 @@ maxFP <- function(p.values, thr) {
 }
 
 
-maxFPslow <- function(p.values, thr) {
+maxFP_slow <- function(p.values, thr) {
     stopifnot(identical(sort(thr), thr))
     nS <- length(p.values)
     K <- length(thr)
@@ -169,7 +168,7 @@ maxFPslow <- function(p.values, thr) {
 }
 
 
-#' (Slow) Lower bound for the number of true discoveries in a selection
+#' Lower bound for the number of true discoveries in a selection
 #' 
 #' @inheritParams maxFP
 #' @return A Lower bound on the number of true discoveries in the selection
@@ -178,6 +177,23 @@ minTP <- function(p.values, thr) {
     length(p.values) - maxFP(p.values, thr)
 }
 
+#' Lower bound for the true discovery proportion in a selection
+#' 
+#' @inheritParams maxFP
+#' @return Lower bound on the proportion of true discoveries in the selection
+#' @export
+minTDP <- function(p.values, thr) {
+    1 -  maxFP(p.values, thr)/length(p.values)
+}
+
+#' Upper bound for the false discovery proportion in a selection
+#' 
+#' @inheritParams maxFP
+#' @return Upper bound on the proportion of false discoveries in the selection
+#' @export
+maxFDP <- function(p.values, thr) {
+    maxFP(p.values, thr)/length(p.values)
+}
 
 #' Upper bound for the number of false discoveries among most significant items
 #'
