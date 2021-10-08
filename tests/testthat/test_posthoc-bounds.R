@@ -9,7 +9,7 @@ tests <- rowWelchTests(X, categ)
 pval <- sort(tests$p.value)
 
 test_that("Upper bound on the number of false positives", {
-    expect_error(maxFP(pval, rev(thr)))  ## thr is not sorted descendingly
+    expect_error(maxFP_low(pval, rev(thr)))  ## thr is not sorted descendingly
     
     best <- head(pval)
     worse <- tail(pval)
@@ -30,8 +30,8 @@ test_that("Upper bound on the number of false positives", {
 })
 
 test_that("curveMaxFP", {
-    expect_error(curveMaxFP(pval, rev(thr)))  
-    expect_error(curveMaxFP(rev(pval), rev(thr)))
+    expect_error(curveMaxFP_old(pval, rev(thr)))  
+    expect_error(curveMaxFP_old(rev(pval), rev(thr)))
     
     ub <- curveMaxFP(pval, thr)
     expect_length(ub, m)
@@ -43,10 +43,10 @@ test_that("curveMaxFP", {
 })
 
 test_that("flavors of curveMaxFP", {
-    ub <- curveMaxFP(pval, thr)
-    ub16 <- curveMaxFP(pval, thr, flavor = "BNR2014")
-    ub14 <- curveMaxFP(pval, thr, flavor = "BNR2014") 
-    ub06 <- curveMaxFP(pval, thr, flavor = "Mein2006") 
+    ub <- curveMaxFP_ECN(pval, thr)
+    ub16 <- curveMaxFP_old(pval, thr, flavor = "BNR2014")
+    ub14 <- curveMaxFP_old(pval, thr, flavor = "BNR2014") 
+    ub06 <- curveMaxFP_old(pval, thr, flavor = "Mein2006") 
     expect_identical(ub, ub16)
     expect_identical(ub, ub14)
     expect_identical(ub, ub06)  ## not sure this is always true?
