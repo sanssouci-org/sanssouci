@@ -21,13 +21,13 @@
 )
 }
 \arguments{
-\item{x}{A vector of fold changes, use for x-axis of the volcanoPlot}
+\item{x}{A vector of fold changes (x axis of the volcano plot)}
 
-\item{y}{A vector of p-values, use for y-axis of the volcanoPlot}
+\item{y}{A vector of p-values (y axis of the volcano plot)}
 
 \item{pval}{A vector of p-values, of the same length as \code{x}, use to estimate post-hoc bounds}
 
-\item{thr}{A numeric vector of length K, a JER controlling family, use to estimate post-hoc bounds}
+\item{thr}{A numeric vector of length K, a JER controlling family, used to estimate post-hoc bounds}
 
 \item{p}{A numeric value, the p-value threshold under which genes are selected}
 
