@@ -9,6 +9,8 @@ volcanoPlot(x, ...)
 
 \method{volcanoPlot}{SansSouci}(
   x,
+  fold_changes = foldChanges(x),
+  p_values = pValues(x),
   p = 1,
   q = 1,
   r = 0,
@@ -23,6 +25,10 @@ volcanoPlot(x, ...)
 \item{x}{An object of class \code{SansSouci}}
 
 \item{...}{Other arguments to be passed to volcanoPlot.numeric}
+
+\item{fold_changes}{An optional vector of fold changes, of the same length as \code{nHyp(object)}, use for volcanoPlot x-axis. If not specified,}
+
+\item{p_values}{A vector of p-values, of the same length as \code{nHyp(object)}, use for volcanoPlot x-axis}
 
 \item{p}{A numeric value, the p-value threshold under which genes are selected}
 
