@@ -2,6 +2,12 @@
 Package: sansSouci
 ==================
 
+Version 0.12.3 [2021-10-11]
+
+* volcano plot made more generic: different p-values can be used for selection/display and for calculating post hoc bounds (#66).
+* SPEEDUP: curveMaxFP now always has O(|S|) complexity (#65).
+
+
 Version 0.12.2 [2021-09-21]
 
 * SPEEDUP: rowWilcoxonTests now completely vectorized (#64).
