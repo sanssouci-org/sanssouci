@@ -8,7 +8,7 @@ thr <- t_linear(0.2, seq_len(m), m)
 tests <- rowWelchTests(X, categ)
 pval <- sort(tests$p.value)
 
-test_that("Upper bound on the number of false positives", {
+test_that("maxFP: Upper bound on the number of false positives", {
     expect_error(maxFP_low(pval, rev(thr)))  ## thr is not sorted descendingly
     
     best <- head(pval)
@@ -27,7 +27,18 @@ test_that("Upper bound on the number of false positives", {
     sM0 <- maxFP(pval, thr)
     expect_equal(M0, sM0)
     expect_equal(M0, ub[m])
+    
+    expect_equal(maxFP(numeric(0L), thr), 0)
+    expect_equal(curveMaxFP(numeric(0L), thr), numeric(0))
+    
+    expect_equal(curveMaxFP(numeric(0L), thr), numeric(0))
+
+    bounds <- posthoc_bound(p.values = pval, S = 1:m, thr = thr, lab = "method")
+    bounds <- posthoc_bound(p.values = pval, S = 1, thr = thr, lab = "method")
+    bounds <- posthoc_bound(p.values = pval, S = numeric(0), thr = thr, lab = "method")
+    expect_equal(nrow(bounds), 0)
 })
+
 
 test_that("curveMaxFP", {
     expect_error(curveMaxFP_old(pval, rev(thr)))  
