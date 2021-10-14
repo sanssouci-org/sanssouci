@@ -56,7 +56,7 @@ set.seed(20200924)
 
 We focus on differential gene expression studies in cancerology. These studies aim at identifying genes whose mean expression level differs significantly between two (or more) populations, based on a sample of gene expression measurements from individuals from these populations. Specifically, we consider a data set studied in <span style="color:red"> citation </span>.
 
-```{r load-data, echo = FALSE}
+```{r load-data, message = FALSE}
 blca <- curatedTCGAData("BLCA", "RNA*", dry.run = FALSE)
 head(getSubtypeMap(blca))
 annot <- colData(blca)[, getClinicalNames("BLCA")]
@@ -75,6 +75,8 @@ idx_0 <- which(annot$pathologic_stage == "stage ii")
 idx_1 <- which(annot$pathologic_stage == "stage iii")
 s_0 <- rownames(annot)[idx_0]
 s_1 <- rownames(annot)[idx_1]
+s_0 <- sample(s_0, length(idx_0)/2)
+s_1 <- sample(s_1, length(idx_1)/2)
 
 X0 <- X[, match(s_0, colnames(X))]
 X1 <- X[, match(s_1, colnames(X))]
@@ -105,7 +107,7 @@ This question can be addressed by performing one statistical test of no differen
 Below, the Wilcoxon test for differential expression is applied to each gene. This can be done e.g. using the `sansSouci::rowWilcoxonTests` function:
 
 ```{r row-welch-tests}
-dex <- data.frame(rowWelchTests(Y, groups))
+dex <- data.frame(rowWilcoxonTests(Y, groups))
 pval <- dex[["p.value"]]
 ```
 
@@ -280,41 +282,13 @@ volcanoPlot(res_Simes, q = q, r = r)
 ```
 
 
-```{r volcano-Simes}
-# ylim <- c(0, 6)
-
-library(limma)
-library(edgeR)
-d <- DGEList(Y)
-d <- calcNormFactors(d)
-Grp <- as.factor(groups)
-mm <- model.matrix(~0 + Grp)
-
-y <- voom(d, mm, plot = F)
-
-fit <- lmFit(y, mm)
-contr <- makeContrasts(Grp1 - Grp0, levels = colnames(coef(fit)))
-tmp <- contrasts.fit(fit, contr)
-tmp <- eBayes(tmp)
-TT <- topTable(tmp, sort.by = "none", n = Inf)
-p.value <- as.numeric(TT$P.Value)
-logFC <- as.numeric(TT$logFC)
-
-volcanoPlot(res_Simes, fold_changes = logFC, p_values = p.value, q = q, r = r) #, ylim = ylim)
-```
-
 
 This type of plot is called a "volcano plot" @CC2003. Post hoc inference makes it possible to obtain statistical guarantees on selections such as the ones represented in the above figure. 
 
 The substantial gain in power offered by the above-described calibration is illustrated as follows for the Simes reference family:
 
 ```{r volcano-Simes-cal}
-
-
-
-volcanoPlot(res, 
-            # fold_changes = logFC, p_values = p.value, 
-            q = q, r = r)#, ylim = ylim)
+volcanoPlot(res, q = q, r = r)
 ```
 
 
@@ -343,8 +317,32 @@ knitr::kable(tab, caption = cap)
 ```
 
 
+Post hoc bounds are calculated on any independent selection. Until now, the volcano plot used to select the genes used the same statistical test as the one used for the post hoc bounds.  Nevertheless, this two tests could be differents because they are independant of each other. It is possible to print the volcano plot with a first test and estimate post hoc bound with an other test. The next plot shows a volcanoplot with p-values and log-Fold changes from limma-voom methods (@) and post hoc bounds estimates with the wilcoxon's test: 
 
 
+
+```{r volcano-Simes}
+# ylim <- c(0, 6)
+
+library(limma)
+library(edgeR)
+d <- DGEList(Y)
+d <- calcNormFactors(d)
+Grp <- as.factor(groups)
+mm <- model.matrix(~0 + Grp)
+
+y <- voom(d, mm, plot = F)
+
+fit <- lmFit(y, mm)
+contr <- makeContrasts(Grp1 - Grp0, levels = colnames(coef(fit)))
+tmp <- contrasts.fit(fit, contr)
+tmp <- eBayes(tmp)
+TT <- topTable(tmp, sort.by = "none", n = Inf)
+p.value <- as.numeric(TT$P.Value)
+logFC <- as.numeric(TT$logFC)
+
+volcanoPlot(res_Simes, fold_changes = logFC, p_values = p.value, q = q, r = r) 
+```
 
 
 
