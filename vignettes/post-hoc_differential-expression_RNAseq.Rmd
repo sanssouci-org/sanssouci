@@ -38,17 +38,12 @@ The methods described in this vignette are described in detail in the book chapt
 ```{r install-r-packages, results='hide', message=FALSE, eval=FALSE}
 require("ggplot2") || install.packages("ggplot2")
 require("sansSouci") || remotes::install_github("pneuvial/sanssouci@develop")
-require("BiocManager") || install.packages("BiocManager")
-require("curatedTCGAData") || BiocManager::install("curatedTCGAData")
-require("TCGAutils") || BiocManager::install("TCGAutils")
 ```
 
 
 ```{r load-r-packages, results='hide', message=FALSE}
 library("ggplot2")
 library("sansSouci")
-library("curatedTCGAData")
-library("TCGAutils")
 ```
 
 Set the seed of the random number generator for numerical reproducibility of the results:
@@ -62,36 +57,10 @@ set.seed(20200924)
 We focus on differential gene expression studies in cancerology. These studies aim at identifying genes whose mean expression level differs significantly between two (or more) populations, based on a sample of gene expression measurements from individuals from these populations. Specifically, we consider a data set studied in <span style="color:red"> citation </span>.
 
 ```{r load-data, message = FALSE}
-blca <- curatedTCGAData("BLCA", "RNA*", dry.run = FALSE)
-head(getSubtypeMap(blca))
-annot <- colData(blca)[, getClinicalNames("BLCA")]
-blca <- blca[[1]]
-
-X <- assays(blca)[[1]]
-str(X) 
-sample_type <- substr(colnames(X), 14, 16)
-tumors <- which(sample_type %in% c("01A", "01B"))
-X <- X[, tumors]
-colnames(X) <- substr(colnames(X), 1, 12)
-
-# ref for BLCA stages: 
-# https://www.cancer.org/cancer/bladder-cancer/detection-diagnosis-staging/staging.html
-idx_0 <- which(annot$pathologic_stage == "stage ii")
-idx_1 <- which(annot$pathologic_stage == "stage iii")
-s_0 <- rownames(annot)[idx_0]
-s_1 <- rownames(annot)[idx_1]
-s_0 <- sample(s_0, length(idx_0)/2)
-s_1 <- sample(s_1, length(idx_1)/2)
-
-X0 <- X[, match(s_0, colnames(X))]
-X1 <- X[, match(s_1, colnames(X))]
-Y <- cbind(X0, X1)
-
-groups <- rep(c(0, 1), times = c(ncol(X0), ncol(X1)))
-
-# drop 0 genes
-ww <- which(rowSums(Y) == 0)
-Y <- Y[-ww, ]
+data("RNAseq_blca", package = "sansSouci.data")
+Y <- RNAseq_blca
+groups <- ifelse(colnames(RNAseq_blca) == "III", 1, 0)
+rm(RNAseq_blca)
 ```
 
 This data set consists of gene expression measurements for  $n = `r ncol(Y)`$ patients from the Cancer Genome Atlas Urothelial Bladder Carcinoma (TCGA-BLCA) data collection. These patients are classified into two subgoups, depending on the pathologic stage (stage ii vs stage iii):
@@ -275,8 +244,8 @@ Both calibrated curves outperform the Simes curve in this example.
 <!-- For an interactive volcano plot, see the [volcano plot shiny application]( https://shiny-iidea-sanssouci.apps.math.cnrs.fr/). -->
 
 ```{r volcano-setup}
-q <- 0.05
-r <-  0.5
+q <- 0.2
+r <-  0.3
 ```
 
 Let us assume that we are interested in genes selected by the BH procedure at level $q = `r q`$ and whose fold change is larger than $r = `r r`$ in absolute value.  The "fold change" is defined as the difference between the expression means of the two groups compared; it is an estimate of the effect size of a gene. This double selection corresponds to two sets of genes, with positive/negative fold change, which can be represented in the following plot:
