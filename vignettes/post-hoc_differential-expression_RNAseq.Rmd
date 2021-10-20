@@ -26,8 +26,13 @@ cache = TRUE
 ```
 
 
+This vignette illustrate the relevance of permutation-based post hoc bounds on false positives for the differential analysis of (bulk) RNA sequencing (RNAseq) data. After showing the output of a classical differential analysis based on False Discovery Rate control we illustrate the application of basic post-hoc bounds derived from probabilistic inequalities. 
+Then, we introduce more powerful post hoc methods (introduced by @blanchard20post-hoc) that yield tighter bounds by adapting to unknown dependence by randomization. Finally we demonstrate the use of these methods on two applications of post hoc methods:
 
-<span style="color:red"> Quelle intro faire pour la  vignette ? Est ce qu'on fait le lien avec la vignette précédente en disant que c'est une adaptation aux données RNAseq ? </span>
+- confidence curves (envelopes) for the true or false positives
+- statistical inference on volcano plots
+
+The methods described in this vignette are described in detail in the book chapter @BNR:chap and in the paper @blanchard20post-hoc. A shiny application for volcano plots is also available from  https://shiny-iidea-sanssouci.apps.math.cnrs.fr/.
 
 
 ```{r install-r-packages, results='hide', message=FALSE, eval=FALSE}
@@ -316,14 +321,11 @@ cap <- "Post hoc bounds on true positives in user-defined gene selections"
 knitr::kable(tab, caption = cap)
 ```
 
+# Volcano plot using limma-voom statistics
 
-Post hoc bounds are calculated on any independent selection. Until now, the volcano plot used to select the genes used the same statistical test as the one used for the post hoc bounds.  Nevertheless, this two tests could be differents because they are independant of each other. It is possible to print the volcano plot with a first test and estimate post hoc bound with an other test. The next plot shows a volcanoplot with p-values and log-Fold changes from limma-voom methods (@) and post hoc bounds estimates with the wilcoxon's test: 
+Post hoc bounds can be calculated for any gene selection. In particular, even if Wilcoxon tests have been performed for the calibration of the post hoc bounds, it is possible to rely on other statistics to select genes of interest. In this section, we illustrate this idea by making a volcano plot based on the $p$-values and log-fold changes obtained from the limma-voom methods <span style="color:red"> citation </span>:
 
-
-
-```{r volcano-Simes}
-# ylim <- c(0, 6)
-
+```{r volcano-limma}
 library(limma)
 library(edgeR)
 d <- DGEList(Y)
@@ -335,18 +337,14 @@ y <- voom(d, mm, plot = F)
 
 fit <- lmFit(y, mm)
 contr <- makeContrasts(Grp1 - Grp0, levels = colnames(coef(fit)))
-tmp <- contrasts.fit(fit, contr)
-tmp <- eBayes(tmp)
-TT <- topTable(tmp, sort.by = "none", n = Inf)
-p.value <- as.numeric(TT$P.Value)
-logFC <- as.numeric(TT$logFC)
+res <- contrasts.fit(fit, contr)
+res_eb <- eBayes(res)
+TT <- topTable(res_eb, sort.by = "none", n = Inf)
 
-volcanoPlot(res_Simes, fold_changes = logFC, p_values = p.value, q = q, r = r) 
+volcanoPlot(res_Simes, 
+            fold_changes = TT$logFC, p_values = TT$P.Value, 
+            q = q, r = r)
 ```
-
-
-
-
 
 # Session information
 
@@ -359,9 +357,9 @@ sessionInfo()
 To re-build this vignette from its source, use: 
 
 ```{r reproducibility, eval = FALSE}
-rmarkdown::render("post-hoc_differential-expression.Rmd", output_format = "pdf_document")
+rmarkdown::render("post-hoc_differential-expression_RNAseq.Rmd", output_format = "pdf_document")
 # To keep intermediate files, add option 'clean = FALSE'
-rmarkdown::render("post-hoc_differential-expression.Rmd", output_format = "html_document")
+rmarkdown::render("post-hoc_differential-expression_RNAseq.Rmd", output_format = "html_document")
 ```
 
 # References
