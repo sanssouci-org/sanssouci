@@ -4,6 +4,8 @@ Package: sansSouci
 
 Version 0.12.3 [2021-10-11]
 
+* 'colSort' becomes a wrapper around the C++ function arma::sort (which natively handles matrices).
+* BUG FIX: curveMaxFP would raise an error on empty p-value vector. Now returns 0. 
 * volcano plot made more generic: different p-values can be used for selection/display and for calculating post hoc bounds (#66).
 * SPEEDUP: curveMaxFP now always has O(|S|) complexity (#65).
 

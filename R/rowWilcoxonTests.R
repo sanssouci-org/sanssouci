@@ -72,7 +72,7 @@
 #' str(stats)
 
 rowWilcoxonTests <- function (mat, categ, alternative = c("two.sided", "less", "greater"), 
-                                correct = TRUE) 
+                              correct = TRUE) 
 {
     alternative <- match.arg(alternative)
     stopifnot(all(categ %in% c(0, 1)))
@@ -120,7 +120,7 @@ rowWilcoxonTests <- function (mat, categ, alternative = c("two.sided", "less", "
     est <- matrix(NA_real_, nrow = m, ncol = B)
     if (dim(categ)[2] == 1){
         wx <- which(categ == 1)
-        est <- rowMedians(mat[, wx]) - rowMedians(mat[, -wx])
+        est <- log(rowMedians(mat[, wx])+1) - log(rowMedians(mat[, -wx])+1)
         stats <- as.vector(stats)
         p <- as.vector(p)
     } 
@@ -132,16 +132,16 @@ rowWilcoxonTests <- function (mat, categ, alternative = c("two.sided", "less", "
 # first version
 
 rowWilcoxonTestsV1 <- function(mat, categ, 
-                             alternative = c("two.sided", "less", "greater"), 
-                             correct = TRUE) {
+                               alternative = c("two.sided", "less", "greater"), 
+                               correct = TRUE) {
     alternative <- match.arg(alternative)
     stopifnot(all(categ %in% c(0, 1)))
     levels(categ) <- NULL
     
     if (is.vector(categ)) {
         return(rowWilcoxonTests1V1(mat, categ, 
-                                 alternative = alternative, 
-                                 correct = correct))
+                                   alternative = alternative, 
+                                   correct = correct))
     } 
     stopifnot(is.matrix(categ))
     B <- ncol(categ)
@@ -151,8 +151,8 @@ rowWilcoxonTestsV1 <- function(mat, categ,
     stat0 <- matrix(NA_real_, nrow = m, ncol = B) 
     for (bb in 1:B) {
         rwt <- rowWilcoxonTests1V1(mat, categ[, bb], 
-                                 alternative = alternative, 
-                                 correct = correct)
+                                   alternative = alternative, 
+                                   correct = correct)
         pval0[, bb] <- rwt$p.value
         stat0[, bb] <- rwt$statistic
     }
@@ -163,8 +163,8 @@ rowWilcoxonTestsV1 <- function(mat, categ,
 
 #' @importFrom matrixStats rowMedians
 rowWilcoxonTests1V1 <- function(mat, categ, 
-                              alternative = c("two.sided", "less", "greater"), 
-                              correct = TRUE) {
+                                alternative = c("two.sided", "less", "greater"), 
+                                correct = TRUE) {
     alternative <- match.arg(alternative)
     categCheck(categ, ncol(mat))
     

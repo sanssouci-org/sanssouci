@@ -3,6 +3,9 @@ posthoc_bound <- function(p.values, S = seq_along(p.values), thr = NULL, lab = N
     if (is.null(thr)) {
         stop("Argument 'thr' must be non NULL")
     }
+    if (is.null(lab)) {
+        stop("Argument 'lab' must be non NULL")
+    }
     s <- length(S)
     idxs <- seq_len(s)
     max_FP <- rep(NA_integer_, s)
@@ -15,7 +18,7 @@ posthoc_bound <- function(p.values, S = seq_along(p.values), thr = NULL, lab = N
         # then it suffices to count the number of '0' in 'thr', cumulatively
         max_FP <- cumsum(thr[o] == 0) 
     } else {
-        max_FP <- curveMaxFP(sorted_p, thr) ## Would be faster to do 'thr[length(S)]' here. Is it correct?
+        max_FP <- curveMaxFP(sorted_p, thr)
     }
     bounds <- formatBounds(max_FP, idxs = idxs, lab = lab, what = what, all = all)
     bounds
@@ -30,19 +33,26 @@ formatBounds <- function(max_FP, idxs = seq_len(max_FP), lab = NULL,
     if (!all(what %in% what0)) {
         stop("Error in argument 'what': only the following statistics are supported: ", paste(what0, collapse = ", "))
     }
-    annot <- data.frame(x = idxs, 
-                        label = lab,
-                        row.names = NULL)
-    boundsList <- list(
-        FP = cbind(annot, stat = "FP", bound = max_FP),
-        TP = cbind(annot, stat = "TP", bound = idxs - max_FP),
-        FDP = cbind(annot, stat = "FDP", bound = max_FDP),
-        TDP = cbind(annot, stat = "TDP", bound = 1 - max_FDP))
-    boundsList <- boundsList[what]
-    if (!all) {
-        boundsList <- lapply(boundsList, FUN = function(x) x[length(idxs), ])
+    if (length(max_FP) == 0){ # output should be empty
+        mat <- matrix(NA, nrow = 0, ncol = 4)
+        colnames(mat) <- c("x", "label", "stat", "bound")
+        bounds <- as.data.frame(mat)
+    } else {
+        annot <- data.frame(x = idxs, 
+                            label = lab,
+                            row.names = NULL)
+        boundsList <- list(
+            FP = cbind(annot, stat = "FP", bound = max_FP),
+            TP = cbind(annot, stat = "TP", bound = idxs - max_FP),
+            FDP = cbind(annot, stat = "FDP", bound = max_FDP),
+            TDP = cbind(annot, stat = "TDP", bound = 1 - max_FDP))
+        boundsList <- boundsList[what]
+        if (!all) {
+            boundsList <- lapply(boundsList, FUN = function(x) x[length(idxs), ])
+        }
+        bounds <- Reduce(rbind, boundsList)
     }
-    Reduce(rbind, boundsList)
+    bounds
 }
 
 #' Plot confidence bound
@@ -136,15 +146,12 @@ plotConfCurve <- function(conf_bound, xmax, cols = NULL) {
 #' maxFP(c(head(sorted_p), tail(sorted_p)), thr)
 
 maxFP <- function(p.values, thr) {
-    size <- min(length(thr), length(p.values))
-    if (size == 0) {
+    s <- length(p.values)
+    if (s == 0) {
         return(0)
     }
-    p.values <- sort(p.values)
-    thr <- sort(thr)
     all_maxFP <- curveMaxFP(p.values, thr)
-    maxFP <- all_maxFP[length(p.values)]
-    return(maxFP)
+    all_maxFP[s]
 }
 
 
@@ -210,10 +217,13 @@ maxFDP <- function(p.values, thr) {
 #'   optimal since s is the length of the returned vector.
 
 curveMaxFP <- function(p.values, thr) {
+    s <- length(p.values)
+    if (s == 0) {
+        return(numeric(0L))
+    }
     p.values <- sort(p.values)
     thr <- sort(thr)
     
-    s <- length(p.values)
     kMax <- length(thr)
     if (s < kMax){  # truncate thr to first 's' values
         seqK <- seq(from = 1, to = s, by = 1)
