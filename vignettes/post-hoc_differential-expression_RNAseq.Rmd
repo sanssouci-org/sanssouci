@@ -176,7 +176,7 @@ To bypass these limitations, @blanchard20post-hoc have proposed a randomization-
 
 ```{r calibration, cache=TRUE}
 B <- 1000
-system.time(res <- fit(obj, B = B, alpha = alpha, family = "Simes", rowTestFUN = rowWilcoxonTests))
+res <- fit(obj, B = B, alpha = alpha, family = "Simes", rowTestFUN = rowWilcoxonTests)
 ```
 
 
