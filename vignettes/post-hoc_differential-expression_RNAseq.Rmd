@@ -142,18 +142,17 @@ bh_plot +
 ```
 
 
+## Simes posthoc bounds
 
-## Basic posthoc bounds
+Post hoc inference makes it possible to build confidence statements on the number of true/false positives within any set $S$ of genes: $S$ may be selected after seing the data (e.g., $S$ may be the set of rejections by the BH prcedure), and multiple choices of $S$ are allowed. 
 
-Post hoc inference makes it possible to build confidence statements on the number of true/false positives within any set $S$ of genes: $S$ may be selected after seing the data (e.g., $S$ may be the set of rejections by the BH prcedure), and multiple choices of $S$ are allowed. Post hoc inference has been popularized by @GS2011. 
-
+We begin by setting the target error level:
 
 ```{r basic-bounds-setup}
 alpha <- 0.1
-pvalo <- dexo$p.value
 ```
 
-### Simes bound
+Therefore, all of the statements made in this vignette are made at the `r round((1-alpha)*100)`% confidence level. 
 
 The Simes post hoc bound has been proposed by @GS2011. It is valid under the same assumptions as the Benjamini-Hochberg method for FDR control (positive dependence between null test statistics, known as PRDS for Positive Regression Dependency on a Subset of hypotheses). In the framework of @BNR:chap this bound is a direct consequence of the @simes86improved inequality. It can be applied to the `r nBH` rejections of the BH procedure as follows:
 
