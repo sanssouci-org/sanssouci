@@ -184,7 +184,7 @@ As expected from the theory, the post hoc bounds obtained after calibration by t
 
 ```{r tighter-bounds}
 resList <- list("Simes" = res_Simes,
-                "Linear" = res)
+                "Simes + calibration" = res)
 
 bounds <- sapply(resList, predict, S_BH)
 rownames(bounds) <- c("Lower bound on True Positives", "Upper bound on False Discovery Proportion")
@@ -209,7 +209,7 @@ The confidence curves obtained by calibration of the Simes and Beta families can
 
 ```{r, conf-env-plot}
 conf_bounds <- lapply(resList, predict, all = TRUE)
-cols <- c("lightgray", "black")
+cols <- c("black", "lightgray")
 p <- plotConfCurve(conf_bounds, xmax = 5000, cols = cols)
 p + geom_vline(xintercept = nBH, color = "gray", linetype = "dotted", size = 1.5) +
   geom_line(size = 1.5) + labs(title = "Wilcoxon Test")
@@ -218,7 +218,6 @@ p + geom_vline(xintercept = nBH, color = "gray", linetype = "dotted", size = 1.5
 This example illustrates the power increase obtained by calibration.
 
 # Volcano plots
-
 
 <!-- For an interactive volcano plot, see the [volcano plot shiny application]( https://shiny-iidea-sanssouci.apps.math.cnrs.fr/). -->
 
@@ -281,15 +280,15 @@ mm <- model.matrix(~0 + Grp)
 
 y <- voom(d, mm, plot = F)
 
-fit <- lmFit(y, mm)
-contr <- makeContrasts(Grp1 - Grp0, levels = colnames(coef(fit)))
-res <- contrasts.fit(fit, contr)
-res_eb <- eBayes(res)
+res_lm <- lmFit(y, mm)
+contr <- makeContrasts(Grp1 - Grp0, levels = colnames(coef(res_lm)))
+res_fit <- contrasts.fit(res_lm, contr)
+res_eb <- eBayes(res_fit)
 TT <- topTable(res_eb, sort.by = "none", number = Inf)
 ```
 
 ```{r volcano-limma}
-volcanoPlot(res_Simes, 
+volcanoPlot(res, 
             fold_changes = TT$logFC, p_values = TT$P.Value, 
             q = q, r = r)
 ```
