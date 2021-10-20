@@ -6,25 +6,24 @@ using namespace Rcpp;
 // Sorting of the colums of a matrix by ascending order
 //
 // @param X A numeric matrix.
-// @return A numeric matrix whose rows are sorted by ascending order.
+// @return A numeric matrix whose columns are sorted by ascending order.
 //
 // @export
 // [[Rcpp::export]]
 arma::mat colSort(arma::mat X) {
-    int m = X.n_rows;
-    int B = X.n_cols;
-    arma::mat Y(m, B, arma::fill::zeros);
-    for (int cc=0; cc<B; cc++) {
-        arma::colvec x = X.col(cc); 
-        std::sort(x.begin(), x.end());
-        Y.col(cc) = x;
-    }
+    arma::mat Y = sort(X);
     return Y;
 }
 
 /*** R
 A <- matrix(rnorm(15), 5, 3);
 print(A)
-B <- colSort(A);
-print(A);
+apply(A, 2, sort)
+colSort(A);
+
+# A <- matrix(rnorm(1e7), 1e4, 1e3);
+# b <- bench::mark(apply(A, 2, sort),
+#                  colSort(A), iterations = 10)
+# plot(b)
 */
+
