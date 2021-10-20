@@ -224,8 +224,8 @@ This example illustrates the power increase obtained by calibration.
 <!-- For an interactive volcano plot, see the [volcano plot shiny application]( https://shiny-iidea-sanssouci.apps.math.cnrs.fr/). -->
 
 ```{r volcano-setup}
-q <- 0.2
-r <-  0.3
+q <- 0.05
+r <-  0.5
 ```
 
 Let us assume that we are interested in genes selected by the BH procedure at level $q = `r q`$ and whose fold change is larger than $r = `r r`$ in absolute value.  The "fold change" is an estimate of the effect size of a gene. Here, it is defined as the difference between the expression medians (on the log scale) of the two groups compared. This double selection by $p$-value and fold change corresponds to two sets of genes, with positive/negative fold change, which can be represented in the following plot:
