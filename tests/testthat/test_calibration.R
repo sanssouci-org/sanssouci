@@ -3,7 +3,7 @@ context("Joint Error Rate calibration")
 test_that("Consistency of 'get_perm'", {
     m <- 5
     n <- 45
-    X <- matrix(rnorm(m*n), ncol = n, nrow = m)
+    X <- matrix(rnorm(m*n, mean = 1), ncol = n, nrow = m)
     categ <- rbinom(n, 1, 0.4)
 
     B <- 10
