@@ -1,5 +1,5 @@
 ---
-title: "Permutation-based post hoc inference for differential gene expression studies on RNAseq data"
+title: "Permutation-based post hoc inference for differential gene expression studies: RNAseq data"
 author: "Nicolas Enjalbert Courrech and Pierre Neuvial"
 date: "`r Sys.Date()`"
 output:
@@ -9,7 +9,7 @@ output:
   pdf_document: default
 bibliography: sansSouci.bib
 vignette: |
-  %\VignetteIndexEntry{Permutation-based post hoc inference for differential gene expression studies on RNAseq data}
+  %\VignetteIndexEntry{Permutation-based post hoc inference for differential gene expression studies: RNAseq data}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteDepends{sansSouci.data}
@@ -54,7 +54,7 @@ set.seed(20200924)
 
 # Motivation: a differential gene expression study
 
-We focus on differential gene expression studies in cancerology. These studies aim at identifying genes whose mean expression level differs significantly between two (or more) populations, based on a sample of gene expression measurements from individuals from these populations. Specifically, we consider a data set studied in <span style="color:red"> citation </span>.
+We focus on differential gene expression studies in cancerology. These studies aim at identifying genes whose mean expression level differs significantly between two (or more) populations, based on a sample of gene expression measurements from individuals from these populations. 
 
 ```{r load-data, message = FALSE}
 data("RNAseq_blca", package = "sansSouci.data")
@@ -63,22 +63,22 @@ groups <- ifelse(colnames(RNAseq_blca) == "III", 1, 0)
 rm(RNAseq_blca)
 ```
 
-This data set consists of gene expression measurements for  $n = `r ncol(Y)`$ patients from the Cancer Genome Atlas Urothelial Bladder Carcinoma (TCGA-BLCA) data collection. These patients are classified into two subgoups, depending on the pathologic stage (stage ii vs stage iii):
+This data set consists of gene expression measurements for  $n = `r ncol(Y)`$ patients from the Cancer Genome Atlas Urothelial Bladder Carcinoma (TCGA-BLCA) data collection (@tcga2014blca). These patients are classified into two subgoups, depending on their clinical stage (II or III):
 
 ```{r colnames}
 table(groups)
 m <- nrow(Y)
 ```
 
-The goal of this study is to understand the molecular differences at the gene expression level between the populations with a pathologic stage II and a pathologic stage III For each patient, we observe a vector of $m = `r m`$ gene expression values. 
+The goal of this study is to understand the molecular differences at the gene expression level between stage II and stage III populations. For each patient, we observe a vector of $m = `r m`$ gene expression values. 
 
 The most basic question to ask is: 
 
-> For which genes is there a difference in the mean expression level of the stage II  and stage III population? 
+> For which genes is there a difference in the mean expression level of the stage II and stage III populations? 
 
-This question can be addressed by performing one statistical test of no difference between ranks for each gene, and to define "differentially expressed" genes as those passing some significance threshold. 
+This question can be addressed by performing one statistical test per gene, and to define "differentially expressed" genes as those passing some significance threshold.
 
-Below, the Wilcoxon test for differential expression is applied to each gene. This can be done e.g. using the `sansSouci::rowWilcoxonTests` function:
+Below, we use the Wilcoxon (or Mann-Whitney) test. This is a non-parametric tests based on ranks. For each gene, we test the null hypothesis that the two populations have the same expression distribution against the alternative hypothesis that one of the two distribtions is stochastically greater than the other one.  This can be done using the `sansSouci::rowWilcoxonTests` function:
 
 ```{r row-welch-tests}
 dex <- data.frame(rowWilcoxonTests(Y, groups))
@@ -268,7 +268,7 @@ knitr::kable(tab, caption = cap)
 
 # Volcano plot using limma-voom statistics
 
-Post hoc bounds can be calculated for any gene selection. In particular, even if Wilcoxon tests have been performed *for the calibration of the post hoc bounds*, it is possible to rely on other statistics to *select genes of interest*. In this section, we illustrate this idea by making a volcano plot based on the $p$-values and log-fold changes obtained from the limma-voom methods <span style="color:red"> citation </span>:
+Post hoc bounds can be calculated for any gene selection. In particular, even if Wilcoxon tests have been performed *for the calibration of the post hoc bounds*, it is possible to rely on other statistics to *select genes of interest*. In this section, we illustrate this idea by making a volcano plot based on the $p$-values and log-fold changes obtained from the limma-voom method of @law2014voom implemented in the `limma` package  (@limma):
 
 ```{r limma}
 library(limma)
@@ -278,7 +278,7 @@ d <- calcNormFactors(d)
 Grp <- as.factor(groups)
 mm <- model.matrix(~0 + Grp)
 
-y <- voom(d, mm, plot = F)
+y <- voom(d, mm, plot = FALSE)
 
 res_lm <- lmFit(y, mm)
 contr <- makeContrasts(Grp1 - Grp0, levels = colnames(coef(res_lm)))
@@ -286,6 +286,17 @@ res_fit <- contrasts.fit(res_lm, contr)
 res_eb <- eBayes(res_fit)
 TT <- topTable(res_eb, sort.by = "none", number = Inf)
 ```
+
+The next plot that the $p$-values obtained from limma-voom and from Wilcoxon tests are consistent.
+
+```{r}
+df <- data.frame(wilcox = -log10(pval), limma = -log10(TT$P.Value))
+ggplot(df, aes(x = limma, y = wilcox)) + 
+  geom_point(color = "#10101010") + 
+  ggtitle("p-values (log-scale)")
+```
+
+Finally we obtain the volcano plot based on limma statistics.
 
 ```{r volcano-limma}
 volcanoPlot(res, 
