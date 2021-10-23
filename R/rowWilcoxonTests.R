@@ -120,7 +120,7 @@ rowWilcoxonTests <- function (mat, categ, alternative = c("two.sided", "less", "
     est <- matrix(NA_real_, nrow = m, ncol = B)
     if (dim(categ)[2] == 1){
         wx <- which(categ == 1)
-        est <- log(rowMedians(mat[, wx])+1) - log(rowMedians(mat[, -wx])+1)
+        est <- rowMedians(mat[, wx]) - rowMedians(mat[, -wx])
         stats <- as.vector(stats)
         p <- as.vector(p)
     } 
