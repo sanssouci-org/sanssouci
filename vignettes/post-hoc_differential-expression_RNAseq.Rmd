@@ -223,7 +223,7 @@ This example illustrates the power increase obtained by calibration.
 
 ```{r volcano-setup}
 q <- 0.05
-r <-  0.5
+r <-  0.25
 ```
 
 Let us assume that we are interested in genes selected by the BH procedure at level $q = `r q`$ and whose fold change is larger than $r = `r r`$ in absolute value.  The "fold change" is an estimate of the effect size of a gene. Here, it is defined as the difference between the expression medians (on the log scale) of the two groups compared. This double selection by $p$-value and fold change corresponds to two sets of genes, with positive/negative fold change, which can be represented in the following plot:
@@ -290,17 +290,19 @@ TT <- topTable(res_eb, sort.by = "none", number = Inf)
 
 The next plot that the $p$-values obtained from limma-voom and from Wilcoxon tests are consistent.
 
-```{r}
+```{r compare-p-values}
 df <- data.frame(wilcox = -log10(pval), limma = -log10(TT$P.Value))
 ggplot(df, aes(x = limma, y = wilcox)) + 
   geom_point(color = "#10101010") + 
   ggtitle("p-values (log-scale)")
 ```
 
+
 Finally we obtain the volcano plot based on limma statistics.
 
 ```{r volcano-limma}
-volcanoPlot(res, 
+r <- 1
+volcanoPlot(res_Simes, 
             fold_changes = TT$logFC, p_values = TT$P.Value, 
             q = q, r = r)
 ```
