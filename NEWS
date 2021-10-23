@@ -2,6 +2,11 @@
 Package: sansSouci
 ==================
 
+Version 0.12.4 [2021-10-23]
+
+* Add vignette for differential analysis of RNAseq data
+* Fix 'R CMD check' github action  (by upgrading to current rlib version)
+
 Version 0.12.3 [2021-10-11]
 
 * 'colSort' becomes a wrapper around the C++ function arma::sort (which natively handles matrices).
