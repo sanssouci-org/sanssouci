@@ -5,7 +5,8 @@
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/pneuvial/sanssouci/workflows/R-CMD-check/badge.svg)](https://github.com/pneuvial/sanssouci/actions)
+[![R build
+status](https://github.com/pneuvial/sanssouci/workflows/R-CMD-check/badge.svg)](https://github.com/pneuvial/sanssouci/actions)
 [![Coverage
 Status](https://codecov.io/gh/pneuvial/sanssouci/branch/develop/graph/badge.svg)](https://codecov.io/github/pneuvial/sanssouci/branch/develop)
 <!-- badges: end -->
@@ -16,11 +17,13 @@ possibly user-defined and/or data-driven sets of hypotheses.
 
 Typical use cases include:
 
-  - **Differential gene expression studies in genomics**: see
-    [differential expression
-    vignette](https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html)
-    and run [volcano plot shiny
-    app](https://shiny-iidea-sanssouci.apps.math.cnrs.fr/)
+  - **Differential gene expression (DGE) studies in genomics**:
+      - see vignettes dedicated to [microarray
+        data](https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html)
+        and [RNAseq
+        data](https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression_RNAseq.html)
+      - run [volcano plot shiny
+        app](https://shiny-iidea-sanssouci.apps.math.cnrs.fr/)
   - **fMRI studies in neuroimaging**: see [fMRI
     vignette](https://pneuvial.github.io/sanssouci/articles/post-hoc_fMRI.html).
 
