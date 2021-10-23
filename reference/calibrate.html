@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.4</span>
       </span>
     </div>
 
@@ -108,6 +108,9 @@
     </li>
     <li>
       <a href="../articles/post-hoc_differential-expression.html">Permutation-based post hoc inference for differential gene expression studies</a>
+    </li>
+    <li>
+      <a href="../articles/post-hoc_differential-expression_RNAseq.html">Permutation-based post hoc inference for differential gene expression studies: RNAseq data</a>
     </li>
     <li>
       <a href="../articles/post-hoc_fMRI.html">Permutation-based post hoc inference for fMRI studies</a>
@@ -146,10 +149,10 @@
 
     <pre class="usage"><span class='fu'>calibrate</span><span class='op'>(</span>
   <span class='va'>p0</span>,
+  <span class='va'>m</span>,
   <span class='va'>alpha</span>,
   family <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Linear"</span>, <span class='st'>"Beta"</span>, <span class='st'>"Simes"</span><span class='op'>)</span>,
-  m <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>p0</span><span class='op'>)</span>,
-  K <span class='op'>=</span> <span class='va'>m</span>,
+  K <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>p0</span><span class='op'>)</span>,
   p <span class='op'>=</span> <span class='cn'>NULL</span>,
   max_steps_down <span class='op'>=</span> <span class='fl'>10L</span>,
   piv_stat0 <span class='op'>=</span> <span class='cn'>NULL</span>
@@ -157,10 +160,10 @@
 
 <span class='fu'>calibrate0</span><span class='op'>(</span>
   <span class='va'>p0</span>,
+  <span class='va'>m</span>,
   <span class='va'>alpha</span>,
   family <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Linear"</span>, <span class='st'>"Beta"</span>, <span class='st'>"Simes"</span><span class='op'>)</span>,
-  m <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>p0</span><span class='op'>)</span>,
-  K <span class='op'>=</span> <span class='va'>m</span>,
+  K <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>p0</span><span class='op'>)</span>,
   piv_stat0 <span class='op'>=</span> <span class='cn'>NULL</span>
 <span class='op'>)</span></pre>
 
@@ -169,9 +172,11 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>p0</th>
-      <td><p>A <code>m x B</code> matrix. The j-th ow corresponds to a permutation
-of the input <code>categ</code>: for each hypothesis i, <code>p0[i,j]</code> is the
-p-value of the test of the i-th null hypothesis on the permuted categories</p></td>
+      <td><p>A matrix with B rows. Each row is a vector of null p-values</p></td>
+    </tr>
+    <tr>
+      <th>m</th>
+      <td><p>The total number of tested hypotheses</p></td>
     </tr>
     <tr>
       <th>alpha</th>
@@ -182,10 +187,6 @@ p-value of the test of the i-th null hypothesis on the permuted categories</p></
       <td><p>A character value, the name of a threshold family. Should be
 one of "Linear", "Beta" and "Simes", or "Oracle". "Linear" and "Simes" families are
 identical.</p></td>
-    </tr>
-    <tr>
-      <th>m</th>
-      <td><p>The total numer of tested hypotheses. Defaults to <code>p0</code></p></td>
     </tr>
     <tr>
       <th>K</th>
@@ -242,8 +243,8 @@ Statistics</em>, 48(3), 1281-1303.</p>
 
 <span class='va'>null_groups</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>replicate</a></span><span class='op'>(</span><span class='va'>B</span>, <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='va'>categ</span><span class='op'>)</span><span class='op'>)</span>
 <span class='va'>p0</span> <span class='op'>&lt;-</span> <span class='fu'><a href='rowWelchTests.html'>rowWelchTests</a></span><span class='op'>(</span><span class='va'>X</span>, <span class='va'>null_groups</span><span class='op'>)</span><span class='op'>$</span><span class='va'>p.value</span>
-<span class='va'>calib0</span> <span class='op'>&lt;-</span> <span class='fu'>calibrate0</span><span class='op'>(</span><span class='va'>p0</span>, alpha <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span> <span class='co'># single step</span>
-<span class='va'>calib</span> <span class='op'>&lt;-</span> <span class='fu'>calibrate</span><span class='op'>(</span><span class='va'>p0</span>, alpha <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span>
+<span class='va'>calib0</span> <span class='op'>&lt;-</span> <span class='fu'>calibrate0</span><span class='op'>(</span><span class='va'>p0</span>, <span class='va'>m</span>, alpha <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span> <span class='co'># single step</span>
+<span class='va'>calib</span> <span class='op'>&lt;-</span> <span class='fu'>calibrate</span><span class='op'>(</span><span class='va'>p0</span>, <span class='va'>m</span>, alpha <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span>
 <span class='va'>calib</span><span class='op'>$</span><span class='va'>lambda</span> <span class='op'>&gt;=</span> <span class='va'>calib0</span><span class='op'>$</span><span class='va'>lambda</span> <span class='co'># probably very close here (null data)</span>
 </div><div class='output co'>#&gt;  10% 
 #&gt; TRUE </div><div class='input'>
@@ -260,8 +261,9 @@ Statistics</em>, 48(3), 1281-1303.</p>
 <span class='va'>p0</span> <span class='op'>&lt;-</span> <span class='va'>perm</span><span class='op'>$</span><span class='va'>p.value</span>
 
 <span class='va'>alpha</span> <span class='op'>&lt;-</span> <span class='fl'>0.1</span>
-<span class='va'>calib_L</span> <span class='op'>&lt;-</span> <span class='fu'>calibrate</span><span class='op'>(</span><span class='va'>p0</span>, <span class='va'>alpha</span>, family <span class='op'>=</span> <span class='st'>"Linear"</span><span class='op'>)</span>
-<span class='va'>calib_B</span> <span class='op'>&lt;-</span> <span class='fu'>calibrate</span><span class='op'>(</span><span class='va'>p0</span>, <span class='va'>alpha</span>, family <span class='op'>=</span> <span class='st'>"Beta"</span>, K <span class='op'>=</span> <span class='fl'>100</span><span class='op'>)</span>
+<span class='va'>m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>X</span><span class='op'>)</span>
+<span class='va'>calib_L</span> <span class='op'>&lt;-</span> <span class='fu'>calibrate</span><span class='op'>(</span><span class='va'>p0</span>, <span class='va'>m</span>, <span class='va'>alpha</span>, family <span class='op'>=</span> <span class='st'>"Linear"</span><span class='op'>)</span>
+<span class='va'>calib_B</span> <span class='op'>&lt;-</span> <span class='fu'>calibrate</span><span class='op'>(</span><span class='va'>p0</span>, <span class='va'>m</span>, <span class='va'>alpha</span>, family <span class='op'>=</span> <span class='st'>"Beta"</span>, K <span class='op'>=</span> <span class='fl'>100</span><span class='op'>)</span>
 <span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fu'><a href='rowWelchTests.html'>rowWelchTests</a></span><span class='op'>(</span><span class='va'>X</span>, <span class='va'>categ</span><span class='op'>)</span><span class='op'>$</span><span class='va'>p.value</span>
 
 <span class='co'>## post hoc bounds (these are functions!)</span>

@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.4</span>
       </span>
     </div>
 
@@ -69,6 +69,9 @@
       <a href="articles/post-hoc_differential-expression.html">Permutation-based post hoc inference for differential gene expression studies</a>
     </li>
     <li>
+      <a href="articles/post-hoc_differential-expression_RNAseq.html">Permutation-based post hoc inference for differential gene expression studies: RNAseq data</a>
+    </li>
+    <li>
       <a href="articles/post-hoc_fMRI.html">Permutation-based post hoc inference for fMRI studies</a>
     </li>
   </ul>
@@ -102,7 +105,13 @@
 <p>Typical use cases include:</p>
 <ul>
 <li>
-<strong>Differential gene expression studies in genomics</strong>: see <a href="https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html">differential expression vignette</a> and run <a href="https://shiny-iidea-sanssouci.apps.math.cnrs.fr/">volcano plot shiny app</a>
+<strong>Differential gene expression (DGE) studies in genomics</strong>:
+<ul>
+<li>see vignettes dedicated to <a href="https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html">microarray data</a> and <a href="https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression_RNAseq.html">RNAseq data</a>
+</li>
+<li>run <a href="https://shiny-iidea-sanssouci.apps.math.cnrs.fr/">volcano plot shiny app</a>
+</li>
+</ul>
 </li>
 <li>
 <strong>fMRI studies in neuroimaging</strong>: see <a href="https://pneuvial.github.io/sanssouci/articles/post-hoc_fMRI.html">fMRI vignette</a>.</li>
@@ -163,12 +172,8 @@
 <!-- ``` -->
 <p>You can install the development version from <a href="https://github.com/">GitHub</a> with:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># install.packages("devtools")</span>
-<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"pneuvial/sanssouci"</span><span class="op">)</span></code></pre></div>
-</div>
-<div id="references" class="section level2">
-<h2 class="hasAnchor">
-<a href="#references" class="anchor"></a>References</h2>
+<code class="sourceCode R"><span class="co"># install.packages("remotes")</span>
+<span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"pneuvial/sanssouci"</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
   </div>

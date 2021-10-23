@@ -75,7 +75,7 @@ to permutation p-values and to a reference family" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.4</span>
       </span>
     </div>
 
@@ -111,6 +111,9 @@ to permutation p-values and to a reference family" />
     </li>
     <li>
       <a href="../articles/post-hoc_differential-expression.html">Permutation-based post hoc inference for differential gene expression studies</a>
+    </li>
+    <li>
+      <a href="../articles/post-hoc_differential-expression_RNAseq.html">Permutation-based post hoc inference for differential gene expression studies: RNAseq data</a>
     </li>
     <li>
       <a href="../articles/post-hoc_fMRI.html">Permutation-based post hoc inference for fMRI studies</a>
@@ -149,24 +152,22 @@ to permutation p-values and to a reference family</h1>
 to permutation p-values and to a reference family</p>
     </div>
 
-    <pre class="usage"><span class='fu'>get_pivotal_stat</span><span class='op'>(</span><span class='va'>p0</span>, t_inv <span class='op'>=</span> <span class='va'>t_inv_linear</span>, m <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>p0</span><span class='op'>)</span>, K <span class='op'>=</span> <span class='va'>m</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>get_pivotal_stat</span><span class='op'>(</span><span class='va'>p0</span>, <span class='va'>m</span>, t_inv <span class='op'>=</span> <span class='va'>t_inv_linear</span>, K <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>p0</span><span class='op'>)</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>p0</th>
-      <td><p>A <code>m x B</code> matrix. The j-th ow corresponds to a permutation
-of the input <code>categ</code>: for each hypothesis i, <code>p0[i,j]</code> is the
-p-value of the test of the i-th null hypothesis on the permuted categories</p></td>
+      <td><p>A matrix with B rows. Each row is a vector of null p-values</p></td>
+    </tr>
+    <tr>
+      <th>m</th>
+      <td><p>The total number of tested hypotheses</p></td>
     </tr>
     <tr>
       <th>t_inv</th>
       <td><p>An inverse threshold function (same I/O as 't_inv_linear')</p></td>
-    </tr>
-    <tr>
-      <th>m</th>
-      <td><p>The total numer of tested hypotheses. Defaults to <code>p0</code></p></td>
     </tr>
     <tr>
       <th>K</th>
@@ -194,7 +195,7 @@ Statistics</em>, 48(3), 1281-1303.</p>
 <span class='va'>B</span> <span class='op'>&lt;-</span> <span class='fl'>10</span>
 <span class='va'>null_groups</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>replicate</a></span><span class='op'>(</span><span class='va'>B</span>, <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='va'>categ</span><span class='op'>)</span><span class='op'>)</span>
 <span class='va'>p0</span> <span class='op'>&lt;-</span> <span class='fu'><a href='rowWelchTests.html'>rowWelchTests</a></span><span class='op'>(</span><span class='va'>X</span>, <span class='va'>null_groups</span><span class='op'>)</span><span class='op'>$</span><span class='va'>p.value</span>
-<span class='va'>pivStat</span> <span class='op'>&lt;-</span> <span class='fu'>get_pivotal_stat</span><span class='op'>(</span><span class='va'>p0</span><span class='op'>)</span>
+<span class='va'>pivStat</span> <span class='op'>&lt;-</span> <span class='fu'>get_pivotal_stat</span><span class='op'>(</span><span class='va'>p0</span>, <span class='va'>m</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/stats/quantile.html'>quantile</a></span><span class='op'>(</span><span class='va'>pivStat</span>, <span class='fl'>0.2</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;       20% 
 #&gt; 0.1741211 </div><div class='input'>

@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.4</span>
       </span>
     </div>
 
@@ -69,6 +69,9 @@
       <a href="../articles/post-hoc_differential-expression.html">Permutation-based post hoc inference for differential gene expression studies</a>
     </li>
     <li>
+      <a href="../articles/post-hoc_differential-expression_RNAseq.html">Permutation-based post hoc inference for differential gene expression studies: RNAseq data</a>
+    </li>
+    <li>
       <a href="../articles/post-hoc_fMRI.html">Permutation-based post hoc inference for fMRI studies</a>
     </li>
   </ul>
@@ -97,7 +100,7 @@
       <h1 data-toc-skip>IIDEA: Interactive Inference for Differential Expression Analyses</h1>
                         <h4 class="author">Nicolas Enjalbert-Courrech and Pierre Neuvial</h4>
             
-            <h4 class="date">2021-07-27</h4>
+            <h4 class="date">2021-10-23</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/pneuvial/sanssouci/blob/master/vignettes/IIDEA.Rmd"><code>vignettes/IIDEA.Rmd</code></a></small>
       <div class="hidden name"><code>IIDEA.Rmd</code></div>
@@ -215,7 +218,7 @@
 <a href="#running-the-app-on-a-local-computer" class="anchor"></a>Running the app on a local computer</h1>
 <p>IIDEA is deployed at . No login is required, and the data sets uploaded by users are not stored on the server side. The source code of the R package  which contains the source files for IIDEA, is available at . This allows users to run IIDEA on a local machine or deploy it on their own servers if desired. Once the ‘remotes’ package is installed, IIDEA can be run locally from an R session by executing the following commands:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html">install_github</a></span><span class="op">(</span><span class="st">"pneuvial/sanssouci"</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"pneuvial/sanssouci"</span><span class="op">)</span>
 <span class="fu">shiny</span><span class="fu">::</span><span class="fu">runApp</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"shiny-examples/volcano-plot"</span>, package <span class="op">=</span> <span class="st">"sansSouci"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>By default, only the Leukemia data set is available for a local installation. To add the nine other public data sets, you may run the following code:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">

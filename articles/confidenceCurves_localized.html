@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.4</span>
       </span>
     </div>
 
@@ -69,6 +69,9 @@
       <a href="../articles/post-hoc_differential-expression.html">Permutation-based post hoc inference for differential gene expression studies</a>
     </li>
     <li>
+      <a href="../articles/post-hoc_differential-expression_RNAseq.html">Permutation-based post hoc inference for differential gene expression studies: RNAseq data</a>
+    </li>
+    <li>
       <a href="../articles/post-hoc_fMRI.html">Permutation-based post hoc inference for fMRI studies</a>
     </li>
   </ul>
@@ -97,7 +100,7 @@
       <h1 data-toc-skip>Confidence curves for structured hypotheses</h1>
                         <h4 class="author">G. Durand, G. Blanchard, P. Neuvial, E. Roquain</h4>
             
-            <h4 class="date">2021-07-27</h4>
+            <h4 class="date">2021-10-23</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/pneuvial/sanssouci/blob/master/vignettes/confidenceCurves_localized.Rmd"><code>vignettes/confidenceCurves_localized.Rmd</code></a></small>
       <div class="hidden name"><code>confidenceCurves_localized.Rmd</code></div>
@@ -260,37 +263,40 @@ Figure 11 in Durand et al.
 <a href="#session-information" class="anchor"></a>Session information</h2>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code>## R version 4.1.0 (2021-05-18)
-## Platform: x86_64-apple-darwin17.0 (64-bit)
-## Running under: macOS Catalina 10.15.7
+<pre><code>## R version 4.1.1 (2021-08-10)
+## Platform: x86_64-pc-linux-gnu (64-bit)
+## Running under: Ubuntu 20.04.3 LTS
 ## 
 ## Matrix products: default
-## BLAS:   /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRblas.dylib
-## LAPACK: /Library/Frameworks/R.framework/Versions/4.1/Resources/lib/libRlapack.dylib
+## BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.9.0
+## LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.9.0
 ## 
 ## locale:
-## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+##  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
+##  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
+##  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
+## [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
 ## 
 ## attached base packages:
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] ggplot2_3.3.5    sansSouci_0.12.1
+## [1] ggplot2_3.3.5    sansSouci_0.12.4
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] Rcpp_1.0.7         RColorBrewer_1.1-2 pillar_1.6.1       compiler_4.1.0    
-##  [5] highr_0.9          tools_4.1.0        digest_0.6.27      evaluate_0.14     
-##  [9] memoise_2.0.0      lifecycle_1.0.0    tibble_3.1.3       gtable_0.3.0      
-## [13] lattice_0.20-44    pkgconfig_2.0.3    rlang_0.4.11       Matrix_1.3-3      
-## [17] yaml_2.2.1         pkgdown_1.6.1      xfun_0.24          fastmap_1.1.0     
-## [21] withr_2.4.2        stringr_1.4.0      knitr_1.33         vctrs_0.3.8       
-## [25] generics_0.1.0     desc_1.3.0         fs_1.5.0           systemfonts_1.0.2 
-## [29] rprojroot_2.0.2    grid_4.1.0         glue_1.4.2         R6_2.5.0          
-## [33] textshaping_0.3.5  fansi_0.5.0        rmarkdown_2.9      farver_2.1.0      
-## [37] magrittr_2.0.1     scales_1.1.1       htmltools_0.5.1.1  matrixStats_0.60.0
-## [41] ellipsis_0.3.2     colorspace_2.0-2   labeling_0.4.2     ragg_1.1.3        
-## [45] utf8_1.2.2         stringi_1.7.3      munsell_0.5.0      cachem_1.0.5      
-## [49] crayon_1.4.1</code></pre>
+##  [1] Rcpp_1.0.7         RColorBrewer_1.1-2 pillar_1.6.4       compiler_4.1.1    
+##  [5] jquerylib_0.1.4    highr_0.9          tools_4.1.1        digest_0.6.28     
+##  [9] tibble_3.1.5       evaluate_0.14      memoise_2.0.0      lifecycle_1.0.1   
+## [13] gtable_0.3.0       lattice_0.20-45    pkgconfig_2.0.3    rlang_0.4.12      
+## [17] Matrix_1.3-4       yaml_2.2.1         pkgdown_1.6.1      xfun_0.27         
+## [21] fastmap_1.1.0      withr_2.4.2        stringr_1.4.0      knitr_1.36        
+## [25] vctrs_0.3.8        desc_1.4.0         generics_0.1.0     fs_1.5.0          
+## [29] systemfonts_1.0.3  rprojroot_2.0.2    grid_4.1.1         glue_1.4.2        
+## [33] R6_2.5.1           textshaping_0.3.6  fansi_0.5.0        rmarkdown_2.11    
+## [37] farver_2.1.0       magrittr_2.0.1     ellipsis_0.3.2     scales_1.1.1      
+## [41] htmltools_0.5.2    matrixStats_0.61.0 colorspace_2.0-2   labeling_0.4.2    
+## [45] ragg_1.1.3         utf8_1.2.2         stringi_1.7.5      munsell_0.5.0     
+## [49] cachem_1.0.6       crayon_1.4.1</code></pre>
 </div>
 <div id="references" class="section level2 unnumbered">
 <h2 class="hasAnchor">

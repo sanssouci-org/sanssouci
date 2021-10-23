@@ -73,7 +73,13 @@
     <loc>https://pneuvial.github.io/sanssouci/reference/get_pivotal_stat.html</loc>
   </url>
   <url>
+    <loc>https://pneuvial.github.io/sanssouci/reference/maxFDP.html</loc>
+  </url>
+  <url>
     <loc>https://pneuvial.github.io/sanssouci/reference/maxFP.html</loc>
+  </url>
+  <url>
+    <loc>https://pneuvial.github.io/sanssouci/reference/minTDP.html</loc>
   </url>
   <url>
     <loc>https://pneuvial.github.io/sanssouci/reference/minTP.html</loc>
@@ -137,6 +143,9 @@
   </url>
   <url>
     <loc>https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html</loc>
+  </url>
+  <url>
+    <loc>https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression_RNAseq.html</loc>
   </url>
   <url>
     <loc>https://pneuvial.github.io/sanssouci/articles/post-hoc_fMRI.html</loc>

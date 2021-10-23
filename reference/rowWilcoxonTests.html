@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.4</span>
       </span>
     </div>
 
@@ -108,6 +108,9 @@
     </li>
     <li>
       <a href="../articles/post-hoc_differential-expression.html">Permutation-based post hoc inference for differential gene expression studies</a>
+    </li>
+    <li>
+      <a href="../articles/post-hoc_differential-expression_RNAseq.html">Permutation-based post hoc inference for differential gene expression studies: RNAseq data</a>
     </li>
     <li>
       <a href="../articles/post-hoc_fMRI.html">Permutation-based post hoc inference for fMRI studies</a>
@@ -188,10 +191,9 @@ p-values for the tests</p></dd>
 
 <p>A list containing the following components:</p><dl>
 <dt>statistic</dt><dd><p>the value of the statistics</p></dd>
-<dt>parameter</dt><dd><p>the degrees of freedom for the statistics</p></dd>
 <dt>p.value</dt><dd><p>the p-values for the tests</p></dd>
-<dt>estimate</dt><dd><p>the median difference between groups</p></dd>
-</dl><p>Each of these elements is a matrix of size <code>m x B</code>, coerced to a vector of length <code><a href='https://rdrr.io/r/base/nrow.html'>nrow(mat)</a></code> if <code>B=1</code></p>
+<dt>estimate</dt><dd><p>the median difference between groups (only calculated if <code>B=1</code> for computational efficiency)</p></dd>
+</dl><p>Each of these elements is a matrix of size <code>m x B</code>, coerced to a vector of length <code>m</code> if <code>B=1</code></p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>This function performs <code>m x B</code> Wilcoxon T tests on
@@ -218,30 +220,38 @@ described in the <code><a href='https://rdrr.io/r/stats/wilcox.test.html'>wilcox
 <span class='va'>p</span> <span class='op'>&lt;-</span> <span class='fl'>200</span>
 <span class='va'>n</span> <span class='op'>&lt;-</span> <span class='fl'>50</span>
 <span class='va'>mat</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='va'>p</span><span class='op'>*</span><span class='va'>n</span><span class='op'>)</span>, ncol <span class='op'>=</span> <span class='va'>n</span><span class='op'>)</span>
-<span class='va'>cls</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>1</span><span class='op'>)</span>, times <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>n</span><span class='op'>/</span><span class='fl'>2</span>, <span class='va'>n</span><span class='op'>/</span><span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/system.time.html'>system.time</a></span><span class='op'>(</span><span class='va'>fwt</span> <span class='op'>&lt;-</span> <span class='fu'>rowWilcoxonTests</span><span class='op'>(</span><span class='va'>mat</span>, categ <span class='op'>=</span> <span class='va'>cls</span>, alternative <span class='op'>=</span> <span class='st'>"two.sided"</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;    user  system elapsed 
-#&gt;   0.003   0.000   0.003 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>fwt</span><span class='op'>)</span>
+<span class='va'>cls</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>1</span><span class='op'>)</span>, each <span class='op'>=</span> <span class='va'>n</span><span class='op'>/</span><span class='fl'>2</span><span class='op'>)</span>
+
+<span class='va'>stats</span> <span class='op'>&lt;-</span> <span class='fu'>rowWilcoxonTests</span><span class='op'>(</span><span class='va'>mat</span>, categ <span class='op'>=</span> <span class='va'>cls</span>, alternative <span class='op'>=</span> <span class='st'>"two.sided"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>stats</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; List of 3
-#&gt;  $ statistic: num [1:200] 299 325 306 384 277 324 328 380 289 376 ...
 #&gt;  $ p.value  : num [1:200] 0.801 0.816 0.907 0.168 0.497 ...
+#&gt;  $ statistic: num [1:200] 299 325 306 384 277 324 328 380 289 376 ...
 #&gt;  $ estimate : num [1:200] -0.0789 -0.0922 -0.1116 0.487 -0.2801 ...</div><div class='input'>
-<span class='co'># compare with ordinary wilcox.test:</span>
-<span class='fu'><a href='https://rdrr.io/r/base/system.time.html'>system.time</a></span><span class='op'>(</span><span class='va'>pwt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/t.html'>t</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>sapply</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='va'>p</span>, FUN<span class='op'>=</span><span class='kw'>function</span><span class='op'>(</span><span class='va'>ii</span><span class='op'>)</span> <span class='op'>{</span>
-  <span class='va'>wt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/wilcox.test.html'>wilcox.test</a></span><span class='op'>(</span><span class='va'>mat</span><span class='op'>[</span><span class='va'>ii</span>, <span class='va'>cls</span><span class='op'>==</span><span class='fl'>1</span><span class='op'>]</span>, <span class='va'>mat</span><span class='op'>[</span><span class='va'>ii</span>, <span class='va'>cls</span><span class='op'>==</span><span class='fl'>0</span><span class='op'>]</span>, alternative <span class='op'>=</span> <span class='st'>"two.sided"</span><span class='op'>)</span>
-  <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span>statistic <span class='op'>=</span> <span class='va'>wt</span><span class='op'>[[</span><span class='st'>"statistic"</span><span class='op'>]</span><span class='op'>]</span>, p.value <span class='op'>=</span> <span class='va'>wt</span><span class='op'>[[</span><span class='st'>"p.value"</span><span class='op'>]</span><span class='op'>]</span><span class='op'>)</span>
-<span class='op'>}</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;    user  system elapsed 
-#&gt;   0.045   0.000   0.045 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>abs</a></span><span class='op'>(</span><span class='va'>fwt</span><span class='op'>$</span><span class='va'>p.value</span><span class='op'>-</span><span class='va'>pwt</span><span class='op'>[</span>, <span class='st'>"p.value"</span><span class='op'>]</span><span class='op'>)</span> <span class='op'>&lt;</span> <span class='fl'>1e-10</span><span class='op'>)</span>  <span class='co'>## same results</span>
-</div><div class='output co'>#&gt; [1] FALSE</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>abs</a></span><span class='op'>(</span><span class='va'>fwt</span><span class='op'>$</span><span class='va'>statistic</span><span class='op'>-</span><span class='va'>pwt</span><span class='op'>[</span>, <span class='st'>"statistic.W"</span><span class='op'>]</span><span class='op'>)</span> <span class='op'>&lt;</span> <span class='fl'>1e-10</span><span class='op'>)</span>  <span class='co'>## same results</span>
-</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
-<span class='co'># with several permutations</span>
-<span class='va'>B</span> <span class='op'>&lt;-</span> <span class='fl'>50</span>
-<span class='va'>cls_perm</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>replicate</a></span><span class='op'>(</span><span class='va'>B</span>, <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='va'>cls</span><span class='op'>)</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/system.time.html'>system.time</a></span><span class='op'>(</span><span class='va'>fwt</span> <span class='op'>&lt;-</span> <span class='fu'>rowWilcoxonTests</span><span class='op'>(</span><span class='va'>mat</span>, categ <span class='op'>=</span> <span class='va'>cls_perm</span>, alternative <span class='op'>=</span> <span class='st'>"two.sided"</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;    user  system elapsed 
-#&gt;   0.135   0.011   0.145 </div><div class='input'>
-</div></pre>
+<span class='co'># permutation of class labels</span>
+<span class='va'>cls_perm</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>replicate</a></span><span class='op'>(</span><span class='fl'>11</span>, <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='va'>cls</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>stats</span> <span class='op'>&lt;-</span> <span class='fu'>rowWilcoxonTests</span><span class='op'>(</span><span class='va'>mat</span>, categ <span class='op'>=</span> <span class='va'>cls_perm</span>, alternative <span class='op'>=</span> <span class='st'>"two.sided"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>stats</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; List of 3
+#&gt;  $ p.value  : num [1:200, 1:11] 0.8159 0.3038 0.2604 0.0952 0.1806 ...
+#&gt;  $ statistic: num [1:200, 1:11] 325 366 254 399 382 239 256 433 221 279 ...
+#&gt;  $ estimate : num [1:200, 1:11] NA NA NA NA NA NA NA NA NA NA ...</div><div class='input'>
+<span class='co'># several unrelated contrasts</span>
+<span class='va'>cls2</span> <span class='op'>&lt;-</span> <span class='va'>cls</span>
+<span class='va'>cls</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span><span class='op'>]</span> <span class='op'>&lt;-</span> <span class='fl'>1</span> <span class='co'># varying nx, ny</span>
+<span class='va'>cls_mat</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span><span class='op'>(</span><span class='va'>cls</span>, <span class='va'>cls2</span><span class='op'>)</span>
+<span class='va'>stats</span> <span class='op'>&lt;-</span> <span class='fu'>rowWilcoxonTests</span><span class='op'>(</span><span class='va'>mat</span>, categ <span class='op'>=</span> <span class='va'>cls_mat</span>, alternative <span class='op'>=</span> <span class='st'>"two.sided"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>stats</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; List of 3
+#&gt;  $ p.value  : num [1:200, 1:2] 0.783 0.597 0.641 0.219 0.197 ...
+#&gt;   ..- attr(*, "dimnames")=List of 2
+#&gt;   .. ..$ : NULL
+#&gt;   .. ..$ : chr [1:2] "cls" "cls2"
+#&gt;  $ statistic: num [1:200, 1:2] 276 288 285 321 201 284 282 241 253 350 ...
+#&gt;   ..- attr(*, "dimnames")=List of 2
+#&gt;   .. ..$ : NULL
+#&gt;   .. ..$ : chr [1:2] "cls" "cls2"
+#&gt;  $ estimate : num [1:200, 1:2] NA NA NA NA NA NA NA NA NA NA ...</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
