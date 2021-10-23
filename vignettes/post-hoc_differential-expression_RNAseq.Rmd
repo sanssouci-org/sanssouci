@@ -58,7 +58,7 @@ We focus on differential gene expression studies in cancerology. These studies a
 
 ```{r load-data, message = FALSE}
 data("RNAseq_blca", package = "sansSouci.data")
-Y <- RNAseq_blca
+Y <- log(1 + RNAseq_blca)
 groups <- ifelse(colnames(RNAseq_blca) == "III", 1, 0)
 rm(RNAseq_blca)
 ```
@@ -273,7 +273,8 @@ Post hoc bounds can be calculated for any gene selection. In particular, even if
 ```{r limma}
 library(limma)
 library(edgeR)
-d <- DGEList(Y)
+X <- exp(Y) - 1  # back to linear scale
+d <- DGEList(X)
 d <- calcNormFactors(d)
 Grp <- as.factor(groups)
 mm <- model.matrix(~0 + Grp)
