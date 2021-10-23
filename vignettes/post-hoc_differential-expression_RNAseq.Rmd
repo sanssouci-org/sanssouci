@@ -1,0 +1,327 @@
+---
+title: "Permutation-based post hoc inference for differential gene expression studies: RNAseq data"
+author: "Nicolas Enjalbert Courrech and Pierre Neuvial"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    number_sections: yes
+    toc: yes
+  pdf_document: default
+bibliography: sansSouci.bib
+vignette: |
+  %\VignetteIndexEntry{Permutation-based post hoc inference for differential gene expression studies: RNAseq data}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteDepends{sansSouci.data}
+---
+  
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+collapse = TRUE,
+comment = "#>",
+fig.width=8,
+fig.height=6, 
+cache = TRUE
+)
+```
+
+
+This vignette illustrate the relevance of permutation-based post hoc bounds on false positives for the differential analysis of (bulk) RNA sequencing (RNAseq) data. After showing the output of a classical differential analysis based on False Discovery Rate control we illustrate the application of basic post-hoc bounds derived from probabilistic inequalities. 
+Then, we introduce more powerful post hoc methods (introduced by @blanchard20post-hoc) that yield tighter bounds by adapting to unknown dependence by randomization. Finally we demonstrate the use of these methods on two applications of post hoc methods:
+
+- confidence curves (envelopes) for the true or false positives
+- statistical inference on volcano plots
+
+The methods described in this vignette are described in detail in the book chapter @BNR:chap and in the paper @blanchard20post-hoc. A shiny application for volcano plots is also available from  https://shiny-iidea-sanssouci.apps.math.cnrs.fr/.
+
+
+```{r install-r-packages, results='hide', message=FALSE, eval=FALSE}
+require("ggplot2") || install.packages("ggplot2")
+require("sansSouci") || remotes::install_github("pneuvial/sanssouci@develop")
+```
+
+
+```{r load-r-packages, results='hide', message=FALSE}
+library("ggplot2")
+library("sansSouci")
+```
+
+Set the seed of the random number generator for numerical reproducibility of the results:
+```{r set-seed}
+set.seed(20200924)
+```
+
+
+# Motivation: a differential gene expression study
+
+We focus on differential gene expression studies in cancerology. These studies aim at identifying genes whose mean expression level differs significantly between two (or more) populations, based on a sample of gene expression measurements from individuals from these populations. 
+
+```{r load-data, message = FALSE}
+data("RNAseq_blca", package = "sansSouci.data")
+Y <- log(1 + RNAseq_blca)
+groups <- ifelse(colnames(RNAseq_blca) == "III", 1, 0)
+rm(RNAseq_blca)
+```
+
+This data set consists of gene expression measurements for  $n = `r ncol(Y)`$ patients from the Cancer Genome Atlas Urothelial Bladder Carcinoma (TCGA-BLCA) data collection (@tcga2014blca). These patients are classified into two subgoups, depending on their clinical stage (II or III):
+
+```{r colnames}
+table(groups)
+m <- nrow(Y)
+```
+
+The goal of this study is to understand the molecular differences at the gene expression level between stage II and stage III populations. For each patient, we observe a vector of $m = `r m`$ gene expression values. 
+
+The most basic question to ask is: 
+
+> For which genes is there a difference in the mean expression level of the stage II and stage III populations? 
+
+This question can be addressed by performing one statistical test per gene, and to define "differentially expressed" genes as those passing some significance threshold.
+
+Below, we use the Wilcoxon (or Mann-Whitney) test. This is a non-parametric tests based on ranks. For each gene, we test the null hypothesis that the two populations have the same expression distribution against the alternative hypothesis that one of the two distribtions is stochastically greater than the other one.  This can be done using the `sansSouci::rowWilcoxonTests` function:
+
+```{r row-welch-tests}
+dex <- data.frame(rowWilcoxonTests(Y, groups))
+pval <- dex[["p.value"]]
+```
+
+We plot a histogram of the corresponding $p$-values:
+
+```{r hist}
+hist(pval, probability = TRUE, breaks = 20,
+     xlab = "p-value", main = "p-value distributon")
+```
+
+As expected, the distribution presents a large number of small $p$-values (which include signals, i.e. differentially expressed genes) mixed with uniformly distributed $p$-values (corresponding to non-differentially expressed genes). 
+
+
+## Multiple testing correction: False Discovery Rate control 
+
+The state of the art approach to large-scale multiple testing is to control the False Discovery Rate (FDR), which is the expected proportion of wrongly selected genes (false positives) among all selected genes @benjamini95controlling. The most widely used method to control this risk is the Benjamini-Hochberg (BH) procedure, which has been shown to control the FDR when the hypotheses corresponding to the non-differentially expressed genes are independent @benjamini95controlling or satisfy a specific type of positive dependence called Positive Regression Dependence on the Subset (PRDS) $\mathcal{H}_0$ of truly non-differentially expressed genes @benjamini01control.
+
+```{r bh}
+q <- 0.05
+adjp_BH <- p.adjust(pval, method = "BH")
+dex$adjp <- adjp_BH
+S_BH <- which(adjp_BH <= q)
+nBH <- length(S_BH)
+nBH
+```
+
+The application of the BH procedure at level $q = `r q`$ is illustrated in the figures below (all genes are displayed in the first one, second one is a zoom on the top genes):
+
+```{r bh-plot}
+my_col <- "#FF000080"
+dexo <- dex[order(pval), ]  ## order genes by increasing p-values
+dexo[["gene_order"]] <- 1:nrow(dex)
+
+bh_plot <- ggplot(dexo, aes(x = gene_order, y = p.value)) + 
+  geom_line() +
+  xlab("Number of top genes") + ylab("Ordered p-value") +
+  geom_abline(slope = 1/m, intercept = 0, linetype = 2, size = 1) +
+  geom_abline(slope = q/m, color = my_col, size = 2) +
+  # geom_segment(aes(x = nBH, y = 0, yend = q*nBH/m, xend = nBH), linetype = "dotted") +
+  # geom_segment(aes(x = 0, y = q*nBH/m, xend = nBH, yend = q*nBH/m), linetype = "dotted") +
+  geom_abline(slope = 0, intercept = q, linetype = "dotted", color = my_col, size = 2) +
+  theme_bw() +
+  theme(axis.text = element_text(size = 14), 
+        axis.title = element_text(size = 18))  
+#geom_text(x = 0, y = q, label = expression(alpha), color = my_col)
+
+bh_plot
+```
+
+
+```{r bh-plot-zoom}
+xmax <- nBH*2.5
+ymax <- dexo$p.value[xmax]
+bh_plot + 
+  xlim(1, xmax) + ylim(0, ymax) +
+  geom_segment(aes(x = nBH, y = 0, yend = q*nBH/m, xend = nBH), linetype = "dotted") +
+  geom_segment(aes(x = 1, y = q*nBH/m, xend = nBH, yend = q*nBH/m), linetype = "dotted", col = 1)
+```
+
+
+## Simes posthoc bounds
+
+Post hoc inference makes it possible to build confidence statements on the number of true/false positives within any set $S$ of genes: $S$ may be selected after seing the data (e.g., $S$ may be the set of rejections by the BH prcedure), and multiple choices of $S$ are allowed. 
+
+We begin by setting the target error level:
+
+```{r basic-bounds-setup}
+alpha <- 0.1
+```
+
+Therefore, all of the statements made in this vignette are made at the `r round((1-alpha)*100)`% confidence level. 
+
+The Simes post hoc bound has been proposed by @GS2011. It is valid under the same assumptions as the Benjamini-Hochberg method for FDR control (positive dependence between null test statistics, known as PRDS for Positive Regression Dependency on a Subset of hypotheses). In the framework of @BNR:chap this bound is a direct consequence of the @simes86improved inequality. It can be applied to the `r nBH` rejections of the BH procedure as follows:
+
+```{r, Simes}
+obj <- SansSouci(Y = Y, groups = groups)
+res_Simes <- fit(obj, B = 0, family = "Simes", alpha = alpha, rowTestFUN = rowWilcoxonTests) ## B=0 => no calibration!
+FP_Simes <- predict(res_Simes, S_BH, what = "FP")
+```
+
+The Simes bound implies that with probability larger than `r 1-alpha`, the false discovery proportion among the genes selected by the BH procedure at level $q= `r q`$ is upper bounded by `r ceiling(FP_Simes/nBH*100)/100`. 
+
+# Tighter confidence bounds by adaptation to unknown dependence 
+
+As discussed in @blanchard20post-hoc, the above-described bound has two major limitations, being a consequence of the Simes inequality:
+
+- It is known to be valid only under certain positive dependence assumptions (PRDS) on the joint $p$-value distribution. Although the PRDS assumption is generally accepted in the case of differential expression studies (which justifies the application of the BH procedure itself), it has not been formally proved to hold in this case.
+
+- It is not *adaptive* to the specific type of dependence at hand for a particular data set.
+
+To bypass these limitations, @blanchard20post-hoc have proposed a randomization-based procedure known as $\lambda$-calibration, which yields tighter bounds that are adapted to the dependency observed in the data set at hand. A closely related approach has been proposed by @HSG2019. In the case of two-sample tests, this calibration can be achieved by permutation of class labels:
+
+```{r calibration, cache=TRUE}
+B <- 1000
+res <- fit(obj, B = B, alpha = alpha, family = "Simes", rowTestFUN = rowWilcoxonTests)
+```
+
+
+As expected from the theory, the post hoc bounds obtained after calibration by these methods is much tighter than the Simes bound:
+
+```{r tighter-bounds}
+resList <- list("Simes" = res_Simes,
+                "Simes + calibration" = res)
+
+bounds <- sapply(resList, predict, S_BH)
+rownames(bounds) <- c("Lower bound on True Positives", "Upper bound on False Discovery Proportion")
+knitr::kable(t(bounds), digits = 2)
+```
+
+In the next two sections we illustrate the use of these improved bounds in order to build
+
+- confidence curves for the true or false positives
+- confidence statements for volcano plots
+
+
+# Confidence curves on "top-$k$" lists
+
+In the absence of prior information on genes, a natural idea is to rank them by decreasing statistical significance, and a natural question to ask is: 
+
+> Can we provide a lower confidence curve on the number (or proportion) of truly differentially expressed genes among the most significant genes?
+
+We illustrate the use of post-hoc methods to provide this type of information. More specifcally, we build confidence statements on the number of true/false positives within the top $k$ most significant genes in a differential gene expression study, where $k$ may be defined by the user after seing the data, and multiple choices of $k$ are allowed. 
+
+The confidence curves obtained by calibration of the Simes and Beta families can be compared graphically to the (parametric) Simes curve that can be obtained from @GS2011:
+
+```{r, conf-env-plot}
+conf_bounds <- lapply(resList, predict, all = TRUE)
+cols <- c("black", "lightgray")
+p <- plotConfCurve(conf_bounds, xmax = 5000, cols = cols)
+p + geom_vline(xintercept = nBH, color = "gray", linetype = "dotted", size = 1.5) +
+  geom_line(size = 1.5) + labs(title = "Wilcoxon Test")
+```
+
+This example illustrates the power increase obtained by calibration.
+
+# Volcano plots
+
+<!-- For an interactive volcano plot, see the [volcano plot shiny application]( https://shiny-iidea-sanssouci.apps.math.cnrs.fr/). -->
+
+```{r volcano-setup}
+q <- 0.05
+r <-  0.25
+```
+
+Let us assume that we are interested in genes selected by the BH procedure at level $q = `r q`$ and whose fold change is larger than $r = `r r`$ in absolute value.  The "fold change" is an estimate of the effect size of a gene. Here, it is defined as the difference between the expression medians (on the log scale) of the two groups compared. This double selection by $p$-value and fold change corresponds to two sets of genes, with positive/negative fold change, which can be represented in the following plot:
+
+
+```{r volcano-Simes}
+volcanoPlot(res_Simes, q = q, r = r)
+```
+
+
+This type of plot is called a "volcano plot" @CC2003. Post hoc inference makes it possible to obtain statistical guarantees on selections such as the ones represented in the above figure. 
+
+The substantial gain in power offered by the above-described calibration is illustrated as follows for the Simes reference family:
+
+```{r volcano-Simes-cal}
+volcanoPlot(res, q = q, r = r)
+```
+
+The comparison between these bounds may be summarized by the following Table:
+
+```{r compare-volcano-bounds}
+fc <- foldChanges(res)
+S_pos <- which(fc >= r & adjp_BH <= q)
+S_neg <- which(fc <= -r & adjp_BH <= q)
+S_all <- union(S_pos, S_neg)
+
+all_bounds <- function(S, resList) {
+  c(length(S), sapply(resList, predict, S, "TP"))
+}
+tab <- rbind(all_bounds(S_pos, resList), 
+             all_bounds(S_neg, resList),
+             all_bounds(S_all, resList))
+plab <- paste("BH-adjusted p.value <", q)
+lab <- c(paste(plab, "&", " fold change  > ", r),
+         paste(plab, "&", " fold change  < ", -r),
+         paste(plab, "&", "|fold change| > ", r))
+tab <- cbind(lab, tab)
+cap <- "Post hoc bounds on true positives in user-defined gene selections"
+#knitr::kable(tab, caption = cap, format = "latex")
+knitr::kable(tab, caption = cap)
+```
+
+# Volcano plot using limma-voom statistics
+
+Post hoc bounds can be calculated for any gene selection. In particular, even if Wilcoxon tests have been performed *for the calibration of the post hoc bounds*, it is possible to rely on other statistics to *select genes of interest*. In this section, we illustrate this idea by making a volcano plot based on the $p$-values and log-fold changes obtained from the limma-voom method of @law2014voom implemented in the `limma` package  (@limma):
+
+```{r limma}
+library(limma)
+library(edgeR)
+X <- exp(Y) - 1  # back to linear scale
+d <- DGEList(X)
+d <- calcNormFactors(d)
+Grp <- as.factor(groups)
+mm <- model.matrix(~0 + Grp)
+
+y <- voom(d, mm, plot = FALSE)
+
+res_lm <- lmFit(y, mm)
+contr <- makeContrasts(Grp1 - Grp0, levels = colnames(coef(res_lm)))
+res_fit <- contrasts.fit(res_lm, contr)
+res_eb <- eBayes(res_fit)
+TT <- topTable(res_eb, sort.by = "none", number = Inf)
+```
+
+The next plot that the $p$-values obtained from limma-voom and from Wilcoxon tests are consistent.
+
+```{r compare-p-values}
+df <- data.frame(wilcox = -log10(pval), limma = -log10(TT$P.Value))
+ggplot(df, aes(x = limma, y = wilcox)) + 
+  geom_point(color = "#10101010") + 
+  ggtitle("p-values (log-scale)")
+```
+
+
+Finally we obtain the volcano plot based on limma statistics.
+
+```{r volcano-limma}
+r <- 1
+volcanoPlot(res_Simes, 
+            fold_changes = TT$logFC, p_values = TT$P.Value, 
+            q = q, r = r)
+```
+
+
+# Session information
+
+```{r session-info}
+sessionInfo()
+```
+
+# Reproducibility
+
+To re-build this vignette from its source, use: 
+
+```{r reproducibility, eval = FALSE}
+rmarkdown::render("post-hoc_differential-expression_RNAseq.Rmd", output_format = "pdf_document")
+# To keep intermediate files, add option 'clean = FALSE'
+rmarkdown::render("post-hoc_differential-expression_RNAseq.Rmd", output_format = "html_document")
+```
+
+# References

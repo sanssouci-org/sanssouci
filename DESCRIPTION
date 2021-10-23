@@ -20,8 +20,10 @@ Imports:
 LinkingTo: Rcpp, RcppArmadillo
 Suggests:
     cherry,
+    edgeR,
     ggplot2,
     knitr,
+    limma,
     markdown,
     rmarkdown,
     RColorBrewer,
