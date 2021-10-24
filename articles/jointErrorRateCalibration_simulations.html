@@ -172,7 +172,7 @@
 ##      (of size:   K=500)
 ## 
 ## Output:
-##  Calibration parameter:  lambda=0.3027539</code></pre>
+##  Calibration parameter:  lambda=0.327838</code></pre>
 <p>The output of the calibration is the following <code>SansSouci</code> object. In particular:</p>
 <ul>
 <li>
@@ -194,8 +194,8 @@
 <p>Because we are under positive equi-correlation, we expect <span class="math inline">\(\lambda &gt; \alpha\)</span> for the Simes family.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cal</span><span class="op">$</span><span class="va">output</span><span class="op">$</span><span class="va">lambda</span></code></pre></div>
-<pre><code>##       20% 
-## 0.3027539</code></pre>
+<pre><code>##      20% 
+## 0.327838</code></pre>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cal</span><span class="op">$</span><span class="va">output</span><span class="op">$</span><span class="va">lambda</span> <span class="op">&gt;</span> <span class="va">alpha</span></code></pre></div>
 <pre><code>##  20% 
@@ -212,9 +212,9 @@
 ## 1 1 Simes   TP     1
 ## 2 2 Simes   TP     2
 ## 3 3 Simes   TP     3
-## 4 4 Simes   TP     3
-## 5 5 Simes   TP     3
-## 6 6 Simes   TP     3</code></pre>
+## 4 4 Simes   TP     4
+## 5 5 Simes   TP     5
+## 6 6 Simes   TP     6</code></pre>
 <p>We compare it to the true number of false positives among the most significant items, and to the Simes bound without calibration</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cal0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html">fit</a></span><span class="op">(</span><span class="va">obj</span>, alpha <span class="op">=</span> <span class="va">alpha</span>, B <span class="op">=</span> <span class="fl">0</span>, family <span class="op">=</span> <span class="st">"Simes"</span><span class="op">)</span>
@@ -260,7 +260,7 @@
 ##      (of size:   K=500)
 ## 
 ## Output:
-##  Calibration parameter:  lambda=0.3455428</code></pre>
+##  Calibration parameter:  lambda=0.2271331</code></pre>
 <p>Again we expect <span class="math inline">\(\lambda &gt; \alpha\)</span>.</p>
 <div id="confidence-curves" class="section level3">
 <h3 class="hasAnchor">
