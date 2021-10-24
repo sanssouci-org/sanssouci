@@ -546,9 +546,6 @@ predict.SansSouci <- function(object, S = seq_len(nHyp(object)),
     p.values <- pValues(object)
     thr <- thresholds(object)
     lab <- label(object)
-    if (max(S) > nHyp(object)) {
-        stop("'S' is not a subset of hypotheses")
-    }
     bounds <- posthoc_bound(p.values, S = S, thr = thr, lab = lab, what = what, all = all)
     if (!all) {
         bounds <- bounds[, "bound"]

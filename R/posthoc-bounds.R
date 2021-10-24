@@ -6,13 +6,21 @@ posthoc_bound <- function(p.values, S = seq_along(p.values), thr = NULL, lab = N
     if (is.null(lab)) {
         stop("Argument 'lab' must be non NULL")
     }
+    if (any(is.na(p.values)) || min(p.values) < 0 || max(p.values) > 1) {
+        stop("Argument 'p.values' should only contain elements between 0 and 1")
+    }
+    if ((length(S) > 0) && (min(S) <= 0 || max(S) > length(p.values))) {
+        stop("Argument 'S' should be a subset of indices between 1 and ", length(p.values))
+    }
+
     s <- length(S)
     idxs <- seq_len(s)
-    max_FP <- rep(NA_integer_, s)
     pS <- p.values[S]
+
     o <- order(pS)
     sorted_p <- pS[o]
     
+    max_FP <- rep(NA_integer_, s)
     if (length(thr) == length(p.values) && all(thr %in% c(0,1))) {
         # assume 'thr' is in fact the "truth" <=> Oracle thresholds
         # then it suffices to count the number of '0' in 'thr', cumulatively

@@ -7,6 +7,55 @@ categ <- sim$categ
 thr <- t_linear(0.2, seq_len(m), m)
 tests <- rowWelchTests(X, categ)
 pval <- sort(tests$p.value)
+whats <- c("TP", "FP", "TDP", "FDP")
+
+test_that("I/O of 'posthoc_bound'", {
+    nb_stats <- ceiling(runif(1)*4)
+    what <- sample(whats, nb_stats)
+
+    # subset of arbitrary size
+    s <- sample(m, 1) 
+    S <- sample(m, s)
+    bounds <- posthoc_bound(p.values = pval, S = S, thr = thr, lab = "method", what = what)
+    expect_equal(nrow(bounds), nb_stats)
+    bounds <- posthoc_bound(p.values = pval, S = S, thr = thr, lab = "method", what = what, all = TRUE)
+    expect_equal(nrow(bounds), nb_stats * s)
+    
+    # subset of size 1
+    s <- 1
+    S <- sample(m, s)
+    bounds <- posthoc_bound(p.values = pval, S = S, thr = thr, lab = "method", what = what)
+    expect_equal(nrow(bounds), nb_stats)
+    bounds <- posthoc_bound(p.values = pval, S = S, thr = thr, lab = "method", what = what, all = TRUE)
+    expect_equal(nrow(bounds), nb_stats * s)
+
+    # empty subset
+    S <- integer(0L)
+    bounds <- posthoc_bound(p.values = pval, S = S, thr = thr, lab = "method")
+    expect_equal(nrow(bounds), 0)
+
+    # not a subset
+    S <- m + 1
+    expect_error(posthoc_bound(p.values = pval, S = S, thr = thr, lab = "method"),
+                 regexp = "Argument 'S' should be a subset of indices between 1 and ")
+    S <- 1 + 0:m
+    expect_error(posthoc_bound(p.values = pval, S = S, thr = thr, lab = "method"),
+                 regexp = "Argument 'S' should be a subset of indices between 1 and ")
+    
+    # invalid 'p.values'
+    pval_wrong <- pval
+    pval_wrong[1] <- NA
+    expect_error(posthoc_bound(p.values = pval_wrong, thr = thr, lab = "method"), 
+                 regexp = "Argument 'p.values' should only contain elements between 0 and 1")
+
+    pval_wrong[1] <- -1
+    expect_error(posthoc_bound(p.values = pval_wrong, thr = thr, lab = "method"), 
+                 regexp = "Argument 'p.values' should only contain elements between 0 and 1")
+    
+    pval_wrong[1] <- 2
+    expect_error(posthoc_bound(p.values = pval_wrong, thr = thr, lab = "method"), 
+                 regexp = "Argument 'p.values' should only contain elements between 0 and 1")
+})
 
 test_that("maxFP: Upper bound on the number of false positives", {
     expect_error(maxFP_low(pval, rev(thr)))  ## thr is not sorted descendingly
@@ -32,11 +81,6 @@ test_that("maxFP: Upper bound on the number of false positives", {
     expect_equal(curveMaxFP(numeric(0L), thr), numeric(0))
     
     expect_equal(curveMaxFP(numeric(0L), thr), numeric(0))
-
-    bounds <- posthoc_bound(p.values = pval, S = 1:m, thr = thr, lab = "method")
-    bounds <- posthoc_bound(p.values = pval, S = 1, thr = thr, lab = "method")
-    bounds <- posthoc_bound(p.values = pval, S = numeric(0), thr = thr, lab = "method")
-    expect_equal(nrow(bounds), 0)
 })
 
 
