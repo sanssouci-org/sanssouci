@@ -9,7 +9,7 @@ maxFDP(p.values, thr)
 \arguments{
 \item{p.values}{A vector of p-values for the selected items}
 
-\item{thr}{A vector of non-decreasing k-FWER-controlling thresholds}
+\item{thr}{A vector of non-decreasing JER-controlling thresholds}
 }
 \value{
 Upper bound on the proportion of false discoveries in the selection

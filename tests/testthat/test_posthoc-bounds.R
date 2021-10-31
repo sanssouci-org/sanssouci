@@ -31,7 +31,9 @@ test_that("I/O of 'posthoc_bound'", {
 
     # empty subset
     S <- integer(0L)
-    bounds <- posthoc_bound(p.values = pval, S = S, thr = thr, lab = "method")
+    bounds <- posthoc_bound(p.values = pval, S = S, thr = thr, lab = "method", what = what)
+    expect_equal(nrow(bounds), nb_stats)
+    bounds <- posthoc_bound(p.values = pval, S = S, thr = thr, lab = "method", what = what, all = TRUE)
     expect_equal(nrow(bounds), 0)
 
     # not a subset

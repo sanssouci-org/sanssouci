@@ -41,25 +41,31 @@ formatBounds <- function(max_FP, idxs = seq_len(max_FP), lab = NULL,
     if (!all(what %in% what0)) {
         stop("Error in argument 'what': only the following statistics are supported: ", paste(what0, collapse = ", "))
     }
-    if (length(max_FP) == 0){ # output should be empty
-        mat <- matrix(NA, nrow = 0, ncol = 4)
-        colnames(mat) <- c("x", "label", "stat", "bound")
-        bounds <- as.data.frame(mat)
-    } else {
-        annot <- data.frame(x = idxs, 
-                            label = lab,
-                            row.names = NULL)
-        boundsList <- list(
-            FP = cbind(annot, stat = "FP", bound = max_FP),
-            TP = cbind(annot, stat = "TP", bound = idxs - max_FP),
-            FDP = cbind(annot, stat = "FDP", bound = max_FDP),
-            TDP = cbind(annot, stat = "TDP", bound = 1 - max_FDP))
-        boundsList <- boundsList[what]
-        if (!all) {
-            boundsList <- lapply(boundsList, FUN = function(x) x[length(idxs), ])
+    if (length(max_FP) == 0) {
+        if (all) {   # output should be empty (no subsets of positive size)
+            mat <- matrix(NA, nrow = 0, ncol = 4)
+            colnames(mat) <- c("x", "label", "stat", "bound")
+            bounds <- as.data.frame(mat)
+            return(bounds)
+        } else {     # output should not be empty (number of FP in empty set is 0)
+            idxs <- 0
+            max_FP <- 0 # number of FP in empty set is 0
+            max_FDP <- 0 # FDP in empty set is 0
         }
-        bounds <- Reduce(rbind, boundsList)
     }
+    annot <- data.frame(x = idxs, 
+                        label = lab,
+                        row.names = NULL)
+    boundsList <- list(
+        FP = cbind(annot, stat = "FP", bound = max_FP),
+        TP = cbind(annot, stat = "TP", bound = idxs - max_FP),
+        FDP = cbind(annot, stat = "FDP", bound = max_FDP),
+        TDP = cbind(annot, stat = "TDP", bound = 1 - max_FDP))
+    boundsList <- boundsList[what]
+    if (!all) {
+        boundsList <- lapply(boundsList, FUN = function(x) x[length(idxs), ])
+    }
+    bounds <- Reduce(rbind, boundsList)
     bounds
 }
 
@@ -127,7 +133,7 @@ plotConfCurve <- function(conf_bound, xmax, cols = NULL) {
 #' Upper bound for the number of false discoveries in a selection
 #' 
 #' @param p.values A vector of p-values for the selected items
-#' @param thr A vector of non-decreasing k-FWER-controlling thresholds
+#' @param thr A vector of non-decreasing JER-controlling thresholds
 #' @return A post hoc upper bound on the number of false discoveries in the selection
 #' @references Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc confidence bounds on false positives using reference families. Annals of Statistics, 48(3), 1281-1303.
 #' @export
