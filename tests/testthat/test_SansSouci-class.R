@@ -150,7 +150,7 @@ test_that("Consistency of output of 'bound.SansSouci'", {
 })    
 
 
-test_that("'bound.SansSouci' reproduces the results of 'curveMaxFP'", {
+test_that("'predict.SansSouci' reproduces the results of 'curveMaxFP'", {
     m <- 54
     n <- 132
     
@@ -169,4 +169,43 @@ test_that("'bound.SansSouci' reproduces the results of 'curveMaxFP'", {
                                  thr = thresholds(res))
     FPb <- predict(res, what = "FP", all = TRUE)$bound
     expect_identical(FPb, FP)
+})
+
+test_that("Correctness of Oracle predictions", {
+    m <- 54
+    pi0 <- 0.5
+    m0 <- m * pi0
+    m1 <- m - m0
+    n <- 132
+    
+    alpha <- 0.05
+    obj <- SansSouciSim(m = m, rho = 0, n = n, 
+                        pi0 = pi0, SNR = 10, prob = 0.5)
+    res_oracle <- fit(obj, alpha = alpha, family = "Oracle")
+    FP <- predict(res_oracle, what = "FP", all = TRUE)$bound
+    expect_equal(FP, c(rep(0, m1), 1:m0))
+    
+    # random selection of m/2 hypotheses should contain at least 
+    # one true and one false positive with overwhelming proba
+    S <- sample(m, m/2)
+    FP <- predict(res_oracle, S = S, what = "FP")
+    expect_lt(FP, length(S))
+    expect_gt(FP, 0)
+
+    # selection of first 10 hyps in the order of p-values
+    # should contain only signal 
+    p_values <- pValues(res_oracle)
+    S <- head(order(p_values), 10)
+    FP <- predict(res_oracle, S = S, what = "FP")
+    expect_equal(FP, 0)
+
+    # selection of last 10 hyps in the order of p-values
+    # should contain only noise
+    p_values <- pValues(res_oracle)
+    S <- tail(order(p_values), 10)
+    FP <- predict(res_oracle, S = S, what = "FP")
+    expect_equal(FP, length(S))
+    
+    FP <- predict(res_oracle, S = integer(0L), what = "FP")
+    expect_equal(FP, 0)
 })

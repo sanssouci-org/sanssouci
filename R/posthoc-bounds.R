@@ -24,7 +24,7 @@ posthoc_bound <- function(p.values, S = seq_along(p.values), thr = NULL, lab = N
     if (length(thr) == length(p.values) && all(thr %in% c(0,1))) {
         # assume 'thr' is in fact the "truth" <=> Oracle thresholds
         # then it suffices to count the number of '0' in 'thr', cumulatively
-        max_FP <- cumsum(thr[o] == 0) 
+        max_FP <- cumsum(thr[S[o]] == 0) 
     } else {
         max_FP <- curveMaxFP(sorted_p, thr)
     }
