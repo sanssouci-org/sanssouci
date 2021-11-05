@@ -2,8 +2,9 @@
 Package: sansSouci
 ==================
 
-Version 0.12.4 [2021-10-31]
+Version 0.12.4 [2021-11-05]
 
+* Update CITATION (book chapter in Handbook of Multiple Comparisons)
 * Add tests for corner cases in posthoc_bounds
 * Unskip tests for 'rowWilcoxonTests'
 * Add vignette for differential analysis of RNAseq data

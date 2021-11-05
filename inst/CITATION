@@ -8,30 +8,33 @@ citEntry(entry="Manual",
          title = paste("sansSouci:", title),
          author   = personList(as.person("Pierre Neuvial"),
                                as.person("Guillermo Durand"),
-                               as.person("Nicolas Enjalbert-Courrech"),
-                               as.person("Marie Perrot-Dockès")),
+                               as.person("Nicolas Enjalbert-Courrech")),
          year = year,
          note = vers,
          url =  "https://pneuvial.github.io/sanssouci",
          textVersion =
-         paste("Pierre Neuvial, Guillermo Durand, Nicolas Enjalbert-Courrech and Marie Perrot-Dockès (",
+         paste("Pierre Neuvial, Guillermo Durand and Nicolas Enjalbert-Courrech (",
                year,
                "). sansSouci: ",
                title, ". ",
                vers, ". https://pneuvial.github.io/sanssouci", sep=""))
 
-
 citEntry(
-  entry    = "Misc",
-  title    = "On agnostic post hoc approaches to false positive control",
-  author   = personList(as.person("Gilles Blanchard"),
+  entry     = "InBook",
+  title     = "On agnostic post hoc approaches to false positive control",
+  author    = personList(as.person("Gilles Blanchard"),
                              as.person("Pierre Neuvial"),
                              as.person("Etienne Roquain")),
-  year     = 2021,
-  url      = "https://hal.archives-ouvertes.fr/hal-02320543",
-  note     = "To appear in Handbook of Multiple Comparisons",
-  textVersion = "Blanchard, G., Neuvial, P., & Roquain, E. (2020). On agnostic post hoc approaches to false positive control. To appear in Handbook of Multiple Comparisons."
-  )
+  year      = 2021,
+  url       = "https://hal.archives-ouvertes.fr/hal-02320543",
+  booktitle = "Handbook of Multiple Comparisons",
+  chapter   = 9,
+  publisher = "Chapman and Hall/CRC ",
+  editor    = personList(as.person("Xinping Cui"),
+                             as.person("Thorsten Dickhaus"),
+                             as.person("Ying Ding"),
+                             as.person("Jason C. Hsu")),
+  textVersion = "Blanchard, G., Neuvial, P., & Roquain, E. (2021). On agnostic post hoc approaches to false positive control. In 'Handbook of Multiple Comparisons', edited by Xinping Cui, Thorsten Dickhaus, Ying Ding, Jason C. Hsu. Chapman & Hall/CRC")
 
 citEntry(
   entry    = "Article",
