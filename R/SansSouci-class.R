@@ -315,6 +315,9 @@ fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
                           max_steps_down = 10L, K = nHyp(object), 
                           force = FALSE,
                           verbose = FALSE, ...) {
+    if (mode(alpha) != "numeric" || alpha < 0 || alpha > 1 ) {
+        stop("Argument 'alpha' should be a numeric value in [0,1]")
+    } 
     alternative <- match.arg(alternative)
     family <- match.arg(family)
     if (family == "Oracle") {

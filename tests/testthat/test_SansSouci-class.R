@@ -72,6 +72,10 @@ test_that("Correctness of elements of fitted  'SansSouci' object", {
     expect_gte(output$lambda, 0)
     expect_lte(output$lambda, 1)
     expect_gte(output$steps_down, 0)
+    
+    expect_error(fit(obj, alpha = "alpha"))
+    expect_error(fit(obj, alpha = "alpha"))
+    expect_error(fit(obj))
 })
 
 

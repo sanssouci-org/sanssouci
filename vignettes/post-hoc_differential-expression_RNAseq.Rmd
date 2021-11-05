@@ -58,7 +58,7 @@ We focus on differential gene expression studies in cancerology. These studies a
 
 ```{r load-data, message = FALSE}
 data("RNAseq_blca", package = "sansSouci.data")
-Y <- log(1 + RNAseq_blca)
+Y <- RNAseq_blca
 groups <- ifelse(colnames(RNAseq_blca) == "III", 1, 0)
 rm(RNAseq_blca)
 ```
@@ -78,7 +78,28 @@ The most basic question to ask is:
 
 This question can be addressed by performing one statistical test per gene, and to define "differentially expressed" genes as those passing some significance threshold.
 
-Below, we use the Wilcoxon (or Mann-Whitney) test. This is a non-parametric tests based on ranks. For each gene, we test the null hypothesis that the two populations have the same expression distribution against the alternative hypothesis that one of the two distribtions is stochastically greater than the other one.  This can be done using the `sansSouci::rowWilcoxonTests` function:
+Below, we use the Wilcoxon rank sum (or Mann-Whitney) test for comparing two independent samples, a non-parametric test based on ranks. For each gene, we test the null hypothesis that the two populations have the same expression distribution against the alternative hypothesis that one of the two distribtions is stochastically greater than the other one.  This can be done using the `sansSouci::rowWilcoxonTests` function:
+
+changes obtained from the limma-voom method of @law2014voom implemented in the `limma` package  (@limma):
+
+```{r limma-voom}
+library(limma)
+library(edgeR)
+X <- exp(Y) - 1  # back to linear scale
+d <- DGEList(X)
+d <- calcNormFactors(d)
+Grp <- as.factor(groups)
+mm <- model.matrix(~0 + Grp)
+
+y <- voom(d, mm, plot = FALSE)
+
+res_lm <- lmFit(y, mm)
+contr <- makeContrasts(Grp1 - Grp0, levels = colnames(coef(res_lm)))
+res_fit <- contrasts.fit(res_lm, contr)
+res_eb <- eBayes(res_fit)
+TT <- topTable(res_eb, sort.by = "none", number = Inf)
+```
+
 
 ```{r row-welch-tests}
 dex <- data.frame(rowWilcoxonTests(Y, groups))
