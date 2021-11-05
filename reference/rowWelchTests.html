@@ -204,7 +204,7 @@ alternative approach. Biometrika, <em>38</em>, 330-336</p>
 <span class='r-in'><span class='va'>categ</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>1</span><span class='op'>)</span>, times<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>27</span>, <span class='va'>n</span><span class='op'>-</span><span class='fl'>27</span><span class='op'>)</span><span class='op'>)</span></span>
 <span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/system.time.html'>system.time</a></span><span class='op'>(</span><span class='va'>fwt</span> <span class='op'>&lt;-</span> <span class='fu'>rowWelchTests</span><span class='op'>(</span><span class='va'>mat</span>, <span class='va'>categ</span>, alternative <span class='op'>=</span> <span class='st'>"greater"</span><span class='op'>)</span><span class='op'>)</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>    user  system elapsed </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   0.001   0.000   0.002 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   0.002   0.000   0.002 </span>
 <span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>fwt</span><span class='op'>)</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> List of 4</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>  $ statistic: num [1:300] -1.603 -0.744 1.619 0.596 0.896 ...</span>
@@ -217,7 +217,7 @@ alternative approach. Biometrika, <em>38</em>, 330-336</p>
 <span class='r-in'>   <span class='fu'><a href='https://rdrr.io/r/stats/t.test.html'>t.test</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>[</span><span class='va'>categ</span><span class='op'>==</span><span class='fl'>1</span><span class='op'>]</span>, <span class='va'>x</span><span class='op'>[</span><span class='va'>categ</span><span class='op'>==</span><span class='fl'>0</span><span class='op'>]</span>, alternative <span class='op'>=</span> <span class='st'>"greater"</span><span class='op'>)</span><span class='op'>$</span><span class='va'>p.value</span></span>
 <span class='r-in'><span class='op'>}</span><span class='op'>)</span><span class='op'>)</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>    user  system elapsed </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   0.041   0.000   0.041 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   0.070   0.000   0.071 </span>
 <span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>abs</a></span><span class='op'>(</span><span class='va'>fwt</span><span class='op'>$</span><span class='va'>p.value</span><span class='op'>-</span><span class='va'>pwt</span><span class='op'>)</span> <span class='op'>&lt;</span> <span class='fl'>1e-10</span><span class='op'>)</span>  <span class='co'>## same results</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> [1] TRUE</span>
 <span class='r-in'></span>
@@ -226,7 +226,7 @@ alternative approach. Biometrika, <em>38</em>, 330-336</p>
 <span class='r-in'><span class='va'>categ_perm</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>replicate</a></span><span class='op'>(</span><span class='va'>B</span>, <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='va'>categ</span><span class='op'>)</span><span class='op'>)</span></span>
 <span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/system.time.html'>system.time</a></span><span class='op'>(</span><span class='va'>fwt_perm</span> <span class='op'>&lt;-</span> <span class='fu'>rowWelchTests</span><span class='op'>(</span><span class='va'>mat</span>, <span class='va'>categ_perm</span>, alternative <span class='op'>=</span> <span class='st'>"greater"</span><span class='op'>)</span><span class='op'>)</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>    user  system elapsed </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>   0.015   0.000   0.015 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   0.019   0.000   0.018 </span>
 <span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>fwt_perm</span><span class='op'>)</span></span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> List of 4</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>  $ statistic: num [1:300, 1:100] -0.65 -1.26 -1.73 -2.8 0.75 ...</span>
@@ -246,7 +246,7 @@ alternative approach. Biometrika, <em>38</em>, 330-336</p>
 
       <footer>
       <div class="copyright">
-  <p>Developed by <a href='https://www.math.univ-toulouse.fr/~pneuvial/'>Pierre Neuvial</a>, <a href='https://durandg12.github.io/'>Guillermo Durand</a>, Nicolas Enjalbert-Courrech, <a href='https://marie-perrotdockes.github.io/'>Marie Perrot-Dockès</a>.</p>
+  <p>Developed by <a href='https://www.math.univ-toulouse.fr/~pneuvial/'>Pierre Neuvial</a>, <a href='https://durandg12.github.io/'>Guillermo Durand</a>, Nicolas Enjalbert-Courrech.</p>
 </div>
 
 <div class="pkgdown">
