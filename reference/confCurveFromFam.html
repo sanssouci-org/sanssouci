@@ -187,7 +187,7 @@ computed, among:</p><ul>
 <li><p>TP: Lower bound on the proportion of true positives in the 'x' most significant items.</p></li>
 </ul>
 
-<p>Defaults to <code><a href='https://rdrr.io/r/base/c.html'>c("TP", "FDP")</a></code></p></td>
+<p>Defaults to <code>c("TP", "FDP")</code></p></td>
     </tr>
     </table>
 
@@ -211,23 +211,25 @@ length m indicating whether each null hypothesis is true or false.</p>
     <p>Gilles Blanchard, Pierre Neuvial and Etienne Roquain</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='co'># Generate Gaussian data and perform multiple tests</span>
-<span class='va'>sim</span> <span class='op'>&lt;-</span> <span class='fu'><a href='gaussianSamples.html'>gaussianSamples</a></span><span class='op'>(</span>m <span class='op'>=</span> <span class='fl'>502</span>, rho <span class='op'>=</span> <span class='fl'>0.5</span>, n <span class='op'>=</span> <span class='fl'>100</span>, pi0 <span class='op'>=</span> <span class='fl'>0.8</span>, SNR <span class='op'>=</span> <span class='fl'>3</span>, prob <span class='op'>=</span> <span class='fl'>0.5</span><span class='op'>)</span>
-<span class='va'>rwt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='rowWelchTests.html'>rowWelchTests</a></span><span class='op'>(</span><span class='va'>sim</span><span class='op'>$</span><span class='va'>X</span>, <span class='va'>sim</span><span class='op'>$</span><span class='va'>categ</span>, alternative <span class='op'>=</span> <span class='st'>"greater"</span><span class='op'>)</span>
-
-<span class='co'># calculate, print, and plot confidence bound</span>
-<span class='va'>cb</span> <span class='op'>&lt;-</span> <span class='fu'>confCurveFromFam</span><span class='op'>(</span><span class='va'>rwt</span><span class='op'>$</span><span class='va'>p.value</span>, refFamily <span class='op'>=</span> <span class='st'>"Simes"</span>, param <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>cb</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;   x      label stat bound
-#&gt; 1 1 Simes(0.1)   TP     1
-#&gt; 2 2 Simes(0.1)   TP     2
-#&gt; 3 3 Simes(0.1)   TP     3
-#&gt; 4 4 Simes(0.1)   TP     4
-#&gt; 5 5 Simes(0.1)   TP     5
-#&gt; 6 6 Simes(0.1)   TP     6</div><div class='input'><span class='fu'><a href='plotConfCurve.html'>plotConfCurve</a></span><span class='op'>(</span><span class='va'>cb</span>, xmax <span class='op'>=</span> <span class='fl'>200</span><span class='op'>)</span> 
-</div><div class='img'><img src='confCurveFromFam-1.png' alt='' width='700' height='433' /></div><div class='input'>
-</div></pre>
+    <pre class="examples"><span class='r-in'></span>
+<span class='r-in'><span class='co'># Generate Gaussian data and perform multiple tests</span></span>
+<span class='r-in'><span class='va'>sim</span> <span class='op'>&lt;-</span> <span class='fu'><a href='gaussianSamples.html'>gaussianSamples</a></span><span class='op'>(</span>m <span class='op'>=</span> <span class='fl'>502</span>, rho <span class='op'>=</span> <span class='fl'>0.5</span>, n <span class='op'>=</span> <span class='fl'>100</span>, pi0 <span class='op'>=</span> <span class='fl'>0.8</span>, SNR <span class='op'>=</span> <span class='fl'>3</span>, prob <span class='op'>=</span> <span class='fl'>0.5</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>rwt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='rowWelchTests.html'>rowWelchTests</a></span><span class='op'>(</span><span class='va'>sim</span><span class='op'>$</span><span class='va'>X</span>, <span class='va'>sim</span><span class='op'>$</span><span class='va'>categ</span>, alternative <span class='op'>=</span> <span class='st'>"greater"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># calculate, print, and plot confidence bound</span></span>
+<span class='r-in'><span class='va'>cb</span> <span class='op'>&lt;-</span> <span class='fu'>confCurveFromFam</span><span class='op'>(</span><span class='va'>rwt</span><span class='op'>$</span><span class='va'>p.value</span>, refFamily <span class='op'>=</span> <span class='st'>"Simes"</span>, param <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>cb</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   x      label stat bound</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1 1 Simes(0.1)   TP     1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 2 2 Simes(0.1)   TP     2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 3 3 Simes(0.1)   TP     3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 4 4 Simes(0.1)   TP     4</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 5 5 Simes(0.1)   TP     5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 6 6 Simes(0.1)   TP     6</span>
+<span class='r-in'><span class='fu'><a href='plotConfCurve.html'>plotConfCurve</a></span><span class='op'>(</span><span class='va'>cb</span>, xmax <span class='op'>=</span> <span class='fl'>200</span><span class='op'>)</span> </span>
+<span class='r-plt img'><img src='confCurveFromFam-1.png' alt='' width='700' height='433' /></span>
+<span class='r-in'></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -203,45 +203,56 @@ thresholds: get thresholds" />
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>expr_ALL</span>, package <span class='op'>=</span> <span class='st'>"sansSouci.data"</span><span class='op'>)</span>
-<span class='va'>groups</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/ifelse.html'>ifelse</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>expr_ALL</span><span class='op'>)</span><span class='op'>==</span><span class='st'>"NEG"</span>, <span class='fl'>0</span>, <span class='fl'>1</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span><span class='op'>(</span><span class='va'>groups</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; groups
-#&gt;  0  1 
-#&gt; 42 37 </div><div class='input'><span class='va'>a</span> <span class='op'>&lt;-</span> <span class='fu'><a href='SansSouci.html'>SansSouci</a></span><span class='op'>(</span>Y <span class='op'>=</span> <span class='va'>expr_ALL</span>, groups <span class='op'>=</span> <span class='va'>groups</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>a</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; 'SansSouci' object:
-#&gt; 	Number of hypotheses:	 9038 
-#&gt; 	Number of observations:	 79 
-#&gt; 	2-sample data
-#&gt; </div><div class='input'><span class='fu'><a href='all-generics.html'>nHyp</a></span><span class='op'>(</span><span class='va'>a</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] 9038</div><div class='input'><span class='fu'><a href='all-generics.html'>nObs</a></span><span class='op'>(</span><span class='va'>a</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] 79</div><div class='input'><span class='fu'><a href='all-generics.html'>label</a></span><span class='op'>(</span><span class='va'>a</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; NULL</div><div class='input'>
-<span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://generics.r-lib.org/reference/fit.html'>fit</a></span><span class='op'>(</span><span class='va'>a</span>, B <span class='op'>=</span> <span class='fl'>100</span>, alpha <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span>
-<span class='fu'><a href='all-generics.html'>label</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "Simes"</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; 'SansSouci' object:
-#&gt; 	Number of hypotheses:	 9038 
-#&gt; 	Number of observations:	 79 
-#&gt; 	2-sample data
-#&gt; 
-#&gt; Parameters: 
-#&gt; 	Test function:		rowWelchTests
-#&gt; 	Number of permutations:	B=100
-#&gt; 	Significance level:	alpha=0.1
-#&gt; 	Reference family:	Simes
-#&gt; 		(of size:	K=9038)
-#&gt; 
-#&gt; Output:
-#&gt; 	Calibration parameter:	lambda=0.1210904</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='fu'><a href='all-generics.html'>pValues</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;  Named num [1:9038] 0.9647 0.5203 0.9516 0.8438 0.0045 ...
-#&gt;  - attr(*, "names")= chr [1:9038] "ENSG00000000003" "ENSG00000000419" "ENSG00000000457" "ENSG00000000460" ...</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='fu'><a href='all-generics.html'>foldChanges</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span><span class='op'>)</span> 
-</div><div class='output co'>#&gt;  Named num [1:9038] -0.0044 0.09394 -0.00426 -0.00886 0.27775 ...
-#&gt;  - attr(*, "names")= chr [1:9038] "ENSG00000000003" "ENSG00000000419" "ENSG00000000457" "ENSG00000000460" ...</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='fu'><a href='all-generics.html'>thresholds</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;  num [1:9038] 1.34e-05 2.68e-05 4.02e-05 5.36e-05 6.70e-05 ...</div><div class='input'><span class='fu'><a href='volcanoPlot.html'>volcanoPlot</a></span><span class='op'>(</span><span class='va'>res</span>, q <span class='op'>=</span> <span class='fl'>0.05</span>, r <span class='op'>=</span> <span class='fl'>0.5</span><span class='op'>)</span>
-</div><div class='img'><img src='SansSouci-methods-1.png' alt='' width='700' height='433' /></div><div class='input'>
-</div></pre>
+    <pre class="examples"><span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>expr_ALL</span>, package <span class='op'>=</span> <span class='st'>"sansSouci.data"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>groups</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/ifelse.html'>ifelse</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>expr_ALL</span><span class='op'>)</span><span class='op'>==</span><span class='st'>"NEG"</span>, <span class='fl'>0</span>, <span class='fl'>1</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span><span class='op'>(</span><span class='va'>groups</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> groups</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  0  1 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 42 37 </span>
+<span class='r-in'><span class='va'>a</span> <span class='op'>&lt;-</span> <span class='fu'><a href='SansSouci.html'>SansSouci</a></span><span class='op'>(</span>Y <span class='op'>=</span> <span class='va'>expr_ALL</span>, groups <span class='op'>=</span> <span class='va'>groups</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>a</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 'SansSouci' object:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Number of hypotheses:	 9038 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Number of observations:	 79 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	2-sample data</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-in'><span class='fu'><a href='all-generics.html'>nHyp</a></span><span class='op'>(</span><span class='va'>a</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 9038</span>
+<span class='r-in'><span class='fu'><a href='all-generics.html'>nObs</a></span><span class='op'>(</span><span class='va'>a</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] 79</span>
+<span class='r-in'><span class='fu'><a href='all-generics.html'>label</a></span><span class='op'>(</span><span class='va'>a</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> NULL</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://generics.r-lib.org/reference/fit.html'>fit</a></span><span class='op'>(</span><span class='va'>a</span>, B <span class='op'>=</span> <span class='fl'>100</span>, alpha <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='all-generics.html'>label</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "Simes"</span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 'SansSouci' object:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Number of hypotheses:	 9038 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Number of observations:	 79 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	2-sample data</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Parameters: </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Test function:		rowWelchTests</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Number of permutations:	B=100</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Significance level:	alpha=0.1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Reference family:	Simes</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 		(of size:	K=9038)</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Output:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 	Calibration parameter:	lambda=0.1210904</span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='fu'><a href='all-generics.html'>pValues</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  Named num [1:9038] 0.9647 0.5203 0.9516 0.8438 0.0045 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - attr(*, "names")= chr [1:9038] "ENSG00000000003" "ENSG00000000419" "ENSG00000000457" "ENSG00000000460" ...</span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='fu'><a href='all-generics.html'>foldChanges</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span><span class='op'>)</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  Named num [1:9038] -0.0044 0.09394 -0.00426 -0.00886 0.27775 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  - attr(*, "names")= chr [1:9038] "ENSG00000000003" "ENSG00000000419" "ENSG00000000457" "ENSG00000000460" ...</span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='fu'><a href='all-generics.html'>thresholds</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  num [1:9038] 1.34e-05 2.68e-05 4.02e-05 5.36e-05 6.70e-05 ...</span>
+<span class='r-in'><span class='fu'><a href='volcanoPlot.html'>volcanoPlot</a></span><span class='op'>(</span><span class='va'>res</span>, q <span class='op'>=</span> <span class='fl'>0.05</span>, r <span class='op'>=</span> <span class='fl'>0.5</span><span class='op'>)</span></span>
+<span class='r-plt img'><img src='SansSouci-methods-1.png' alt='' width='700' height='433' /></span>
+<span class='r-in'></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -177,7 +177,7 @@ computed, among:</p><ul>
 <li><p>TP: Lower bound on the proportion of true positives in the 'x' most significant items</p></li>
 </ul>
 
-<p>Defaults to <code><a href='https://rdrr.io/r/base/c.html'>c("TP", "FDP")</a></code></p></td>
+<p>Defaults to <code>c("TP", "FDP")</code></p></td>
     </tr>
     <tr>
       <th>all</th>
@@ -200,30 +200,33 @@ computed, among:</p><ul>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='co'># Generate Gaussian data and perform multiple tests</span>
-<span class='va'>obj</span> <span class='op'>&lt;-</span> <span class='fu'><a href='SansSouciSim.html'>SansSouciSim</a></span><span class='op'>(</span>m <span class='op'>=</span> <span class='fl'>502</span>, rho <span class='op'>=</span> <span class='fl'>0.5</span>, n <span class='op'>=</span> <span class='fl'>100</span>, pi0 <span class='op'>=</span> <span class='fl'>0.8</span>, SNR <span class='op'>=</span> <span class='fl'>3</span>, prob <span class='op'>=</span> <span class='fl'>0.5</span><span class='op'>)</span>
-<span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://generics.r-lib.org/reference/fit.html'>fit</a></span><span class='op'>(</span><span class='va'>obj</span>, B <span class='op'>=</span> <span class='fl'>100</span>, alpha <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span>
-
-<span class='co'># post hoc bound on the set of all hypotheses</span>
-<span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;         TP        FDP 
-#&gt; 58.0000000  0.8844622 </div><div class='input'>
-<span class='co'># idem for all possible subsets (sorted by p-value)</span>
-<span class='va'>bounds</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>res</span>, all<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>bounds</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;   x label stat bound
-#&gt; 1 1 Simes   TP     1
-#&gt; 2 2 Simes   TP     2
-#&gt; 3 3 Simes   TP     3
-#&gt; 4 4 Simes   TP     4
-#&gt; 5 5 Simes   TP     5
-#&gt; 6 6 Simes   TP     6</div><div class='input'>
-<span class='co'># post hoc bound on a subset</span>
-<span class='va'>S</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/which.html'>which</a></span><span class='op'>(</span><span class='fu'><a href='all-generics.html'>pValues</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span> <span class='op'>&lt;</span> <span class='fl'>0.01</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>res</span>, <span class='va'>S</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;         TP        FDP 
-#&gt; 58.0000000  0.3333333 </div></pre>
+    <pre class="examples"><span class='r-in'></span>
+<span class='r-in'><span class='co'># Generate Gaussian data and perform multiple tests</span></span>
+<span class='r-in'><span class='va'>obj</span> <span class='op'>&lt;-</span> <span class='fu'><a href='SansSouciSim.html'>SansSouciSim</a></span><span class='op'>(</span>m <span class='op'>=</span> <span class='fl'>502</span>, rho <span class='op'>=</span> <span class='fl'>0.5</span>, n <span class='op'>=</span> <span class='fl'>100</span>, pi0 <span class='op'>=</span> <span class='fl'>0.8</span>, SNR <span class='op'>=</span> <span class='fl'>3</span>, prob <span class='op'>=</span> <span class='fl'>0.5</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://generics.r-lib.org/reference/fit.html'>fit</a></span><span class='op'>(</span><span class='va'>obj</span>, B <span class='op'>=</span> <span class='fl'>100</span>, alpha <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># post hoc bound on the set of all hypotheses</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>         TP        FDP </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 58.0000000  0.8844622 </span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># idem for all possible subsets (sorted by p-value)</span></span>
+<span class='r-in'><span class='va'>bounds</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>res</span>, all<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>bounds</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   x label stat bound</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 1 1 Simes   TP     1</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 2 2 Simes   TP     2</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 3 3 Simes   TP     3</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 4 4 Simes   TP     4</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 5 5 Simes   TP     5</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 6 6 Simes   TP     6</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># post hoc bound on a subset</span></span>
+<span class='r-in'><span class='va'>S</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/which.html'>which</a></span><span class='op'>(</span><span class='fu'><a href='all-generics.html'>pValues</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span> <span class='op'>&lt;</span> <span class='fl'>0.01</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>res</span>, <span class='va'>S</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>         TP        FDP </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 58.0000000  0.3333333 </span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

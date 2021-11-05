@@ -197,38 +197,44 @@ alternative approach. Biometrika, <em>38</em>, 330-336</p>
     <p>Pierre Neuvial</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='va'>m</span> <span class='op'>&lt;-</span> <span class='fl'>300</span>
-<span class='va'>n</span> <span class='op'>&lt;-</span> <span class='fl'>38</span>
-<span class='va'>mat</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='va'>m</span><span class='op'>*</span><span class='va'>n</span><span class='op'>)</span>, ncol<span class='op'>=</span><span class='va'>n</span><span class='op'>)</span>
-<span class='va'>categ</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>1</span><span class='op'>)</span>, times<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>27</span>, <span class='va'>n</span><span class='op'>-</span><span class='fl'>27</span><span class='op'>)</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/system.time.html'>system.time</a></span><span class='op'>(</span><span class='va'>fwt</span> <span class='op'>&lt;-</span> <span class='fu'>rowWelchTests</span><span class='op'>(</span><span class='va'>mat</span>, <span class='va'>categ</span>, alternative <span class='op'>=</span> <span class='st'>"greater"</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;    user  system elapsed 
-#&gt;   0.001   0.000   0.001 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>fwt</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; List of 4
-#&gt;  $ statistic: num [1:300] -1.603 -0.744 1.619 0.596 0.896 ...
-#&gt;  $ parameter: num [1:300] 30.2 13.4 22.5 17.7 18.6 ...
-#&gt;  $ p.value  : num [1:300] 0.9404 0.7651 0.0597 0.2792 0.1908 ...
-#&gt;  $ estimate : num [1:300] -0.41 -0.366 0.567 0.211 0.369 ...</div><div class='input'>
-<span class='co'># compare with ordinary t.test:</span>
-<span class='fu'><a href='https://rdrr.io/r/base/system.time.html'>system.time</a></span><span class='op'>(</span><span class='va'>pwt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/apply.html'>apply</a></span><span class='op'>(</span><span class='va'>mat</span>, <span class='fl'>1</span>, FUN<span class='op'>=</span><span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>{</span>
-   <span class='fu'><a href='https://rdrr.io/r/stats/t.test.html'>t.test</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>[</span><span class='va'>categ</span><span class='op'>==</span><span class='fl'>1</span><span class='op'>]</span>, <span class='va'>x</span><span class='op'>[</span><span class='va'>categ</span><span class='op'>==</span><span class='fl'>0</span><span class='op'>]</span>, alternative <span class='op'>=</span> <span class='st'>"greater"</span><span class='op'>)</span><span class='op'>$</span><span class='va'>p.value</span>
-<span class='op'>}</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;    user  system elapsed 
-#&gt;   0.042   0.000   0.041 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>abs</a></span><span class='op'>(</span><span class='va'>fwt</span><span class='op'>$</span><span class='va'>p.value</span><span class='op'>-</span><span class='va'>pwt</span><span class='op'>)</span> <span class='op'>&lt;</span> <span class='fl'>1e-10</span><span class='op'>)</span>  <span class='co'>## same results</span>
-</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
-<span class='co'># with several contrasts/permutations</span>
-<span class='va'>B</span> <span class='op'>&lt;-</span> <span class='fl'>100</span>
-<span class='va'>categ_perm</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>replicate</a></span><span class='op'>(</span><span class='va'>B</span>, <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='va'>categ</span><span class='op'>)</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/system.time.html'>system.time</a></span><span class='op'>(</span><span class='va'>fwt_perm</span> <span class='op'>&lt;-</span> <span class='fu'>rowWelchTests</span><span class='op'>(</span><span class='va'>mat</span>, <span class='va'>categ_perm</span>, alternative <span class='op'>=</span> <span class='st'>"greater"</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;    user  system elapsed 
-#&gt;   0.015   0.000   0.015 </div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>fwt_perm</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; List of 4
-#&gt;  $ statistic: num [1:300, 1:100] -0.65 -1.26 -1.73 -2.8 0.75 ...
-#&gt;  $ parameter: num [1:300, 1:100] 18.1 26.9 31.1 31.9 17.2 ...
-#&gt;  $ p.value  : num [1:300, 1:100] 0.738 0.89 0.953 0.996 0.232 ...
-#&gt;  $ estimate : num [1:300, 1:100] -0.21 -0.437 -0.534 -0.726 0.322 ...</div><div class='input'>
-</div></pre>
+    <pre class="examples"><span class='r-in'></span>
+<span class='r-in'><span class='va'>m</span> <span class='op'>&lt;-</span> <span class='fl'>300</span></span>
+<span class='r-in'><span class='va'>n</span> <span class='op'>&lt;-</span> <span class='fl'>38</span></span>
+<span class='r-in'><span class='va'>mat</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='va'>m</span><span class='op'>*</span><span class='va'>n</span><span class='op'>)</span>, ncol<span class='op'>=</span><span class='va'>n</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>categ</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>1</span><span class='op'>)</span>, times<span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>27</span>, <span class='va'>n</span><span class='op'>-</span><span class='fl'>27</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/system.time.html'>system.time</a></span><span class='op'>(</span><span class='va'>fwt</span> <span class='op'>&lt;-</span> <span class='fu'>rowWelchTests</span><span class='op'>(</span><span class='va'>mat</span>, <span class='va'>categ</span>, alternative <span class='op'>=</span> <span class='st'>"greater"</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    user  system elapsed </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   0.001   0.000   0.002 </span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>fwt</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> List of 4</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ statistic: num [1:300] -1.603 -0.744 1.619 0.596 0.896 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ parameter: num [1:300] 30.2 13.4 22.5 17.7 18.6 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ p.value  : num [1:300] 0.9404 0.7651 0.0597 0.2792 0.1908 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ estimate : num [1:300] -0.41 -0.366 0.567 0.211 0.369 ...</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># compare with ordinary t.test:</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/system.time.html'>system.time</a></span><span class='op'>(</span><span class='va'>pwt</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/apply.html'>apply</a></span><span class='op'>(</span><span class='va'>mat</span>, <span class='fl'>1</span>, FUN<span class='op'>=</span><span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>{</span></span>
+<span class='r-in'>   <span class='fu'><a href='https://rdrr.io/r/stats/t.test.html'>t.test</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>[</span><span class='va'>categ</span><span class='op'>==</span><span class='fl'>1</span><span class='op'>]</span>, <span class='va'>x</span><span class='op'>[</span><span class='va'>categ</span><span class='op'>==</span><span class='fl'>0</span><span class='op'>]</span>, alternative <span class='op'>=</span> <span class='st'>"greater"</span><span class='op'>)</span><span class='op'>$</span><span class='va'>p.value</span></span>
+<span class='r-in'><span class='op'>}</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    user  system elapsed </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   0.041   0.000   0.041 </span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/all.html'>all</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>abs</a></span><span class='op'>(</span><span class='va'>fwt</span><span class='op'>$</span><span class='va'>p.value</span><span class='op'>-</span><span class='va'>pwt</span><span class='op'>)</span> <span class='op'>&lt;</span> <span class='fl'>1e-10</span><span class='op'>)</span>  <span class='co'>## same results</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] TRUE</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># with several contrasts/permutations</span></span>
+<span class='r-in'><span class='va'>B</span> <span class='op'>&lt;-</span> <span class='fl'>100</span></span>
+<span class='r-in'><span class='va'>categ_perm</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>replicate</a></span><span class='op'>(</span><span class='va'>B</span>, <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='va'>categ</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/system.time.html'>system.time</a></span><span class='op'>(</span><span class='va'>fwt_perm</span> <span class='op'>&lt;-</span> <span class='fu'>rowWelchTests</span><span class='op'>(</span><span class='va'>mat</span>, <span class='va'>categ_perm</span>, alternative <span class='op'>=</span> <span class='st'>"greater"</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    user  system elapsed </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   0.015   0.000   0.015 </span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='va'>fwt_perm</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> List of 4</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ statistic: num [1:300, 1:100] -0.65 -1.26 -1.73 -2.8 0.75 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ parameter: num [1:300, 1:100] 18.1 26.9 31.1 31.9 17.2 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ p.value  : num [1:300, 1:100] 0.738 0.89 0.953 0.996 0.232 ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  $ estimate : num [1:300, 1:100] -0.21 -0.437 -0.534 -0.726 0.322 ...</span>
+<span class='r-in'></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

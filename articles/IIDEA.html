@@ -100,7 +100,7 @@
       <h1 data-toc-skip>IIDEA: Interactive Inference for Differential Expression Analyses</h1>
                         <h4 class="author">Nicolas Enjalbert-Courrech and Pierre Neuvial</h4>
             
-            <h4 class="date">2021-11-01</h4>
+            <h4 class="date">2021-11-05</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/pneuvial/sanssouci/blob/master/vignettes/IIDEA.Rmd"><code>vignettes/IIDEA.Rmd</code></a></small>
       <div class="hidden name"><code>IIDEA.Rmd</code></div>
@@ -230,7 +230,7 @@
 <h1 class="hasAnchor">
 <a href="#methods" class="anchor"></a>Methods</h1>
 <p>IIDEA leverages post hoc inference methods implemented in the R package <a href="https://github.com/pneuvial/sanssouci"><code>sansSouci</code></a>.</p>
-<p>Post hoc inference is a recent field stemming from the multiple testing literature where users are allowed to freely select hypotheses of interest after “seeing the data”, without compromising statistical validity despite the issue of “cherry-picking” (<span class="citation">Blanchard, Neuvial, and Roquain (2019)</span>, <span class="citation">Blanchard, Neuvial, and Roquain (2020)</span>, <span class="citation">Goeman and Solari (2011)</span>).</p>
+<p>Post hoc inference is a recent field stemming from the multiple testing literature where users are allowed to freely select hypotheses of interest after “seeing the data”, without compromising statistical validity despite the issue of “cherry-picking” (<span class="citation">Blanchard, Neuvial, and Roquain (2021)</span>, <span class="citation">Blanchard, Neuvial, and Roquain (2020)</span>, <span class="citation">Goeman and Solari (2011)</span>).</p>
 <p>The methods implemented by IIDEA allow for valid inference without requiring assumptions on the dependence between genes. Instead, such dependencies are <em>estimated</em> from the data using permutation techniques, making our methods both mathematically valid and statistically powerful (see e.g. <a href="https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html" class="uri">https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html</a>).</p>
 <p>The parameters for this estimation step can be customized by clicking “Advanced parameters”.</p>
 </div>
@@ -245,7 +245,8 @@
 <p>Blanchard, Gilles, Pierre Neuvial, and Etienne Roquain. 2020. “Post Hoc Confidence Bounds on False Positives Using Reference Families.” <em>Annals of Statistics</em> 48 (3): 1281–1303. <a href="https://projecteuclid.org/euclid.aos/1594972818">https://projecteuclid.org/euclid.aos/1594972818</a>.</p>
 </div>
 <div id="ref-BNR:chap">
-<p>———. 2019. “On Agnostic Post Hoc Approaches to False Positive Control.” <a href="https://hal.archives-ouvertes.fr/hal-02320543">https://hal.archives-ouvertes.fr/hal-02320543</a>.</p>
+<p>———. 2021. “On agnostic post hoc approaches to false positive control.” In <em>Handbook of Multiple Comparisons</em>, edited by Xinping Cui, Thorsten Dickhaus, Ying Ding, and Jason C. Hsu. Handbooks of Modern Statistical Methods. Chapman<br>
+&amp; Hall/CRC. <a href="https://hal.archives-ouvertes.fr/hal-02320543">https://hal.archives-ouvertes.fr/hal-02320543</a>.</p>
 </div>
 <div id="ref-BGH2010">
 <p>Bourgon, Richard, Robert Gentleman, and Wolfgang Huber. 2010. “Independent filtering increases detection power for high-throughput experiments.” <em>PNAS</em>. <a href="https://doi.org/10.1073/pnas.0914005107/-/DCSupplemental.www.pnas.org/cgi/doi/10.1073/pnas.0914005107">https://doi.org/10.1073/pnas.0914005107/-/DCSupplemental.www.pnas.org/cgi/doi/10.1073/pnas.0914005107</a>.</p>
