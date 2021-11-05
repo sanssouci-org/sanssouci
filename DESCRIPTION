@@ -5,9 +5,11 @@ Title: Post Hoc Multiple Testing Inference
 Authors@R: c(person("Pierre", "Neuvial", role=c("aut", "cre"),
                  email="pierre.neuvial@math.univ-toulouse.fr",
                  comment = c(ORCID = "0000-0003-3584-9998")),
+             person("Gilles", "Blanchard", role="aut"), 
              person("Guillermo", "Durand", role="aut", 
-                comment = c(ORCID = "https://orcid.org/0000-0003-4056-5631")),
-             person("Nicolas", "Enjalbert-Courrech", role="aut"))
+                comment = c(ORCID = "0000-0003-4056-5631")),
+             person("Nicolas", "Enjalbert-Courrech", role="aut"),
+             person("Etienne", "Roquain", role="aut"))
 License: GPL-3
 Description: Post hoc inference based on the control of a dedicated risk called the Joint (Family-Wise) Error Rate.
 Depends: R (>= 3.5.0)
