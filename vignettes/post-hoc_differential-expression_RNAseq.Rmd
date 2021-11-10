@@ -106,8 +106,9 @@ The confidence curve obtained by calibration is the solid black line in the figu
 ```{r, conf-env-plot}
 conf_bounds <- lapply(resList, predict, all = TRUE)
 cols <- c("black", "darkgray")
-plotConfCurve(conf_bounds, xmax = 5000, cols = cols) +
+p <- plotConfCurve(conf_bounds, xmax = 5000, cols = cols) + 
   geom_line(size = 1.5)
+# ggsave(p, file = "conf-curve.pdf", width = 6, height = 4)
 ```
 
 ```{r ex-use-curves, echo=FALSE}
@@ -138,9 +139,9 @@ n_DEG <- sapply(FDP, function(x) sum(x <= q))
 size <- 1.5
 p <- plotConfCurve(FDP, xmax = 2.5*n_DEG, col = cols) +
   geom_hline(yintercept = q, linetype = "dashed", size = size) +
-  geom_vline(xintercept = n_DEG, linetype = "dotted", col = cols, size = size)
-p + geom_line(size = size)
-ggsave(p, file = "conf-curve.pdf", width = 6, height = 4)
+  geom_vline(xintercept = n_DEG, linetype = "dotted", col = cols, size = size) + 
+  geom_line(size = size)
+# ggsave(p, file = "conf-curve_DEG.pdf", width = 6, height = 4)
 ```
 
 Using $q = `r q`$, we obtain `r n_DEG[["SansSouci"]]` differentially expressed genes. Note that this gene list has a clear statistical interpretation: with probability $1-\alpha = `r 1-alpha`$, the proportion of false positives (that is, genes that are called DE by mistake) is less than $q = `r q`$.  
