@@ -239,6 +239,7 @@ reference family. Defaults to m</p></td>
     <pre class="examples"><span class='r-in'><span class='co'># Generate Gaussian data and perform multiple tests</span></span>
 <span class='r-in'><span class='va'>obj</span> <span class='op'>&lt;-</span> <span class='fu'><a href='SansSouciSim.html'>SansSouciSim</a></span><span class='op'>(</span>m <span class='op'>=</span> <span class='fl'>502</span>, rho <span class='op'>=</span> <span class='fl'>0.5</span>, n <span class='op'>=</span> <span class='fl'>100</span>, pi0 <span class='op'>=</span> <span class='fl'>0.8</span>, SNR <span class='op'>=</span> <span class='fl'>3</span>, prob <span class='op'>=</span> <span class='fl'>0.5</span><span class='op'>)</span></span>
 <span class='r-in'><span class='va'>res</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://generics.r-lib.org/reference/fit.html'>fit</a></span><span class='op'>(</span><span class='va'>obj</span>, B <span class='op'>=</span> <span class='fl'>100</span>, alpha <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span></span>
+<span class='r-wrn co'><span class='r-pr'>#&gt;</span> <span class='warning'>Warning: </span>the condition has length &gt; 1 and only the first element will be used</span>
 <span class='r-in'></span>
 <span class='r-in'><span class='co'># confidence curve</span></span>
 <span class='r-in'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>res</span><span class='op'>)</span></span>
@@ -269,7 +270,7 @@ reference family. Defaults to m</p></td>
 
       <footer>
       <div class="copyright">
-  <p>Developed by <a href='https://www.math.univ-toulouse.fr/~pneuvial/'>Pierre Neuvial</a>, <a href='https://durandg12.github.io/'>Guillermo Durand</a>, Nicolas Enjalbert-Courrech.</p>
+  <p>Developed by <a href='https://www.math.univ-toulouse.fr/~pneuvial/'>Pierre Neuvial</a>, <a href='https://www.imo.universite-paris-saclay.fr/~blanchard/'>Gilles Blanchard</a>, <a href='https://durandg12.github.io/'>Guillermo Durand</a>, Nicolas Enjalbert-Courrech, <a href='https://etienneroquain-81.webself.net/'>Etienne Roquain</a>.</p>
 </div>
 
 <div class="pkgdown">
