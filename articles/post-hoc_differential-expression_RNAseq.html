@@ -170,9 +170,9 @@
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">conf_bounds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">resList</span>, <span class="va">predict</span>, all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="va">cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"black"</span>, <span class="st">"darkgray"</span><span class="op">)</span>
-<span class="fu"><a href="../reference/plotConfCurve.html">plotConfCurve</a></span><span class="op">(</span><span class="va">conf_bounds</span>, xmax <span class="op">=</span> <span class="fl">5000</span>, cols <span class="op">=</span> <span class="va">cols</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span></code></pre></div>
-<p><img src="post-hoc_differential-expression_RNAseq_files/figure-html/conf-env-plot-1.png" width="768"></p>
+<span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plotConfCurve.html">plotConfCurve</a></span><span class="op">(</span><span class="va">conf_bounds</span>, xmax <span class="op">=</span> <span class="fl">5000</span>, cols <span class="op">=</span> <span class="va">cols</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span>
+<span class="co"># ggsave(p, file = "conf-curve.pdf", width = 6, height = 4)</span></code></pre></div>
 <p>This plot can be interpreted as follows: among the 2000 most significant genes, the number of truly differentially expressed genes is at least 1682 (right panel). Equivalently, the FDP among these 2000 genes is at most 0.16 (left panel).</p>
 <p>The dashed gray curve is obtained by the parametric Simes method introduced by <span class="citation">Goeman and Solari (2011)</span>. The comparison between the two curves illustrates the gain in power obtained by using permutations methods to adapt to the dependence between genes. In this example, the parametric Simes method gives the following guarantees: among the 2000 most significant genes, the number of truly differentially expressed genes is at least 1437 (right panel). Equivalently, the FDP among these 2000 genes is at most 0.29 (left panel).</p>
 <div id="differentially-expressed-genes" class="section level2">
@@ -191,11 +191,9 @@
 <span class="va">size</span> <span class="op">&lt;-</span> <span class="fl">1.5</span>
 <span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plotConfCurve.html">plotConfCurve</a></span><span class="op">(</span><span class="va">FDP</span>, xmax <span class="op">=</span> <span class="fl">2.5</span><span class="op">*</span><span class="va">n_DEG</span>, col <span class="op">=</span> <span class="va">cols</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_hline</a></span><span class="op">(</span>yintercept <span class="op">=</span> <span class="va">q</span>, linetype <span class="op">=</span> <span class="st">"dashed"</span>, size <span class="op">=</span> <span class="va">size</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="va">n_DEG</span>, linetype <span class="op">=</span> <span class="st">"dotted"</span>, col <span class="op">=</span> <span class="va">cols</span>, size <span class="op">=</span> <span class="va">size</span><span class="op">)</span>
-<span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span>size <span class="op">=</span> <span class="va">size</span><span class="op">)</span></code></pre></div>
-<p><img src="post-hoc_differential-expression_RNAseq_files/figure-html/post-hoc-FDP-control-1.png" width="768"></p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html">ggsave</a></span><span class="op">(</span><span class="va">p</span>, file <span class="op">=</span> <span class="st">"conf-curve.pdf"</span>, width <span class="op">=</span> <span class="fl">6</span>, height <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></code></pre></div>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="va">n_DEG</span>, linetype <span class="op">=</span> <span class="st">"dotted"</span>, col <span class="op">=</span> <span class="va">cols</span>, size <span class="op">=</span> <span class="va">size</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span>size <span class="op">=</span> <span class="va">size</span><span class="op">)</span>
+<span class="co"># ggsave(p, file = "conf-curve_DEG.pdf", width = 6, height = 4)</span></code></pre></div>
 <p>Using <span class="math inline">\(q = 0.1\)</span>, we obtain 1597 differentially expressed genes. Note that this gene list has a clear statistical interpretation: with probability <span class="math inline">\(1-\alpha = 0.9\)</span>, the proportion of false positives (that is, genes that are called DE by mistake) is less than <span class="math inline">\(q = 0.1\)</span>.</p>
 <p>The above example also illustrates the increase in power obtained by calibration, since the parametric Simes method yields a subset of “only” 1157 genes called differentially expressed (with identical statistical guarantees).</p>
 </div>
@@ -203,7 +201,7 @@
 <h2 class="hasAnchor">
 <a href="#comparison-to-fdr-control" class="anchor"></a>Comparison to FDR control</h2>
 <p>We argue that ensuring <em>with high probability</em> that the FDP is less than some user-defined budget, as done above, is more interpretable than the widely used False Discovery Rate (FDR) control introduced by <span class="citation">Benjamini and Hochberg (1995)</span>. Indeed, FDR control guarantees that the <em>expected</em> (or average) FDP among DE genes is less than some user-defined FDR budget. However, <strong>the true FDP may well be far from its expected value</strong>, especially since the variability of the FDP is known to increase with the degree of dependence between genes.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">adjp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/p.adjust.html">p.adjust</a></span><span class="op">(</span><span class="fu"><a href="../reference/all-generics.html">pValues</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span>, method <span class="op">=</span> <span class="st">"BH"</span><span class="op">)</span>
 <span class="va">FDR_level</span> <span class="op">&lt;-</span> <span class="fl">0.05</span>
 <span class="va">n_BH</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">adjp</span> <span class="op">&lt;</span> <span class="va">FDR_level</span><span class="op">)</span>
@@ -217,7 +215,7 @@
 <a href="#volcano-plots" class="anchor"></a>Volcano plots</h1>
 <!-- For an interactive volcano plot, see the [volcano plot shiny application]( https://shiny-iidea-sanssouci.apps.math.cnrs.fr/). -->
 <p>A classical practice in gene expression studies is to define DE genes as those passing both a significance filter (small <span class="math inline">\(p\)</span>-value) and an effect size or “fold change” filter. Here, the fold change of a gene is defined as the difference between the expression medians (on the log scale) of the two groups compared. This double selection by <span class="math inline">\(p\)</span>-value and fold change corresponds to two sets of genes, with positive/negative fold change, which can be represented in the following plot:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/volcanoPlot.html">volcanoPlot</a></span><span class="op">(</span><span class="va">res</span>, p <span class="op">=</span> <span class="fl">1e-4</span>, r <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></code></pre></div>
 <p><img src="post-hoc_differential-expression_RNAseq_files/figure-html/volcano-1.png" width="768"></p>
 <p>This type of plot is called a “volcano plot” <span class="citation">Cui and Churchill (2003)</span>. Post hoc inference makes it possible to obtain statistical guarantees on selections such as the ones represented in the above figure.</p>
@@ -225,7 +223,7 @@
 <h2 class="hasAnchor">
 <a href="#custom-statistics-example-using-limma-voom" class="anchor"></a>Custom statistics: example using limma-voom</h2>
 <p>Post hoc bounds can be calculated for any gene selection. In particular, even if Wilcoxon tests have been performed <em>for the calibration of the post hoc bounds</em>, it is possible to rely on other statistics to <em>select genes of interest</em>. In this section, we illustrate this idea by making a volcano plot based on the <span class="math inline">\(p\)</span>-values and log-fold changes obtained from the limma-voom method of <span class="citation">Law et al. (2014)</span> implemented in the <code>limma</code> package (<span class="citation">Ritchie et al. (2015)</span>). The next code chunk is adapted from the vignette of the <code>limma</code> package:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://bioinf.wehi.edu.au/limma">limma</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://bioinf.wehi.edu.au/edgeR">edgeR</a></span><span class="op">)</span>
 <span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/edgeR/man/DGEList.html">DGEList</a></span><span class="op">(</span><span class="va">Y</span><span class="op">)</span>
@@ -242,14 +240,14 @@
 <span class="va">res_eb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/limma/man/ebayes.html">eBayes</a></span><span class="op">(</span><span class="va">res_fit</span><span class="op">)</span>
 <span class="va">TT</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/limma/man/toptable.html">topTable</a></span><span class="op">(</span><span class="va">res_eb</span>, sort.by <span class="op">=</span> <span class="st">"none"</span>, number <span class="op">=</span> <span class="cn">Inf</span><span class="op">)</span></code></pre></div>
 <p>The next plot suggests that the <span class="math inline">\(p\)</span>-values obtained from limma-voom and from Wilcoxon tests are consistent.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>wilcox <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log10</a></span><span class="op">(</span><span class="fu"><a href="../reference/all-generics.html">pValues</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span>, limma <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log10</a></span><span class="op">(</span><span class="va">TT</span><span class="op">$</span><span class="va">P.Value</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">df</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">limma</span>, y <span class="op">=</span> <span class="va">wilcox</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"#10101010"</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"p-values (log-scale)"</span><span class="op">)</span></code></pre></div>
 <p><img src="post-hoc_differential-expression_RNAseq_files/figure-html/compare-p-values-1.png" width="768"></p>
 <p>Finally we obtain the volcano plot based on limma statistics.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/volcanoPlot.html">volcanoPlot</a></span><span class="op">(</span><span class="va">res</span>, 
             fold_changes <span class="op">=</span> <span class="va">TT</span><span class="op">$</span><span class="va">logFC</span>, 
             p_values <span class="op">=</span> <span class="va">TT</span><span class="op">$</span><span class="va">P.Value</span>, 
@@ -260,7 +258,7 @@
 <div id="session-information" class="section level1">
 <h1 class="hasAnchor">
 <a href="#session-information" class="anchor"></a>Session information</h1>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; R version 4.1.2 (2021-11-01)</span>
 <span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span>
@@ -301,7 +299,7 @@
 <h1 class="hasAnchor">
 <a href="#reproducibility" class="anchor"></a>Reproducibility</h1>
 <p>To re-build this vignette from its source, use:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://pkgs.rstudio.com/rmarkdown/reference/render.html">render</a></span><span class="op">(</span><span class="st">"post-hoc_differential-expression_RNAseq.Rmd"</span>, output_format <span class="op">=</span> <span class="st">"pdf_document"</span><span class="op">)</span>
 <span class="co"># To keep intermediate files, add option 'clean = FALSE'</span>
 <span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://pkgs.rstudio.com/rmarkdown/reference/render.html">render</a></span><span class="op">(</span><span class="st">"post-hoc_differential-expression_RNAseq.Rmd"</span>, output_format <span class="op">=</span> <span class="st">"html_document"</span><span class="op">)</span></code></pre></div>
