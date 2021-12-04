@@ -43,6 +43,7 @@ require("sansSouci") || remotes::install_github("pneuvial/sanssouci@develop")
 ```{r load-r-packages, results='hide', message=FALSE}
 library("ggplot2")
 library("sansSouci")
+library("matrixStats")
 ```
 
 Set the seed of the random number generator for numerical reproducibility of the results:
@@ -62,19 +63,29 @@ groups <- ifelse(colnames(RNAseq_blca) == "III", 1, 0)
 rm(RNAseq_blca)
 ```
 
-This data set consists of gene expression measurements for  $n = `r ncol(Y)`$ patients from the Cancer Genome Atlas Urothelial Bladder Carcinoma (TCGA-BLCA) data collection (@tcga2014blca). These patients are classified into two subgoups, according to their clinical stage (II or III):
+This data set consists of gene expression measurements for  $n = `r ncol(Y)`$ patients from the Cancer Genome Atlas Urothelial Bladder Carcinoma (TCGA-BLCA) data collection (@tcga2014blca). Following a standard practice in RNAseq data analysis, we convert these measurements to to *count per millions* (CPM) in order to make them comparable across samples, and filter out genes with very low counts in all samples:
 
-```{r colnames}
-table(groups)
+```{r CPM+filter}
+CPM <- Y/colSums(Y)*1e6
+# plot(density(rowMaxs(log(1 + CPM))))
+ww <- which(rowMaxs(CPM) < 10)
+Y <- CPM[-ww, ]
 m <- nrow(Y)
 ```
 
-The goal of this study is to understand the molecular differences at the gene expression level between stage the II and stage III populations. For each patient, we observe a vector of $m = `r m`$ gene expression values.  We aim at addressing the following question:
+The patients are classified into two subgoups, according to their clinical stage (II or III):
+
+```{r colnames}
+table(groups)
+```
+
+The goal of this study is to understand the molecular differences at the gene expression level between the stage II and stage III populations. Each patient is characterized by a vector of $m = `r m`$ gene expression values.  We aim at addressing the following question:
 
 > For which genes is there a difference in the distribution of expression levels between the stage II and stage III populations? 
 
 This question can be addressed by performing one statistical test per gene, and to define "differentially expressed" genes as those passing some significance threshold.
 Below, we use the Wilcoxon rank sum (or Mann-Whitney) test for comparing two independent samples. This is a rank-based non-parametric test. A fast version of this test is implemented in the  `sansSouci::rowWilcoxonTests` function.
+
 
 To obtain post hoc bounds, we create an object of class `SansSouci` and run the `fit` method to perform calibration with $B=1,000$ permutations. The target risk level is set to $\alpha = 0.1$, meaning that all of the statements made below will be true with probability greater than $1-\alpha= 0.9$.
 
