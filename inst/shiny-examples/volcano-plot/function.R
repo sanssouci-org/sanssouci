@@ -22,6 +22,22 @@ cleanGo.GS <- function(go.gs){
   
 }
 
+readCSV_sep<- function(file, ... ){
+  df <- read.csv(file, sep = c(","), ...)
+  if (dim(df)[2] > 1) {
+    return(df)
+  }
+  df <- read.csv(file, sep = c(";"), ...)
+  if (dim(df)[2] > 1) {
+    return(df)
+  } 
+  df <- read.csv(file,  sep = c("\t"), ...)
+  if (dim(df)[2] > 1) {
+    return(df)
+  } 
+  stop("Only ',', ';', '\\t' separators are allowed. Please adapte your csv file.")  
+}
+
 
 exampleData <- function(){
   
