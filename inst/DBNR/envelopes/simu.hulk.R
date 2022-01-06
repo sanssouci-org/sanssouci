@@ -16,7 +16,7 @@ simu.hulk <- function(m,
     mu <- gen.mu.leaves(m, K1, d, grouped, setting, barmu, leaf_list)
     # m1 <- sum(mu > 0)
     m1 <-  d*K1*s ## covers the case where barmu==0
-    xmax <- min(2 * m1, m)
+    # xmax <- min(2 * m1, m)
     xmax <- min(4/3 * m1, m)
     #idxs1 <- c(1:max(xmax, s))
     idxs1 <- round(seq(from = 1, to = xmax, length = 10))
@@ -47,10 +47,13 @@ simu.hulk <- function(m,
             V <- cumsum(oo %in% H0)
             V <- V[idxs]
         } else if (meth == "Simes") {
-            V <- idxs - sapply(idxs, FUN = function(ii) {
-                posthocBySimes(pvalues, oo[1:ii], alpha) ## slow!
-                ##cherry::pickSimes(hf, oo[1:ii], alpha = alpha, silent = TRUE) ## currently faster (for ii>1e4...) because posthocBySimes not optimized
-            })
+            thr <- alpha * 1:m/m
+            FP_Simes <- sansSouci:::curveMaxFP(pvalues, thr)
+            V <- FP_Simes[idxs]
+            # V2 <- idxs - sapply(idxs, FUN = function(ii) {
+            #     posthocBySimes(pvalues, oo[1:ii], alpha) ## slow!
+            # })
+            # stopifnot(identical(V, V2))
         } else if (meth %in% c("tree", "part")) {
             ZL <- zetas.tree(Cs[[meth]], leaf_list, zeta.DKWM, pvalues, alpha = alpha)
             V <- sapply(idxs, FUN = function(ii) {
