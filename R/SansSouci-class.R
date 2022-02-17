@@ -9,7 +9,7 @@
 #' @return An object of class "SansSouci"
 #' @export
 #' @examples
-#' data(expr_ALL, package = "sansSouci.data")
+#' data(expr_ALL, package = "sanssouci.data")
 #' groups <- ifelse(colnames(expr_ALL)=="NEG", 0, 1)
 #' table(groups)
 #' a <- SansSouci(Y = expr_ALL, groups = groups)
@@ -105,7 +105,7 @@ SansSouciSim <- function(...) {
 #' @param object An object of class \code{SansSouci}
 #' @name SansSouci-methods
 #' @examples
-#' data(expr_ALL, package = "sansSouci.data")
+#' data(expr_ALL, package = "sanssouci.data")
 #' groups <- ifelse(colnames(expr_ALL)=="NEG", 0, 1)
 #' table(groups)
 #' a <- SansSouci(Y = expr_ALL, groups = groups)

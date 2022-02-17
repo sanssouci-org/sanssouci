@@ -12,7 +12,7 @@ vignette: |
   %\VignetteIndexEntry{IIDEA: Interactive Inference for Differential Expression Analyses}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteDepends{sansSouci.data}
+  %\VignetteDepends{sanssouci.data}
 ---
   
 ```{r setup, include = FALSE}
@@ -94,14 +94,14 @@ knitr::include_graphics("img/IIDEA_GO-0002576.png")
 The first data set available in the list of public data sets is the Leukemia data set studied in @BGH2010.
 
 ```{r load-data, echo=FALSE}
-data(expr_ALL, package = "sansSouci.data")
+data(expr_ALL, package = "sanssouci.data")
 dat <- expr_ALL
 rm(expr_ALL)
 ```
 
 This data set consists of gene expression measurements for  $n = `r ncol(dat)`$ patients with B-cell acute lymphoblastic leukemia (ALL) @CLGV+2005. These patients are classified into two subgoups, depending on whether or not they harbor a specific mutation called "BCR/ABL". A Welch $T$test of equality of group mean expression is applied to each gene. 
 
-This data set is available from the R package [`sansSouci.data`](https://github.com/pneuvial/sanssouci.data), and also studied in the [differential expression vignette](https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html) of the SansSouci package.
+This data set is available from the R package [`sanssouci.data`](https://github.com/pneuvial/sanssouci.data), and also studied in the [differential expression vignette](https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html) of the SansSouci package.
 
 ### GSEAbenchmarkeR data
 
@@ -121,7 +121,6 @@ Gene expression data data must be in of the two following formats (see also the 
 
 - A matrix containing $p$-values and fold changes for each gene. This matrix can be obtained from any standard differential expression method (e.g. DESeq2, edgeR, limma-voom). 
 
-> From a statistical perspective, an important limitation when only $p$-values and fold changes are provided is that post hoc inference can only be performed using the original post hoc bound of @GS2011, and not using the more powerful bounds of @blanchard20post-hoc. Indeed, the latter require the full expression matrix to be available in order to use permutations in order to provide bounds that are adaptive to the dependence in the data set at hand.  An important perspective for IIDEA is to directly implement differential expression methods dedicated to count data, so that the powerful bounds of @blanchard20post-hoc can be used. However, this requires additional methodological developments that are not finalized yet.
 
 ### Gene sets
 

@@ -16,7 +16,7 @@ vignette: |
   %\VignetteIndexEntry{Permutation-based post hoc inference for fMRI studies} 
   %\VignetteEncoding{UTF-8} 
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteDepends{sansSouci.data}
+  %\VignetteDepends{sanssouci.data}
 ---
 
 ```{r setup, include = FALSE}
@@ -29,7 +29,7 @@ fig.height=6
 ```
 
 
-This vignette shows how to use the [`sansSouci`](https://github.com/pneuvial/sanssouci) package to perform permutation-based post hoc inference for fMRI data. We focus on a motor task (left versus right click) from the Localizer data set by @orfanos2017brainomics. The data set is included in the [`sansSouci.data`](https://github.com/pneuvial/sanssouci.data) package. It has been obtained using the Python module [nilearn](http://nilearn.github.io/), see @abraham2014machine-learning.
+This vignette shows how to use the [`sansSouci`](https://github.com/pneuvial/sanssouci) package to perform permutation-based post hoc inference for fMRI data. We focus on a motor task (left versus right click) from the Localizer data set by @orfanos2017brainomics. The data set is included in the [`sanssouci.data`](https://github.com/pneuvial/sanssouci.data) package. It has been obtained using the Python module [nilearn](http://nilearn.github.io/), see @abraham2014machine-learning.
 
 # Setup
 
@@ -38,7 +38,7 @@ We first make sure that the required R packages are installed and loaded.
 ```{r install-r-packages, results='hide', message=FALSE, eval=FALSE}
 require("ggplot2") || install.packages("ggplot2")
 require("sansSouci") || remotes::install_github("pneuvial/sanssouci@develop")
-require("sansSouci.data") || remotes::install_github("pneuvial/sanssouci.data")
+require("sanssouci.data") || remotes::install_github("pneuvial/sanssouci.data")
 ```
 
 
@@ -56,7 +56,7 @@ set.seed(20200924)
 # Loading and preprocessing the data
 
 ```{r load-data}
-data(fMRI_localizer, package = "sansSouci.data")
+data(fMRI_localizer, package = "sanssouci.data")
 Y <- fMRI_localizer
 rm(fMRI_localizer)
 ```
@@ -164,10 +164,10 @@ In this example, ARI is outperformed by permutation-based approaches, which are 
 
 # Post hoc bounds on brain atlas areas
 
-The goal in this section is to calculate post hoc bound on user-defined brain regions. One definition of such regions is given by the [Harvard-Oxford brain atlas](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/Atlases), which is available from the sansSouci.data package. 
+The goal in this section is to calculate post hoc bound on user-defined brain regions. One definition of such regions is given by the [Harvard-Oxford brain atlas](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/Atlases), which is available from the sanssouci.data package. 
 
 ```{r load-atlas}
-data(brainAtlas, package = "sansSouci.data")
+data(brainAtlas, package = "sanssouci.data")
 ```
 
 This atlas is made of `r nrow(brainAtlas)` areas. For each of these areas, we  calculate the three post hoc bounds obtained above. Note that by construction of post hoc bounds, these 48 bounds are valid simultaneously (in particular, no further multiple testing correction is required at this stage). 

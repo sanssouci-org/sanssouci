@@ -14,7 +14,7 @@ writeFUN <- function(x, filename, outPath = path) {
     return(pathname)
 }
 
-data(fMRI_localizer, package = "sansSouci.data")
+data(fMRI_localizer, package = "sanssouci.data")
 
 # only keep a small subset of the data set
 m <- 543

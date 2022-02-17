@@ -88,7 +88,7 @@ maxFP(p, calib$thr)
 
 \dontrun{
 # Gene expression
-data(expr_ALL, package = "sansSouci.data")
+data(expr_ALL, package = "sanssouci.data")
 X <- expr_ALL; rm(expr_ALL)
 groups <- ifelse(colnames(X) == "BCR/ABL", 1, 0) # map to 0/1
 

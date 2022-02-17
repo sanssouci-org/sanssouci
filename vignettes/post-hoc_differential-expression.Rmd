@@ -12,7 +12,7 @@ vignette: |
   %\VignetteIndexEntry{Permutation-based post hoc inference for differential gene expression studies}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteDepends{sansSouci.data}
+  %\VignetteDepends{sanssouci.data}
 ---
   
 ```{r setup, include = FALSE}
@@ -35,7 +35,7 @@ The methods described in this vignette are described in detail in the book chapt
 ```{r install-r-packages, results='hide', message=FALSE, eval=FALSE}
 require("ggplot2") || install.packages("ggplot2")
 require("sansSouci") || remotes::install_github("pneuvial/sanssouci@develop")
-require("sansSouci.data") || remotes::install_github("pneuvial/sanssouci.data")
+require("sanssouci.data") || remotes::install_github("pneuvial/sanssouci.data")
 ```
 
 
@@ -54,7 +54,7 @@ set.seed(20200924)
 We focus on differential gene expression studies in cancerology. These studies aim at identifying genes whose mean expression level differs significantly between two (or more) populations, based on a sample of gene expression measurements from individuals from these populations. Specifically, we consider a data set studied in @BGH2010.
 
 ```{r load-data}
-data(expr_ALL, package = "sansSouci.data")
+data(expr_ALL, package = "sanssouci.data")
 dat <- expr_ALL
 rm(expr_ALL)
 ```

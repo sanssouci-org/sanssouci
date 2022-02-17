@@ -12,7 +12,7 @@ vignette: |
   %\VignetteIndexEntry{Permutation-based post hoc inference for differential gene expression studies: RNAseq data}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteDepends{sansSouci.data}
+  %\VignetteDepends{sanssouci.data}
 ---
   
 ```{r setup, include = FALSE}
@@ -57,7 +57,7 @@ set.seed(20200924)
 We focus on differential gene expression studies in cancerology. These studies aim at identifying genes whose mean expression level differs significantly between two (or more) populations, based on a sample of gene expression measurements from individuals from these populations. 
 
 ```{r load-data, message = FALSE}
-data("RNAseq_blca", package = "sansSouci.data")
+data("RNAseq_blca", package = "sanssouci.data")
 Y <- RNAseq_blca
 groups <- ifelse(colnames(RNAseq_blca) == "III", 1, 0)
 rm(RNAseq_blca)
