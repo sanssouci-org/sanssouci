@@ -78,7 +78,7 @@ rowWilcoxonTests <- function (mat, categ, alternative = c("two.sided", "less", "
     stopifnot(all(categ %in% c(0, 1)))
     categ <- as.matrix(categ)
     levels(categ) <- NULL
-    apply(categ, 2, sansSouci:::categCheck, n = ncol(mat))
+    apply(categ, 2, categCheck, n = ncol(mat))
     B <- ncol(categ)
     m <- nrow(mat)
     n_obs <- nrow(categ)
