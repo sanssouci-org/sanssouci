@@ -69,7 +69,10 @@ This data set consists of gene expression measurements for  $n = `r ncol(Y)`$ pa
 CPM <- Y/colSums(Y)*1e6
 # plot(density(rowMaxs(log(1 + CPM))))
 ww <- which(rowMaxs(CPM) < 10)
+ww <- which(rowQuantiles(log(1 + CPM), prob = 0.75) < log(1+5))
 Y <- CPM[-ww, ]
+plot(density(log(1 + Y)))
+plot(density(log(1 + CPM)))
 m <- nrow(Y)
 ```
 
