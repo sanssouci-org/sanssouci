@@ -21,9 +21,8 @@ reference:
 - contents:
   - SansSouciStruct
   - fit.SansSouciStruct
-  - predict.SansSouciStruct
   - SansSouciDyadic
-- SansSouciStruct-methods
+  - SansSouciStruct-methods
 
 - exclude:
   - gaussianSamples
