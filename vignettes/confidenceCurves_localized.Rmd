@@ -7,7 +7,7 @@ output:
   pdf_document: 
     citation_package: natbib
     keep_tex: true
-bibliography: sansSouci.bib
+bibliography: sanssouci.bib
 vignette: >
   %\VignetteIndexEntry{Confidence curves for structured hypotheses}
   %\VignetteEngine{knitr::knitr}
@@ -19,10 +19,10 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Introduction
 
-The goal of this vignette is to illustrate the post hoc bounds on the number of true/false positives proposed in @durand20post-hoc for localized signals. More specifically, we reproduce one of the plots of Figure 12 in @durand20post-hoc using the R package `sansSouci`. We will explicitly quote @durand20post-hoc when relevant.
+The goal of this vignette is to illustrate the post hoc bounds on the number of true/false positives proposed in @durand20post-hoc for localized signals. More specifically, we reproduce one of the plots of Figure 12 in @durand20post-hoc using the R package `sanssouci`. We will explicitly quote @durand20post-hoc when relevant.
 
 ```{r library, message = FALSE}
-library("sansSouci")
+library("sanssouci")
 ```
 
 ## Objective
