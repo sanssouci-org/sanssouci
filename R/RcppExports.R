@@ -2,24 +2,24 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 colSort <- function(X) {
-    .Call('_sansSouci_colSort', PACKAGE = 'sansSouci', X)
+    .Call('_sanssouci_colSort', PACKAGE = 'sanssouci', X)
 }
 
 partialColSortDescCpp <- function(X, k) {
-    .Call('_sansSouci_partialColSortDescCpp', PACKAGE = 'sansSouci', X, k)
+    .Call('_sanssouci_partialColSortDescCpp', PACKAGE = 'sanssouci', X, k)
 }
 
 partialColSortCpp <- function(X, k) {
-    .Call('_sansSouci_partialColSortCpp', PACKAGE = 'sansSouci', X, k)
+    .Call('_sanssouci_partialColSortCpp', PACKAGE = 'sanssouci', X, k)
 }
 
 #' @describeIn posthocBySimes Rcpp version
 #' @export
 posthocBySimes0Rcpp <- function(p, select, alpha) {
-    .Call('_sansSouci_posthocBySimes0Rcpp', PACKAGE = 'sansSouci', p, select, alpha)
+    .Call('_sanssouci_posthocBySimes0Rcpp', PACKAGE = 'sanssouci', p, select, alpha)
 }
 
 testBySignFlipping <- function(X, B) {
-    .Call('_sansSouci_testBySignFlipping', PACKAGE = 'sansSouci', X, B)
+    .Call('_sanssouci_testBySignFlipping', PACKAGE = 'sanssouci', X, B)
 }
 
