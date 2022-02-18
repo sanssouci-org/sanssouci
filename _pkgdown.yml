@@ -6,7 +6,7 @@ reference:
     Functions to perform post hoc inference for 
     one- and two sample tests as described in the 
     BNR (2020) paper
-- contents:
+  contents:
   - SansSouci
   - fit.SansSouci
   - predict.SansSouci
@@ -18,25 +18,38 @@ reference:
   desc: > 
     Functions to perform post hoc inference for structured 
     hypotheses as described in the Durand et al. (2020) paper
-- contents:
+  contents:
   - SansSouciStruct
   - fit.SansSouciStruct
   - SansSouciDyadic
   - SansSouciStruct-methods
 
-- exclude:
+- title: internal
+  contents:
+  - all-generics
+  - calibrate
+  - confCurveFromFam
+  - curveMaxFP
+  - curveMaxFP_old
   - gaussianSamples
   - gaussianTestStatistics
-
+  - get_perm
+  - get_pivotal_stat
   - volcanoPlot
   - maxFP
+  - maxFDP
   - minTP
-  - curveMaxFP
-  
+  - minTDP
+  - plot.SansSouci
+  - plotConfCurve
+  - posthocBySimes0Rcpp
+  - reference-families
   - rowWilcoxonTests
   - rowWelchTests
+  - rowZTests
   - rowBinomialTests
-  
+  - testByRandomization
+  - volcanoPlot.numeric
   - curveVstar_tree
   - dyadic.from.leaf_list
   - dyadic
@@ -44,7 +57,9 @@ reference:
   - gen.mu.leaves
   - gen.mu.noleaves
   - gen.p.values
+  - V.star
   - zeta
+  - zetas.tree 
 
 home:
   links:
