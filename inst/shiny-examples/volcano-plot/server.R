@@ -87,7 +87,7 @@ shinyServer(function(input, output, session) {
     #             "Acute myeloid leukemia" = "GSE9476"))
   })
   
-  ## Download our example data set, loaded from sansSouci.data
+  ## Download our example data set, loaded from sanssouci.data
   
   ### load data sets in the button : save in three csv file containing in a zip file
   output$downloadExampleData <- downloadHandler(
@@ -141,8 +141,8 @@ shinyServer(function(input, output, session) {
       withProgress(value = 0, message = "Upload Data... ", {
         if (input$checkboxDemo){ #if example data set
           if(req(input$choiceGSEA)=='OurData'){ # cleaning for data from sanssouci.data
-            setProgress(value = 0.4, detail = "SansSoucis data set ...")
-            matrix <- expr_ALL #read data from sansSouci.data
+            setProgress(value = 0.4, detail = "sanssouci data set ...")
+            matrix <- expr_ALL #read data from sanssouci.data
             
             ### cleaning categories 
             cat <- colnames(matrix)

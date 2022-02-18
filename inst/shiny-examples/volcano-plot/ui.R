@@ -2,8 +2,8 @@ library("shiny")
 library("shinyjs")
 library("plotly")
 library("sansSouci")
-library("sansSouci.data")
-stopifnot(packageVersion("sansSouci.data") >= '0.2.2')
+library("sanssouci.data")
+stopifnot(packageVersion("sanssouci.data") >= '0.5.0')
 library("ggplot2")
 library("dplyr")
 library("htmlwidgets")
@@ -17,8 +17,8 @@ library("R.cache")
 
 
 
-data(expr_ALL, package = "sansSouci.data")
-data(expr_ALL_GO, package = "sansSouci.data")
+data(expr_ALL, package = "sanssouci.data")
+data(expr_ALL_GO, package = "sanssouci.data")
 
 shinyUI(fluidPage(
   useShinyjs(),

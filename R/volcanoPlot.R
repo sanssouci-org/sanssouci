@@ -21,7 +21,7 @@ volcanoPlot <- function(x, ...) UseMethod("volcanoPlot")
 #' @export
 #' 
 #' @examples
-#' data(expr_ALL, package = "sansSouci.data")
+#' data(expr_ALL, package = "sanssouci.data")
 #' groups <- ifelse(colnames(expr_ALL)=="NEG", 0, 1)
 #' a <- SansSouci(Y = expr_ALL, groups = groups)
 #' 

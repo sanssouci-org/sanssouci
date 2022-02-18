@@ -1,6 +1,11 @@
 ==================
-Package: sansSouci
+Package: sanssouci
 ==================
+
+Version 0.12.5 [2022-02-18]
+
+* Package sansSouci renamed to sanssouci
+* Package sansSouci.data renamed to sanssouci.data
 
 Version 0.12.4 [2021-11-05]
 

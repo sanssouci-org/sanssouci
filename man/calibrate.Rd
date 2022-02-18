@@ -88,7 +88,7 @@ maxFP(p, calib$thr)
 
 \dontrun{
 # Gene expression
-data(expr_ALL, package = "sansSouci.data")
+data(expr_ALL, package = "sanssouci.data")
 X <- expr_ALL; rm(expr_ALL)
 groups <- ifelse(colnames(X) == "BCR/ABL", 1, 0) # map to 0/1
 
@@ -115,7 +115,7 @@ length(sel)
 minTP(p[sel], thr)
 
 # confidence bound on the FDP
-FDP_bound <- sansSouci:::curveMaxFP(sort(p), thr)/seq(along = p)
+FDP_bound <- sanssouci:::curveMaxFP(sort(p), thr)/seq(along = p)
 plot(head(FDP_bound, 300), t = 's', 
   xlab = "Number of features",
   ylab = "Upper bound on False Discovery Proportion")

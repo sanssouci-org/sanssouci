@@ -18,18 +18,18 @@
 # m <- 20
 #
 # ## independent
-# Y <- sansSouci:::simulateGaussianNullsFromFactorModel(m, 
+# Y <- sanssouci:::simulateGaussianNullsFromFactorModel(m, 
 #     flavor = "independent")
 #   image(Y)
 #
 # ## equi-correlated
-# Y <- sansSouci:::simulateGaussianNullsFromFactorModel(m, 
+# Y <- sanssouci:::simulateGaussianNullsFromFactorModel(m, 
 #     flavor = "equi-correlated", rho = 0.2, cov = TRUE)
 # S <- attr(Y, "Sigma")
 # image(S)
 #
 # ## check equi-correlation:
-# Y <- sansSouci:::simulateGaussianNullsFromFactorModel(m, 
+# Y <- sanssouci:::simulateGaussianNullsFromFactorModel(m, 
 #     n = 1237, flavor = "equi-correlated", rho = 0.2)
 # covmat <- cov(t(Y))
 # image(covmat)
@@ -39,7 +39,7 @@
 #
 # ## 3-factor model
 # m <- 4*floor(m/4) ## make sure m/4 is an integer
-# S3 <- sansSouci:::simulateGaussianNullsFromFactorModel(m, 
+# S3 <- sanssouci:::simulateGaussianNullsFromFactorModel(m, 
 #     flavor = "3-factor", rho = 0.5)
 # image(S3)
 #

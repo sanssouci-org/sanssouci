@@ -13,14 +13,14 @@ knitr::opts_chunk$set(
 )
 ```
 
-# sansSouci
+# sanssouci
 
 <!-- badges: start -->
   [![R build status](https://github.com/pneuvial/sanssouci/workflows/R-CMD-check/badge.svg)](https://github.com/pneuvial/sanssouci/actions)
 [![Coverage Status](https://codecov.io/gh/pneuvial/sanssouci/branch/develop/graph/badge.svg)](https://codecov.io/github/pneuvial/sanssouci/branch/develop)
 <!-- badges: end -->
 
-The goal of sansSouci is to perform **post hoc inference**: in a multiple testing context, sansSouci provides statistical guarantees on possibly user-defined and/or data-driven sets of hypotheses. 
+The goal of sanssouci [sãsusi] is to perform **post hoc inference**: in a multiple testing context, sanssouci provides statistical guarantees on possibly user-defined and/or data-driven sets of hypotheses. 
 
 Typical use cases include:
 
@@ -29,16 +29,16 @@ Typical use cases include:
   - run [volcano plot shiny app](https://shiny-iidea-sanssouci.apps.math.cnrs.fr/)
 - **fMRI studies in neuroimaging**: see [fMRI vignette](https://pneuvial.github.io/sanssouci/articles/post-hoc_fMRI.html). 
 
-In both cases, the permutation-based post hoc inference methods implemented in the `SansSouci` package outperform classical post hoc bounds based on probabilistic inequalities.
+In both cases, the permutation-based post hoc inference methods implemented in the `sanssouci` package outperform classical post hoc bounds based on probabilistic inequalities.
 
 ## Example: differential analysis
 
-We briefly illustrate the case of differential gene expression study (see dedicated [vignette](https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html) for more information). We start by creating an object of class `SansSouci` from gene expression data available from the [sansSouci.data](https://github.com/pneuvial/sanssouci.data) package, 
+We briefly illustrate the case of differential gene expression study (see dedicated [vignette](https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html) for more information). We start by creating an object of class `sanssouci` from gene expression data available from the [sanssouci.data](https://github.com/pneuvial/sanssouci.data) package, 
 
 ```{r load-data}
-library("sansSouci")
+library("sanssouci")
 #> remotes::install_github("pneuvial/sanssouci.data")
-data(expr_ALL, package = "sansSouci.data")
+data(expr_ALL, package = "sanssouci.data")
 groups <- ifelse(colnames(expr_ALL) == "BCR/ABL", 1, 0) # map to 0/1
 obj <- SansSouci(Y = expr_ALL, groups = groups)
 ```
@@ -86,10 +86,10 @@ Importantly, multiple such selections can be made without compromising the valid
 
 ## Installation
 
-<!-- You can install the released version of sansSouci from [CRAN](https://CRAN.R-project.org) with: -->
+<!-- You can install the released version of sanssouci from [CRAN](https://CRAN.R-project.org) with: -->
 
 <!-- ``` r -->
-<!-- install.packages("sansSouci") -->
+<!-- install.packages("sanssouci") -->
 <!-- ``` -->
 
 You can install the development version from [GitHub](https://github.com/) with:

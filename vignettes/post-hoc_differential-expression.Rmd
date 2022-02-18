@@ -7,12 +7,12 @@ output:
     number_sections: yes
     toc: yes
   pdf_document: default
-bibliography: sansSouci.bib
+bibliography: sanssouci.bib
 vignette: |
   %\VignetteIndexEntry{Permutation-based post hoc inference for differential gene expression studies}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteDepends{sansSouci.data}
+  %\VignetteDepends{sanssouci.data}
 ---
   
 ```{r setup, include = FALSE}
@@ -24,7 +24,7 @@ fig.height=6
 )
 ```
 
-This vignette reproduces figures from Section 9 in the book chapter: @BNR:chap. It demonstrates how the [`sansSouci`](https://github.com/pneuvial/sanssouci) package may be used to obtain post hoc confidence bounds on false positives in the case of differential gene expression analysis. After showing the output of a classical differential analysis based on False Discovery Rate control we illustrate the application of basic post-hoc bounds derived from probabilistic inequalities. 
+This vignette reproduces figures from Section 9 in the book chapter: @BNR:chap. It demonstrates how the [`sanssouci`](https://github.com/pneuvial/sanssouci) package may be used to obtain post hoc confidence bounds on false positives in the case of differential gene expression analysis. After showing the output of a classical differential analysis based on False Discovery Rate control we illustrate the application of basic post-hoc bounds derived from probabilistic inequalities. 
 Then, we introduce more powerful post hoc methods (introduced by @blanchard20post-hoc) that yield tighter bounds by adapting to unknown dependence by randomization. Finally we demonstrate the use of these methods on two applications of post hoc methods:
 
 - confidence curves (envelopes) for the true or false positives
@@ -33,15 +33,15 @@ Then, we introduce more powerful post hoc methods (introduced by @blanchard20pos
 The methods described in this vignette are described in detail in the book chapter @BNR:chap and in the paper @blanchard20post-hoc. A shiny application for volcano plots is also available from  https://shiny-iidea-sanssouci.apps.math.cnrs.fr/.
 
 ```{r install-r-packages, results='hide', message=FALSE, eval=FALSE}
-require("ggplot2") || install.packages("ggplot2")
-require("sansSouci") || remotes::install_github("pneuvial/sanssouci@develop")
-require("sansSouci.data") || remotes::install_github("pneuvial/sanssouci.data")
+require("ggplot2") # install.packages("ggplot2")
+require("sanssouci") # remotes::install_github("pneuvial/sanssouci@develop")
+require("sanssouci.data") # remotes::install_github("pneuvial/sanssouci.data")
 ```
 
 
 ```{r load-r-packages, results='hide', message=FALSE}
 library("ggplot2")
-library("sansSouci")
+library("sanssouci")
 ```
 
 Set the seed of the random number generator for numerical reproducibility of the results:
@@ -54,7 +54,7 @@ set.seed(20200924)
 We focus on differential gene expression studies in cancerology. These studies aim at identifying genes whose mean expression level differs significantly between two (or more) populations, based on a sample of gene expression measurements from individuals from these populations. Specifically, we consider a data set studied in @BGH2010.
 
 ```{r load-data}
-data(expr_ALL, package = "sansSouci.data")
+data(expr_ALL, package = "sanssouci.data")
 dat <- expr_ALL
 rm(expr_ALL)
 ```
@@ -75,7 +75,7 @@ The most basic question to ask is:
 
 This question can be addressed by performing one statistical test of no difference between means for each gene, and to define "differentially expressed" genes as those passing some significance threshold. 
 
-Below, the Welch test for differential expression is applied to each gene. This can be done e.g. using the `sansSouci::rowWelchTests` function:
+Below, the Welch test for differential expression is applied to each gene. This can be done e.g. using the `sanssouci::rowWelchTests` function:
 
 ```{r row-welch-tests}
 categ <- ifelse(colnames(dat) == "BCR/ABL", 1, 0) # map to 0/1

@@ -7,12 +7,12 @@ output:
     number_sections: yes
     toc: yes
   pdf_document: default
-bibliography: sansSouci.bib
+bibliography: sanssouci.bib
 vignette: |
   %\VignetteIndexEntry{Permutation-based post hoc inference for differential gene expression studies: RNAseq data}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteDepends{sansSouci.data}
+  %\VignetteDepends{sanssouci.data}
 ---
   
 ```{r setup, include = FALSE}
@@ -36,13 +36,13 @@ The methods described in this vignette have been introduced in the paper @blanch
 
 ```{r install-r-packages, results='hide', message=FALSE, eval=FALSE}
 require("ggplot2") || install.packages("ggplot2")
-require("sansSouci") || remotes::install_github("pneuvial/sanssouci@develop")
+require("sanssouci") || remotes::install_github("pneuvial/sanssouci@develop")
 ```
 
 
 ```{r load-r-packages, results='hide', message=FALSE}
 library("ggplot2")
-library("sansSouci")
+library("sanssouci")
 library("matrixStats")
 ```
 
@@ -57,7 +57,7 @@ set.seed(20200924)
 We focus on differential gene expression studies in cancerology. These studies aim at identifying genes whose mean expression level differs significantly between two (or more) populations, based on a sample of gene expression measurements from individuals from these populations. 
 
 ```{r load-data, message = FALSE}
-data("RNAseq_blca", package = "sansSouci.data")
+data("RNAseq_blca", package = "sanssouci.data")
 Y <- RNAseq_blca
 groups <- ifelse(colnames(RNAseq_blca) == "III", 1, 0)
 rm(RNAseq_blca)
@@ -87,7 +87,7 @@ The goal of this study is to understand the molecular differences at the gene ex
 > For which genes is there a difference in the distribution of expression levels between the stage II and stage III populations? 
 
 This question can be addressed by performing one statistical test per gene, and to define "differentially expressed" genes as those passing some significance threshold.
-Below, we use the Wilcoxon rank sum (or Mann-Whitney) test for comparing two independent samples. This is a rank-based non-parametric test. A fast version of this test is implemented in the  `sansSouci::rowWilcoxonTests` function.
+Below, we use the Wilcoxon rank sum (or Mann-Whitney) test for comparing two independent samples. This is a rank-based non-parametric test. A fast version of this test is implemented in the  `sanssouci::rowWilcoxonTests` function.
 
 
 To obtain post hoc bounds, we create an object of class `SansSouci` and run the `fit` method to perform calibration with $B=1,000$ permutations. The target risk level is set to $\alpha = 0.1$, meaning that all of the statements made below will be true with probability greater than $1-\alpha= 0.9$.

@@ -1,4 +1,4 @@
-#' @useDynLib sansSouci
+#' @useDynLib sanssouci
 #' @importFrom Rcpp sourceCpp
 NULL
 

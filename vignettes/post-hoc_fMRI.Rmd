@@ -11,12 +11,12 @@ output:
     number_sections: yes
     toc: yes
     toc_depth: 1
-bibliography: sansSouci.bib
+bibliography: sanssouci.bib
 vignette: |
   %\VignetteIndexEntry{Permutation-based post hoc inference for fMRI studies} 
   %\VignetteEncoding{UTF-8} 
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteDepends{sansSouci.data}
+  %\VignetteDepends{sanssouci.data}
 ---
 
 ```{r setup, include = FALSE}
@@ -29,7 +29,7 @@ fig.height=6
 ```
 
 
-This vignette shows how to use the [`sansSouci`](https://github.com/pneuvial/sanssouci) package to perform permutation-based post hoc inference for fMRI data. We focus on a motor task (left versus right click) from the Localizer data set by @orfanos2017brainomics. The data set is included in the [`sansSouci.data`](https://github.com/pneuvial/sanssouci.data) package. It has been obtained using the Python module [nilearn](http://nilearn.github.io/), see @abraham2014machine-learning.
+This vignette shows how to use the [`sanssouci`](https://github.com/pneuvial/sanssouci) package to perform permutation-based post hoc inference for fMRI data. We focus on a motor task (left versus right click) from the Localizer data set by @orfanos2017brainomics. The data set is included in the [`sanssouci.data`](https://github.com/pneuvial/sanssouci.data) package. It has been obtained using the Python module [nilearn](http://nilearn.github.io/), see @abraham2014machine-learning.
 
 # Setup
 
@@ -37,14 +37,14 @@ We first make sure that the required R packages are installed and loaded.
 
 ```{r install-r-packages, results='hide', message=FALSE, eval=FALSE}
 require("ggplot2") || install.packages("ggplot2")
-require("sansSouci") || remotes::install_github("pneuvial/sanssouci@develop")
-require("sansSouci.data") || remotes::install_github("pneuvial/sanssouci.data")
+require("sanssouci") || remotes::install_github("pneuvial/sanssouci@develop")
+require("sanssouci.data") || remotes::install_github("pneuvial/sanssouci.data")
 ```
 
 
 ```{r load-r-packages, results='hide', message=FALSE}
 library("ggplot2")
-library("sansSouci")
+library("sanssouci")
 ```
 
 We set the seed of the random number generator for numerical reproducibility of the results:
@@ -56,7 +56,7 @@ set.seed(20200924)
 # Loading and preprocessing the data
 
 ```{r load-data}
-data(fMRI_localizer, package = "sansSouci.data")
+data(fMRI_localizer, package = "sanssouci.data")
 Y <- fMRI_localizer
 rm(fMRI_localizer)
 ```
@@ -77,7 +77,7 @@ We start by calculating the Simes bound introduced by @GS2011. This bound has al
 alpha <- 0.1
 ```
 
-We set the target confidence level to $\alpha = `r alpha`$. The Simes bound is implemented in the package 'cherry'. Here, we use the 'sansSouci' package, as follows:
+We set the target confidence level to $\alpha = `r alpha`$. The Simes bound is implemented in the package 'cherry'. Here, we use the 'sanssouci' package, as follows:
 
 
 ```{r simes-bound}
@@ -108,7 +108,7 @@ plot(res_Simes, xmax = xmax) +
 As discussed in @blanchard20post-hoc, the above-described bound is known to be valid only under certain positive dependence assumptions (PRDS) on the joint $p$-value distribution. Although the PRDS assumption is widely accepted for fMRI studies (see @genovese2002thresholding, @nichols2003controlling), we argue (and demonstrate below) that this assumption yields overly conservative post hoc bounds. Indeed, the Simes bound is by construction not *adaptive* to the specific type of dependence at hand for a particular data set.
 
 
-To bypass these limitations, @blanchard20post-hoc have proposed a randomization-based procedure known as $\lambda$-calibration, which yields tighter bounds that are adapted to the dependency observed in the data set at hand. We note that a related approach has been proposed by @HSG2019. In the case of two-sample tests, this calibration can be achieved by permutation of class labels, which is readily available via the `fit` function of the sansSouci package:
+To bypass these limitations, @blanchard20post-hoc have proposed a randomization-based procedure known as $\lambda$-calibration, which yields tighter bounds that are adapted to the dependency observed in the data set at hand. We note that a related approach has been proposed by @HSG2019. In the case of two-sample tests, this calibration can be achieved by permutation of class labels, which is readily available via the `fit` function of the sanssouci package:
 
 
 ```{r post-hoc-calibration, cache=TRUE}
@@ -164,10 +164,10 @@ In this example, ARI is outperformed by permutation-based approaches, which are 
 
 # Post hoc bounds on brain atlas areas
 
-The goal in this section is to calculate post hoc bound on user-defined brain regions. One definition of such regions is given by the [Harvard-Oxford brain atlas](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/Atlases), which is available from the sansSouci.data package. 
+The goal in this section is to calculate post hoc bound on user-defined brain regions. One definition of such regions is given by the [Harvard-Oxford brain atlas](https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/Atlases), which is available from the sanssouci.data package. 
 
 ```{r load-atlas}
-data(brainAtlas, package = "sansSouci.data")
+data(brainAtlas, package = "sanssouci.data")
 ```
 
 This atlas is made of `r nrow(brainAtlas)` areas. For each of these areas, we  calculate the three post hoc bounds obtained above. Note that by construction of post hoc bounds, these 48 bounds are valid simultaneously (in particular, no further multiple testing correction is required at this stage). 
