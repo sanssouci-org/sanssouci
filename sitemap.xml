@@ -1,6 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://pneuvial.github.io/sanssouci/404.html</loc>
+  </url>
+  <url>
+    <loc>https://pneuvial.github.io/sanssouci/articles/IIDEA.html</loc>
+  </url>
+  <url>
+    <loc>https://pneuvial.github.io/sanssouci/articles/Simes_equi-correlation.html</loc>
+  </url>
+  <url>
+    <loc>https://pneuvial.github.io/sanssouci/articles/confidenceCurves_localized.html</loc>
+  </url>
+  <url>
+    <loc>https://pneuvial.github.io/sanssouci/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>https://pneuvial.github.io/sanssouci/articles/jointErrorRateCalibration_simulations.html</loc>
+  </url>
+  <url>
+    <loc>https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html</loc>
+  </url>
+  <url>
+    <loc>https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression_RNAseq.html</loc>
+  </url>
+  <url>
+    <loc>https://pneuvial.github.io/sanssouci/articles/post-hoc_fMRI.html</loc>
+  </url>
+  <url>
+    <loc>https://pneuvial.github.io/sanssouci/authors.html</loc>
+  </url>
+  <url>
     <loc>https://pneuvial.github.io/sanssouci/index.html</loc>
   </url>
   <url>
@@ -73,6 +103,9 @@
     <loc>https://pneuvial.github.io/sanssouci/reference/get_pivotal_stat.html</loc>
   </url>
   <url>
+    <loc>https://pneuvial.github.io/sanssouci/reference/index.html</loc>
+  </url>
+  <url>
     <loc>https://pneuvial.github.io/sanssouci/reference/maxFDP.html</loc>
   </url>
   <url>
@@ -128,26 +161,5 @@
   </url>
   <url>
     <loc>https://pneuvial.github.io/sanssouci/reference/zetas.tree.html</loc>
-  </url>
-  <url>
-    <loc>https://pneuvial.github.io/sanssouci/articles/IIDEA.html</loc>
-  </url>
-  <url>
-    <loc>https://pneuvial.github.io/sanssouci/articles/Simes_equi-correlation.html</loc>
-  </url>
-  <url>
-    <loc>https://pneuvial.github.io/sanssouci/articles/confidenceCurves_localized.html</loc>
-  </url>
-  <url>
-    <loc>https://pneuvial.github.io/sanssouci/articles/jointErrorRateCalibration_simulations.html</loc>
-  </url>
-  <url>
-    <loc>https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html</loc>
-  </url>
-  <url>
-    <loc>https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression_RNAseq.html</loc>
-  </url>
-  <url>
-    <loc>https://pneuvial.github.io/sanssouci/articles/post-hoc_fMRI.html</loc>
   </url>
 </urlset>

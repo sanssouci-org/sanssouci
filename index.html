@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Post Hoc Multiple Testing Inference • sansSouci</title>
+<title>Post Hoc Multiple Testing Inference • sanssouci</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -30,19 +32,13 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="index.html">sansSouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.12.4</span>
+        <a class="navbar-link" href="index.html">sanssouci</a>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.5</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
@@ -79,7 +75,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/pneuvial/sanssouci/">
+  <a href="https://github.com/pneuvial/sanssouci/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -96,12 +92,12 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="sanssouci" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#sanssouci" class="anchor"></a>sansSouci</h1></div>
+<div class="section level1">
+<div class="page-header"><h1 id="sanssouci">sanssouci<a class="anchor" aria-label="anchor" href="#sanssouci"></a>
+</h1></div>
 <!-- badges: start -->
 
-<p>The goal of sansSouci is to perform <strong>post hoc inference</strong>: in a multiple testing context, sansSouci provides statistical guarantees on possibly user-defined and/or data-driven sets of hypotheses.</p>
+<p>The goal of sanssouci [sãsusi] is to perform <strong>post hoc inference</strong>: in a multiple testing context, sanssouci provides statistical guarantees on possibly user-defined and/or data-driven sets of hypotheses.</p>
 <p>Typical use cases include:</p>
 <ul>
 <li>
@@ -109,68 +105,70 @@
 <ul>
 <li>see vignettes dedicated to <a href="https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html">microarray data</a> and <a href="https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression_RNAseq.html">RNAseq data</a>
 </li>
-<li>run <a href="https://shiny-iidea-sanssouci.apps.math.cnrs.fr/">volcano plot shiny app</a>
+<li>run <a href="https://shiny-iidea-sanssouci.apps.math.cnrs.fr/" class="external-link">volcano plot shiny app</a>
 </li>
 </ul>
 </li>
 <li>
 <strong>fMRI studies in neuroimaging</strong>: see <a href="https://pneuvial.github.io/sanssouci/articles/post-hoc_fMRI.html">fMRI vignette</a>.</li>
 </ul>
-<p>In both cases, the permutation-based post hoc inference methods implemented in the <code>SansSouci</code> package outperform classical post hoc bounds based on probabilistic inequalities.</p>
-<div id="example-differential-analysis" class="section level2">
-<h2 class="hasAnchor">
-<a href="#example-differential-analysis" class="anchor"></a>Example: differential analysis</h2>
-<p>We briefly illustrate the case of differential gene expression study (see dedicated <a href="https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html">vignette</a> for more information). We start by creating an object of class <code>SansSouci</code> from gene expression data available from the <a href="https://github.com/pneuvial/sanssouci.data">sansSouci.data</a> package,</p>
+<p>In both cases, the permutation-based post hoc inference methods implemented in the <code>sanssouci</code> package outperform classical post hoc bounds based on probabilistic inequalities.</p>
+<div class="section level2">
+<h2 id="example-differential-analysis">Example: differential analysis<a class="anchor" aria-label="anchor" href="#example-differential-analysis"></a>
+</h2>
+<p>We briefly illustrate the case of differential gene expression study (see dedicated <a href="https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html">vignette</a> for more information). We start by creating an object of class <code>sanssouci</code> from gene expression data available from the <a href="https://github.com/pneuvial/sanssouci.data" class="external-link">sanssouci.data</a> package,</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/pneuvial/sanssouci">"sansSouci"</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/pneuvial/sanssouci" class="external-link">"sanssouci"</a></span><span class="op">)</span>
 <span class="co">#&gt; remotes::install_github("pneuvial/sanssouci.data")</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">expr_ALL</span>, package <span class="op">=</span> <span class="st">"sansSouci.data"</span><span class="op">)</span>
-<span class="va">groups</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">expr_ALL</span><span class="op">)</span> <span class="op">==</span> <span class="st">"BCR/ABL"</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span> <span class="co"># map to 0/1</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">expr_ALL</span>, package <span class="op">=</span> <span class="st">"sanssouci.data"</span><span class="op">)</span>
+<span class="va">groups</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">expr_ALL</span><span class="op">)</span> <span class="op">==</span> <span class="st">"BCR/ABL"</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span> <span class="co"># map to 0/1</span>
 <span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/SansSouci.html">SansSouci</a></span><span class="op">(</span>Y <span class="op">=</span> <span class="va">expr_ALL</span>, groups <span class="op">=</span> <span class="va">groups</span><span class="op">)</span></code></pre></div>
 <p>Then we fit the method by with <code>B=1000</code> permutations, and with a target risk <code>alpha = 0.1</code>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html">fit</a></span><span class="op">(</span><span class="va">obj</span>, alpha <span class="op">=</span> <span class="fl">0.1</span>, B <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></code></pre></div>
-<div id="output-1---post-hoc-bound-for-a-subset-of-genes" class="section level3">
-<h3 class="hasAnchor">
-<a href="#output-1---post-hoc-bound-for-a-subset-of-genes" class="anchor"></a>Output 1 - Post hoc bound for a subset of genes</h3>
-<p>Let us assume that we are interested in genes with a <span class="math inline"><em>p</em></span>-value below <span class="math inline">10<sup> − 3</sup></span>.</p>
+<code class="sourceCode R"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">obj</span>, alpha <span class="op">=</span> <span class="fl">0.1</span>, B <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></code></pre></div>
+<div class="section level3">
+<h3 id="output-1---post-hoc-bound-for-a-subset-of-genes">Output 1 - Post hoc bound for a subset of genes<a class="anchor" aria-label="anchor" href="#output-1---post-hoc-bound-for-a-subset-of-genes"></a>
+</h3>
+<p>Let us assume that we are interested in genes with a (p)-value below (10^{-3}).</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">S</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="fu"><a href="reference/all-generics.html">pValues</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fl">1e-3</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span><span class="op">(</span><span class="va">res</span>, <span class="va">S</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">S</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="fu"><a href="reference/all-generics.html">pValues</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fl">1e-3</span><span class="op">)</span>
+<span class="co">#&gt; Warning: namespace 'sansSouci' is not available and has been replaced</span>
+<span class="co">#&gt; by .GlobalEnv when processing object '&lt;unknown&gt;'</span>
+<span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">res</span>, <span class="va">S</span><span class="op">)</span>
 <span class="co">#&gt;          TP         FDP </span>
-<span class="co">#&gt; 123.0000000   0.2360248</span></code></pre></div>
-<p>The method ensures with <span class="math inline">1 − <em>α</em> = 90%</span> confidence that there are at least 123 truly differentially expressed genes (true positives, TP) among these 161 genes, corresponding to a false discovery proportion (FDP) less than 0.24.</p>
+<span class="co">#&gt; 114.0000000   0.2919255</span></code></pre></div>
+<p>The method ensures with (1-= 90%) confidence that there are at least 114 truly differentially expressed genes (true positives, TP) among these 161 genes, corresponding to a false discovery proportion (FDP) less than 0.3.</p>
 </div>
-<div id="output-2---confidence-curves-for-top-k-feature-lists" class="section level3">
-<h3 class="hasAnchor">
-<a href="#output-2---confidence-curves-for-top-k-feature-lists" class="anchor"></a>Output 2 - Confidence curves for “top-k” feature lists</h3>
-<p>Another output of the method is the following <span class="math inline">1 − <em>α</em></span>-level confidence curve on FDP (left panel) and corresponding TP (right panel) in “top-k” gene lists.</p>
+<div class="section level3">
+<h3 id="output-2---confidence-curves-for-top-k-feature-lists">Output 2 - Confidence curves for “top-k” feature lists<a class="anchor" aria-label="anchor" href="#output-2---confidence-curves-for-top-k-feature-lists"></a>
+</h3>
+<p>Another output of the method is the following (1-)-level confidence curve on FDP (left panel) and corresponding TP (right panel) in “top-k” gene lists.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org">"ggplot2"</a></span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">res</span>, xmax <span class="op">=</span> <span class="fl">500</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">S</span><span class="op">)</span>, 
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">res</span>, xmax <span class="op">=</span> <span class="fl">500</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">S</span><span class="op">)</span>, 
              color <span class="op">=</span> <span class="st">"gray"</span>, linetype <span class="op">=</span> <span class="st">"dotted"</span>, size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span></code></pre></div>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-conf-curve-1.png" width="100%"></p>
 </div>
-<div id="output-3---volcano-plots" class="section level3">
-<h3 class="hasAnchor">
-<a href="#output-3---volcano-plots" class="anchor"></a>Output 3 - Volcano plots</h3>
-<p>A more refined user selection is obtained by selecting genes based on both significance (here, a FDR-adjusted <span class="math inline"><em>p</em></span>-value below 0.05) and fold change (here, fold change above 0.3). Such selections are generally represented by volcano plots:</p>
+<div class="section level3">
+<h3 id="output-3---volcano-plots">Output 3 - Volcano plots<a class="anchor" aria-label="anchor" href="#output-3---volcano-plots"></a>
+</h3>
+<p>A more refined user selection is obtained by selecting genes based on both significance (here, a FDR-adjusted (p)-value below 0.05) and fold change (here, fold change above 0.3). Such selections are generally represented by volcano plots:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="reference/volcanoPlot.html">volcanoPlot</a></span><span class="op">(</span><span class="va">res</span>, q <span class="op">=</span> <span class="fl">0.05</span>, r <span class="op">=</span> <span class="fl">0.3</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">6</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="reference/volcanoPlot.html">volcanoPlot</a></span><span class="op">(</span><span class="va">res</span>, q <span class="op">=</span> <span class="fl">0.05</span>, r <span class="op">=</span> <span class="fl">0.3</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">6</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-volcano-plot-1.png" width="100%"></p>
-<p>Importantly, multiple such selections can be made without compromising the validity of the bounds. The <a href="https://shiny-iidea-sanssouci.apps.math.cnrs.fr/">IIDEA shiny app</a> makes it possible to perform such selections interactively and without programming.</p>
+<p>Importantly, multiple such selections can be made without compromising the validity of the bounds. The <a href="https://shiny-iidea-sanssouci.apps.math.cnrs.fr/" class="external-link">IIDEA shiny app</a> makes it possible to perform such selections interactively and without programming.</p>
 </div>
 </div>
-<div id="installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
-<!-- You can install the released version of sansSouci from [CRAN](https://CRAN.R-project.org) with: -->
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
+<!-- You can install the released version of sanssouci from [CRAN](https://CRAN.R-project.org) with: -->
 <!-- ``` r -->
-<!-- install.packages("sansSouci") -->
+<!-- install.packages("sanssouci") -->
 <!-- ``` -->
-<p>You can install the development version from <a href="https://github.com/">GitHub</a> with:</p>
+<p>You can install the development version from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># install.packages("remotes")</span>
 <span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"pneuvial/sanssouci"</span><span class="op">)</span></code></pre></div>
@@ -180,60 +178,64 @@
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Browse source code at <br><a href="https://github.com/pneuvial/sanssouci/">https://​github.com/​pneuvial/​sanssouci/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/pneuvial/sanssouci/issues">https://​github.com/​pneuvial/​sanssouci/​issues</a>
-</li>
-<li>Run volcano plot shiny app at <br><a href="https://shiny-iidea-sanssouci.apps.math.cnrs.fr/">https://​shiny-iidea-sanssouci.apps.math.cnrs.fr/​</a>
-</li>
-</ul>
-</div>
-<div class="license">
-<h2>License</h2>
-<ul class="list-unstyled">
-<li><a href="https://www.r-project.org/Licenses/GPL-3">GPL-3</a></li>
-</ul>
-</div>
-<div class="citation">
-<h2>Citation</h2>
-<ul class="list-unstyled">
-<li><a href="authors.html">Citing sansSouci</a></li>
-</ul>
-</div>
-<div class="developers">
-<h2>Developers</h2>
-<ul class="list-unstyled">
-<li>
-<a href="https://www.math.univ-toulouse.fr/~pneuvial/">Pierre Neuvial</a> <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0003-3584-9998" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>
-<a href="https://www.imo.universite-paris-saclay.fr/~blanchard/">Gilles Blanchard</a> <br><small class="roles"> Author </small>  </li>
-<li>
-<a href="https://durandg12.github.io/">Guillermo Durand</a> <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0003-4056-5631" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Nicolas Enjalbert-Courrech <br><small class="roles"> Author </small>  </li>
-<li>
-<a href="https://etienneroquain-81.webself.net/">Etienne Roquain</a> <br><small class="roles"> Author </small>  </li>
+<li><a href="https://github.com/pneuvial/sanssouci/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/pneuvial/sanssouci/issues" class="external-link">Report a bug</a></li>
+<li><a href="https://shiny-iidea-sanssouci.apps.math.cnrs.fr/" class="external-link">Run volcano plot shiny app</a></li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
+<div class="license">
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/pneuvial/sanssouci/actions"><img src="https://github.com/pneuvial/sanssouci/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
-<li><a href="https://codecov.io/github/pneuvial/sanssouci/branch/develop"><img src="https://codecov.io/gh/pneuvial/sanssouci/branch/develop/graph/badge.svg" alt="Coverage Status"></a></li>
+<li><a href="https://www.r-project.org/Licenses/GPL-3" class="external-link">GPL-3</a></li>
 </ul>
 </div>
+
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
+<ul class="list-unstyled">
+<li><a href="authors.html#citation">Citing sanssouci</a></li>
+</ul>
 </div>
+
+<div class="developers">
+<h2 data-toc-skip>Developers</h2>
+<ul class="list-unstyled">
+<li>
+<a href="https://www.math.univ-toulouse.fr/~pneuvial/" class="external-link">Pierre Neuvial</a> <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0003-3584-9998" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>
+<a href="https://www.imo.universite-paris-saclay.fr/~blanchard/" class="external-link">Gilles Blanchard</a> <br><small class="roles"> Author </small>  </li>
+<li>
+<a href="https://durandg12.github.io/" class="external-link">Guillermo Durand</a> <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0003-4056-5631" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Nicolas Enjalbert-Courrech <br><small class="roles"> Author </small>  </li>
+<li>
+<a href="https://etienneroquain-81.webself.net/" class="external-link">Etienne Roquain</a> <br><small class="roles"> Author </small>  </li>
+</ul>
+</div>
+
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/pneuvial/sanssouci/actions" class="external-link"><img src="https://github.com/pneuvial/sanssouci/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
+<li><a href="https://codecov.io/github/pneuvial/sanssouci/branch/develop" class="external-link"><img src="https://codecov.io/gh/pneuvial/sanssouci/branch/develop/graph/badge.svg" alt="Coverage Status"></a></li>
+</ul>
+</div>
+
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by <a href="https://www.math.univ-toulouse.fr/~pneuvial/">Pierre Neuvial</a>, <a href="https://www.imo.universite-paris-saclay.fr/~blanchard/">Gilles Blanchard</a>, <a href="https://durandg12.github.io/">Guillermo Durand</a>, Nicolas Enjalbert-Courrech, <a href="https://etienneroquain-81.webself.net/">Etienne Roquain</a>.</p>
+  <p></p>
+<p>Developed by <a href="https://www.math.univ-toulouse.fr/~pneuvial/" class="external-link">Pierre Neuvial</a>, <a href="https://www.imo.universite-paris-saclay.fr/~blanchard/" class="external-link">Gilles Blanchard</a>, <a href="https://durandg12.github.io/" class="external-link">Guillermo Durand</a>, Nicolas Enjalbert-Courrech, <a href="https://etienneroquain-81.webself.net/" class="external-link">Etienne Roquain</a>.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>
@@ -241,6 +243,8 @@
 
   
 
+
+  
 
   </body>
 </html>
