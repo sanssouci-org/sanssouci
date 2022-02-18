@@ -1,4 +1,4 @@
-Package: sansSouci
+Package: sanssouci
 Version: 0.12.5
 Date: 2022-02-18
 Title: Post Hoc Multiple Testing Inference
@@ -39,4 +39,4 @@ LazyData: true
 Encoding: UTF-8
 URL: https://github.com/pneuvial/sanssouci
 BugReports: https://github.com/pneuvial/sanssouci/issues
-Remotes: github::pneuvial/sansSouci.data
+Remotes: github::pneuvial/sanssouci.data

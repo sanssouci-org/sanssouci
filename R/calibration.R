@@ -78,7 +78,7 @@
 #' minTP(p[sel], thr)
 #' 
 #' # confidence bound on the FDP
-#' FDP_bound <- sansSouci:::curveMaxFP(sort(p), thr)/seq(along = p)
+#' FDP_bound <- sanssouci:::curveMaxFP(sort(p), thr)/seq(along = p)
 #' plot(head(FDP_bound, 300), t = 's', 
 #'   xlab = "Number of features",
 #'   ylab = "Upper bound on False Discovery Proportion")
@@ -184,7 +184,7 @@ calibrate0 <- function(p0, m, alpha,
 #' 
 #' B <- 10
 #' set.seed(123)
-#' perm0 <- sansSouci:::get_perm(X, categ, B, rowWelchTests)
+#' perm0 <- sanssouci:::get_perm(X, categ, B, rowWelchTests)
 #' 
 #' # for this particular test 'get_perm' can be bypassed
 #' set.seed(123)
@@ -195,7 +195,7 @@ calibrate0 <- function(p0, m, alpha,
 
 #' # Wilcoxon tests
 #' set.seed(123)
-#' perm0 <- sansSouci:::get_perm(X, categ, B, rowWilcoxonTests)
+#' perm0 <- sanssouci:::get_perm(X, categ, B, rowWilcoxonTests)
 #' perm <- rowWilcoxonTests(X, null_groups)
 #' identical(perm0$p.value, perm$p.value)
 #' identical(perm0$statistic, perm$statistic)

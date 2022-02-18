@@ -7,7 +7,7 @@ output:
     number_sections: yes
     toc: yes
   pdf_document: default
-bibliography: sansSouci.bib
+bibliography: sanssouci.bib
 vignette: |
   %\VignetteIndexEntry{IIDEA: Interactive Inference for Differential Expression Analyses}
   %\VignetteEncoding{UTF-8}
@@ -131,18 +131,18 @@ While only the gene expression matrix is mandatory to obtain interactive volcano
 # Running the app on a local computer
 
 IIDEA is deployed at \url{https://shiny-iidea-sanssouci.apps.math.cnrs.fr/}. No login is required, and the data sets uploaded by users are not stored on the server side. 
-The source code of the R package \texttt{sansSouci} which contains the source files for IIDEA, is available at \url{https://github.com/pneuvial/sanssouci}. This allows users to run IIDEA on a local machine or deploy it on their own servers if desired. Once the 'remotes' package is installed, IIDEA can be run locally from an R session by executing the following commands:
+The source code of the R package \texttt{sanssouci} which contains the source files for IIDEA, is available at \url{https://github.com/pneuvial/sanssouci}. This allows users to run IIDEA on a local machine or deploy it on their own servers if desired. Once the 'remotes' package is installed, IIDEA can be run locally from an R session by executing the following commands:
 
 ```{r local, eval=FALSE}
 remotes::install_github("pneuvial/sanssouci")
-shiny::runApp(system.file("shiny-examples/volcano-plot", package = "sansSouci"))
+shiny::runApp(system.file("shiny-examples/volcano-plot", package = "sanssouci"))
 ```
 
 By default, only the Leukemia data set is available for a local installation. To add the nine other public data sets, you may run the following code:
 
 ```{r local-add-GSEABenchmarkeR, eval=FALSE}
 source(system.file("shiny-examples/volcano-plot/GSEABenchmarkeR/export-data.R", 
-                   package = "sansSouci"))
+                   package = "sanssouci"))
 ```
 
 This code uses functions of the [GSEABenchmarkeR](https://bioconductor.org/packages/release/bioc/html/GSEABenchmarkeR.html) package to normalize and store locally gene expression data sets and corresponding gene annotation from GO Biological Process. Please note that it may take several minutes to run (but it only needs to be run once).
@@ -150,7 +150,7 @@ This code uses functions of the [GSEABenchmarkeR](https://bioconductor.org/packa
 
 # Methods
 
-IIDEA leverages post hoc inference methods implemented in the R package  [`sansSouci`](https://github.com/pneuvial/sanssouci). 
+IIDEA leverages post hoc inference methods implemented in the R package  [`sanssouci`](https://github.com/pneuvial/sanssouci). 
 
 Post hoc inference is a recent field stemming from the multiple testing literature where users are allowed to freely select hypotheses of interest after "seeing the data", without compromising statistical validity despite the issue of "cherry-picking" (@BNR:chap, @blanchard20post-hoc, @GS2011).
 

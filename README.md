@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# sansSouci
+# sanssouci
 
 <!-- badges: start -->
 
@@ -11,8 +11,8 @@ status](https://github.com/pneuvial/sanssouci/workflows/R-CMD-check/badge.svg)](
 Status](https://codecov.io/gh/pneuvial/sanssouci/branch/develop/graph/badge.svg)](https://codecov.io/github/pneuvial/sanssouci/branch/develop)
 <!-- badges: end -->
 
-The goal of sansSouci \[sãsusi\] is to perform **post hoc inference**:
-in a multiple testing context, sansSouci provides statistical guarantees
+The goal of sanssouci \[sãsusi\] is to perform **post hoc inference**:
+in a multiple testing context, sanssouci provides statistical guarantees
 on possibly user-defined and/or data-driven sets of hypotheses.
 
 Typical use cases include:
@@ -28,7 +28,7 @@ Typical use cases include:
     vignette](https://pneuvial.github.io/sanssouci/articles/post-hoc_fMRI.html).
 
 In both cases, the permutation-based post hoc inference methods
-implemented in the `sansSouci` package outperform classical post hoc
+implemented in the `sanssouci` package outperform classical post hoc
 bounds based on probabilistic inequalities.
 
 ## Example: differential analysis
@@ -37,11 +37,11 @@ We briefly illustrate the case of differential gene expression study
 (see dedicated
 [vignette](https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html)
 for more information). We start by creating an object of class
-`sansSouci` from gene expression data available from the
+`sanssouci` from gene expression data available from the
 [sanssouci.data](https://github.com/pneuvial/sanssouci.data) package,
 
 ``` r
-library("sansSouci")
+library("sanssouci")
 #> remotes::install_github("pneuvial/sanssouci.data")
 data(expr_ALL, package = "sanssouci.data")
 groups <- ifelse(colnames(expr_ALL) == "BCR/ABL", 1, 0) # map to 0/1
@@ -62,6 +62,8 @@ Let us assume that we are interested in genes with a \(p\)-value below
 
 ``` r
 S <- which(pValues(res) < 1e-3)
+#> Warning: namespace 'sansSouci' is not available and has been replaced
+#> by .GlobalEnv when processing object '<unknown>'
 predict(res, S)
 #>          TP         FDP 
 #> 114.0000000   0.2919255
@@ -113,7 +115,7 @@ programming.
 
 <!-- ``` r -->
 
-<!-- install.packages("sansSouci") -->
+<!-- install.packages("sanssouci") -->
 
 <!-- ``` -->
 

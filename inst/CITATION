@@ -1,11 +1,11 @@
-citHeader("To cite sansSouci in publications, please use the following references:")
+citHeader("To cite sanssouci in publications, please use the following references:")
 
 
 year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date, perl = TRUE)
 vers <- paste("R package version", meta$Version)
 title <- meta$Title
 citEntry(entry="Manual",
-         title = paste("sansSouci:", title),
+         title = paste("sanssouci:", title),
          author   = personList(as.person("Pierre Neuvial"),
                                as.person("Guillermo Durand"),
                                as.person("Nicolas Enjalbert-Courrech")),
@@ -15,7 +15,7 @@ citEntry(entry="Manual",
          textVersion =
          paste("Pierre Neuvial, Guillermo Durand and Nicolas Enjalbert-Courrech (",
                year,
-               "). sansSouci: ",
+               "). sanssouci: ",
                title, ". ",
                vers, ". https://pneuvial.github.io/sanssouci", sep=""))
 

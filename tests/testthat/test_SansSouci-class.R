@@ -169,7 +169,7 @@ test_that("'predict.SansSouci' reproduces the results of 'curveMaxFP'", {
     what0 <- c("FP", "TP", "FDP", "TDP")
     
     pvals <- sort(pValues(res))
-    FP <- sansSouci:::curveMaxFP(p.values = pvals, 
+    FP <- sanssouci:::curveMaxFP(p.values = pvals, 
                                  thr = thresholds(res))
     FPb <- predict(res, what = "FP", all = TRUE)$bound
     expect_identical(FPb, FP)
