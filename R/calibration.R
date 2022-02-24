@@ -281,4 +281,154 @@ t_inv_beta <- function(y, k, m) {
     pbeta(y, k, m + 1 - k);
 }
 
+#' Get a vector of pivotal statistics associated
+#'   to permutation p-values and to a reference family
+#'
+#' @param p0 A matrix with B rows. Each row is a vector of null p-values
+#' @param m The total number of tested hypotheses
+#' @param t_inv  An inverse threshold function (same I/O as 't_inv_linear')
+#' @param K An integer value in `[1,m]`, the number of elements in the reference family. Defaults to `m`
+#' 
+#' @return A vector of length `B` pivotal statitics, whose j-th entry
+#'   corresponds to `psi(g_j.X)` with notation of the AoS 2020 paper cited
+#'   below (section 4.5)
+#'
+#' @references Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc
+#'   confidence bounds on false positives using reference families. *Annals of
+#'   Statistics*, 48(3), 1281-1303.
+#'
+#' @export
+#'
+#' @importFrom matrixStats colMins
+#' @examples
+#'
+#' m <- 50
+#' n <- 45
+#' X <- matrix(rnorm(m*n), ncol = n, nrow = m)
+#' categ <- rbinom(n, 1, 0.4)
+#' B <- 10
+#' null_groups <- replicate(B, sample(categ))
+#' p0 <- rowWelchTests(X, null_groups)$p.value
+#' pivStat <- get_pivotal_stat(p0, m)
+#' quantile(pivStat, 0.2)
+#' 
+#' 
+#' @export
+estimate_jer <- function(template, pval0, k_max){
+  B <- dim(pval0)[1]
+  p <- dim(pval0)[2]
+  id_ranks <- matrix(rep(0:(p-1), B), nrow = B, byrow = TRUE) #Warning, begin by 0 or 1 ? 
+  # print(id_ranks[,k_max])
+  
+  cutoffs <- matrix(findInterval(pval0, template, left.open=TRUE), nrow=B)
+  print(cutoffs[,k_max])
+  signs <- sign(id_ranks - cutoffs)
+  # print(signs[,k_max])
+  sgn_trunc <- signs[,1:(k_max)]
+  
+  # return(signs)
+  # print(apply(sgn_trunc>=0, 1, any))
+  JER <- sum(apply(sgn_trunc>=0, 1, any))/B
+  return(JER)
+}
 
+#' For a given risk level, calibrate the method on learned templates by
+#'   dichotomy. This is equivalent to calibrating using pivotal stats but does 
+#'   not require the availability of a closed form inverse template.
+#'
+#' @param alpha A float, confidence level in [0, 1]
+#' @param learned_templates A matrix with B rows and p columns. Learned templates for B' permutations and p features
+#' @param pval0 A matrix with B rows and p columns of permuted p-values. 
+#' @param k_max An integer value, the template size. 
+#' @param min_dist An integer, minimum distance to stop iterating dichotomy. Defaults to `m`
+#' 
+#' @return A integer, index of template chosen by calibration
+#'
+#' @references Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc
+#'   confidence bounds on false positives using reference families. *Annals of
+#'   Statistics*, 48(3), 1281-1303.
+#'
+#' @export
+#'
+#' @importFrom matrixStats colMins
+#' @examples
+#'
+#' m <- 50
+#' n <- 45
+#' X <- matrix(rnorm(m*n), ncol = n, nrow = m)
+#' categ <- rbinom(n, 1, 0.4)
+#' B <- 10
+#' null_groups <- replicate(B, sample(categ))
+#' p0 <- rowWelchTests(X, null_groups)$p.value
+#' pivStat <- get_pivotal_stat(p0, m)
+#' quantile(pivStat, 0.2)
+#' 
+#' 
+#' @export
+calibrate_jer <- function(alpha, learned_templates, pval0, k_max, min_dist=3){
+  B <- dim(learned_templates)[1]
+  p <- dim(learned_templates)[2]
+  low <- 1
+  high <- B
+  while(high - low > min_dist){
+    mid <- as.integer((high + low)/2)
+    lw <- estimate_jer(learned_templates[low,], pval0, k_max) - alpha
+    md <- estimate_jer(learned_templates[mid,], pval0, k_max) - alpha
+    if (md == 0){
+      return(mid)
+    } else if (lw * md <0){
+      high <- mid
+    } else {
+      low <- mid
+    }
+  }
+  return(low)
+}
+
+#' For a given risk level, calibrate the method on learned templates by
+#'   dichotomy. This is equivalent to calibrating using pivotal stats but does 
+#'   not require the availability of a closed form inverse template.
+#'
+#' @param alpha A float, confidence level in [0, 1]
+#' @param learned_templates A matrix with B rows and p columns. Learned templates for B' permutations and p features
+#' @param pval0 A matrix with B rows and p columns of permuted p-values. 
+#' @param k_max An integer value, the template size. 
+#' @param min_dist An integer, minimum distance to stop iterating dichotomy. Defaults to `m`
+#' 
+#' @return A integer, index of template chosen by calibration
+#'
+#' @references Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc
+#'   confidence bounds on false positives using reference families. *Annals of
+#'   Statistics*, 48(3), 1281-1303.
+#'
+#' @export
+#'
+#' @importFrom matrixStats colMins
+#' @examples
+#'
+#' m <- 50
+#' n <- 45
+#' X <- matrix(rnorm(m*n), ncol = n, nrow = m)
+#' categ <- rbinom(n, 1, 0.4)
+#' B <- 10
+#' null_groups <- replicate(B, sample(categ))
+#' p0 <- rowWelchTests(X, null_groups)$p.value
+#' pivStat <- get_pivotal_stat(p0, m)
+#' quantile(pivStat, 0.2)
+#' 
+#' 
+#' @export
+get_data_driven_template <- function(X, categ, B, 
+                                     rowTestFUN = rowWelchTests, 
+                                     alternative = c("two.sided", "less", "greater")){
+  learned_template_ <- get_perm(X = X, categ = categ, B = B, 
+           rowTestFUN = rowWelchTests, 
+           alternative = c("two.sided", "less", "greater"))$p.value
+  learned_template_ <- t(apply(learned_template_, 1, sort))
+  learned_template <- apply(learned_template_, 2, sort)
+  return(learned_template)
+}
+
+# let X_train data set for the learning template, and let X_test data set for the calibration 
+# learned_template <- get_data_driven_template(X, categ ... )
+# 
