@@ -84,4 +84,10 @@ test_that("pivotal statistics are non-decreasing in the set of hypotheses used f
     expect_gte(min(piv_stat_sub - piv_stat_sub), 0)
 })
 
+test_that("Test consistency between R and python implementations", {
+  p_values <- t(read.csv("test_cal_small.csv", header=FALSE))
+  cal <- calibrate(p0 = p_values, m = nrow(p_values), alpha = 0.1, family = "Simes")
+  expect_equal(unname(cal$lambda), 0.1541749)
+})
+
 
