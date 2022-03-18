@@ -251,10 +251,15 @@ get_permuted_p_values_one_sample <- function(X, B=100, seed=NULL) {
   # stat0 = matrix(0, nrow = m, ncol=B)
   
   for (bb in 1:B){
-    X_flipped = t(t(X)*sample(x=c(-1,1), size=n, replace=TRUE))
-    rtonesample <- matrixTests::row_t_onesample(X_flipped, mu=0)
-    pval0[,bb] <- rtonesample$pvalue
+    # X_flipped = t(t(X)*sample(x=c(-1,1), size=n, replace=TRUE))
+    # rtonesample <- row_t_onesample(X_flipped, mu=0)
+    # pval0[,bb] <- rtonesample$pvalue
     # stat0[,bb] <- rtonesample$statistic
+    
+    categ_permuted = sample(x=c(-1,1), size=n, replace=TRUE)
+    ztest <- rowZTests(X, categ = categ_permuted, alternative = "two.sided")
+    pval0[,bb] <- ztest$p.value
+    # stat0[,bb] <- ztest$statistic
   }
   
   pval0 <- apply(pval0, 2, sort)
@@ -462,7 +467,6 @@ dichotomy <- function(alpha, learned_templates, pval0, k_max, min_dist=3){
 #' quantile(pivStat, 0.2)
 #' 
 #' 
-#' @export
 get_data_driven_template <- function(X, categ, B, 
                                      rowTestFUN = rowWelchTests, 
                                      alternative = c("two.sided", "less", "greater")){
@@ -474,6 +478,92 @@ get_data_driven_template <- function(X, categ, B,
   return(learned_template)
 }
 
-# let X_train data set for the learning template, and let X_test data set for the calibration 
-# learned_template <- get_data_driven_template(X_train, categ ... )
-# 
+
+
+#' Perform JER calibration 
+#'
+#' @param X A matrix of `m` variables (hypotheses) by `n` observations
+#' @param B An integer value, the number of permutations to be performed
+#' @param rowTestFUN A (vectorized) test function. Defaults to [rowWelchTests].
+#' @param alpha A numeric value in `[0,1]`, the target (JER) risk
+#' @param template A character value, the name of a threshold family. Should be
+#'   one of "Linear", "Beta" and "Simes", or "Oracle". "Linear" and "Simes" families are
+#'   identical.
+#' @param k_max A numeric value in `[0,m]`, the length of the template
+#' 
+#' @return A list with elements
+#' - thr: A numeric vector of length K, such that the estimated probability that
+#' there exists an index k between 1 and K such that the k-th maximum of the
+#' test statistics of is greater than `thr[k]`, is less than alpha
+#' - piv_stat: A vector of `B` pivotal statitics
+#' - lambda: A numeric value, the result of the calibration
+#' 
+#' @details 'calibrate0' performs single step calibration,
+#'   whereas 'calibrate' performs step-down calibration. Hence
+#'   the output of 'calibrate(..., max_steps_down = 0)' and
+#'   'calibrate0(...)' should be identical
+#'
+#' @references Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc
+#'   confidence bounds on false positives using reference families. *Annals of
+#'   Statistics*, 48(3), 1281-1303.
+#'
+#' @export
+#' @examples
+#' 
+#' set.seed(0xBEEF)
+#' m <- 50
+#' sim <- gaussianSamples(m = m, rho = 0.3, n = 45, 
+#'                        pi0 = 0.8, SNR = 3, prob = 0.5)
+#' Y <- sim$X
+#' groups <- sim$categ
+#' p <- rowWelchTests(Y, groups)$p.value
+#' 
+#' B <- 100
+#' null_groups <- replicate(B, sample(groups))
+#' p0 <- rowWelchTests(Y, null_groups)$p.value
+#' 
+#' calib0 <- calibrate0(p0, m, alpha = 0.1) # single step
+#' calib <- calibrate(p0, m, alpha = 0.1, p = p)
+#' calib$lambda >= calib0$lambda 
+#' 
+#' maxFP(p, calib$thr)
+#' 
+#' \dontrun{
+#' # Gene expression
+#' data(expr_ALL, package = "sanssouci.data")
+#' X <- expr_ALL; rm(expr_ALL)
+#' groups <- ifelse(colnames(X) == "BCR/ABL", 1, 0) # map to 0/1
+#' 
+#' null_groups <- replicate(500, sample(groups))
+#' perm <- rowWelchTests(X, null_groups)
+#' p0 <- perm$p.value
+#' 
+#' alpha <- 0.1
+#' m <- nrow(X)
+#' p <- rowWelchTests(X, groups)$p.value
+#' calib_L <- calibrate(p0, m, alpha, family = "Linear")
+#' calib_B <- calibrate(p0, m, alpha, family = "Beta", K = 100)
+#' 
+#' ## post hoc bounds
+#' thr <- calib_L$thr
+#' minTP(p, thr)  ## lower bound on true positives
+#' 
+#' 
+#' ## example of user selection: rejections of BH(0.05) procedure
+#' adjp <- p.adjust(p, method = "BH") 
+#' sel <- which(adjp < 0.05)
+#' length(sel)
+#' 
+#' minTP(p[sel], thr)
+#' 
+#' # confidence bound on the FDP
+#' FDP_bound <- sanssouci:::curveMaxFP(sort(p), thr)/seq(along = p)
+#' plot(head(FDP_bound, 300), t = 's', 
+#'   xlab = "Number of features",
+#'   ylab = "Upper bound on False Discovery Proportion")
+#' }
+#' 
+#' @export
+calibrate_jer <- function() {
+  
+}
