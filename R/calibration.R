@@ -365,7 +365,7 @@ estimate_jer <- function(template, pval0, k_max){
 #' 
 #' 
 #' @export
-calibrate_jer <- function(alpha, learned_templates, pval0, k_max, min_dist=3){
+dichotomy <- function(alpha, learned_templates, pval0, k_max, min_dist=3){
   B <- dim(learned_templates)[1]
   p <- dim(learned_templates)[2]
   low <- 1
@@ -430,5 +430,5 @@ get_data_driven_template <- function(X, categ, B,
 }
 
 # let X_train data set for the learning template, and let X_test data set for the calibration 
-# learned_template <- get_data_driven_template(X, categ ... )
+# learned_template <- get_data_driven_template(X_train, categ ... )
 # 
