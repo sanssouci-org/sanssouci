@@ -217,6 +217,51 @@ get_perm <- function(X, categ, B,
          statistic = stat0)
 }
 
+#' Get permutation  p-values
+#' 
+#' Get a matrix of p-values under the null hypothesis obtained by sign-flipping (one-sample test).
+#' 
+#' @param X A matrix of `m` variables (hypotheses) by `n` observations
+#' @param B An integer value, the number of permutations to be performed
+#' @param rowTestFUN a vectorized testing function (same I/O as [rowWelchTests])
+#' @param alternative A character string specifying the alternative hypothesis, to be passed to `rowTestFUN`. Must be one of "two.sided" (default), "greater" or "less".
+#' 
+#' @details The element 'p.value' of the output is a `m x B` matrix whose entry i,j corresponds to `p_{(i)}(g_j.X)` with notation of the AoS 2020 paper cited below (section 4.5).
+#' 
+#' @export
+#' 
+#' @examples
+#' m <- 50
+#' n <- 45
+#' X <- matrix(rnorm(m*n), ncol = n, nrow = m)
+#' 
+#' B <- 10
+#' set.seed(123)
+#' perm0 <- sanssouci:::get_perm(X, categ, B, rowWelchTests)
+
+get_permuted_p_values_one_sample <- function(X, B=100, seed=NULL) {
+  set.seed(seed)
+  
+  #Init
+  n = dim(X)[2]
+  m = dim(X)[1]
+  
+  # Initialize p-values
+  pval0 = matrix(0, nrow = m, ncol=B)
+  # stat0 = matrix(0, nrow = m, ncol=B)
+  
+  for (bb in 1:B){
+    X_flipped = t(t(X)*sample(x=c(-1,1), size=n, replace=TRUE))
+    rtonesample <- matrixTests::row_t_onesample(X_flipped, mu=0)
+    pval0[,bb] <- rtonesample$pvalue
+    # stat0[,bb] <- rtonesample$statistic
+  }
+  
+  pval0 <- apply(pval0, 2, sort)
+  
+  return(pval0)
+}
+
 #' Get a vector of pivotal statistics associated
 #'   to permutation p-values and to a reference family
 #'

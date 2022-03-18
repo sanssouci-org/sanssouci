@@ -66,6 +66,20 @@ test_that("JER calibration and get_pivotal_stat yield identical pivotal statisti
     expect_equal(cal$piv_stat, pivStat)
 })
 
+test_that("Test of get_permuted_p_values_one_sample", {
+  n <- 10
+  m <- 50
+  set.seed(42)
+  X <- matrix(rnorm(m*n), ncol = n, nrow = m)
+  B <- 100
+  pvals <- get_permuted_p_values_one_sample(X, B=B)
+  expect_equal(dim(pvals), c(m,B))
+  expect_equal(pvals, apply(pvals, 2, sort))
+  expect_gt(min(pvals), 1e-7) #0 ? 
+  expect_lte(max(pvals), 1)
+  expect_lt(sum(pvals<0.1), B*m*0.12) #why this one ? 
+})
+
 
 
 test_that("pivotal statistics are non-decreasing in the set of hypotheses used for calibration", {
