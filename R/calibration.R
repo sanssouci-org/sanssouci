@@ -440,7 +440,8 @@ dichotomy <- function(alpha, learned_templates, pval0, k_max, min_dist=3){
 #'   not require the availability of a closed form inverse template.
 #'
 #' @param alpha A float, confidence level in [0, 1]
-#' @param learned_templates A matrix with B rows and p columns. Learned templates for B' permutations and p features
+#' @param learned_templates A matrix with B rows and p columns. 
+#'    Learned templates for B' permutations and p features
 #' @param pval0 A matrix with B rows and p columns of permuted p-values. 
 #' @param k_max An integer value, the template size. 
 #' @param min_dist An integer, minimum distance to stop iterating dichotomy. Defaults to `m`
@@ -483,6 +484,8 @@ get_data_driven_template <- function(X, categ, B,
 #' Perform JER calibration 
 #'
 #' @param X A matrix of `m` variables (hypotheses) by `n` observations
+#' @param categ A numeric vector of \eqn{n} values in \eqn{0, 1}, the groups of
+#'   observations on which to perform two-sample tests
 #' @param B An integer value, the number of permutations to be performed
 #' @param rowTestFUN A (vectorized) test function. Defaults to [rowWelchTests].
 #' @param alpha A numeric value in `[0,1]`, the target (JER) risk
@@ -564,6 +567,30 @@ get_data_driven_template <- function(X, categ, B,
 #' }
 #' 
 #' @export
-calibrate_jer <- function() {
+calibrate_jer <- function(X, categ, alpha, B=100, row_test_fun=rowWelchTests, template = "Simes", k_max=nrow(X)) {
   
+  if (is.null(categ)){
+    perm_p_values <- get_permuted_p_values_one_sample(X, B=B)
+  } else {
+    perm <- get_perm(X, categ, B, rowTestFUN = row_test_fun, alternative = "two.sided")
+    perm_p_value <- perm$p.value
+  }
+  
+  if (any(template == c("Simes", "Linear", "Beta"))){
+    calibration <- calibrate0(p0 = perm_p_value, m = nrow(X), alpha = alpha, family = template, K = k_max)
+    return(calibration$thr[calibration$lambda]) #?
+  } else if (is.numeric(template)){ #no robuste for charactor
+    lambda <- dichotomy(alpha = alpha, learned_templates = template, pval0 = perm_p_value, k_max = k_max)
+    return(template[lambda])
+  }
+  
+}
+
+
+#' blablabla high level 
+#' 
+calibrate_simes_one_sample <- function(X, alpha, B=100){
+  #...
+  return(calibrate_jer(X=X, categ = NULL, alpha = alpha, B=B, row_test_fun=rowZtests, template="Simes", k_max = nrow(X)))
+  #for now row_test_fun = rowZtest is forced
 }
