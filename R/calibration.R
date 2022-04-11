@@ -161,9 +161,9 @@ calibrate0 <- function(p0, m, alpha,
     return(res)
 }
 
-#' Get permutation statistics and p-values
+#' Get permutation  p-values
 #' 
-#' Get a matrix of statistics and p-values under the null hypothesis obtained by repeated permutation of class labels (two-sample tests)
+#' Get a matrix of p-values under the null hypothesis obtained by repeated permutation of class labels (two-sample tests)
 #' 
 #' @param X A matrix of `m` variables (hypotheses) by `n` observations
 #' @param categ An numeric vector of `n` values in `0,1`
@@ -184,9 +184,9 @@ calibrate0 <- function(p0, m, alpha,
 #' 
 #' B <- 10
 #' set.seed(123)
-#' perm0 <- sanssouci:::get_perm(X, categ, B, rowWelchTests)
+#' perm0 <- sanssouci:::get_randomized_p_values_two_sample(X, categ, B, rowWelchTests)
 #' 
-#' # for this particular test 'get_perm' can be bypassed
+#' # for this particular test 'get_randomized_p_values_two_sample' can be bypassed
 #' set.seed(123)
 #' null_groups <- replicate(B, sample(categ))
 #' perm <- rowWelchTests(X, null_groups)
@@ -195,11 +195,11 @@ calibrate0 <- function(p0, m, alpha,
 
 #' # Wilcoxon tests
 #' set.seed(123)
-#' perm0 <- sanssouci:::get_perm(X, categ, B, rowWilcoxonTests)
+#' perm0 <- sanssouci:::get_randomized_p_values_two_sample(X, categ, B, rowWilcoxonTests)
 #' perm <- rowWilcoxonTests(X, null_groups)
 #' identical(perm0$p.value, perm$p.value)
 #' identical(perm0$statistic, perm$statistic)
-get_perm <- function(X, categ, B, 
+get_randomized_p_values_two_sample <- function(X, categ, B, 
                      rowTestFUN = rowWelchTests, 
                      alternative = c("two.sided", "less", "greater")) {
     m <- nrow(X)
@@ -213,8 +213,7 @@ get_perm <- function(X, categ, B,
         stat0[, bb] <- rwt$statistic
     }
     
-    list(p.value = pval0,
-         statistic = stat0)
+    return(pval0)
 }
 
 #' Get permutation  p-values
@@ -237,9 +236,9 @@ get_perm <- function(X, categ, B,
 #' 
 #' B <- 10
 #' set.seed(123)
-#' perm0 <- sanssouci:::get_perm(X, categ, B, rowWelchTests)
+#' perm0 <- sanssouci:::get_randomized_p_values_two_sample(X, categ, B, rowWelchTests)
 
-get_permuted_p_values_one_sample <- function(X, B=100, seed=NULL) {
+get_permuted_p_values_one_sample <- function(X, B=100, rowTestFUN = rowTtestsOneSample, seed=NULL) {
   set.seed(seed)
   
   #Init
@@ -252,12 +251,12 @@ get_permuted_p_values_one_sample <- function(X, B=100, seed=NULL) {
   
   for (bb in 1:B){
     # X_flipped = t(t(X)*sample(x=c(-1,1), size=n, replace=TRUE))
-    # rtonesample <- row_t_onesample(X_flipped, mu=0)
-    # pval0[,bb] <- rtonesample$pvalue
+    # rtonesample <- rowTestFUN(X_flipped)
+    # pval0[,bb] <- rtonesample$p.value
     # stat0[,bb] <- rtonesample$statistic
     
     categ_permuted = sample(x=c(-1,1), size=n, replace=TRUE)
-    ztest <- rowZTests(X, categ = categ_permuted, alternative = "two.sided")
+    ztest <- rowTestFUN(X, categ = categ_permuted, alternative = "two.sided")
     pval0[,bb] <- ztest$p.value
     # stat0[,bb] <- ztest$statistic
   }
@@ -367,17 +366,13 @@ t_inv_beta <- function(y, k, m) {
 estimate_jer <- function(template, pval0, k_max){
   B <- dim(pval0)[1]
   p <- dim(pval0)[2]
-  id_ranks <- matrix(rep(0:(p-1), B), nrow = B, byrow = TRUE) #Warning, begin by 0 or 1 ? 
-  # print(id_ranks[,k_max])
+  id_ranks <- matrix(rep(0:(p-1), B), nrow = B, byrow = TRUE) 
   
   cutoffs <- matrix(findInterval(pval0, template, left.open=TRUE), nrow=B)
   print(cutoffs[,k_max])
   signs <- sign(id_ranks - cutoffs)
-  # print(signs[,k_max])
   sgn_trunc <- signs[,1:(k_max)]
   
-  # return(signs)
-  # print(apply(sgn_trunc>=0, 1, any))
   JER <- sum(apply(sgn_trunc>=0, 1, any))/B
   return(JER)
 }
@@ -471,7 +466,7 @@ dichotomy <- function(alpha, learned_templates, pval0, k_max, min_dist=3){
 get_data_driven_template <- function(X, categ, B, 
                                      rowTestFUN = rowWelchTests, 
                                      alternative = c("two.sided", "less", "greater")){
-  learned_template_ <- get_perm(X = X, categ = categ, B = B, 
+  learned_template_ <- get_randomized_p_values_two_sample(X = X, categ = categ, B = B, 
            rowTestFUN = rowWelchTests, 
            alternative = c("two.sided", "less", "greater"))$p.value
   learned_template_ <- t(apply(learned_template_, 1, sort))
@@ -572,14 +567,14 @@ calibrate_jer <- function(X, categ, alpha, B=100, row_test_fun=rowWelchTests, te
   if (is.null(categ)){
     perm_p_values <- get_permuted_p_values_one_sample(X, B=B)
   } else {
-    perm <- get_perm(X, categ, B, rowTestFUN = row_test_fun, alternative = "two.sided")
+    perm <- get_randomized_p_values_two_sample(X, categ, B, rowTestFUN = row_test_fun, alternative = "two.sided")
     perm_p_value <- perm$p.value
   }
   
   if (any(template == c("Simes", "Linear", "Beta"))){
     calibration <- calibrate0(p0 = perm_p_value, m = nrow(X), alpha = alpha, family = template, K = k_max)
     return(calibration$thr[calibration$lambda]) #?
-  } else if (is.numeric(template)){ #no robuste for charactor
+  } else if (is.numeric(template)){ 
     lambda <- dichotomy(alpha = alpha, learned_templates = template, pval0 = perm_p_value, k_max = k_max)
     return(template[lambda])
   }
