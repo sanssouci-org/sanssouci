@@ -1,6 +1,6 @@
 context("Joint Error Rate calibration")
 
-test_that("Consistency of 'get_perm'", {
+test_that("Consistency of 'get_randomized_p_values_two_sample'", {
     m <- 5
     n <- 45
     X <- matrix(rnorm(m*n, mean = 1), ncol = n, nrow = m)
@@ -8,25 +8,22 @@ test_that("Consistency of 'get_perm'", {
 
     B <- 10
     set.seed(123)
-    perm0 <- get_perm(X, categ, B, rowWelchTests)
+    perm0 <- get_randomized_p_values_two_sample(X, categ, B, rowWelchTests)
 
     set.seed(123)
     null_groups <- replicate(B, sample(categ))
     perm <- rowWelchTests(X, null_groups)
-    expect_identical(perm0$p.value, perm$p.value)
-    expect_identical(perm0$statistic, perm$statistic)
+    expect_identical(perm0, perm$p.value)
 
     
     set.seed(123)
-    perm0 <- get_perm(X, categ, B, rowWilcoxonTests)
+    perm0 <- get_randomized_p_values_two_sample(X, categ, B, rowWilcoxonTests)
     set.seed(123)
-    perm1 <- get_perm(X, categ, B, rowWilcoxonTests1V1)
-    expect_identical(perm0$p.value, perm1$p.value)
-    expect_identical(perm0$statistic, perm1$statistic)
+    perm1 <- get_randomized_p_values_two_sample(X, categ, B, rowWilcoxonTests1V1)
+    expect_identical(perm0, perm1)
 
     perm <- rowWilcoxonTests(X, null_groups)
-    expect_identical(perm0$p.value, perm$p.value)
-    expect_identical(perm0$statistic, perm$statistic)
+    expect_identical(perm0, perm$p.value)
 })
 
 test_that("Vanilla tests for 'get_pivotal_stat'", {
@@ -59,20 +56,20 @@ test_that("JER calibration and get_pivotal_stat yield identical pivotal statisti
     
     ## TODO: tests all param combinations
     set.seed(0xBEEF)
-    p0 <- get_perm(X, categ, B)$p.value
+    p0 <- get_randomized_p_values_two_sample(X, categ, B)
     pivStat <- get_pivotal_stat(p0, m, t_inv_linear)
 
     cal <- calibrate(p0, m, alpha = 1, family = "Linear")
     expect_equal(cal$piv_stat, pivStat)
 })
 
-test_that("Test of get_permuted_p_values_one_sample", {
+test_that("Test of get_randomized_p_values_one_sample", {
   n <- 10
   m <- 50
   set.seed(42)
   X <- matrix(rnorm(m*n), ncol = n, nrow = m)
   B <- 100
-  pvals <- get_permuted_p_values_one_sample(X, B=B)
+  pvals <- get_randomized_p_values_one_sample(X, B=B)
   expect_equal(dim(pvals), c(m,B))
   expect_equal(pvals, apply(pvals, 2, sort))
   expect_gt(min(pvals), 1e-7) #0 ? 
@@ -89,7 +86,7 @@ test_that("pivotal statistics are non-decreasing in the set of hypotheses used f
     categ <- rbinom(n, 1, 0.4)
     B <- 111
     
-    p0 <- get_perm(X, categ, B)$p.value
+    p0 <- get_randomized_p_values_two_sample(X, categ, B)
     piv_stat <- get_pivotal_stat(p0, m, t_inv_linear)
     
     sub <- sample(m, round(m/2))

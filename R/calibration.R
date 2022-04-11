@@ -190,15 +190,13 @@ calibrate0 <- function(p0, m, alpha,
 #' set.seed(123)
 #' null_groups <- replicate(B, sample(categ))
 #' perm <- rowWelchTests(X, null_groups)
-#' identical(perm0$p.value, perm$p.value)
-#' identical(perm0$statistic, perm$statistic)
+#' identical(perm0, perm$p.value)
 
 #' # Wilcoxon tests
 #' set.seed(123)
 #' perm0 <- sanssouci:::get_randomized_p_values_two_sample(X, categ, B, rowWilcoxonTests)
 #' perm <- rowWilcoxonTests(X, null_groups)
-#' identical(perm0$p.value, perm$p.value)
-#' identical(perm0$statistic, perm$statistic)
+#' identical(perm0, perm$p.value)
 get_randomized_p_values_two_sample <- function(X, categ, B, 
                      rowTestFUN = rowWelchTests, 
                      alternative = c("two.sided", "less", "greater")) {
@@ -228,17 +226,7 @@ get_randomized_p_values_two_sample <- function(X, categ, B,
 #' @details The element 'p.value' of the output is a `m x B` matrix whose entry i,j corresponds to `p_{(i)}(g_j.X)` with notation of the AoS 2020 paper cited below (section 4.5).
 #' 
 #' @export
-#' 
-#' @examples
-#' m <- 50
-#' n <- 45
-#' X <- matrix(rnorm(m*n), ncol = n, nrow = m)
-#' 
-#' B <- 10
-#' set.seed(123)
-#' perm0 <- sanssouci:::get_randomized_p_values_two_sample(X, categ, B, rowWelchTests)
-
-get_permuted_p_values_one_sample <- function(X, B=100, rowTestFUN = rowTtestsOneSample, seed=NULL) {
+get_randomized_p_values_one_sample <- function(X, B=100, rowTestFUN = rowTtestsOneSample, seed=NULL) {
   set.seed(seed)
   
   #Init
@@ -256,7 +244,7 @@ get_permuted_p_values_one_sample <- function(X, B=100, rowTestFUN = rowTtestsOne
     # stat0[,bb] <- rtonesample$statistic
     
     categ_permuted = sample(x=c(-1,1), size=n, replace=TRUE)
-    ztest <- rowTestFUN(X, categ = categ_permuted, alternative = "two.sided")
+    ztest <- rowTestFUN(X, categ_permuted, alternative = "two.sided")
     pval0[,bb] <- ztest$p.value
     # stat0[,bb] <- ztest$statistic
   }
@@ -562,12 +550,13 @@ get_data_driven_template <- function(X, categ, B,
 #' }
 #' 
 #' @export
-calibrate_jer <- function(X, categ, alpha, B=100, row_test_fun=rowWelchTests, template = "Simes", k_max=nrow(X)) {
+calibrate_jer <- function(X, label, alpha, B=100, row_test_fun=rowWelchTests, template = "Simes", k_max=nrow(X)) {
   
-  if (is.null(categ)){
-    perm_p_values <- get_permuted_p_values_one_sample(X, B=B)
+  if (is.null(label)){
+    perm_p_values <- get_randomized_p_values_one_sample(X, B=B)
   } else {
-    perm <- get_randomized_p_values_two_sample(X, categ, B, rowTestFUN = row_test_fun, alternative = "two.sided")
+    categCheck(label, ncol(X))
+    perm <- get_randomized_p_values_two_sample(X, label, B, rowTestFUN = row_test_fun, alternative = "two.sided")
     perm_p_value <- perm$p.value
   }
   
@@ -586,6 +575,6 @@ calibrate_jer <- function(X, categ, alpha, B=100, row_test_fun=rowWelchTests, te
 #' 
 calibrate_simes_one_sample <- function(X, alpha, B=100){
   #...
-  return(calibrate_jer(X=X, categ = NULL, alpha = alpha, B=B, row_test_fun=rowZtests, template="Simes", k_max = nrow(X)))
+  return(calibrate_jer(X=X, label = NULL, alpha = alpha, B=B, template="Simes", k_max = nrow(X)))
   #for now row_test_fun = rowZtest is forced
 }
