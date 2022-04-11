@@ -32,9 +32,10 @@ rowTtestsOneSample <- function(mat, labels, alternative = c("two.sided", "grater
   mean_ <- mat %*% labels / sqrt(n)
   var_ <- ((rowSums(mat^2) %*% t(rep(1,B))) - n * mean_^2 )/(n-1)
   test <- (mean_-mu/var_)
-  p <- switch(alternative, 
-              "two.sided" = 2*(pnorm(abs(test), lower.tail = FALSE)),
-              "greater" = pnorm(test, lower.tail = FALSE),
-              "less" = pnorm(test, lower.tail = TRUE))
+  df <- n-1
+  pval <- switch(alternative,
+                 "two.sided" = 2*(1 - pt(abs(test), df = df)),
+                 "greater" = 1 - pt(test, df = df),
+                 "less" = pt(test, df = df))
   list(statistic = test, p.value = p)
 }
