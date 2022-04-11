@@ -27,15 +27,15 @@ rowTtestsOneSample <- function(mat, labels, alternative = c("two.sided", "grater
   if(is.null(dim(labels))){
     B <- 1
   } else {
-    B <- dim(labels)[1]
+    B <- dim(labels)[2]
   }
-  mean_ <- mat %*% labels / sqrt(n)
+  mean_ <- mat %*% labels / n
   var_ <- ((rowSums(mat^2) %*% t(rep(1,B))) - n * mean_^2 )/(n-1)
-  test <- (mean_-mu/var_)
+  test <- ((mean_ - mu )/ sqrt(var_) ) * sqrt(n)
   df <- n-1
   pval <- switch(alternative,
                  "two.sided" = 2*(1 - pt(abs(test), df = df)),
                  "greater" = 1 - pt(test, df = df),
                  "less" = pt(test, df = df))
-  list(statistic = test, p.value = p)
+  list(statistic = test, p.value = pval)
 }
