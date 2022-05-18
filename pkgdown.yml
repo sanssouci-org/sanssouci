@@ -1,5 +1,5 @@
 pandoc: 2.7.3
-pkgdown: 2.0.2
+pkgdown: 2.0.3
 pkgdown_sha: ~
 articles:
   IIDEA: IIDEA.html
@@ -9,7 +9,7 @@ articles:
   post-hoc_differential-expression: post-hoc_differential-expression.html
   post-hoc_differential-expression_RNAseq: post-hoc_differential-expression_RNAseq.html
   post-hoc_fMRI: post-hoc_fMRI.html
-last_built: 2022-02-18T23:21Z
+last_built: 2022-05-18T14:54Z
 urls:
   reference: https://pneuvial.github.io/sanssouci/reference
   article: https://pneuvial.github.io/sanssouci/articles
