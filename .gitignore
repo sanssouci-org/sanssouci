@@ -43,13 +43,8 @@ vignettes/*_cache/
 .RData
 .Ruserdata
 /inst/doc/
-/png/
-/fig/
-/local/
-/doc/
-/Rout/
-/results/
 /docs
+README_cache
 
 ## OS X
 .DS_Store
