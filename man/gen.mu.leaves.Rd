@@ -28,7 +28,7 @@ A numeric vector of length \code{m}, the signal values for each hypothesis
 Generate the signal in the leaves of the tree
 }
 \details{
-If \code{setting == "const"} the signal is constant equal to \eqn{barmu}. If \code{setting == "gauss"} the signal has a Gaussian shape. If \code{setting == "poisson"} the signal has a Poisson shape.
+If \code{setting == "const"} the non-null signal is constant equal to \code{barmu}. If \code{setting == "gauss"} and \eqn{d=1} the signal in an active leaf has the shape of a Gaussian bell with mean \code{barmu}, see the \code{\link{gauss_bloc}} function which generates it. If \eqn{d<1} it has the same shape but randomly pruned. If \code{setting == "poisson"} the non-null signal is randomly drawn according to a Poisson distribution of mean \code{barmu} (slightly modified to not yield 0). If \code{setting == "rgauss"} the non-null signal is randomly drawn according to a Normal distribution of mean \code{barmu} and variance \code{barmu}.
 }
 \examples{
 m <- 160
@@ -48,4 +48,7 @@ muP <- gen.mu.leaves(m = m, K1 = K1, d = d, grouped = FALSE,
                     setting = "poisson", barmu = barmu, leaf_list =leaf_list)
 mu <- cbind(constant = muC, Gaussian = muG, Poisson = muP)
 matplot(mu, t = 's')
+}
+\seealso{
+\code{\link{gauss_bloc}}
 }
