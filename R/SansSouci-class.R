@@ -257,19 +257,20 @@ generics::fit
 #' Fit SansSouci object
 #' @param object An object of class `SansSouci`
 #' @param alpha A numeric value in `[0,1]`, the target (JER) risk
-#' @param B An integer value, the number of permutations to be performed
+#' @param B An integer value, the number of permutations to be performed.
+#'  Defaults to 1000
 #' @param alternative A character string specifying the alternative hypothesis.
 #'   Must be one of "two.sided" (default), "greater" or "less".
 #' @param rowTestFUN A (vectorized) test function. Defaults to [rowWelchTests].
 #' @param family A character value, the name of a threshold family. Should be
-#'   one of "Linear", "Beta" and "Simes", or "Oracle". "Linear" and "Simes" families are
-#'   identical.
+#'   one of "Linear", "Beta" and "Simes", or "Oracle". "Linear" and "Simes"
+#'   families are identical.
 #'   
 #'   - Simes/Linear: The classical family of thresholds introduced by Simes (1986).
 #'   This family yields JER control if the test statistics are positively
 #'   dependent (PRDS) under H0.
 #'
-#'   - Beta: A family of thresholds that achieves "balanced" JER control under
+#'   - Beta: A family of thresholds that achieves marginal kFWER control under
 #'   independence
 #'
 #'   - Oracle A family such that the associated bounds correspond to the true
@@ -308,7 +309,7 @@ generics::fit
 #' bounds <- lapply(resList, predict, all = TRUE)
 #' plotConfCurve(bounds, xmax = 200)
 #' 
-fit.SansSouci <- function(object, alpha, B = ceiling(10/alpha),
+fit.SansSouci <- function(object, alpha, B = 1e3,
                           rowTestFUN = NULL, 
                           alternative = c("two.sided", "less", "greater"),
                           family = c("Simes", "Linear", "Beta", "Oracle"), 
