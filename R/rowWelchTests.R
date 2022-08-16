@@ -203,8 +203,8 @@ categCheck <- function(categ, n) {
     }
     categ <- as.factor(categ)
     cats <- levels(categ)
-    if (!identical(cats, c("0", "1"))) {
-        stop("'", name, "' should consist only of '0' and '1'!")
+    if (!identical(cats, c("0", "1")) & length(cats) != n) {
+        stop("'", name, "' should consist only of '0' and '1'! Or disctinct values (for a covariate).")
     }
 }
 
