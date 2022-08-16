@@ -35,6 +35,18 @@
 #' str(fwt)
 #' 
 rowCorPearson <- function(X,categ,alternative = "two.sided"){
-  r <- row_cor_pearson(X, categ, alternative = alternative)
+  if(any(class(categ) == "numeric")){
+    r <- row_cor_pearson(X, categ, alternative = alternative)
+  } else {
+    m <- dim(X)[1]
+    B <- dim(categ)[2]
+    r <- list(pvalue = matrix(nrow = m, ncol = B), statistic = matrix(nrow = m, ncol= B), cor = matrix(nrow = m, ncol = B))
+    for (b in 1:B){
+      rr <- row_cor_pearson(X, categ[,b], alternative = alternative)
+      r$pvalue[,b] <- rr$pvalue
+      r$statistic[,b] <- rr$statistic
+      r$cor[,b] <- rr$cor
+    }
+  }
   return(list(p.value = r$pvalue, statistic = r$statistic, estimate =r$cor))
 }

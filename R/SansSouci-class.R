@@ -399,7 +399,8 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
             cat("Randomization p-values...")
         }
         if (do_p0) {
-            null_groups <- switch(n_groups,
+          n_groups_ <- if(n>=2){2}else{1}
+            null_groups <- switch(n_groups_,
                                   replicate(B, rbinom(n, 1, 0.5)*2 - 1), # sign-flipping
                                   replicate(B, sample(groups)))          # permutation
             rwt0 <- rowTestFUN(Y, null_groups, alternative = alternative)
