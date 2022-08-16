@@ -343,6 +343,9 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
         } else if (n_groups == 2) {
             rowTestFUN <- rowWelchTests
             funName <- "rowWelchTests"
+        } else if (n_groups == n){
+          rowTestFUN <- rowCorPearson
+          funName <- "rowCorPearson"
         }
     }  else {
         funName <- as.character(substitute(rowTestFUN))
