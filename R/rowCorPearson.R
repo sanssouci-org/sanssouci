@@ -35,7 +35,7 @@
 #' str(fwt)
 #' 
 rowCorPearson <- function(X,categ,alternative = "two.sided"){
-  if(any(class(categ) == "numeric")){
+  if(is.null(dim(categ))){
     r <- row_cor_pearson(X, categ, alternative = alternative)
   } else {
     m <- dim(X)[1]

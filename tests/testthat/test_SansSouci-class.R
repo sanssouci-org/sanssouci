@@ -213,3 +213,42 @@ test_that("Correctness of Oracle predictions", {
     FP <- predict(res_oracle, S = integer(0L), what = "FP")
     expect_equal(FP, 0)
 })
+
+test_that("Continuous covariate", {
+  m = 52
+  n = 25
+  B = 10
+  
+  Y <- matrix(rnorm(m*n), nrow = m, ncol = n)
+  groups = rnorm(n)
+  
+  alpha <- 0.05
+  obj <- SansSouci(Y, groups)
+  res_oracle <- fit(obj, alpha = alpha)
+  FP <- predict(res_oracle, what = "FP", all = TRUE)$bound
+  expect_equal(FP, 1:m)
+  
+  # random selection of m/2 hypotheses should contain at least 
+  # one true and one false positive with overwhelming proba
+  S <- sample(m, m/2)
+  FP <- predict(res_oracle, S = S, what = "FP")
+  expect_lte(FP, length(S))
+  expect_gte(FP, 0)
+  
+  # selection of first 10 hyps in the order of p-values
+  # should contain only signal 
+  p_values <- pValues(res_oracle)
+  S <- head(order(p_values), 10)
+  FP <- predict(res_oracle, S = S, what = "FP")
+  expect_lte(FP, 10)
+  
+  # selection of last 10 hyps in the order of p-values
+  # should contain only noise
+  p_values <- pValues(res_oracle)
+  S <- tail(order(p_values), 10)
+  FP <- predict(res_oracle, S = S, what = "FP")
+  expect_equal(FP, length(S))
+  
+  FP <- predict(res_oracle, S = integer(0L), what = "FP")
+  expect_equal(FP, 0)
+})
