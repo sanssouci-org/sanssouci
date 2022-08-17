@@ -19,6 +19,10 @@
 #'   \item{estimate}{the correlation}}
 #'   Each of these elements is a matrix of size \code{m x B}, coerced to a vector of length \code{m} if \code{B=1}
 #'   
+#' @details This function is a wrapper around the \code{row_cor_pearson function} in the 'matrixTests' package.
+#' 
+#' @seealso [matrixTests::function(row_cor_pearson)]
+#' 
 #' @importFrom matrixTests row_cor_pearson
 #'   
 #' @author Nicolas Enjalbert Courrech
@@ -31,10 +35,10 @@
 #' n <- 38
 #' mat <- matrix(rnorm(m*n), ncol=n)
 #' categ <- rnorm(n, mean = 10)
-#' system.time(fwt <- rowCorPearson(mat, categ, alternative = "greater"))
+#' system.time(fwt <- rowPearsonCorrelationTests(mat, categ, alternative = "greater"))
 #' str(fwt)
 #' 
-rowCorPearson <- function(X,categ,alternative = "two.sided"){
+rowPearsonCorrelationTests <- function(X,categ,alternative = "two.sided"){
   if(is.null(dim(categ))){
     r <- row_cor_pearson(X, categ, alternative = alternative)
   } else {
