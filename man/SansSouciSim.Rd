@@ -14,8 +14,10 @@ Create a 'SansSouci' object from simulation in the Gaussian
 equi-correlated model
 }
 \examples{
-obj <- SansSouciSim(m = 543, rho = 0.4, n = 210,
-                        pi0 = 0.8, SNR = 3, prob = 0.5)
+obj <- SansSouciSim(
+  m = 543, rho = 0.4, n = 210,
+  pi0 = 0.8, SNR = 3, prob = 0.5
+)
 alpha <- 0.1
 
 # Adaptive Simes (lambda-calibration)
@@ -28,7 +30,7 @@ volcanoPlot(res, q = 0.05, r = 0.2)
 # (and corresponding lower bound on FDP)
 predict(res)
 
-# confidence curve 
+# confidence curve
 plot(res)
 
 # comparison to other confidence curves
@@ -40,9 +42,11 @@ res0
 oracle <- fit(obj, alpha = alpha, family = "Oracle")
 oracle
 
-confs <- list(Simes = predict(res0, all = TRUE),
-              "Simes+calibration" = predict(res, all = TRUE),
-              "Oracle" = predict(oracle, all = TRUE))
+confs <- list(
+  Simes = predict(res0, all = TRUE),
+  "Simes+calibration" = predict(res, all = TRUE),
+  "Oracle" = predict(oracle, all = TRUE)
+)
 plotConfCurve(confs)
 
 \dontrun{
@@ -50,6 +54,7 @@ plotConfCurve(confs)
 res <- fit(obj, B = 100, alpha = 0.1, rowTestFUN = rowWilcoxonTests)
 volcanoPlot(res, q = 0.05, r = 0.2)
 }
+
 }
 \seealso{
 \link{gaussianSamples}
