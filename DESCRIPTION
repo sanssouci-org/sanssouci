@@ -17,6 +17,7 @@ Imports:
     generics,
     Matrix,
     matrixStats,
+    matrixTests,
     Rcpp (>= 0.12.3)
 LinkingTo: Rcpp, RcppArmadillo
 Suggests:
