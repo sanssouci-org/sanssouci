@@ -44,7 +44,7 @@ str(fwt)
 
 }
 \seealso{
-\link[matrixTests:function(row_cor_pearson)]{matrixTests::function(row_cor_pearson)}
+\code{\link[matrixTests:cortest]{matrixTests::row_cor_pearson()}}
 }
 \author{
 Nicolas Enjalbert Courrech

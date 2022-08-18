@@ -21,7 +21,7 @@
 #'   
 #' @details This function is a wrapper around the \code{row_cor_pearson function} in the 'matrixTests' package.
 #' 
-#' @seealso [matrixTests::function(row_cor_pearson)]
+#' @seealso [matrixTests::row_cor_pearson()]
 #' 
 #' @importFrom matrixTests row_cor_pearson
 #'   
