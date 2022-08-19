@@ -8,26 +8,26 @@ not require the availability of a closed form inverse template.}
 \usage{
 get_data_driven_template(
   X,
-  categ,
+  label,
   B,
-  rowTestFUN = rowWelchTests,
+  row_test_fun = rowWelchTests,
   alternative = c("two.sided", "less", "greater")
 )
 }
 \arguments{
-\item{alpha}{A float, confidence level in \link{0, 1}}
+\item{X}{A matrix (m, n)}
 
-\item{learned_templates}{A matrix with B rows and p columns.
-Learned templates for B' permutations and p features}
+\item{label}{A numeric vector of \eqn{n} values in \eqn{0, 1}, the groups of
+observations on which to perform two-sample tests}
 
-\item{pval0}{A matrix with B rows and p columns of permuted p-values.}
+\item{B}{integer, the number of permutation.}
 
-\item{k_max}{An integer value, the template size.}
+\item{row_test_fun}{A (vectorized) test function. Defaults to \link{rowWelchTests}.}
 
-\item{min_dist}{An integer, minimum distance to stop iterating dichotomy. Defaults to \code{m}}
+\item{alternative}{A character string specifying the alternative hypothesis, to be passed to \code{rowTestFUN}. Must be one of "two.sided" (default), "greater" or "less".}
 }
 \value{
-A integer, index of template chosen by calibration
+A matrix (m, B) of a learned template
 }
 \description{
 For a given risk level, calibrate the method on learned templates by
@@ -38,14 +38,13 @@ not require the availability of a closed form inverse template.
 
 m <- 50
 n <- 45
-X <- matrix(rnorm(m*n), ncol = n, nrow = m)
+X <- matrix(rnorm(m * n), ncol = n, nrow = m)
 categ <- rbinom(n, 1, 0.4)
 B <- 10
 null_groups <- replicate(B, sample(categ))
 p0 <- rowWelchTests(X, null_groups)$p.value
 pivStat <- get_pivotal_stat(p0, m)
 quantile(pivStat, 0.2)
-
 
 }
 \references{
