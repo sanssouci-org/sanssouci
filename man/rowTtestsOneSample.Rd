@@ -21,9 +21,6 @@ vectors. If missing, coerced to \code{rep(1, n)}}
 
 \item{alternative}{A character string specifying the alternative hypothesis.
 Must be one of "two.sided" (default), "greater" or "less". \code{Alternative =  "greater"} corresponds to a positive mean.}
-
-\item{mu}{A number indicating the true value of the mean (or difference in
-means.}
 }
 \value{
 A list containing the following components:

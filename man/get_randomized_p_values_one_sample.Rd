@@ -18,7 +18,7 @@ get_randomized_p_values_one_sample(
 
 \item{rowTestFUN}{a vectorized testing function (same I/O as \link{rowWelchTests})}
 
-\item{seed}{a single value, interpreted as an integer or NULL. The seed used for the Random Number Generation. NULL by default.}
+\item{alternative}{A character string specifying the alternative hypothesis, to be passed to \code{rowTestFUN}. Must be one of "two.sided" (default), "greater" or "less".}
 }
 \description{
 Get a matrix of p-values under the null hypothesis obtained by sign-flipping (one-sample test).

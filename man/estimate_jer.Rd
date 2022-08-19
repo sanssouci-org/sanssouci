@@ -8,11 +8,13 @@ to permutation p-values and to a reference family}
 estimate_jer(template, pval0, k_max)
 }
 \arguments{
-\item{template}{matrix (B,m), template used for the calibration}
+\item{p0}{A matrix with B rows. Each row is a vector of null p-values}
 
-\item{pval0}{matrix (B,m) of permuted pvalues}
+\item{m}{The total number of tested hypotheses}
 
-\item{k_max}{An integer value in \verb{[1,m]}, the number of elements in the reference family.}
+\item{t_inv}{An inverse threshold function (same I/O as 't_inv_linear')}
+
+\item{K}{An integer value in \verb{[1,m]}, the number of elements in the reference family. Defaults to \code{m}}
 }
 \value{
 A vector of length \code{B} pivotal statitics, whose j-th entry
@@ -22,6 +24,20 @@ below (section 4.5)
 \description{
 Get a vector of pivotal statistics associated
 to permutation p-values and to a reference family
+}
+\examples{
+
+m <- 50
+n <- 45
+X <- matrix(rnorm(m*n), ncol = n, nrow = m)
+categ <- rbinom(n, 1, 0.4)
+B <- 10
+null_groups <- replicate(B, sample(categ))
+p0 <- rowWelchTests(X, null_groups)$p.value
+pivStat <- get_pivotal_stat(p0, m)
+quantile(pivStat, 0.2)
+
+
 }
 \references{
 Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc

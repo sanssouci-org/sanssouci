@@ -10,9 +10,6 @@
 #' @param alternative A character string specifying the alternative hypothesis.
 #'   Must be one of "two.sided" (default), "greater" or "less". `Alternative = 
 #'   "greater"` corresponds to a positive mean.
-#'   
-#' @param mu A number indicating the true value of the mean (or difference in 
-#'   means.
 #'
 #' @return A list containing the following components:
 #' \describe{ 

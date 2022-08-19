@@ -33,7 +33,7 @@ The element 'p.value' of the output is a \verb{m x B} matrix whose entry i,j cor
 \examples{
 m <- 50
 n <- 45
-X <- matrix(rnorm(m * n), ncol = n, nrow = m)
+X <- matrix(rnorm(m*n), ncol = n, nrow = m)
 categ <- rbinom(n, 1, 0.4)
 
 B <- 10
@@ -45,7 +45,6 @@ set.seed(123)
 null_groups <- replicate(B, sample(categ))
 perm <- rowWelchTests(X, null_groups)
 identical(perm0, perm$p.value)
-
 # Wilcoxon tests
 set.seed(123)
 perm0 <- sanssouci:::get_randomized_p_values_two_sample(X, categ, B, rowWilcoxonTests)

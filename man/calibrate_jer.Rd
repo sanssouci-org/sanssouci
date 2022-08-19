@@ -17,20 +17,20 @@ calibrate_jer(
 \arguments{
 \item{X}{A matrix of \code{m} variables (hypotheses) by \code{n} observations}
 
-\item{label}{A numeric vector of \eqn{n} values in \eqn{0, 1}, the groups of
-observations on which to perform two-sample tests}
-
 \item{alpha}{A numeric value in \verb{[0,1]}, the target (JER) risk}
 
 \item{B}{An integer value, the number of permutations to be performed}
-
-\item{row_test_fun}{A (vectorized) test function. Defaults to \link{rowWelchTests}.}
 
 \item{template}{A character value, the name of a threshold family. Should be
 one of "Linear", "Beta" and "Simes", or "Oracle". "Linear" and "Simes" families are
 identical.}
 
 \item{k_max}{A numeric value in \verb{[0,m]}, the length of the template}
+
+\item{categ}{A numeric vector of \eqn{n} values in \eqn{0, 1}, the groups of
+observations on which to perform two-sample tests}
+
+\item{rowTestFUN}{A (vectorized) test function. Defaults to \link{rowWelchTests}.}
 }
 \value{
 A list with elements
@@ -50,6 +50,62 @@ Perform JER calibration
 whereas 'calibrate' performs step-down calibration. Hence
 the output of 'calibrate(..., max_steps_down = 0)' and
 'calibrate0(...)' should be identical
+}
+\examples{
+
+set.seed(0xBEEF)
+m <- 50
+sim <- gaussianSamples(m = m, rho = 0.3, n = 45, 
+                       pi0 = 0.8, SNR = 3, prob = 0.5)
+Y <- sim$X
+groups <- sim$categ
+p <- rowWelchTests(Y, groups)$p.value
+
+B <- 100
+null_groups <- replicate(B, sample(groups))
+p0 <- rowWelchTests(Y, null_groups)$p.value
+
+calib0 <- calibrate0(p0, m, alpha = 0.1) # single step
+calib <- calibrate(p0, m, alpha = 0.1, p = p)
+calib$lambda >= calib0$lambda 
+
+maxFP(p, calib$thr)
+
+\dontrun{
+# Gene expression
+data(expr_ALL, package = "sanssouci.data")
+X <- expr_ALL; rm(expr_ALL)
+groups <- ifelse(colnames(X) == "BCR/ABL", 1, 0) # map to 0/1
+
+null_groups <- replicate(500, sample(groups))
+perm <- rowWelchTests(X, null_groups)
+p0 <- perm$p.value
+
+alpha <- 0.1
+m <- nrow(X)
+p <- rowWelchTests(X, groups)$p.value
+calib_L <- calibrate(p0, m, alpha, family = "Linear")
+calib_B <- calibrate(p0, m, alpha, family = "Beta", K = 100)
+
+## post hoc bounds
+thr <- calib_L$thr
+minTP(p, thr)  ## lower bound on true positives
+
+
+## example of user selection: rejections of BH(0.05) procedure
+adjp <- p.adjust(p, method = "BH") 
+sel <- which(adjp < 0.05)
+length(sel)
+
+minTP(p[sel], thr)
+
+# confidence bound on the FDP
+FDP_bound <- sanssouci:::curveMaxFP(sort(p), thr)/seq(along = p)
+plot(head(FDP_bound, 300), t = 's', 
+  xlab = "Number of features",
+  ylab = "Upper bound on False Discovery Proportion")
+}
+
 }
 \references{
 Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc
