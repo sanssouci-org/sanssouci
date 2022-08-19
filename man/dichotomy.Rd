@@ -9,7 +9,7 @@ not require the availability of a closed form inverse template.}
 dichotomy(alpha, learned_templates, pval0, k_max, min_dist = 3)
 }
 \arguments{
-\item{alpha}{A float, confidence level in \link{0, 1}}
+\item{alpha}{A float, confidence level in [0, 1]}
 
 \item{learned_templates}{A matrix with B rows and p columns. Learned templates for B' permutations and p features}
 
@@ -20,26 +20,12 @@ dichotomy(alpha, learned_templates, pval0, k_max, min_dist = 3)
 \item{min_dist}{An integer, minimum distance to stop iterating dichotomy. Defaults to \code{m}}
 }
 \value{
-A integer, index of template chosen by calibration
+A vector of length k_max. Threshold family chosen by calibration
 }
 \description{
 For a given risk level, calibrate the method on learned templates by
 dichotomy. This is equivalent to calibrating using pivotal stats but does
 not require the availability of a closed form inverse template.
-}
-\examples{
-
-m <- 50
-n <- 45
-X <- matrix(rnorm(m*n), ncol = n, nrow = m)
-categ <- rbinom(n, 1, 0.4)
-B <- 10
-null_groups <- replicate(B, sample(categ))
-p0 <- rowWelchTests(X, null_groups)$p.value
-pivStat <- get_pivotal_stat(p0, m)
-quantile(pivStat, 0.2)
-
-
 }
 \references{
 Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc
