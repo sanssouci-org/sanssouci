@@ -80,36 +80,44 @@ test_that("Correctness of elements of fitted  'SansSouci' object", {
 
 
 test_that("'fit.SansSouci' reproduces the results of 'calibrate'", {
-    m <- 54
-    n <- 132
-    obj <- SansSouciSim(m = m, rho = 0, n = n, 
-                         pi0 = 0.8, SNR = 0, prob = 0.4)
-    Y <- obj$input$Y
-    groups <- obj$input$groups
-    alpha <- 0.07
-    B <- 123
-    K <- m/2
-    alt <- "greater"
-    fam <- "Beta"
-    configs <- expand.grid(alternative = c("two.sided", "less", 
-                                           "greater"), 
-                           family = c("Simes", "Beta"), 
-                           stringsAsFactors = FALSE)
-    cc <- sample(nrow(configs), 1)   ## perform just one at random at each execution
-    alt <- configs[cc, "alternative"]
-    fam <- configs[cc, "family"]
-    set.seed(20210311)
-    res <- fit(obj, alpha = alpha, B = B, K = K, 
-               alternative = alt, family = fam, max_steps_down = 0)
-    set.seed(20210311)
-    p0 <- get_randomized_p_values_two_sample(obj$input$Y, obj$input$groups, B, alternative = alt)
-    expect_equal(p0, res$output$p0)
-    t_inv <- ifelse(fam == "Simes", t_inv_linear,  t_inv_beta)
-    t_ <- ifelse(fam == "Simes", t_linear,  t_beta)
-    pivStat <- get_pivotal_stat(p0, m, t_inv, K = K)
-    expect_equal(pivStat, res$output$piv_stat)
-#    expect_equal(quantile(pivStat, alpha), res$output$lambda)
-#    expect_identical(cal$thr,      reso$thr)
+  m <- 54
+  n <- 132
+  obj <- SansSouciSim(
+    m = m, rho = 0, n = n,
+    pi0 = 0.8, SNR = 0, prob = 0.4
+  )
+  Y <- obj$input$Y
+  groups <- obj$input$groups
+  alpha <- 0.07
+  B <- 123
+  K <- m / 2
+  alt <- "greater"
+  fam <- "Beta"
+  configs <- expand.grid(
+    alternative = c(
+      "two.sided", "less",
+      "greater"
+    ),
+    family = c("Simes", "Beta"),
+    stringsAsFactors = FALSE
+  )
+  cc <- sample(nrow(configs), 1) ## perform just one at random at each execution
+  alt <- configs[cc, "alternative"]
+  fam <- configs[cc, "family"]
+  set.seed(20210311)
+  res <- fit(obj,
+             alpha = alpha, B = B, K = K,
+             alternative = alt, family = fam, max_steps_down = 0
+  )
+  set.seed(20210311)
+  p0 <- get_perm(obj$input$Y, obj$input$groups, B, alternative = alt)$p.value
+  expect_equal(p0, res$output$p0)
+  t_inv <- ifelse(fam == "Simes", t_inv_linear, t_inv_beta)
+  t_ <- ifelse(fam == "Simes", t_linear, t_beta)
+  pivStat <- get_pivotal_stat(p0, m, t_inv, K = K)
+  expect_equal(pivStat, res$output$piv_stat)
+  #    expect_equal(quantile(pivStat, alpha), res$output$lambda)
+  #    expect_identical(cal$thr,      reso$thr)
 })
 
 test_that("Consistency of output of 'bound.SansSouci'", {
