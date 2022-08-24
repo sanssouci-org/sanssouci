@@ -2,6 +2,15 @@
 Package: sanssouci
 ==================
 
+Version 0.12.7 [2022-08-18]
+
+* Added treatment for continuous covariates (PR #90)
+
+Version 0.12.6 [2022-08-11]
+
+* B=1000 permutations is now the default for calibration
+* 'zeta.HB' vectorized (#87)
+
 Version 0.12.5 [2022-02-18]
 
 * Package sansSouci renamed to sanssouci

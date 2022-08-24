@@ -167,19 +167,29 @@ NULL
 #' @export
 #' @rdname zeta
 zeta.HB <- function(pval, lambda) {
-    s <- length(pval)
-    k <- 0
-    sp <- sort(pval)
-    CONT <- TRUE
-    while ((k < s) && CONT) {
-        if (sp[k + 1] > lambda/(s - k)) {
-            CONT <- FALSE
-        } else {
-            k <- k + 1
-        }
+    m <- length(pval)
+    sorted.pval <- sort(pval)
+    
+    thresholds <- lambda / (m - m:1 + 1)
+    v <- sorted.pval - thresholds
+    indexes <- which(v > 0)
+    if (!length(indexes)){
+      return(0)
     }
-    # res<-list(hatk = k, rej_ind = sort(or[seq_len(k)]) )
-    return(s - k)
+    else{
+      return(m - indexes[1] + 1)
+    }
+    # legacy code using a while loop:
+    # k <- 0
+    # CONT <- TRUE
+    # while ((k < m) && CONT) {
+    #     if (sorted.pval[k + 1] > lambda/(m - k)) {
+    #         CONT <- FALSE
+    #     } else {
+    #         k <- k + 1
+    #     }
+    # }
+    # return(m - k)
 }
 
 #' @export

@@ -255,7 +255,7 @@ curveMaxFP <- function(p.values, thr) {
     kk <- 1
     ii <- 1
     while ((kk <= s) && (ii <= s)) {
-        if (thr[kk] >= p.values[ii]) {
+        if (thr[kk] > p.values[ii]) {
             K[ii] <- kk-1
             ii <- ii+1
         } else {
@@ -296,7 +296,7 @@ curveMaxFP_ECN <- function(p.values, thr) {
     kk <- 1
     ii <- 1
     while ((kk <= kMax) && (ii <= m)) {
-        if (thr[kk] >= p.values[ii]) {
+        if (thr[kk] > p.values[ii]) {
             K[ii] <- kk-1
             ii <- ii+1
         } else {
@@ -373,7 +373,7 @@ curveMaxFP_old <- function(p.values, thr,
         kk <- 1
         ii <- 1
         while ((kk <= kMax) && (ii <= m)) {
-            if (thr[kk] >= p.values[ii]) {
+            if (thr[kk] > p.values[ii]) {
                 K[ii] <- kk-1
                 ii <- ii+1
             } else {

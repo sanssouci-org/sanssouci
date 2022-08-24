@@ -9,7 +9,7 @@ gauss_bloc(barmu, len)
 \arguments{
 \item{barmu}{A numeric value, the strength of the signal}
 
-\item{len}{An integer value, teh length of the block}
+\item{len}{An integer value, the length of the block}
 }
 \value{
 A numeric vector of length \code{len}, the signal values in the block

@@ -51,7 +51,7 @@ Print 'SansSouci' objects
 }
 \examples{
 data(expr_ALL, package = "sanssouci.data")
-groups <- ifelse(colnames(expr_ALL)=="NEG", 0, 1)
+groups <- ifelse(colnames(expr_ALL) == "NEG", 0, 1)
 table(groups)
 a <- SansSouci(Y = expr_ALL, groups = groups)
 print(a)
@@ -63,7 +63,7 @@ res <- fit(a, B = 100, alpha = 0.1)
 label(res)
 print(res)
 str(pValues(res))
-str(foldChanges(res)) 
+str(foldChanges(res))
 str(thresholds(res))
 volcanoPlot(res, q = 0.05, r = 0.5)
 
