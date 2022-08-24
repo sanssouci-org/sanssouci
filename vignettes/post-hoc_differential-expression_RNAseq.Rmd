@@ -1,0 +1,250 @@
+---
+title: "Permutation-based post hoc inference for differential gene expression studies: RNAseq data"
+author: "Nicolas Enjalbert Courrech and Pierre Neuvial"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    number_sections: yes
+    toc: yes
+  pdf_document: default
+bibliography: sanssouci.bib
+vignette: |
+  %\VignetteIndexEntry{Permutation-based post hoc inference for differential gene expression studies: RNAseq data}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteDepends{sanssouci.data}
+---
+  
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+collapse = TRUE,
+comment = "#>",
+fig.width=8,
+fig.height=6, 
+cache = TRUE
+)
+```
+
+
+This vignette illustrates the relevance of permutation-based post hoc bounds on false positives for the differential analysis of (bulk) RNA sequencing (RNAseq) data. We illustrate how the post hoc methods introduced by @blanchard20post-hoc may be used to 
+
+- build confidence curves (envelopes) for the true or false positives and defined differentially expressed genes accordingly
+- perform statistical inference on the output of volcano plots
+
+The methods described in this vignette have been introduced in the paper @blanchard20post-hoc and in the book chapter @BNR:chap. A shiny application for volcano plots is also available from  https://shiny-iidea-sanssouci.apps.math.cnrs.fr/.
+
+
+```{r install-r-packages, results='hide', message=FALSE, eval=FALSE}
+require("ggplot2") || install.packages("ggplot2")
+require("sanssouci") || remotes::install_github("pneuvial/sanssouci@develop")
+```
+
+
+```{r load-r-packages, results='hide', message=FALSE}
+library("ggplot2")
+library("sanssouci")
+library("matrixStats")
+```
+
+Set the seed of the random number generator for numerical reproducibility of the results:
+```{r set-seed}
+set.seed(20200924)
+```
+
+
+# Motivation: a differential gene expression study
+
+We focus on differential gene expression studies in cancerology. These studies aim at identifying genes whose mean expression level differs significantly between two (or more) populations, based on a sample of gene expression measurements from individuals from these populations. 
+
+```{r load-data, message = FALSE}
+data("RNAseq_blca", package = "sanssouci.data")
+Y <- RNAseq_blca
+groups <- ifelse(colnames(RNAseq_blca) == "III", 1, 0)
+rm(RNAseq_blca)
+```
+
+This data set consists of gene expression measurements for  $n = `r ncol(Y)`$ patients from the Cancer Genome Atlas Urothelial Bladder Carcinoma (TCGA-BLCA) data collection (@tcga2014blca). Following a standard practice in RNAseq data analysis, we convert these measurements to to *count per millions* (CPM) in order to make them comparable across samples, and filter out genes with very low counts in all samples:
+
+```{r CPM+filter}
+CPM <- Y/colSums(Y)*1e6
+# plot(density(rowMaxs(log(1 + CPM))))
+ww <- which(rowMaxs(CPM) < 10)
+ww <- which(rowQuantiles(log(1 + CPM), prob = 0.75) < log(1+5))
+Y <- CPM[-ww, ]
+plot(density(log(1 + Y)))
+plot(density(log(1 + CPM)))
+m <- nrow(Y)
+```
+
+The patients are classified into two subgoups, according to their clinical stage (II or III):
+
+```{r colnames}
+table(groups)
+```
+
+The goal of this study is to understand the molecular differences at the gene expression level between the stage II and stage III populations. Each patient is characterized by a vector of $m = `r m`$ gene expression values.  We aim at addressing the following question:
+
+> For which genes is there a difference in the distribution of expression levels between the stage II and stage III populations? 
+
+This question can be addressed by performing one statistical test per gene, and to define "differentially expressed" genes as those passing some significance threshold.
+Below, we use the Wilcoxon rank sum (or Mann-Whitney) test for comparing two independent samples. This is a rank-based non-parametric test. A fast version of this test is implemented in the  `sanssouci::rowWilcoxonTests` function.
+
+
+To obtain post hoc bounds, we create an object of class `SansSouci` and run the `fit` method to perform calibration with $B=1,000$ permutations. The target risk level is set to $\alpha = 0.1$, meaning that all of the statements made below will be true with probability greater than $1-\alpha= 0.9$.
+
+```{r calibration, cache=TRUE}
+alpha <- 0.1
+obj <- SansSouci(Y = log(1 + Y), groups = groups)
+res <- fit(obj, B = 1000, alpha = alpha, family = "Simes", 
+           rowTestFUN = rowWilcoxonTests)
+```
+
+For comparison purposes we also run the (parametric) Simes method introduced by @GS2011:
+
+```{r Simes}
+res_Simes <- fit(obj, B = 0, family = "Simes", alpha = alpha, 
+                 rowTestFUN = rowWilcoxonTests) ## B=0 => no calibration!
+
+resList <- list("SansSouci" = res,
+                "Simes (parametric)" = res_Simes)
+```
+
+# Confidence curves for "top-$k$" lists
+
+In the absence of prior information on genes, a natural idea is to rank them by decreasing statistical significance, and a natural question to ask is: 
+
+> Can we provide a lower confidence curve on the number (or proportion) of truly differentially expressed genes among the most significant genes?
+
+The confidence curve obtained by calibration is the solid black line in the figure below:
+
+```{r, conf-env-plot}
+conf_bounds <- lapply(resList, predict, all = TRUE)
+cols <- c("black", "darkgray")
+p <- plotConfCurve(conf_bounds, xmax = 5000, cols = cols) + 
+  geom_line(size = 1.5)
+# ggsave(p, file = "conf-curve.pdf", width = 6, height = 4)
+```
+
+```{r ex-use-curves, echo=FALSE}
+x <- 2000
+TP <- predict(res, what = "TP", all = TRUE)$bound
+FDP <- predict(res, what = "FDP", all = TRUE)$bound
+TP_Simes <- predict(res_Simes, what = "TP", all = TRUE)$bound
+FDP_Simes <- predict(res_Simes, what = "FDP", all = TRUE)$bound
+```
+
+This plot can be interpreted as follows: among the `r x` most significant genes, the number of truly differentially expressed genes is at least `r TP[x]` (right panel). Equivalently, the FDP among these `r x` genes is at most `r ceiling(FDP[x]*100)/100` (left panel).
+
+The dashed gray curve is obtained by the parametric Simes method introduced by @GS2011. The comparison between the two curves illustrates the gain in power obtained by using permutations methods to adapt to the dependence between genes. In this example, the parametric Simes method gives the following guarantees: among the `r x` most significant genes, the number of truly differentially expressed genes is at least `r TP_Simes[x]` (right panel). Equivalently, the FDP among these `r x` genes is at most `r ceiling(FDP_Simes[x]*100)/100` (left panel).
+
+## Differentially expressed genes
+
+In this section we show how to the above curves may be used to address the question:
+
+> Which genes are differentially expressed with high probability?
+
+To do so, we *define* differentially expressed genes as the largest set of genes for which the FDP bound is less than a user-given value, for example $q = 0.1$. This corresponds to drawing a horizontal line in the preceding plot:
+
+```{r post-hoc-FDP-control}
+q <- 0.1 # FDP budget (user-defined)
+FDP <- lapply(resList, predict, what = "FDP", all = TRUE)
+n_DEG <- sapply(FDP, function(x) sum(x <= q))
+
+size <- 1.5
+p <- plotConfCurve(FDP, xmax = 2.5*n_DEG, col = cols) +
+  geom_hline(yintercept = q, linetype = "dashed", size = size) +
+  geom_vline(xintercept = n_DEG, linetype = "dotted", col = cols, size = size) + 
+  geom_line(size = size)
+# ggsave(p, file = "conf-curve_DEG.pdf", width = 6, height = 4)
+```
+
+Using $q = `r q`$, we obtain `r n_DEG[["SansSouci"]]` differentially expressed genes. Note that this gene list has a clear statistical interpretation: with probability $1-\alpha = `r 1-alpha`$, the proportion of false positives (that is, genes that are called DE by mistake) is less than $q = `r q`$.  
+
+The above example also illustrates the increase in power obtained by calibration, since the parametric Simes method yields a subset of "only" `r n_DEG[["Simes (parametric)"]]` genes called differentially expressed (with identical statistical guarantees).
+
+
+## Comparison to FDR control
+
+We argue that ensuring *with high probability* that the FDP is less than some user-defined budget, as done above, is more interpretable than the widely used False Discovery Rate (FDR) control introduced by @benjamini95controlling. Indeed, FDR control guarantees that the *expected* (or average) FDP among DE genes is less than some user-defined FDR budget.  However, **the true FDP may well be far from its expected value**, especially since the variability of the FDP is known to increase with the degree of dependence between genes.
+
+```{r}
+adjp <- p.adjust(pValues(res), method = "BH")
+FDR_level <- 0.05
+n_BH <- sum(adjp < FDR_level)
+n_BH
+```
+
+In our case, the BH procedure would consider `r n_BH` genes as differentially expressed at the FDR level `r FDR_level`. This set of DE genes is larger than the `r n_DEG[["SansSouci"]]` genes called DE by our method, but the latter comes with stronger and more interpretable statistical guarantees than FDR control.
+
+# Volcano plots
+
+<!-- For an interactive volcano plot, see the [volcano plot shiny application]( https://shiny-iidea-sanssouci.apps.math.cnrs.fr/). -->
+
+A classical practice in gene expression studies is to define DE genes as those passing both a significance filter (small $p$-value) and an effect size or "fold change" filter. Here, the fold change of a gene is defined as the difference between the expression medians (on the log scale) of the two groups compared. This double selection by $p$-value and fold change corresponds to two sets of genes, with positive/negative fold change, which can be represented in the following plot:
+
+
+```{r volcano}
+volcanoPlot(res, p = 1e-4, r = 0.5)
+```
+
+This type of plot is called a "volcano plot" @CC2003. Post hoc inference makes it possible to obtain statistical guarantees on selections such as the ones represented in the above figure. 
+
+
+## Custom statistics: example using limma-voom
+
+Post hoc bounds can be calculated for any gene selection. In particular, even if Wilcoxon tests have been performed *for the calibration of the post hoc bounds*, it is possible to rely on other statistics to *select genes of interest*. In this section, we illustrate this idea by making a volcano plot based on the $p$-values and log-fold changes obtained from the limma-voom method of @law2014voom implemented in the `limma` package  (@limma). The next code chunk is adapted from the vignette of the `limma` package:
+
+```{r limma}
+library(limma)
+library(edgeR)
+d <- DGEList(Y)
+d <- calcNormFactors(d)
+Grp <- as.factor(groups)
+mm <- model.matrix(~0 + Grp)
+
+y <- voom(d, mm, plot = FALSE)
+
+res_lm <- lmFit(y, mm)
+contr <- makeContrasts(Grp1 - Grp0, levels = colnames(coef(res_lm)))
+res_fit <- contrasts.fit(res_lm, contr)
+res_eb <- eBayes(res_fit)
+TT <- topTable(res_eb, sort.by = "none", number = Inf)
+```
+
+The next plot suggests that the $p$-values obtained from limma-voom and from Wilcoxon tests are consistent.
+
+```{r compare-p-values}
+df <- data.frame(wilcox = -log10(pValues(res)), limma = -log10(TT$P.Value))
+ggplot(df, aes(x = limma, y = wilcox)) + 
+  geom_point(color = "#10101010") + 
+  ggtitle("p-values (log-scale)")
+```
+
+
+Finally we obtain the volcano plot based on limma statistics.
+
+```{r volcano-limma}
+volcanoPlot(res, 
+            fold_changes = TT$logFC, 
+            p_values = TT$P.Value, 
+            p = 1e-4, r = 0.5)
+```
+
+
+# Session information
+
+```{r session-info}
+sessionInfo()
+```
+
+# Reproducibility
+
+To re-build this vignette from its source, use: 
+
+```{r reproducibility, eval = FALSE}
+rmarkdown::render("post-hoc_differential-expression_RNAseq.Rmd", output_format = "pdf_document")
+# To keep intermediate files, add option 'clean = FALSE'
+rmarkdown::render("post-hoc_differential-expression_RNAseq.Rmd", output_format = "html_document")
+```
+
+# References

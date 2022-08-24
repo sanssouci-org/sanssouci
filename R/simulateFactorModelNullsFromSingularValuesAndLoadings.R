@@ -17,9 +17,9 @@
 # m <- 10
 #
 # ## independent
-# sim0 <- sansSouci:::simulateFactorModelNullsFromSingularValuesAndLoadings(m)
+# sim0 <- sanssouci:::simulateFactorModelNullsFromSingularValuesAndLoadings(m)
 # str(sim0)
-# sum(is.na(sansSouci:::simulateFactorModelNullsFromSingularValuesAndLoadings(m)))
+# sum(is.na(sanssouci:::simulateFactorModelNullsFromSingularValuesAndLoadings(m)))
 # S0 <- getFactorModelCovarianceMatrix(m)
 # image(S0)
 #
@@ -27,7 +27,7 @@
 # rho <- 0.2
 # h <- 1
 # P <- matrix(1, m, length(h))
-# sim1 <- sansSouci:::simulateFactorModelNullsFromSingularValuesAndLoadings(m, h, P, rho=rho)
+# sim1 <- sanssouci:::simulateFactorModelNullsFromSingularValuesAndLoadings(m, h, P, rho=rho)
 # str(sim1)
 # S1 <- getFactorModelCovarianceMatrix(m, h, P, rho=rho)
 # image(S1)
@@ -41,7 +41,7 @@
 # gamma3 <- rep(c(-1, 1), times=m/2)
 # P <- cbind(gamma1, gamma2, gamma3)/sqrt(m)
 #
-# sim3 <- sansSouci:::simulateFactorModelNullsFromSingularValuesAndLoadings(m, h, P, rho=rho)
+# sim3 <- sanssouci:::simulateFactorModelNullsFromSingularValuesAndLoadings(m, h, P, rho=rho)
 # str(sim3)
 # S3 <- getFactorModelCovarianceMatrix(m, h, P, rho=rho)
 # image(S3)

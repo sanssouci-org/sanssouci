@@ -37,11 +37,11 @@ probability greater than \eqn{1-\alpha}, \eqn{|H_0 cap R| \leq \min_k {|R
 }
 \section{Functions}{
 \itemize{
-\item \code{posthocBySimes0Rcpp}: Rcpp version
+\item \code{posthocBySimes0Rcpp()}: Rcpp version
 
-\item \code{posthocBySimes}: R version
+\item \code{posthocBySimes()}: R version
+
 }}
-
 \examples{
 m <- 1e3
 m1 <- 200

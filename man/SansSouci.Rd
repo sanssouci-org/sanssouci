@@ -23,14 +23,14 @@ An object of class "SansSouci"
 Create an object of class 'SansSouci'
 }
 \examples{
-data(expr_ALL, package = "sansSouci.data")
-groups <- ifelse(colnames(expr_ALL)=="NEG", 0, 1)
+data(expr_ALL, package = "sanssouci.data")
+groups <- ifelse(colnames(expr_ALL) == "NEG", 0, 1)
 table(groups)
 a <- SansSouci(Y = expr_ALL, groups = groups)
 
 res <- fit(a, B = 100, alpha = 0.1)
 plot(res, xmax = 500)
-res_beta <- fit(res, B = 100, alpha = 0.1, family="Beta", K=10)
+res_beta <- fit(res, B = 100, alpha = 0.1, family = "Beta", K = 10)
 plot(res_beta, xmax = 500)
 
 }

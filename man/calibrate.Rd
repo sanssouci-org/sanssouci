@@ -7,10 +7,10 @@
 \usage{
 calibrate(
   p0,
+  m,
   alpha,
   family = c("Linear", "Beta", "Simes"),
-  m = nrow(p0),
-  K = m,
+  K = nrow(p0),
   p = NULL,
   max_steps_down = 10L,
   piv_stat0 = NULL
@@ -18,25 +18,23 @@ calibrate(
 
 calibrate0(
   p0,
+  m,
   alpha,
   family = c("Linear", "Beta", "Simes"),
-  m = nrow(p0),
-  K = m,
+  K = nrow(p0),
   piv_stat0 = NULL
 )
 }
 \arguments{
-\item{p0}{A \verb{m x B} matrix. The j-th ow corresponds to a permutation
-of the input \code{categ}: for each hypothesis i, \code{p0[i,j]} is the
-p-value of the test of the i-th null hypothesis on the permuted categories}
+\item{p0}{A matrix with B rows. Each row is a vector of null p-values}
+
+\item{m}{The total number of tested hypotheses}
 
 \item{alpha}{A numeric value in \verb{[0,1]}, the target (JER) risk}
 
 \item{family}{A character value, the name of a threshold family. Should be
 one of "Linear", "Beta" and "Simes", or "Oracle". "Linear" and "Simes" families are
 identical.}
-
-\item{m}{The total numer of tested hypotheses. Defaults to \code{p0}}
 
 \item{K}{An integer value in \verb{[1,m]}, the number of elements in the reference family. Defaults to \code{m}}
 
@@ -72,36 +70,39 @@ the output of 'calibrate(..., max_steps_down = 0)' and
 
 set.seed(0xBEEF)
 m <- 50
-n <- 45
-X <- matrix(rnorm(m*n), ncol = n, nrow = m)
-categ <- rbinom(n, 1, 0.4)
-B <- 100
-p <- rowWelchTests(X, categ)$p.value
+sim <- gaussianSamples(m = m, rho = 0.3, n = 45, 
+                       pi0 = 0.8, SNR = 3, prob = 0.5)
+Y <- sim$X
+groups <- sim$categ
+p <- rowWelchTests(Y, groups)$p.value
 
-null_groups <- replicate(B, sample(categ))
-p0 <- rowWelchTests(X, null_groups)$p.value
-calib0 <- calibrate0(p0, alpha = 0.1) # single step
-calib <- calibrate(p0, alpha = 0.1)
-calib$lambda >= calib0$lambda # probably very close here (null data)
+B <- 100
+null_groups <- replicate(B, sample(groups))
+p0 <- rowWelchTests(Y, null_groups)$p.value
+
+calib0 <- calibrate0(p0, m, alpha = 0.1) # single step
+calib <- calibrate(p0, m, alpha = 0.1, p = p)
+calib$lambda >= calib0$lambda 
 
 maxFP(p, calib$thr)
 
 \dontrun{
 # Gene expression
-data(expr_ALL, package = "sansSouci.data")
+data(expr_ALL, package = "sanssouci.data")
 X <- expr_ALL; rm(expr_ALL)
-categ <- ifelse(colnames(X) == "BCR/ABL", 1, 0) # map to 0/1
+groups <- ifelse(colnames(X) == "BCR/ABL", 1, 0) # map to 0/1
 
-null_groups <- replicate(500, sample(categ))
+null_groups <- replicate(500, sample(groups))
 perm <- rowWelchTests(X, null_groups)
 p0 <- perm$p.value
 
 alpha <- 0.1
-calib_L <- calibrate(p0, alpha, family = "Linear")
-calib_B <- calibrate(p0, alpha, family = "Beta", K = 100)
-p <- rowWelchTests(X, categ)$p.value
+m <- nrow(X)
+p <- rowWelchTests(X, groups)$p.value
+calib_L <- calibrate(p0, m, alpha, family = "Linear")
+calib_B <- calibrate(p0, m, alpha, family = "Beta", K = 100)
 
-## post hoc bounds (these are functions!)
+## post hoc bounds
 thr <- calib_L$thr
 minTP(p, thr)  ## lower bound on true positives
 
@@ -114,7 +115,7 @@ length(sel)
 minTP(p[sel], thr)
 
 # confidence bound on the FDP
-FDP_bound <- sansSouci:::curveMaxFP(sort(p), thr)/seq(along = p)
+FDP_bound <- sanssouci:::curveMaxFP(sort(p), thr)/seq(along = p)
 plot(head(FDP_bound, 300), t = 's', 
   xlab = "Number of features",
   ylab = "Upper bound on False Discovery Proportion")

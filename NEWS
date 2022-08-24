@@ -1,6 +1,51 @@
 ==================
-Package: sansSouci
+Package: sanssouci
 ==================
+
+Version 0.12.7 [2022-08-18]
+
+* Added treatment for continuous covariates (PR #90)
+
+Version 0.12.6 [2022-08-11]
+
+* B=1000 permutations is now the default for calibration
+* 'zeta.HB' vectorized (#87)
+
+Version 0.12.5 [2022-02-18]
+
+* Package sansSouci renamed to sanssouci
+* Package sansSouci.data renamed to sanssouci.data
+
+Version 0.12.4 [2021-11-05]
+
+* Update CITATION (book chapter in Handbook of Multiple Comparisons)
+* Add tests for corner cases in posthoc_bounds
+* Unskip tests for 'rowWilcoxonTests'
+* Add vignette for differential analysis of RNAseq data
+* Fix 'R CMD check' github action  (by upgrading to current rlib version)
+
+Version 0.12.3 [2021-10-11]
+
+* volcano plot made more generic: different p-values can be used for 
+  selection/display and for calculating post hoc bounds (#66).
+* 'colSort' becomes a wrapper around the C++ function arma::sort (which natively handles matrices).
+* BUG FIX: curveMaxFP would raise an error on empty p-value vector. Now returns 0. 
+* volcano plot made more generic: different p-values can be used for selection/display and for calculating post hoc bounds (#66).
+>>>>>>> develop
+* SPEEDUP: curveMaxFP now always has O(|S|) complexity (#65).
+
+
+Version 0.12.2 [2021-09-21]
+
+* SPEEDUP: rowWilcoxonTests now completely vectorized (#64).
+* Remove default value for argument 'm' in 'calibrate' and 'get_pivotal_stat' to make sure that m is properly set.
+* Add unit test: the pivotal statistics are non-decreasing in the subset of hypotheses used for calibration (following feedback by Angela Andreella).
+
+Version 0.12.1 [2021-06-11]
+
+* [IIDEA] Speedup: data sets from the GSEABenchmarkeR package and associated gene sets are preprocessed on the deployment server. 
+* [IIDEA] Added script "GSEABenchmarkeR/export-data.R" to preprocess a subset of the 40 microarray data sets of GSEABenchmarkeR and store them locally. 
+* [IIDEA] Cleanups in the UI.
 
 
 Version 0.12.0 [2021-04-30]

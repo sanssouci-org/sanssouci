@@ -1,4 +1,4 @@
 library(testthat)
-library(sansSouci)
+library(sanssouci)
 
-test_check("sansSouci")
+test_check("sanssouci")

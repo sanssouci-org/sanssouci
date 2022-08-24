@@ -1,14 +1,15 @@
-Package: sansSouci
-Version: 0.12.0
-Date: 2021-04-30
+Package: sanssouci
+Version: 0.12.7
+Date: 2022-08-18
 Title: Post Hoc Multiple Testing Inference
 Authors@R: c(person("Pierre", "Neuvial", role=c("aut", "cre"),
                  email="pierre.neuvial@math.univ-toulouse.fr",
                  comment = c(ORCID = "0000-0003-3584-9998")),
+             person("Gilles", "Blanchard", role="aut"), 
              person("Guillermo", "Durand", role="aut", 
-                comment = c(ORCID = "https://orcid.org/0000-0003-4056-5631")),
+                comment = c(ORCID = "0000-0003-4056-5631")),
              person("Nicolas", "Enjalbert-Courrech", role="aut"),
-             person("Marie", "Perrot-Dockès", role="aut"))
+             person("Etienne", "Roquain", role="aut"))
 License: GPL-3
 Description: Post hoc inference based on the control of a dedicated risk called the Joint (Family-Wise) Error Rate.
 Depends: R (>= 3.5.0)
@@ -16,24 +17,27 @@ Imports:
     generics,
     Matrix,
     matrixStats,
+    matrixTests,
     Rcpp (>= 0.12.3)
 LinkingTo: Rcpp, RcppArmadillo
 Suggests:
     cherry,
+    edgeR,
     ggplot2,
     knitr,
+    limma,
     markdown,
     rmarkdown,
     RColorBrewer,
-    sansSouci.data,
+    sanssouci.data,
     scales,
     testthat,
     covr
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.1
 LazyData: true
 Encoding: UTF-8
 URL: https://github.com/pneuvial/sanssouci
 BugReports: https://github.com/pneuvial/sanssouci/issues
-Remotes: github::pneuvial/sansSouci.data
+Remotes: github::pneuvial/sanssouci.data

@@ -29,28 +29,22 @@ vignettes/*.pdf
 .httr-oauth
 
 # knitr and R markdown default cache directories
-/*_cache/
-/cache/
+vignettes/*_cache/
 
 # Temporary files created by R markdown
 *.utf8.md
 *.knit.md
-.Rproj.user
 
+# other
+.Rproj.user
 *.Rproj
 .Rproj.user
 .Rhistory
 .RData
 .Ruserdata
-
 /inst/doc/
-/png/
-/fig/
-/local/
-/doc/
-/Rout/
-/results/
 /docs
+README_cache
 
 ## OS X
 .DS_Store
@@ -58,3 +52,4 @@ vignettes/*.pdf
 Meta
 doc
 /Meta/
+resData

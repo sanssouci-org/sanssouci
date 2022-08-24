@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# sansSouci
+# sanssouci
 
 <!-- badges: start -->
 
@@ -11,22 +11,24 @@ status](https://github.com/pneuvial/sanssouci/workflows/R-CMD-check/badge.svg)](
 Status](https://codecov.io/gh/pneuvial/sanssouci/branch/develop/graph/badge.svg)](https://codecov.io/github/pneuvial/sanssouci/branch/develop)
 <!-- badges: end -->
 
-The goal of sansSouci is to perform **post hoc inference**: in a
-multiple testing context, sansSouci provides statistical guarantees on
-possibly user-defined and/or data-driven sets of hypotheses.
+The goal of sanssouci \[sãsusi\] is to perform **post hoc inference**:
+in a multiple testing context, sanssouci provides statistical guarantees
+on possibly user-defined and/or data-driven sets of hypotheses.
 
 Typical use cases include:
 
-  - **Differential gene expression studies in genomics**: see
-    [differential expression
-    vignette](https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html)
-    and run [volcano plot shiny
-    app](https://shiny-iidea-sanssouci.apps.math.cnrs.fr/)
+  - **Differential gene expression (DGE) studies in genomics**:
+      - see vignettes dedicated to [microarray
+        data](https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html)
+        and [RNAseq
+        data](https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression_RNAseq.html)
+      - run [volcano plot shiny
+        app](https://shiny-iidea-sanssouci.apps.math.cnrs.fr/)
   - **fMRI studies in neuroimaging**: see [fMRI
     vignette](https://pneuvial.github.io/sanssouci/articles/post-hoc_fMRI.html).
 
 In both cases, the permutation-based post hoc inference methods
-implemented in the `SansSouci` package outperform classical post hoc
+implemented in the `sanssouci` package outperform classical post hoc
 bounds based on probabilistic inequalities.
 
 ## Example: differential analysis
@@ -35,13 +37,13 @@ We briefly illustrate the case of differential gene expression study
 (see dedicated
 [vignette](https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html)
 for more information). We start by creating an object of class
-`SansSouci` from gene expression data available from the
-[sansSouci.data](https://github.com/pneuvial/sanssouci.data) package,
+`sanssouci` from gene expression data available from the
+[sanssouci.data](https://github.com/pneuvial/sanssouci.data) package,
 
 ``` r
-library("sansSouci")
+library("sanssouci")
 #> remotes::install_github("pneuvial/sanssouci.data")
-data(expr_ALL, package = "sansSouci.data")
+data(expr_ALL, package = "sanssouci.data")
 groups <- ifelse(colnames(expr_ALL) == "BCR/ABL", 1, 0) # map to 0/1
 obj <- SansSouci(Y = expr_ALL, groups = groups)
 ```
@@ -60,15 +62,17 @@ Let us assume that we are interested in genes with a \(p\)-value below
 
 ``` r
 S <- which(pValues(res) < 1e-3)
+#> Warning: namespace 'sansSouci' is not available and has been replaced
+#> by .GlobalEnv when processing object '<unknown>'
 predict(res, S)
 #>          TP         FDP 
-#> 119.0000000   0.2608696
+#> 114.0000000   0.2919255
 ```
 
 The method ensures with \(1-\alpha = 90\%\) confidence that there are at
-least 119 truly differentially expressed genes (true positives, TP)
+least 114 truly differentially expressed genes (true positives, TP)
 among these 161 genes, corresponding to a false discovery proportion
-(FDP) less than 0.27.
+(FDP) less than 0.3.
 
 ### Output 2 - Confidence curves for “top-k” feature lists
 
@@ -84,7 +88,7 @@ plot(res, xmax = 500) +
   geom_line(size = 1.5)
 ```
 
-<img src="README-conf-curve-1.png" width="100%" />
+<img src="man/figures/README-conf-curve-1.png" width="100%" />
 
 ### Output 3 - Volcano plots
 
@@ -97,7 +101,7 @@ represented by volcano plots:
 volcanoPlot(res, q = 0.05, r = 0.3, ylim = c(0, 6))
 ```
 
-<img src="README-volcano-plot-1.png" width="100%" />
+<img src="man/figures/README-volcano-plot-1.png" width="100%" />
 
 Importantly, multiple such selections can be made without compromising
 the validity of the bounds. The [IIDEA shiny
@@ -107,11 +111,11 @@ programming.
 
 ## Installation
 
-<!-- You can install the released version of sansSouci from [CRAN](https://CRAN.R-project.org) with: -->
+<!-- You can install the released version of sanssouci from [CRAN](https://CRAN.R-project.org) with: -->
 
 <!-- ``` r -->
 
-<!-- install.packages("sansSouci") -->
+<!-- install.packages("sanssouci") -->
 
 <!-- ``` -->
 
@@ -119,8 +123,6 @@ You can install the development version from
 [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools")
+# install.packages("remotes")
 remotes::install_github("pneuvial/sanssouci")
 ```
-
-## References

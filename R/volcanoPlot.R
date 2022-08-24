@@ -7,6 +7,8 @@ volcanoPlot <- function(x, ...) UseMethod("volcanoPlot")
 
 #' @rdname volcanoPlot
 #' @param x An object of class `SansSouci`
+#' @param fold_changes An optional vector of fold changes, of the same length as `nHyp(object)`, use for volcanoPlot x-axis. If not specified, 
+#' @param p_values A vector of p-values, of the same length as `nHyp(object)`, use for volcanoPlot x-axis
 #' @param p A numeric value, the p-value threshold under which genes are selected
 #' @param q A numeric value, the q-value (or FDR-adjusted p-value) threshold under which genes are selected
 #' @param r A numeric value, the absolute fold change above which genes are selected
@@ -19,25 +21,33 @@ volcanoPlot <- function(x, ...) UseMethod("volcanoPlot")
 #' @export
 #' 
 #' @examples
-#' data(expr_ALL, package = "sansSouci.data")
+#' data(expr_ALL, package = "sanssouci.data")
 #' groups <- ifelse(colnames(expr_ALL)=="NEG", 0, 1)
 #' a <- SansSouci(Y = expr_ALL, groups = groups)
 #' 
 #' res <- fit(a, B = 100, alpha = 0.1)
 #' volcanoPlot(res, q = 0.2, r = 0.2, ylim = c(0, 4))
 volcanoPlot.SansSouci <- function(x, 
+                                  fold_changes = foldChanges(x), 
+                                  p_values = pValues(x), 
                                   p = 1, q = 1, r = 0,
                                   cex = c(0.2, 0.6), 
                                   col = c("#33333333", "#FF0000", "#FF666633"),
                                   pch = 19, ylim = NULL, ...) {
-    object <- x; rm(x);
+    object <- x;
+    y <- force(p_values)
+    x <- force(fold_changes)
+
     if (object$input$n_group == 1) {
         stop("Can't do a volcano plot for one-sample tests!")
     }
+    
+    stopifnot(nHyp(object) == length(x))
+    stopifnot(nHyp(object) == length(y))
     pval <- pValues(object)
-    fc <- foldChanges(object)
     thr <- thresholds(object)
-    volcanoPlot(pval, fc = fc, thr = thr, 
+    
+    volcanoPlot(x = x, y = y, pval = pval, thr = thr, 
                 p = p, q = q, r = r,
                 cex = cex, 
                 col = col,
@@ -48,9 +58,10 @@ volcanoPlot.SansSouci <- function(x,
 #' 
 #' Volcano plot for differential expression studies
 #' 
-#' @param x A vector of p-values
-#' @param fc A vector of fold changes, of the same length as `x`
-#' @param thr A numeric vector of length K, a JER controlling family
+#' @param x A vector of fold changes (x axis of the volcano plot)
+#' @param y A vector of p-values (y axis of the volcano plot)
+#' @param pval A vector of p-values, of the same length as `x`, use to estimate post-hoc bounds
+#' @param thr A numeric vector of length K, a JER controlling family, used to estimate post-hoc bounds
 #' @param p A numeric value, the p-value threshold under which genes are selected
 #' @param q A numeric value, the q-value (or FDR-adjusted p-value) threshold under which genes are selected
 #' @param r A numeric value, the absolute fold change above which genes are selected
@@ -71,33 +82,34 @@ volcanoPlot.SansSouci <- function(x,
 #' @importFrom graphics abline legend rect title
 #' @importFrom stats p.adjust
 #' @seealso Volcano plot shiny app at \url{ https://shiny-iidea-sanssouci.apps.math.cnrs.fr/}
-volcanoPlot.numeric <- function(x, fc, thr,
+volcanoPlot.numeric <- function(x, y, pval, thr,
                         p = 1, q = 1, r = 0,
                         cex = c(0.2, 0.6), 
                         col = c("#33333333", "#FF0000", "#FF666633"),
                         pch = 19, ylim = NULL, bounds = TRUE, ...) {
-    pval <- x; rm(x);
+    # pval <- x; rm(x);
     if (p < 1 && q < 1) {
         warning("Filtering both on p-values and BH-adjusted p-values")
     }
     m <- length(pval)
     
     ## sanity checks
-    stopifnot(length(fc) == m)
+    stopifnot(length(y) == m)
     stopifnot(length(thr) <= m)
+    stopifnot(length(x) == m)
     
-    logp <- -log10(pval)
-    adjp <- p.adjust(pval, method = "BH")  ## adjusted p-values
+    logp <- -log10(y)
+    adjp <- p.adjust(y, method = "BH")  ## adjusted p-values
     y_sel <- which((adjp <= q) &           ## selected by q-value
-                       (pval <= p))        ##          or p-value
+                       (y <= p))        ##          or p-value
     y_thr <- Inf
     if (length(y_sel) > 0) {
         y_thr <- min(logp[y_sel])       ## threshold on the log(p-value) scale
     }
     
     ## gene selections
-    sel1 <- which(logp >= y_thr & fc >= r)
-    sel2 <- which(logp >= y_thr & fc <= -r)
+    sel1 <- which(logp >= y_thr & x >= r)
+    sel2 <- which(logp >= y_thr & x <= -r)
     sel12 <- sort(union(sel1, sel2))
     
     ## post hoc bounds in selections
@@ -129,7 +141,7 @@ volcanoPlot.numeric <- function(x, fc, thr,
     if (is.null(ylim)) {
         ylim <- c(0, max(logp))
     }
-    plot(fc, logp, pch = pch, cex = cexs, col = cols, 
+    plot(x, logp, pch = pch, cex = cexs, col = cols, 
          xlab = xlab, ylab = ylab, ylim = ylim)
     # axis4 <- thrYaxis(thr, max(ylim))
     # axis(side = 4, at = axis4$pvalue, labels = axis4$num, las = 1)

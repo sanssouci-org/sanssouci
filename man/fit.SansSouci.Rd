@@ -7,7 +7,7 @@
 \method{fit}{SansSouci}(
   object,
   alpha,
-  B = ceiling(10/alpha),
+  B = 1000,
   rowTestFUN = NULL,
   alternative = c("two.sided", "less", "greater"),
   family = c("Simes", "Linear", "Beta", "Oracle"),
@@ -23,7 +23,8 @@
 
 \item{alpha}{A numeric value in \verb{[0,1]}, the target (JER) risk}
 
-\item{B}{An integer value, the number of permutations to be performed}
+\item{B}{An integer value, the number of permutations to be performed.
+Defaults to 1000}
 
 \item{rowTestFUN}{A (vectorized) test function. Defaults to \link{rowWelchTests}.}
 
@@ -31,13 +32,13 @@
 Must be one of "two.sided" (default), "greater" or "less".}
 
 \item{family}{A character value, the name of a threshold family. Should be
-one of "Linear", "Beta" and "Simes", or "Oracle". "Linear" and "Simes" families are
-identical.
+one of "Linear", "Beta" and "Simes", or "Oracle". "Linear" and "Simes"
+families are identical.
 \itemize{
 \item Simes/Linear: The classical family of thresholds introduced by Simes (1986).
 This family yields JER control if the test statistics are positively
 dependent (PRDS) under H0.
-\item Beta: A family of thresholds that achieves "balanced" JER control under
+\item Beta: A family of thresholds that achieves marginal kFWER control under
 independence
 \item Oracle A family such that the associated bounds correspond to the true
 numbers/proportions of true/false positives. "truth" must be available in

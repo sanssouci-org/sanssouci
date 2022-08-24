@@ -6,7 +6,8 @@
 \usage{
 \method{volcanoPlot}{numeric}(
   x,
-  fc,
+  y,
+  pval,
   thr,
   p = 1,
   q = 1,
@@ -20,11 +21,13 @@
 )
 }
 \arguments{
-\item{x}{A vector of p-values}
+\item{x}{A vector of fold changes (x axis of the volcano plot)}
 
-\item{fc}{A vector of fold changes, of the same length as \code{x}}
+\item{y}{A vector of p-values (y axis of the volcano plot)}
 
-\item{thr}{A numeric vector of length K, a JER controlling family}
+\item{pval}{A vector of p-values, of the same length as \code{x}, use to estimate post-hoc bounds}
+
+\item{thr}{A numeric vector of length K, a JER controlling family, used to estimate post-hoc bounds}
 
 \item{p}{A numeric value, the p-value threshold under which genes are selected}
 
