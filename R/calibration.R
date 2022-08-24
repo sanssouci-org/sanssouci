@@ -427,7 +427,6 @@ dichotomy <- function(alpha, learned_templates, pval0, k_max, min_dist = 3) {
 #'   confidence bounds on false positives using reference families. *Annals of
 #'   Statistics*, 48(3), 1281-1303.
 #'
-#' @export
 #'
 #' @importFrom matrixStats colMins
 #' @examples

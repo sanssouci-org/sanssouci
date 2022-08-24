@@ -110,7 +110,7 @@ test_that("'fit.SansSouci' reproduces the results of 'calibrate'", {
     alternative = alt, family = fam, max_steps_down = 0
   )
   set.seed(20210311)
-  p0 <- get_perm(obj$input$Y, obj$input$groups, B, alternative = alt)$p.value
+  p0 <- get_randomized_p_values_two_sample(obj$input$Y, obj$input$groups, B, alternative = alt)
   expect_equal(p0, res$output$p0)
   t_inv <- ifelse(fam == "Simes", t_inv_linear, t_inv_beta)
   t_ <- ifelse(fam == "Simes", t_linear, t_beta)

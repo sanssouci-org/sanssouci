@@ -8,9 +8,9 @@ to permutation p-values and to a reference family}
 estimate_jer(template, pval0, k_max)
 }
 \arguments{
-\item{template}{matrix (B,m), template used for the calibration}
+\item{template}{matrix (m,B), template used for the calibration}
 
-\item{pval0}{matrix (B,m) of permuted pvalues}
+\item{pval0}{matrix (m,B) of permuted pvalues}
 
 \item{k_max}{An integer value in \verb{[1,m]}, the number of elements in the reference family.}
 }

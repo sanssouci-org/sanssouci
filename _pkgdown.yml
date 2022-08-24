@@ -28,13 +28,19 @@ reference:
   contents:
   - all-generics
   - calibrate
+  - calibrate_jer
+  - calibrate_simes_one_sample
   - confCurveFromFam
   - curveMaxFP
   - curveMaxFP_old
+  - dichotomy
+  - estimate_jer
   - gaussianSamples
   - gaussianTestStatistics
-  - get_perm
+  - get_data_driven_template
   - get_pivotal_stat
+  - get_randomized_p_values_one_sample
+  - get_randomized_p_values_two_sample
   - volcanoPlot
   - maxFP
   - maxFDP
@@ -44,6 +50,7 @@ reference:
   - plotConfCurve
   - posthocBySimes0Rcpp
   - reference-families
+  - rowTtestsOneSample
   - rowWilcoxonTests
   - rowWelchTests
   - rowZTests

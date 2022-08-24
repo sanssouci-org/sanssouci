@@ -11,9 +11,9 @@ dichotomy(alpha, learned_templates, pval0, k_max, min_dist = 3)
 \arguments{
 \item{alpha}{A float, confidence level in [0, 1]}
 
-\item{learned_templates}{A matrix with B rows and p columns. Learned templates for B' permutations and p features}
+\item{learned_templates}{A matrix with m rows and B columns. Learned templates for B permutations and m features}
 
-\item{pval0}{A matrix with B rows and p columns of permuted p-values.}
+\item{pval0}{A matrix with m rows and B columns of permuted p-values.}
 
 \item{k_max}{An integer value, the template size.}
 

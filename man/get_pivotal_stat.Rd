@@ -8,7 +8,7 @@ to permutation p-values and to a reference family}
 get_pivotal_stat(p0, m, t_inv = t_inv_linear, K = nrow(p0))
 }
 \arguments{
-\item{p0}{A matrix with B rows. Each row is a vector of null p-values}
+\item{p0}{A matrix with B columns. Each row is a vector of m null p-values}
 
 \item{m}{The total number of tested hypotheses}
 
