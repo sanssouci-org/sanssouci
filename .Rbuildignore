@@ -15,6 +15,7 @@ appveyor.yml
 ^resData$
 ^fig$
 ^local$
+^local-vignettes$
 ^docs$
 ^Rout$
 ^results$

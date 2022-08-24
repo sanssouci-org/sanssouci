@@ -7,9 +7,60 @@ categ <- sim$categ
 thr <- t_linear(0.2, seq_len(m), m)
 tests <- rowWelchTests(X, categ)
 pval <- sort(tests$p.value)
+whats <- c("TP", "FP", "TDP", "FDP")
 
-test_that("Upper bound on the number of false positives", {
-    expect_error(maxFP(pval, rev(thr)))  ## thr is not sorted descendingly
+test_that("I/O of 'posthoc_bound'", {
+    nb_stats <- ceiling(runif(1)*4)
+    what <- sample(whats, nb_stats)
+
+    # subset of arbitrary size
+    s <- sample(m, 1) 
+    S <- sample(m, s)
+    bounds <- posthoc_bound(p.values = pval, S = S, thr = thr, lab = "method", what = what)
+    expect_equal(nrow(bounds), nb_stats)
+    bounds <- posthoc_bound(p.values = pval, S = S, thr = thr, lab = "method", what = what, all = TRUE)
+    expect_equal(nrow(bounds), nb_stats * s)
+    
+    # subset of size 1
+    s <- 1
+    S <- sample(m, s)
+    bounds <- posthoc_bound(p.values = pval, S = S, thr = thr, lab = "method", what = what)
+    expect_equal(nrow(bounds), nb_stats)
+    bounds <- posthoc_bound(p.values = pval, S = S, thr = thr, lab = "method", what = what, all = TRUE)
+    expect_equal(nrow(bounds), nb_stats * s)
+
+    # empty subset
+    S <- integer(0L)
+    bounds <- posthoc_bound(p.values = pval, S = S, thr = thr, lab = "method", what = what)
+    expect_equal(nrow(bounds), nb_stats)
+    bounds <- posthoc_bound(p.values = pval, S = S, thr = thr, lab = "method", what = what, all = TRUE)
+    expect_equal(nrow(bounds), 0)
+
+    # not a subset
+    S <- m + 1
+    expect_error(posthoc_bound(p.values = pval, S = S, thr = thr, lab = "method"),
+                 regexp = "Argument 'S' should be a subset of indices between 1 and ")
+    S <- 1 + 0:m
+    expect_error(posthoc_bound(p.values = pval, S = S, thr = thr, lab = "method"),
+                 regexp = "Argument 'S' should be a subset of indices between 1 and ")
+    
+    # invalid 'p.values'
+    pval_wrong <- pval
+    pval_wrong[1] <- NA
+    expect_error(posthoc_bound(p.values = pval_wrong, thr = thr, lab = "method"), 
+                 regexp = "Argument 'p.values' should only contain elements between 0 and 1")
+
+    pval_wrong[1] <- -1
+    expect_error(posthoc_bound(p.values = pval_wrong, thr = thr, lab = "method"), 
+                 regexp = "Argument 'p.values' should only contain elements between 0 and 1")
+    
+    pval_wrong[1] <- 2
+    expect_error(posthoc_bound(p.values = pval_wrong, thr = thr, lab = "method"), 
+                 regexp = "Argument 'p.values' should only contain elements between 0 and 1")
+})
+
+test_that("maxFP: Upper bound on the number of false positives", {
+    expect_error(maxFP_low(pval, rev(thr)))  ## thr is not sorted descendingly
     
     best <- head(pval)
     worse <- tail(pval)
@@ -27,11 +78,17 @@ test_that("Upper bound on the number of false positives", {
     sM0 <- maxFP(pval, thr)
     expect_equal(M0, sM0)
     expect_equal(M0, ub[m])
+    
+    expect_equal(maxFP(numeric(0L), thr), 0)
+    expect_equal(curveMaxFP(numeric(0L), thr), numeric(0))
+    
+    expect_equal(curveMaxFP(numeric(0L), thr), numeric(0))
 })
 
+
 test_that("curveMaxFP", {
-    expect_error(curveMaxFP(pval, rev(thr)))  
-    expect_error(curveMaxFP(rev(pval), rev(thr)))
+    expect_error(curveMaxFP_old(pval, rev(thr)))  
+    expect_error(curveMaxFP_old(rev(pval), rev(thr)))
     
     ub <- curveMaxFP(pval, thr)
     expect_length(ub, m)
@@ -43,10 +100,10 @@ test_that("curveMaxFP", {
 })
 
 test_that("flavors of curveMaxFP", {
-    ub <- curveMaxFP(pval, thr)
-    ub16 <- curveMaxFP(pval, thr, flavor = "BNR2014")
-    ub14 <- curveMaxFP(pval, thr, flavor = "BNR2014") 
-    ub06 <- curveMaxFP(pval, thr, flavor = "Mein2006") 
+    ub <- curveMaxFP_ECN(pval, thr)
+    ub16 <- curveMaxFP_old(pval, thr, flavor = "BNR2014")
+    ub14 <- curveMaxFP_old(pval, thr, flavor = "BNR2014") 
+    ub06 <- curveMaxFP_old(pval, thr, flavor = "Mein2006") 
     expect_identical(ub, ub16)
     expect_identical(ub, ub14)
     expect_identical(ub, ub06)  ## not sure this is always true?

@@ -33,36 +33,39 @@
 #' 
 #' set.seed(0xBEEF)
 #' m <- 50
-#' n <- 45
-#' X <- matrix(rnorm(m*n), ncol = n, nrow = m)
-#' categ <- rbinom(n, 1, 0.4)
-#' B <- 100
-#' p <- rowWelchTests(X, categ)$p.value
+#' sim <- gaussianSamples(m = m, rho = 0.3, n = 45, 
+#'                        pi0 = 0.8, SNR = 3, prob = 0.5)
+#' Y <- sim$X
+#' groups <- sim$categ
+#' p <- rowWelchTests(Y, groups)$p.value
 #' 
-#' null_groups <- replicate(B, sample(categ))
-#' p0 <- rowWelchTests(X, null_groups)$p.value
-#' calib0 <- calibrate0(p0, alpha = 0.1) # single step
-#' calib <- calibrate(p0, alpha = 0.1)
-#' calib$lambda >= calib0$lambda # probably very close here (null data)
+#' B <- 100
+#' null_groups <- replicate(B, sample(groups))
+#' p0 <- rowWelchTests(Y, null_groups)$p.value
+#' 
+#' calib0 <- calibrate0(p0, m, alpha = 0.1) # single step
+#' calib <- calibrate(p0, m, alpha = 0.1, p = p)
+#' calib$lambda >= calib0$lambda 
 #' 
 #' maxFP(p, calib$thr)
 #' 
 #' \dontrun{
 #' # Gene expression
-#' data(expr_ALL, package = "sansSouci.data")
+#' data(expr_ALL, package = "sanssouci.data")
 #' X <- expr_ALL; rm(expr_ALL)
-#' categ <- ifelse(colnames(X) == "BCR/ABL", 1, 0) # map to 0/1
+#' groups <- ifelse(colnames(X) == "BCR/ABL", 1, 0) # map to 0/1
 #' 
-#' null_groups <- replicate(500, sample(categ))
+#' null_groups <- replicate(500, sample(groups))
 #' perm <- rowWelchTests(X, null_groups)
 #' p0 <- perm$p.value
 #' 
 #' alpha <- 0.1
-#' calib_L <- calibrate(p0, alpha, family = "Linear")
-#' calib_B <- calibrate(p0, alpha, family = "Beta", K = 100)
-#' p <- rowWelchTests(X, categ)$p.value
+#' m <- nrow(X)
+#' p <- rowWelchTests(X, groups)$p.value
+#' calib_L <- calibrate(p0, m, alpha, family = "Linear")
+#' calib_B <- calibrate(p0, m, alpha, family = "Beta", K = 100)
 #' 
-#' ## post hoc bounds (these are functions!)
+#' ## post hoc bounds
 #' thr <- calib_L$thr
 #' minTP(p, thr)  ## lower bound on true positives
 #' 
@@ -75,24 +78,22 @@
 #' minTP(p[sel], thr)
 #' 
 #' # confidence bound on the FDP
-#' FDP_bound <- sansSouci:::curveMaxFP(sort(p), thr)/seq(along = p)
+#' FDP_bound <- sanssouci:::curveMaxFP(sort(p), thr)/seq(along = p)
 #' plot(head(FDP_bound, 300), t = 's', 
 #'   xlab = "Number of features",
 #'   ylab = "Upper bound on False Discovery Proportion")
 #' }
 #' 
 #' @export
-calibrate <- function(p0, alpha, 
+calibrate <- function(p0, m, alpha, 
                       family = c("Linear", "Beta", "Simes"), 
-                      m = nrow(p0),
-                      K = m,
+                      K = nrow(p0),
                       p = NULL, 
                       max_steps_down = 10L,
                       piv_stat0 = NULL) {
     step <- 0
-    cal <- calibrate0(p0, alpha, 
+    cal <- calibrate0(p0, m, alpha, 
                       family = family, 
-                      m = m,
                       K = K, 
                       piv_stat0 = piv_stat0)
     thr <- cal$thr[1]   ## (1-)FWER threshold
@@ -110,9 +111,8 @@ calibrate <- function(p0, alpha,
         p1 <- p0[-R1, ]
         thr <- cal$thr
         lambda <- cal$lambda
-        cal <- calibrate(p1, alpha, 
+        cal <- calibrate(p1, m, alpha, 
                          family = family, 
-                         m = m,
                          K = K,
                          piv_stat0 = NULL) ## force piv stat calc
         R1_new <- which(p < cal$thr[1])
@@ -136,11 +136,11 @@ calibrate <- function(p0, alpha,
 
 #' @rdname calibrate
 #' @export
-calibrate0 <- function(p0, alpha, 
+calibrate0 <- function(p0, m, alpha, 
                        family = c("Linear", "Beta", "Simes"), 
-                       m = nrow(p0),
-                       K = m,
+                       K = nrow(p0),
                        piv_stat0 = NULL) {
+    K <- force(K)
     family <- match.arg(family)
     if (family %in% c("Linear", "Simes")) {
         t_inv <- t_inv_linear
@@ -151,7 +151,7 @@ calibrate0 <- function(p0, alpha,
     }
     pivStat <- piv_stat0
     if (is.null(pivStat)) {
-        pivStat <- get_pivotal_stat(p0, t_inv, m, min(nrow(p0), K))
+        pivStat <- get_pivotal_stat(p0, m, t_inv, min(nrow(p0), K))
     }
     lambda <- stats::quantile(pivStat, alpha, type = 1)
     thr <- t_(lambda, 1:K, m)
@@ -167,8 +167,7 @@ calibrate0 <- function(p0, alpha,
 #' 
 #' @param X A matrix of `m` variables (hypotheses) by `n` observations
 #' @param categ An numeric vector of `n` values in `0,1`
-#'   specifying the column indices of the first and second samples. If not
-#'   provided, a one-sample test is performed.
+#'   specifying the column indices of the first and second samples. 
 #' @param B An integer value, the number of permutations to be performed
 #' @param rowTestFUN a vectorized testing function (same I/O as [rowWelchTests])
 #' @param alternative A character string specifying the alternative hypothesis, to be passed to `rowTestFUN`. Must be one of "two.sided" (default), "greater" or "less".
@@ -185,7 +184,7 @@ calibrate0 <- function(p0, alpha,
 #' 
 #' B <- 10
 #' set.seed(123)
-#' perm0 <- sansSouci:::get_perm(X, categ, B, rowWelchTests)
+#' perm0 <- sanssouci:::get_perm(X, categ, B, rowWelchTests)
 #' 
 #' # for this particular test 'get_perm' can be bypassed
 #' set.seed(123)
@@ -196,7 +195,7 @@ calibrate0 <- function(p0, alpha,
 
 #' # Wilcoxon tests
 #' set.seed(123)
-#' perm0 <- sansSouci:::get_perm(X, categ, B, rowWilcoxonTests)
+#' perm0 <- sanssouci:::get_perm(X, categ, B, rowWilcoxonTests)
 #' perm <- rowWilcoxonTests(X, null_groups)
 #' identical(perm0$p.value, perm$p.value)
 #' identical(perm0$statistic, perm$statistic)
@@ -221,11 +220,9 @@ get_perm <- function(X, categ, B,
 #' Get a vector of pivotal statistics associated
 #'   to permutation p-values and to a reference family
 #'
-#' @param p0 A `m x B` matrix. The j-th ow corresponds to a permutation
-#'   of the input `categ`: for each hypothesis i, `p0[i,j]` is the
-#'   p-value of the test of the i-th null hypothesis on the permuted categories
+#' @param p0 A matrix with B rows. Each row is a vector of null p-values
+#' @param m The total number of tested hypotheses
 #' @param t_inv  An inverse threshold function (same I/O as 't_inv_linear')
-#' @param m The total numer of tested hypotheses. Defaults to `p0`
 #' @param K An integer value in `[1,m]`, the number of elements in the reference family. Defaults to `m`
 #' 
 #' @return A vector of length `B` pivotal statitics, whose j-th entry
@@ -248,16 +245,14 @@ get_perm <- function(X, categ, B,
 #' B <- 10
 #' null_groups <- replicate(B, sample(categ))
 #' p0 <- rowWelchTests(X, null_groups)$p.value
-#' pivStat <- get_pivotal_stat(p0)
+#' pivStat <- get_pivotal_stat(p0, m)
 #' quantile(pivStat, 0.2)
 #' 
 #' 
 #' @export
-get_pivotal_stat <- function(p0,
+get_pivotal_stat <- function(p0, m,
                              t_inv = t_inv_linear,
-                             m = nrow(p0),
-                             K = m) {
-    m <- force(m)
+                             K = nrow(p0)) {
     K <- force(K)
     stopifnot(m >= nrow(p0))
     stopifnot(K <= m)

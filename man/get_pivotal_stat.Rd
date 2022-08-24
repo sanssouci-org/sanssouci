@@ -5,16 +5,14 @@
 \title{Get a vector of pivotal statistics associated
 to permutation p-values and to a reference family}
 \usage{
-get_pivotal_stat(p0, t_inv = t_inv_linear, m = nrow(p0), K = m)
+get_pivotal_stat(p0, m, t_inv = t_inv_linear, K = nrow(p0))
 }
 \arguments{
-\item{p0}{A \verb{m x B} matrix. The j-th ow corresponds to a permutation
-of the input \code{categ}: for each hypothesis i, \code{p0[i,j]} is the
-p-value of the test of the i-th null hypothesis on the permuted categories}
+\item{p0}{A matrix with B rows. Each row is a vector of null p-values}
+
+\item{m}{The total number of tested hypotheses}
 
 \item{t_inv}{An inverse threshold function (same I/O as 't_inv_linear')}
-
-\item{m}{The total numer of tested hypotheses. Defaults to \code{p0}}
 
 \item{K}{An integer value in \verb{[1,m]}, the number of elements in the reference family. Defaults to \code{m}}
 }
@@ -36,7 +34,7 @@ categ <- rbinom(n, 1, 0.4)
 B <- 10
 null_groups <- replicate(B, sample(categ))
 p0 <- rowWelchTests(X, null_groups)$p.value
-pivStat <- get_pivotal_stat(p0)
+pivStat <- get_pivotal_stat(p0, m)
 quantile(pivStat, 0.2)
 
 

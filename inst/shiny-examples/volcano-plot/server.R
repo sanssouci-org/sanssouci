@@ -6,7 +6,7 @@ shinyServer(function(input, output, session) {
   # size of input data sets
   options(shiny.maxRequestSize=1024^3)
   output$help <- renderUI({
-    a("IIDEA help page", href = "https://pneuvial.github.io/sanssouci/articles/IIDEA.html", target= "_blank")
+    a("IIDEA help page", href = "https://sanssouci-org.github.io/sanssouci/articles/IIDEA.html", target= "_blank")
   })
   
   ################### 
@@ -87,7 +87,7 @@ shinyServer(function(input, output, session) {
     #             "Acute myeloid leukemia" = "GSE9476"))
   })
   
-  ## Download our example data set, loaded from sansSouci.data
+  ## Download our example data set, loaded from sanssouci.data
   
   ### load data sets in the button : save in three csv file containing in a zip file
   output$downloadExampleData <- downloadHandler(
@@ -141,8 +141,8 @@ shinyServer(function(input, output, session) {
       withProgress(value = 0, message = "Upload Data... ", {
         if (input$checkboxDemo){ #if example data set
           if(req(input$choiceGSEA)=='OurData'){ # cleaning for data from sanssouci.data
-            setProgress(value = 0.4, detail = "SansSoucis data set ...")
-            matrix <- expr_ALL #read data from sansSouci.data
+            setProgress(value = 0.4, detail = "sanssouci data set ...")
+            matrix <- expr_ALL #read data from sanssouci.data
             
             ### cleaning categories 
             cat <- colnames(matrix)
@@ -194,7 +194,7 @@ shinyServer(function(input, output, session) {
           req(fileData())
           file <- req(fileData())
           setProgress(value = 0.1, detail = "Read csv ...")
-          matrix <- read.csv(file = file$datapath, row.names = 1, check.names=FALSE)
+          matrix <- readCSV_sep(file = file$datapath, row.names = 1, check.names=FALSE)
           
           boolDegrade <- (length(matrix) == 2 & all(sort(colnames(matrix)) == sort(c("fc","p.value")))) #est ce que la matrice est dégradée
           setProgress(value = 0.2, detail = "Test data ...")
@@ -251,7 +251,7 @@ shinyServer(function(input, output, session) {
           if (!is.null(fileGroup)){
             setProgress(value = 0.75, detail = "Read gene set data ...")
             T1 <- Sys.time()
-            bioFun <- read.csv(file = fileGroup$datapath, row.names = 1, check.names=FALSE)
+            bioFun <- readCSV_sep(file = fileGroup$datapath, row.names = 1, check.names=FALSE)
             T2 <- Sys.time()
             print(paste("read gene set", T2-T1))
             setProgress(value = 0.8, detail = "Cleaning of gene set data ...")

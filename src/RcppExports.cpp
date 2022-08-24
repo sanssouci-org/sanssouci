@@ -6,9 +6,14 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // colSort
 arma::mat colSort(arma::mat X);
-RcppExport SEXP _sansSouci_colSort(SEXP XSEXP) {
+RcppExport SEXP _sanssouci_colSort(SEXP XSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -19,7 +24,7 @@ END_RCPP
 }
 // partialColSortDescCpp
 arma::mat partialColSortDescCpp(arma::mat X, int k);
-RcppExport SEXP _sansSouci_partialColSortDescCpp(SEXP XSEXP, SEXP kSEXP) {
+RcppExport SEXP _sanssouci_partialColSortDescCpp(SEXP XSEXP, SEXP kSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -31,7 +36,7 @@ END_RCPP
 }
 // partialColSortCpp
 arma::mat partialColSortCpp(arma::mat X, int k);
-RcppExport SEXP _sansSouci_partialColSortCpp(SEXP XSEXP, SEXP kSEXP) {
+RcppExport SEXP _sanssouci_partialColSortCpp(SEXP XSEXP, SEXP kSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -43,7 +48,7 @@ END_RCPP
 }
 // posthocBySimes0Rcpp
 double posthocBySimes0Rcpp(NumericVector p, NumericVector select, double alpha);
-RcppExport SEXP _sansSouci_posthocBySimes0Rcpp(SEXP pSEXP, SEXP selectSEXP, SEXP alphaSEXP) {
+RcppExport SEXP _sanssouci_posthocBySimes0Rcpp(SEXP pSEXP, SEXP selectSEXP, SEXP alphaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -56,7 +61,7 @@ END_RCPP
 }
 // testBySignFlipping
 arma::mat testBySignFlipping(arma::mat X, double B);
-RcppExport SEXP _sansSouci_testBySignFlipping(SEXP XSEXP, SEXP BSEXP) {
+RcppExport SEXP _sanssouci_testBySignFlipping(SEXP XSEXP, SEXP BSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -68,15 +73,15 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_sansSouci_colSort", (DL_FUNC) &_sansSouci_colSort, 1},
-    {"_sansSouci_partialColSortDescCpp", (DL_FUNC) &_sansSouci_partialColSortDescCpp, 2},
-    {"_sansSouci_partialColSortCpp", (DL_FUNC) &_sansSouci_partialColSortCpp, 2},
-    {"_sansSouci_posthocBySimes0Rcpp", (DL_FUNC) &_sansSouci_posthocBySimes0Rcpp, 3},
-    {"_sansSouci_testBySignFlipping", (DL_FUNC) &_sansSouci_testBySignFlipping, 2},
+    {"_sanssouci_colSort", (DL_FUNC) &_sanssouci_colSort, 1},
+    {"_sanssouci_partialColSortDescCpp", (DL_FUNC) &_sanssouci_partialColSortDescCpp, 2},
+    {"_sanssouci_partialColSortCpp", (DL_FUNC) &_sanssouci_partialColSortCpp, 2},
+    {"_sanssouci_posthocBySimes0Rcpp", (DL_FUNC) &_sanssouci_posthocBySimes0Rcpp, 3},
+    {"_sanssouci_testBySignFlipping", (DL_FUNC) &_sanssouci_testBySignFlipping, 2},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_sansSouci(DllInfo *dll) {
+RcppExport void R_init_sanssouci(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

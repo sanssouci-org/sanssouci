@@ -1,9 +1,9 @@
 library("shiny")
 library("shinyjs")
 library("plotly")
-library("sansSouci")
-library("sansSouci.data")
-stopifnot(packageVersion("sansSouci.data") >= '0.2.2')
+library("sanssouci")
+library("sanssouci.data")
+stopifnot(packageVersion("sanssouci.data") >= '0.5.0')
 library("ggplot2")
 library("dplyr")
 library("htmlwidgets")
@@ -17,8 +17,8 @@ library("R.cache")
 
 
 
-data(expr_ALL, package = "sansSouci.data")
-data(expr_ALL_GO, package = "sansSouci.data")
+data(expr_ALL, package = "sanssouci.data")
+data(expr_ALL_GO, package = "sanssouci.data")
 
 shinyUI(fluidPage(
   useShinyjs(),
@@ -99,7 +99,7 @@ shinyUI(fluidPage(
       # bsTooltip(id = "Qparam", 
       #           title = paste("Select parameters to implement permutation-based post hoc inference bounds for differential gene expression analysis, see dedicated ", 
       #                           a("vignette.", 
-      #                             href = "https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html")), 
+      #                             href = "https://sanssouci-org.github.io/sanssouci/articles/post-hoc_differential-expression.html")), 
       #           trigger = c("click", "hover"),
       #           options = NULL),
       conditionalPanel(condition = "input.checkboxAdvancedParam",
@@ -202,11 +202,11 @@ shinyUI(fluidPage(
        "and",
        a("Pierre Neuvial", href = "https://www.math.univ-toulouse.fr/~pneuvial/", target="_blank"),
        "for the R package ",
-       a("sansSouci.", href = "https://pneuvial.github.io/sanssouci/", target="_blank"),
+       a("sanssouci.", href = "https://sanssouci-org.github.io/sanssouci/", target="_blank"),
        "It implements permutation-based post hoc inference bounds for differential gene expression analysis, see dedicated ",
-       a("vignette.", href = "https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html", target="_blank"), 
+       a("vignette.", href = "https://sanssouci-org.github.io/sanssouci/articles/post-hoc_differential-expression.html", target="_blank"), 
        "The ",
-       a("source code", href = "https://github.com/pneuvial/sanssouci/tree/develop/inst/shiny-examples/volcano-plot", target="_blank"), 
+       a("source code", href = "https://github.com/sanssouci-org/sanssouci/tree/develop/inst/shiny-examples/volcano-plot", target="_blank"), 
        "for this app is freely available. For any question, please file an",
-       a("issue.", href = "https://github.com/pneuvial/sanssouci/issues", target="_blank"))
+       a("issue.", href = "https://github.com/sanssouci-org/sanssouci/issues", target="_blank"))
   )))

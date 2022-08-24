@@ -16,8 +16,7 @@ get_perm(
 \item{X}{A matrix of \code{m} variables (hypotheses) by \code{n} observations}
 
 \item{categ}{An numeric vector of \code{n} values in \verb{0,1}
-specifying the column indices of the first and second samples. If not
-provided, a one-sample test is performed.}
+specifying the column indices of the first and second samples.}
 
 \item{B}{An integer value, the number of permutations to be performed}
 
@@ -39,7 +38,7 @@ categ <- rbinom(n, 1, 0.4)
 
 B <- 10
 set.seed(123)
-perm0 <- sansSouci:::get_perm(X, categ, B, rowWelchTests)
+perm0 <- sanssouci:::get_perm(X, categ, B, rowWelchTests)
 
 # for this particular test 'get_perm' can be bypassed
 set.seed(123)
@@ -49,7 +48,7 @@ identical(perm0$p.value, perm$p.value)
 identical(perm0$statistic, perm$statistic)
 # Wilcoxon tests
 set.seed(123)
-perm0 <- sansSouci:::get_perm(X, categ, B, rowWilcoxonTests)
+perm0 <- sanssouci:::get_perm(X, categ, B, rowWilcoxonTests)
 perm <- rowWilcoxonTests(X, null_groups)
 identical(perm0$p.value, perm$p.value)
 identical(perm0$statistic, perm$statistic)

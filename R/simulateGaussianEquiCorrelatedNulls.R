@@ -18,7 +18,7 @@
 # ## equi-correlated
 # rho <- 0.2
 #
-# Y <- sansSouci:::simulateGaussianEquiCorrelatedNulls(m, n, rho)
+# Y <- sanssouci:::simulateGaussianEquiCorrelatedNulls(m, n, rho)
 # ## check equi-correlation:
 # covmat <- cov(t(Y))
 # diag(covmat) <- NA

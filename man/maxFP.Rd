@@ -2,20 +2,20 @@
 % Please edit documentation in R/posthoc-bounds.R
 \name{maxFP}
 \alias{maxFP}
-\title{(Slow) Upper bound for the number of false discoveries in a selection}
+\title{Upper bound for the number of false discoveries in a selection}
 \usage{
 maxFP(p.values, thr)
 }
 \arguments{
 \item{p.values}{A vector of p-values for the selected items}
 
-\item{thr}{A vector of non-decreasing k-FWER-controlling thresholds}
+\item{thr}{A vector of non-decreasing JER-controlling thresholds}
 }
 \value{
 A post hoc upper bound on the number of false discoveries in the selection
 }
 \description{
-(Slow) Upper bound for the number of false discoveries in a selection
+Upper bound for the number of false discoveries in a selection
 }
 \examples{
 
@@ -28,16 +28,16 @@ p <- rowWelchTests(X, groups)$p.value
 
 null_groups <- replicate(100, sample(groups))
 p0 <- rowWelchTests(X, null_groups)$p.value
-calib <- calibrate(p0, alpha = 0.1)
+calib <- calibrate(p0, m, alpha = 0.1)
 thr <- calib$thr
 
 M0 <- maxFP(p, thr)
 M0/m
 
-maxFP(head(p), thr)
-maxFP(tail(p), thr)
-maxFP(c(head(p), tail(p)), thr)
-
+sorted_p <- sort(p)
+maxFP(head(sorted_p, 20), thr) # some signal
+maxFP(tail(sorted_p), thr)     # no signal
+maxFP(c(head(sorted_p), tail(sorted_p)), thr)
 }
 \references{
 Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc confidence bounds on false positives using reference families. Annals of Statistics, 48(3), 1281-1303.

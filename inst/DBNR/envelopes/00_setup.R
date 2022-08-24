@@ -1,3 +1,7 @@
+library("sansSouci")
+file <- system.file("DBNR/envelopes/simu.hulk.R", package = "sansSouci", mustWork = TRUE)
+source(file)
+
 ms <- 12800
 ss <- rev(c(10, 50, 100, 200, 400))
 ds <- c(0.5, 0.75, 0.9, 1)
@@ -15,6 +19,5 @@ configs <- expand.grid(
     grouped = groupeds,
     setting = settings, 
     stringsAsFactors = FALSE)
-
 
 repl <- 2  ## number of replications
