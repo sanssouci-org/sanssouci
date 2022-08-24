@@ -202,11 +202,11 @@ shinyUI(fluidPage(
        "and",
        a("Pierre Neuvial", href = "https://www.math.univ-toulouse.fr/~pneuvial/", target="_blank"),
        "for the R package ",
-       a("sansSouci.", href = "https://pneuvial.github.io/sanssouci/", target="_blank"),
+       a("sansSouci.", href = "https://sanssouci-org.github.io/sanssouci/", target="_blank"),
        "It implements permutation-based post hoc inference bounds for differential gene expression analysis, see dedicated ",
-       a("vignette.", href = "https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html", target="_blank"), 
+       a("vignette.", href = "https://sanssouci-org.github.io/sanssouci/articles/post-hoc_differential-expression.html", target="_blank"), 
        "The ",
-       a("source code", href = "https://github.com/pneuvial/sanssouci/tree/develop/inst/shiny-examples/volcano-plot", target="_blank"), 
+       a("source code", href = "https://github.com/sanssouci-org/sanssouci/tree/develop/inst/shiny-examples/volcano-plot", target="_blank"), 
        "for this app is freely available. For any question, please file an",
-       a("issue.", href = "https://github.com/pneuvial/sanssouci/issues", target="_blank"))
+       a("issue.", href = "https://github.com/sanssouci-org/sanssouci/issues", target="_blank"))
   )))

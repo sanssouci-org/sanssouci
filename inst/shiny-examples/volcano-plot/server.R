@@ -6,7 +6,7 @@ shinyServer(function(input, output, session) {
   # size of input data sets
   options(shiny.maxRequestSize=1024^3)
   output$help <- renderUI({
-    a("IIDEA help page", href = "https://pneuvial.github.io/sanssouci/articles/IIDEA.html", target= "_blank")
+    a("IIDEA help page", href = "https://sanssouci-org.github.io/sanssouci/articles/IIDEA.html", target= "_blank")
   })
   
   ################### 
