@@ -106,8 +106,8 @@ test_that("'fit.SansSouci' reproduces the results of 'calibrate'", {
   fam <- configs[cc, "family"]
   set.seed(20210311)
   res <- fit(obj,
-             alpha = alpha, B = B, K = K,
-             alternative = alt, family = fam, max_steps_down = 0
+    alpha = alpha, B = B, K = K,
+    alternative = alt, family = fam, max_steps_down = 0
   )
   set.seed(20210311)
   p0 <- get_perm(obj$input$Y, obj$input$groups, B, alternative = alt)$p.value
