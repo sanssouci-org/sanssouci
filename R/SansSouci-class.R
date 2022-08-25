@@ -352,6 +352,9 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
     } else if (n_groups == 2) {
       rowTestFUN <- rowWelchTests
       funName <- "rowWelchTests"
+    } else if (n_groups == n) {
+      rowTestFUN <- rowPearsonCorrelationTests
+      funName <- "rowPearsonCorrelationTests"
     }
   } else {
     funName <- as.character(substitute(rowTestFUN))
@@ -407,10 +410,14 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
       cat("Randomization p-values...")
     }
     if (do_p0) {
-      null_groups <- switch(n_groups,
-        replicate(B, rbinom(n, 1, 0.5) * 2 - 1), # sign-flipping
-        replicate(B, sample(groups))
-      ) # permutation
+      null_groups <- NULL
+      if (n_groups == 1) { # sign-flipping
+        null_groups <- replicate(B, rbinom(n, 1, 0.5) * 2 - 1)
+      } else if (n_groups == 2) { # permutation
+        null_groups <- replicate(B, sample(groups))
+      } else if (n_groups > 2) { # continuous covariate
+        null_groups <- replicate(B, sample(groups))
+      }
       rwt0 <- rowTestFUN(Y, null_groups, alternative = alternative)
       gc()
       p0 <- rwt0$p.value

@@ -115,12 +115,16 @@ If "Use public data" is unchecked, users can upload their own gene expression da
 
 ### Gene expression
 
-Gene expression data data must be in of the two following formats (see also the example data files that can be downloaded from IIDEA):
+Gene expression data must be in of the two following formats (see also the example data files that can be downloaded from IIDEA):
 
 - A matrix containing gene expression data, in the form of a gene $\times$ condition matrix. The first row of this matrix should be a header containing category labels 0 or 1. The first column contains an unique gene identifier per row. One current limitation of IIDEA in this case is that it performs Welch $T$ tests for differential expression, which is only suitable for microarray data;
 
 - A matrix containing $p$-values and fold changes for each gene. This matrix can be obtained from any standard differential expression method (e.g. DESeq2, edgeR, limma-voom). 
 
+
+Gene expression data must be stored in a csv file. the first row must contain the name of the columns. The separator should be a ','. Nevertheless, ';' and '\t' are allowed.
+
+From a statistical perspective, an important limitation when only $p$-values and fold changes are provided is that post hoc inference can only be performed using the original post hoc bound of @GS2011, and not using the more powerful bounds of @blanchard20post-hoc. Indeed, the latter require the full expression matrix to be available in order to use permutations and obtain bounds that are adaptive to the dependence in the data set at hand.  An important perspective for IIDEA is to directly implement differential expression methods dedicated to count data, so that the powerful bounds of @blanchard20post-hoc can be used.
 
 ### Gene sets
 

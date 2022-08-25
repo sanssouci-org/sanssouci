@@ -43,16 +43,16 @@ the code is vectorized
 
 m <- 300
 n <- 38
-mat <- matrix(rnorm(m*n), ncol=n)
-categ <- rep(c(0, 1), times=c(27, n-27))
+mat <- matrix(rnorm(m * n), ncol = n)
+categ <- rep(c(0, 1), times = c(27, n - 27))
 system.time(fwt <- rowWelchTests(mat, categ, alternative = "greater"))
 str(fwt)
 
 # compare with ordinary t.test:
-system.time(pwt <- apply(mat, 1, FUN=function(x) {
-   t.test(x[categ==1], x[categ==0], alternative = "greater")$p.value
+system.time(pwt <- apply(mat, 1, FUN = function(x) {
+  t.test(x[categ == 1], x[categ == 0], alternative = "greater")$p.value
 }))
-all(abs(fwt$p.value-pwt) < 1e-10)  ## same results
+all(abs(fwt$p.value - pwt) < 1e-10) ## same results
 
 # with several contrasts/permutations
 B <- 100

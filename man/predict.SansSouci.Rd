@@ -54,7 +54,7 @@ res <- fit(obj, B = 100, alpha = 0.1)
 predict(res)
 
 # idem for all possible subsets (sorted by p-value)
-bounds <- predict(res, all=TRUE)
+bounds <- predict(res, all = TRUE)
 head(bounds)
 
 # post hoc bound on a subset

@@ -2,7 +2,7 @@
 Package: sanssouci
 ==================
 
-Version 0.12.6-9999 [2022-08-11]
+Version 0.12.7-9999 [2022-08-25]
 
 * Drop 'piv_stat0' (not used)
 * Speedup: permutation p-values stored in 'output$p0' are now sorted by column
@@ -10,6 +10,10 @@ Version 0.12.6-9999 [2022-08-11]
 * Removed all C++ source code from the package!
 * testByRandomization now deprecated (has been useless since at least Version 
   0.12.0 [2021-04-30])
+
+Version 0.12.7 [2022-08-18]
+
+* Added treatment for continuous covariates (PR #90)
 
 Version 0.12.6 [2022-08-11]
 

@@ -76,9 +76,11 @@ rowWelchTests <- function(X, categ,
   mY <- divide_cols(sumY, nY)
 
   num <- sum2X - divide_cols(sumX^2, nX)
+  num <- abs(num) # fix rare corner cases where num ~= -1e-15
   sX <- sqrt(divide_cols(num, nX - 1))
 
   num <- sum2Y - divide_cols(sumY^2, nY)
+  num <- abs(num) # fix rare corner cases where num ~= -1e-15
   sY <- sqrt(divide_cols(num, nY - 1))
 
   sumX <- NULL
@@ -180,20 +182,14 @@ suffWelchTests <- function(mx, my, sx, sy, nx, ny,
   ## names(stat) <- rep("t", length(stat))
 
   ## approximate degrees of freedom (Welch-Satterthwaite)
-  deno <- divide_cols(sse.x^2, nx - 1) +
-    divide_cols(sse.y^2, ny - 1)
+  deno <- divide_cols(sse.x^2, nx - 1) + divide_cols(sse.y^2, ny - 1)
   df <- sse2 / deno
   deno <- NULL
-  rm(deno)
   sse <- NULL
-  rm(sse)
   sse.x <- NULL
-  rm(sse.x)
   sse.y <- NULL
-  rm(sse.y)
   sse2 <- NULL
-  rm(sse2)
-  ## names(df) <- "df"
+  rm(deno, sse, sse.x, sse.y, sse2)
 
   # mean difference
   meanDiff <- mx - my
@@ -231,8 +227,8 @@ categCheck <- function(categ, n) {
   }
   categ <- as.factor(categ)
   cats <- levels(categ)
-  if (!identical(cats, c("0", "1"))) {
-    stop("'", name, "' should consist only of '0' and '1'!")
+  if (!identical(cats, c("0", "1")) & length(cats) <= 2) {
+    stop("'", name, "' should consist only of '0' and '1' or distinct continuous values.")
   }
 }
 
@@ -319,6 +315,7 @@ suffWelchTests1 <- function(mx, my, sx, sy, nx, ny,
   )
   rm(sse, sse2, sse.x, sse.y)
   gc()
+
   list(
     statistic = stat,
     parameter = df,
