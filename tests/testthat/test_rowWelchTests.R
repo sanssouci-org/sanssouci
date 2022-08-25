@@ -127,7 +127,21 @@ test_that("Sanity checks of 'categCheck' throw errors when expected to", {
   categCheck(c(0, 1, 0, 1), 4)
 
   # expect_error(categCheck(c(1,2,1,2), 4),
-  #              "'c1212' should consist only of '0' and '1'! Or disctinct values (for a covariate).")
+  #              "'c1212' should consist only of '0' and '1'! Or distinct values (for a covariate).")
 
   categCheck(c(1, 2, 3, 4), 4)
 })
+
+test_that("Corner case with almost null within-group level variance", {
+  file <-  system.file("testdata", "issue-94_y.rds", package = "sanssouci")
+  y <- readRDS(file)
+  groups <- c(1, 0, 0, 0, 0, 1, 1, 0, 0, 0)
+  
+  res_stat <- t.test(y~groups)
+  res_sanssouci <- sanssouci::rowWelchTests(y, groups)
+  names(res_sanssouci)
+  expect_equivalent(res_stat$statistic, -res_sanssouci$statistic) # inconsistent direction??
+  expect_equivalent(res_stat$p.value, res_sanssouci$p.value)
+  expect_equivalent(res_stat$parameter, res_sanssouci$parameter)
+})
+
