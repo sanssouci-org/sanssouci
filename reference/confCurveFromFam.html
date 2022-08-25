@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sanssouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.7</span>
       </span>
     </div>
 
@@ -78,13 +78,13 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">confCurveFromFam</span><span class="op">(</span>
-  <span class="va">p.values</span>,
-  <span class="va">refFamily</span>,
-  <span class="va">param</span>,
-  K <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">p.values</span><span class="op">)</span>,
-  what <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TP"</span>, <span class="st">"FDP"</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">confCurveFromFam</span><span class="op">(</span></span>
+<span>  <span class="va">p.values</span>,</span>
+<span>  <span class="va">refFamily</span>,</span>
+<span>  <span class="va">param</span>,</span>
+<span>  K <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">p.values</span><span class="op">)</span>,</span>
+<span>  what <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TP"</span>, <span class="st">"FDP"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -92,14 +92,22 @@
     <dl><dt>p.values</dt>
 <dd><p>A vector containing the p-values for all m hypotheses, sorted
 increasingly</p></dd>
+
+
 <dt>refFamily</dt>
 <dd><p>A character value, the reference family to be used. Should
 be either "Simes" (or equivalenlty, "Linear"), "Beta", or "Oracle".</p></dd>
+
+
 <dt>param</dt>
 <dd><p>A numeric value or vector of parameters for the reference family.</p></dd>
+
+
 <dt>K</dt>
 <dd><p>For JER control over <code>1:K</code>, ie joint control of all
 k-FWER, k &lt;= K. Defaults to m.</p></dd>
+
+
 <dt>what</dt>
 <dd><p>A character vector, the names of the post hoc bounds to be
 computed, among:</p><ul><li><p>FP: Upper bound on the number of false positives in the 'x' most significant items</p></li>
@@ -107,10 +115,13 @@ computed, among:</p><ul><li><p>FP: Upper bound on the number of false positives 
 <li><p>FDP: Upper bound on the proportion of false positives in the 'x' most significant items</p></li>
 <li><p>TP: Lower bound on the proportion of true positives in the 'x' most significant items.</p></li>
 </ul><p>Defaults to <code>c("TP", "FDP")</code></p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A <code>data.frame</code> with <code>m</code> rows and 5 columns:</p><ul><li><p>x: Number of most significant items selected</p></li>
+    
+
+<p>A <code>data.frame</code> with <code>m</code> rows and 5 columns:</p><ul><li><p>x: Number of most significant items selected</p></li>
 <li><p>family: Matches input argument <code>refFamily</code></p></li>
 <li><p>param: Matches argument <code>param</code></p></li>
 <li><p>procedure: Label for the procedure, typically of the form 'refFamily(param)'</p></li>
@@ -129,14 +140,14 @@ length m indicating whether each null hypothesis is true or false.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="co"># Generate Gaussian data and perform multiple tests</span></span>
-<span class="r-in"><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="gaussianSamples.html">gaussianSamples</a></span><span class="op">(</span>m <span class="op">=</span> <span class="fl">502</span>, rho <span class="op">=</span> <span class="fl">0.5</span>, n <span class="op">=</span> <span class="fl">100</span>, pi0 <span class="op">=</span> <span class="fl">0.8</span>, SNR <span class="op">=</span> <span class="fl">3</span>, prob <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">rwt</span> <span class="op">&lt;-</span> <span class="fu"><a href="rowWelchTests.html">rowWelchTests</a></span><span class="op">(</span><span class="va">sim</span><span class="op">$</span><span class="va">X</span>, <span class="va">sim</span><span class="op">$</span><span class="va">categ</span>, alternative <span class="op">=</span> <span class="st">"greater"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># calculate, print, and plot confidence bound</span></span>
-<span class="r-in"><span class="va">cb</span> <span class="op">&lt;-</span> <span class="fu">confCurveFromFam</span><span class="op">(</span><span class="va">rwt</span><span class="op">$</span><span class="va">p.value</span>, refFamily <span class="op">=</span> <span class="st">"Simes"</span>, param <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">cb</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Generate Gaussian data and perform multiple tests</span></span></span>
+<span class="r-in"><span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="gaussianSamples.html">gaussianSamples</a></span><span class="op">(</span>m <span class="op">=</span> <span class="fl">502</span>, rho <span class="op">=</span> <span class="fl">0.5</span>, n <span class="op">=</span> <span class="fl">100</span>, pi0 <span class="op">=</span> <span class="fl">0.8</span>, SNR <span class="op">=</span> <span class="fl">3</span>, prob <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">rwt</span> <span class="op">&lt;-</span> <span class="fu"><a href="rowWelchTests.html">rowWelchTests</a></span><span class="op">(</span><span class="va">sim</span><span class="op">$</span><span class="va">X</span>, <span class="va">sim</span><span class="op">$</span><span class="va">categ</span>, alternative <span class="op">=</span> <span class="st">"greater"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># calculate, print, and plot confidence bound</span></span></span>
+<span class="r-in"><span><span class="va">cb</span> <span class="op">&lt;-</span> <span class="fu">confCurveFromFam</span><span class="op">(</span><span class="va">rwt</span><span class="op">$</span><span class="va">p.value</span>, refFamily <span class="op">=</span> <span class="st">"Simes"</span>, param <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">cb</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   x      label stat bound</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 1 Simes(0.1)   TP     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 2 Simes(0.1)   TP     2</span>
@@ -144,9 +155,9 @@ length m indicating whether each null hypothesis is true or false.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4 4 Simes(0.1)   TP     4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5 5 Simes(0.1)   TP     5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6 6 Simes(0.1)   TP     6</span>
-<span class="r-in"><span class="fu"><a href="plotConfCurve.html">plotConfCurve</a></span><span class="op">(</span><span class="va">cb</span>, xmax <span class="op">=</span> <span class="fl">200</span><span class="op">)</span> </span>
+<span class="r-in"><span><span class="fu"><a href="plotConfCurve.html">plotConfCurve</a></span><span class="op">(</span><span class="va">cb</span>, xmax <span class="op">=</span> <span class="fl">200</span><span class="op">)</span> </span></span>
 <span class="r-plt img"><img src="confCurveFromFam-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -161,7 +172,7 @@ length m indicating whether each null hypothesis is true or false.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

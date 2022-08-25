@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sanssouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.7</span>
       </span>
     </div>
 
@@ -114,16 +114,16 @@
 </ul>
 <p>We start with two-sample tests because we believe they are used more frequently.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/pneuvial/sanssouci" class="external-link">"sanssouci"</a></span><span class="op">)</span>
-<span class="co">#set.seed(0xBEEF) # for reproducibility</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/pneuvial/sanssouci" class="external-link">"sanssouci"</a></span><span class="op">)</span></span>
+<span><span class="co">#set.seed(0xBEEF) # for reproducibility</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span></span></code></pre></div>
 <p>Parameters:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fl">5e2</span>
-<span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">30</span>
-<span class="va">pi0</span> <span class="op">&lt;-</span> <span class="fl">0.8</span>
-<span class="va">rho</span> <span class="op">&lt;-</span> <span class="fl">0.3</span>
-<span class="va">SNR</span> <span class="op">&lt;-</span> <span class="fl">3</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fl">5e2</span></span>
+<span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">30</span></span>
+<span><span class="va">pi0</span> <span class="op">&lt;-</span> <span class="fl">0.8</span></span>
+<span><span class="va">rho</span> <span class="op">&lt;-</span> <span class="fl">0.3</span></span>
+<span><span class="va">SNR</span> <span class="op">&lt;-</span> <span class="fl">3</span></span></code></pre></div>
 <p>We use the function <code>SansSouciSim</code> to generate Gaussian equi-correlated samples. We then ‘fit’ the resulting SansSouci object</p>
 <div class="section level2">
 <h2 id="two-sample-tests">Two-sample tests<a class="anchor" aria-label="anchor" href="#two-sample-tests"></a>
@@ -132,15 +132,15 @@
 <h3 id="simulation">Simulation<a class="anchor" aria-label="anchor" href="#simulation"></a>
 </h3>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SansSouciSim.html">SansSouciSim</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">rho</span>, <span class="va">n</span>, <span class="va">pi0</span>, SNR <span class="op">=</span> <span class="va">SNR</span>, prob <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span>
-<span class="va">obj</span></code></pre></div>
-<pre><code><span class="co">## 'SansSouci' object:</span>
-<span class="co">##  Number of hypotheses:    500 </span>
-<span class="co">##  Number of observations:  30 </span>
-<span class="co">##  2-sample data</span>
-<span class="co">## </span>
-<span class="co">## Truth: </span>
-<span class="co">##   100 false null hypotheses (signals) out of 500 (pi0=0.8)</span></code></pre>
+<code class="sourceCode R"><span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SansSouciSim.html">SansSouciSim</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">rho</span>, <span class="va">n</span>, <span class="va">pi0</span>, SNR <span class="op">=</span> <span class="va">SNR</span>, prob <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
+<span><span class="va">obj</span></span></code></pre></div>
+<pre><code><span><span class="co">## 'SansSouci' object:</span></span>
+<span><span class="co">##  Number of hypotheses:    500 </span></span>
+<span><span class="co">##  Number of observations:  30 </span></span>
+<span><span class="co">##  2-sample data</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Truth: </span></span>
+<span><span class="co">##   100 false null hypotheses (signals) out of 500 (pi0=0.8)</span></span></code></pre>
 <p>We perform JER calibration using the linear (Simes) template <span class="math inline">\(\mathfrak{R(\lambda)}=(R_1(\lambda),\)</span> <span class="math inline">\(\ldots,R_K(\lambda)\)</span>, where for <span class="math inline">\(1 \leq k \leq K\)</span></p>
 <p><span class="math display">\[R_k(\lambda) = \left\{i\in \{1, \dots , m\}\::\: \bar{\Phi}(Z_i) &gt;  \frac{\lambda k}{m} \right\}\,\]</span></p>
 <p>where <span class="math inline">\(\bar{\Phi}\)</span> is the cdf of the <span class="math inline">\(\mathcal{N}(0,1)\)</span> distribution. Note that <span class="math inline">\(p_i = \bar{\Phi}(Z_i)\)</span> is the one-sided <span class="math inline">\(p\)</span>-value associated to the test statistics <span class="math inline">\(Z_i\)</span>.</p>
@@ -149,26 +149,26 @@
 <h3 id="calibration">Calibration<a class="anchor" aria-label="anchor" href="#calibration"></a>
 </h3>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">B</span> <span class="op">&lt;-</span> <span class="fl">1000</span>
-<span class="va">alpha</span> <span class="op">&lt;-</span> <span class="fl">0.2</span>
-<span class="va">cal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">obj</span>, alpha <span class="op">=</span> <span class="va">alpha</span>, B <span class="op">=</span> <span class="va">B</span>, family <span class="op">=</span> <span class="st">"Simes"</span><span class="op">)</span>
-<span class="va">cal</span></code></pre></div>
-<pre><code><span class="co">## 'SansSouci' object:</span>
-<span class="co">##  Number of hypotheses:    500 </span>
-<span class="co">##  Number of observations:  30 </span>
-<span class="co">##  2-sample data</span>
-<span class="co">## </span>
-<span class="co">## Truth: </span>
-<span class="co">##   100 false null hypotheses (signals) out of 500 (pi0=0.8)</span>
-<span class="co">## Parameters: </span>
-<span class="co">##  Test function:      rowWelchTests</span>
-<span class="co">##  Number of permutations: B=1000</span>
-<span class="co">##  Significance level: alpha=0.2</span>
-<span class="co">##  Reference family:   Simes</span>
-<span class="co">##      (of size:   K=500)</span>
-<span class="co">## </span>
-<span class="co">## Output:</span>
-<span class="co">##  Calibration parameter:  lambda=0.2532932</span></code></pre>
+<code class="sourceCode R"><span><span class="va">B</span> <span class="op">&lt;-</span> <span class="fl">1000</span></span>
+<span><span class="va">alpha</span> <span class="op">&lt;-</span> <span class="fl">0.2</span></span>
+<span><span class="va">cal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">obj</span>, alpha <span class="op">=</span> <span class="va">alpha</span>, B <span class="op">=</span> <span class="va">B</span>, family <span class="op">=</span> <span class="st">"Simes"</span><span class="op">)</span></span>
+<span><span class="va">cal</span></span></code></pre></div>
+<pre><code><span><span class="co">## 'SansSouci' object:</span></span>
+<span><span class="co">##  Number of hypotheses:    500 </span></span>
+<span><span class="co">##  Number of observations:  30 </span></span>
+<span><span class="co">##  2-sample data</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Truth: </span></span>
+<span><span class="co">##   100 false null hypotheses (signals) out of 500 (pi0=0.8)</span></span>
+<span><span class="co">## Parameters: </span></span>
+<span><span class="co">##  Test function:      rowWelchTests</span></span>
+<span><span class="co">##  Number of permutations: B=1000</span></span>
+<span><span class="co">##  Significance level: alpha=0.2</span></span>
+<span><span class="co">##  Reference family:   Simes</span></span>
+<span><span class="co">##      (of size:   K=500)</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Output:</span></span>
+<span><span class="co">##  Calibration parameter:  lambda=0.2565321</span></span></code></pre>
 <p>The output of the calibration is the following <code>SansSouci</code> object. In particular:</p>
 <ul>
 <li>
@@ -189,38 +189,38 @@
 </ul>
 <p>Because we are under positive equi-correlation, we expect <span class="math inline">\(\lambda &gt; \alpha\)</span> for the Simes family.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">cal</span><span class="op">$</span><span class="va">output</span><span class="op">$</span><span class="va">lambda</span></code></pre></div>
-<pre><code><span class="co">##       20% </span>
-<span class="co">## 0.2532932</span></code></pre>
+<code class="sourceCode R"><span><span class="va">cal</span><span class="op">$</span><span class="va">output</span><span class="op">$</span><span class="va">lambda</span></span></code></pre></div>
+<pre><code><span><span class="co">##       20% </span></span>
+<span><span class="co">## 0.2565321</span></span></code></pre>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">cal</span><span class="op">$</span><span class="va">output</span><span class="op">$</span><span class="va">lambda</span> <span class="op">&gt;</span> <span class="va">alpha</span></code></pre></div>
-<pre><code><span class="co">##  20% </span>
-<span class="co">## TRUE</span></code></pre>
+<code class="sourceCode R"><span><span class="va">cal</span><span class="op">$</span><span class="va">output</span><span class="op">$</span><span class="va">lambda</span> <span class="op">&gt;</span> <span class="va">alpha</span></span></code></pre></div>
+<pre><code><span><span class="co">##  20% </span></span>
+<span><span class="co">## TRUE</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="post-hoc-confidence-bounds">Post hoc confidence bounds<a class="anchor" aria-label="anchor" href="#post-hoc-confidence-bounds"></a>
 </h3>
 <p>The fitted <code>SansSouci</code> object contains post hoc confidence bounds:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">env</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">cal</span>, all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">env</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">##   x label stat bound</span>
-<span class="co">## 1 1 Simes   TP     1</span>
-<span class="co">## 2 2 Simes   TP     2</span>
-<span class="co">## 3 3 Simes   TP     3</span>
-<span class="co">## 4 4 Simes   TP     4</span>
-<span class="co">## 5 5 Simes   TP     5</span>
-<span class="co">## 6 6 Simes   TP     6</span></code></pre>
+<code class="sourceCode R"><span><span class="va">env</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">cal</span>, all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">env</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">##   x label stat bound</span></span>
+<span><span class="co">## 1 1 Simes   TP     1</span></span>
+<span><span class="co">## 2 2 Simes   TP     2</span></span>
+<span><span class="co">## 3 3 Simes   TP     3</span></span>
+<span><span class="co">## 4 4 Simes   TP     4</span></span>
+<span><span class="co">## 5 5 Simes   TP     4</span></span>
+<span><span class="co">## 6 6 Simes   TP     4</span></span></code></pre>
 <p>We compare it to the true number of false positives among the most significant items, and to the Simes bound without calibration</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">cal0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">obj</span>, alpha <span class="op">=</span> <span class="va">alpha</span>, B <span class="op">=</span> <span class="fl">0</span>, family <span class="op">=</span> <span class="st">"Simes"</span><span class="op">)</span>
-<span class="va">oracle</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">obj</span>, alpha <span class="op">=</span> <span class="va">alpha</span>, family <span class="op">=</span> <span class="st">"Oracle"</span><span class="op">)</span>
-
-<span class="va">confs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Simes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">cal0</span>, all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,
-              <span class="st">"Simes+calibration"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">cal</span>, all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,
-              <span class="st">"Oracle"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">oracle</span>, all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">cal0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">obj</span>, alpha <span class="op">=</span> <span class="va">alpha</span>, B <span class="op">=</span> <span class="fl">0</span>, family <span class="op">=</span> <span class="st">"Simes"</span><span class="op">)</span></span>
+<span><span class="va">oracle</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">obj</span>, alpha <span class="op">=</span> <span class="va">alpha</span>, family <span class="op">=</span> <span class="st">"Oracle"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">confs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Simes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">cal0</span>, all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>              <span class="st">"Simes+calibration"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">cal</span>, all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>              <span class="st">"Oracle"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">oracle</span>, all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plotConfCurve.html">plotConfCurve</a></span><span class="op">(</span><span class="va">confs</span>, xmax <span class="op">=</span> <span class="fl">200</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotConfCurve.html">plotConfCurve</a></span><span class="op">(</span><span class="va">confs</span>, xmax <span class="op">=</span> <span class="fl">200</span><span class="op">)</span></span></code></pre></div>
 <p><img src="jointErrorRateCalibration_simulations_files/figure-html/plot-conf-env-1.png" width="700"></p>
 </div>
 </div>
@@ -229,48 +229,48 @@
 </h2>
 <p>The code is identical, except for the line to generate the observations (where we do not specify a probability of belonging to one of the two populations using the <code>prob</code> argument); moreover it is not necessary to specify a vector of categories ‘categ’ in ‘calibrateJER’.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SansSouciSim.html">SansSouciSim</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">rho</span>, <span class="va">n</span>, <span class="va">pi0</span>, SNR <span class="op">=</span> <span class="va">SNR</span><span class="op">)</span>
-<span class="va">obj</span></code></pre></div>
-<pre><code><span class="co">## 'SansSouci' object:</span>
-<span class="co">##  Number of hypotheses:    500 </span>
-<span class="co">##  Number of observations:  30 </span>
-<span class="co">##  1-sample data</span>
-<span class="co">## </span>
-<span class="co">## Truth: </span>
-<span class="co">##   100 false null hypotheses (signals) out of 500 (pi0=0.8)</span></code></pre>
+<code class="sourceCode R"><span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SansSouciSim.html">SansSouciSim</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">rho</span>, <span class="va">n</span>, <span class="va">pi0</span>, SNR <span class="op">=</span> <span class="va">SNR</span><span class="op">)</span></span>
+<span><span class="va">obj</span></span></code></pre></div>
+<pre><code><span><span class="co">## 'SansSouci' object:</span></span>
+<span><span class="co">##  Number of hypotheses:    500 </span></span>
+<span><span class="co">##  Number of observations:  30 </span></span>
+<span><span class="co">##  1-sample data</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Truth: </span></span>
+<span><span class="co">##   100 false null hypotheses (signals) out of 500 (pi0=0.8)</span></span></code></pre>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">cal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">obj</span>, alpha <span class="op">=</span> <span class="va">alpha</span>, B <span class="op">=</span> <span class="va">B</span>, family <span class="op">=</span> <span class="st">"Simes"</span><span class="op">)</span>
-<span class="va">cal</span></code></pre></div>
-<pre><code><span class="co">## 'SansSouci' object:</span>
-<span class="co">##  Number of hypotheses:    500 </span>
-<span class="co">##  Number of observations:  30 </span>
-<span class="co">##  1-sample data</span>
-<span class="co">## </span>
-<span class="co">## Truth: </span>
-<span class="co">##   100 false null hypotheses (signals) out of 500 (pi0=0.8)</span>
-<span class="co">## Parameters: </span>
-<span class="co">##  Test function:      rowZTests</span>
-<span class="co">##  Number of permutations: B=1000</span>
-<span class="co">##  Significance level: alpha=0.2</span>
-<span class="co">##  Reference family:   Simes</span>
-<span class="co">##      (of size:   K=500)</span>
-<span class="co">## </span>
-<span class="co">## Output:</span>
-<span class="co">##  Calibration parameter:  lambda=0.4318916</span></code></pre>
+<code class="sourceCode R"><span><span class="va">cal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">obj</span>, alpha <span class="op">=</span> <span class="va">alpha</span>, B <span class="op">=</span> <span class="va">B</span>, family <span class="op">=</span> <span class="st">"Simes"</span><span class="op">)</span></span>
+<span><span class="va">cal</span></span></code></pre></div>
+<pre><code><span><span class="co">## 'SansSouci' object:</span></span>
+<span><span class="co">##  Number of hypotheses:    500 </span></span>
+<span><span class="co">##  Number of observations:  30 </span></span>
+<span><span class="co">##  1-sample data</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Truth: </span></span>
+<span><span class="co">##   100 false null hypotheses (signals) out of 500 (pi0=0.8)</span></span>
+<span><span class="co">## Parameters: </span></span>
+<span><span class="co">##  Test function:      rowZTests</span></span>
+<span><span class="co">##  Number of permutations: B=1000</span></span>
+<span><span class="co">##  Significance level: alpha=0.2</span></span>
+<span><span class="co">##  Reference family:   Simes</span></span>
+<span><span class="co">##      (of size:   K=500)</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Output:</span></span>
+<span><span class="co">##  Calibration parameter:  lambda=0.519773</span></span></code></pre>
 <p>Again we expect <span class="math inline">\(\lambda &gt; \alpha\)</span>.</p>
 <div class="section level3">
 <h3 id="confidence-curves">Confidence curves<a class="anchor" aria-label="anchor" href="#confidence-curves"></a>
 </h3>
 <p>The associated confidence curves are displayed below:</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">cal0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">obj</span>, alpha <span class="op">=</span> <span class="va">alpha</span>, B <span class="op">=</span> <span class="fl">0</span>, family <span class="op">=</span> <span class="st">"Simes"</span><span class="op">)</span>
-<span class="va">oracle</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">obj</span>, alpha <span class="op">=</span> <span class="va">alpha</span>, family <span class="op">=</span> <span class="st">"Oracle"</span><span class="op">)</span>
-
-<span class="va">confs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Simes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">cal0</span>, all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,
-              <span class="st">"Simes+calibration"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">cal</span>, all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,
-              <span class="st">"Oracle"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">oracle</span>, all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">cal0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">obj</span>, alpha <span class="op">=</span> <span class="va">alpha</span>, B <span class="op">=</span> <span class="fl">0</span>, family <span class="op">=</span> <span class="st">"Simes"</span><span class="op">)</span></span>
+<span><span class="va">oracle</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">obj</span>, alpha <span class="op">=</span> <span class="va">alpha</span>, family <span class="op">=</span> <span class="st">"Oracle"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">confs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Simes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">cal0</span>, all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>              <span class="st">"Simes+calibration"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">cal</span>, all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>              <span class="st">"Oracle"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">oracle</span>, all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plotConfCurve.html">plotConfCurve</a></span><span class="op">(</span><span class="va">confs</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotConfCurve.html">plotConfCurve</a></span><span class="op">(</span><span class="va">confs</span><span class="op">)</span></span></code></pre></div>
 <p><img src="jointErrorRateCalibration_simulations_files/figure-html/plot-conf-env-one-sample-1.png" width="700"></p>
 </div>
 </div>
@@ -278,42 +278,46 @@
 <h2 id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
 </h2>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<pre><code><span class="co">## R version 4.2.0 (2022-04-22)</span>
-<span class="co">## Platform: x86_64-pc-linux-gnu (64-bit)</span>
-<span class="co">## Running under: Ubuntu 20.04.4 LTS</span>
-<span class="co">## </span>
-<span class="co">## Matrix products: default</span>
-<span class="co">## BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.9.0</span>
-<span class="co">## LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.9.0</span>
-<span class="co">## </span>
-<span class="co">## locale:</span>
-<span class="co">##  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       </span>
-<span class="co">##  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   </span>
-<span class="co">##  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          </span>
-<span class="co">## [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   </span>
-<span class="co">## </span>
-<span class="co">## attached base packages:</span>
-<span class="co">## [1] stats     graphics  grDevices utils     datasets  methods   base     </span>
-<span class="co">## </span>
-<span class="co">## other attached packages:</span>
-<span class="co">## [1] ggplot2_3.3.6    sanssouci_0.12.5</span>
-<span class="co">## </span>
-<span class="co">## loaded via a namespace (and not attached):</span>
-<span class="co">##  [1] Rcpp_1.0.8.3       highr_0.9          pillar_1.7.0       bslib_0.3.1       </span>
-<span class="co">##  [5] compiler_4.2.0     jquerylib_0.1.4    tools_4.2.0        digest_0.6.29     </span>
-<span class="co">##  [9] tibble_3.1.7       jsonlite_1.8.0     evaluate_0.15      memoise_2.0.1     </span>
-<span class="co">## [13] lifecycle_1.0.1    gtable_0.3.0       lattice_0.20-45    pkgconfig_2.0.3   </span>
-<span class="co">## [17] rlang_1.0.2        Matrix_1.4-1       cli_3.3.0          yaml_2.3.5        </span>
-<span class="co">## [21] pkgdown_2.0.3      xfun_0.31          fastmap_1.1.0      withr_2.5.0       </span>
-<span class="co">## [25] stringr_1.4.0      knitr_1.39         vctrs_0.4.1        desc_1.4.1        </span>
-<span class="co">## [29] generics_0.1.2     fs_1.5.2           sass_0.4.1         systemfonts_1.0.4 </span>
-<span class="co">## [33] rprojroot_2.0.3    grid_4.2.0         glue_1.6.2         R6_2.5.1          </span>
-<span class="co">## [37] textshaping_0.3.6  fansi_1.0.3        rmarkdown_2.14     farver_2.1.0      </span>
-<span class="co">## [41] purrr_0.3.4        magrittr_2.0.3     ellipsis_0.3.2     scales_1.2.0      </span>
-<span class="co">## [45] htmltools_0.5.2    matrixStats_0.62.0 colorspace_2.0-3   labeling_0.4.2    </span>
-<span class="co">## [49] ragg_1.2.2         utf8_1.2.2         stringi_1.7.6      munsell_0.5.0     </span>
-<span class="co">## [53] cachem_1.0.6       crayon_1.5.1</span></code></pre>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## R version 4.2.1 (2022-06-23)</span></span>
+<span><span class="co">## Platform: x86_64-pc-linux-gnu (64-bit)</span></span>
+<span><span class="co">## Running under: Ubuntu 20.04.4 LTS</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Matrix products: default</span></span>
+<span><span class="co">## BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.9.0</span></span>
+<span><span class="co">## LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.9.0</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## locale:</span></span>
+<span><span class="co">##  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       </span></span>
+<span><span class="co">##  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   </span></span>
+<span><span class="co">##  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          </span></span>
+<span><span class="co">## [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## attached base packages:</span></span>
+<span><span class="co">## [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## other attached packages:</span></span>
+<span><span class="co">## [1] ggplot2_3.3.6    sanssouci_0.12.7</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## loaded via a namespace (and not attached):</span></span>
+<span><span class="co">##  [1] Rcpp_1.0.9          highr_0.9           pillar_1.8.1       </span></span>
+<span><span class="co">##  [4] bslib_0.4.0         compiler_4.2.1      jquerylib_0.1.4    </span></span>
+<span><span class="co">##  [7] tools_4.2.1         digest_0.6.29       tibble_3.1.8       </span></span>
+<span><span class="co">## [10] jsonlite_1.8.0      evaluate_0.16       memoise_2.0.1      </span></span>
+<span><span class="co">## [13] lifecycle_1.0.1     gtable_0.3.0        lattice_0.20-45    </span></span>
+<span><span class="co">## [16] pkgconfig_2.0.3     rlang_1.0.4         Matrix_1.4-1       </span></span>
+<span><span class="co">## [19] cli_3.3.0           yaml_2.3.5          pkgdown_2.0.6      </span></span>
+<span><span class="co">## [22] xfun_0.32           fastmap_1.1.0       withr_2.5.0        </span></span>
+<span><span class="co">## [25] stringr_1.4.1       knitr_1.40          vctrs_0.4.1        </span></span>
+<span><span class="co">## [28] desc_1.4.1          generics_0.1.3      fs_1.5.2           </span></span>
+<span><span class="co">## [31] sass_0.4.2          systemfonts_1.0.4   rprojroot_2.0.3    </span></span>
+<span><span class="co">## [34] grid_4.2.1          glue_1.6.2          R6_2.5.1           </span></span>
+<span><span class="co">## [37] textshaping_0.3.6   fansi_1.0.3         rmarkdown_2.16     </span></span>
+<span><span class="co">## [40] farver_2.1.1        purrr_0.3.4         magrittr_2.0.3     </span></span>
+<span><span class="co">## [43] scales_1.2.1        htmltools_0.5.3     matrixStats_0.62.0 </span></span>
+<span><span class="co">## [46] matrixTests_0.1.9.1 colorspace_2.0-3    labeling_0.4.2     </span></span>
+<span><span class="co">## [49] ragg_1.2.2          utf8_1.2.2          stringi_1.7.8      </span></span>
+<span><span class="co">## [52] munsell_0.5.0       cachem_1.0.6</span></span></code></pre>
 </div>
   </div>
 
@@ -334,7 +338,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>

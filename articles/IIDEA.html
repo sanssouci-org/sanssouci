@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sanssouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.7</span>
       </span>
     </div>
 
@@ -96,7 +96,7 @@
       <h1 data-toc-skip>IIDEA: Interactive Inference for Differential Expression Analyses</h1>
                         <h4 data-toc-skip class="author">Nicolas Enjalbert-Courrech and Pierre Neuvial</h4>
             
-            <h4 data-toc-skip class="date">2022-05-18</h4>
+            <h4 data-toc-skip class="date">2022-08-25</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/pneuvial/sanssouci/blob/HEAD/vignettes/IIDEA.Rmd" class="external-link"><code>vignettes/IIDEA.Rmd</code></a></small>
       <div class="hidden name"><code>IIDEA.Rmd</code></div>
@@ -192,11 +192,13 @@
 <div class="section level4">
 <h4 id="gene-expression">Gene expression<a class="anchor" aria-label="anchor" href="#gene-expression"></a>
 </h4>
-<p>Gene expression data data must be in of the two following formats (see also the example data files that can be downloaded from IIDEA):</p>
+<p>Gene expression data must be in of the two following formats (see also the example data files that can be downloaded from IIDEA):</p>
 <ul>
 <li><p>A matrix containing gene expression data, in the form of a gene <span class="math inline">\(\times\)</span> condition matrix. The first row of this matrix should be a header containing category labels 0 or 1. The first column contains an unique gene identifier per row. One current limitation of IIDEA in this case is that it performs Welch <span class="math inline">\(T\)</span> tests for differential expression, which is only suitable for microarray data;</p></li>
 <li><p>A matrix containing <span class="math inline">\(p\)</span>-values and fold changes for each gene. This matrix can be obtained from any standard differential expression method (e.g. DESeq2, edgeR, limma-voom).</p></li>
 </ul>
+<p>Gene expression data must be stored in a csv file. the first row must contain the name of the columns. The separator should be a ‘,’. Nevertheless, ‘;’ and ’ are allowed.</p>
+<p>From a statistical perspective, an important limitation when only <span class="math inline">\(p\)</span>-values and fold changes are provided is that post hoc inference can only be performed using the original post hoc bound of <span class="citation">Goeman and Solari (2011)</span>, and not using the more powerful bounds of <span class="citation">Blanchard, Neuvial, and Roquain (2020)</span>. Indeed, the latter require the full expression matrix to be available in order to use permutations and obtain bounds that are adaptive to the dependence in the data set at hand. An important perspective for IIDEA is to directly implement differential expression methods dedicated to count data, so that the powerful bounds of <span class="citation">Blanchard, Neuvial, and Roquain (2020)</span> can be used.</p>
 </div>
 <div class="section level4">
 <h4 id="gene-sets">Gene sets<a class="anchor" aria-label="anchor" href="#gene-sets"></a>
@@ -211,12 +213,12 @@
 </h2>
 <p>IIDEA is deployed at . No login is required, and the data sets uploaded by users are not stored on the server side. The source code of the R package  which contains the source files for IIDEA, is available at . This allows users to run IIDEA on a local machine or deploy it on their own servers if desired. Once the ‘remotes’ package is installed, IIDEA can be run locally from an R session by executing the following commands:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"pneuvial/sanssouci"</span><span class="op">)</span>
-<span class="fu">shiny</span><span class="fu">::</span><span class="fu">runApp</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"shiny-examples/volcano-plot"</span>, package <span class="op">=</span> <span class="st">"sanssouci"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"pneuvial/sanssouci"</span><span class="op">)</span></span>
+<span><span class="fu">shiny</span><span class="fu">::</span><span class="fu">runApp</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"shiny-examples/volcano-plot"</span>, package <span class="op">=</span> <span class="st">"sanssouci"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>By default, only the Leukemia data set is available for a local installation. To add the nine other public data sets, you may run the following code:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"shiny-examples/volcano-plot/GSEABenchmarkeR/export-data.R"</span>, 
-                   package <span class="op">=</span> <span class="st">"sanssouci"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"shiny-examples/volcano-plot/GSEABenchmarkeR/export-data.R"</span>, </span>
+<span>                   package <span class="op">=</span> <span class="st">"sanssouci"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>This code uses functions of the <a href="https://bioconductor.org/packages/release/bioc/html/GSEABenchmarkeR.html" class="external-link">GSEABenchmarkeR</a> package to normalize and store locally gene expression data sets and corresponding gene annotation from GO Biological Process. Please note that it may take several minutes to run (but it only needs to be run once).</p>
 </div>
 <div class="section level2">
@@ -274,7 +276,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>

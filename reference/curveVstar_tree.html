@@ -20,7 +20,7 @@ noise"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathj
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sanssouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.7</span>
       </span>
     </div>
 
@@ -83,21 +83,29 @@ noise</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">curveVstar_tree</span><span class="op">(</span><span class="va">treeFam</span>, <span class="va">ordering</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">curveVstar_tree</span><span class="op">(</span><span class="va">treeFam</span>, <span class="va">ordering</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>treeFam</dt>
 <dd><p>A tree-based reference family, see example below</p></dd>
+
+
 <dt>ordering</dt>
 <dd><p>A permutation of <code>1, ..., m</code>, the ordering of the
 \(m\) null hypotheses</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A vector of length \(m\), whose \(k\)-th element is a lower
-bound \(V^*(S_k)\) on the number of true positives in the set \(S_k\)of the first \(k\) hypotheses according to the specified ordering</p>
+    
+
+<p>A vector of length \(m\), whose \(k\)-th element is a lower
+bound \(V^*(S_k)\) on the number of true positives in the set \(S_k\)</p>
+
+
+<p>of the first \(k\) hypotheses according to the specified ordering</p>
     </div>
     <div id="references">
     <h2>References</h2>
@@ -106,44 +114,44 @@ bound \(V^*(S_k)\) on the number of true positives in the set \(S_k\)of the firs
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fl">250</span></span>
-<span class="r-in"><span class="va">s</span> <span class="op">&lt;-</span> <span class="fl">25</span></span>
-<span class="r-in"><span class="va">K1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">floor</a></span><span class="op">(</span><span class="va">m</span><span class="op">/</span><span class="op">(</span><span class="va">s</span> <span class="op">*</span> <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">d</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
-<span class="r-in"><span class="va">m1</span> <span class="op">&lt;-</span> <span class="va">s</span><span class="op">*</span><span class="va">K1</span><span class="op">*</span><span class="va">d</span></span>
-<span class="r-in"><span class="va">barmu</span> <span class="op">&lt;-</span> <span class="fl">4</span></span>
-<span class="r-in"><span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu"><a href="dyadic.html">dyadic.from.window.size</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">s</span>, method <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">leaf_list</span> <span class="op">&lt;-</span> <span class="va">dd</span><span class="op">$</span><span class="va">leaf_list</span></span>
-<span class="r-in"><span class="va">mu</span> <span class="op">&lt;-</span> <span class="fu"><a href="gen.mu.leaves.html">gen.mu.leaves</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m</span>, K1 <span class="op">=</span> <span class="va">K1</span>, d <span class="op">=</span> <span class="va">d</span>,</span>
-<span class="r-in">  grouped <span class="op">=</span> <span class="cn">TRUE</span>, setting <span class="op">=</span> <span class="st">"const"</span>,</span>
-<span class="r-in">  barmu <span class="op">=</span> <span class="va">barmu</span>, leaf_list <span class="op">=</span><span class="va">leaf_list</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">pvals</span> <span class="op">&lt;-</span> <span class="fu"><a href="gen.p.values.html">gen.p.values</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m</span>, mu <span class="op">=</span> <span class="va">mu</span>, rho <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">alpha</span> <span class="op">&lt;-</span> <span class="fl">0.1</span></span>
-<span class="r-in"><span class="va">ZL</span> <span class="op">&lt;-</span> <span class="fu"><a href="zetas.tree.html">zetas.tree</a></span><span class="op">(</span><span class="va">dd</span><span class="op">$</span><span class="va">C</span>, <span class="va">leaf_list</span>, <span class="va">zeta.DKWM</span>, <span class="va">pvals</span>, alpha <span class="op">=</span> <span class="va">alpha</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">treeFam</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>tree <span class="op">=</span> <span class="va">dd</span><span class="op">$</span><span class="va">C</span>, leaves <span class="op">=</span> <span class="va">leaf_list</span>, zetas <span class="op">=</span> <span class="va">ZL</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># order by p-value (favorable to Simes)</span></span>
-<span class="r-in"><span class="va">op</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">pvals</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">Vp</span> <span class="op">&lt;-</span> <span class="fu">curveVstar_tree</span><span class="op">(</span><span class="va">treeFam</span>, <span class="va">op</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Simes</span></span>
-<span class="r-in"><span class="va">VpS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">m</span>, FUN<span class="op">=</span><span class="kw">function</span><span class="op">(</span><span class="va">kk</span><span class="op">)</span> <span class="fu"><a href="posthocBySimes.html">posthocBySimes</a></span><span class="op">(</span><span class="va">pvals</span>, <span class="va">op</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="va">kk</span><span class="op">]</span>, <span class="va">alpha</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">m</span>, <span class="fl">1</span><span class="op">:</span><span class="va">m</span><span class="op">-</span><span class="va">Vp</span>, t <span class="op">=</span> <span class="st">'s'</span>,</span>
-<span class="r-in">     xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span><span class="op">*</span><span class="va">m1</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">m1</span><span class="op">)</span>, </span>
-<span class="r-in">     ylab <span class="op">=</span> <span class="st">"Lower bound on true positives"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">m</span>, <span class="fl">1</span><span class="op">:</span><span class="va">m</span><span class="op">-</span><span class="va">VpS</span>, t <span class="op">=</span> <span class="st">'s'</span>, col <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fl">250</span></span></span>
+<span class="r-in"><span><span class="va">s</span> <span class="op">&lt;-</span> <span class="fl">25</span></span></span>
+<span class="r-in"><span><span class="va">K1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">floor</a></span><span class="op">(</span><span class="va">m</span><span class="op">/</span><span class="op">(</span><span class="va">s</span> <span class="op">*</span> <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fl">1</span></span></span>
+<span class="r-in"><span><span class="va">m1</span> <span class="op">&lt;-</span> <span class="va">s</span><span class="op">*</span><span class="va">K1</span><span class="op">*</span><span class="va">d</span></span></span>
+<span class="r-in"><span><span class="va">barmu</span> <span class="op">&lt;-</span> <span class="fl">4</span></span></span>
+<span class="r-in"><span><span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu"><a href="dyadic.html">dyadic.from.window.size</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">s</span>, method <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">leaf_list</span> <span class="op">&lt;-</span> <span class="va">dd</span><span class="op">$</span><span class="va">leaf_list</span></span></span>
+<span class="r-in"><span><span class="va">mu</span> <span class="op">&lt;-</span> <span class="fu"><a href="gen.mu.leaves.html">gen.mu.leaves</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m</span>, K1 <span class="op">=</span> <span class="va">K1</span>, d <span class="op">=</span> <span class="va">d</span>,</span></span>
+<span class="r-in"><span>  grouped <span class="op">=</span> <span class="cn">TRUE</span>, setting <span class="op">=</span> <span class="st">"const"</span>,</span></span>
+<span class="r-in"><span>  barmu <span class="op">=</span> <span class="va">barmu</span>, leaf_list <span class="op">=</span><span class="va">leaf_list</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">pvals</span> <span class="op">&lt;-</span> <span class="fu"><a href="gen.p.values.html">gen.p.values</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m</span>, mu <span class="op">=</span> <span class="va">mu</span>, rho <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">alpha</span> <span class="op">&lt;-</span> <span class="fl">0.1</span></span></span>
+<span class="r-in"><span><span class="va">ZL</span> <span class="op">&lt;-</span> <span class="fu"><a href="zetas.tree.html">zetas.tree</a></span><span class="op">(</span><span class="va">dd</span><span class="op">$</span><span class="va">C</span>, <span class="va">leaf_list</span>, <span class="va">zeta.DKWM</span>, <span class="va">pvals</span>, alpha <span class="op">=</span> <span class="va">alpha</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">treeFam</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>tree <span class="op">=</span> <span class="va">dd</span><span class="op">$</span><span class="va">C</span>, leaves <span class="op">=</span> <span class="va">leaf_list</span>, zetas <span class="op">=</span> <span class="va">ZL</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># order by p-value (favorable to Simes)</span></span></span>
+<span class="r-in"><span><span class="va">op</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">pvals</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">Vp</span> <span class="op">&lt;-</span> <span class="fu">curveVstar_tree</span><span class="op">(</span><span class="va">treeFam</span>, <span class="va">op</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Simes</span></span></span>
+<span class="r-in"><span><span class="va">VpS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">m</span>, FUN<span class="op">=</span><span class="kw">function</span><span class="op">(</span><span class="va">kk</span><span class="op">)</span> <span class="fu"><a href="posthocBySimes.html">posthocBySimes</a></span><span class="op">(</span><span class="va">pvals</span>, <span class="va">op</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="va">kk</span><span class="op">]</span>, <span class="va">alpha</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">m</span>, <span class="fl">1</span><span class="op">:</span><span class="va">m</span><span class="op">-</span><span class="va">Vp</span>, t <span class="op">=</span> <span class="st">'s'</span>,</span></span>
+<span class="r-in"><span>     xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span><span class="op">*</span><span class="va">m1</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">m1</span><span class="op">)</span>, </span></span>
+<span class="r-in"><span>     ylab <span class="op">=</span> <span class="st">"Lower bound on true positives"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">m</span>, <span class="fl">1</span><span class="op">:</span><span class="va">m</span><span class="op">-</span><span class="va">VpS</span>, t <span class="op">=</span> <span class="st">'s'</span>, col <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="curveVstar_tree-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># order by 'mu' (favorable to DKWM)</span></span>
-<span class="r-in"><span class="va">omu</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">mu</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">Vmu</span> <span class="op">&lt;-</span> <span class="fu">curveVstar_tree</span><span class="op">(</span><span class="va">treeFam</span>, <span class="va">omu</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">thrSimes</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference-families.html">t_linear</a></span><span class="op">(</span><span class="va">alpha</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span>, <span class="va">m</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">SmuS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">m</span>, FUN<span class="op">=</span><span class="kw">function</span><span class="op">(</span><span class="va">kk</span><span class="op">)</span> <span class="fu"><a href="posthocBySimes.html">posthocBySimes</a></span><span class="op">(</span><span class="va">pvals</span>, <span class="va">omu</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="va">kk</span><span class="op">]</span>, <span class="va">alpha</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">m</span>, <span class="fl">1</span><span class="op">:</span><span class="va">m</span><span class="op">-</span><span class="va">Vmu</span>, t <span class="op">=</span> <span class="st">'s'</span>,</span>
-<span class="r-in">     xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span><span class="op">*</span><span class="va">m1</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">m1</span><span class="op">)</span>,</span>
-<span class="r-in">     ylab <span class="op">=</span> <span class="st">"Lower bound on true positives"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">m</span>, <span class="va">SmuS</span>, t <span class="op">=</span> <span class="st">'s'</span>, col <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># order by 'mu' (favorable to DKWM)</span></span></span>
+<span class="r-in"><span><span class="va">omu</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">mu</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">Vmu</span> <span class="op">&lt;-</span> <span class="fu">curveVstar_tree</span><span class="op">(</span><span class="va">treeFam</span>, <span class="va">omu</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">thrSimes</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference-families.html">t_linear</a></span><span class="op">(</span><span class="va">alpha</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span>, <span class="va">m</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">SmuS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">m</span>, FUN<span class="op">=</span><span class="kw">function</span><span class="op">(</span><span class="va">kk</span><span class="op">)</span> <span class="fu"><a href="posthocBySimes.html">posthocBySimes</a></span><span class="op">(</span><span class="va">pvals</span>, <span class="va">omu</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="va">kk</span><span class="op">]</span>, <span class="va">alpha</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">m</span>, <span class="fl">1</span><span class="op">:</span><span class="va">m</span><span class="op">-</span><span class="va">Vmu</span>, t <span class="op">=</span> <span class="st">'s'</span>,</span></span>
+<span class="r-in"><span>     xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span><span class="op">*</span><span class="va">m1</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">m1</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>     ylab <span class="op">=</span> <span class="st">"Lower bound on true positives"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">m</span>, <span class="va">SmuS</span>, t <span class="op">=</span> <span class="st">'s'</span>, col <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="curveVstar_tree-2.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
@@ -159,7 +167,7 @@ bound \(V^*(S_k)\) on the number of true positives in the set \(S_k\)of the firs
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

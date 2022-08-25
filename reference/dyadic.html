@@ -18,7 +18,7 @@ Create a complete dyadic tree structure"><!-- mathjax --><script src="https://cd
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sanssouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.7</span>
       </span>
     </div>
 
@@ -80,33 +80,46 @@ Create a complete dyadic tree structure"><!-- mathjax --><script src="https://cd
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">dyadic.from.leaf_list</span><span class="op">(</span><span class="va">leaf_list</span>, <span class="va">method</span><span class="op">)</span>
-
-<span class="fu">dyadic.from.window.size</span><span class="op">(</span><span class="va">m</span>, <span class="va">s</span>, <span class="va">method</span><span class="op">)</span>
-
-<span class="fu">dyadic.from.height</span><span class="op">(</span><span class="va">m</span>, H <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">method</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">dyadic.from.leaf_list</span><span class="op">(</span><span class="va">leaf_list</span>, <span class="va">method</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">dyadic.from.window.size</span><span class="op">(</span><span class="va">m</span>, <span class="va">s</span>, <span class="va">method</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">dyadic.from.height</span><span class="op">(</span><span class="va">m</span>, H <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">method</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>leaf_list</dt>
 <dd><p>A list of leaves</p></dd>
+
+
 <dt>method</dt>
 <dd><p>A numeric value. If <code>method == 1</code>, start from the leaves
 and group nodes of a same height 2 by 2 as long as possible. If
 <code>method==2</code>, start from the root and divide nodes in 2 nodes of equal
 size as long as possible</p></dd>
+
+
 <dt>m</dt>
 <dd><p>An integer value, the number of elements in the structure</p></dd>
+
+
 <dt>s</dt>
 <dd><p>An integer value, the number of elements in each leaf</p></dd>
+
+
 <dt>H</dt>
 <dd><p>An integer value, the desired maximal height of the tree</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list of lists containing the dyadic structure
-A list with two elements:</p><dl><dt>leaf_list</dt>
+    
+
+<p>A list of lists containing the dyadic structure</p>
+
+
+<p>A list with two elements:</p><dl><dt>leaf_list</dt>
 <dd><p>A list of leaves</p></dd>
 
 <dt>C</dt>
@@ -131,9 +144,9 @@ A list with two elements:</p><dl><dt>leaf_list</dt>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fl">6</span></span>
-<span class="r-in"><span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu">dyadic.from.window.size</span><span class="op">(</span><span class="va">m</span>, s <span class="op">=</span> <span class="fl">2</span>, method <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">dd</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fl">6</span></span></span>
+<span class="r-in"><span><span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu">dyadic.from.window.size</span><span class="op">(</span><span class="va">m</span>, s <span class="op">=</span> <span class="fl">2</span>, method <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">dd</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ leaf_list:List of 3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : num [1:2] 1 2</span>
@@ -149,9 +162,9 @@ A list with two elements:</p><dl><dt>leaf_list</dt>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : num [1:2] 1 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : num [1:2] 2 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : num [1:2] 3 3</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu">dyadic.from.height</span><span class="op">(</span><span class="va">m</span>, H <span class="op">=</span> <span class="fl">3</span>, method <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">dd</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu">dyadic.from.height</span><span class="op">(</span><span class="va">m</span>, H <span class="op">=</span> <span class="fl">3</span>, method <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">dd</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ leaf_list:List of 4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : num [1:2] 1 2</span>
@@ -169,9 +182,9 @@ A list with two elements:</p><dl><dt>leaf_list</dt>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : num [1:2] 2 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : num [1:2] 3 3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : num [1:2] 4 4</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu">dyadic.from.height</span><span class="op">(</span><span class="va">m</span>, method<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">dd</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu">dyadic.from.height</span><span class="op">(</span><span class="va">m</span>, method<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">dd</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ leaf_list:List of 6</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : int 1</span>
@@ -198,8 +211,8 @@ A list with two elements:</p><dl><dt>leaf_list</dt>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : num [1:2] 4 4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : num [1:2] 5 5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : num [1:2] 6 6</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">leaf_list</span> <span class="op">&lt;-</span> <span class="va">dd</span><span class="op">$</span><span class="va">leaf_list</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">leaf_list</span> <span class="op">&lt;-</span> <span class="va">dd</span><span class="op">$</span><span class="va">leaf_list</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -214,7 +227,7 @@ A list with two elements:</p><dl><dt>leaf_list</dt>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

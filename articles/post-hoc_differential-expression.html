@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sanssouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.7</span>
       </span>
     </div>
 
@@ -96,7 +96,7 @@
       <h1 data-toc-skip>Permutation-based post hoc inference for differential gene expression studies</h1>
                         <h4 data-toc-skip class="author">Gilles Blanchard, Pierre Neuvial and Etienne Roquain</h4>
             
-            <h4 data-toc-skip class="date">2022-05-18</h4>
+            <h4 data-toc-skip class="date">2022-08-25</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/pneuvial/sanssouci/blob/HEAD/vignettes/post-hoc_differential-expression.Rmd" class="external-link"><code>vignettes/post-hoc_differential-expression.Rmd</code></a></small>
       <div class="hidden name"><code>post-hoc_differential-expression.Rmd</code></div>
@@ -112,30 +112,30 @@
 </ul>
 <p>The methods described in this vignette are described in detail in the book chapter <span class="citation">Blanchard, Neuvial, and Roquain (2021)</span> and in the paper <span class="citation">Blanchard, Neuvial, and Roquain (2020)</span>. A shiny application for volcano plots is also available from <a href="https://shiny-iidea-sanssouci.apps.math.cnrs.fr/" class="external-link uri">https://shiny-iidea-sanssouci.apps.math.cnrs.fr/</a>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span> <span class="co"># install.packages("ggplot2")</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://github.com/pneuvial/sanssouci" class="external-link">"sanssouci"</a></span><span class="op">)</span> <span class="co"># remotes::install_github("pneuvial/sanssouci@develop")</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://github.com/pneuvial/sanssouci.data" class="external-link">"sanssouci.data"</a></span><span class="op">)</span> <span class="co"># remotes::install_github("pneuvial/sanssouci.data")</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span> <span class="co"># install.packages("ggplot2")</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://github.com/pneuvial/sanssouci" class="external-link">"sanssouci"</a></span><span class="op">)</span> <span class="co"># remotes::install_github("pneuvial/sanssouci@develop")</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://github.com/pneuvial/sanssouci.data" class="external-link">"sanssouci.data"</a></span><span class="op">)</span> <span class="co"># remotes::install_github("pneuvial/sanssouci.data")</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/pneuvial/sanssouci" class="external-link">"sanssouci"</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/pneuvial/sanssouci" class="external-link">"sanssouci"</a></span><span class="op">)</span></span></code></pre></div>
 <p>Set the seed of the random number generator for numerical reproducibility of the results:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">20200924</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">20200924</span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="motivation-a-differential-gene-expression-study">Motivation: a differential gene expression study<a class="anchor" aria-label="anchor" href="#motivation-a-differential-gene-expression-study"></a>
 </h2>
 <p>We focus on differential gene expression studies in cancerology. These studies aim at identifying genes whose mean expression level differs significantly between two (or more) populations, based on a sample of gene expression measurements from individuals from these populations. Specifically, we consider a data set studied in <span class="citation">Bourgon, Gentleman, and Huber (2010)</span>.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">expr_ALL</span>, package <span class="op">=</span> <span class="st">"sanssouci.data"</span><span class="op">)</span>
-<span class="va">dat</span> <span class="op">&lt;-</span> <span class="va">expr_ALL</span>
-<span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">expr_ALL</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">expr_ALL</span>, package <span class="op">=</span> <span class="st">"sanssouci.data"</span><span class="op">)</span></span>
+<span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="va">expr_ALL</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">expr_ALL</span><span class="op">)</span></span></code></pre></div>
 <p>This data set consists of gene expression measurements for <span class="math inline">\(n = 79\)</span> patients with B-cell acute lymphoblastic leukemia (ALL) <span class="citation">Chiaretti et al. (2005)</span>. These patients are classified into two subgoups, depending on whether or not they harbor a specific mutation called “BCR/ABL”:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; BCR/ABL     NEG </span>
-<span class="co">#&gt;      37      42</span>
-<span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; BCR/ABL     NEG </span></span>
+<span><span class="co">#&gt;      37      42</span></span>
+<span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></span></code></pre></div>
 <p>The goal of this study is to understand the molecular differences at the gene expression level between the populations of BCR/ABL positive and negative (“NEG”) patients. For each patient, we observe a vector of <span class="math inline">\(m = 9038\)</span> gene expression values.</p>
 <p>The most basic question to ask is:</p>
 <blockquote>
@@ -144,13 +144,13 @@
 <p>This question can be addressed by performing one statistical test of no difference between means for each gene, and to define “differentially expressed” genes as those passing some significance threshold.</p>
 <p>Below, the Welch test for differential expression is applied to each gene. This can be done e.g. using the <code><a href="../reference/rowWelchTests.html">sanssouci::rowWelchTests</a></code> function:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">categ</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span> <span class="op">==</span> <span class="st">"BCR/ABL"</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span> <span class="co"># map to 0/1</span>
-<span class="va">dex</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="fu"><a href="../reference/rowWelchTests.html">rowWelchTests</a></span><span class="op">(</span><span class="va">dat</span>, <span class="va">categ</span><span class="op">)</span><span class="op">)</span>
-<span class="va">pval</span> <span class="op">&lt;-</span> <span class="va">dex</span><span class="op">[[</span><span class="st">"p.value"</span><span class="op">]</span><span class="op">]</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">categ</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span> <span class="op">==</span> <span class="st">"BCR/ABL"</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span> <span class="co"># map to 0/1</span></span>
+<span><span class="va">dex</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="fu"><a href="../reference/rowWelchTests.html">rowWelchTests</a></span><span class="op">(</span><span class="va">dat</span>, <span class="va">categ</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">pval</span> <span class="op">&lt;-</span> <span class="va">dex</span><span class="op">[[</span><span class="st">"p.value"</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
 <p>We plot a histogram of the corresponding <span class="math inline">\(p\)</span>-values:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">pval</span>, probability <span class="op">=</span> <span class="cn">TRUE</span>, breaks <span class="op">=</span> <span class="fl">20</span>,
-     xlab <span class="op">=</span> <span class="st">"p-value"</span>, main <span class="op">=</span> <span class="st">"p-value distributon"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">pval</span>, probability <span class="op">=</span> <span class="cn">TRUE</span>, breaks <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>     xlab <span class="op">=</span> <span class="st">"p-value"</span>, main <span class="op">=</span> <span class="st">"p-value distributon"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="post-hoc_differential-expression_files/figure-html/hist-1.png" width="768"></p>
 <p>As expected, the distribution presents a large number of small <span class="math inline">\(p\)</span>-values (which include signals, i.e. differentially expressed genes) mixed with uniformly distributed <span class="math inline">\(p\)</span>-values (corresponding to non-differentially expressed genes).</p>
 <div class="section level3">
@@ -158,42 +158,42 @@
 </h3>
 <p>The state of the art approach to large-scale multiple testing is to control the False Discovery Rate (FDR), which is the expected proportion of wrongly selected genes (false positives) among all selected genes <span class="citation">Benjamini and Hochberg (1995)</span>. The most widely used method to control this risk is the Benjamini-Hochberg (BH) procedure, which has been shown to control the FDR when the hypotheses corresponding to the non-differentially expressed genes are independent <span class="citation">Benjamini and Hochberg (1995)</span> or satisfy a specific type of positive dependence called Positive Regression Dependence on the Subset (PRDS) <span class="math inline">\(\mathcal{H}_0\)</span> of truly non-differentially expressed genes <span class="citation">Benjamini and Yekutieli (2001)</span>.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">q</span> <span class="op">&lt;-</span> <span class="fl">0.05</span>
-<span class="va">adjp_BH</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/p.adjust.html" class="external-link">p.adjust</a></span><span class="op">(</span><span class="va">pval</span>, method <span class="op">=</span> <span class="st">"BH"</span><span class="op">)</span>
-<span class="va">dex</span><span class="op">$</span><span class="va">adjp</span> <span class="op">&lt;-</span> <span class="va">adjp_BH</span>
-<span class="va">S_BH</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">adjp_BH</span> <span class="op">&lt;=</span> <span class="va">q</span><span class="op">)</span>
-<span class="va">nBH</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">S_BH</span><span class="op">)</span>
-<span class="va">nBH</span>
-<span class="co">#&gt; [1] 150</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">q</span> <span class="op">&lt;-</span> <span class="fl">0.05</span></span>
+<span><span class="va">adjp_BH</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/p.adjust.html" class="external-link">p.adjust</a></span><span class="op">(</span><span class="va">pval</span>, method <span class="op">=</span> <span class="st">"BH"</span><span class="op">)</span></span>
+<span><span class="va">dex</span><span class="op">$</span><span class="va">adjp</span> <span class="op">&lt;-</span> <span class="va">adjp_BH</span></span>
+<span><span class="va">S_BH</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">adjp_BH</span> <span class="op">&lt;=</span> <span class="va">q</span><span class="op">)</span></span>
+<span><span class="va">nBH</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">S_BH</span><span class="op">)</span></span>
+<span><span class="va">nBH</span></span>
+<span><span class="co">#&gt; [1] 150</span></span></code></pre></div>
 <p>The application of the BH procedure at level <span class="math inline">\(q = 0.05\)</span> is illustrated in the figures below (all genes are displayed in the first one, second one is a zoom on the top genes):</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">my_col</span> <span class="op">&lt;-</span> <span class="st">"#FF000080"</span>
-<span class="va">dexo</span> <span class="op">&lt;-</span> <span class="va">dex</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">pval</span><span class="op">)</span>, <span class="op">]</span>  <span class="co">## order genes by increasing p-values</span>
-<span class="va">dexo</span><span class="op">[[</span><span class="st">"gene_order"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dex</span><span class="op">)</span>
-
-<span class="va">bh_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">dexo</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">gene_order</span>, y <span class="op">=</span> <span class="va">p.value</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"Number of top genes"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ylab</a></span><span class="op">(</span><span class="st">"Ordered p-value"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_abline</a></span><span class="op">(</span>slope <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="va">m</span>, intercept <span class="op">=</span> <span class="fl">0</span>, linetype <span class="op">=</span> <span class="fl">2</span>, size <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_abline</a></span><span class="op">(</span>slope <span class="op">=</span> <span class="va">q</span><span class="op">/</span><span class="va">m</span>, color <span class="op">=</span> <span class="va">my_col</span>, size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span>
-  <span class="co"># geom_segment(aes(x = nBH, y = 0, yend = q*nBH/m, xend = nBH), linetype = "dotted") +</span>
-  <span class="co"># geom_segment(aes(x = 0, y = q*nBH/m, xend = nBH, yend = q*nBH/m), linetype = "dotted") +</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_abline</a></span><span class="op">(</span>slope <span class="op">=</span> <span class="fl">0</span>, intercept <span class="op">=</span> <span class="va">q</span>, linetype <span class="op">=</span> <span class="st">"dotted"</span>, color <span class="op">=</span> <span class="va">my_col</span>, size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">14</span><span class="op">)</span>, 
-        axis.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">18</span><span class="op">)</span><span class="op">)</span>  
-<span class="co">#geom_text(x = 0, y = q, label = expression(alpha), color = my_col)</span>
-
-<span class="va">bh_plot</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">my_col</span> <span class="op">&lt;-</span> <span class="st">"#FF000080"</span></span>
+<span><span class="va">dexo</span> <span class="op">&lt;-</span> <span class="va">dex</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">pval</span><span class="op">)</span>, <span class="op">]</span>  <span class="co">## order genes by increasing p-values</span></span>
+<span><span class="va">dexo</span><span class="op">[[</span><span class="st">"gene_order"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dex</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">bh_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">dexo</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">gene_order</span>, y <span class="op">=</span> <span class="va">p.value</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"Number of top genes"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ylab</a></span><span class="op">(</span><span class="st">"Ordered p-value"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_abline</a></span><span class="op">(</span>slope <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="va">m</span>, intercept <span class="op">=</span> <span class="fl">0</span>, linetype <span class="op">=</span> <span class="fl">2</span>, size <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_abline</a></span><span class="op">(</span>slope <span class="op">=</span> <span class="va">q</span><span class="op">/</span><span class="va">m</span>, color <span class="op">=</span> <span class="va">my_col</span>, size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="co"># geom_segment(aes(x = nBH, y = 0, yend = q*nBH/m, xend = nBH), linetype = "dotted") +</span></span>
+<span>  <span class="co"># geom_segment(aes(x = 0, y = q*nBH/m, xend = nBH, yend = q*nBH/m), linetype = "dotted") +</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_abline</a></span><span class="op">(</span>slope <span class="op">=</span> <span class="fl">0</span>, intercept <span class="op">=</span> <span class="va">q</span>, linetype <span class="op">=</span> <span class="st">"dotted"</span>, color <span class="op">=</span> <span class="va">my_col</span>, size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">14</span><span class="op">)</span>, </span>
+<span>        axis.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">18</span><span class="op">)</span><span class="op">)</span>  </span>
+<span><span class="co">#geom_text(x = 0, y = q, label = expression(alpha), color = my_col)</span></span>
+<span></span>
+<span><span class="va">bh_plot</span></span></code></pre></div>
 <p><img src="post-hoc_differential-expression_files/figure-html/bh-plot-1.png" width="768"></p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">xmax</span> <span class="op">&lt;-</span> <span class="va">nBH</span><span class="op">*</span><span class="fl">2.5</span>
-<span class="va">ymax</span> <span class="op">&lt;-</span> <span class="va">dexo</span><span class="op">$</span><span class="va">p.value</span><span class="op">[</span><span class="va">xmax</span><span class="op">]</span>
-<span class="va">bh_plot</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">xlim</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">xmax</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">ylim</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">ymax</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html" class="external-link">geom_segment</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">nBH</span>, y <span class="op">=</span> <span class="fl">0</span>, yend <span class="op">=</span> <span class="va">q</span><span class="op">*</span><span class="va">nBH</span><span class="op">/</span><span class="va">m</span>, xend <span class="op">=</span> <span class="va">nBH</span><span class="op">)</span>, linetype <span class="op">=</span> <span class="st">"dotted"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html" class="external-link">geom_segment</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span>, y <span class="op">=</span> <span class="va">q</span><span class="op">*</span><span class="va">nBH</span><span class="op">/</span><span class="va">m</span>, xend <span class="op">=</span> <span class="va">nBH</span>, yend <span class="op">=</span> <span class="va">q</span><span class="op">*</span><span class="va">nBH</span><span class="op">/</span><span class="va">m</span><span class="op">)</span>, linetype <span class="op">=</span> <span class="st">"dotted"</span>, col <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
-<span class="co">#&gt; Warning: Removed 8663 row(s) containing missing values (geom_path).</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">xmax</span> <span class="op">&lt;-</span> <span class="va">nBH</span><span class="op">*</span><span class="fl">2.5</span></span>
+<span><span class="va">ymax</span> <span class="op">&lt;-</span> <span class="va">dexo</span><span class="op">$</span><span class="va">p.value</span><span class="op">[</span><span class="va">xmax</span><span class="op">]</span></span>
+<span><span class="va">bh_plot</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">xlim</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">xmax</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/lims.html" class="external-link">ylim</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">ymax</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html" class="external-link">geom_segment</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">nBH</span>, y <span class="op">=</span> <span class="fl">0</span>, yend <span class="op">=</span> <span class="va">q</span><span class="op">*</span><span class="va">nBH</span><span class="op">/</span><span class="va">m</span>, xend <span class="op">=</span> <span class="va">nBH</span><span class="op">)</span>, linetype <span class="op">=</span> <span class="st">"dotted"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html" class="external-link">geom_segment</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span>, y <span class="op">=</span> <span class="va">q</span><span class="op">*</span><span class="va">nBH</span><span class="op">/</span><span class="va">m</span>, xend <span class="op">=</span> <span class="va">nBH</span>, yend <span class="op">=</span> <span class="va">q</span><span class="op">*</span><span class="va">nBH</span><span class="op">/</span><span class="va">m</span><span class="op">)</span>, linetype <span class="op">=</span> <span class="st">"dotted"</span>, col <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: Removed 8663 row(s) containing missing values (geom_path).</span></span></code></pre></div>
 <p><img src="post-hoc_differential-expression_files/figure-html/bh-plot-zoom-1.png" width="768"></p>
 </div>
 <div class="section level3">
@@ -201,8 +201,8 @@
 </h3>
 <p>Post hoc inference makes it possible to build confidence statements on the number of true/false positives within any set <span class="math inline">\(S\)</span> of genes: <span class="math inline">\(S\)</span> may be selected after seing the data (e.g., <span class="math inline">\(S\)</span> may be the set of rejections by the BH prcedure), and multiple choices of <span class="math inline">\(S\)</span> are allowed. Post hoc inference has been popularized by <span class="citation">Goeman and Solari (2011)</span>.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">alpha</span> <span class="op">&lt;-</span> <span class="fl">0.1</span>
-<span class="va">pvalo</span> <span class="op">&lt;-</span> <span class="va">dexo</span><span class="op">$</span><span class="va">p.value</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">alpha</span> <span class="op">&lt;-</span> <span class="fl">0.1</span></span>
+<span><span class="va">pvalo</span> <span class="op">&lt;-</span> <span class="va">dexo</span><span class="op">$</span><span class="va">p.value</span></span></code></pre></div>
 <div class="section level4">
 <h4 id="k_0-bonferroni-bound">
 <span class="math inline">\(k_0\)</span>-Bonferroni bound<a class="anchor" aria-label="anchor" href="#k_0-bonferroni-bound"></a>
@@ -211,11 +211,11 @@
 <p><span class="math display">\[V(S)=\sum_{i\in S} 1_{\{p_i \geq \alpha k_0 /|S|\}} + k_0-1\]</span></p>
 <p>As an application we calculate the bound associated to <span class="math inline">\(k_0=100\)</span> for <span class="math inline">\(\alpha = 0.1\)</span>:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">k0</span> <span class="op">&lt;-</span> <span class="fl">100</span>
-<span class="va">S</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="va">nBH</span>
-<span class="va">FP_k0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">pvalo</span><span class="op">[</span><span class="va">S</span><span class="op">]</span> <span class="op">&gt;=</span> <span class="va">alpha</span><span class="op">*</span><span class="va">k0</span><span class="op">/</span><span class="va">m</span><span class="op">)</span> <span class="op">+</span> <span class="va">k0</span> <span class="op">-</span> <span class="fl">1</span>
-<span class="va">FP_k0</span><span class="op">/</span><span class="va">nBH</span>
-<span class="co">#&gt; [1] 0.66</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">k0</span> <span class="op">&lt;-</span> <span class="fl">100</span></span>
+<span><span class="va">S</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="va">nBH</span></span>
+<span><span class="va">FP_k0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">pvalo</span><span class="op">[</span><span class="va">S</span><span class="op">]</span> <span class="op">&gt;=</span> <span class="va">alpha</span><span class="op">*</span><span class="va">k0</span><span class="op">/</span><span class="va">m</span><span class="op">)</span> <span class="op">+</span> <span class="va">k0</span> <span class="op">-</span> <span class="fl">1</span></span>
+<span><span class="va">FP_k0</span><span class="op">/</span><span class="va">nBH</span></span>
+<span><span class="co">#&gt; [1] 0.66</span></span></code></pre></div>
 <p>This implies that with probability larger than 0.9 the false discovery proportion among the genes selected by the BH procedure at level <span class="math inline">\(q= 0.05\)</span> is upper bounded by 0.66.</p>
 </div>
 <div class="section level4">
@@ -223,9 +223,9 @@
 </h4>
 <p>A more refined post hoc bound has been proposed by <span class="citation">Goeman and Solari (2011)</span> under the PRDS assumption. In the framework of <span class="citation">Blanchard, Neuvial, and Roquain (2021)</span> this bound is a direct consequence of the <span class="citation">Simes (1986)</span> inequality. It can be applied to the 150 rejections of the BH procedure as follows:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SansSouci.html">SansSouci</a></span><span class="op">(</span>Y <span class="op">=</span> <span class="va">dat</span>, groups <span class="op">=</span> <span class="va">categ</span><span class="op">)</span>
-<span class="va">res_Simes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">obj</span>, B <span class="op">=</span> <span class="fl">0</span>, family <span class="op">=</span> <span class="st">"Simes"</span>, alpha <span class="op">=</span> <span class="va">alpha</span><span class="op">)</span> <span class="co">## B=0 =&gt; no calibration!</span>
-<span class="va">FP_Simes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">res_Simes</span>, <span class="va">S_BH</span>, what <span class="op">=</span> <span class="st">"FP"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SansSouci.html">SansSouci</a></span><span class="op">(</span>Y <span class="op">=</span> <span class="va">dat</span>, groups <span class="op">=</span> <span class="va">categ</span><span class="op">)</span></span>
+<span><span class="va">res_Simes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">obj</span>, B <span class="op">=</span> <span class="fl">0</span>, family <span class="op">=</span> <span class="st">"Simes"</span>, alpha <span class="op">=</span> <span class="va">alpha</span><span class="op">)</span> <span class="co">## B=0 =&gt; no calibration!</span></span>
+<span><span class="va">FP_Simes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">res_Simes</span>, <span class="va">S_BH</span>, what <span class="op">=</span> <span class="st">"FP"</span><span class="op">)</span></span></code></pre></div>
 <p>The Simes bound implies that with probability larger than 0.9, the false discovery proportion among the genes selected by the BH procedure at level <span class="math inline">\(q= 0.05\)</span> is upper bounded by 0.44. The Simes bound is sharper than the <span class="math inline">\(k_0\)</span>-Bonferroni bound because it is obtained from a <em>joint</em> control of all <span class="math inline">\(k\)</span>-FWER for all <span class="math inline">\(k=1, \dots, m\)</span>. The <span class="math inline">\(k_0\)</span>-Bonferroni bound will therefore not be considered further in this vignette.</p>
 </div>
 </div>
@@ -240,22 +240,22 @@
 </ul>
 <p>To bypass these limitations, <span class="citation">Blanchard, Neuvial, and Roquain (2020)</span> have proposed a randomization-based procedure known as <span class="math inline">\(\lambda\)</span>-calibration, which yields tighter bounds that are adapted to the dependency observed in the data set at hand. A closely related approach has been proposed by <span class="citation">Hemerik, Solari, and Goeman (2019)</span>. In the case of two-sample tests, this calibration can be achieved by permutation of class labels:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">B</span> <span class="op">&lt;-</span> <span class="fl">1000</span>
-<span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">obj</span>, B <span class="op">=</span> <span class="va">B</span>, alpha <span class="op">=</span> <span class="va">alpha</span>, family <span class="op">=</span> <span class="st">"Simes"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">B</span> <span class="op">&lt;-</span> <span class="fl">1000</span></span>
+<span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">obj</span>, B <span class="op">=</span> <span class="va">B</span>, alpha <span class="op">=</span> <span class="va">alpha</span>, family <span class="op">=</span> <span class="st">"Simes"</span><span class="op">)</span></span></code></pre></div>
 <p>An alternative to the Simes/Linear reference family is the Beta reference family:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">K</span> <span class="op">&lt;-</span> <span class="fl">50</span>
-<span class="va">res_Beta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">res</span>, B <span class="op">=</span> <span class="va">B</span>, alpha <span class="op">=</span> <span class="va">alpha</span>, family <span class="op">=</span> <span class="st">"Beta"</span>, K <span class="op">=</span> <span class="va">K</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">K</span> <span class="op">&lt;-</span> <span class="fl">50</span></span>
+<span><span class="va">res_Beta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">res</span>, B <span class="op">=</span> <span class="va">B</span>, alpha <span class="op">=</span> <span class="va">alpha</span>, family <span class="op">=</span> <span class="st">"Beta"</span>, K <span class="op">=</span> <span class="va">K</span><span class="op">)</span></span></code></pre></div>
 <p>As expected from the theory, the post hoc bounds obtained after calibration by these methods is much tighter than the Simes bound:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">resList</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Simes"</span> <span class="op">=</span> <span class="va">res_Simes</span>,
-            <span class="st">"Linear"</span> <span class="op">=</span> <span class="va">res</span>,
-            <span class="st">"Beta"</span> <span class="op">=</span> <span class="va">res_Beta</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">resList</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Beta (K=%s)"</span>, <span class="va">K</span><span class="op">)</span>
-
-<span class="va">bounds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">resList</span>, <span class="va">predict</span>, <span class="va">S_BH</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">bounds</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Lower bound on True Positives"</span>, <span class="st">"Upper bound on False Discovery Proportion"</span><span class="op">)</span>
-<span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">bounds</span><span class="op">)</span>, digits <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">resList</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Simes"</span> <span class="op">=</span> <span class="va">res_Simes</span>,</span>
+<span>            <span class="st">"Linear"</span> <span class="op">=</span> <span class="va">res</span>,</span>
+<span>            <span class="st">"Beta"</span> <span class="op">=</span> <span class="va">res_Beta</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">resList</span><span class="op">)</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sprintf.html" class="external-link">sprintf</a></span><span class="op">(</span><span class="st">"Beta (K=%s)"</span>, <span class="va">K</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">bounds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">resList</span>, <span class="va">predict</span>, <span class="va">S_BH</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">bounds</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Lower bound on True Positives"</span>, <span class="st">"Upper bound on False Discovery Proportion"</span><span class="op">)</span></span>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">bounds</span><span class="op">)</span>, digits <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="left"></th>
@@ -296,12 +296,12 @@
 <p>We illustrate the use of post-hoc methods to provide this type of information. More specifcally, we build confidence statements on the number of true/false positives within the top <span class="math inline">\(k\)</span> most significant genes in a differential gene expression study, where <span class="math inline">\(k\)</span> may be defined by the user after seing the data, and multiple choices of <span class="math inline">\(k\)</span> are allowed.</p>
 <p>The confidence curves obtained by calibration of the Simes and Beta families can be compared graphically to the (parametric) Simes curve that can be obtained from <span class="citation">Goeman and Solari (2011)</span>:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">conf_bounds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">resList</span>, <span class="va">predict</span>, all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co"># cols &lt;- c("lightgray", "black", "darkgray")</span>
-<span class="va">cols</span> <span class="op">&lt;-</span> <span class="fu">RColorBrewer</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html" class="external-link">brewer.pal</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">conf_bounds</span><span class="op">)</span>, <span class="st">"Dark2"</span><span class="op">)</span>
-<span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plotConfCurve.html">plotConfCurve</a></span><span class="op">(</span><span class="va">conf_bounds</span>, xmax <span class="op">=</span> <span class="fl">300</span>, cols <span class="op">=</span> <span class="va">cols</span><span class="op">)</span>
-<span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="va">nBH</span>, color <span class="op">=</span> <span class="st">"gray"</span>, linetype <span class="op">=</span> <span class="st">"dotted"</span>, size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">conf_bounds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">resList</span>, <span class="va">predict</span>, all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co"># cols &lt;- c("lightgray", "black", "darkgray")</span></span>
+<span><span class="va">cols</span> <span class="op">&lt;-</span> <span class="fu">RColorBrewer</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html" class="external-link">brewer.pal</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">conf_bounds</span><span class="op">)</span>, <span class="st">"Dark2"</span><span class="op">)</span></span>
+<span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plotConfCurve.html">plotConfCurve</a></span><span class="op">(</span><span class="va">conf_bounds</span>, xmax <span class="op">=</span> <span class="fl">300</span>, cols <span class="op">=</span> <span class="va">cols</span><span class="op">)</span></span>
+<span><span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="va">nBH</span>, color <span class="op">=</span> <span class="st">"gray"</span>, linetype <span class="op">=</span> <span class="st">"dotted"</span>, size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span></span></code></pre></div>
 <p><img src="post-hoc_differential-expression_files/figure-html/conf-env-plot-1.png" width="768"></p>
 <p>Both calibrated curves outperform the Simes curve in this example.</p>
 </div>
@@ -310,43 +310,43 @@
 </h2>
 <p>For an interactive volcano plot, see the <a href="https://shiny-iidea-sanssouci.apps.math.cnrs.fr/" class="external-link">volcano plot shiny application</a>.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">q</span> <span class="op">&lt;-</span> <span class="fl">0.05</span>
-<span class="va">r</span> <span class="op">&lt;-</span>  <span class="fl">0.3</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">q</span> <span class="op">&lt;-</span> <span class="fl">0.05</span></span>
+<span><span class="va">r</span> <span class="op">&lt;-</span>  <span class="fl">0.3</span></span></code></pre></div>
 <p>Let us assume that we are interested in genes selected by the BH procedure at level <span class="math inline">\(q = 0.05\)</span> and whose fold change is larger than <span class="math inline">\(r = 0.3\)</span> in absolute value. The “fold change” is defined as the difference between the expression means of the two groups compared; it is an estimate of the effect size of a gene. This double selection corresponds to two sets of genes, with positive/negative fold change, which can be represented in the following plot:</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">ylim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">6</span><span class="op">)</span>
-<span class="fu"><a href="../reference/volcanoPlot.html">volcanoPlot</a></span><span class="op">(</span><span class="va">res_Simes</span>, q <span class="op">=</span> <span class="va">q</span>, r <span class="op">=</span> <span class="va">r</span>, ylim <span class="op">=</span> <span class="va">ylim</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">ylim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">6</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/volcanoPlot.html">volcanoPlot</a></span><span class="op">(</span><span class="va">res_Simes</span>, q <span class="op">=</span> <span class="va">q</span>, r <span class="op">=</span> <span class="va">r</span>, ylim <span class="op">=</span> <span class="va">ylim</span><span class="op">)</span></span></code></pre></div>
 <p><img src="post-hoc_differential-expression_files/figure-html/volcano-Simes-1.png" width="768"></p>
 <p>This type of plot is called a “volcano plot” <span class="citation">Cui and Churchill (2003)</span>. Post hoc inference makes it possible to obtain statistical guarantees on selections such as the ones represented in the above figure.</p>
 <p>The substantial gain in power offered by the above-described calibration is illustrated as follows for the Simes reference family:</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/volcanoPlot.html">volcanoPlot</a></span><span class="op">(</span><span class="va">res</span>, q <span class="op">=</span> <span class="va">q</span>, r <span class="op">=</span> <span class="va">r</span>, ylim <span class="op">=</span> <span class="va">ylim</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/volcanoPlot.html">volcanoPlot</a></span><span class="op">(</span><span class="va">res</span>, q <span class="op">=</span> <span class="va">q</span>, r <span class="op">=</span> <span class="va">r</span>, ylim <span class="op">=</span> <span class="va">ylim</span><span class="op">)</span></span></code></pre></div>
 <p><img src="post-hoc_differential-expression_files/figure-html/volcano-Simes-cal-1.png" width="768"></p>
 <p>and for the Beta reference family.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/volcanoPlot.html">volcanoPlot</a></span><span class="op">(</span><span class="va">res_Beta</span>, q <span class="op">=</span> <span class="va">q</span>, r <span class="op">=</span> <span class="va">r</span>, ylim <span class="op">=</span> <span class="va">ylim</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/volcanoPlot.html">volcanoPlot</a></span><span class="op">(</span><span class="va">res_Beta</span>, q <span class="op">=</span> <span class="va">q</span>, r <span class="op">=</span> <span class="va">r</span>, ylim <span class="op">=</span> <span class="va">ylim</span><span class="op">)</span></span></code></pre></div>
 <p><img src="post-hoc_differential-expression_files/figure-html/volcano-Beta-cal-1.png" width="768"></p>
 <p>The comparison between these bounds may be summarized by the following Table:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">fc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/all-generics.html">foldChanges</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span>
-<span class="va">S_pos</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">fc</span> <span class="op">&gt;=</span> <span class="va">r</span> <span class="op">&amp;</span> <span class="va">adjp_BH</span> <span class="op">&lt;=</span> <span class="va">q</span><span class="op">)</span>
-<span class="va">S_neg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">fc</span> <span class="op">&lt;=</span> <span class="op">-</span><span class="va">r</span> <span class="op">&amp;</span> <span class="va">adjp_BH</span> <span class="op">&lt;=</span> <span class="va">q</span><span class="op">)</span>
-<span class="va">S_all</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">union</a></span><span class="op">(</span><span class="va">S_pos</span>, <span class="va">S_neg</span><span class="op">)</span>
-
-<span class="va">all_bounds</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">S</span>, <span class="va">resList</span><span class="op">)</span> <span class="op">{</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">S</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">resList</span>, <span class="va">predict</span>, <span class="va">S</span>, <span class="st">"TP"</span><span class="op">)</span><span class="op">)</span>
-<span class="op">}</span>
-<span class="va">tab</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu">all_bounds</span><span class="op">(</span><span class="va">S_pos</span>, <span class="va">resList</span><span class="op">)</span>, 
-             <span class="fu">all_bounds</span><span class="op">(</span><span class="va">S_neg</span>, <span class="va">resList</span><span class="op">)</span>,
-             <span class="fu">all_bounds</span><span class="op">(</span><span class="va">S_all</span>, <span class="va">resList</span><span class="op">)</span><span class="op">)</span>
-<span class="va">plab</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"BH-adjusted p.value &lt;"</span>, <span class="va">q</span><span class="op">)</span>
-<span class="va">lab</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">plab</span>, <span class="st">"&amp;"</span>, <span class="st">" fold change  &gt; "</span>, <span class="va">r</span><span class="op">)</span>,
-         <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">plab</span>, <span class="st">"&amp;"</span>, <span class="st">" fold change  &lt; "</span>, <span class="op">-</span><span class="va">r</span><span class="op">)</span>,
-         <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">plab</span>, <span class="st">"&amp;"</span>, <span class="st">"|fold change| &gt; "</span>, <span class="va">r</span><span class="op">)</span><span class="op">)</span>
-<span class="va">tab</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">lab</span>, <span class="va">tab</span><span class="op">)</span>
-<span class="va">cap</span> <span class="op">&lt;-</span> <span class="st">"Post hoc bounds on true positives in user-defined gene selections"</span>
-<span class="co">#knitr::kable(tab, caption = cap, format = "latex")</span>
-<span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">tab</span>, caption <span class="op">=</span> <span class="va">cap</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">fc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/all-generics.html">foldChanges</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
+<span><span class="va">S_pos</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">fc</span> <span class="op">&gt;=</span> <span class="va">r</span> <span class="op">&amp;</span> <span class="va">adjp_BH</span> <span class="op">&lt;=</span> <span class="va">q</span><span class="op">)</span></span>
+<span><span class="va">S_neg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">fc</span> <span class="op">&lt;=</span> <span class="op">-</span><span class="va">r</span> <span class="op">&amp;</span> <span class="va">adjp_BH</span> <span class="op">&lt;=</span> <span class="va">q</span><span class="op">)</span></span>
+<span><span class="va">S_all</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">union</a></span><span class="op">(</span><span class="va">S_pos</span>, <span class="va">S_neg</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">all_bounds</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">S</span>, <span class="va">resList</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">S</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">resList</span>, <span class="va">predict</span>, <span class="va">S</span>, <span class="st">"TP"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="va">tab</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu">all_bounds</span><span class="op">(</span><span class="va">S_pos</span>, <span class="va">resList</span><span class="op">)</span>, </span>
+<span>             <span class="fu">all_bounds</span><span class="op">(</span><span class="va">S_neg</span>, <span class="va">resList</span><span class="op">)</span>,</span>
+<span>             <span class="fu">all_bounds</span><span class="op">(</span><span class="va">S_all</span>, <span class="va">resList</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">plab</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"BH-adjusted p.value &lt;"</span>, <span class="va">q</span><span class="op">)</span></span>
+<span><span class="va">lab</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">plab</span>, <span class="st">"&amp;"</span>, <span class="st">" fold change  &gt; "</span>, <span class="va">r</span><span class="op">)</span>,</span>
+<span>         <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">plab</span>, <span class="st">"&amp;"</span>, <span class="st">" fold change  &lt; "</span>, <span class="op">-</span><span class="va">r</span><span class="op">)</span>,</span>
+<span>         <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">plab</span>, <span class="st">"&amp;"</span>, <span class="st">"|fold change| &gt; "</span>, <span class="va">r</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">tab</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">lab</span>, <span class="va">tab</span><span class="op">)</span></span>
+<span><span class="va">cap</span> <span class="op">&lt;-</span> <span class="st">"Post hoc bounds on true positives in user-defined gene selections"</span></span>
+<span><span class="co">#knitr::kable(tab, caption = cap, format = "latex")</span></span>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">tab</span>, caption <span class="op">=</span> <span class="va">cap</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <caption>Post hoc bounds on true positives in user-defined gene selections</caption>
 <thead><tr class="header">
@@ -385,51 +385,56 @@
 <h2 id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
 </h2>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; R version 4.2.0 (2022-04-22)</span>
-<span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span>
-<span class="co">#&gt; Running under: Ubuntu 20.04.4 LTS</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Matrix products: default</span>
-<span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.9.0</span>
-<span class="co">#&gt; LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.9.0</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; locale:</span>
-<span class="co">#&gt;  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       </span>
-<span class="co">#&gt;  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   </span>
-<span class="co">#&gt;  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          </span>
-<span class="co">#&gt; [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   </span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; attached base packages:</span>
-<span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; other attached packages:</span>
-<span class="co">#&gt; [1] sanssouci_0.12.5 ggplot2_3.3.6   </span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; loaded via a namespace (and not attached):</span>
-<span class="co">#&gt;  [1] Rcpp_1.0.8.3       RColorBrewer_1.1-3 highr_0.9          bslib_0.3.1       </span>
-<span class="co">#&gt;  [5] compiler_4.2.0     pillar_1.7.0       jquerylib_0.1.4    tools_4.2.0       </span>
-<span class="co">#&gt;  [9] digest_0.6.29      lattice_0.20-45    jsonlite_1.8.0     evaluate_0.15     </span>
-<span class="co">#&gt; [13] memoise_2.0.1      lifecycle_1.0.1    tibble_3.1.7       gtable_0.3.0      </span>
-<span class="co">#&gt; [17] pkgconfig_2.0.3    rlang_1.0.2        Matrix_1.4-1       cli_3.3.0         </span>
-<span class="co">#&gt; [21] yaml_2.3.5         pkgdown_2.0.3      xfun_0.31          fastmap_1.1.0     </span>
-<span class="co">#&gt; [25] withr_2.5.0        stringr_1.4.0      knitr_1.39         generics_0.1.2    </span>
-<span class="co">#&gt; [29] vctrs_0.4.1        desc_1.4.1         fs_1.5.2           sass_0.4.1        </span>
-<span class="co">#&gt; [33] systemfonts_1.0.4  rprojroot_2.0.3    grid_4.2.0         glue_1.6.2        </span>
-<span class="co">#&gt; [37] R6_2.5.1           textshaping_0.3.6  fansi_1.0.3        rmarkdown_2.14    </span>
-<span class="co">#&gt; [41] farver_2.1.0       purrr_0.3.4        magrittr_2.0.3     codetools_0.2-18  </span>
-<span class="co">#&gt; [45] matrixStats_0.62.0 scales_1.2.0       htmltools_0.5.2    ellipsis_0.3.2    </span>
-<span class="co">#&gt; [49] colorspace_2.0-3   labeling_0.4.2     ragg_1.2.2         utf8_1.2.2        </span>
-<span class="co">#&gt; [53] stringi_1.7.6      munsell_0.5.0      cachem_1.0.6       crayon_1.5.1</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; R version 4.2.1 (2022-06-23)</span></span>
+<span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 20.04.4 LTS</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Matrix products: default</span></span>
+<span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.9.0</span></span>
+<span><span class="co">#&gt; LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.9.0</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; locale:</span></span>
+<span><span class="co">#&gt;  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       </span></span>
+<span><span class="co">#&gt;  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   </span></span>
+<span><span class="co">#&gt;  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          </span></span>
+<span><span class="co">#&gt; [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; attached base packages:</span></span>
+<span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; other attached packages:</span></span>
+<span><span class="co">#&gt; [1] sanssouci_0.12.7 ggplot2_3.3.6   </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
+<span><span class="co">#&gt;  [1] Rcpp_1.0.9          RColorBrewer_1.1-3  highr_0.9          </span></span>
+<span><span class="co">#&gt;  [4] bslib_0.4.0         compiler_4.2.1      pillar_1.8.1       </span></span>
+<span><span class="co">#&gt;  [7] jquerylib_0.1.4     tools_4.2.1         digest_0.6.29      </span></span>
+<span><span class="co">#&gt; [10] lattice_0.20-45     jsonlite_1.8.0      evaluate_0.16      </span></span>
+<span><span class="co">#&gt; [13] memoise_2.0.1       lifecycle_1.0.1     tibble_3.1.8       </span></span>
+<span><span class="co">#&gt; [16] gtable_0.3.0        pkgconfig_2.0.3     rlang_1.0.4        </span></span>
+<span><span class="co">#&gt; [19] Matrix_1.4-1        cli_3.3.0           yaml_2.3.5         </span></span>
+<span><span class="co">#&gt; [22] pkgdown_2.0.6       xfun_0.32           fastmap_1.1.0      </span></span>
+<span><span class="co">#&gt; [25] withr_2.5.0         stringr_1.4.1       knitr_1.40         </span></span>
+<span><span class="co">#&gt; [28] generics_0.1.3      desc_1.4.1          fs_1.5.2           </span></span>
+<span><span class="co">#&gt; [31] sass_0.4.2          vctrs_0.4.1         systemfonts_1.0.4  </span></span>
+<span><span class="co">#&gt; [34] rprojroot_2.0.3     grid_4.2.1          glue_1.6.2         </span></span>
+<span><span class="co">#&gt; [37] R6_2.5.1            textshaping_0.3.6   fansi_1.0.3        </span></span>
+<span><span class="co">#&gt; [40] rmarkdown_2.16      farver_2.1.1        purrr_0.3.4        </span></span>
+<span><span class="co">#&gt; [43] magrittr_2.0.3      codetools_0.2-18    matrixTests_0.1.9.1</span></span>
+<span><span class="co">#&gt; [46] matrixStats_0.62.0  scales_1.2.1        htmltools_0.5.3    </span></span>
+<span><span class="co">#&gt; [49] colorspace_2.0-3    labeling_0.4.2      ragg_1.2.2         </span></span>
+<span><span class="co">#&gt; [52] utf8_1.2.2          stringi_1.7.8       munsell_0.5.0      </span></span>
+<span><span class="co">#&gt; [55] cachem_1.0.6</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="reproducibility">Reproducibility<a class="anchor" aria-label="anchor" href="#reproducibility"></a>
 </h2>
 <p>To re-build this vignette from its source, use:</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://pkgs.rstudio.com/rmarkdown/reference/render.html" class="external-link">render</a></span><span class="op">(</span><span class="st">"post-hoc_differential-expression.Rmd"</span>, output_format <span class="op">=</span> <span class="st">"pdf_document"</span><span class="op">)</span>
-<span class="co"># To keep intermediate files, add option 'clean = FALSE'</span>
-<span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://pkgs.rstudio.com/rmarkdown/reference/render.html" class="external-link">render</a></span><span class="op">(</span><span class="st">"post-hoc_differential-expression.Rmd"</span>, output_format <span class="op">=</span> <span class="st">"html_document"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://pkgs.rstudio.com/rmarkdown/reference/render.html" class="external-link">render</a></span><span class="op">(</span><span class="st">"post-hoc_differential-expression.Rmd"</span>, output_format <span class="op">=</span> <span class="st">"pdf_document"</span><span class="op">)</span></span>
+<span><span class="co"># To keep intermediate files, add option 'clean = FALSE'</span></span>
+<span><span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://pkgs.rstudio.com/rmarkdown/reference/render.html" class="external-link">render</a></span><span class="op">(</span><span class="st">"post-hoc_differential-expression.Rmd"</span>, output_format <span class="op">=</span> <span class="st">"html_document"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -487,7 +492,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sanssouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.7</span>
       </span>
     </div>
 
@@ -78,23 +78,28 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">zeta.HB</span><span class="op">(</span><span class="va">pval</span>, <span class="va">lambda</span><span class="op">)</span>
-
-<span class="fu">zeta.trivial</span><span class="op">(</span><span class="va">pval</span>, <span class="va">lambda</span><span class="op">)</span>
-
-<span class="fu">zeta.DKWM</span><span class="op">(</span><span class="va">pval</span>, <span class="va">lambda</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">zeta.HB</span><span class="op">(</span><span class="va">pval</span>, <span class="va">lambda</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">zeta.trivial</span><span class="op">(</span><span class="va">pval</span>, <span class="va">lambda</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">zeta.DKWM</span><span class="op">(</span><span class="va">pval</span>, <span class="va">lambda</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>pval</dt>
 <dd><p>A vector of \(p\)-values</p></dd>
+
+
 <dt>lambda</dt>
 <dd><p>A numeric value in \([0,1]\), the target level of the test</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>The numer of true nulls is estimated as follows:</p><dl><dt><code>zeta.DKWM</code></dt>
+    
+
+<p>The numer of true nulls is estimated as follows:</p><dl><dt><code>zeta.DKWM</code></dt>
 <dd><p>Dvoretzky-Kiefer-Wolfowitz-Massart inequality (related to the Storey estimator of the proportion of true nulls) with parameter <code>lambda</code></p></dd>
 
 <dt><code>zeta.HB</code></dt>
@@ -116,14 +121,14 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">50</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">pval</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">pnorm</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">zeta.trivial</span><span class="op">(</span><span class="va">pval</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span>, each <span class="op">=</span> <span class="fl">50</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">pval</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">pnorm</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">zeta.trivial</span><span class="op">(</span><span class="va">pval</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 100</span>
-<span class="r-in"><span class="fu">zeta.HB</span><span class="op">(</span><span class="va">pval</span>, <span class="fl">0.05</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 95</span>
-<span class="r-in"><span class="fu">zeta.DKWM</span><span class="op">(</span><span class="va">pval</span>, <span class="fl">0.05</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 56</span>
+<span class="r-in"><span><span class="fu">zeta.HB</span><span class="op">(</span><span class="va">pval</span>, <span class="fl">0.05</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 90</span>
+<span class="r-in"><span><span class="fu">zeta.DKWM</span><span class="op">(</span><span class="va">pval</span>, <span class="fl">0.05</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 57</span>
 </code></pre></div>
     </div>
   </div>
@@ -138,7 +143,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

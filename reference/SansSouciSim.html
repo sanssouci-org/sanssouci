@@ -18,7 +18,7 @@ equi-correlated model"><!-- mathjax --><script src="https://cdnjs.cloudflare.com
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sanssouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.7</span>
       </span>
     </div>
 
@@ -80,13 +80,14 @@ equi-correlated model</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">SansSouciSim</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">SansSouciSim</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>...</dt>
 <dd><p>Parameters to be passed to <a href="gaussianSamples.html">gaussianSamples</a></p></dd>
+
 </dl></div>
     <div id="see-also">
     <h2>See also</h2>
@@ -95,32 +96,34 @@ equi-correlated model</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">SansSouciSim</span><span class="op">(</span>m <span class="op">=</span> <span class="fl">543</span>, rho <span class="op">=</span> <span class="fl">0.4</span>, n <span class="op">=</span> <span class="fl">210</span>,</span>
-<span class="r-in">                        pi0 <span class="op">=</span> <span class="fl">0.8</span>, SNR <span class="op">=</span> <span class="fl">3</span>, prob <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">alpha</span> <span class="op">&lt;-</span> <span class="fl">0.1</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Adaptive Simes (lambda-calibration)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">542</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">obj</span>, B <span class="op">=</span> <span class="fl">100</span>, alpha <span class="op">=</span> <span class="va">alpha</span>, family <span class="op">=</span> <span class="st">"Simes"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">SansSouciSim</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  m <span class="op">=</span> <span class="fl">543</span>, rho <span class="op">=</span> <span class="fl">0.4</span>, n <span class="op">=</span> <span class="fl">210</span>,</span></span>
+<span class="r-in"><span>  pi0 <span class="op">=</span> <span class="fl">0.8</span>, SNR <span class="op">=</span> <span class="fl">3</span>, prob <span class="op">=</span> <span class="fl">0.5</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">alpha</span> <span class="op">&lt;-</span> <span class="fl">0.1</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Adaptive Simes (lambda-calibration)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">542</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">obj</span>, B <span class="op">=</span> <span class="fl">100</span>, alpha <span class="op">=</span> <span class="va">alpha</span>, family <span class="op">=</span> <span class="st">"Simes"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="SansSouciSim-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="fu"><a href="volcanoPlot.html">volcanoPlot</a></span><span class="op">(</span><span class="va">res</span>, q <span class="op">=</span> <span class="fl">0.05</span>, r <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="volcanoPlot.html">volcanoPlot</a></span><span class="op">(</span><span class="va">res</span>, q <span class="op">=</span> <span class="fl">0.05</span>, r <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="SansSouciSim-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># upper bound on number of signals if the entire data set</span></span>
-<span class="r-in"><span class="co"># (and corresponding lower bound on FDP)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        TP       FDP </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 58.000000  0.893186 </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># confidence curve </span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># upper bound on number of signals if the entire data set</span></span></span>
+<span class="r-in"><span><span class="co"># (and corresponding lower bound on FDP)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         TP        FDP </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 49.0000000  0.9097606 </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># confidence curve</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="SansSouciSim-3.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># comparison to other confidence curves</span></span>
-<span class="r-in"><span class="co"># Parametric Simes (no calibration -- assume positive dependence (PRDS))</span></span>
-<span class="r-in"><span class="va">res0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">obj</span>, B <span class="op">=</span> <span class="fl">0</span>, alpha <span class="op">=</span> <span class="va">alpha</span>, family <span class="op">=</span> <span class="st">"Simes"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">res0</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># comparison to other confidence curves</span></span></span>
+<span class="r-in"><span><span class="co"># Parametric Simes (no calibration -- assume positive dependence (PRDS))</span></span></span>
+<span class="r-in"><span><span class="va">res0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">obj</span>, B <span class="op">=</span> <span class="fl">0</span>, alpha <span class="op">=</span> <span class="va">alpha</span>, family <span class="op">=</span> <span class="st">"Simes"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">res0</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 'SansSouci' object:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Number of hypotheses:	 543 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Number of observations:	 210 </span>
@@ -137,10 +140,10 @@ equi-correlated model</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Output:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Calibration parameter:	lambda=0.1</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Oracle</span></span>
-<span class="r-in"><span class="va">oracle</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">obj</span>, alpha <span class="op">=</span> <span class="va">alpha</span>, family <span class="op">=</span> <span class="st">"Oracle"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">oracle</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Oracle</span></span></span>
+<span class="r-in"><span><span class="va">oracle</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">obj</span>, alpha <span class="op">=</span> <span class="va">alpha</span>, family <span class="op">=</span> <span class="st">"Oracle"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">oracle</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 'SansSouci' object:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Number of hypotheses:	 543 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Number of observations:	 210 </span>
@@ -150,25 +153,28 @@ equi-correlated model</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	 109 false null hypotheses (signals) out of 543 (pi0=0.799)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Parameters: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Test function:		rowWelchTests</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	Number of permutations:	B=NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	Number of permutations:	B=1000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Significance level:	alpha=NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Reference family:	Oracle</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 		(of size:	K=543)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Output:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Calibration parameter:	lambda=NA</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">confs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Simes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">res0</span>, all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
-<span class="r-in">              <span class="st">"Simes+calibration"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">res</span>, all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
-<span class="r-in">              <span class="st">"Oracle"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">oracle</span>, all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="plotConfCurve.html">plotConfCurve</a></span><span class="op">(</span><span class="va">confs</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">confs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  Simes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">res0</span>, all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"Simes+calibration"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">res</span>, all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"Oracle"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">oracle</span>, all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="plotConfCurve.html">plotConfCurve</a></span><span class="op">(</span><span class="va">confs</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="SansSouciSim-4.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="co"># Use wilcoxon tests instead of Welch tests</span></span>
-<span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">obj</span>, B <span class="op">=</span> <span class="fl">100</span>, alpha <span class="op">=</span> <span class="fl">0.1</span>, rowTestFUN <span class="op">=</span> <span class="va">rowWilcoxonTests</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="volcanoPlot.html">volcanoPlot</a></span><span class="op">(</span><span class="va">res</span>, q <span class="op">=</span> <span class="fl">0.05</span>, r <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="co"># Use wilcoxon tests instead of Welch tests</span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">obj</span>, B <span class="op">=</span> <span class="fl">100</span>, alpha <span class="op">=</span> <span class="fl">0.1</span>, rowTestFUN <span class="op">=</span> <span class="va">rowWilcoxonTests</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="volcanoPlot.html">volcanoPlot</a></span><span class="op">(</span><span class="va">res</span>, q <span class="op">=</span> <span class="fl">0.05</span>, r <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -183,7 +189,7 @@ equi-correlated model</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

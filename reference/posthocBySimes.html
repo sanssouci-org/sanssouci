@@ -18,7 +18,7 @@ family"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/math
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sanssouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.7</span>
       </span>
     </div>
 
@@ -80,28 +80,39 @@ family</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">posthocBySimes0Rcpp</span><span class="op">(</span><span class="va">p</span>, <span class="va">select</span>, <span class="va">alpha</span><span class="op">)</span>
-
-<span class="fu">posthocBySimes</span><span class="op">(</span><span class="va">p</span>, <span class="va">select</span>, <span class="va">alpha</span>, Rcpp <span class="op">=</span> <span class="cn">FALSE</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">posthocBySimes0Rcpp</span><span class="op">(</span><span class="va">p</span>, <span class="va">select</span>, <span class="va">alpha</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">posthocBySimes</span><span class="op">(</span><span class="va">p</span>, <span class="va">select</span>, <span class="va">alpha</span>, Rcpp <span class="op">=</span> <span class="cn">FALSE</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>p</dt>
 <dd><p>A numeric vector of <code>m</code> p-values for all tested hypotheses.</p></dd>
+
+
 <dt>select</dt>
 <dd><p>A vector of indices in \([1, \dots m]\) of the hypotheses to be selected.</p></dd>
+
+
 <dt>alpha</dt>
 <dd><p>A numeric value, the significance level of the test procedure.</p></dd>
+
+
 <dt>Rcpp</dt>
 <dd><p>A boolean value: use Rcpp version of the implementation? Defaults to FALSE.</p></dd>
+
+
 <dt>verbose</dt>
 <dd><p>If <code>TRUE</code>, prints verbose result to the
 screen. Defaults to <code>FALSE</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A integer value, Simes's lower bound on the number of
+    
+
+<p>A integer value, Simes's lower bound on the number of
 correct rejections within the selected hypotheses</p>
     </div>
     <div id="details">
@@ -114,8 +125,8 @@ probability greater than \(1-\alpha\), \(|H_0 cap R| \leq \min_k {|R
     <div id="functions">
     <h2>Functions</h2>
     
-<ul><li><p><code>posthocBySimes0Rcpp</code>: Rcpp version</p></li>
-<li><p><code>posthocBySimes</code>: R version</p></li>
+<ul><li><p><code>posthocBySimes0Rcpp()</code>: Rcpp version</p></li>
+<li><p><code>posthocBySimes()</code>: R version</p></li>
 </ul></div>
     <div id="references">
     <h2>References</h2>
@@ -129,20 +140,20 @@ probability greater than \(1-\alpha\), \(|H_0 cap R| \leq \min_k {|R
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fl">1e3</span></span>
-<span class="r-in"><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fl">200</span></span>
-<span class="r-in"><span class="va">p</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">pnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">m1</span>, mean<span class="op">=</span><span class="fl">4</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">m</span><span class="op">-</span><span class="va">m1</span>, mean<span class="op">=</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">R</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">union</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">m</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">alpha</span> <span class="op">&lt;-</span> <span class="fl">0.10</span></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st">"cherry"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">  <span class="va">hom</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/cherry/man/hommelFast.html" class="external-link">hommelFast</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span></span>
-<span class="r-in">  <span class="fu"><a href="https://rdrr.io/pkg/cherry/man/shortcuts.html" class="external-link">pickSimes</a></span><span class="op">(</span><span class="va">hom</span>, <span class="va">R</span>, silent<span class="op">=</span><span class="cn">TRUE</span>, alpha <span class="op">=</span> <span class="va">alpha</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fl">1e3</span></span></span>
+<span class="r-in"><span><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fl">200</span></span></span>
+<span class="r-in"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">pnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">m1</span>, mean<span class="op">=</span><span class="fl">4</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">m</span><span class="op">-</span><span class="va">m1</span>, mean<span class="op">=</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">R</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">union</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">m</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">alpha</span> <span class="op">&lt;-</span> <span class="fl">0.10</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st">"cherry"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="va">hom</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/cherry/man/hommelFast.html" class="external-link">hommelFast</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/pkg/cherry/man/shortcuts.html" class="external-link">pickSimes</a></span><span class="op">(</span><span class="va">hom</span>, <span class="va">R</span>, silent<span class="op">=</span><span class="cn">TRUE</span>, alpha <span class="op">=</span> <span class="va">alpha</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: cherry</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 7</span>
-<span class="r-in"><span class="fu">posthocBySimes</span><span class="op">(</span><span class="va">p</span>, <span class="va">R</span>, alpha<span class="op">=</span><span class="va">alpha</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">posthocBySimes</span><span class="op">(</span><span class="va">p</span>, <span class="va">R</span>, alpha<span class="op">=</span><span class="va">alpha</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 7</span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -157,7 +168,7 @@ probability greater than \(1-\alpha\), \(|H_0 cap R| \leq \min_k {|R
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

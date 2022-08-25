@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sanssouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.7</span>
       </span>
     </div>
 
@@ -78,23 +78,32 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">zetas.tree</span><span class="op">(</span><span class="va">C</span>, <span class="va">leaf_list</span>, <span class="va">method</span>, <span class="va">pvalues</span>, <span class="va">alpha</span><span class="op">)</span>
-
-<span class="fu">zetas.tree.refined</span><span class="op">(</span><span class="va">C</span>, <span class="va">leaf_list</span>, <span class="va">method</span>, <span class="va">pvalues</span>, <span class="va">alpha</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">zetas.tree</span><span class="op">(</span><span class="va">C</span>, <span class="va">leaf_list</span>, <span class="va">method</span>, <span class="va">pvalues</span>, <span class="va">alpha</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">zetas.tree.refined</span><span class="op">(</span><span class="va">C</span>, <span class="va">leaf_list</span>, <span class="va">method</span>, <span class="va">pvalues</span>, <span class="va">alpha</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>C</dt>
 <dd><p>Tree structure</p></dd>
+
+
 <dt>leaf_list</dt>
 <dd><p>A list of leaves</p></dd>
+
+
 <dt>method</dt>
 <dd><p>A function to compute the estimators</p></dd>
+
+
 <dt>pvalues</dt>
 <dd><p>A vector of \(p\)-values</p></dd>
+
+
 <dt>alpha</dt>
 <dd><p>A target level</p></dd>
+
 </dl></div>
     <div id="details">
     <h2>Details</h2>
@@ -108,14 +117,14 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fl">1000</span> </span>
-<span class="r-in"><span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu"><a href="dyadic.html">dyadic.from.window.size</a></span><span class="op">(</span><span class="va">m</span>, s <span class="op">=</span> <span class="fl">10</span>, method <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">leaf_list</span> <span class="op">&lt;-</span> <span class="va">dd</span><span class="op">$</span><span class="va">leaf_list</span></span>
-<span class="r-in"><span class="va">mu</span> <span class="op">&lt;-</span> <span class="fu"><a href="gen.mu.leaves.html">gen.mu.leaves</a></span><span class="op">(</span><span class="va">m</span>, K1 <span class="op">=</span> <span class="fl">3</span>, d <span class="op">=</span> <span class="fl">1</span>, grouped <span class="op">=</span> <span class="cn">FALSE</span>, <span class="st">"const"</span>, barmu <span class="op">=</span> <span class="fl">4</span>, <span class="va">leaf_list</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">pvalues</span><span class="op">&lt;-</span><span class="fu"><a href="gen.p.values.html">gen.p.values</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">mu</span>, rho <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">C</span> <span class="op">&lt;-</span> <span class="va">dd</span><span class="op">$</span><span class="va">C</span> </span>
-<span class="r-in"><span class="va">ZL</span><span class="op">&lt;-</span><span class="fu">zetas.tree</span><span class="op">(</span><span class="va">C</span>, <span class="va">leaf_list</span>, <span class="va">zeta.DKWM</span>, <span class="va">pvalues</span>, alpha <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fl">1000</span> </span></span>
+<span class="r-in"><span><span class="va">dd</span> <span class="op">&lt;-</span> <span class="fu"><a href="dyadic.html">dyadic.from.window.size</a></span><span class="op">(</span><span class="va">m</span>, s <span class="op">=</span> <span class="fl">10</span>, method <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">leaf_list</span> <span class="op">&lt;-</span> <span class="va">dd</span><span class="op">$</span><span class="va">leaf_list</span></span></span>
+<span class="r-in"><span><span class="va">mu</span> <span class="op">&lt;-</span> <span class="fu"><a href="gen.mu.leaves.html">gen.mu.leaves</a></span><span class="op">(</span><span class="va">m</span>, K1 <span class="op">=</span> <span class="fl">3</span>, d <span class="op">=</span> <span class="fl">1</span>, grouped <span class="op">=</span> <span class="cn">FALSE</span>, <span class="st">"const"</span>, barmu <span class="op">=</span> <span class="fl">4</span>, <span class="va">leaf_list</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">pvalues</span><span class="op">&lt;-</span><span class="fu"><a href="gen.p.values.html">gen.p.values</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">mu</span>, rho <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">C</span> <span class="op">&lt;-</span> <span class="va">dd</span><span class="op">$</span><span class="va">C</span> </span></span>
+<span class="r-in"><span><span class="va">ZL</span><span class="op">&lt;-</span><span class="fu">zetas.tree</span><span class="op">(</span><span class="va">C</span>, <span class="va">leaf_list</span>, <span class="va">zeta.DKWM</span>, <span class="va">pvalues</span>, alpha <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -130,7 +139,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sanssouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.7</span>
       </span>
     </div>
 
@@ -78,12 +78,12 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">rowBinomialTests</span><span class="op">(</span>
-  <span class="va">mat</span>,
-  <span class="va">categ</span>,
-  alternative <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"two.sided"</span>, <span class="st">"less"</span>, <span class="st">"greater"</span><span class="op">)</span>,
-  warn <span class="op">=</span> <span class="cn">TRUE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">rowBinomialTests</span><span class="op">(</span></span>
+<span>  <span class="va">mat</span>,</span>
+<span>  <span class="va">categ</span>,</span>
+<span>  alternative <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"two.sided"</span>, <span class="st">"less"</span>, <span class="st">"greater"</span><span class="op">)</span>,</span>
+<span>  warn <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -91,22 +91,31 @@
     <dl><dt>mat</dt>
 <dd><p>A numeric matrix whose rows correspond to variables and columns to
 observations</p></dd>
+
+
 <dt>categ</dt>
 <dd><p>Either a numeric vector of <code>n</code> categories in \(0, 1\) for
 the observations, or a <code>n x B</code> matrix stacking <code>B</code> such vectors
 (typically permutations of an original vector of size <code>n</code>)</p></dd>
+
+
 <dt>alternative</dt>
 <dd><p>A character string specifying the alternative hypothesis.
 Must be one of "two.sided" (default), "greater" or "less". As in
 <code><a href="https://rdrr.io/r/stats/binom.test.html" class="external-link">binom.test</a></code>, alternative = "greater" is the alternative that
 class 1 is shifted to the right of class 0.</p></dd>
+
+
 <dt>warn</dt>
 <dd><p>A boolean value indicating whether to issue a warning if
 <code>alternative=="two-sided"</code>. Defaults to <code>TRUE</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list containing the following components:</p><dl><dt>statistic</dt>
+    
+
+<p>A list containing the following components:</p><dl><dt>statistic</dt>
 <dd><p>the value of the statistics</p></dd>
 
 <dt>p.value</dt>
@@ -116,6 +125,8 @@ class 1 is shifted to the right of class 0.</p></dd>
 <dd><p>the difference between observed group proportions</p></dd>
 
 </dl><p>Each of these elements is a matrix of size <code>nrow(mat) x B</code>, coerced to a vector of length <code>nrow(mat)</code> if <code>B=1</code></p>
+
+
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -135,37 +146,37 @@ the effect size (as e.g. done by 't.test'))</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="va">alt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"two.sided"</span>, <span class="st">"less"</span>, <span class="st">"greater"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">p</span> <span class="op">&lt;-</span> <span class="fl">100</span></span>
-<span class="r-in"><span class="va">n0</span> <span class="op">&lt;-</span> <span class="fl">60</span>; <span class="va">n1</span> <span class="op">&lt;-</span> <span class="fl">40</span></span>
-<span class="r-in"><span class="va">mat0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="va">p</span><span class="op">*</span><span class="va">n0</span>, size <span class="op">=</span> <span class="fl">1</span>, prob <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="va">n0</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">mat1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="va">p</span><span class="op">*</span><span class="va">n1</span>, size <span class="op">=</span> <span class="fl">1</span>, prob <span class="op">=</span> <span class="fl">0.02</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="va">n1</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">mat0</span>, <span class="va">mat1</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">cls</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>, times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">n0</span>, <span class="va">n1</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">fbt</span> <span class="op">&lt;-</span> <span class="fu">rowBinomialTests</span><span class="op">(</span><span class="va">mat</span>, categ <span class="op">=</span> <span class="va">cls</span>, alternative <span class="op">=</span> <span class="va">alt</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">alt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"two.sided"</span>, <span class="st">"less"</span>, <span class="st">"greater"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fl">100</span></span></span>
+<span class="r-in"><span><span class="va">n0</span> <span class="op">&lt;-</span> <span class="fl">60</span>; <span class="va">n1</span> <span class="op">&lt;-</span> <span class="fl">40</span></span></span>
+<span class="r-in"><span><span class="va">mat0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="va">p</span><span class="op">*</span><span class="va">n0</span>, size <span class="op">=</span> <span class="fl">1</span>, prob <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="va">n0</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">mat1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="va">p</span><span class="op">*</span><span class="va">n1</span>, size <span class="op">=</span> <span class="fl">1</span>, prob <span class="op">=</span> <span class="fl">0.02</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="va">n1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">mat0</span>, <span class="va">mat1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">cls</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>, times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">n0</span>, <span class="va">n1</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">fbt</span> <span class="op">&lt;-</span> <span class="fu">rowBinomialTests</span><span class="op">(</span><span class="va">mat</span>, categ <span class="op">=</span> <span class="va">cls</span>, alternative <span class="op">=</span> <span class="va">alt</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Two-sided p-value not vectorized yet! Looping for now.</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">fbt</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">fbt</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ statistic: num [1:100] 2 1 1 1 1 1 0 0 3 0 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ p.value  : num [1:100] 1 1 0.5201 0.0819 0.4895 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ estimate : num [1:100] 0 -0.00833 -0.04167 -0.09167 0.00833 ...</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># compare with ordinary binom.test:</span></span>
-<span class="r-in"><span class="va">pbt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">p</span>, FUN<span class="op">=</span><span class="kw">function</span><span class="op">(</span><span class="va">ii</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">  <span class="va">x1</span> <span class="op">&lt;-</span> <span class="va">mat</span><span class="op">[</span><span class="va">ii</span>, <span class="va">cls</span><span class="op">==</span><span class="fl">1</span><span class="op">]</span></span>
-<span class="r-in">  <span class="va">x0</span> <span class="op">&lt;-</span> <span class="va">mat</span><span class="op">[</span><span class="va">ii</span>, <span class="va">cls</span><span class="op">==</span><span class="fl">0</span><span class="op">]</span></span>
-<span class="r-in">  <span class="va">bt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/binom.test.html" class="external-link">binom.test</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">x1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">x0</span><span class="op">)</span>, alternative <span class="op">=</span> <span class="va">alt</span><span class="op">)</span></span>
-<span class="r-in">  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>statistic <span class="op">=</span> <span class="va">bt</span><span class="op">[[</span><span class="st">"statistic"</span><span class="op">]</span><span class="op">]</span>, p.value <span class="op">=</span> <span class="va">bt</span><span class="op">[[</span><span class="st">"p.value"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">fbt</span><span class="op">$</span><span class="va">p.value</span><span class="op">-</span><span class="va">pbt</span><span class="op">[</span>, <span class="st">"p.value"</span><span class="op">]</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fl">1e-10</span><span class="op">)</span>  <span class="co">## same results</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># compare with ordinary binom.test:</span></span></span>
+<span class="r-in"><span><span class="va">pbt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">p</span>, FUN<span class="op">=</span><span class="kw">function</span><span class="op">(</span><span class="va">ii</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="va">x1</span> <span class="op">&lt;-</span> <span class="va">mat</span><span class="op">[</span><span class="va">ii</span>, <span class="va">cls</span><span class="op">==</span><span class="fl">1</span><span class="op">]</span></span></span>
+<span class="r-in"><span>  <span class="va">x0</span> <span class="op">&lt;-</span> <span class="va">mat</span><span class="op">[</span><span class="va">ii</span>, <span class="va">cls</span><span class="op">==</span><span class="fl">0</span><span class="op">]</span></span></span>
+<span class="r-in"><span>  <span class="va">bt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/binom.test.html" class="external-link">binom.test</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">x1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">x0</span><span class="op">)</span>, alternative <span class="op">=</span> <span class="va">alt</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>statistic <span class="op">=</span> <span class="va">bt</span><span class="op">[[</span><span class="st">"statistic"</span><span class="op">]</span><span class="op">]</span>, p.value <span class="op">=</span> <span class="va">bt</span><span class="op">[[</span><span class="st">"p.value"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">fbt</span><span class="op">$</span><span class="va">p.value</span><span class="op">-</span><span class="va">pbt</span><span class="op">[</span>, <span class="st">"p.value"</span><span class="op">]</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fl">1e-10</span><span class="op">)</span>  <span class="co">## same results</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">fbt</span><span class="op">$</span><span class="va">statistic</span><span class="op">-</span><span class="va">pbt</span><span class="op">[</span>, <span class="st">"statistic.number of successes"</span><span class="op">]</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fl">1e-10</span><span class="op">)</span>  <span class="co">## same results</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">fbt</span><span class="op">$</span><span class="va">statistic</span><span class="op">-</span><span class="va">pbt</span><span class="op">[</span>, <span class="st">"statistic.number of successes"</span><span class="op">]</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fl">1e-10</span><span class="op">)</span>  <span class="co">## same results</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-in"></span>
-<span class="r-in"></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -180,7 +191,7 @@ the effect size (as e.g. done by 't.test'))</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

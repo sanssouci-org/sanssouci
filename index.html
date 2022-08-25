@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">sanssouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.7</span>
       </span>
     </div>
 
@@ -116,25 +116,25 @@
 </h2>
 <p>We briefly illustrate the case of differential gene expression study (see dedicated <a href="https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html">vignette</a> for more information). We start by creating an object of class <code>sanssouci</code> from gene expression data available from the <a href="https://github.com/pneuvial/sanssouci.data" class="external-link">sanssouci.data</a> package,</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/pneuvial/sanssouci" class="external-link">"sanssouci"</a></span><span class="op">)</span>
-<span class="co">#&gt; remotes::install_github("pneuvial/sanssouci.data")</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">expr_ALL</span>, package <span class="op">=</span> <span class="st">"sanssouci.data"</span><span class="op">)</span>
-<span class="va">groups</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">expr_ALL</span><span class="op">)</span> <span class="op">==</span> <span class="st">"BCR/ABL"</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span> <span class="co"># map to 0/1</span>
-<span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/SansSouci.html">SansSouci</a></span><span class="op">(</span>Y <span class="op">=</span> <span class="va">expr_ALL</span>, groups <span class="op">=</span> <span class="va">groups</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/pneuvial/sanssouci" class="external-link">"sanssouci"</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; remotes::install_github("pneuvial/sanssouci.data")</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">expr_ALL</span>, package <span class="op">=</span> <span class="st">"sanssouci.data"</span><span class="op">)</span></span>
+<span><span class="va">groups</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">expr_ALL</span><span class="op">)</span> <span class="op">==</span> <span class="st">"BCR/ABL"</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span> <span class="co"># map to 0/1</span></span>
+<span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/SansSouci.html">SansSouci</a></span><span class="op">(</span>Y <span class="op">=</span> <span class="va">expr_ALL</span>, groups <span class="op">=</span> <span class="va">groups</span><span class="op">)</span></span></code></pre></div>
 <p>Then we fit the method by with <code>B=1000</code> permutations, and with a target risk <code>alpha = 0.1</code>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">obj</span>, alpha <span class="op">=</span> <span class="fl">0.1</span>, B <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">obj</span>, alpha <span class="op">=</span> <span class="fl">0.1</span>, B <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="output-1---post-hoc-bound-for-a-subset-of-genes">Output 1 - Post hoc bound for a subset of genes<a class="anchor" aria-label="anchor" href="#output-1---post-hoc-bound-for-a-subset-of-genes"></a>
 </h3>
 <p>Let us assume that we are interested in genes with a (p)-value below (10^{-3}).</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">S</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="fu"><a href="reference/all-generics.html">pValues</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fl">1e-3</span><span class="op">)</span>
-<span class="co">#&gt; Warning: namespace 'sansSouci' is not available and has been replaced</span>
-<span class="co">#&gt; by .GlobalEnv when processing object '&lt;unknown&gt;'</span>
-<span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">res</span>, <span class="va">S</span><span class="op">)</span>
-<span class="co">#&gt;          TP         FDP </span>
-<span class="co">#&gt; 114.0000000   0.2919255</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">S</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="fu"><a href="reference/all-generics.html">pValues</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fl">1e-3</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: namespace 'sansSouci' is not available and has been replaced</span></span>
+<span><span class="co">#&gt; by .GlobalEnv when processing object '&lt;unknown&gt;'</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">res</span>, <span class="va">S</span><span class="op">)</span></span>
+<span><span class="co">#&gt;          TP         FDP </span></span>
+<span><span class="co">#&gt; 114.0000000   0.2919255</span></span></code></pre></div>
 <p>The method ensures with (1-= 90%) confidence that there are at least 114 truly differentially expressed genes (true positives, TP) among these 161 genes, corresponding to a false discovery proportion (FDP) less than 0.3.</p>
 </div>
 <div class="section level3">
@@ -142,11 +142,11 @@
 </h3>
 <p>Another output of the method is the following (1-)-level confidence curve on FDP (left panel) and corresponding TP (right panel) in “top-k” gene lists.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">res</span>, xmax <span class="op">=</span> <span class="fl">500</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">S</span><span class="op">)</span>, 
-             color <span class="op">=</span> <span class="st">"gray"</span>, linetype <span class="op">=</span> <span class="st">"dotted"</span>, size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">res</span>, xmax <span class="op">=</span> <span class="fl">500</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">S</span><span class="op">)</span>, </span>
+<span>             color <span class="op">=</span> <span class="st">"gray"</span>, linetype <span class="op">=</span> <span class="st">"dotted"</span>, size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-conf-curve-1.png" width="100%"></p>
 </div>
 <div class="section level3">
@@ -154,7 +154,7 @@
 </h3>
 <p>A more refined user selection is obtained by selecting genes based on both significance (here, a FDR-adjusted (p)-value below 0.05) and fold change (here, fold change above 0.3). Such selections are generally represented by volcano plots:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="reference/volcanoPlot.html">volcanoPlot</a></span><span class="op">(</span><span class="va">res</span>, q <span class="op">=</span> <span class="fl">0.05</span>, r <span class="op">=</span> <span class="fl">0.3</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">6</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="reference/volcanoPlot.html">volcanoPlot</a></span><span class="op">(</span><span class="va">res</span>, q <span class="op">=</span> <span class="fl">0.05</span>, r <span class="op">=</span> <span class="fl">0.3</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-volcano-plot-1.png" width="100%"></p>
 <p>Importantly, multiple such selections can be made without compromising the validity of the bounds. The <a href="https://shiny-iidea-sanssouci.apps.math.cnrs.fr/" class="external-link">IIDEA shiny app</a> makes it possible to perform such selections interactively and without programming.</p>
 </div>
@@ -164,8 +164,8 @@
 </h2>
 <!-- You can install the released version of sanssouci from [CRAN](https://CRAN.R-project.org) with: --><!-- ``` r --><!-- install.packages("sanssouci") --><!-- ``` --><p>You can install the development version from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># install.packages("remotes")</span>
-<span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"pneuvial/sanssouci"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"pneuvial/sanssouci"</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
   </div>
@@ -229,7 +229,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sanssouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.7</span>
       </span>
     </div>
 
@@ -78,43 +78,50 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">SansSouci</span><span class="op">(</span><span class="va">Y</span>, <span class="va">groups</span>, truth <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">SansSouci</span><span class="op">(</span><span class="va">Y</span>, <span class="va">groups</span>, truth <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>Y</dt>
 <dd><p>A matrix of \(m\) variables (hypotheses) by \(n\) observations</p></dd>
+
+
 <dt>groups</dt>
 <dd><p>A numeric vector of \(n\) values in \(0, 1\), the groups of
 observations on which to perform two-sample tests</p></dd>
+
+
 <dt>truth</dt>
 <dd><p>An optional numeric vector of $m$ values in $0,1$, the status
 of each null hypothesis (0 means H0 is true, 1 means H1 is true). Typically
 used in simulations.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>An object of class "SansSouci"</p>
+    
+
+<p>An object of class "SansSouci"</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">expr_ALL</span>, package <span class="op">=</span> <span class="st">"sanssouci.data"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">groups</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">expr_ALL</span><span class="op">)</span><span class="op">==</span><span class="st">"NEG"</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">groups</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">expr_ALL</span>, package <span class="op">=</span> <span class="st">"sanssouci.data"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">groups</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">expr_ALL</span><span class="op">)</span> <span class="op">==</span> <span class="st">"NEG"</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">groups</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> groups</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  0  1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 42 37 </span>
-<span class="r-in"><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu">SansSouci</span><span class="op">(</span>Y <span class="op">=</span> <span class="va">expr_ALL</span>, groups <span class="op">=</span> <span class="va">groups</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">a</span>, B <span class="op">=</span> <span class="fl">100</span>, alpha <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">res</span>, xmax <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu">SansSouci</span><span class="op">(</span>Y <span class="op">=</span> <span class="va">expr_ALL</span>, groups <span class="op">=</span> <span class="va">groups</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">a</span>, B <span class="op">=</span> <span class="fl">100</span>, alpha <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">res</span>, xmax <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="SansSouci-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="va">res_beta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">res</span>, B <span class="op">=</span> <span class="fl">100</span>, alpha <span class="op">=</span> <span class="fl">0.1</span>, family<span class="op">=</span><span class="st">"Beta"</span>, K<span class="op">=</span><span class="fl">10</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">res_beta</span>, xmax <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="va">res_beta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">res</span>, B <span class="op">=</span> <span class="fl">100</span>, alpha <span class="op">=</span> <span class="fl">0.1</span>, family <span class="op">=</span> <span class="st">"Beta"</span>, K <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">res_beta</span>, xmax <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="SansSouci-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -129,7 +136,7 @@ used in simulations.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

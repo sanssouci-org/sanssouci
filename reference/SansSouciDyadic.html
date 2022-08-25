@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sanssouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.7</span>
       </span>
     </div>
 
@@ -78,34 +78,45 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">SansSouciDyadic</span><span class="op">(</span>
-  <span class="va">m</span>,
-  leaf_size <span class="op">=</span> <span class="cn">NULL</span>,
-  height <span class="op">=</span> <span class="cn">NULL</span>,
-  direction <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bottom-up"</span>, <span class="st">"top-down"</span><span class="op">)</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">SansSouciDyadic</span><span class="op">(</span></span>
+<span>  <span class="va">m</span>,</span>
+<span>  leaf_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  height <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  direction <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bottom-up"</span>, <span class="st">"top-down"</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>m</dt>
 <dd><p>A numeric value, the number of hypotheses</p></dd>
+
+
 <dt>leaf_size</dt>
 <dd><p>An integer value, the number of hypotheses in each leaf.
 Defaults to NULL.</p></dd>
+
+
 <dt>height</dt>
 <dd><p>An integer value, the desired maximal height of the tree.
 Defaults to NULL.</p></dd>
+
+
 <dt>direction</dt>
 <dd><p>A character value, the direction used for building the tree.
 Must be one of  "bottom-up" or "top-down"</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Further arguments to be passed to 'SansSouciStruct'</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>An object of class 'SansSouciStruct'</p>
+    
+
+<p>An object of class 'SansSouciStruct'</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -128,13 +139,13 @@ dyadic.from.max.height</p></div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">s</span> <span class="op">&lt;-</span> <span class="fl">100</span></span>
-<span class="r-in"><span class="va">q</span> <span class="op">&lt;-</span> <span class="fl">7</span></span>
-<span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="va">s</span><span class="op">*</span><span class="fl">2</span><span class="op">^</span><span class="va">q</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">SansSouciDyadic</span><span class="op">(</span><span class="va">m</span>, leaf_size <span class="op">=</span> <span class="va">s</span>, direction <span class="op">=</span> <span class="st">"top-down"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">SansSouciDyadic</span><span class="op">(</span><span class="va">m</span>, height <span class="op">=</span> <span class="fl">8</span>, direction <span class="op">=</span> <span class="st">"top-down"</span><span class="op">)</span></span>
-<span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">s</span> <span class="op">&lt;-</span> <span class="fl">100</span></span></span>
+<span class="r-in"><span><span class="va">q</span> <span class="op">&lt;-</span> <span class="fl">7</span></span></span>
+<span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="va">s</span><span class="op">*</span><span class="fl">2</span><span class="op">^</span><span class="va">q</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">SansSouciDyadic</span><span class="op">(</span><span class="va">m</span>, leaf_size <span class="op">=</span> <span class="va">s</span>, direction <span class="op">=</span> <span class="st">"top-down"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu">SansSouciDyadic</span><span class="op">(</span><span class="va">m</span>, height <span class="op">=</span> <span class="fl">8</span>, direction <span class="op">=</span> <span class="st">"top-down"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -149,7 +160,7 @@ dyadic.from.max.height</p></div>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sanssouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.7</span>
       </span>
     </div>
 
@@ -78,22 +78,26 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># S3 method for SansSouci</span>
-<span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span>
-  <span class="va">object</span>,
-  S <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="all-generics.html">nHyp</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span><span class="op">)</span>,
-  what <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TP"</span>, <span class="st">"FDP"</span><span class="op">)</span>,
-  all <span class="op">=</span> <span class="cn">FALSE</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for SansSouci</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  S <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="all-generics.html">nHyp</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  what <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TP"</span>, <span class="st">"FDP"</span><span class="op">)</span>,</span>
+<span>  all <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>object</dt>
 <dd><p>An object of class 'SansSouci'</p></dd>
+
+
 <dt>S</dt>
 <dd><p>A subset of indices</p></dd>
+
+
 <dt>what</dt>
 <dd><p>A character vector, the names of the post hoc bounds to be
 computed, among:</p><ul><li><p>FP: Upper bound on the number of false positives in the 'x' most significant items</p></li>
@@ -101,14 +105,21 @@ computed, among:</p><ul><li><p>FP: Upper bound on the number of false positives 
 <li><p>FDP: Upper bound on the proportion of false positives in the 'x' most significant items</p></li>
 <li><p>TP: Lower bound on the proportion of true positives in the 'x' most significant items</p></li>
 </ul><p>Defaults to <code>c("TP", "FDP")</code></p></dd>
+
+
 <dt>all</dt>
 <dd><p>A logical value: should the bounds for all ordered subsets of <code>S</code> be returned? If <code>FALSE</code> (the default), only the bound for <code>S</code> is returned</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Not used</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>If <code>all</code> is <code>FALSE</code> (the default), only the value of the bound is returned. Otherwise, a <code>data.frame</code> is return, with |S| rows and 4 columns:</p><ul><li><p>x: Number of most significant items selected</p></li>
+    
+
+<p>If <code>all</code> is <code>FALSE</code> (the default), only the value of the bound is returned. Otherwise, a <code>data.frame</code> is return, with |S| rows and 4 columns:</p><ul><li><p>x: Number of most significant items selected</p></li>
 <li><p>label: Label for the procedure, typically of the form 'family(param)'</p></li>
 <li><p>bound: Value of the post hoc bound</p></li>
 <li><p>stat: Type of post hoc bound, as specified by argument <code>bound</code>.</p></li>
@@ -116,19 +127,19 @@ computed, among:</p><ul><li><p>FP: Upper bound on the number of false positives 
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="co"># Generate Gaussian data and perform multiple tests</span></span>
-<span class="r-in"><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="SansSouciSim.html">SansSouciSim</a></span><span class="op">(</span>m <span class="op">=</span> <span class="fl">502</span>, rho <span class="op">=</span> <span class="fl">0.5</span>, n <span class="op">=</span> <span class="fl">100</span>, pi0 <span class="op">=</span> <span class="fl">0.8</span>, SNR <span class="op">=</span> <span class="fl">3</span>, prob <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">obj</span>, B <span class="op">=</span> <span class="fl">100</span>, alpha <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># post hoc bound on the set of all hypotheses</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Generate Gaussian data and perform multiple tests</span></span></span>
+<span class="r-in"><span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="SansSouciSim.html">SansSouciSim</a></span><span class="op">(</span>m <span class="op">=</span> <span class="fl">502</span>, rho <span class="op">=</span> <span class="fl">0.5</span>, n <span class="op">=</span> <span class="fl">100</span>, pi0 <span class="op">=</span> <span class="fl">0.8</span>, SNR <span class="op">=</span> <span class="fl">3</span>, prob <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">obj</span>, B <span class="op">=</span> <span class="fl">100</span>, alpha <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># post hoc bound on the set of all hypotheses</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         TP        FDP </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 58.0000000  0.8844622 </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># idem for all possible subsets (sorted by p-value)</span></span>
-<span class="r-in"><span class="va">bounds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">res</span>, all<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">bounds</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># idem for all possible subsets (sorted by p-value)</span></span></span>
+<span class="r-in"><span><span class="va">bounds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">res</span>, all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">bounds</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   x label stat bound</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 1 Simes   TP     1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 2 Simes   TP     2</span>
@@ -136,10 +147,10 @@ computed, among:</p><ul><li><p>FP: Upper bound on the number of false positives 
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4 4 Simes   TP     4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5 5 Simes   TP     5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6 6 Simes   TP     6</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># post hoc bound on a subset</span></span>
-<span class="r-in"><span class="va">S</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="fu"><a href="all-generics.html">pValues</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fl">0.01</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">res</span>, <span class="va">S</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># post hoc bound on a subset</span></span></span>
+<span class="r-in"><span><span class="va">S</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="fu"><a href="all-generics.html">pValues</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fl">0.01</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">res</span>, <span class="va">S</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         TP        FDP </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 58.0000000  0.3333333 </span>
 </code></pre></div>
@@ -156,7 +167,7 @@ computed, among:</p><ul><li><p>FP: Upper bound on the number of false positives 
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

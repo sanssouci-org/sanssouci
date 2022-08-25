@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sanssouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.7</span>
       </span>
     </div>
 
@@ -78,39 +78,52 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">testByRandomization</span><span class="op">(</span>
-  <span class="va">X</span>,
-  <span class="va">categ</span>,
-  <span class="va">B</span>,
-  alternative <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"two.sided"</span>, <span class="st">"less"</span>, <span class="st">"greater"</span><span class="op">)</span>,
-  rowTestFUN <span class="op">=</span> <span class="va">rowWelchTests</span>,
-  rand.p.value <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">testByRandomization</span><span class="op">(</span></span>
+<span>  <span class="va">X</span>,</span>
+<span>  <span class="va">categ</span>,</span>
+<span>  <span class="va">B</span>,</span>
+<span>  alternative <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"two.sided"</span>, <span class="st">"less"</span>, <span class="st">"greater"</span><span class="op">)</span>,</span>
+<span>  rowTestFUN <span class="op">=</span> <span class="va">rowWelchTests</span>,</span>
+<span>  rand.p.value <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>X</dt>
 <dd><p>a matrix of <code>m</code> variables by <code>n</code> observations</p></dd>
+
+
 <dt>categ</dt>
 <dd><p>An optional numeric vector of \(n\) values in \(0, 1\)
 specifying the column indices of the first and second samples. If not
 provided, a one-sample test is performed.</p></dd>
+
+
 <dt>B</dt>
 <dd><p>A numeric value, the number of permutations to be performed</p></dd>
+
+
 <dt>alternative</dt>
 <dd><p>A character string specifying the alternative hypothesis.
 Must be one of "two.sided" (default), "greater" or "less".</p></dd>
+
+
 <dt>rowTestFUN</dt>
 <dd><p>A (vectorized) test function used in the two-sample case.
 Defaults to <code><a href="rowWelchTests.html">rowWelchTests</a></code></p></dd>
+
+
 <dt>rand.p.value</dt>
 <dd><p>A boolean value: should randomization \(p\)-values be
 calculated and returned? Defaults to @FALSE</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>a list with elements:</p><dl><dt>T</dt>
+    
+
+<p>a list with elements:</p><dl><dt>T</dt>
 <dd><p>A vector of \(m\) test statistics</p></dd>
 
 
@@ -175,46 +188,46 @@ multiple testing for microarray data analysis. <em>Test</em>, 12(1), pp.1-77.</p
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fl">123</span></span>
-<span class="r-in"><span class="va">rho</span> <span class="op">&lt;-</span> <span class="fl">0.2</span></span>
-<span class="r-in"><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">100</span></span>
-<span class="r-in"><span class="va">pi0</span> <span class="op">&lt;-</span> <span class="fl">0.5</span></span>
-<span class="r-in"><span class="va">B</span> <span class="op">&lt;-</span> <span class="fl">1e3</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## two-sample data</span></span>
-<span class="r-in"><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="gaussianSamples.html">gaussianSamples</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">rho</span>, <span class="va">n</span>, <span class="va">pi0</span>, SNR <span class="op">=</span> <span class="fl">2</span>, prob <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">X</span> <span class="op">&lt;-</span> <span class="va">sim</span><span class="op">$</span><span class="va">X</span></span>
-<span class="r-in"><span class="va">categ</span> <span class="op">&lt;-</span><span class="va">sim</span><span class="op">$</span><span class="va">categ</span></span>
-<span class="r-in"><span class="va">tests</span> <span class="op">&lt;-</span> <span class="fu">testByRandomization</span><span class="op">(</span>X <span class="op">=</span> <span class="va">X</span>, categ <span class="op">=</span> <span class="va">categ</span>, <span class="va">B</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">testsW</span> <span class="op">&lt;-</span> <span class="fu">testByRandomization</span><span class="op">(</span>X <span class="op">=</span> <span class="va">X</span>, categ <span class="op">=</span> <span class="va">categ</span>, B <span class="op">=</span> <span class="fl">10</span>, rowTestFUN <span class="op">=</span> <span class="va">rowWilcoxonTests</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## show test statistics</span></span>
-<span class="r-in"><span class="va">pch</span> <span class="op">&lt;-</span> <span class="fl">20</span></span>
-<span class="r-in"><span class="va">colStat</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">+</span><span class="va">sim</span><span class="op">$</span><span class="va">H</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tests</span><span class="op">$</span><span class="cn">T</span>, col <span class="op">=</span> <span class="va">colStat</span>, main <span class="op">=</span> <span class="st">"T-Test statistics"</span>, pch <span class="op">=</span> <span class="va">pch</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topleft"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"H0"</span>, <span class="st">"H1"</span><span class="op">)</span>, pch<span class="op">=</span><span class="va">pch</span>, col<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fl">123</span></span></span>
+<span class="r-in"><span><span class="va">rho</span> <span class="op">&lt;-</span> <span class="fl">0.2</span></span></span>
+<span class="r-in"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">100</span></span></span>
+<span class="r-in"><span><span class="va">pi0</span> <span class="op">&lt;-</span> <span class="fl">0.5</span></span></span>
+<span class="r-in"><span><span class="va">B</span> <span class="op">&lt;-</span> <span class="fl">1e3</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## two-sample data</span></span></span>
+<span class="r-in"><span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="gaussianSamples.html">gaussianSamples</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">rho</span>, <span class="va">n</span>, <span class="va">pi0</span>, SNR <span class="op">=</span> <span class="fl">2</span>, prob <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">X</span> <span class="op">&lt;-</span> <span class="va">sim</span><span class="op">$</span><span class="va">X</span></span></span>
+<span class="r-in"><span><span class="va">categ</span> <span class="op">&lt;-</span><span class="va">sim</span><span class="op">$</span><span class="va">categ</span></span></span>
+<span class="r-in"><span><span class="va">tests</span> <span class="op">&lt;-</span> <span class="fu">testByRandomization</span><span class="op">(</span>X <span class="op">=</span> <span class="va">X</span>, categ <span class="op">=</span> <span class="va">categ</span>, <span class="va">B</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">testsW</span> <span class="op">&lt;-</span> <span class="fu">testByRandomization</span><span class="op">(</span>X <span class="op">=</span> <span class="va">X</span>, categ <span class="op">=</span> <span class="va">categ</span>, B <span class="op">=</span> <span class="fl">10</span>, rowTestFUN <span class="op">=</span> <span class="va">rowWilcoxonTests</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## show test statistics</span></span></span>
+<span class="r-in"><span><span class="va">pch</span> <span class="op">&lt;-</span> <span class="fl">20</span></span></span>
+<span class="r-in"><span><span class="va">colStat</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">+</span><span class="va">sim</span><span class="op">$</span><span class="va">H</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tests</span><span class="op">$</span><span class="cn">T</span>, col <span class="op">=</span> <span class="va">colStat</span>, main <span class="op">=</span> <span class="st">"T-Test statistics"</span>, pch <span class="op">=</span> <span class="va">pch</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topleft"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"H0"</span>, <span class="st">"H1"</span><span class="op">)</span>, pch<span class="op">=</span><span class="va">pch</span>, col<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="testByRandomization-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">testsW</span><span class="op">$</span><span class="cn">T</span>, col <span class="op">=</span> <span class="va">colStat</span>, main <span class="op">=</span> <span class="st">"Wilcoxon test statistics"</span>, pch <span class="op">=</span> <span class="va">pch</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topleft"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"H0"</span>, <span class="st">"H1"</span><span class="op">)</span>, pch<span class="op">=</span><span class="va">pch</span>, col<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">testsW</span><span class="op">$</span><span class="cn">T</span>, col <span class="op">=</span> <span class="va">colStat</span>, main <span class="op">=</span> <span class="st">"Wilcoxon test statistics"</span>, pch <span class="op">=</span> <span class="va">pch</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topleft"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"H0"</span>, <span class="st">"H1"</span><span class="op">)</span>, pch<span class="op">=</span><span class="va">pch</span>, col<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="testByRandomization-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># one-sample data:</span></span>
-<span class="r-in"><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="gaussianSamples.html">gaussianSamples</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">rho</span>, <span class="va">n</span>, <span class="va">pi0</span>, SNR<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">tests</span> <span class="op">&lt;-</span> <span class="fu">testByRandomization</span><span class="op">(</span>X <span class="op">=</span> <span class="va">sim</span><span class="op">$</span><span class="va">X</span>, categ <span class="op">=</span> <span class="va">sim</span><span class="op">$</span><span class="va">categ</span>, <span class="va">B</span>, alternative <span class="op">=</span> <span class="st">"two.sided"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## show test statistics</span></span>
-<span class="r-in"><span class="va">pch</span> <span class="op">&lt;-</span> <span class="fl">20</span></span>
-<span class="r-in"><span class="va">colStat</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">+</span><span class="va">sim</span><span class="op">$</span><span class="va">H</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tests</span><span class="op">$</span><span class="cn">T</span>, col <span class="op">=</span> <span class="va">colStat</span>, main <span class="op">=</span> <span class="st">"Test statistics"</span>, pch <span class="op">=</span> <span class="va">pch</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topleft"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"H0"</span>, <span class="st">"H1"</span><span class="op">)</span>, pch <span class="op">=</span> <span class="va">pch</span>, col <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># one-sample data:</span></span></span>
+<span class="r-in"><span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="gaussianSamples.html">gaussianSamples</a></span><span class="op">(</span><span class="va">m</span>, <span class="va">rho</span>, <span class="va">n</span>, <span class="va">pi0</span>, SNR<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tests</span> <span class="op">&lt;-</span> <span class="fu">testByRandomization</span><span class="op">(</span>X <span class="op">=</span> <span class="va">sim</span><span class="op">$</span><span class="va">X</span>, categ <span class="op">=</span> <span class="va">sim</span><span class="op">$</span><span class="va">categ</span>, <span class="va">B</span>, alternative <span class="op">=</span> <span class="st">"two.sided"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## show test statistics</span></span></span>
+<span class="r-in"><span><span class="va">pch</span> <span class="op">&lt;-</span> <span class="fl">20</span></span></span>
+<span class="r-in"><span><span class="va">colStat</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">+</span><span class="va">sim</span><span class="op">$</span><span class="va">H</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tests</span><span class="op">$</span><span class="cn">T</span>, col <span class="op">=</span> <span class="va">colStat</span>, main <span class="op">=</span> <span class="st">"Test statistics"</span>, pch <span class="op">=</span> <span class="va">pch</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topleft"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"H0"</span>, <span class="st">"H1"</span><span class="op">)</span>, pch <span class="op">=</span> <span class="va">pch</span>, col <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="testByRandomization-3.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log10</a></span><span class="op">(</span><span class="va">tests</span><span class="op">$</span><span class="va">p</span><span class="op">)</span>, col <span class="op">=</span> <span class="va">colStat</span>, main <span class="op">=</span> <span class="st">"-log[10](p-value)"</span>, pch <span class="op">=</span> <span class="va">pch</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topleft"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"H0"</span>, <span class="st">"H1"</span><span class="op">)</span>, pch <span class="op">=</span> <span class="va">pch</span>, col <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log10</a></span><span class="op">(</span><span class="va">tests</span><span class="op">$</span><span class="va">p</span><span class="op">)</span>, col <span class="op">=</span> <span class="va">colStat</span>, main <span class="op">=</span> <span class="st">"-log[10](p-value)"</span>, pch <span class="op">=</span> <span class="va">pch</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topleft"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"H0"</span>, <span class="st">"H1"</span><span class="op">)</span>, pch <span class="op">=</span> <span class="va">pch</span>, col <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="testByRandomization-4.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -229,7 +242,7 @@ multiple testing for microarray data analysis. <em>Test</em>, 12(1), pp.1-77.</p
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

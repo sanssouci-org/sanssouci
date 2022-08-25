@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sanssouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.7</span>
       </span>
     </div>
 
@@ -78,54 +78,71 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">calibrate</span><span class="op">(</span>
-  <span class="va">p0</span>,
-  <span class="va">m</span>,
-  <span class="va">alpha</span>,
-  family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Linear"</span>, <span class="st">"Beta"</span>, <span class="st">"Simes"</span><span class="op">)</span>,
-  K <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">p0</span><span class="op">)</span>,
-  p <span class="op">=</span> <span class="cn">NULL</span>,
-  max_steps_down <span class="op">=</span> <span class="fl">10L</span>,
-  piv_stat0 <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span>
-
-<span class="fu">calibrate0</span><span class="op">(</span>
-  <span class="va">p0</span>,
-  <span class="va">m</span>,
-  <span class="va">alpha</span>,
-  family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Linear"</span>, <span class="st">"Beta"</span>, <span class="st">"Simes"</span><span class="op">)</span>,
-  K <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">p0</span><span class="op">)</span>,
-  piv_stat0 <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">calibrate</span><span class="op">(</span></span>
+<span>  <span class="va">p0</span>,</span>
+<span>  <span class="va">m</span>,</span>
+<span>  <span class="va">alpha</span>,</span>
+<span>  family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Linear"</span>, <span class="st">"Beta"</span>, <span class="st">"Simes"</span><span class="op">)</span>,</span>
+<span>  K <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">p0</span><span class="op">)</span>,</span>
+<span>  p <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  max_steps_down <span class="op">=</span> <span class="fl">10L</span>,</span>
+<span>  piv_stat0 <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">calibrate0</span><span class="op">(</span></span>
+<span>  <span class="va">p0</span>,</span>
+<span>  <span class="va">m</span>,</span>
+<span>  <span class="va">alpha</span>,</span>
+<span>  family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Linear"</span>, <span class="st">"Beta"</span>, <span class="st">"Simes"</span><span class="op">)</span>,</span>
+<span>  K <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">p0</span><span class="op">)</span>,</span>
+<span>  piv_stat0 <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>p0</dt>
 <dd><p>A matrix with B rows. Each row is a vector of null p-values</p></dd>
+
+
 <dt>m</dt>
 <dd><p>The total number of tested hypotheses</p></dd>
+
+
 <dt>alpha</dt>
 <dd><p>A numeric value in <code>[0,1]</code>, the target (JER) risk</p></dd>
+
+
 <dt>family</dt>
 <dd><p>A character value, the name of a threshold family. Should be
 one of "Linear", "Beta" and "Simes", or "Oracle". "Linear" and "Simes" families are
 identical.</p></dd>
+
+
 <dt>K</dt>
 <dd><p>An integer value in <code>[1,m]</code>, the number of elements in the reference family. Defaults to <code>m</code></p></dd>
+
+
 <dt>p</dt>
 <dd><p>A vector of 'm' p.values, used for step-down control. If not
 provided, single step control is performed.</p></dd>
+
+
 <dt>max_steps_down</dt>
 <dd><p>A numeric value, the maximum number of steps down to
 perform. Defaults to 10 (but the algorithm generally converges in 1 or 2
 steps).</p></dd>
+
+
 <dt>piv_stat0</dt>
 <dd><p>Don't use! Should be removed soon...</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list with elements</p><ul><li><p>thr: A numeric vector of length K, such that the estimated probability that
+    
+
+<p>A list with elements</p><ul><li><p>thr: A numeric vector of length K, such that the estimated probability that
 there exists an index k between 1 and K such that the k-th maximum of the
 test statistics of is greater than <code>thr[k]</code>, is less than alpha</p></li>
 <li><p>piv_stat: A vector of <code>B</code> pivotal statitics</p></li>
@@ -147,63 +164,63 @@ Statistics</em>, 48(3), 1281-1303.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">0xBEEF</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fl">50</span></span>
-<span class="r-in"><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="gaussianSamples.html">gaussianSamples</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m</span>, rho <span class="op">=</span> <span class="fl">0.3</span>, n <span class="op">=</span> <span class="fl">45</span>, </span>
-<span class="r-in">                       pi0 <span class="op">=</span> <span class="fl">0.8</span>, SNR <span class="op">=</span> <span class="fl">3</span>, prob <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">Y</span> <span class="op">&lt;-</span> <span class="va">sim</span><span class="op">$</span><span class="va">X</span></span>
-<span class="r-in"><span class="va">groups</span> <span class="op">&lt;-</span> <span class="va">sim</span><span class="op">$</span><span class="va">categ</span></span>
-<span class="r-in"><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="rowWelchTests.html">rowWelchTests</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">groups</span><span class="op">)</span><span class="op">$</span><span class="va">p.value</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">B</span> <span class="op">&lt;-</span> <span class="fl">100</span></span>
-<span class="r-in"><span class="va">null_groups</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">replicate</a></span><span class="op">(</span><span class="va">B</span>, <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">groups</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">p0</span> <span class="op">&lt;-</span> <span class="fu"><a href="rowWelchTests.html">rowWelchTests</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">null_groups</span><span class="op">)</span><span class="op">$</span><span class="va">p.value</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">calib0</span> <span class="op">&lt;-</span> <span class="fu">calibrate0</span><span class="op">(</span><span class="va">p0</span>, <span class="va">m</span>, alpha <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span> <span class="co"># single step</span></span>
-<span class="r-in"><span class="va">calib</span> <span class="op">&lt;-</span> <span class="fu">calibrate</span><span class="op">(</span><span class="va">p0</span>, <span class="va">m</span>, alpha <span class="op">=</span> <span class="fl">0.1</span>, p <span class="op">=</span> <span class="va">p</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">calib</span><span class="op">$</span><span class="va">lambda</span> <span class="op">&gt;=</span> <span class="va">calib0</span><span class="op">$</span><span class="va">lambda</span> </span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">0xBEEF</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fl">50</span></span></span>
+<span class="r-in"><span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu"><a href="gaussianSamples.html">gaussianSamples</a></span><span class="op">(</span>m <span class="op">=</span> <span class="va">m</span>, rho <span class="op">=</span> <span class="fl">0.3</span>, n <span class="op">=</span> <span class="fl">45</span>, </span></span>
+<span class="r-in"><span>                       pi0 <span class="op">=</span> <span class="fl">0.8</span>, SNR <span class="op">=</span> <span class="fl">3</span>, prob <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">Y</span> <span class="op">&lt;-</span> <span class="va">sim</span><span class="op">$</span><span class="va">X</span></span></span>
+<span class="r-in"><span><span class="va">groups</span> <span class="op">&lt;-</span> <span class="va">sim</span><span class="op">$</span><span class="va">categ</span></span></span>
+<span class="r-in"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="rowWelchTests.html">rowWelchTests</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">groups</span><span class="op">)</span><span class="op">$</span><span class="va">p.value</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">B</span> <span class="op">&lt;-</span> <span class="fl">100</span></span></span>
+<span class="r-in"><span><span class="va">null_groups</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">replicate</a></span><span class="op">(</span><span class="va">B</span>, <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">groups</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">p0</span> <span class="op">&lt;-</span> <span class="fu"><a href="rowWelchTests.html">rowWelchTests</a></span><span class="op">(</span><span class="va">Y</span>, <span class="va">null_groups</span><span class="op">)</span><span class="op">$</span><span class="va">p.value</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">calib0</span> <span class="op">&lt;-</span> <span class="fu">calibrate0</span><span class="op">(</span><span class="va">p0</span>, <span class="va">m</span>, alpha <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span> <span class="co"># single step</span></span></span>
+<span class="r-in"><span><span class="va">calib</span> <span class="op">&lt;-</span> <span class="fu">calibrate</span><span class="op">(</span><span class="va">p0</span>, <span class="va">m</span>, alpha <span class="op">=</span> <span class="fl">0.1</span>, p <span class="op">=</span> <span class="va">p</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">calib</span><span class="op">$</span><span class="va">lambda</span> <span class="op">&gt;=</span> <span class="va">calib0</span><span class="op">$</span><span class="va">lambda</span> </span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  10% </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> TRUE </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="maxFP.html">maxFP</a></span><span class="op">(</span><span class="va">p</span>, <span class="va">calib</span><span class="op">$</span><span class="va">thr</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="maxFP.html">maxFP</a></span><span class="op">(</span><span class="va">p</span>, <span class="va">calib</span><span class="op">$</span><span class="va">thr</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 45</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="co"># Gene expression</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">expr_ALL</span>, package <span class="op">=</span> <span class="st">"sanssouci.data"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">X</span> <span class="op">&lt;-</span> <span class="va">expr_ALL</span>; <span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">expr_ALL</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">groups</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span> <span class="op">==</span> <span class="st">"BCR/ABL"</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span> <span class="co"># map to 0/1</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">null_groups</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">replicate</a></span><span class="op">(</span><span class="fl">500</span>, <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">groups</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">perm</span> <span class="op">&lt;-</span> <span class="fu"><a href="rowWelchTests.html">rowWelchTests</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">null_groups</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">p0</span> <span class="op">&lt;-</span> <span class="va">perm</span><span class="op">$</span><span class="va">p.value</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">alpha</span> <span class="op">&lt;-</span> <span class="fl">0.1</span></span>
-<span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="rowWelchTests.html">rowWelchTests</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">groups</span><span class="op">)</span><span class="op">$</span><span class="va">p.value</span></span>
-<span class="r-in"><span class="va">calib_L</span> <span class="op">&lt;-</span> <span class="fu">calibrate</span><span class="op">(</span><span class="va">p0</span>, <span class="va">m</span>, <span class="va">alpha</span>, family <span class="op">=</span> <span class="st">"Linear"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">calib_B</span> <span class="op">&lt;-</span> <span class="fu">calibrate</span><span class="op">(</span><span class="va">p0</span>, <span class="va">m</span>, <span class="va">alpha</span>, family <span class="op">=</span> <span class="st">"Beta"</span>, K <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## post hoc bounds</span></span>
-<span class="r-in"><span class="va">thr</span> <span class="op">&lt;-</span> <span class="va">calib_L</span><span class="op">$</span><span class="va">thr</span></span>
-<span class="r-in"><span class="fu"><a href="minTP.html">minTP</a></span><span class="op">(</span><span class="va">p</span>, <span class="va">thr</span><span class="op">)</span>  <span class="co">## lower bound on true positives</span></span>
-<span class="r-in"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## example of user selection: rejections of BH(0.05) procedure</span></span>
-<span class="r-in"><span class="va">adjp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/p.adjust.html" class="external-link">p.adjust</a></span><span class="op">(</span><span class="va">p</span>, method <span class="op">=</span> <span class="st">"BH"</span><span class="op">)</span> </span>
-<span class="r-in"><span class="va">sel</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">adjp</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">sel</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="minTP.html">minTP</a></span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="va">sel</span><span class="op">]</span>, <span class="va">thr</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># confidence bound on the FDP</span></span>
-<span class="r-in"><span class="va">FDP_bound</span> <span class="op">&lt;-</span> <span class="fu">sanssouci</span><span class="fu">:::</span><span class="fu"><a href="curveMaxFP.html">curveMaxFP</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span>, <span class="va">thr</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span>along <span class="op">=</span> <span class="va">p</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">FDP_bound</span>, <span class="fl">300</span><span class="op">)</span>, t <span class="op">=</span> <span class="st">'s'</span>, </span>
-<span class="r-in">  xlab <span class="op">=</span> <span class="st">"Number of features"</span>,</span>
-<span class="r-in">  ylab <span class="op">=</span> <span class="st">"Upper bound on False Discovery Proportion"</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="co"># Gene expression</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">expr_ALL</span>, package <span class="op">=</span> <span class="st">"sanssouci.data"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">X</span> <span class="op">&lt;-</span> <span class="va">expr_ALL</span>; <span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">expr_ALL</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">groups</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span> <span class="op">==</span> <span class="st">"BCR/ABL"</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span> <span class="co"># map to 0/1</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">null_groups</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">replicate</a></span><span class="op">(</span><span class="fl">500</span>, <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">groups</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">perm</span> <span class="op">&lt;-</span> <span class="fu"><a href="rowWelchTests.html">rowWelchTests</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">null_groups</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">p0</span> <span class="op">&lt;-</span> <span class="va">perm</span><span class="op">$</span><span class="va">p.value</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">alpha</span> <span class="op">&lt;-</span> <span class="fl">0.1</span></span></span>
+<span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="rowWelchTests.html">rowWelchTests</a></span><span class="op">(</span><span class="va">X</span>, <span class="va">groups</span><span class="op">)</span><span class="op">$</span><span class="va">p.value</span></span></span>
+<span class="r-in"><span><span class="va">calib_L</span> <span class="op">&lt;-</span> <span class="fu">calibrate</span><span class="op">(</span><span class="va">p0</span>, <span class="va">m</span>, <span class="va">alpha</span>, family <span class="op">=</span> <span class="st">"Linear"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">calib_B</span> <span class="op">&lt;-</span> <span class="fu">calibrate</span><span class="op">(</span><span class="va">p0</span>, <span class="va">m</span>, <span class="va">alpha</span>, family <span class="op">=</span> <span class="st">"Beta"</span>, K <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## post hoc bounds</span></span></span>
+<span class="r-in"><span><span class="va">thr</span> <span class="op">&lt;-</span> <span class="va">calib_L</span><span class="op">$</span><span class="va">thr</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="minTP.html">minTP</a></span><span class="op">(</span><span class="va">p</span>, <span class="va">thr</span><span class="op">)</span>  <span class="co">## lower bound on true positives</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## example of user selection: rejections of BH(0.05) procedure</span></span></span>
+<span class="r-in"><span><span class="va">adjp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/p.adjust.html" class="external-link">p.adjust</a></span><span class="op">(</span><span class="va">p</span>, method <span class="op">=</span> <span class="st">"BH"</span><span class="op">)</span> </span></span>
+<span class="r-in"><span><span class="va">sel</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">adjp</span> <span class="op">&lt;</span> <span class="fl">0.05</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">sel</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="minTP.html">minTP</a></span><span class="op">(</span><span class="va">p</span><span class="op">[</span><span class="va">sel</span><span class="op">]</span>, <span class="va">thr</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># confidence bound on the FDP</span></span></span>
+<span class="r-in"><span><span class="va">FDP_bound</span> <span class="op">&lt;-</span> <span class="fu">sanssouci</span><span class="fu">:::</span><span class="fu"><a href="curveMaxFP.html">curveMaxFP</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="va">p</span><span class="op">)</span>, <span class="va">thr</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span>along <span class="op">=</span> <span class="va">p</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">FDP_bound</span>, <span class="fl">300</span><span class="op">)</span>, t <span class="op">=</span> <span class="st">'s'</span>, </span></span>
+<span class="r-in"><span>  xlab <span class="op">=</span> <span class="st">"Number of features"</span>,</span></span>
+<span class="r-in"><span>  ylab <span class="op">=</span> <span class="st">"Upper bound on False Discovery Proportion"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -218,7 +235,7 @@ Statistics</em>, 48(3), 1281-1303.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

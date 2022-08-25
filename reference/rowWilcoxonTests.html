@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sanssouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.7</span>
       </span>
     </div>
 
@@ -78,12 +78,12 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">rowWilcoxonTests</span><span class="op">(</span>
-  <span class="va">mat</span>,
-  <span class="va">categ</span>,
-  alternative <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"two.sided"</span>, <span class="st">"less"</span>, <span class="st">"greater"</span><span class="op">)</span>,
-  correct <span class="op">=</span> <span class="cn">TRUE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">rowWilcoxonTests</span><span class="op">(</span></span>
+<span>  <span class="va">mat</span>,</span>
+<span>  <span class="va">categ</span>,</span>
+<span>  alternative <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"two.sided"</span>, <span class="st">"less"</span>, <span class="st">"greater"</span><span class="op">)</span>,</span>
+<span>  correct <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -91,22 +91,31 @@
     <dl><dt>mat</dt>
 <dd><p>A <code>m x n</code> numeric matrix whose rows correspond to variables and columns to
 observations</p></dd>
+
+
 <dt>categ</dt>
 <dd><p>Either a numeric vector of <code>n</code> categories in \(0, 1\) for
 the observations, or a <code>n x B</code> matrix stacking <code>B</code> such vectors
 (typically permutations of an original vector of size <code>n</code>)</p></dd>
+
+
 <dt>alternative</dt>
 <dd><p>A character string specifying the alternative hypothesis.
 Must be one of "two.sided" (default), "greater" or "less". As in
 <code><a href="https://rdrr.io/r/stats/wilcox.test.html" class="external-link">wilcox.test</a></code>, alternative = "greater" is the alternative that
 class 1 is shifted to the right of class 0.</p></dd>
+
+
 <dt>correct</dt>
 <dd><p>A logical indicating whether to apply continuity correction in
 the normal approximation for the p-value.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list containing the following components:</p><dl><dt>statistic</dt>
+    
+
+<p>A list containing the following components:</p><dl><dt>statistic</dt>
 <dd><p>the value of the statistics</p></dd>
  <dt>p.value</dt>
 <dd><p>the
@@ -122,6 +131,8 @@ p-values for the tests</p></dd>
 <dd><p>the median difference between groups (only calculated if <code>B=1</code> for computational efficiency)</p></dd>
 
 </dl><p>Each of these elements is a matrix of size <code>m x B</code>, coerced to a vector of length <code>m</code> if <code>B=1</code></p>
+
+
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -149,40 +160,40 @@ described in the <code><a href="https://rdrr.io/r/stats/wilcox.test.html" class=
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="va">p</span> <span class="op">&lt;-</span> <span class="fl">200</span></span>
-<span class="r-in"><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">50</span></span>
-<span class="r-in"><span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">p</span><span class="op">*</span><span class="va">n</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="va">n</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">cls</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>, each <span class="op">=</span> <span class="va">n</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">stats</span> <span class="op">&lt;-</span> <span class="fu">rowWilcoxonTests</span><span class="op">(</span><span class="va">mat</span>, categ <span class="op">=</span> <span class="va">cls</span>, alternative <span class="op">=</span> <span class="st">"two.sided"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">stats</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fl">200</span></span></span>
+<span class="r-in"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">50</span></span></span>
+<span class="r-in"><span><span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">p</span><span class="op">*</span><span class="va">n</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="va">n</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">cls</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>, each <span class="op">=</span> <span class="va">n</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">stats</span> <span class="op">&lt;-</span> <span class="fu">rowWilcoxonTests</span><span class="op">(</span><span class="va">mat</span>, categ <span class="op">=</span> <span class="va">cls</span>, alternative <span class="op">=</span> <span class="st">"two.sided"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">stats</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ p.value  : num [1:200] 0.801 0.816 0.907 0.168 0.497 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ statistic: num [1:200] 299 325 306 384 277 324 328 380 289 376 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ estimate : num [1:200] -0.0789 -0.0922 -0.1116 0.487 -0.2801 ...</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># permutation of class labels</span></span>
-<span class="r-in"><span class="va">cls_perm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">replicate</a></span><span class="op">(</span><span class="fl">11</span>, <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">cls</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">stats</span> <span class="op">&lt;-</span> <span class="fu">rowWilcoxonTests</span><span class="op">(</span><span class="va">mat</span>, categ <span class="op">=</span> <span class="va">cls_perm</span>, alternative <span class="op">=</span> <span class="st">"two.sided"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">stats</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ p.value  : num [1:200] 0.2948 0.1302 0.0199 0.5347 0.3933 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ statistic: num [1:200] 367 234 433 280 357 237 279 301 336 268 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ estimate : num [1:200] 0.674 -0.453 0.76 -0.368 0.401 ...</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># permutation of class labels</span></span></span>
+<span class="r-in"><span><span class="va">cls_perm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">replicate</a></span><span class="op">(</span><span class="fl">11</span>, <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">cls</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">stats</span> <span class="op">&lt;-</span> <span class="fu">rowWilcoxonTests</span><span class="op">(</span><span class="va">mat</span>, categ <span class="op">=</span> <span class="va">cls_perm</span>, alternative <span class="op">=</span> <span class="st">"two.sided"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">stats</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ p.value  : num [1:200, 1:11] 0.8159 0.3038 0.2604 0.0952 0.1806 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ statistic: num [1:200, 1:11] 325 366 254 399 382 239 256 433 221 279 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ p.value  : num [1:200, 1:11] 0.3517 0.3517 0.0877 0.8159 0.3721 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ statistic: num [1:200, 1:11] 361 264 401 325 266 260 322 354 301 308 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ estimate : num [1:200, 1:11] NA NA NA NA NA NA NA NA NA NA ...</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># several unrelated contrasts</span></span>
-<span class="r-in"><span class="va">cls2</span> <span class="op">&lt;-</span> <span class="va">cls</span></span>
-<span class="r-in"><span class="va">cls</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="co"># varying nx, ny</span></span>
-<span class="r-in"><span class="va">cls_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cls</span>, <span class="va">cls2</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">stats</span> <span class="op">&lt;-</span> <span class="fu">rowWilcoxonTests</span><span class="op">(</span><span class="va">mat</span>, categ <span class="op">=</span> <span class="va">cls_mat</span>, alternative <span class="op">=</span> <span class="st">"two.sided"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">stats</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># several unrelated contrasts</span></span></span>
+<span class="r-in"><span><span class="va">cls2</span> <span class="op">&lt;-</span> <span class="va">cls</span></span></span>
+<span class="r-in"><span><span class="va">cls</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="co"># varying nx, ny</span></span></span>
+<span class="r-in"><span><span class="va">cls_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">cls</span>, <span class="va">cls2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">stats</span> <span class="op">&lt;-</span> <span class="fu">rowWilcoxonTests</span><span class="op">(</span><span class="va">mat</span>, categ <span class="op">=</span> <span class="va">cls_mat</span>, alternative <span class="op">=</span> <span class="st">"two.sided"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">stats</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ p.value  : num [1:200, 1:2] 0.783 0.597 0.641 0.219 0.197 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ p.value  : num [1:200, 1:2] 0.5116 0.7189 0.0944 0.1441 0.3739 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "dimnames")=List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : chr [1:2] "cls" "cls2"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ statistic: num [1:200, 1:2] 276 288 285 321 201 284 282 241 253 350 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ statistic: num [1:200, 1:2] 294 245 342 193 305 173 223 294 163 268 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "dimnames")=List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : chr [1:2] "cls" "cls2"</span>
@@ -201,7 +212,7 @@ described in the <code><a href="https://rdrr.io/r/stats/wilcox.test.html" class=
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

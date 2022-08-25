@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sanssouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.7</span>
       </span>
     </div>
 
@@ -78,33 +78,48 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">gaussianSamples</span><span class="op">(</span><span class="va">m</span>, <span class="va">rho</span>, <span class="va">n</span>, <span class="va">pi0</span>, SNR <span class="op">=</span> <span class="fl">1</span>, prob <span class="op">=</span> <span class="fl">1</span>, w <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">gaussianSamples</span><span class="op">(</span><span class="va">m</span>, <span class="va">rho</span>, <span class="va">n</span>, <span class="va">pi0</span>, SNR <span class="op">=</span> <span class="fl">1</span>, prob <span class="op">=</span> <span class="fl">1</span>, w <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>m</dt>
 <dd><p>Number of hypotheses</p></dd>
+
+
 <dt>rho</dt>
 <dd><p>Level of equi-correlation between pairs of variables</p></dd>
+
+
 <dt>n</dt>
 <dd><p>Number of observations, i.e. sample size</p></dd>
+
+
 <dt>pi0</dt>
 <dd><p>Proportion of true null hypotheses</p></dd>
+
+
 <dt>SNR</dt>
 <dd><p>Signal to noise ratio. Either a numeric value (a measure of
 distance between H0 and H1) or a vector of length <code>m*(1-pi0)</code></p></dd>
+
+
 <dt>prob</dt>
 <dd><p>A numeric value in (0, 1], the frequency of the population under
 H1. If \(prob=1\) (the default), a data set from a single population is
 generated.</p></dd>
+
+
 <dt>w</dt>
 <dd><p>An optional vector of length <code>n</code>, the underlying factor driving
 equi-correlation</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A list with three elements:</p><dl><dt>X</dt>
+    
+
+<p>A list with three elements:</p><dl><dt>X</dt>
 <dd><p>An \(m x n\) matrix of \(m\)-dimensional Gaussian observations,
 where \(m1\) rows are under H1, and \(m0\) rows are under H0, with
 \(m0/m = pi0\)</p></dd>
@@ -141,35 +156,35 @@ sample to belong to the non-zero-mean population.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fl">123</span></span>
-<span class="r-in"><span class="va">rho</span> <span class="op">&lt;-</span> <span class="fl">0.2</span></span>
-<span class="r-in"><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">100</span></span>
-<span class="r-in"><span class="va">pi0</span> <span class="op">&lt;-</span> <span class="fl">0.5</span></span>
-<span class="r-in"><span class="va">B</span> <span class="op">&lt;-</span> <span class="fl">1e3</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## two-sample data</span></span>
-<span class="r-in"><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu">gaussianSamples</span><span class="op">(</span><span class="va">m</span>, <span class="va">rho</span>, <span class="va">n</span>, <span class="va">pi0</span>, SNR <span class="op">=</span> <span class="fl">2</span>, prob <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">tests</span> <span class="op">&lt;-</span> <span class="fu"><a href="testByRandomization.html">testByRandomization</a></span><span class="op">(</span><span class="va">sim</span><span class="op">$</span><span class="va">X</span>, <span class="va">sim</span><span class="op">$</span><span class="va">categ</span>, B <span class="op">=</span> <span class="va">B</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## show test statistics</span></span>
-<span class="r-in"><span class="va">pch</span> <span class="op">&lt;-</span> <span class="fl">20</span></span>
-<span class="r-in"><span class="va">colStat</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">+</span><span class="va">sim</span><span class="op">$</span><span class="va">H</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tests</span><span class="op">$</span><span class="cn">T</span>, col<span class="op">=</span><span class="va">colStat</span>, main<span class="op">=</span><span class="st">"Test statistics"</span>, pch<span class="op">=</span><span class="va">pch</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topleft"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"H0"</span>, <span class="st">"H1"</span><span class="op">)</span>, pch<span class="op">=</span><span class="va">pch</span>, col<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fl">123</span></span></span>
+<span class="r-in"><span><span class="va">rho</span> <span class="op">&lt;-</span> <span class="fl">0.2</span></span></span>
+<span class="r-in"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">100</span></span></span>
+<span class="r-in"><span><span class="va">pi0</span> <span class="op">&lt;-</span> <span class="fl">0.5</span></span></span>
+<span class="r-in"><span><span class="va">B</span> <span class="op">&lt;-</span> <span class="fl">1e3</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## two-sample data</span></span></span>
+<span class="r-in"><span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu">gaussianSamples</span><span class="op">(</span><span class="va">m</span>, <span class="va">rho</span>, <span class="va">n</span>, <span class="va">pi0</span>, SNR <span class="op">=</span> <span class="fl">2</span>, prob <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tests</span> <span class="op">&lt;-</span> <span class="fu"><a href="testByRandomization.html">testByRandomization</a></span><span class="op">(</span><span class="va">sim</span><span class="op">$</span><span class="va">X</span>, <span class="va">sim</span><span class="op">$</span><span class="va">categ</span>, B <span class="op">=</span> <span class="va">B</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## show test statistics</span></span></span>
+<span class="r-in"><span><span class="va">pch</span> <span class="op">&lt;-</span> <span class="fl">20</span></span></span>
+<span class="r-in"><span><span class="va">colStat</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">+</span><span class="va">sim</span><span class="op">$</span><span class="va">H</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tests</span><span class="op">$</span><span class="cn">T</span>, col<span class="op">=</span><span class="va">colStat</span>, main<span class="op">=</span><span class="st">"Test statistics"</span>, pch<span class="op">=</span><span class="va">pch</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topleft"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"H0"</span>, <span class="st">"H1"</span><span class="op">)</span>, pch<span class="op">=</span><span class="va">pch</span>, col<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="gaussianSamples-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## one-sample data</span></span>
-<span class="r-in"><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu">gaussianSamples</span><span class="op">(</span><span class="va">m</span>, <span class="va">rho</span>, <span class="va">n</span>, <span class="va">pi0</span>, SNR<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">tests</span> <span class="op">&lt;-</span> <span class="fu"><a href="testByRandomization.html">testByRandomization</a></span><span class="op">(</span><span class="va">sim</span><span class="op">$</span><span class="va">X</span>, B <span class="op">=</span> <span class="va">B</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## show test statistics</span></span>
-<span class="r-in"><span class="va">pch</span> <span class="op">&lt;-</span> <span class="fl">20</span></span>
-<span class="r-in"><span class="va">colStat</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">+</span><span class="va">sim</span><span class="op">$</span><span class="va">H</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tests</span><span class="op">$</span><span class="cn">T</span>, col<span class="op">=</span><span class="va">colStat</span>, main<span class="op">=</span><span class="st">"Test statistics"</span>, pch<span class="op">=</span><span class="va">pch</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topleft"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"H0"</span>, <span class="st">"H1"</span><span class="op">)</span>, pch<span class="op">=</span><span class="va">pch</span>, col<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## one-sample data</span></span></span>
+<span class="r-in"><span><span class="va">sim</span> <span class="op">&lt;-</span> <span class="fu">gaussianSamples</span><span class="op">(</span><span class="va">m</span>, <span class="va">rho</span>, <span class="va">n</span>, <span class="va">pi0</span>, SNR<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tests</span> <span class="op">&lt;-</span> <span class="fu"><a href="testByRandomization.html">testByRandomization</a></span><span class="op">(</span><span class="va">sim</span><span class="op">$</span><span class="va">X</span>, B <span class="op">=</span> <span class="va">B</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## show test statistics</span></span></span>
+<span class="r-in"><span><span class="va">pch</span> <span class="op">&lt;-</span> <span class="fl">20</span></span></span>
+<span class="r-in"><span><span class="va">colStat</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">+</span><span class="va">sim</span><span class="op">$</span><span class="va">H</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">tests</span><span class="op">$</span><span class="cn">T</span>, col<span class="op">=</span><span class="va">colStat</span>, main<span class="op">=</span><span class="st">"Test statistics"</span>, pch<span class="op">=</span><span class="va">pch</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topleft"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"H0"</span>, <span class="st">"H1"</span><span class="op">)</span>, pch<span class="op">=</span><span class="va">pch</span>, col<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="gaussianSamples-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -184,7 +199,7 @@ sample to belong to the non-zero-mean population.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>
