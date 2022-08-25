@@ -142,7 +142,7 @@ Must be one of "two.sided" (default), "greater" or "less". As in
 <span class="r-in"><span><span class="va">categ</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>, mean <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">fwt</span> <span class="op">&lt;-</span> <span class="fu">rowPearsonCorrelationTests</span><span class="op">(</span><span class="va">mat</span>, <span class="va">categ</span>, alternative <span class="op">=</span> <span class="st">"greater"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    user  system elapsed </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   0.004   0.000   0.005 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   0.005   0.000   0.005 </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">fwt</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ p.value  : num [1:300] 0.746 0.11 0.813 0.784 0.162 ...</span>
