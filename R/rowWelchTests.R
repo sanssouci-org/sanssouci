@@ -76,9 +76,11 @@ rowWelchTests <- function(X, categ,
   mY <- divide_cols(sumY, nY)
 
   num <- sum2X - divide_cols(sumX^2, nX)
+  num <- abs(num) # fix rare corner cases where num ~= -1e-15
   sX <- sqrt(divide_cols(num, nX - 1))
 
   num <- sum2Y - divide_cols(sumY^2, nY)
+  num <- abs(num) # fix rare corner cases where num ~= -1e-15
   sY <- sqrt(divide_cols(num, nY - 1))
 
   suffWelchTests(mX, mY, sX, sY, nX, nY, alternative = alternative)
