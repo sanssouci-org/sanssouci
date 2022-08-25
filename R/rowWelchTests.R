@@ -57,39 +57,39 @@
 #' 
 rowWelchTests <- function(X, categ, 
                           alternative = c("two.sided", "less", "greater")) {
-    alternative <- match.arg(alternative)
-    stopifnot(all(categ %in% c(0, 1)))
-    
-    categ0 <- as.matrix(categ)
-    categ1 <- 1 - categ0
-    
-    nX <- as.matrix(colSums(categ0))
-    nY <- as.matrix(colSums(categ1))
-    
-    sumX <- X %*% categ0
-    sumY <- X %*% categ1
-    XX <- X * X
-    sum2X <- XX %*% categ0
-    sum2Y <- XX %*% categ1
-    
-    mX <- divide_cols(sumX, nX)
-    mY <- divide_cols(sumY, nY)
-    
-    num <- sum2X - divide_cols(sumX^2, nX)
-    sX <- sqrt(divide_cols(num, nX - 1))
-    
-    num <- sum2Y - divide_cols(sumY^2, nY)
-    sY <- sqrt(divide_cols(num, nY - 1))
-    
-    sumX <- NULL
-    sumY <- NULL
-    sum2X <- NULL
-    sum2Y <- NULL
-    num <- NULL
-    rm(sumX, sumY, sum2X, sum2Y, num)
-    gc()
-    
-    suffWelchTests(mX, mY, sX, sY, nX, nY, alternative = alternative)
+  alternative <- match.arg(alternative)
+  stopifnot(all(categ %in% c(0, 1)))
+  
+  categ0 <- as.matrix(categ)
+  categ1 <- 1 - categ0
+  
+  nX <- as.matrix(colSums(categ0))
+  nY <- as.matrix(colSums(categ1))
+  
+  sumX <- X %*% categ0
+  sumY <- X %*% categ1
+  XX <- X * X
+  sum2X <- XX %*% categ0
+  sum2Y <- XX %*% categ1
+  
+  mX <- divide_cols(sumX, nX)
+  mY <- divide_cols(sumY, nY)
+  
+  num <- sum2X - divide_cols(sumX^2, nX)
+  sX <- sqrt(divide_cols(num, nX - 1))
+  
+  num <- sum2Y - divide_cols(sumY^2, nY)
+  sY <- sqrt(divide_cols(num, nY - 1))
+  
+  sumX <- NULL
+  sumY <- NULL
+  sum2X <- NULL
+  sum2Y <- NULL
+  num <- NULL
+  rm(sumX, sumY, sum2X, sum2Y, num)
+  gc()
+  
+  suffWelchTests(mX, mY, sX, sY, nX, nY, alternative = alternative)
 }
 
 #' Welch test from sufficient statistics
@@ -140,86 +140,86 @@ rowWelchTests <- function(X, categ,
 #' all.equal(swt$parameter, target$parameter, check.attributes = FALSE)
 #' 
 suffWelchTests <- function(mx, my, sx, sy, nx, ny, 
-                          alternative = c("two.sided", "less", "greater")) {
-    alternative <- match.arg(alternative)
-    
-    
-    if (is.vector(mx)) {
-        if (!all(is.vector(my), is.vector(sx), is.vector(sy),
-                      is.vector(nx), is.vector(ny))) {
-            stop("All numeric inputs should be of the same type (either vector or matrix)")
-        }
-        mx <- as.matrix(mx)
-        my <- as.matrix(my)
-        sx <- as.matrix(sx)
-        sy <- as.matrix(sy)
-        nx <- as.matrix(nx)
-        ny <- as.matrix(ny)
-    } else if (is.matrix(mx)) {
-        if (!all(is.matrix(my), is.matrix(sx), is.matrix(sy),
-                 is.matrix(nx), is.matrix(ny))) {
-            stop("All numeric inputs should be of the same type (either vector or matrix)")
-        }
-    } else {
-        stop("Numeric inputs should be vectors or matrices")
+                           alternative = c("two.sided", "less", "greater")) {
+  alternative <- match.arg(alternative)
+  
+  
+  if (is.vector(mx)) {
+    if (!all(is.vector(my), is.vector(sx), is.vector(sy),
+             is.vector(nx), is.vector(ny))) {
+      stop("All numeric inputs should be of the same type (either vector or matrix)")
     }
-    sse.x <- divide_cols(sx^2, nx)  ## sc <-> sqrt((sum2c - sumc^2/nc)/(nc-1))
-    sse.y <- divide_cols(sy^2, ny)
-    
-    sse <- sse.x + sse.y
-    sse2 <- sse^2
-    
-    ## test statistic
-    stat <- (mx - my)/sqrt(sse)
-    ## names(stat) <- rep("t", length(stat))
-    
-    ## approximate degrees of freedom (Welch-Satterthwaite)
-    deno <- divide_cols(sse.x^2, nx-1) +
-        divide_cols(sse.y^2, ny-1)
-    df <- sse2/deno
-    deno <- NULL; rm(deno)
-    sse <- NULL; rm(sse)
-    sse.x <- NULL; rm(sse.x)
-    sse.y <- NULL; rm(sse.y)
-    sse2 <- NULL; rm(sse2)
-    ## names(df) <- "df"
-    
-    # mean difference
-    meanDiff <- mx - my
-    
-    # coerce to vector if single column
-    if (ncol(stat) == 1) {
-        stat <- stat[, 1]
-        stopifnot(ncol(df) == 1)
-        df <- df[, 1]
-        stopifnot(ncol(meanDiff) == 1)
-        meanDiff <- meanDiff[, 1]
+    mx <- as.matrix(mx)
+    my <- as.matrix(my)
+    sx <- as.matrix(sx)
+    sy <- as.matrix(sy)
+    nx <- as.matrix(nx)
+    ny <- as.matrix(ny)
+  } else if (is.matrix(mx)) {
+    if (!all(is.matrix(my), is.matrix(sx), is.matrix(sy),
+             is.matrix(nx), is.matrix(ny))) {
+      stop("All numeric inputs should be of the same type (either vector or matrix)")
     }
-    
-    ## p-value
-    pval <- switch(alternative,
-                   "two.sided" = 2*(1 - pt(abs(stat), df = df)),
-                   "greater" = 1 - pt(stat, df = df),
-                   "less" = pt(stat, df = df))
-
-    list(statistic = stat,
-         parameter = df,
-         p.value = pval, 
-         estimate = meanDiff)
+  } else {
+    stop("Numeric inputs should be vectors or matrices")
+  }
+  sse.x <- divide_cols(sx^2, nx)  ## sc <-> sqrt((sum2c - sumc^2/nc)/(nc-1))
+  sse.y <- divide_cols(sy^2, ny)
+  
+  sse <- sse.x + sse.y
+  sse2 <- sse^2
+  
+  ## test statistic
+  stat <- (mx - my)/sqrt(sse)
+  ## names(stat) <- rep("t", length(stat))
+  
+  ## approximate degrees of freedom (Welch-Satterthwaite)
+  deno <- divide_cols(sse.x^2, nx-1) +
+    divide_cols(sse.y^2, ny-1)
+  df <- sse2/deno
+  deno <- NULL; rm(deno)
+  sse <- NULL; rm(sse)
+  sse.x <- NULL; rm(sse.x)
+  sse.y <- NULL; rm(sse.y)
+  sse2 <- NULL; rm(sse2)
+  ## names(df) <- "df"
+  
+  # mean difference
+  meanDiff <- mx - my
+  
+  # coerce to vector if single column
+  if (ncol(stat) == 1) {
+    stat <- stat[, 1]
+    stopifnot(ncol(df) == 1)
+    df <- df[, 1]
+    stopifnot(ncol(meanDiff) == 1)
+    meanDiff <- meanDiff[, 1]
+  }
+  
+  ## p-value
+  pval <- switch(alternative,
+                 "two.sided" = 2*(1 - pt(abs(stat), df = df)),
+                 "greater" = 1 - pt(stat, df = df),
+                 "less" = pt(stat, df = df))
+  
+  list(statistic = stat,
+       parameter = df,
+       p.value = pval, 
+       estimate = meanDiff)
 }
 
 divide_cols <- function(a, b) sweep(a, 2, b, "/")
 
 categCheck <- function(categ, n) {
-    name <- as.character(substitute(categ))
-    if (length(categ) != n) {
-        stop(name, " should be of length ", n, ", not", length(categ))
-    }
-    categ <- as.factor(categ)
-    cats <- levels(categ)
-    if (!identical(cats, c("0", "1"))) {
-        stop("'", name, "' should consist only of '0' and '1'!")
-    }
+  name <- as.character(substitute(categ))
+  if (length(categ) != n) {
+    stop(name, " should be of length ", n, ", not", length(categ))
+  }
+  categ <- as.factor(categ)
+  cats <- levels(categ)
+  if (!identical(cats, c("0", "1"))) {
+    stop("'", name, "' should consist only of '0' and '1'!")
+  }
 }
 
 #' Welch test from sufficient statistics
@@ -269,59 +269,59 @@ categCheck <- function(categ, n) {
 
 #' @noRd
 suffWelchTests1 <- function(mx, my, sx, sy, nx, ny, 
-                          alternative = c("two.sided", "less", "greater")) {
-    alternative <- match.arg(alternative)
-    #    if (alternative != "two.sided") stop("altenative", alternative, "not implemented yet!")
-    
-    ## sanity checks
-    p <- length(mx)
-    stopifnot(length(my)==p)
-    stopifnot(length(sx)==p)
-    stopifnot(length(sy)==p)
-    stopifnot(length(nx) %in% c(1, p))
-    stopifnot(length(ny) %in% c(1, p))
-    
-    sse.x <- sx^2/nx  ## sc <- sqrt((sum2c - sumc^2/nc)/(nc-1))
-    sse.y <- sy^2/ny
-    
-    sse <- sse.x + sse.y
-    sse2 <- sse^2
-    
-    ## test statistic
-    stat <- (mx - my)/sqrt(sse)
-    ## names(stat) <- rep("t", length(stat))
-    
-    ## approximate degrees of freedom (Welch-Satterthwaite)
-    df <- sse2 / (sse.x^2 /(nx-1) + sse.y^2 / (ny-1))
-    ## names(df) <- "df"
-    
-    ## p-value
-    pval <- switch(alternative,
-                   "two.sided" = 2*(1 - pt(abs(stat), df = df)),
-                   "greater" = 1 - pt(stat, df = df),
-                   "less" = pt(stat, df = df))
-    rm(sse, sse2, sse.x, sse.y)
-    gc()
-    list(statistic = stat,
-         parameter = df,
-         p.value = pval,
-         estimate = mx - my)
+                            alternative = c("two.sided", "less", "greater")) {
+  alternative <- match.arg(alternative)
+  #    if (alternative != "two.sided") stop("altenative", alternative, "not implemented yet!")
+  
+  ## sanity checks
+  p <- length(mx)
+  stopifnot(length(my)==p)
+  stopifnot(length(sx)==p)
+  stopifnot(length(sy)==p)
+  stopifnot(length(nx) %in% c(1, p))
+  stopifnot(length(ny) %in% c(1, p))
+  
+  sse.x <- sx^2/nx  ## sc <- sqrt((sum2c - sumc^2/nc)/(nc-1))
+  sse.y <- sy^2/ny
+  
+  sse <- sse.x + sse.y
+  sse2 <- sse^2
+  
+  ## test statistic
+  stat <- (mx - my)/sqrt(sse)
+  ## names(stat) <- rep("t", length(stat))
+  
+  ## approximate degrees of freedom (Welch-Satterthwaite)
+  df <- sse2 / (sse.x^2 /(nx-1) + sse.y^2 / (ny-1))
+  ## names(df) <- "df"
+  
+  ## p-value
+  pval <- switch(alternative,
+                 "two.sided" = 2*(1 - pt(abs(stat), df = df)),
+                 "greater" = 1 - pt(stat, df = df),
+                 "less" = pt(stat, df = df))
+  rm(sse, sse2, sse.x, sse.y)
+  gc()
+  list(statistic = stat,
+       parameter = df,
+       p.value = pval,
+       estimate = mx - my)
 }
 
 rowWelchTests1 <- function(mat, categ, alternative = c("two.sided", "less", "greater")) {
-    alternative <- match.arg(alternative)
-    categCheck(categ, ncol(mat))
-    
-    sstats <- getSummaryStats(mat, categ = categ)
-    Y <- sstats[["0"]]
-    X <- sstats[["1"]]  ## as per the doc of t.test:
-    ## 'alternative = "greater"' is the alternative that 'x' has a larger  mean
-    ## than 'y'.
-    swt <- suffWelchTests1(X[["mean"]], Y[["mean"]],
-                          X[["sd"]], Y[["sd"]],
-                          X[["n"]], Y[["n"]],
-                          alternative = alternative)
-    swt
+  alternative <- match.arg(alternative)
+  categCheck(categ, ncol(mat))
+  
+  sstats <- getSummaryStats(mat, categ = categ)
+  Y <- sstats[["0"]]
+  X <- sstats[["1"]]  ## as per the doc of t.test:
+  ## 'alternative = "greater"' is the alternative that 'x' has a larger  mean
+  ## than 'y'.
+  swt <- suffWelchTests1(X[["mean"]], Y[["mean"]],
+                         X[["sd"]], Y[["sd"]],
+                         X[["n"]], Y[["n"]],
+                         alternative = alternative)
+  swt
 }
 
 #' Convert a matrix of observations into summary statistics
@@ -349,25 +349,25 @@ rowWelchTests1 <- function(mat, categ, alternative = c("two.sided", "less", "gre
 #' cls <- rep(c(0, 1), times = c(27, 11))
 #' stats <- getSummaryStats(mat, categ = cls) 
 getSummaryStats <- function(mat, categ) {
-    stopifnot(ncol(mat) == length(categ))
-    cats <- sort(unique(categ))
-    res <- list()
-    for (cc in seq(along = cats)) {
-        ww <- which(categ == cats[cc])
-        matc <- mat[, ww, drop = FALSE]
-        
-        sumc <- rowSums(matc)
-        sum2c <- rowSums(matc^2)
-        nc <- length(ww)
-        mc <- sumc/nc
-        sc <- sqrt((sum2c - sumc^2/nc)/(nc-1))
-        
-        res[[cc]] <- list(sum = sumc,
-                          sum2 = sum2c,
-                          n = nc,
-                          mean = mc,
-                          sd = sc)
-    }
-    names(res) <- cats
-    return(res)
+  stopifnot(ncol(mat) == length(categ))
+  cats <- sort(unique(categ))
+  res <- list()
+  for (cc in seq(along = cats)) {
+    ww <- which(categ == cats[cc])
+    matc <- mat[, ww, drop = FALSE]
+    
+    sumc <- rowSums(matc)
+    sum2c <- rowSums(matc^2)
+    nc <- length(ww)
+    mc <- sumc/nc
+    sc <- sqrt((sum2c - sumc^2/nc)/(nc-1))
+    
+    res[[cc]] <- list(sum = sumc,
+                      sum2 = sum2c,
+                      n = nc,
+                      mean = mc,
+                      sd = sc)
+  }
+  names(res) <- cats
+  return(res)
 }
