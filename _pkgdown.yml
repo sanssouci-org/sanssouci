@@ -30,7 +30,6 @@ reference:
   - calibrate
   - confCurveFromFam
   - curveMaxFP
-  - curveMaxFP_old
   - gaussianSamples
   - gaussianTestStatistics
   - get_perm
@@ -44,6 +43,7 @@ reference:
   - plotConfCurve
   - posthocBySimes0Rcpp
   - reference-families
+  - rowPearsonCorrelationTests
   - rowWilcoxonTests
   - rowWelchTests
   - rowZTests
