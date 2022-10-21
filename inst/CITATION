@@ -63,4 +63,15 @@ citEntry(
   url      = "https://projecteuclid.org/euclid.aos/1594972818",
   textVersion = "Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148."
   )
+  
+citEntry(
+  entry       = "Article", 
+  title       = "Powerful and interpretable control of false discoveries in two-group differential expression studies", 
+  author      = personList(as.person("Nicolas Enjalbert-Courrech"), 
+                           as.person("Pierre Neuvial")), 
+  journal      = "Bioinformatics", 
+  year        = 2022, 
+  url         = "https://doi.org/10.1093/bioinformatics/btac693",
+  textVersion = "Enjalbert-Courrech, N. & Neuvial, P. (2022). Powerful and interpretable control of false discoveries in two-group differential expression studies. Bioinformatics. doi: 10.1093/bioinformatcs/btac693"
+)
 
