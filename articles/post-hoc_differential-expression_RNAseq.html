@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sanssouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.8</span>
       </span>
     </div>
 
@@ -75,7 +75,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/pneuvial/sanssouci/" class="external-link">
+  <a href="https://github.com/sanssouci-org/sanssouci/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -96,9 +96,9 @@
       <h1 data-toc-skip>Permutation-based post hoc inference for differential gene expression studies: RNAseq data</h1>
                         <h4 data-toc-skip class="author">Nicolas Enjalbert Courrech and Pierre Neuvial</h4>
             
-            <h4 data-toc-skip class="date">2022-08-25</h4>
+            <h4 data-toc-skip class="date">2022-11-11</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/pneuvial/sanssouci/blob/HEAD/vignettes/post-hoc_differential-expression_RNAseq.Rmd" class="external-link"><code>vignettes/post-hoc_differential-expression_RNAseq.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sanssouci-org/sanssouci/blob/HEAD/vignettes/post-hoc_differential-expression_RNAseq.Rmd" class="external-link"><code>vignettes/post-hoc_differential-expression_RNAseq.Rmd</code></a></small>
       <div class="hidden name"><code>post-hoc_differential-expression_RNAseq.Rmd</code></div>
 
     </div>
@@ -113,10 +113,10 @@
 <p>The methods described in this vignette have been introduced in the paper <span class="citation">Blanchard, Neuvial, and Roquain (2020)</span> and in the book chapter <span class="citation">Blanchard, Neuvial, and Roquain (2021)</span>. A shiny application for volcano plots is also available from <a href="https://shiny-iidea-sanssouci.apps.math.cnrs.fr/" class="external-link uri">https://shiny-iidea-sanssouci.apps.math.cnrs.fr/</a>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span> <span class="op">||</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"ggplot2"</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://github.com/pneuvial/sanssouci" class="external-link">"sanssouci"</a></span><span class="op">)</span> <span class="op">||</span> <span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"pneuvial/sanssouci@develop"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://github.com/sanssouci-org/sanssouci" class="external-link">"sanssouci"</a></span><span class="op">)</span> <span class="op">||</span> <span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"sanssouci-org/sanssouci@develop"</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/pneuvial/sanssouci" class="external-link">"sanssouci"</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/sanssouci-org/sanssouci" class="external-link">"sanssouci"</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/HenrikBengtsson/matrixStats" class="external-link">"matrixStats"</a></span><span class="op">)</span></span></code></pre></div>
 <p>Set the seed of the random number generator for numerical reproducibility of the results:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -182,6 +182,8 @@
 <span><span class="va">cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"black"</span>, <span class="st">"darkgray"</span><span class="op">)</span></span>
 <span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plotConfCurve.html">plotConfCurve</a></span><span class="op">(</span><span class="va">conf_bounds</span>, xmax <span class="op">=</span> <span class="fl">5000</span>, cols <span class="op">=</span> <span class="va">cols</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use `linewidth` instead.</span></span>
 <span><span class="co"># ggsave(p, file = "conf-curve.pdf", width = 6, height = 4)</span></span></code></pre></div>
 <p>This plot can be interpreted as follows: among the 2000 most significant genes, the number of truly differentially expressed genes is at least 1163 (right panel). Equivalently, the FDP among these 2000 genes is at most 0.42 (left panel).</p>
 <p>The dashed gray curve is obtained by the parametric Simes method introduced by <span class="citation">Goeman and Solari (2011)</span>. The comparison between the two curves illustrates the gain in power obtained by using permutations methods to adapt to the dependence between genes. In this example, the parametric Simes method gives the following guarantees: among the 2000 most significant genes, the number of truly differentially expressed genes is at least 928 (right panel). Equivalently, the FDP among these 2000 genes is at most 0.54 (left panel).</p>
@@ -270,9 +272,9 @@
 </h2>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; R version 4.2.1 (2022-06-23)</span></span>
+<span><span class="co">#&gt; R version 4.2.2 (2022-10-31)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 20.04.4 LTS</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 20.04.5 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
 <span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.9.0</span></span>
@@ -288,28 +290,28 @@
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] edgeR_3.38.4       limma_3.52.2       matrixStats_0.62.0 sanssouci_0.12.7  </span></span>
-<span><span class="co">#&gt; [5] ggplot2_3.3.6     </span></span>
+<span><span class="co">#&gt; [1] edgeR_3.38.4       limma_3.52.4       matrixStats_0.62.0 sanssouci_0.12.8  </span></span>
+<span><span class="co">#&gt; [5] ggplot2_3.4.0     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] matrixTests_0.1.9.1 locfit_1.5-9.6      xfun_0.32          </span></span>
-<span><span class="co">#&gt;  [4] bslib_0.4.0         purrr_0.3.4         lattice_0.20-45    </span></span>
-<span><span class="co">#&gt;  [7] colorspace_2.0-3    vctrs_0.4.1         generics_0.1.3     </span></span>
-<span><span class="co">#&gt; [10] htmltools_0.5.3     yaml_2.3.5          utf8_1.2.2         </span></span>
-<span><span class="co">#&gt; [13] rlang_1.0.4         pkgdown_2.0.6       jquerylib_0.1.4    </span></span>
+<span><span class="co">#&gt;  [1] matrixTests_0.1.9.1 locfit_1.5-9.6      xfun_0.34          </span></span>
+<span><span class="co">#&gt;  [4] bslib_0.4.1         purrr_0.3.5         lattice_0.20-45    </span></span>
+<span><span class="co">#&gt;  [7] colorspace_2.0-3    vctrs_0.5.0         generics_0.1.3     </span></span>
+<span><span class="co">#&gt; [10] htmltools_0.5.3     yaml_2.3.6          utf8_1.2.2         </span></span>
+<span><span class="co">#&gt; [13] rlang_1.0.6         pkgdown_2.0.6       jquerylib_0.1.4    </span></span>
 <span><span class="co">#&gt; [16] pillar_1.8.1        glue_1.6.2          withr_2.5.0        </span></span>
-<span><span class="co">#&gt; [19] lifecycle_1.0.1     stringr_1.4.1       munsell_0.5.0      </span></span>
-<span><span class="co">#&gt; [22] gtable_0.3.0        ragg_1.2.2          codetools_0.2-18   </span></span>
-<span><span class="co">#&gt; [25] memoise_2.0.1       evaluate_0.16       labeling_0.4.2     </span></span>
+<span><span class="co">#&gt; [19] lifecycle_1.0.3     stringr_1.4.1       munsell_0.5.0      </span></span>
+<span><span class="co">#&gt; [22] gtable_0.3.1        ragg_1.2.4          codetools_0.2-18   </span></span>
+<span><span class="co">#&gt; [25] memoise_2.0.1       evaluate_0.18       labeling_0.4.2     </span></span>
 <span><span class="co">#&gt; [28] knitr_1.40          fastmap_1.1.0       fansi_1.0.3        </span></span>
 <span><span class="co">#&gt; [31] highr_0.9           Rcpp_1.0.9          scales_1.2.1       </span></span>
-<span><span class="co">#&gt; [34] cachem_1.0.6        desc_1.4.1          jsonlite_1.8.0     </span></span>
+<span><span class="co">#&gt; [34] cachem_1.0.6        desc_1.4.2          jsonlite_1.8.3     </span></span>
 <span><span class="co">#&gt; [37] farver_2.1.1        systemfonts_1.0.4   fs_1.5.2           </span></span>
-<span><span class="co">#&gt; [40] textshaping_0.3.6   digest_0.6.29       stringi_1.7.8      </span></span>
-<span><span class="co">#&gt; [43] grid_4.2.1          rprojroot_2.0.3     cli_3.3.0          </span></span>
-<span><span class="co">#&gt; [46] tools_4.2.1         magrittr_2.0.3      sass_0.4.2         </span></span>
-<span><span class="co">#&gt; [49] tibble_3.1.8        pkgconfig_2.0.3     Matrix_1.4-1       </span></span>
-<span><span class="co">#&gt; [52] rmarkdown_2.16      R6_2.5.1            compiler_4.2.1</span></span></code></pre></div>
+<span><span class="co">#&gt; [40] textshaping_0.3.6   digest_0.6.30       stringi_1.7.8      </span></span>
+<span><span class="co">#&gt; [43] grid_4.2.2          rprojroot_2.0.3     cli_3.4.1          </span></span>
+<span><span class="co">#&gt; [46] tools_4.2.2         magrittr_2.0.3      sass_0.4.2         </span></span>
+<span><span class="co">#&gt; [49] tibble_3.1.8        pkgconfig_2.0.3     Matrix_1.5-3       </span></span>
+<span><span class="co">#&gt; [52] rmarkdown_2.18      R6_2.5.1            compiler_4.2.2</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="reproducibility">Reproducibility<a class="anchor" aria-label="anchor" href="#reproducibility"></a>
@@ -365,7 +367,7 @@
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by <a href="https://www.math.univ-toulouse.fr/~pneuvial/" class="external-link">Pierre Neuvial</a>, <a href="https://www.imo.universite-paris-saclay.fr/~blanchard/" class="external-link">Gilles Blanchard</a>, <a href="https://durandg12.github.io/" class="external-link">Guillermo Durand</a>, Nicolas Enjalbert-Courrech, <a href="https://etienneroquain-81.webself.net/" class="external-link">Etienne Roquain</a>.</p>
+<p>Developed by <a href="https://www.math.univ-toulouse.fr/~pneuvial/" class="external-link">Pierre Neuvial</a>, <a href="https://www.imo.universite-paris-saclay.fr/~blanchard/" class="external-link">Gilles Blanchard</a>, <a href="https://durandg12.github.io/" class="external-link">Guillermo Durand</a>, <a href="https://nicolas-enjalbert.github.io/" class="external-link">Nicolas Enjalbert-Courrech</a>, <a href="https://etienneroquain-81.webself.net/" class="external-link">Etienne Roquain</a>.</p>
 </div>
 
 <div class="pkgdown">

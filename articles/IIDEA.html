@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">sanssouci</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.12.8</span>
       </span>
     </div>
 
@@ -75,7 +75,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/pneuvial/sanssouci/" class="external-link">
+  <a href="https://github.com/sanssouci-org/sanssouci/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -96,9 +96,9 @@
       <h1 data-toc-skip>IIDEA: Interactive Inference for Differential Expression Analyses</h1>
                         <h4 data-toc-skip class="author">Nicolas Enjalbert-Courrech and Pierre Neuvial</h4>
             
-            <h4 data-toc-skip class="date">2022-08-25</h4>
+            <h4 data-toc-skip class="date">2022-11-11</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/pneuvial/sanssouci/blob/HEAD/vignettes/IIDEA.Rmd" class="external-link"><code>vignettes/IIDEA.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sanssouci-org/sanssouci/blob/HEAD/vignettes/IIDEA.Rmd" class="external-link"><code>vignettes/IIDEA.Rmd</code></a></small>
       <div class="hidden name"><code>IIDEA.Rmd</code></div>
 
     </div>
@@ -176,7 +176,7 @@
 </h4>
 <p>The first data set available in the list of public data sets is the Leukemia data set studied in <span class="citation">Bourgon, Gentleman, and Huber (2010)</span>.</p>
 <p>This data set consists of gene expression measurements for <span class="math inline">\(n = 79\)</span> patients with B-cell acute lymphoblastic leukemia (ALL) <span class="citation">Chiaretti et al. (2005)</span>. These patients are classified into two subgoups, depending on whether or not they harbor a specific mutation called “BCR/ABL”. A Welch <span class="math inline">\(T\)</span>test of equality of group mean expression is applied to each gene.</p>
-<p>This data set is available from the R package <a href="https://github.com/pneuvial/sanssouci.data" class="external-link"><code>sanssouci.data</code></a>, and also studied in the <a href="https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html">differential expression vignette</a> of the SansSouci package.</p>
+<p>This data set is available from the R package <a href="https://github.com/sanssouci-org/sanssouci.data" class="external-link"><code>sanssouci.data</code></a>, and also studied in the <a href="post-hoc_differential-expression.html">differential expression vignette</a> of the SansSouci package.</p>
 </div>
 <div class="section level4">
 <h4 id="gseabenchmarker-data">GSEAbenchmarkeR data<a class="anchor" aria-label="anchor" href="#gseabenchmarker-data"></a>
@@ -213,7 +213,7 @@
 </h2>
 <p>IIDEA is deployed at . No login is required, and the data sets uploaded by users are not stored on the server side. The source code of the R package  which contains the source files for IIDEA, is available at . This allows users to run IIDEA on a local machine or deploy it on their own servers if desired. Once the ‘remotes’ package is installed, IIDEA can be run locally from an R session by executing the following commands:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"pneuvial/sanssouci"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"sanssouci-org/sanssouci"</span><span class="op">)</span></span>
 <span><span class="fu">shiny</span><span class="fu">::</span><span class="fu">runApp</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"shiny-examples/volcano-plot"</span>, package <span class="op">=</span> <span class="st">"sanssouci"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>By default, only the Leukemia data set is available for a local installation. To add the nine other public data sets, you may run the following code:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
@@ -224,9 +224,9 @@
 <div class="section level2">
 <h2 id="methods">Methods<a class="anchor" aria-label="anchor" href="#methods"></a>
 </h2>
-<p>IIDEA leverages post hoc inference methods implemented in the R package <a href="https://github.com/pneuvial/sanssouci" class="external-link"><code>sanssouci</code></a>.</p>
+<p>IIDEA leverages post hoc inference methods implemented in the R package <a href="https://github.com/sanssouci-org/sanssouci" class="external-link"><code>sanssouci</code></a>.</p>
 <p>Post hoc inference is a recent field stemming from the multiple testing literature where users are allowed to freely select hypotheses of interest after “seeing the data”, without compromising statistical validity despite the issue of “cherry-picking” (<span class="citation">Blanchard, Neuvial, and Roquain (2021)</span>, <span class="citation">Blanchard, Neuvial, and Roquain (2020)</span>, <span class="citation">Goeman and Solari (2011)</span>).</p>
-<p>The methods implemented by IIDEA allow for valid inference without requiring assumptions on the dependence between genes. Instead, such dependencies are <em>estimated</em> from the data using permutation techniques, making our methods both mathematically valid and statistically powerful (see e.g. <a href="https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html" class="uri">https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html</a>).</p>
+<p>The methods implemented by IIDEA allow for valid inference without requiring assumptions on the dependence between genes. Instead, such dependencies are <em>estimated</em> from the data using permutation techniques, making our methods both mathematically valid and statistically powerful (see e.g. <a href="https://sanssouci-org.github.io/sanssouci/articles/post-hoc_differential-expression.html" class="uri">https://sanssouci-org.github.io/sanssouci/articles/post-hoc_differential-expression.html</a>).</p>
 <p>The parameters for this estimation step can be customized by clicking “Advanced parameters”.</p>
 </div>
 <div class="section level2">
@@ -271,7 +271,7 @@
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by <a href="https://www.math.univ-toulouse.fr/~pneuvial/" class="external-link">Pierre Neuvial</a>, <a href="https://www.imo.universite-paris-saclay.fr/~blanchard/" class="external-link">Gilles Blanchard</a>, <a href="https://durandg12.github.io/" class="external-link">Guillermo Durand</a>, Nicolas Enjalbert-Courrech, <a href="https://etienneroquain-81.webself.net/" class="external-link">Etienne Roquain</a>.</p>
+<p>Developed by <a href="https://www.math.univ-toulouse.fr/~pneuvial/" class="external-link">Pierre Neuvial</a>, <a href="https://www.imo.universite-paris-saclay.fr/~blanchard/" class="external-link">Gilles Blanchard</a>, <a href="https://durandg12.github.io/" class="external-link">Guillermo Durand</a>, <a href="https://nicolas-enjalbert.github.io/" class="external-link">Nicolas Enjalbert-Courrech</a>, <a href="https://etienneroquain-81.webself.net/" class="external-link">Etienne Roquain</a>.</p>
 </div>
 
 <div class="pkgdown">
