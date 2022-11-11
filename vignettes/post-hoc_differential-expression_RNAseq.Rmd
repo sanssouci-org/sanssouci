@@ -36,7 +36,7 @@ The methods described in this vignette have been introduced in the paper @blanch
 
 ```{r install-r-packages, results='hide', message=FALSE, eval=FALSE}
 require("ggplot2") || install.packages("ggplot2")
-require("sanssouci") || remotes::install_github("pneuvial/sanssouci@develop")
+require("sanssouci") || remotes::install_github("sanssouci-org/sanssouci@develop")
 ```
 
 
