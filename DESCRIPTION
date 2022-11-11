@@ -1,6 +1,6 @@
 Package: sanssouci
-Version: 0.12.7
-Date: 2022-08-18
+Version: 0.12.8
+Date: 2022-11-11
 Title: Post Hoc Multiple Testing Inference
 Authors@R: c(person("Pierre", "Neuvial", role=c("aut", "cre"),
                  email="pierre.neuvial@math.univ-toulouse.fr",
