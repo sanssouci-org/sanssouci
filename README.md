@@ -19,13 +19,13 @@ Typical use cases include:
 
   - **Differential gene expression (DGE) studies in genomics**:
       - see vignettes dedicated to [microarray
-        data](https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html)
+        data](articles/post-hoc_differential-expression.html)
         and [RNAseq
-        data](https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression_RNAseq.html)
+        data](articles/post-hoc_differential-expression_RNAseq.html)
       - run [volcano plot shiny
         app](https://shiny-iidea-sanssouci.apps.math.cnrs.fr/)
   - **fMRI studies in neuroimaging**: see [fMRI
-    vignette](https://pneuvial.github.io/sanssouci/articles/post-hoc_fMRI.html).
+    vignette](articles/post-hoc_fMRI.html).
 
 In both cases, the permutation-based post hoc inference methods
 implemented in the `sanssouci` package outperform classical post hoc
@@ -35,10 +35,10 @@ bounds based on probabilistic inequalities.
 
 We briefly illustrate the case of differential gene expression study
 (see dedicated
-[vignette](https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html)
+[vignette](articles/post-hoc_differential-expression.html)
 for more information). We start by creating an object of class
 `sanssouci` from gene expression data available from the
-[sanssouci.data](https://github.com/pneuvial/sanssouci.data) package,
+[sanssouci.data](https://github.com/sanssouci-org/sanssouci.data) package,
 
 ``` r
 library("sanssouci")
