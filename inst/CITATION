@@ -11,13 +11,13 @@ citEntry(entry="Manual",
                                as.person("Nicolas Enjalbert-Courrech")),
          year = year,
          note = vers,
-         url =  "https://pneuvial.github.io/sanssouci",
+         url =  "https://sanssouci-org.github.io/sanssouci",
          textVersion =
          paste("Pierre Neuvial, Guillermo Durand and Nicolas Enjalbert-Courrech (",
                year,
                "). sanssouci: ",
                title, ". ",
-               vers, ". https://pneuvial.github.io/sanssouci", sep=""))
+               vers, ". https://sanssouci-org.github.io/sanssouci", sep=""))
 
 citEntry(
   entry     = "InBook",

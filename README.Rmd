@@ -16,8 +16,8 @@ knitr::opts_chunk$set(
 # sanssouci
 
 <!-- badges: start -->
-  [![R build status](https://github.com/pneuvial/sanssouci/workflows/R-CMD-check/badge.svg)](https://github.com/pneuvial/sanssouci/actions)
-[![Coverage Status](https://codecov.io/gh/pneuvial/sanssouci/branch/develop/graph/badge.svg)](https://codecov.io/github/pneuvial/sanssouci/branch/develop)
+  [![R build status](https://github.com/sanssouci-org/sanssouci/workflows/R-CMD-check/badge.svg)](https://github.com/sanssouci-org/sanssouci/actions)
+[![Coverage Status](https://codecov.io/gh/sanssouci-org/sanssouci/branch/develop/graph/badge.svg)](https://codecov.io/github/sanssouci-org/sanssouci/branch/develop)
 <!-- badges: end -->
 
 The goal of sanssouci [sãsusi] is to perform **post hoc inference**: in a multiple testing context, sanssouci provides statistical guarantees on possibly user-defined and/or data-driven sets of hypotheses. 
@@ -37,7 +37,7 @@ We briefly illustrate the case of differential gene expression study (see dedica
 
 ```{r load-data}
 library("sanssouci")
-#> remotes::install_github("pneuvial/sanssouci.data")
+#> remotes::install_github("sanssouci-org/sanssouci.data")
 data(expr_ALL, package = "sanssouci.data")
 groups <- ifelse(colnames(expr_ALL) == "BCR/ABL", 1, 0) # map to 0/1
 obj <- SansSouci(Y = expr_ALL, groups = groups)
@@ -96,6 +96,6 @@ You can install the development version from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("remotes")
-remotes::install_github("pneuvial/sanssouci")
+remotes::install_github("sanssouci-org/sanssouci")
 ```
 

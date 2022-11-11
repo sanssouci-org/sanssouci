@@ -138,7 +138,7 @@ IIDEA is deployed at \url{https://shiny-iidea-sanssouci.apps.math.cnrs.fr/}. No 
 The source code of the R package \texttt{sanssouci} which contains the source files for IIDEA, is available at \url{https://github.com/sanssouci-org/sanssouci}. This allows users to run IIDEA on a local machine or deploy it on their own servers if desired. Once the 'remotes' package is installed, IIDEA can be run locally from an R session by executing the following commands:
 
 ```{r local, eval=FALSE}
-remotes::install_github("pneuvial/sanssouci")
+remotes::install_github("sanssouci-org/sanssouci")
 shiny::runApp(system.file("shiny-examples/volcano-plot", package = "sanssouci"))
 ```
 
@@ -158,7 +158,7 @@ IIDEA leverages post hoc inference methods implemented in the R package  [`sanss
 
 Post hoc inference is a recent field stemming from the multiple testing literature where users are allowed to freely select hypotheses of interest after "seeing the data", without compromising statistical validity despite the issue of "cherry-picking" (@BNR:chap, @blanchard20post-hoc, @GS2011).
 
-The methods implemented by IIDEA allow for valid inference without requiring assumptions on the dependence between genes. Instead, such dependencies are *estimated* from the data using permutation techniques, making our methods both mathematically valid and statistically powerful (see e.g. https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html).
+The methods implemented by IIDEA allow for valid inference without requiring assumptions on the dependence between genes. Instead, such dependencies are *estimated* from the data using permutation techniques, making our methods both mathematically valid and statistically powerful (see e.g. https://sanssouci-org.github.io/sanssouci/articles/post-hoc_differential-expression.html).
 
 The parameters for this estimation step can be customized by clicking "Advanced parameters". 
 
