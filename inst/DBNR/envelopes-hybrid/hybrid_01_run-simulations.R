@@ -1,10 +1,10 @@
 library("future")
 
-plan(multisession, workers = 100) # multiprocess est déprécié
+# future.rng.onMisuse = "error"
+plan(multisession, workers = 100)
 
 resPath <- "resData/DBNR/confidenceEnvelopes"
 resPath <- file.path(resPath, Sys.Date())
-#resPath <- file.path(resPath, "2018-05-31")
 resPath <- R.utils::Arguments$getWritablePath(resPath)
 
 nb <- nrow(configs)
@@ -13,7 +13,7 @@ nb <- nrow(configs)
 
 #alphas <- c(0.001, 0.01, 0.05, 0.2, 0.5)
 #alphas <- c(0.001, 0.05, 0.05-0.001)
-alphas <- c(0.0001, 0.001, 0.05, 0.05-0.0001, 0.05-0.001)[3] #alphas == 0.05
+alphas <- c(0.0001, 0.001, 0.05, 0.05-0.0001, 0.05-0.001)
 
 for (cc in 1:nb) {
     print(cc)

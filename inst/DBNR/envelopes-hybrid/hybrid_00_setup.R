@@ -1,8 +1,8 @@
-library("sansSouci")
+library(sanssouci)
 # file <- system.file("DBNR/envelopes/simu.hulk.R", package = "sansSouci", mustWork = TRUE)
 # source(file)
 setwd("~/Documents/sanssouci")
-source("inst/DBNR/envelopes/guillermo_simu.hulk.R")
+source("inst/DBNR/envelopes-hybrid/hybrid_simu.hulk.R")
 
 ms <- 12800 # nombre total d'hypothèses, 12800 dans le papier
 ss <- rev(c(10, 50, 100, 200, 400))[3] # taille d'une feuille, 100 dans le papier
@@ -22,4 +22,4 @@ configs <- expand.grid(
     setting = settings, 
     stringsAsFactors = FALSE)
 
-repl <- 2  ## number of replications
+repl <- 3  ## number of replications

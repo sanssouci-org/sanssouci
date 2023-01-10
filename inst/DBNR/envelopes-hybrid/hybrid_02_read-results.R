@@ -1,5 +1,12 @@
+# The entire purpose of this script is to 
+# produce the "all-conf-env.rds"
+# and "all-conf-env.txt" files from
+# the various "conf-env_%s.rds" files
+# produced by the previous script
+
 resPath <- "resData/DBNR/confidenceEnvelopes"
-resPath <- file.path(resPath, "2018-06-06")
+resPath <- file.path(resPath, Sys.Date())
+# resPath <- file.path(resPath, "2022-01-09")
 resPath <- R.utils::Arguments$getWritablePath(resPath)
 
 ## confs <- subset(configs, grouped & setting == "const")
@@ -15,7 +22,7 @@ resPath <- R.utils::Arguments$getWritablePath(resPath)
 ##    for (st in unique (configs$setting)) {
 ##        message("setting=", st)
 ##        confs <- subset(configs, grouped==grp & setting == st)
-filename <- sprintf("all-conf-env-rgauss.txt")
+filename <- sprintf("all-conf-env.txt")
 opathname <- file.path(resPath, filename)
 confs <- configs
 str(confs)
@@ -47,7 +54,7 @@ for (cc in 1:nrow(confs)) {
 }
 dat <- read.table(opathname, header = TRUE)
 print(nrow(dat))
-filename <- sprintf("all-conf-env-rgauss.rds")
+filename <- sprintf("all-conf-env.rds")
 pathname <- file.path(resPath, filename)
 saveRDS(dat, pathname)
 rm(pathname, opathname)
