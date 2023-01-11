@@ -10,7 +10,7 @@ ds <- c(0.5, 0.75, 0.9, 1)[-1] # proportion de signal dans les feuilles actives,
 barmus <- c(2, 3, 4, 5)[1:3] # "taille de référence" du signal quand non-nul, 2, 3, 4 dans le papier
 K1s <- c(1, 4, 8, 16, 32)[3] # nombre de feuilles avec du signal/feuilles actives, 8 dans le papier
 groupeds <- c(TRUE, FALSE)[1] # coller ensemble ou pas les feuilles avec du signal, TRUE dans le papier
-settings <- c("const", "gauss", "poisson", "rgauss")[4] # forme des espérances des stats de test, rgauss dans le papier
+settings <- c("const", "gauss", "poisson", "rgauss")[1] # forme des espérances des stats de test, const dans le papier
 
 configs <- expand.grid(
     m = ms,
@@ -22,4 +22,4 @@ configs <- expand.grid(
     setting = settings, 
     stringsAsFactors = FALSE)
 
-repl <- 3  ## number of replications
+repl <- 1 # 10 dans le papier ? ## number of replications

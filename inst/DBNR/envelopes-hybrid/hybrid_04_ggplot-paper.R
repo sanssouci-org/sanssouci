@@ -6,6 +6,8 @@ resPath <- "resData/DBNR/confidenceEnvelopes"
 resPath <- R.utils::Arguments$getReadablePath(resPath)
 
 figPath <- R.utils::Arguments$getReadablePath("fig/DBNR")
+figPath <- file.path(figPath, date)
+figPath <- R.utils::Arguments$getWritablePath(figPath)
 
 # line colors
 lvls <- c("Oracle", "Partition", "Simes", "Tree", "Hybrid")
@@ -22,8 +24,7 @@ pheight <- 6.40
 #filename <- sprintf("conf-env-alpha-hybrid_grouped=%s_setting=%s.rds", grouped, setting)
 #filename <- sprintf("conf-env-alpha_grouped=%s_setting=%s.rds", grouped, setting)
 figName <- "all-conf-env"
-filename <- sprintf("%s/%s.rds", Sys.Date(), figName)
-# filename <- sprintf("%s/%s.rds", "2023-01-09", figName)
+filename <- sprintf("%s/%s.rds", date, figName)
 pathname <- file.path(resPath, filename)
 dat <- readRDS(pathname)
 rm(pathname)

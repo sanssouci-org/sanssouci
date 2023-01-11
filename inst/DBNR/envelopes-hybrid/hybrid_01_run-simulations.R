@@ -1,10 +1,11 @@
 library("future")
 
-# future.rng.onMisuse = "error"
 plan(multisession, workers = 100)
 
 resPath <- "resData/DBNR/confidenceEnvelopes"
-resPath <- file.path(resPath, Sys.Date())
+date <- format(Sys.time(), "%Y-%m-%d-%H%M%S")
+# date <- "2023-01-11-164513"
+resPath <- file.path(resPath, date)
 resPath <- R.utils::Arguments$getWritablePath(resPath)
 
 nb <- nrow(configs)
@@ -30,7 +31,7 @@ for (cc in 1:nb) {
                   "setting=", conf[["setting"]], sep = "")
     filename <- sprintf("conf-env_%s.rds", stag)
     # print(filename)
-    dummy %<-% {
+    futureAssign(paste0("dummy",cc), {
         sdatList <- list()
         for (rr in 1:repl) {
             res <- simu.hulk(m = conf[["m"]], 
@@ -52,5 +53,5 @@ for (cc in 1:nb) {
         pathname <- file.path(resPath, filename)
         saveRDS(dat, pathname)
         ## dat <- readRDS(pathname)
-    }
+    }, seed=TRUE)
 }
