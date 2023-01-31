@@ -9,11 +9,11 @@ resPath <- file.path(resPath, date)
 resPath <- R.utils::Arguments$getWritablePath(resPath)
 
 nb <- nrow(configs)
-#nb <- 40
-#cc <- 220 ## (a nice one)
+# nb <- 40
+# cc <- 220 ## (a nice one)
 
-#alphas <- c(0.001, 0.01, 0.05, 0.2, 0.5)
-#alphas <- c(0.001, 0.05, 0.05-0.001)
+# alphas <- c(0.001, 0.01, 0.05, 0.2, 0.5)
+# alphas <- c(0.001, 0.05, 0.05-0.001)
 alphas <- c(0.0001, 0.001, 0.05, 0.05-0.0001, 0.05-0.001)
 
 for (cc in 1:nb) {
@@ -31,7 +31,7 @@ for (cc in 1:nb) {
                   "setting=", conf[["setting"]], sep = "")
     filename <- sprintf("conf-env_%s.rds", stag)
     # print(filename)
-    futureAssign(paste0("dummy",cc), {
+    futureAssign(paste0("dummy", cc), {
         sdatList <- list()
         for (rr in 1:repl) {
             res <- simu.hulk(m = conf[["m"]], 
@@ -52,6 +52,6 @@ for (cc in 1:nb) {
         dat <- cbind(dat, conf)
         pathname <- file.path(resPath, filename)
         saveRDS(dat, pathname)
-        ## dat <- readRDS(pathname)
+        # dat <- readRDS(pathname)
     }, seed=TRUE)
 }

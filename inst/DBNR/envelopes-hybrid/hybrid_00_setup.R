@@ -22,4 +22,4 @@ configs <- expand.grid(
     setting = settings, 
     stringsAsFactors = FALSE)
 
-repl <- 1 # 10 dans le papier ? ## number of replications
+# repl <- 1 # 10 dans le papier ? ## number of replications
