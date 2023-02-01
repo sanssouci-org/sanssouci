@@ -217,7 +217,12 @@ nb.elements <- function(C) {
             Ch <- C[[h]]
             for (j in 1:length(Ch)) {
                 Chj <- Ch[[j]]
-                if (Chj[1] < Chj[2]) 
+                # the following check allows to use an extended
+                # tree where leaves are duplicated  at multiple
+                # depths so as to appear at the larger depth H
+                # or else the function would be simpler : just sum
+                # the length of all C[[h]]
+                if (Chj[1] < Chj[2])
                     count <- count + 1
             }
         }
@@ -252,7 +257,10 @@ zetas.tree <- function(C, leaf_list, method, pvalues, alpha) {
     CH <- C[[H]]
     for (i in 1:length(CH)) {
         CHi <- CH[[i]]
-        if (CHi[1] == CHi[2]) {
+        if (CHi[1] == CHi[2]) { # useless leaf check because every bottom region is a leaf?
+          # oh it's worse than that, this piece of code ASSUMES that the tree is extended
+          # to have all leaves at the bottom and WILL fail if that's not the case
+          # this is a bug
             zeta_leaves[CHi[1]] <- method(pvalues[leaf_list[[CHi[1]]]], alpha/K)
         }
     }
