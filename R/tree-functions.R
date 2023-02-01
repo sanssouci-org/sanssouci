@@ -191,6 +191,7 @@ zeta.HB <- function(pval, lambda) {
     # }
     # return(m - k)
 }
+# TODO: zeta.HB.sorted that assumes that the pvalues are sorted and doesn't sort them
 
 #' @export
 #' @rdname zeta

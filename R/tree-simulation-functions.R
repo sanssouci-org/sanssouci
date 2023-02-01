@@ -184,4 +184,4 @@ curveVstar_tree <- function(treeFam, ordering) {
     }
     vecVstar
 }
-
+# the sanity check makes no sense, we should be able to try orderings of size less than m
