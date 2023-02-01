@@ -257,7 +257,7 @@ zetas.tree <- function(C, leaf_list, method, pvalues, alpha) {
     CH <- C[[H]]
     for (i in 1:length(CH)) {
         CHi <- CH[[i]]
-        if (CHi[1] == CHi[2]) { # useless leaf check because every bottom region is a leaf?
+        if (CHi[1] == CHi[2]) { # useless leaf check because every bottom region is a leaf? <- NO, not necessarily
           # oh it's worse than that, this piece of code ASSUMES that the tree is extended
           # to have all leaves at the bottom and WILL fail if that's not the case
           # this is a bug
@@ -408,7 +408,7 @@ recurleaves <- function(numvect, trunc) {
         if (setinclude(curr_vect, numvect)) {
             if (start) {
                 start <- FALSE
-            }
+            } # useless if, could just be start <- FALSE
             Union <- union(Union, curr_vect)
             if (is.end) {
                 leaf_list <- c(leaf_list, list(curr_vect))
@@ -461,16 +461,16 @@ tree.from.list <- function(m, listR) {
     return(list(C = C, ZL = ZL, leaf_list = leaf_list))
 }
 
-
+# NOTE: assumes the forest is extended
 V.star.all.leaves <- function(S, C, ZL, leaf_list) {
     H <- length(C)
     leaves <- length(leaf_list)
     Vec <- numeric(length = leaves)
     id <- seq_len(length.out = leaves)
     for (i in 1:leaves) {
-#        len <- length(intersect(S, leaf_list[[i]]))
+        # len <- length(intersect(S, leaf_list[[i]]))
         len <- sum(S %in% leaf_list[[i]])
-        Vec[i] <- min(ZL[[H]][i], len)
+        Vec[i] <- min(ZL[[H]][i], len) # this is the part that assumes that the forest is extended
     }
     if (H > 1) {
         for (h in (H - 1):1) {
@@ -481,9 +481,10 @@ V.star.all.leaves <- function(S, C, ZL, leaf_list) {
                 Chj <- C[[h]][[j]]
                 # len <- length(intersect(S, leaves))
                 lvs <- unlist(leaf_list[Chj[1]:Chj[2]])
-                len <- sum(S %in% lvs)
+                len <- sum(S %in% lvs) # 2 OBJECTS NAMED len !!!!
                 rm(lvs)
-                ss <- sum(Vec[id[which((Chj[1] <= id) & (Chj[2] >= id))]])
+                ss <- sum(Vec[id[which((Chj[1] <= id) & (Chj[2] >= id))]]) # id is totally useless
+                # just use ss <- sum(Vec[Chj[1]:Chj[2]]) lol
                 intra <- min(ZL[[h]][j], len, ss)
                 vec_inter[Chj[1]] <- intra
                 new_id[j] <- Chj[1]
@@ -492,7 +493,9 @@ V.star.all.leaves <- function(S, C, ZL, leaf_list) {
             id <- new_id
         }
     }
-    return(sum(Vec[id]))
+    return(sum(Vec[id])) # could also just be sum(Vec) given that Vec has 0 values outside of id
+}
+
 }
 
 # completes an incomplete tree structure
@@ -500,36 +503,38 @@ tree.expand <- function(C, ZL, leaf_list) {
     H <- length(C)
     leaves <- length(leaf_list)
     for (i in 1:H) {
-        expected_leaf <- 1
+        expected_leaf <- 1 # the label of the leaf we expect to find in the forest structure
         len <- length(C[[i]])
         j <- 1
         while (j <= len) {
             Cij <- C[[i]][[j]]
             if (expected_leaf == Cij[1]) {
-                # TOUT VA BIEN suivant
+                # GOOD, on to the next one
                 expected_leaf <- Cij[2] + 1
                 j <- j + 1
             } else {
-                # PROBLEME resolution
+                # PROBLEM => resolution by adding the leaf
                 C[[i]] <- append(C[[i]], list(c(expected_leaf, expected_leaf)), j - 1)
                 ZL[[i]] <- append(ZL[[i]], length(leaf_list[[expected_leaf]]), j - 1)
-                # suivant
+                # on to the next one
                 expected_leaf <- expected_leaf + 1
                 j <- j + 1
                 len <- len + 1
             }
+            # j <- j + 1 should be here, duplicate code
         }
         while (expected_leaf < (leaves + 1)) {
-            # PROBLEME resolution
+            # PROBLEM => resolution
             C[[i]] <- c(C[[i]], list(c(expected_leaf, expected_leaf)))
             ZL[[i]] <- c(ZL[[i]], length(leaf_list[[expected_leaf]]))
-            # suivant
+            # on to the next one
             expected_leaf <- expected_leaf + 1
         }
     }
     if (len == leaves) {
         return(list(C = C, ZL = ZL))
     } else {
+        # prepares an additional layer made of all the leaves
         CH <- list()
         ZLH <- numeric(0)
         for (j in 1:len) {
@@ -548,7 +553,7 @@ tree.expand <- function(C, ZL, leaf_list) {
         C <- c(C, list(CH))
         ZL <- c(ZL, list(ZLH))
     }
-    return(list(C = C, ZL = ZL))
+    return(list(C = C, ZL = ZL)) # duplicate code, change the if condition to (len < leaves)
 }
 
 #' Post hoc bound on the number of false positives
