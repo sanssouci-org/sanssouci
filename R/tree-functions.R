@@ -496,9 +496,45 @@ V.star.all.leaves <- function(S, C, ZL, leaf_list) {
     return(sum(Vec[id])) # could also just be sum(Vec) given that Vec has 0 values outside of id
 }
 
+V.star.all.leaves.no.id <- function(S, C, ZL, leaf_list) {
+  H <- length(C)
+  nb_leaves <- length(leaf_list)
+  Vec <- numeric(nb_leaves)
+  for (i in 1:nb_leaves) {
+    len_inter <- sum(S %in% leaf_list[[i]])
+    Vec[i] <- min(ZL[[H]][i], len_inter) # this is the part that assumes that the forest is extended
+  }
+  if (H > 1) {
+    for (h in (H - 1):1) {
+      nb_regions <- length(C[[h]])
+      vec_inter <- numeric(nb_leaves)
+      for (j in 1:nb_regions) {
+        Chj <- C[[h]][[j]]
+        region_vector <- unlist(leaf_list[Chj[1]:Chj[2]])
+        len_inter <- sum(S %in% region_vector)
+        sum_succ <- sum(Vec[Chj[1]:Chj[2]])
+        res <- min(ZL[[h]][j], len_inter, sum_succ)
+        vec_inter[Chj[1]] <- res
+      }
+      Vec <- vec_inter
+    }
+  }
+  return(sum(Vec))
 }
+# > microbenchmark(id=V.star.all.leaves(1:16, C, ZL, leaf_list), no.id=V.star.all.leaves.no.id(1:16, C, ZL, leaf_list))
+# Unit: microseconds
+# expr    min      lq     mean  median      uq     max neval
+# id 79.786 80.8315 82.54448 81.4875 82.3895 135.054   100
+# no.id 24.600 25.1125 25.67830 25.5430 25.9735  31.611   100
 
 # completes an incomplete tree structure
+# NOTE: this automatically results in an extended tree too
+# NOTE: this expects an input that is already extended too, if not we can
+# add leaves with trivial zeta even if they are already here with proper zeta
+# but at smaller depth (doesn't change V.star.all.leaves output luckily)
+# NOTE: the expected input is strange given that all the leaves are expected
+# to be given by leaf_list, they can only be missing in C, and C has to be
+# properly annotated wrt leaf_list and the leaves labels
 tree.expand <- function(C, ZL, leaf_list) {
     H <- length(C)
     leaves <- length(leaf_list)
