@@ -610,6 +610,14 @@ V.star <- function(S, C, ZL, leaf_list) {
                             leaf_list))
 }
 
+V.star.no.id <- function(S, C, ZL, leaf_list) {
+  all_leaves <- tree.expand(C, ZL, leaf_list)
+  return(V.star.all.leaves.no.id(S, 
+                                 all_leaves$C, 
+                                 all_leaves$ZL, 
+                                 leaf_list))
+}
+
 nodeLabel <- function(x) {
     paste(unlist(x), collapse = ":")
 }
