@@ -566,24 +566,35 @@ V.star.all.leaves.no.id <- function(S, C, ZL, leaf_list) {
   return(sum(Vec))
 }
 
-V.star.all.leaves.no.extension <- function(S, C, ZL, leaf_list) {
+V.star.no.extension <- function(S, C, ZL, leaf_list) {
 	cardS <- length(S)
 	H <- length(C)
 	nb_leaves <- length(leaf_list)
-	Vec <- rep(cardS, nb_leaves) # the initialization term for each atom P_i
-	# doesn't really matter as long as 
-	# it is larger than or equal to
-	# card(S inter P_i)
-	# we are allowed to not care because the forest structure is complete
+	Vec <- numeric(nb_leaves) 
+	for (i in 1:nb_leaves) {
+		Vec[i] <- sum(S %in% leaf_list[[i]])
+	}
+	# the initialization term for each atom P_i
+	# is equivalent to completing the family if it isn't,
+	# assuming that leaf_list does indeed contain all leaves
+	# and some were just eventually missing in C and ZL
 	for (h in H:1) {
 		nb_regions <- length(C[[h]])
 		if(nb_regions>0){
 			for (j in 1:nb_regions) {
 				Chj <- C[[h]][[j]]
-				region_vector <- unlist(leaf_list[Chj[1]:Chj[2]])
-				len_inter <- sum(S %in% region_vector)
-				sum_succ <- sum(Vec[Chj[1]:Chj[2]]) 
-				res <- min(ZL[[h]][j], len_inter, sum_succ)
+				if(Chj[1]==Chj[2]){ # means this is an atom, no need to compute 
+					# len_inter given that we already did it during initialization,
+					# furthermore there are no successors
+					len_inter <- Vec[Chj[1]]
+					res <- min(ZL[[h]][j], len_inter)
+				}
+				else{
+					region_vector <- unlist(leaf_list[Chj[1]:Chj[2]])
+					len_inter <- sum(S %in% region_vector)
+					sum_succ <- sum(Vec[Chj[1]:Chj[2]]) 
+					res <- min(ZL[[h]][j], len_inter, sum_succ)
+				}
 				Vec[Chj[1]:Chj[2]] <- 0
 				Vec[Chj[1]] <- res
 			}
@@ -592,14 +603,14 @@ V.star.all.leaves.no.extension <- function(S, C, ZL, leaf_list) {
 	return(sum(Vec))
 }
 
-curve.V.star.all.leaves <- function(perm, C, ZL, leaf_list){
+curve.V.star <- function(perm, C, ZL, leaf_list){
 	vstars <- numeric(length(perm))
 	S <- numeric(0)
 	j <- 0
 	for (i in perm){
 		j <- j+1
 		S <- c(S,i)
-		vstars[j] <- V.star.all.leaves.no.extension(S, C, ZL, leaf_list) 
+		vstars[j] <- V.star.no.extension(S, C, ZL, leaf_list) 
 	}
 	return(vstars)
 }
