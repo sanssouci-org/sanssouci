@@ -314,7 +314,18 @@ zetas.tree.no.extension <- function(C, leaf_list, method, pvalues, alpha, refine
 			for (j in 1:len) {
 				Chj <- Ch[[j]]
 				pvals <- pvalues[unlist(leaf_list[Chj[1]:Chj[2]])]
-				zeta_inter[j] <- method(pvals, alpha / usage_K)
+				if(typeof(method) == "list"){
+					if(typeof(method[[h]]) == "list"){
+						zeta_method <- method[[h]][[j]]
+					}
+					else{
+						zeta_method <- method[[h]]
+					}
+				}
+				else{
+					zeta_method <- method
+				}
+				zeta_inter[j] <- zeta_method(pvals, alpha / usage_K)
 				if (zeta_inter[j] == 0) 
 					new_K <- new_K - 1
 			}
