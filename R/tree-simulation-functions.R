@@ -122,11 +122,10 @@ gen.p.values <- function(m, mu = rep(0, length(mu)), rho = 0) {
 }
 
 
-#' Generate one-sided p-values associated to a given signal with equi-correlated
-#' noise
+#' Computes a curve of post hoc bound based on a fores-based reference family
 #'
-#' @param treeFam A tree-based reference family, see example below
-#' @param ordering A permutation of \code{1, ..., m}, the ordering of the
+#' @param treeFam A forest-based reference family, see example below
+#' @param ordering A permutation of \eqn{1, ..., m}, the ordering of the
 #'   \eqn{m} null hypotheses
 #' @return A vector of length \eqn{m}, whose \eqn{k}-th element is a lower
 #'   bound \eqn{V^*(S_k)} on the number of true positives in the set \eqn{S_k}
