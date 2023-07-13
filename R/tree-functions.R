@@ -592,11 +592,17 @@ V.star.all.leaves.no.extension <- function(S, C, ZL, leaf_list) {
 	return(sum(Vec))
 }
 
-# > microbenchmark(id=V.star.all.leaves(1:16, C, ZL, leaf_list), no.id=V.star.all.leaves.no.id(1:16, C, ZL, leaf_list))
-# Unit: microseconds
-# expr    min      lq     mean  median      uq     max neval
-# id 79.786 80.8315 82.54448 81.4875 82.3895 135.054   100
-# no.id 24.600 25.1125 25.67830 25.5430 25.9735  31.611   100
+curve.V.star.all.leaves <- function(perm, C, ZL, leaf_list){
+	vstars <- numeric(length(perm))
+	S <- numeric(0)
+	j <- 0
+	for (i in perm){
+		j <- j+1
+		S <- c(S,i)
+		vstars[j] <- V.star.all.leaves.no.extension(S, C, ZL, leaf_list) 
+	}
+	return(vstars)
+}
 
 # completes an incomplete tree structure
 # NOTE: this automatically results in an extended tree too
