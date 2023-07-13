@@ -317,7 +317,7 @@ zetas.tree.refined <- function(C, leaf_list, method, pvalues, alpha) {
             len <- length(Ch)
             zeta_inter <- numeric(len)
             for (j in 1:len) {
-                Chj <- Chj
+                Chj <- Ch[[j]]
                 if (Chj[1] < Chj[2]) {
                     pvals <- pvalues[unlist(leaf_list[Chj[1]:Chj[2]])]
                     zeta_inter[j] <- method(pvals, alpha/usage_K)
