@@ -19,7 +19,7 @@ gen.mu.noleaves <- function(m, pi0, barmu) {
     mu
 }
 
-#' Generate a block of signal of Gaussian shape
+#' Generate a block of deterministic signal of Gaussian shape
 #' 
 #' @param barmu A numeric value, the strength of the signal 
 #' @param len An integer value, the length of the block
@@ -83,9 +83,10 @@ gen.mu.leaves <- function(m, K1, d, grouped, setting, barmu, leaf_list) {
         }, rgauss = {
             rnorm(m1loc, mean = barmu, sd = sqrt(barmu))
         }, gauss = {
-            gauss_bloc(barmu, length_leaf)[signal]
-          # why did I make this choice and not just gauss_bloc(barmu, m1loc) ? 
-          # Strange, because in the current way the signal doesn't have mean barmu but lesser mean as soon as d<1
+        	  gauss_bloc(barmu, m1loc)
+            # gauss_bloc(barmu, length_leaf)[signal] # old code, broken because
+        	  # that way the signal doesn't have mean barmu 
+        	  # but lesser mean as soon as d<1
         }, poisson = {
             rpois(m1loc, 999 * barmu/1000) + barmu/1000
         })
