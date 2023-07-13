@@ -232,6 +232,17 @@ nb.elements <- function(C) {
     return(count)
 }
 
+# number of unique regions in a given tree,
+# assuming we didn't extend the leaves
+nb.elements.no.extension <- function(C) {
+	H <- length(C)
+	count <- 0
+	for (h in H:1) {
+		count <- count + length(C[[h]])
+	}
+	return(count)
+}
+
 #' Estimate of the proportion of true nulls in each node of a tree
 #' 
 #' @param C Tree structure
@@ -283,6 +294,37 @@ zetas.tree <- function(C, leaf_list, method, pvalues, alpha) {
         ZL[[h]] <- zeta_inter
     }
     return(ZL)
+}
+
+zetas.tree.no.extension <- function(C, leaf_list, method, pvalues, alpha, refine=FALSE, verbose=FALSE) {
+	H <- length(C)
+	K <- nb.elements.no.extension(C)
+	ZL <- list()
+	new_K <- K
+	continue <- TRUE
+	nb_loop <- 0
+	while (continue) {
+		nb_loop <- nb_loop + 1
+		usage_K <- new_K
+		new_K <- K
+		for (h in H:1) {
+			Ch <- C[[h]]
+			len <- length(Ch)
+			zeta_inter <- numeric(len)
+			for (j in 1:len) {
+				Chj <- Ch[[j]]
+				pvals <- pvalues[unlist(leaf_list[Chj[1]:Chj[2]])]
+				zeta_inter[j] <- method(pvals, alpha / usage_K)
+				if (zeta_inter[j] == 0) 
+					new_K <- new_K - 1
+			}
+			ZL[[h]] <- zeta_inter
+		}
+		if (verbose)
+			print(paste0("loop number=", nb_loop,", usage_K=",usage_K,", new_K=",new_K))
+		continue <- (new_K < usage_K) & refine
+	}
+	return(ZL)
 }
 
 
