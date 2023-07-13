@@ -556,7 +556,7 @@ V.star.all.leaves.no.id <- function(S, C, ZL, leaf_list) {
         Chj <- C[[h]][[j]]
         region_vector <- unlist(leaf_list[Chj[1]:Chj[2]])
         len_inter <- sum(S %in% region_vector)
-        sum_succ <- sum(Vec[Chj[1]:Chj[2]])
+        sum_succ <- sum(Vec[Chj[1]:Chj[2]]) # this part too assumes that the forest is extended
         res <- min(ZL[[h]][j], len_inter, sum_succ)
         vec_inter[Chj[1]] <- res
       }
@@ -565,6 +565,33 @@ V.star.all.leaves.no.id <- function(S, C, ZL, leaf_list) {
   }
   return(sum(Vec))
 }
+
+V.star.all.leaves.no.extension <- function(S, C, ZL, leaf_list) {
+	cardS <- length(S)
+	H <- length(C)
+	nb_leaves <- length(leaf_list)
+	Vec <- rep(cardS, nb_leaves) # the initialization term for each atom P_i
+	# doesn't really matter as long as 
+	# it is larger than or equal to
+	# card(S inter P_i)
+	# we are allowed to not care because the forest structure is complete
+	for (h in H:1) {
+		nb_regions <- length(C[[h]])
+		if(nb_regions>0){
+			for (j in 1:nb_regions) {
+				Chj <- C[[h]][[j]]
+				region_vector <- unlist(leaf_list[Chj[1]:Chj[2]])
+				len_inter <- sum(S %in% region_vector)
+				sum_succ <- sum(Vec[Chj[1]:Chj[2]]) 
+				res <- min(ZL[[h]][j], len_inter, sum_succ)
+				Vec[Chj[1]:Chj[2]] <- 0
+				Vec[Chj[1]] <- res
+			}
+		}
+	}
+	return(sum(Vec))
+}
+
 # > microbenchmark(id=V.star.all.leaves(1:16, C, ZL, leaf_list), no.id=V.star.all.leaves.no.id(1:16, C, ZL, leaf_list))
 # Unit: microseconds
 # expr    min      lq     mean  median      uq     max neval
