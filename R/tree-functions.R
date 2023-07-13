@@ -205,7 +205,8 @@ zeta.DKWM <- function(pval, lambda) {
     s <- length(pval)
     sorted.pval <- c(0, sort(pval))
     dkwm <- min((sqrt(log(1/lambda)/2)/(2 * (1 - sorted.pval)) + sqrt(log(1/lambda)/(8 * (1 - sorted.pval)^2) + 
-                                                                          (s - seq(0, s))/(1 - sorted.pval)))^2)
+                                                                          (s - seq(0, s))/(1 - sorted.pval)))^2,
+    						na.rm=TRUE)
     return(min(s, floor(dkwm)))
 }
 
