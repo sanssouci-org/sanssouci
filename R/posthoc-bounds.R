@@ -33,6 +33,17 @@ posthoc_bound <- function(p.values, S = seq_along(p.values), thr = NULL, lab = N
 }
 
 
+#' Table of bounds
+#'
+#' @param max_FP a vector of the upper boud for the number of False Discovery
+#' @param idxs vector of indices of the selection 
+#' @param lab label of the method used
+#' @param what type of quantities. Should be in c("FP", "TP", "FDP", "TDP").
+#' @param all Boolean to specify if the function return bounds for all tests
+#'
+#' @return data frame with the post hoc bounds
+#' @export
+#'
 formatBounds <- function(max_FP, idxs = seq_len(max_FP), lab = NULL, 
                          what = c("TP", "FDP"), all = FALSE) {
     stopifnot(length(max_FP) == length(idxs))
@@ -219,18 +230,19 @@ maxFDP <- function(p.values, thr) {
 #' Upper bound for the number of false discoveries among most significant items
 #'
 #' @param p.values A vector containing s p-values
-#' @param thr A vector of \eqn{K} JER-controlling thresholds
-
+#' @param thr A vector of \eqn{K} JER-controlling thresholds 
+#' 
 #' @return A vector of size \eqn{s} giving an joint upper confidence bound on
 #'   the number of false discoveries among the \eqn{k} most significant items
 #'   for all \eqn{i \in \{1\ldots s\}}.
-
+#' 
+#' @export 
+#' 
 #' @author Gilles Blanchard, Nicolas Enjalbert-Courrech, Pierre Neuvial and
 #'   Etienne Roquain
 #' @references Enjalbert-Courrech, N. & Neuvial, P. (2022). Powerful and interpretable control of false discoveries in two-group differential expression studies. Bioinformatics. doi: 10.1093/bioinformatcs/btac693
 #' @details The time and space complexity of this function is O(s), which is
 #'   optimal since s is the length of the returned vector.
-
 curveMaxFP <- function(p.values, thr) {
     s <- length(p.values)
     if (s == 0) {
