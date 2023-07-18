@@ -2,6 +2,11 @@
 Package: sanssouci
 ==================
 
+Version 0.12.9 [2023-07-18]
+
+* export curveMaxFP and formatBounds (#108)
+* cleanup in different versions of curveMaxFP
+
 Version 0.12.8 [2022-11-11]
 
 * Update CITATION with Bioinformatics paper (PR #96)
