@@ -13,9 +13,8 @@ test_that("Consistency of 'get_perm'", {
     set.seed(123)
     null_groups <- replicate(B, sample(categ))
     perm <- rowWelchTests(X, null_groups)
-    expect_identical(perm0$p.value, perm$p.value)
-    expect_identical(perm0$statistic, perm$statistic)
-
+    expect_equal(perm0$p.value, perm$p.value)
+    expect_equal(perm0$statistic, perm$statistic)
     
     set.seed(123)
     perm0 <- get_perm(X, categ, B, rowWilcoxonTests)

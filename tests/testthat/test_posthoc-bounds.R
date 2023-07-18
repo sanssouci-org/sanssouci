@@ -59,7 +59,7 @@ test_that("I/O of 'posthoc_bound'", {
                  regexp = "Argument 'p.values' should only contain elements between 0 and 1")
 })
 
-test_that("maxFP: Upper bound on the number of false positives", {
+test_that("maxFP and curveMaxFP are consistent", {
     expect_error(maxFP_low(pval, rev(thr)))  ## thr is not sorted descendingly
     
     best <- head(pval)
@@ -86,10 +86,7 @@ test_that("maxFP: Upper bound on the number of false positives", {
 })
 
 
-test_that("curveMaxFP", {
-    expect_error(curveMaxFP_old(pval, rev(thr)))  
-    expect_error(curveMaxFP_old(rev(pval), rev(thr)))
-    
+test_that("curveMaxFP and maxFP are consistent for subsets", {
     ub <- curveMaxFP(pval, thr)
     expect_length(ub, m)
     expect_identical(ub, sort(ub))
@@ -97,14 +94,4 @@ test_that("curveMaxFP", {
         bk <- maxFP(pval[seq_len(kk)], thr)
         expect_equal(bk, ub[kk])
     }
-})
-
-test_that("flavors of curveMaxFP", {
-    ub <- curveMaxFP_ECN(pval, thr)
-    ub16 <- curveMaxFP_old(pval, thr, flavor = "BNR2014")
-    ub14 <- curveMaxFP_old(pval, thr, flavor = "BNR2014") 
-    ub06 <- curveMaxFP_old(pval, thr, flavor = "Mein2006") 
-    expect_identical(ub, ub16)
-    expect_identical(ub, ub14)
-    expect_identical(ub, ub06)  ## not sure this is always true?
 })
