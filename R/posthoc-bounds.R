@@ -105,9 +105,9 @@ formatBounds <- function(max_FP, idxs = seq_len(max_FP), lab = NULL,
 
 plotConfCurve <- function(conf_bound, xmax, cols = NULL) {
     nb <- 1
-    if (class(conf_bound) == "data.frame") {    # (assume) a single conf. bound
+    if (inherits(conf_bound, "data.frame")) {    # (assume) a single conf. bound
         ## do nothing!
-    } else if (class(conf_bound) == "list") {          # (assume) a list of conf. bounds
+    } else if (inherits(conf_bound, "list")) {          # (assume) a list of conf. bounds
         nb <- length(conf_bound)
         nms <- names(conf_bound)
         if (!is.null(nms)) {

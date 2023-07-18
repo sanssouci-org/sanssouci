@@ -39,7 +39,7 @@
 #' @importFrom stats rbinom
 #' @examples
 #'
-#' m <- 123
+#' m <- 23
 #' rho <- 0.2
 #' n <- 100
 #' pi0 <- 0.5
