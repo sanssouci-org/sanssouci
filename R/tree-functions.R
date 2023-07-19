@@ -661,7 +661,7 @@ pruning <- function(C, ZL, leaf_list) {
 				 )
 }
 
-curve.V.star.forest <- function(perm, C, ZL, leaf_list, pruning=FALSE){
+curve.V.star.forest.naive <- function(perm, C, ZL, leaf_list, pruning=FALSE){
 	vstars <- numeric(length(perm))
 	
 	if (pruning){
