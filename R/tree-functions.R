@@ -326,14 +326,14 @@ zetas.tree.no.extension <- function(C, leaf_list, method, pvalues, alpha, refine
 					zeta_method <- method
 				}
 				zeta_inter[j] <- zeta_method(pvals, alpha / usage_K)
-				if (zeta_inter[j] == 0) 
+				if (refine && (zeta_inter[j] == 0) )
 					new_K <- new_K - 1
 			}
 			ZL[[h]] <- zeta_inter
 		}
 		if (verbose)
 			print(paste0("loop number=", nb_loop,", usage_K=",usage_K,", new_K=",new_K))
-		continue <- (new_K < usage_K) & refine
+		continue <- refine && (new_K < usage_K)
 	}
 	return(ZL)
 }
@@ -578,7 +578,6 @@ V.star.all.leaves.no.id <- function(S, C, ZL, leaf_list) {
 }
 
 V.star.no.extension <- function(S, C, ZL, leaf_list) {
-	cardS <- length(S)
 	H <- length(C)
 	nb_leaves <- length(leaf_list)
 	Vec <- numeric(nb_leaves) 
@@ -614,8 +613,72 @@ V.star.no.extension <- function(S, C, ZL, leaf_list) {
 	return(sum(Vec))
 }
 
-curve.V.star <- function(perm, C, ZL, leaf_list){
+# the following assumes that zeta_k is <= to
+# the cardinal of R_k but this should always happen
+pruning <- function(C, ZL, leaf_list) {
+	H <- length(C)
+	nb_leaves <- length(leaf_list)
+	Vec <- numeric(nb_leaves) 
+	for (i in 1:nb_leaves) {
+		Vec[i] <- length(leaf_list[[i]])
+	}
+	# the initialization term for each atom P_i
+	# is equivalent to completing the family if it isn't,
+	# assuming that leaf_list does indeed contain all leaves
+	# and some were just eventually missing in C and ZL
+	for (h in H:1) {
+		nb_regions <- length(C[[h]])
+		if(nb_regions>0){
+			for (j in nb_regions:1) {
+				Chj <- C[[h]][[j]]
+				if(Chj[1]==Chj[2]){ 
+					res <- ZL[[h]][j]
+					if(res >= length(leaf_list[[Chj[1]]])){
+						ZL[[h]] <- ZL[[h]][-j]
+						C[[h]][[j]] <- NULL
+					}
+				}
+				else{
+					sum_succ <- sum(Vec[Chj[1]:Chj[2]])
+					if (ZL[[h]][j] >= sum_succ){
+						res <- sum_succ
+						ZL[[h]] <- ZL[[h]][-j]
+						C[[h]][[j]] <- NULL
+					}
+					else{
+						res <- ZL[[h]][j]
+					}
+				}
+				Vec[Chj[1]:Chj[2]] <- 0
+				Vec[Chj[1]] <- res
+			}
+		}
+	}
+	return(list(VstarNm = sum(Vec),
+							C=C,
+							ZL=ZL
+							)
+				 )
+}
+
+curve.V.star.forest <- function(perm, C, ZL, leaf_list, pruning=FALSE){
 	vstars <- numeric(length(perm))
+	
+	if (pruning){
+		pruned <- pruning(C, ZL, leaf_list)
+		C <- pruned$C
+		ZL <- pruned$ZL
+		m <- length(unlist(leaf_list))
+		if(length(perm) == m){
+			# means that length(perm) = m
+			# but the pruning already computed
+			# V^*({1, ..., m,}) as a by-product so we
+			# might as well use it:
+			vstars[m] <- pruned$VstarNm
+			perm <- perm[-m]
+		}
+	}
+	
 	S <- numeric(0)
 	j <- 0
 	for (i in perm){

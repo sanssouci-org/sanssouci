@@ -1,6 +1,9 @@
+library(sanssouci)
+
 set.seed(12)
 
-example <- dyadic.from.height(16,3,2)
+m <- 16
+example <- dyadic.from.height(m, 3, 2)
 leaf_list <- example$leaf_list
 C <- example$C
 
