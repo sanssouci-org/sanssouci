@@ -1,3 +1,5 @@
+library(sanssouci)
+
 C <- list(
 	list(c(2, 5), c(8, 15)), 
 	list(c(3, 5), c(8, 10), c(12, 15)), 
