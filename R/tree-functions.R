@@ -700,6 +700,118 @@ curve.V.star.forest.naive <- function(perm, C, ZL, leaf_list, pruning = FALSE){
 	return(vstars)
 }
 
+# the forest must not be pruned beforehand
+forest.completion <- function(C, ZL, leaf_list) {
+	H <- length(C)
+	
+	leaves.to.place <- 1:length(leaf_list)
+	len.to.place <- length(leaves.to.place)
+	to.delete <- numeric(0)
+	
+	for (h in 1:H){
+		
+		j <- 1
+		l <- 1
+		
+		while(j <= len.to.place){
+			expected_leaf <- leaves.to.place[j]
+			end_of_line <- l > length(C[[h]])
+			if (! end_of_line) {Chl <- C[[h]][[l]]}
+			if((! end_of_line) && expected_leaf == Chl[[1]]){
+				if(expected_leaf == Chl[[2]]){
+					to.delete <- c(to.delete, j)
+				}
+				j <- j + Chl[2] - Chl[1] +1
+			}
+			else{
+				C[[h]] <- append(C[[h]], list(c(expected_leaf, expected_leaf)), l - 1)
+				ZL[[h]] <- append(ZL[[h]], length(leaf_list[[expected_leaf]]), l - 1)
+				to.delete <- c(to.delete, j)
+				j <- j + 1
+			}
+			l <- l + 1
+		}
+		
+		leaves.to.place <- leaves.to.place[-to.delete]
+		len.to.place <- length(leaves.to.place)
+		to.delete <- numeric(0)
+		
+	}
+	
+	if (len.to.place > 0){
+		h <- H + 1
+		C[[h]] <- list()
+		ZL[[h]] <- numeric(0)
+		for (expected_leaf in leaves.to.place){
+			C[[h]] <- append(C[[h]], list(c(expected_leaf, expected_leaf)))
+			ZL[[h]] <- append(ZL[[h]], length(leaf_list[[expected_leaf]]))
+		}
+	}
+	
+	return(list(C = C, ZL = ZL))
+}
+
+# the forest must not be pruned beforehand
+# this version is really cool because 
+# it doesn't add atoms 1 and 2 if R_(1,2) is here
+# and both atoms are missing, which is indeed useless
+# if we apply our V.star computing functions
+# buuuut the pruning function may then delete 
+# R_(1,2) and produce an incomplete forest,
+# that is because the pruning function is only 
+# built to protect real atoms
+# so we have to keep this one hidden forever,
+# or until we find a use for it,
+# and use a version that really add all atoms
+# on the bright side, that makes the code simpler
+forest.completion.hidden <- function(C, ZL, leaf_list) {
+	H <- length(C)
+	
+	leaves.to.place <- 1:length(leaf_list)
+	len.to.place <- length(leaves.to.place)
+	to.delete <- numeric(0)
+	
+	for (h in 1:H){
+		
+		j <- 1
+		l <- 1
+		l_ancestor <- 1
+		
+		while(j <= len.to.place){
+			expected_leaf <- leaves.to.place[j]
+			end_of_line <- l > length(C[[h]])
+			if (! end_of_line) {Chl <- C[[h]][[l]]}
+			while((! end_of_line) && h > 1 && Chl[1] > C[[h-1]][[l_ancestor]][2]){
+				l_ancestor <- l_ancestor + 1
+			}
+			
+			if((! end_of_line) && expected_leaf == Chl[[1]]){
+				if(expected_leaf == Chl[[2]]){
+					to.delete <- c(to.delete, j)
+				}
+				j <- j + Chl[2] - Chl[1] +1
+				l <- l + 1
+			}
+			else{
+				if(h == 1 || C[[h-1]][[l_ancestor]][1] < Chl[1]){
+					C[[h]] <- append(C[[h]], list(c(expected_leaf, expected_leaf)), l - 1)
+					ZL[[h]] <- append(ZL[[h]], length(leaf_list[[expected_leaf]]), l - 1)
+					l <- l + 1
+				}
+				to.delete <- c(to.delete, j)
+				j <- j + 1
+			}
+			
+		}
+		
+		leaves.to.place <- leaves.to.place[-to.delete]
+		len.to.place <- length(leaves.to.place)
+		to.delete <- numeric(0)
+	}
+	
+	
+	return(list(C = C, ZL = ZL))
+}
 # completes an incomplete tree structure
 # NOTE: this automatically results in an extended tree too
 # NOTE: this expects an input that is already extended too, if not we can
