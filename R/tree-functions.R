@@ -615,7 +615,13 @@ V.star.no.extension <- function(S, C, ZL, leaf_list) {
 
 # the following assumes that zeta_k is <= to
 # the cardinal of R_k but this should always happen
-pruning <- function(C, ZL, leaf_list) {
+# super.prune can also prune atoms for which zeta_k is =
+# the cardinal of R_k, this can speed up the
+# computation of V.star.no.extension
+# but must not be used in conjunction with 
+# the fast version of curve.V.star.forest,
+# hence it is at FALSE by default
+pruning <- function(C, ZL, leaf_list, super.prune = FALSE) {
 	H <- length(C)
 	nb_leaves <- length(leaf_list)
 	Vec <- numeric(nb_leaves) 
@@ -633,7 +639,7 @@ pruning <- function(C, ZL, leaf_list) {
 				Chj <- C[[h]][[j]]
 				if(Chj[1]==Chj[2]){ 
 					res <- ZL[[h]][j]
-					if(res >= length(leaf_list[[Chj[1]]])){
+					if(super.prune && res >= length(leaf_list[[Chj[1]]])){
 						ZL[[h]] <- ZL[[h]][-j]
 						C[[h]][[j]] <- NULL
 					}
@@ -661,18 +667,23 @@ pruning <- function(C, ZL, leaf_list) {
 				 )
 }
 
-curve.V.star.forest.naive <- function(perm, C, ZL, leaf_list, pruning=FALSE){
+curve.V.star.forest.naive <- function(perm, C, ZL, leaf_list, pruning = FALSE){
 	vstars <- numeric(length(perm))
 	
+	# the naive version doesn't need a proper completion of the
+	# forest structure because V.star.no.extension
+	# implicitly completes, and for the same reason
+	# it can use super pruning
+	
 	if (pruning){
-		pruned <- pruning(C, ZL, leaf_list)
+		pruned <- pruning(C, ZL, leaf_list, super.prune = TRUE)
 		C <- pruned$C
 		ZL <- pruned$ZL
 		m <- length(unlist(leaf_list))
 		if(length(perm) == m){
-			# means that length(perm) = m
+			# means that length(perm) = m,
 			# but the pruning already computed
-			# V^*({1, ..., m,}) as a by-product so we
+			# V^*({1, ..., m}) as a by-product so we
 			# might as well use it:
 			vstars[m] <- pruned$VstarNm
 			perm <- perm[-m]

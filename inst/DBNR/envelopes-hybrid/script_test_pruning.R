@@ -23,7 +23,7 @@ zetas <- zetas.tree.no.extension(C, leaf_list, method, pval, alpha, refine = TRU
 print("The zetas are:")
 print(zetas)
 
-pruned <- pruning(C, zetas, leaf_list)
+pruned <- pruning(C, zetas, leaf_list, TRUE)
 print(paste0("V^*({1, ..., ", m, "})=", pruned$VstarNm))
 print("New structure:")
 print(pruned$C)
@@ -45,7 +45,7 @@ arbitrary_zetas <- list(10,
 print("The zetas now are:")
 print(arbitrary_zetas)
 
-pruned2 <- pruning(C, arbitrary_zetas, leaf_list)
+pruned2 <- pruning(C, arbitrary_zetas, leaf_list, TRUE)
 print(paste0("V^*({1, ..., ", m, "})=", pruned2$VstarNm))
 print("New structure:")
 print(pruned2$C)
@@ -59,15 +59,19 @@ print(paste0("V^*({1, ..., ", 8, "})=", V.star.no.extension(1:8, pruned2$C, prun
 print(paste0("V^*({9, ..., ", 16, "})=", V.star.no.extension(9:16, pruned2$C, pruned2$ZL, leaf_list)))
 
 print("Now we test the computation time enhancement provided by the pruning, on S={1, ..., m} and S={5}")
+pruned3 <- pruning(C, zetas, leaf_list, FALSE)
+
 mbench <- microbenchmark(no_pruning = V.star.no.extension(1:m, C, zetas, leaf_list), 
-							 pruning = V.star.no.extension(1:m, pruned$C, pruned$ZL, leaf_list),
+							 pruning = V.star.no.extension(1:m, pruned3$C, pruned3$ZL, leaf_list),
+							 super_pruning = V.star.no.extension(1:m, pruned$C, pruned$ZL, leaf_list),
 							 check = "equal",
 							 times = 1000
 							 )
 print(mbench)
 
 mbench <- microbenchmark(no_pruning = V.star.no.extension(5, C, zetas, leaf_list), 
-												 pruning = V.star.no.extension(5, pruned$C, pruned$ZL, leaf_list),
+												 pruning = V.star.no.extension(5, pruned3$C, pruned3$ZL, leaf_list),
+												 super_pruning = V.star.no.extension(5, pruned$C, pruned$ZL, leaf_list),
 												 check = "equal",
 												 times = 1000
 )
