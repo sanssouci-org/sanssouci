@@ -812,6 +812,93 @@ forest.completion.hidden <- function(C, ZL, leaf_list) {
 	
 	return(list(C = C, ZL = ZL))
 }
+
+# the forest must not be pruned beforehand
+curve.V.star.forest.fast <- function(perm, C, ZL, leaf_list, pruning = FALSE){
+	vstars <- numeric(length(perm))
+	
+	# the fast version needs a proper completion of the
+	# forest structure, and for the same reason
+	# it must not use super pruning
+	completed <- forest.completion(C, ZL, leaf_list)
+	C <- completed$C
+	ZL <- completed$ZL
+	
+	if (pruning){
+		pruned <- pruning(C, ZL, leaf_list, super.prune = FALSE)
+		C <- pruned$C
+		ZL <- pruned$ZL
+		m <- length(unlist(leaf_list))
+		if(length(perm) == m){
+			# means that length(perm) = m,
+			# but the pruning already computed
+			# V^*({1, ..., m}) as a by-product so we
+			# might as well use it:
+			vstars[m] <- pruned$VstarNm
+			perm <- perm[-m]
+		}
+	}
+	
+	etas <- ZL
+	H <- length(C)
+	K.minus <- list()
+	for (h in 1:H){
+		etas[[h]] <- rep(0, length(ZL[[h]]))
+		if (length(ZL[[h]]) > 0){
+			for (j in 1:length(ZL[[h]])){
+				if (ZL[[h]][j] == 0){
+					K.minus <- append(K.minus, list(C[[h]][[j]]))
+				}
+			}
+		}
+	}
+	
+	for(i in perm){
+		do.next <- FALSE
+		for (couple in K.minus){
+			lower_leaf <- leaf_list[[couple[1]]]
+			lower_hyp <- lower_leaf[1]
+			upper_leaf <- leaf_list[[couple[2]]]
+			upper_hyp <- upper_leaf[length(upper_leaf)]
+			if((i >= lower_hyp) && (i <= upper_hyp)){
+				do.next <- TRUE
+				# print(paste0(i, " est dans K moins"))
+				break
+			}
+		}
+		if (do.next){
+			next
+		}
+		# print(paste0(i, " n'est pas dans K moins"))
+		for (i in 1:H){
+			nb_regions <- length(C[[h]])
+			if(nb_regions>0){
+				is.found <- FALSE
+				for (j in 1:nb_regions) {
+					couple <- C[[h]][[j]]
+					lower_leaf <- leaf_list[[couple[1]]]
+					lower_hyp <- lower_leaf[1]
+					upper_leaf <- leaf_list[[couple[2]]]
+					upper_hyp <- upper_leaf[length(upper_leaf)]
+					if((i >= lower_hyp) && (i <= upper_hyp)){
+						# we found k^{(t,h)}
+						is.found <- TRUE
+						break
+					}
+				}
+				if(! is.found){
+					next
+				}
+				else{
+					
+				}
+			}
+		}
+	}
+	
+	return(list(etas=etas, Kmoins=K.minus))
+}
+
 # completes an incomplete tree structure
 # NOTE: this automatically results in an extended tree too
 # NOTE: this expects an input that is already extended too, if not we can
