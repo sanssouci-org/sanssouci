@@ -826,8 +826,6 @@ compute.K.1 <- function(C, ZL, leaf_list) {
 				if(all(leaf.available[Chl[1]:Chl[2]])){
 					K.1[[h]][[l]] <- Chl
 					leaf.available[Chl[1]:Chl[2]] <- FALSE
-				} else {
-					K.1[[h]][[l]] <- NA
 				}
 			}
 		}
@@ -962,7 +960,7 @@ curve.V.star.forest.fast <- function(perm, C, ZL, leaf_list, pruning = FALSE, is
 				nb_regions <- length(K.1[[h]])
 				if (nb_regions > 0) {
 					for (l in 1:nb_regions){
-						if(! all(is.na(K.1[[h]][[l]]))) {
+						if(! is.null(K.1[[h]][[l]])) {
 							vstars[t] <- vstars[t] + etas[[h]][[l]]
 						}
 					}
