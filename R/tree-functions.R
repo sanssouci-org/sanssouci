@@ -590,16 +590,15 @@ V.star.no.extension <- function(S, C, ZL, leaf_list) {
 	# and some were just eventually missing in C and ZL
 	for (h in H:1) {
 		nb_regions <- length(C[[h]])
-		if(nb_regions>0){
+		if (nb_regions>0) {
 			for (j in 1:nb_regions) {
 				Chj <- C[[h]][[j]]
-				if(Chj[1]==Chj[2]){ # means this is an atom, no need to compute 
+				if (Chj[1]==Chj[2]) { # means this is an atom, no need to compute 
 					# len_inter given that we already did it during initialization,
 					# furthermore there are no successors
 					len_inter <- Vec[Chj[1]]
 					res <- min(ZL[[h]][j], len_inter)
-				}
-				else{
+				} else {
 					region_vector <- unlist(leaf_list[Chj[1]:Chj[2]])
 					len_inter <- sum(S %in% region_vector)
 					sum_succ <- sum(Vec[Chj[1]:Chj[2]]) 
@@ -634,24 +633,22 @@ pruning <- function(C, ZL, leaf_list, super.prune = FALSE) {
 	# and some were just eventually missing in C and ZL
 	for (h in H:1) {
 		nb_regions <- length(C[[h]])
-		if(nb_regions>0){
+		if (nb_regions > 0) {
 			for (j in nb_regions:1) {
 				Chj <- C[[h]][[j]]
-				if(Chj[1]==Chj[2]){ 
+				if (Chj[1]==Chj[2]) { 
 					res <- ZL[[h]][j]
-					if(super.prune && res >= length(leaf_list[[Chj[1]]])){
+					if (super.prune && res >= length(leaf_list[[Chj[1]]])) {
 						ZL[[h]] <- ZL[[h]][-j]
 						C[[h]][[j]] <- NULL
 					}
-				}
-				else{
+				} else {
 					sum_succ <- sum(Vec[Chj[1]:Chj[2]])
-					if (ZL[[h]][j] >= sum_succ){
+					if (ZL[[h]][j] >= sum_succ) {
 						res <- sum_succ
 						ZL[[h]] <- ZL[[h]][-j]
 						C[[h]][[j]] <- NULL
-					}
-					else{
+					} else {
 						res <- ZL[[h]][j]
 					}
 				}
@@ -661,8 +658,8 @@ pruning <- function(C, ZL, leaf_list, super.prune = FALSE) {
 		}
 	}
 	return(list(VstarNm = sum(Vec),
-							C=C,
-							ZL=ZL
+							C = C,
+							ZL = ZL
 							)
 				 )
 }
@@ -692,15 +689,16 @@ curve.V.star.forest.naive <- function(perm, C, ZL, leaf_list, pruning = FALSE){
 	
 	S <- numeric(0)
 	j <- 0
-	for (i in perm){
-		j <- j+1
-		S <- c(S,i)
+	for (t in perm){
+		j <- j + 1
+		S <- c(S, t)
 		vstars[j] <- V.star.no.extension(S, C, ZL, leaf_list) 
 	}
 	return(vstars)
 }
 
 # the forest must not be pruned beforehand
+# the following code fails if the input is a pruned forest
 forest.completion <- function(C, ZL, leaf_list) {
 	H <- length(C)
 	
@@ -752,6 +750,7 @@ forest.completion <- function(C, ZL, leaf_list) {
 }
 
 # the forest must not be pruned beforehand
+# the following code fails if the input is a pruned forest
 # this version is really cool because 
 # it doesn't add atoms 1 and 2 if R_(1,2) is here
 # and both atoms are missing, which is indeed useless
@@ -813,90 +812,169 @@ forest.completion.hidden <- function(C, ZL, leaf_list) {
 	return(list(C = C, ZL = ZL))
 }
 
-# the forest must not be pruned beforehand
-curve.V.star.forest.fast <- function(perm, C, ZL, leaf_list, pruning = FALSE){
-	vstars <- numeric(length(perm))
-	
-	# the fast version needs a proper completion of the
-	# forest structure, and for the same reason
-	# it must not use super pruning
-	completed <- forest.completion(C, ZL, leaf_list)
-	C <- completed$C
-	ZL <- completed$ZL
-	
-	if (pruning){
-		pruned <- pruning(C, ZL, leaf_list, super.prune = FALSE)
-		C <- pruned$C
-		ZL <- pruned$ZL
-		m <- length(unlist(leaf_list))
-		if(length(perm) == m){
-			# means that length(perm) = m,
-			# but the pruning already computed
-			# V^*({1, ..., m}) as a by-product so we
-			# might as well use it:
-			vstars[m] <- pruned$VstarNm
-			perm <- perm[-m]
+compute.K.1 <- function(C, ZL, leaf_list) {
+	H <- length(C)
+	K.1 <- list()
+	nb_leaves <- length(leaf_list)
+	leaf.available <- ! logical(nb_leaves)
+	for (h in 1:H) {
+		K.1[[h]] <- list()
+		nb_regions <- length(C[[h]])
+		if (nb_regions > 0) {
+			for (l in 1:nb_regions){
+				Chl <- C[[h]][[l]]
+				if(all(leaf.available[Chl[1]:Chl[2]])){
+					K.1[[h]][[l]] <- Chl
+					leaf.available[Chl[1]:Chl[2]] <- FALSE
+				} else {
+					K.1[[h]][[l]] <- NA
+				}
+			}
 		}
 	}
+	return(K.1)
+}
+
+# the forest must not be pruned beforehand
+# the completion fails if the input is a pruned forest
+# TODO : add the option to input a pruned structure, and its K.1
+# and inform the function that that's the case so the function
+# doesn't call forest.completion,
+# so two optional args to add: is.pruned and K.1
+curve.V.star.forest.fast <- function(perm, C, ZL, leaf_list, pruning = FALSE, is.pruned = FALSE, K.1 = NULL){
+	
+	vstars <- numeric(length(perm))
+	
+	if(! is.pruned){
+		# the fast version needs a proper completion of the
+		# forest structure, and for the same reason
+		# it must not use super pruning
+		completed <- forest.completion(C, ZL, leaf_list)
+		C <- completed$C
+		ZL <- completed$ZL
+		
+		if (pruning){
+			is.pruned <- TRUE
+			pruned <- pruning(C, ZL, leaf_list, super.prune = FALSE)
+			C <- pruned$C
+			ZL <- pruned$ZL
+			m <- length(unlist(leaf_list))
+			
+			if(length(perm) == m){
+				# means that length(perm) = m,
+				# but the pruning already computed
+				# V^*({1, ..., m}) as a by-product so we
+				# might as well use it:
+				vstars[m] <- pruned$VstarNm
+				perm <- perm[-m]
+			}
+		}
+	}
+	if (is.pruned && is.null(K.1)){
+		# we need to determine K^1 in the pruned case
+		K.1 <- compute.K.1(C, ZL, leaf_list)
+	}
+	
+	H <- length(C)
 	
 	etas <- ZL
-	H <- length(C)
 	K.minus <- list()
 	for (h in 1:H){
 		etas[[h]] <- rep(0, length(ZL[[h]]))
+		K.minus[[h]] <- list()
 		if (length(ZL[[h]]) > 0){
 			for (j in 1:length(ZL[[h]])){
 				if (ZL[[h]][j] == 0){
-					K.minus <- append(K.minus, list(C[[h]][[j]]))
+					K.minus[[h]][[j]] <- C[[h]][[j]]
 				}
 			}
 		}
 	}
 	
-	for(i in perm){
+	for(t in 1:length(perm)){
+		
+		i.t <- perm[t]
+		
+		################################
+		# SEARCHING IF i_t IS IN K MINUS
+		# if so, do.next == TRUE
+		# and we just go next to step t+1
 		do.next <- FALSE
-		for (couple in K.minus){
-			lower_leaf <- leaf_list[[couple[1]]]
-			lower_hyp <- lower_leaf[1]
-			upper_leaf <- leaf_list[[couple[2]]]
-			upper_hyp <- upper_leaf[length(upper_leaf)]
-			if((i >= lower_hyp) && (i <= upper_hyp)){
-				do.next <- TRUE
-				# print(paste0(i, " est dans K moins"))
+		for (h in 1:H){
+			if(do.next){
 				break
 			}
-		}
-		if (do.next){
-			next
-		}
-		# print(paste0(i, " n'est pas dans K moins"))
-		for (i in 1:H){
-			nb_regions <- length(C[[h]])
-			if(nb_regions>0){
-				is.found <- FALSE
-				for (j in 1:nb_regions) {
-					couple <- C[[h]][[j]]
+			for (couple in K.minus[[h]]){
+				if(! is.null(couple)){
 					lower_leaf <- leaf_list[[couple[1]]]
 					lower_hyp <- lower_leaf[1]
 					upper_leaf <- leaf_list[[couple[2]]]
 					upper_hyp <- upper_leaf[length(upper_leaf)]
-					if((i >= lower_hyp) && (i <= upper_hyp)){
-						# we found k^{(t,h)}
-						is.found <- TRUE
+					if((i.t >= lower_hyp) && (i.t <= upper_hyp)){
+						do.next <- TRUE
+						# print(paste0(i.t, " is in K minus"))
 						break
 					}
 				}
-				if(! is.found){
-					next
-				}
-				else{
-					
+			}
+		}
+		# print(paste0(i.t, " isn't in K minus"))
+		#########################################
+		
+		##################################
+		if (! do.next){
+			# Here, i_t isn't in K minus
+			for (h in 1:H){
+				nb_regions <- length(C[[h]])
+				if(nb_regions > 0){
+					is.found <- FALSE
+					for (j in 1:nb_regions) {
+						couple <- C[[h]][[j]]
+						lower_leaf <- leaf_list[[couple[1]]]
+						lower_hyp <- lower_leaf[1]
+						upper_leaf <- leaf_list[[couple[2]]]
+						upper_hyp <- upper_leaf[length(upper_leaf)]
+						if((i.t >= lower_hyp) && (i.t <= upper_hyp)){
+							# we found k^{(t,h)}
+							is.found <- TRUE
+							break
+						}
+					}
+					if(! is.found){
+						next
+					}
+					etas[[h]][[j]] <- etas[[h]][[j]] + 1
+					if(etas[[h]][[j]] < ZL[[h]][[j]]){
+						# pass
+					} else {
+						K.minus[[h]][[j]] <- C[[h]][[j]]
+						break
+					}
 				}
 			}
 		}
+		######################################
+		
+		##################################
+		# Computing V.star
+		if (is.pruned){
+			for (h in 1:H) {
+				nb_regions <- length(K.1[[h]])
+				if (nb_regions > 0) {
+					for (l in 1:nb_regions){
+						if(! all(is.na(K.1[[h]][[l]]))) {
+							vstars[t] <- vstars[t] + etas[[h]][[l]]
+						}
+					}
+				}
+			}
+		} else {
+			vstars[t] <- sum(etas[[1]])
+		}
+		
 	}
 	
-	return(list(etas=etas, Kmoins=K.minus))
+	return(vstars)
 }
 
 # completes an incomplete tree structure
