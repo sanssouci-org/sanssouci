@@ -38,6 +38,25 @@ mbench <- microbenchmark(naive.not.pruned = curve.V.star.forest.naive(perm, C, Z
 												 times=10, check="equal")
 print(mbench)
 
+print("Testing that the four versions of curve.V.star have the same output:")
+perm <- m:1
+print(curve.V.star.forest.naive(perm, C, ZL, leaf_list, pruning = FALSE))
+print(curve.V.star.forest.naive(perm, C, ZL, leaf_list, pruning = TRUE))
+print(curve.V.star.forest.fast(perm, C, ZL, leaf_list, pruning = FALSE))
+print(curve.V.star.forest.fast(perm, C, ZL, leaf_list, pruning = TRUE))
+
+super.pruned <- pruning(C, ZL, leaf_list, super.prune = TRUE)
+pruned <- pruning(C, ZL, leaf_list, super.prune = FALSE)
+K.1 <- compute.K.1(pruned$C, pruned$ZL, leaf_list)
+
+print("Comparing execution times:")
+mbench <- microbenchmark(naive.not.pruned = curve.V.star.forest.naive(perm, C, ZL, leaf_list),
+												 naive.pruned = curve.V.star.forest.naive(perm, super.pruned$C, super.pruned$ZL, leaf_list),
+												 fast.not.pruned = curve.V.star.forest.fast(perm, C, ZL, leaf_list),
+												 fast.pruned = curve.V.star.forest.fast(perm, pruned$C, pruned$ZL, leaf_list, is.pruned = TRUE, K.1 = K.1),
+												 times=10, check="equal")
+print(mbench)
+
 m <- 20
 C <- list(
 	list(c(2, 5), c(8, 15), c(16, 19)),
