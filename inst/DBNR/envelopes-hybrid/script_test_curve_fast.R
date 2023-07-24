@@ -37,7 +37,7 @@ print("Comparing execution times:")
 mbench <- microbenchmark(naive.not.pruned = curve.V.star.forest.naive(perm, C, ZL, leaf_list),
 												 naive.pruned = curve.V.star.forest.naive(perm, super.pruned$C, super.pruned$ZL, leaf_list),
 												 fast.not.pruned = curve.V.star.forest.fast(perm, C, ZL, leaf_list),
-												 fast.pruned = curve.V.star.forest.fast(perm, pruned$C, pruned$ZL, leaf_list, is.pruned = TRUE, K.1 = K.1),
+												 fast.pruned = curve.V.star.forest.fast(perm, pruned$C, pruned$ZL, leaf_list, is.pruned = TRUE),
 												 times=10, check="equal")
 print(mbench)
 
