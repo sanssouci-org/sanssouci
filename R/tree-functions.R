@@ -211,6 +211,7 @@ zeta.DKWM <- function(pval, lambda) {
 }
 
 # number of unique regions in a given tree
+# TODO BEFORE MERGE: delete this
 nb.elements <- function(C) {
     H <- length(C)
     count <- length(C[[H]])
@@ -234,6 +235,7 @@ nb.elements <- function(C) {
 
 # number of unique regions in a given tree,
 # assuming we didn't extend the leaves
+# TODO BEFORE MERGE: rename nb.elements
 nb.elements.no.extension <- function(C) {
 	H <- length(C)
 	count <- 0
@@ -262,6 +264,7 @@ nb.elements.no.extension <- function(C) {
 #' pvalues<-gen.p.values(m, mu, rho = 0)
 #' C <- dd$C 
 #' ZL<-zetas.tree(C, leaf_list, zeta.DKWM, pvalues, alpha = 0.05)
+# TODO BEFORE MERGE: delete this
 zetas.tree <- function(C, leaf_list, method, pvalues, alpha) {
     H <- length(C)
     K <- nb.elements(C)
@@ -296,6 +299,8 @@ zetas.tree <- function(C, leaf_list, method, pvalues, alpha) {
     return(ZL)
 }
 
+# TODO BEFORE MERGE: rename zetas.tree, change call of nb.elements, complete documentation
+# with refinement
 zetas.tree.no.extension <- function(C, leaf_list, method, pvalues, alpha, refine=FALSE, verbose=FALSE) {
 	H <- length(C)
 	K <- nb.elements.no.extension(C)
@@ -342,7 +347,8 @@ zetas.tree.no.extension <- function(C, leaf_list, method, pvalues, alpha, refine
 #' @rdname zetas.tree
 #' 
 #' @details In \code{zetas.tree.refined}, one tries to estimate the number of regions containing only signal.
-#' 
+#'
+# TODO BEFORE MERGE: delete this
 zetas.tree.refined <- function(C, leaf_list, method, pvalues, alpha) {
     H <- length(C)
     K <- nb.elements(C)
@@ -389,11 +395,13 @@ zetas.tree.refined <- function(C, leaf_list, method, pvalues, alpha) {
     return(ZL)
 }
 
+# TODO later: understand and maybe revamp?
 # boolean: is the set x included in y?
 setinclude <- function(x, y) {
     all(is.element(x, y))
 }
 
+# TODO later: understand and maybe revamp?
 # internal function of tree.from.list computes a 'proto' tree structure from a list of pairs region/zeta
 proto.tree.from.list <- function(listR) {
     lengths <- sapply(listR, function(lll) {
@@ -451,6 +459,7 @@ proto.tree.from.list <- function(listR) {
     return(protoCZ)
 }
 
+# TODO later: understand and maybe revamp?
 # internal function of tree.from.list recursive function designed to compute a list of leaves
 recurleaves <- function(numvect, trunc) {
     leaf_list <- list()
@@ -486,6 +495,7 @@ recurleaves <- function(numvect, trunc) {
     return(leaf_list)
 }
 
+# TODO later: understand and maybe revamp?
 # computes an incomplete tree structure, a tree of zetas, and a list of leaves from a list of pairs region/zeta.
 tree.from.list <- function(m, listR) {
     protoCZ <- proto.tree.from.list(listR)
@@ -517,6 +527,7 @@ tree.from.list <- function(m, listR) {
 }
 
 # NOTE: assumes the forest is extended
+# TODO BEFORE MERGE: delete this
 V.star.all.leaves <- function(S, C, ZL, leaf_list) {
     H <- length(C)
     leaves <- length(leaf_list)
@@ -551,6 +562,7 @@ V.star.all.leaves <- function(S, C, ZL, leaf_list) {
     return(sum(Vec[id])) # could also just be sum(Vec) given that Vec has 0 values outside of id
 }
 
+# TODO BEFORE MERGE: delete this
 V.star.all.leaves.no.id <- function(S, C, ZL, leaf_list) {
   H <- length(C)
   nb_leaves <- length(leaf_list)
@@ -577,6 +589,7 @@ V.star.all.leaves.no.id <- function(S, C, ZL, leaf_list) {
   return(sum(Vec))
 }
 
+# TODO BEFORE MERGE: rename V.star
 V.star.no.extension <- function(S, C, ZL, leaf_list) {
 	H <- length(C)
 	nb_leaves <- length(leaf_list)
@@ -620,6 +633,9 @@ V.star.no.extension <- function(S, C, ZL, leaf_list) {
 # but must not be used in conjunction with 
 # the fast version of curve.V.star.forest,
 # hence it is at FALSE by default
+# TODO later: fast curve.Vmax is slower with the pruning
+# which is unexpected, maybe it is because the pruning leaves gaps
+# => maybe revamp to delete gaps?
 pruning <- function(C, ZL, leaf_list, super.prune = FALSE) {
 	H <- length(C)
 	nb_leaves <- length(leaf_list)
@@ -664,6 +680,7 @@ pruning <- function(C, ZL, leaf_list, super.prune = FALSE) {
 				 )
 }
 
+# TODO BEFORE MERGE: change call of V.star, document
 curve.V.star.forest.naive <- function(perm, C, ZL, leaf_list, pruning = FALSE){
 	vstars <- numeric(length(perm))
 	
@@ -699,6 +716,7 @@ curve.V.star.forest.naive <- function(perm, C, ZL, leaf_list, pruning = FALSE){
 
 # the forest must not be pruned beforehand
 # the following code fails if the input is a pruned forest
+# TODO BEFORE MERGE: document
 forest.completion <- function(C, ZL, leaf_list) {
 	H <- length(C)
 	
@@ -762,6 +780,7 @@ forest.completion <- function(C, ZL, leaf_list) {
 # or until we find a use for it,
 # and use a version that really add all atoms
 # on the bright side, that makes the code simpler
+# TODO BEFORE MERGE: move to a "useless function atm" file?
 forest.completion.hidden <- function(C, ZL, leaf_list) {
 	H <- length(C)
 	
@@ -813,6 +832,9 @@ forest.completion.hidden <- function(C, ZL, leaf_list) {
 
 # useless at the moment because finally
 # curve.V.star.forest.fast does not need K.1
+# TODO BEFORE MERGE: move to a "useless function atm" file?
+# adapt this code and apply it recursively to delete gaps in a completed
+# and pruned forest? sounds like it should work
 compute.K.1 <- function(C, ZL, leaf_list) {
 	H <- length(C)
 	K.1 <- list()
@@ -836,6 +858,7 @@ compute.K.1 <- function(C, ZL, leaf_list) {
 
 # the forest must not be pruned beforehand
 # the completion fails if the input is a pruned forest
+# TODO BEFORE MERGE: document
 curve.V.star.forest.fast <- function(perm, C, ZL, leaf_list, pruning = FALSE, is.pruned = FALSE){
   
   vstars <- numeric(length(perm))
@@ -967,6 +990,7 @@ curve.V.star.forest.fast <- function(perm, C, ZL, leaf_list, pruning = FALSE, is
 # NOTE: the expected input is strange given that all the leaves are expected
 # to be given by leaf_list, they can only be missing in C, and C has to be
 # properly annotated wrt leaf_list and the leaves labels
+# TODO BEFORE MERGE: delete this
 tree.expand <- function(C, ZL, leaf_list) {
     H <- length(C)
     leaves <- length(leaf_list)
@@ -1033,6 +1057,7 @@ tree.expand <- function(C, ZL, leaf_list) {
 #' @return An integer value, upper bound on the number false positives in S
 #' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
 #' @export
+# TODO BEFORE MERGE: delete this
 V.star <- function(S, C, ZL, leaf_list) {
     all_leaves <- tree.expand(C, ZL, leaf_list)
     return(V.star.all.leaves(S, 
@@ -1041,6 +1066,7 @@ V.star <- function(S, C, ZL, leaf_list) {
                             leaf_list))
 }
 
+# TODO BEFORE MERGE: delete this
 V.star.no.id <- function(S, C, ZL, leaf_list) {
   all_leaves <- tree.expand(C, ZL, leaf_list)
   return(V.star.all.leaves.no.id(S, 
@@ -1049,6 +1075,7 @@ V.star.no.id <- function(S, C, ZL, leaf_list) {
                                  leaf_list))
 }
 
+# TODO BEFORE MERGE: move to a "useless function atm" file?
 nodeLabel <- function(x) {
     paste(unlist(x), collapse = ":")
 }
