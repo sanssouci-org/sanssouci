@@ -3,12 +3,14 @@ library(microbenchmark)
 
 set.seed(12)
 
+#########################################################
+################ FIRST EXAMPLE
+#########################################################
 m <- 16
 example <- dyadic.from.height(m, 3, 2)
 leaf_list <- example$leaf_list
 C <- example$C
-pval_idx <- unlist(leaf_list)
-pval <- runif(n = max(pval_idx))
+pval <- runif(n = m)
 alpha = 0.05
 method <- zeta.HB
 pval[13:16] <- 1e-15
@@ -47,16 +49,19 @@ print(curve.V.star.forest.fast(perm, C, ZL, leaf_list, pruning = TRUE))
 
 super.pruned <- pruning(C, ZL, leaf_list, super.prune = TRUE)
 pruned <- pruning(C, ZL, leaf_list, super.prune = FALSE)
-K.1 <- compute.K.1(pruned$C, pruned$ZL, leaf_list)
 
 print("Comparing execution times:")
 mbench <- microbenchmark(naive.not.pruned = curve.V.star.forest.naive(perm, C, ZL, leaf_list),
 												 naive.pruned = curve.V.star.forest.naive(perm, super.pruned$C, super.pruned$ZL, leaf_list),
 												 fast.not.pruned = curve.V.star.forest.fast(perm, C, ZL, leaf_list),
-												 fast.pruned = curve.V.star.forest.fast(perm, pruned$C, pruned$ZL, leaf_list, is.pruned = TRUE, K.1 = K.1),
+												 fast.pruned = curve.V.star.forest.fast(perm, pruned$C, pruned$ZL, leaf_list, is.pruned = TRUE),
 												 times=10, check="equal")
 print(mbench)
 
+
+#########################################################
+################ SECOND EXAMPLE
+#########################################################
 m <- 20
 C <- list(
 	list(c(2, 5), c(8, 15), c(16, 19)),
@@ -87,14 +92,48 @@ print(curve.V.star.forest.fast(perm, C, ZL, leaf_list, pruning = TRUE))
 
 super.pruned <- pruning(C, ZL, leaf_list, super.prune = TRUE)
 pruned <- pruning(C, ZL, leaf_list, super.prune = FALSE)
-K.1 <- compute.K.1(pruned$C, pruned$ZL, leaf_list)
 
 print("Comparing execution times:")
 mbench <- microbenchmark(naive.not.pruned = curve.V.star.forest.naive(perm, C, ZL, leaf_list),
 												 naive.pruned = curve.V.star.forest.naive(perm, super.pruned$C, super.pruned$ZL, leaf_list),
 												 fast.not.pruned = curve.V.star.forest.fast(perm, C, ZL, leaf_list),
-												 fast.pruned = curve.V.star.forest.fast(perm, pruned$C, pruned$ZL, leaf_list, is.pruned = TRUE, K.1 = K.1),
+												 fast.pruned = curve.V.star.forest.fast(perm, pruned$C, pruned$ZL, leaf_list, is.pruned = TRUE),
 												 times=10, check="equal")
 print(mbench)
 
-	
+
+#########################################################
+################ THIRD EXAMPLE
+#########################################################
+pow <- 10
+m <- 2 ^ pow
+example <- dyadic.from.height(m, pow, 2)
+leaf_list <- example$leaf_list
+C <- example$C
+pval <- runif(n = m)
+alpha = 0.05
+method <- zeta.trivial
+ZL <- zetas.tree.no.extension(C, leaf_list, method, pval, alpha, refine = TRUE, verbose = FALSE)
+
+print("The pvalues are:")
+print(pval)
+print("The zetas are:")
+print(ZL)
+
+print("Testing that the four versions of curve.V.star have the same output:")
+perm <- 1:m
+print(curve.V.star.forest.naive(perm, C, ZL, leaf_list, pruning = FALSE))
+print(curve.V.star.forest.naive(perm, C, ZL, leaf_list, pruning = TRUE))
+print(curve.V.star.forest.fast(perm, C, ZL, leaf_list, pruning = FALSE))
+print(curve.V.star.forest.fast(perm, C, ZL, leaf_list, pruning = TRUE))
+
+super.pruned <- pruning(C, ZL, leaf_list, super.prune = TRUE)
+pruned <- pruning(C, ZL, leaf_list, super.prune = FALSE)
+
+print("Comparing execution times:")
+mbench <- microbenchmark(naive.not.pruned = curve.V.star.forest.naive(perm, C, ZL, leaf_list),
+                         naive.pruned = curve.V.star.forest.naive(perm, super.pruned$C, super.pruned$ZL, leaf_list),
+                         fast.not.pruned = curve.V.star.forest.fast(perm, C, ZL, leaf_list),
+                         fast.pruned = curve.V.star.forest.fast(perm, pruned$C, pruned$ZL, leaf_list, is.pruned = TRUE),
+                         times=10, check="equal")
+print(mbench)
