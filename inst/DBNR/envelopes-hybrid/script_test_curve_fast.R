@@ -12,7 +12,7 @@ example <- dyadic.from.height(m, 3, 2)
 leaf_list <- example$leaf_list
 C <- example$C
 pval <- runif(n = m)
-alpha = 0.05
+alpha <- 0.05
 method <- zeta.HB
 pval[13:16] <- 1e-15
 ZL <- zetas.tree.no.extension(C, leaf_list, method, pval, alpha, refine = TRUE, verbose = FALSE)
@@ -112,7 +112,7 @@ example <- dyadic.from.height(m, pow, 2)
 leaf_list <- example$leaf_list
 C <- example$C
 pval <- runif(n = m)
-alpha = 0.05
+alpha <- 0.05
 method <- zeta.trivial
 ZL <- zetas.tree.no.extension(C, leaf_list, method, pval, alpha, refine = TRUE, verbose = FALSE)
 

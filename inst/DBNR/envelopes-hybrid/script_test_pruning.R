@@ -12,7 +12,7 @@ C <- example$C
 pval_idx <- unlist(leaf_list)
 pval <- runif(n = max(pval_idx))
 
-alpha = 0.05
+alpha <- 0.05
 method <- zeta.HB
 
 pval[1:4] <- 1e-15

@@ -173,7 +173,7 @@ zeta.HB <- function(pval, lambda) {
     thresholds <- lambda / (m - m:1 + 1)
     v <- sorted.pval - thresholds
     indexes <- which(v > 0)
-    if (!length(indexes)){
+    if (! length(indexes)) {
       return(0)
     }
     else{
@@ -309,7 +309,6 @@ zetas.tree.no.extension <- function(C, leaf_list, method, pvalues, alpha, refine
 	continue <- TRUE
 	nb_loop <- 0
 	while (continue) {
-		nb_loop <- nb_loop + 1
 		usage_K <- new_K
 		new_K <- K
 		for (h in H:1) {
@@ -319,15 +318,13 @@ zetas.tree.no.extension <- function(C, leaf_list, method, pvalues, alpha, refine
 			for (j in 1:len) {
 				Chj <- Ch[[j]]
 				pvals <- pvalues[unlist(leaf_list[Chj[1]:Chj[2]])]
-				if(typeof(method) == "list"){
-					if(typeof(method[[h]]) == "list"){
+				if (typeof(method) == "list") {
+					if (typeof(method[[h]]) == "list") {
 						zeta_method <- method[[h]][[j]]
-					}
-					else{
+					} else {
 						zeta_method <- method[[h]]
 					}
-				}
-				else{
+				} else {
 					zeta_method <- method
 				}
 				zeta_inter[j] <- zeta_method(pvals, alpha / usage_K)
@@ -336,8 +333,10 @@ zetas.tree.no.extension <- function(C, leaf_list, method, pvalues, alpha, refine
 			}
 			ZL[[h]] <- zeta_inter
 		}
-		if (verbose)
+		if (verbose) {
+			nb_loop <- nb_loop + 1
 			print(paste0("loop number=", nb_loop,", usage_K=",usage_K,", new_K=",new_K))
+		}
 		continue <- refine && (new_K < usage_K)
 	}
 	return(ZL)
