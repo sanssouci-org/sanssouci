@@ -834,7 +834,7 @@ forest.completion.hidden <- function(C, ZL, leaf_list) {
 # TODO BEFORE MERGE: move to a "useless function atm" file?
 # adapt this code and apply it recursively to delete gaps in a completed
 # and pruned forest? sounds like it should work
-compute.K.1 <- function(C, ZL, leaf_list) {
+compute.K.1 <- function(C, leaf_list) {
 	H <- length(C)
 	K.1 <- list()
 	nb_leaves <- length(leaf_list)
