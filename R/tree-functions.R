@@ -635,7 +635,8 @@ V.star.no.extension <- function(S, C, ZL, leaf_list) {
 # TODO later: fast curve.Vmax is slower with the pruning
 # which is unexpected, maybe it is because the pruning leaves gaps
 # => maybe revamp to delete gaps?
-pruning <- function(C, ZL, leaf_list, super.prune = FALSE) {
+# not sure if super.prune and delete.gaps can be both TRUE at the moment
+pruning <- function(C, ZL, leaf_list, super.prune = FALSE, delete.gaps = FALSE) {
 	H <- length(C)
 	nb_leaves <- length(leaf_list)
 	Vec <- numeric(nb_leaves) 
@@ -672,6 +673,13 @@ pruning <- function(C, ZL, leaf_list, super.prune = FALSE) {
 			}
 		}
 	}
+	
+	if (delete.gaps) {
+		gaps.deleted <- delete.gaps(C, ZL, leaf_list)
+		C <- gaps.deleted$C
+		ZL <- gaps.deleted$ZL
+	}
+	
 	return(list(VstarNm = sum(Vec),
 							C = C,
 							ZL = ZL
@@ -679,8 +687,55 @@ pruning <- function(C, ZL, leaf_list, super.prune = FALSE) {
 	)
 }
 
+# TODO BEFORE MERGE: document
+delete.gaps <- function(C, ZL, leaf_list) {
+	H <- length(C)
+	nb_leaves <- length(leaf_list)
+	continue <- TRUE
+	newC <- list()
+	newZL <- list()
+	loop.counter <- 1
+	while(continue){
+		newC[[loop.counter]] <- list()
+		newZL[[loop.counter]] <- numeric(0)
+		leaf.available <- ! logical(nb_leaves)
+		regions.delete <- list()
+		for (h in 1:H) {
+			nb_regions <- length(C[[h]])
+			if (nb_regions > 0) {
+				for (l in 1:nb_regions) {
+					Chl <- C[[h]][[l]]
+					if (all(leaf.available[Chl[1]:Chl[2]])) {
+						newC[[loop.counter]][[Chl[1]]] <- Chl
+						newZL[[loop.counter]][Chl[1]]  <- ZL[[h]][[l]]
+						leaf.available[Chl[1]:Chl[2]] <- FALSE
+						regions.delete <- append(regions.delete, list(c(h, l)))
+					}
+				}
+			}
+		}
+		for (couple in rev(regions.delete)) {
+			h <- couple[1]
+			l <- couple[2]
+			C[[h]][[l]] <- NULL
+			ZL[[h]] <- ZL[[h]][-j]
+		}
+		if(length(newC[[loop.counter]]) > 0) {
+			for(l in length(newC[[loop.counter]]):1) {
+				if (is.null(newC[[loop.counter]][[l]])){
+					newC[[loop.counter]][[l]] <- NULL
+					newZL[[loop.counter]] <- 	newZL[[loop.counter]][-l]
+				}
+			}
+		}
+		loop.counter <- loop.counter + 1
+		continue <- any(sapply(X = ZL, FUN = function(vec){length(vec) > 0}))
+	}
+	return(list(C = newC, ZL = newZL))
+}
+
 # TODO BEFORE MERGE: change call of V.star, document
-curve.V.star.forest.naive <- function(perm, C, ZL, leaf_list, pruning = FALSE){
+curve.V.star.forest.naive <- function(perm, C, ZL, leaf_list, pruning = FALSE, delete.gaps = FALSE){
 	vstars <- numeric(length(perm))
 	
 	# the naive version doesn't need a proper completion of the
@@ -689,7 +744,7 @@ curve.V.star.forest.naive <- function(perm, C, ZL, leaf_list, pruning = FALSE){
 	# it can use super pruning
 	
 	if (pruning){
-		pruned <- pruning(C, ZL, leaf_list, super.prune = TRUE)
+		pruned <- pruning(C, ZL, leaf_list, super.prune = TRUE, delete.gaps = delete.gaps)
 		C <- pruned$C
 		ZL <- pruned$ZL
 		m <- length(unlist(leaf_list))
@@ -855,52 +910,6 @@ compute.K.1 <- function(C, leaf_list) {
 	return(K.1)
 }
 
-# TODO BEFORE MERGE: document
-delete.gaps <- function(C, ZL, leaf_list) {
-	H <- length(C)
-	nb_leaves <- length(leaf_list)
-	continue <- TRUE
-	newC <- list()
-	newZL <- list()
-	loop.counter <- 1
-	while(continue){
-		newC[[loop.counter]] <- list()
-		newZL[[loop.counter]] <- numeric(0)
-		leaf.available <- ! logical(nb_leaves)
-		regions.delete <- list()
-		for (h in 1:H) {
-			nb_regions <- length(C[[h]])
-			if (nb_regions > 0) {
-				for (l in 1:nb_regions) {
-					Chl <- C[[h]][[l]]
-					if (all(leaf.available[Chl[1]:Chl[2]])) {
-						newC[[loop.counter]][[Chl[1]]] <- Chl
-						newZL[[loop.counter]][Chl[1]]  <- ZL[[h]][[l]]
-						leaf.available[Chl[1]:Chl[2]] <- FALSE
-						regions.delete <- append(regions.delete, list(c(h, l)))
-					}
-				}
-			}
-		}
-		for (couple in rev(regions.delete)) {
-			h <- couple[1]
-			l <- couple[2]
-			C[[h]][[l]] <- NULL
-			ZL[[h]] <- ZL[[h]][-j]
-		}
-		if(length(newC[[loop.counter]]) > 0) {
-			for(l in length(newC[[loop.counter]]):1) {
-				if (is.null(newC[[loop.counter]][[l]])){
-					newC[[loop.counter]][[l]] <- NULL
-					newZL[[loop.counter]] <- 	newZL[[loop.counter]][-l]
-				}
-			}
-		}
-		loop.counter <- loop.counter + 1
-		continue <- any(sapply(X = ZL, FUN = function(vec){length(vec) > 0}))
-	}
-	return(list(C = newC, ZL = newZL))
-}
 
 # the forest must not be pruned beforehand
 # the completion fails if the input is a pruned forest
@@ -923,7 +932,7 @@ curve.V.star.forest.fast <- function(perm, C, ZL, leaf_list, is.pruned = FALSE, 
 		
 		if (pruning) {
 			is.pruned <- TRUE
-			pruned <- pruning(C, ZL, leaf_list, super.prune = FALSE)
+			pruned <- pruning(C, ZL, leaf_list, super.prune = FALSE, delete.gaps = delete.gaps)
 			C <- pruned$C
 			ZL <- pruned$ZL
 			m <- length(unlist(leaf_list))
@@ -936,12 +945,7 @@ curve.V.star.forest.fast <- function(perm, C, ZL, leaf_list, is.pruned = FALSE, 
 				vstars[m] <- pruned$VstarNm
 				perm <- perm[-m]
 			}
-			
-			if (delete.gaps) {
-				gaps.deleted <- delete.gaps(C, ZL, leaf_list)
-				C <- gaps.deleted$C
-				ZL <- gaps.deleted$ZL
-			}
+
 		}
 	}
 	
