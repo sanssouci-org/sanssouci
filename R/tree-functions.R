@@ -170,7 +170,7 @@ zeta.HB <- function(pval, lambda) {
     m <- length(pval)
     sorted.pval <- sort(pval)
     
-    thresholds <- lambda / (m - m:1 + 1)
+    thresholds <- lambda / (m - 1:m + 1)
     v <- sorted.pval - thresholds
     indexes <- which(v > 0)
     if (!length(indexes)){
