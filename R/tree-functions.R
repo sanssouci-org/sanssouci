@@ -862,8 +862,9 @@ compute.K.1 <- function(C, ZL, leaf_list) {
 	return(K.1)
 }
 
-# the forest must not be pruned beforehand
-# the completion fails if the input is a pruned forest
+# The completion fails if the input is a pruned forest,
+# so if a pruned forest is input, it MUST be saif with the is.pruned argument
+# so that the function skips completion.
 # TODO BEFORE MERGE: document
 curve.V.star.forest.fast <- function(perm, C, ZL, leaf_list, pruning = FALSE, is.pruned = FALSE){
   
@@ -878,7 +879,7 @@ curve.V.star.forest.fast <- function(perm, C, ZL, leaf_list, pruning = FALSE, is
     ZL <- completed$ZL
     
     if (pruning) {
-      is.pruned <- TRUE
+      is.pruned <- TRUE # useless atm, but kept for clarity
       pruned <- pruning(C, ZL, leaf_list, prune.leafs = FALSE)
       C <- pruned$C
       ZL <- pruned$ZL
