@@ -86,8 +86,8 @@ dyadic.from.leaf_list <- function(leaf_list, method) {
 #' @param m An integer value, the number of elements in the structure
 #' @param s An integer value, the number of elements in each leaf
 #' @return A list with two elements:\describe{
-#' \item{leaf_list}{A list of leaves}
-#' \item{C}{A list of lists containing the dyadic structure}
+#' \item{\code{leaf_list}}{A list of leaves}
+#' \item{\code{C}}{A list of lists containing the dyadic structure}
 #' }
 #' @export
 #' @rdname dyadic
