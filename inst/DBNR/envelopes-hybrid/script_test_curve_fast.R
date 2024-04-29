@@ -29,8 +29,8 @@ print(curve.V.star.forest.naive(perm, C, ZL, leaf_list, pruning = TRUE))
 print(curve.V.star.forest.fast(perm, C, ZL, leaf_list, pruning = FALSE))
 print(curve.V.star.forest.fast(perm, C, ZL, leaf_list, pruning = TRUE))
 
-super.pruned <- pruning(C, ZL, leaf_list, super.prune = TRUE)
-pruned <- pruning(C, ZL, leaf_list, super.prune = FALSE)
+super.pruned <- pruning(C, ZL, leaf_list, prune.leafs = TRUE)
+pruned <- pruning(C, ZL, leaf_list, prune.leafs = FALSE)
 K.1 <- compute.K.1(pruned$C, pruned$ZL, leaf_list)
 
 print("Comparing execution times:")
@@ -48,8 +48,8 @@ print(curve.V.star.forest.naive(perm, C, ZL, leaf_list, pruning = TRUE))
 print(curve.V.star.forest.fast(perm, C, ZL, leaf_list, pruning = FALSE))
 print(curve.V.star.forest.fast(perm, C, ZL, leaf_list, pruning = TRUE))
 
-super.pruned <- pruning(C, ZL, leaf_list, super.prune = TRUE)
-pruned <- pruning(C, ZL, leaf_list, super.prune = FALSE)
+super.pruned <- pruning(C, ZL, leaf_list, prune.leafs = TRUE)
+pruned <- pruning(C, ZL, leaf_list, prune.leafs = FALSE)
 
 print("Comparing execution times:")
 mbench <- microbenchmark(naive.not.pruned = curve.V.star.forest.naive(perm, C, ZL, leaf_list),
@@ -91,8 +91,8 @@ print(curve.V.star.forest.naive(perm, C, ZL, leaf_list, pruning = TRUE))
 print(curve.V.star.forest.fast(perm, C, ZL, leaf_list, pruning = FALSE))
 print(curve.V.star.forest.fast(perm, C, ZL, leaf_list, pruning = TRUE))
 
-super.pruned <- pruning(C, ZL, leaf_list, super.prune = TRUE)
-pruned <- pruning(C, ZL, leaf_list, super.prune = FALSE)
+super.pruned <- pruning(C, ZL, leaf_list, prune.leafs = TRUE)
+pruned <- pruning(C, ZL, leaf_list, prune.leafs = FALSE)
 
 print("Comparing execution times:")
 mbench <- microbenchmark(naive.not.pruned = curve.V.star.forest.naive(perm, C, ZL, leaf_list),
@@ -128,8 +128,8 @@ print(curve.V.star.forest.naive(perm, C, ZL, leaf_list, pruning = TRUE))
 print(curve.V.star.forest.fast(perm, C, ZL, leaf_list, pruning = FALSE))
 print(curve.V.star.forest.fast(perm, C, ZL, leaf_list, pruning = TRUE))
 
-super.pruned <- pruning(C, ZL, leaf_list, super.prune = TRUE)
-pruned <- pruning(C, ZL, leaf_list, super.prune = FALSE)
+super.pruned <- pruning(C, ZL, leaf_list, prune.leafs = TRUE)
+pruned <- pruning(C, ZL, leaf_list, prune.leafs = FALSE)
 
 print("Comparing execution times:")
 mbench <- microbenchmark(naive.not.pruned = curve.V.star.forest.naive(perm, C, ZL, leaf_list),

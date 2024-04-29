@@ -625,9 +625,7 @@ V.star.no.extension <- function(S, C, ZL, leaf_list) {
 	return(sum(Vec))
 }
 
-# the following assumes that zeta_k is <= to
-# the cardinal of R_k but this should always happen
-# super.prune can also prune atoms for which zeta_k is =
+# prune.leafs can also prune atoms/leafs for which zeta_k is =
 # the cardinal of R_k, this can speed up the
 # computation of V.star.no.extension
 # but must not be used in conjunction with 
@@ -635,49 +633,56 @@ V.star.no.extension <- function(S, C, ZL, leaf_list) {
 # hence it is at FALSE by default
 # TODO later: fast curve.Vmax is slower with the pruning
 # which is unexpected, maybe it is because the pruning leaves gaps
-# => maybe revamp to delete gaps?
-pruning <- function(C, ZL, leaf_list, super.prune = FALSE) {
-	H <- length(C)
-	nb_leaves <- length(leaf_list)
-	Vec <- numeric(nb_leaves) 
-	for (i in 1:nb_leaves) {
-		Vec[i] <- length(leaf_list[[i]])
-	}
-	# the initialization term for each atom P_i
-	# is equivalent to completing the family if it isn't,
-	# assuming that leaf_list does indeed contain all leaves
-	# and some were just eventually missing in C and ZL
-	for (h in H:1) {
-		nb_regions <- length(C[[h]])
-		if (nb_regions > 0) {
-			for (j in nb_regions:1) {
-				Chj <- C[[h]][[j]]
-				if (Chj[1]==Chj[2]) { 
-					res <- ZL[[h]][j]
-					if (super.prune && res >= length(leaf_list[[Chj[1]]])) {
-						ZL[[h]] <- ZL[[h]][-j]
-						C[[h]][[j]] <- NULL
-					}
-				} else {
-					sum_succ <- sum(Vec[Chj[1]:Chj[2]])
-					if (ZL[[h]][j] >= sum_succ) {
-						res <- sum_succ
-						ZL[[h]] <- ZL[[h]][-j]
-						C[[h]][[j]] <- NULL
-					} else {
-						res <- ZL[[h]][j]
-					}
-				}
-				Vec[Chj[1]:Chj[2]] <- 0
-				Vec[Chj[1]] <- res
-			}
-		}
-	}
-	return(list(VstarNm = sum(Vec),
-							C = C,
-							ZL = ZL
-							)
-				 )
+# => maybe revamp to delete gaps? 
+# (??? curve.Vmax not found, maybe this TODO should be deleted)
+pruning <- function(C, ZL, leaf_list, prune.leafs = FALSE) {
+  H <- length(C)
+  nb_leaves <- length(leaf_list)
+  Vec <- numeric(nb_leaves) 
+  for (i in 1:nb_leaves) {
+    Vec[i] <- length(leaf_list[[i]])
+    # The initialization term for each atom P_i
+    # is equivalent to completing the family if it isn't,
+    # assuming that leaf_list does indeed contain all leaves
+    # and some were just eventually missing in C and ZL.
+    # Using the length of the atoms assure that we 
+    # will catch atoms with a zeta_i larger than its length
+  }
+  for (h in H:1) {
+    nb_regions <- length(C[[h]])
+    if (nb_regions > 0) {
+      for (j in nb_regions:1) {
+        Chj <- C[[h]][[j]]
+        candidate <- ZL[[h]][j]
+        sum_succ <- sum(Vec[Chj[1]:Chj[2]])
+        if (candidate >= sum_succ) {
+          res <- sum_succ
+          if(prune.leafs || (Chj[1] < Chj[2])){
+            # Either the region is not a leaf, 
+            # or it's a leaf and we chose to prune the leafs
+            # so we prune.
+            ZL[[h]] <- ZL[[h]][-j]
+            C[[h]][[j]] <- NULL
+          }
+          else{
+            # The region is a leaf/atom and we chose
+            # to keep the leafs, so we keep it,
+            # but we change the zeta_i to the length of P_i.
+            ZL[[h]][j] <- sum_succ
+          }
+        } else {
+          res <- candidate
+        }
+        Vec[Chj[1]:Chj[2]] <- 0
+        Vec[Chj[1]] <- res
+      }
+    }
+  }
+  return(list(VstarNm = sum(Vec),
+              C = C,
+              ZL = ZL
+  )
+  )
 }
 
 # TODO BEFORE MERGE: change call of V.star, document
@@ -690,7 +695,7 @@ curve.V.star.forest.naive <- function(perm, C, ZL, leaf_list, pruning = FALSE){
 	# it can use super pruning
 	
 	if (pruning){
-		pruned <- pruning(C, ZL, leaf_list, super.prune = TRUE)
+		pruned <- pruning(C, ZL, leaf_list, prune.leafs = TRUE)
 		C <- pruned$C
 		ZL <- pruned$ZL
 		m <- length(unlist(leaf_list))
@@ -874,7 +879,7 @@ curve.V.star.forest.fast <- function(perm, C, ZL, leaf_list, pruning = FALSE, is
     
     if (pruning) {
       is.pruned <- TRUE
-      pruned <- pruning(C, ZL, leaf_list, super.prune = FALSE)
+      pruned <- pruning(C, ZL, leaf_list, prune.leafs = FALSE)
       C <- pruned$C
       ZL <- pruned$ZL
       m <- length(unlist(leaf_list))
