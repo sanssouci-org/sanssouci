@@ -18,12 +18,11 @@
 #' str(dd)
 #'
 #' leaf_list <- dd$leaf_list
-
+# TODO dyadic.from.max.size doesn't exist !! and not in the examples
+# dyadic.from.leaf_list is not documented and not in the examples, stranges last line in examples
 NULL
 
 
-#' Create a complete dyadic tree structure
-#' 
 #' @param leaf_list A list of leaves
 #' @param method A numeric value. If \code{method == 1}, start from the leaves
 #'   and group nodes of a same height 2 by 2 as long as possible. If
