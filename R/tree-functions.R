@@ -695,7 +695,8 @@ curve.V.star.forest.naive <- function(perm, C, ZL, leaf_list, pruning = FALSE){
 		ZL <- pruned$ZL
 		m <- length(unlist(leaf_list))
 		if(length(perm) == m){
-			# means that length(perm) = m,
+			# means that the last bound to compute
+		  # is V^*({1, ..., m}),
 			# but the pruning already computed
 			# V^*({1, ..., m}) as a by-product so we
 			# might as well use it:
