@@ -331,13 +331,13 @@ zetas.tree.no.extension <- function(C, leaf_list, method, pvalues, alpha, refine
 					zeta_method <- method
 				}
 				zeta_inter[j] <- zeta_method(pvals, alpha / usage_K)
-				if (refine && (zeta_inter[j] == 0) )
+				if (zeta_inter[j] == 0)
 					new_K <- new_K - 1
 			}
 			ZL[[h]] <- zeta_inter
 		}
 		if (verbose)
-			print(paste0("loop number=", nb_loop,", usage_K=",usage_K,", new_K=",new_K))
+			print(paste0("loop number=", nb_loop, ", usage_K=", usage_K, ", new_K=", new_K))
 		continue <- refine && (new_K < usage_K)
 	}
 	return(ZL)
