@@ -130,7 +130,7 @@ gen.p.values <- function(m, mu = rep(0, m), rho = 0, alternative = c("two.sided"
 }
 
 
-#' Computes a curve of post hoc bound based on a fores-based reference family
+#' Computes a curve of post hoc bound based on a forest-based reference family
 #'
 #' @param treeFam A forest-based reference family, see example below
 #' @param ordering A permutation of \eqn{1, ..., m}, the ordering of the
@@ -178,6 +178,8 @@ gen.p.values <- function(m, mu = rep(0, m), rho = 0, alternative = c("two.sided"
 #'      xlim = c(0, 2*m1), ylim = c(0, m1),
 #'      ylab = "Lower bound on true positives")
 #' lines(1:m, SmuS, t = 's', col = 3)
+# TODO BEFORE MERGE: delete this, transfer documentation to appropriate place,
+# redo simulation scripts of SJS paper for replicability
 curveVstar_tree <- function(treeFam, ordering) {
     C <- treeFam$tree
     leaf_list <- treeFam$leaves
@@ -185,6 +187,7 @@ curveVstar_tree <- function(treeFam, ordering) {
     
     m <- length(ordering)
     stopifnot(length(unlist(leaf_list)) == m) ## sanity check
+    # the sanity check makes no sense, we should be able to try orderings of size less than m
     
     vecVstar <- numeric(m)
     for (ii in 1:m) {
@@ -192,4 +195,4 @@ curveVstar_tree <- function(treeFam, ordering) {
     }
     vecVstar
 }
-# the sanity check makes no sense, we should be able to try orderings of size less than m
+
