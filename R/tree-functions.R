@@ -644,7 +644,7 @@ forest.completion <- function(C, ZL, leaf_list) {
 
 
 # The completion fails if the input is a pruned forest,
-# so if a pruned forest is input, it MUST be saif with the is.pruned argument
+# so if a pruned forest is input, it MUST be said with the is.pruned argument
 # so that the function skips completion.
 # TODO BEFORE MERGE: document
 curve.V.star.forest.fast <- function(perm, C, ZL, leaf_list, pruning = FALSE, is.pruned = FALSE){
