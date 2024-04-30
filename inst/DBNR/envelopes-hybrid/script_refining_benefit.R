@@ -15,6 +15,7 @@ alpha = 0.05
 method <- zeta.HB
 
 pval[1:4]<-1e-15
+pval[5] <- 0.002
 
 print("The pvalues are:")
 print(pval)
