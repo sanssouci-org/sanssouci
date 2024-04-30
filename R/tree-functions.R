@@ -1,3 +1,5 @@
+# TODO dyadic.from.max.size doesn't exist !! and not in the examples
+# dyadic.from.leaf_list is not documented and not in the examples, stranges last line in examples
 #' Create a complete dyadic tree structure
 #' 
 #' @name dyadic
@@ -18,8 +20,7 @@
 #' str(dd)
 #'
 #' leaf_list <- dd$leaf_list
-# TODO dyadic.from.max.size doesn't exist !! and not in the examples
-# dyadic.from.leaf_list is not documented and not in the examples, stranges last line in examples
+
 NULL
 
 
@@ -161,7 +162,6 @@ NULL
 #' @references Holm, S. A simple sequentially rejective multiple test procedure. Scandinavian Journal of Statistics 6 (1979), pp. 65-70.
 #' @references Massart, P. (1990). The tight constant in the Dvoretzky-Kiefer-Wolfowitz inequality. The Annals of Probability, pages 1269-1283.
 #' @references Storey, J. D. (2002). A direct approach to false discovery rates. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 64(3):479-498.
-#> NULL
 
 #' @export
 #' @rdname zeta
@@ -234,7 +234,7 @@ nb.elements <- function(C) {
 
 # number of unique regions in a given tree,
 # assuming we didn't extend the leaves
-# TODO BEFORE MERGE: rename nb.elements
+# TODO BEFORE MERGE: rename nb.elements, document
 nb.elements.no.extension <- function(C) {
 	H <- length(C)
 	count <- 0
@@ -459,6 +459,53 @@ V.star.all.leaves.no.id <- function(S, C, ZL, leaf_list) {
 }
 
 # TODO BEFORE MERGE: rename V.star
+#' Post hoc bound on the number of false positives
+#' 
+#' @description Computes the post hoc upper bound \eqn{V^*(S)} on the number of false positives in a 
+#' given selection set \eqn{S} of hypotheses, using a reference family \eqn{(R_k, \zeta_k)} that possess the forest structure
+#' (see Reference).
+#' 
+#' @param S An integer vector with the indices of the hypotheses of the selection set. Does not need to be ordered.
+#' @param C A list of list representing the forest structure. Each list of \code{C} represents a level of
+#' depth in the forest structure. So, \code{C[[1]]} lists the regions at depth 1, \code{C[[2]]} lists the regions at depth 2,
+#' and so on. We then use the fact that each region of the reference family
+#' is the union of some of its atom over an integer interval. 
+#' So he elements of each list \code{C[[i]]} are integer vectors of length 2 representing this interval. 
+#' For example, \code{C[[1]][[1]] = c(1, 5)} means that the first region at depth 1 is the union of the first 5 atoms, 
+#' \code{C[[2]][[3]] = c(4, 5)} means that the third region at depth 2 is the union of the atoms 4 and 5, and
+#' \code{C[[3]][[5]] = c(5, 5)} means that the fifth region at depth 3 is simply the fifth atom. 
+#' @param ZL A list of integer vectors representing the upper bound zeta_k associated to a region R_k in the reference family. 
+#' \code{ZL[[h]][j]} is the \eqn{zeta_k} associated to the \eqn{R_k} described by \code{C[[h]][[j]]}.
+#' @param leaf_list A list of vectors. Each vector is an integer array. The i-th vector contains the indices
+#' of the hypotheses in the i-th atom. Atoms form a partition of the set of hypotheses indices : 
+#' there cannot be overlap, and each index has to be inside one of the atoms.
+#' @return An integer value, the post hoc upper bound \eqn{V^*(S)}.
+#' @details For \code{V.star}, the forest structure doesn't need to be complete. That is, 
+#' in \code{C}, some trivial intervals \code{c(i,i)} corresponding to regions that are atoms may be missing. 
+#' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
+#' @examples
+#' m <- 20
+#' C <- list(
+#'   list(c(2, 5), c(8, 15), c(16, 19)),
+#'   list(c(3, 5), c(8, 10), c(12, 15), c(16, 16), c(17, 19)),
+#'   list(c(4, 5), c(8, 9), c(10, 10), c(12, 12), c(13, 15), c(17, 17), c(18, 19)),
+#'   list(c(8, 8), c(9, 9), c(13, 13), c(14, 15), c(18, 18), c(19, 19))
+#' )
+#' ZL <- list(
+#'   c(4, 8, 4),
+#'   c(3, 3, 4, 1, 3),
+#'   c(2, 2, 1, 1, 2, 1, 2),
+#'   c(1, 1, 1, 2, 1, 1)
+#' )
+#' leaf_list <- as.list(1:m)
+#' V.star(1, C, ZL, leaf_list)
+#' 
+#' V.star(1:5, C, ZL, leaf_list)
+#' 
+#' V.star(13:15, C, ZL, leaf_list)
+#' 
+#' V.star(1:m, C, ZL, leaf_list)
+#' @export
 V.star.no.extension <- function(S, C, ZL, leaf_list) {
 	H <- length(C)
 	nb_leaves <- length(leaf_list)
