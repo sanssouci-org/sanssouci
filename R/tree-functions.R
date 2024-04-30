@@ -507,38 +507,31 @@ V.star.all.leaves.no.id <- function(S, C, ZL, leaf_list) {
 #' V.star(1:m, C, ZL, leaf_list)
 #' @export
 V.star.no.extension <- function(S, C, ZL, leaf_list) {
-	H <- length(C)
-	nb_leaves <- length(leaf_list)
-	Vec <- numeric(nb_leaves) 
-	for (i in 1:nb_leaves) {
-		Vec[i] <- sum(S %in% leaf_list[[i]])
-	}
-	# the initialization term for each atom P_i
-	# is equivalent to completing the family if it isn't,
-	# assuming that leaf_list does indeed contain all leaves
-	# and some were just eventually missing in C and ZL
-	for (h in H:1) {
-		nb_regions <- length(C[[h]])
-		if (nb_regions>0) {
-			for (j in 1:nb_regions) {
-				Chj <- C[[h]][[j]]
-				if (Chj[1]==Chj[2]) { # means this is an atom, no need to compute 
-					# len_inter given that we already did it during initialization,
-					# furthermore there are no successors
-					len_inter <- Vec[Chj[1]]
-					res <- min(ZL[[h]][j], len_inter)
-				} else {
-					region_vector <- unlist(leaf_list[Chj[1]:Chj[2]])
-					len_inter <- sum(S %in% region_vector)
-					sum_succ <- sum(Vec[Chj[1]:Chj[2]]) 
-					res <- min(ZL[[h]][j], len_inter, sum_succ)
-				}
-				Vec[Chj[1]:Chj[2]] <- 0
-				Vec[Chj[1]] <- res
-			}
-		}
-	}
-	return(sum(Vec))
+  H <- length(C)
+  nb_leaves <- length(leaf_list)
+  Vec <- numeric(nb_leaves) 
+  for (i in 1:nb_leaves) {
+    Vec[i] <- sum(S %in% leaf_list[[i]])
+  }
+  # the initialization term for each atom P_i
+  # is equivalent to completing the family if it isn't,
+  # assuming that leaf_list does indeed contain all leaves
+  # and some were just eventually missing in C and ZL
+  # this initialization also takes care of the minima
+  # between zeta_k and card(S inter R_k)
+  for (h in H:1) {
+    nb_regions <- length(C[[h]])
+    if (nb_regions>0) {
+      for (j in 1:nb_regions) {
+        Chj <- C[[h]][[j]]
+        sum_succ <- sum(Vec[Chj[1]:Chj[2]])
+        res <- min(ZL[[h]][j], sum_succ)
+        Vec[Chj[1]:Chj[2]] <- 0
+        Vec[Chj[1]] <- res
+      }
+    }
+  }
+  return(sum(Vec))
 }
 
 # prune.leafs can also prune atoms/leafs for which zeta_k is =
