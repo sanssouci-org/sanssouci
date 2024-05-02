@@ -834,6 +834,26 @@ curve.V.star.forest.fast <- function(perm, C, ZL, leaf_list, pruning = FALSE, is
 # the forest must not be pruned beforehand
 # the following code fails if the input is a pruned forest
 # TODO BEFORE MERGE: document
+#' Complete a forest structure
+#' 
+#' @description Compeltes the forest in the sens of the Reference: adds the missing atoms/leafs 
+#' in the reference family with a forest structure \eqn{(R_k, \zeta_k)} 
+#' so that each atom is well represented by a \eqn{R_k}. The associated \eqn{\zeta_k} is 
+#' taken as the trivial \eqn{|R_k|}.
+#' 
+#' @details The forest must not be pruned beforehand. The code will not behave expectedly 
+#' and will return a wrong result if a pruned forest is given as input. Maybe the function could be rewritten 
+#' going from the leaves to the roots instead of the contrary, to avoid this issue.
+#' 
+#' @param C A list of list representing the forest structure. See [V.star()] for more information.
+#' @param ZL A list of integer vectors representing the upper bounds \eqn{\zeta_k} of the forest structure. See [V.star()] for more information.
+#' @param leaf_list A list of vectors representing the atoms of the forest structure. See [V.star()] for more information.
+#' 
+#' @return A list with two named elements. \describe{
+#' \item{\code{C}}{The new \code{C} after completion.}
+#' \item{\code{ZL}}{The new \code{ZL} after completion.}
+#' }
+#' 
 #' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
 #' @export
 forest.completion <- function(C, ZL, leaf_list) {
