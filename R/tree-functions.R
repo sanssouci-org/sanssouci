@@ -233,9 +233,8 @@ nb.elements <- function(C) {
   return(count)
 }
 
-# number of unique regions in a given tree,
-# assuming we didn't extend the leaves
 # TODO BEFORE MERGE: rename nb.elements, document
+#' Number of unique regions in a reference family with forest structure
 nb.elements.no.extension <- function(C) {
   H <- length(C)
   count <- 0
