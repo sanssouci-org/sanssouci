@@ -475,8 +475,8 @@ V.star.all.leaves.no.id <- function(S, C, ZL, leaf_list) {
 #' For example, \code{C[[1]][[1]] = c(1, 5)} means that the first region at depth 1 is the union of the first 5 atoms, 
 #' \code{C[[2]][[3]] = c(4, 5)} means that the third region at depth 2 is the union of the atoms 4 and 5, and
 #' \code{C[[3]][[5]] = c(5, 5)} means that the fifth region at depth 3 is simply the fifth atom. 
-#' @param ZL A list of integer vectors representing the upper bound \eqn{zeta_k} associated to a region \eqn{R_k} in the reference family. 
-#' \code{ZL[[h]][j]} is the \eqn{zeta_k} associated to the \eqn{R_k} described by \code{C[[h]][[j]]}.
+#' @param ZL A list of integer vectors representing the upper bound \eqn{\zeta_k} associated to a region \eqn{R_k} in the reference family. 
+#' \code{ZL[[h]][j]} is the \eqn{\zeta_k} associated to the \eqn{R_k} described by \code{C[[h]][[j]]}.
 #' @param leaf_list A list of vectors. Each vector is an integer array. The i-th vector contains the indices
 #' of the hypotheses in the i-th atom. Atoms form a partition of the set of hypotheses indices : 
 #' there cannot be overlap, and each index has to be inside one of the atoms.
@@ -519,7 +519,7 @@ V.star.no.extension <- function(S, C, ZL, leaf_list) {
   # assuming that leaf_list does indeed contain all leaves
   # and some were just eventually missing in C and ZL
   # this initialization also takes care of the minima
-  # between zeta_k and card(S inter R_k)
+  # between \zeta_k and card(S inter R_k)
   for (h in H:1) {
     nb_regions <- length(C[[h]])
     if (nb_regions>0) {
@@ -535,16 +535,27 @@ V.star.no.extension <- function(S, C, ZL, leaf_list) {
   return(sum(Vec))
 }
 
-# prune.leafs can also prune atoms/leafs for which zeta_k is =
-# the cardinal of R_k, this can speed up the
-# computation of V.star.no.extension
-# but must not be used in conjunction with 
-# the fast version of curve.V.star.forest,
-# hence it is at FALSE by default
-# TODO later: fast curve.Vmax is slower with the pruning
-# which is unexpected, maybe it is because the pruning leaves gaps
-# => maybe revamp to delete gaps? 
-# (??? curve.Vmax not found, maybe this TODO should be deleted)
+#' Prune a forest structure to speed up computations
+#' 
+#' @description The pruned forest structure makes the computation of [V.star()],
+#' [curve.V.star.forest.naive()] and [curve.V.star.forest.fast()] faster.
+#' 
+#' @param C A list of list representing the forest structure. See [V.star()] for more information.
+#' @param ZL A list of integer vectors representing the upper bounds \eqn{\zeta_k} of the forest structure. See [V.star()] for more information.
+#' @param leaf_list A list of vectors representing the atoms of the forest structure. See [V.star()] for more information.
+#' @param prune.leafs A boolean, \code{FALSE} by default. If \code{TRUE}, will also prune atoms/leafs for which \eqn{\zeta_k \geq |R_k|},
+#' this makes the computation of [V.star()] and [curve.V.star.forest.naive()] even faster but should not be used with [curve.V.star.forest.fast()]
+#' because this needs the structure to be complete (i.e., with all its atoms). This is why the default option is \code{FALSE}.
+#' 
+#' @return A list with three named elements. \describe{
+#' \item{\code{VstarNm}}{\eqn{V^*(\mathbb N_m)} is computed as by-product by the algorithm, so we might as well return it.}
+#' \item{\code{C}}{The new \code{C} after pruning.}
+#' \item{\code{ZL}}{The new \code{ZL} after pruning.}
+#' }
+#' 
+#' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
+#' @references Durand G., preprint to appear with the description of pruning
+#' @export
 pruning <- function(C, ZL, leaf_list, prune.leafs = FALSE) {
   H <- length(C)
   nb_leaves <- length(leaf_list)
@@ -556,7 +567,7 @@ pruning <- function(C, ZL, leaf_list, prune.leafs = FALSE) {
     # assuming that leaf_list does indeed contain all leaves
     # and some were just eventually missing in C and ZL.
     # Using the length of the atoms assure that we 
-    # will catch atoms with a zeta_i larger than its length
+    # will catch atoms with a \zeta_i larger than its length
   }
   for (h in H:1) {
     nb_regions <- length(C[[h]])
@@ -577,7 +588,7 @@ pruning <- function(C, ZL, leaf_list, prune.leafs = FALSE) {
           else{
             # The region is a leaf/atom and we chose
             # to keep the leafs, so we keep it,
-            # but we change the zeta_i to the length of P_i.
+            # but we change the \zeta_i to the length of P_i.
             ZL[[h]][j] <- sum_succ
           }
         } else {
@@ -594,6 +605,10 @@ pruning <- function(C, ZL, leaf_list, prune.leafs = FALSE) {
   )
   )
 }
+# TODO later: fast curve.Vmax is slower with the pruning
+# which is unexpected, maybe it is because the pruning leaves gaps
+# => maybe revamp to delete gaps? 
+# (??? curve.Vmax not found, maybe this TODO should be deleted)
 
 #' Compute a curve of post hoc bounds based on a reference family with forest structure
 #' 
@@ -618,7 +633,7 @@ pruning <- function(C, ZL, leaf_list, prune.leafs = FALSE) {
 #' @param perm An integer vector of elements in \code{1:m}, all different, and of size up to \code{m} (in which case it's a permutation, hence the name). 
 #' The set \eqn{S_t} is represented by \code{perm[1:t]}.
 #' @param C A list of list representing the forest structure. See [V.star()] for more information.
-#' @param ZL A list of integer vectors representing the upper bounds \eqn{zeta_k} of the forest structure. See [V.star()] for more information.
+#' @param ZL A list of integer vectors representing the upper bounds \eqn{\zeta_k} of the forest structure. See [V.star()] for more information.
 #' @param leaf_list A list of vectors representing the atoms of the forest structure. See [V.star()] for more information.
 #' @param pruning A boolean, \code{FALSE} by default. Whether to prune the forest (see [pruning()]) before computing the bounds.
 #' @param is.pruned A boolean, \code{FALSE} by default. If \code{TRUE}, assumes that the forest structure has already been completed and then pruned 
@@ -688,58 +703,6 @@ curve.V.star.forest.naive <- function(perm, C, ZL, leaf_list, pruning = FALSE){
     vstars[j] <- V.star.no.extension(S, C, ZL, leaf_list) 
   }
   return(vstars)
-}
-
-# the forest must not be pruned beforehand
-# the following code fails if the input is a pruned forest
-# TODO BEFORE MERGE: document
-forest.completion <- function(C, ZL, leaf_list) {
-  H <- length(C)
-  
-  leaves.to.place <- 1:length(leaf_list)
-  len.to.place <- length(leaves.to.place)
-  to.delete <- numeric(0)
-  
-  for (h in 1:H) {
-    
-    j <- 1
-    l <- 1
-    
-    while (j <= len.to.place) {
-      expected_leaf <- leaves.to.place[j]
-      end_of_line <- l > length(C[[h]])
-      if (! end_of_line) {Chl <- C[[h]][[l]]}
-      if ((! end_of_line) && expected_leaf == Chl[[1]]) {
-        if (expected_leaf == Chl[[2]]) {
-          to.delete <- c(to.delete, j)
-        }
-        j <- j + Chl[2] - Chl[1] +1
-      } else {
-        C[[h]] <- append(C[[h]], list(c(expected_leaf, expected_leaf)), l - 1)
-        ZL[[h]] <- append(ZL[[h]], length(leaf_list[[expected_leaf]]), l - 1)
-        to.delete <- c(to.delete, j)
-        j <- j + 1
-      }
-      l <- l + 1
-    }
-    
-    leaves.to.place <- leaves.to.place[-to.delete]
-    len.to.place <- length(leaves.to.place)
-    to.delete <- numeric(0)
-    
-  }
-  
-  if (len.to.place > 0) {
-    h <- H + 1
-    C[[h]] <- list()
-    ZL[[h]] <- numeric(0)
-    for (expected_leaf in leaves.to.place) {
-      C[[h]] <- append(C[[h]], list(c(expected_leaf, expected_leaf)))
-      ZL[[h]] <- append(ZL[[h]], length(leaf_list[[expected_leaf]]))
-    }
-  }
-  
-  return(list(C = C, ZL = ZL))
 }
 
 #' @rdname curve.V.star.forest
@@ -866,6 +829,60 @@ curve.V.star.forest.fast <- function(perm, C, ZL, leaf_list, pruning = FALSE, is
     
   }
   return(vstars)
+}
+
+# the forest must not be pruned beforehand
+# the following code fails if the input is a pruned forest
+# TODO BEFORE MERGE: document
+#' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
+#' @export
+forest.completion <- function(C, ZL, leaf_list) {
+  H <- length(C)
+  
+  leaves.to.place <- 1:length(leaf_list)
+  len.to.place <- length(leaves.to.place)
+  to.delete <- numeric(0)
+  
+  for (h in 1:H) {
+    
+    j <- 1
+    l <- 1
+    
+    while (j <= len.to.place) {
+      expected_leaf <- leaves.to.place[j]
+      end_of_line <- l > length(C[[h]])
+      if (! end_of_line) {Chl <- C[[h]][[l]]}
+      if ((! end_of_line) && expected_leaf == Chl[[1]]) {
+        if (expected_leaf == Chl[[2]]) {
+          to.delete <- c(to.delete, j)
+        }
+        j <- j + Chl[2] - Chl[1] +1
+      } else {
+        C[[h]] <- append(C[[h]], list(c(expected_leaf, expected_leaf)), l - 1)
+        ZL[[h]] <- append(ZL[[h]], length(leaf_list[[expected_leaf]]), l - 1)
+        to.delete <- c(to.delete, j)
+        j <- j + 1
+      }
+      l <- l + 1
+    }
+    
+    leaves.to.place <- leaves.to.place[-to.delete]
+    len.to.place <- length(leaves.to.place)
+    to.delete <- numeric(0)
+    
+  }
+  
+  if (len.to.place > 0) {
+    h <- H + 1
+    C[[h]] <- list()
+    ZL[[h]] <- numeric(0)
+    for (expected_leaf in leaves.to.place) {
+      C[[h]] <- append(C[[h]], list(c(expected_leaf, expected_leaf)))
+      ZL[[h]] <- append(ZL[[h]], length(leaf_list[[expected_leaf]]))
+    }
+  }
+  
+  return(list(C = C, ZL = ZL))
 }
 
 # TODO BEFORE MERGE: delete this
