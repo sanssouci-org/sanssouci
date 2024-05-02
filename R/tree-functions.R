@@ -30,6 +30,7 @@ NULL
 #'   \code{method==2}, start from the root and divide nodes in 2 nodes of equal
 #'   size as long as possible
 #' @return A list of lists containing the dyadic structure
+#' @export
 #' @rdname dyadic
 #' 
 dyadic.from.leaf_list <- function(leaf_list, method) {
@@ -474,7 +475,7 @@ V.star.all.leaves.no.id <- function(S, C, ZL, leaf_list) {
 #' For example, \code{C[[1]][[1]] = c(1, 5)} means that the first region at depth 1 is the union of the first 5 atoms, 
 #' \code{C[[2]][[3]] = c(4, 5)} means that the third region at depth 2 is the union of the atoms 4 and 5, and
 #' \code{C[[3]][[5]] = c(5, 5)} means that the fifth region at depth 3 is simply the fifth atom. 
-#' @param ZL A list of integer vectors representing the upper bound zeta_k associated to a region R_k in the reference family. 
+#' @param ZL A list of integer vectors representing the upper bound \eqn{zeta_k} associated to a region \eqn{R_k} in the reference family. 
 #' \code{ZL[[h]][j]} is the \eqn{zeta_k} associated to the \eqn{R_k} described by \code{C[[h]][[j]]}.
 #' @param leaf_list A list of vectors. Each vector is an integer array. The i-th vector contains the indices
 #' of the hypotheses in the i-th atom. Atoms form a partition of the set of hypotheses indices : 
@@ -594,7 +595,67 @@ pruning <- function(C, ZL, leaf_list, prune.leafs = FALSE) {
   )
 }
 
-# TODO BEFORE MERGE: change call of V.star, document
+#' Compute a curve of post hoc bounds based on a reference family with forest structure
+#' 
+#' @name curve.V.star.forest
+#' 
+#' @description
+#' Computes the post hoc upper bound \eqn{V^*(S_t)} on the number of false positives in a 
+#' given sequence of selection sets \eqn{S_t} of hypotheses, such that
+#' \eqn{S_t\subset S_{t+1}} and \eqn{|S_t| = t}, 
+#' using a reference family \eqn{(R_k, \zeta_k)} that possess the forest structure
+#' (see References).
+#' 
+#' @details Two functions are available
+#' \describe{
+#' \item{\code{curve.V.star.forest.naive}}{Repeatedly calls [V.star()] on each \eqn{S_t}, which is not optimized and time-consuming, this should be used in practice.}
+#' \item{\code{curve.V.star.forest.fast}}{A fast and optimized version that leverage the fact that\eqn{S_{t+1}} is the union of \eqn{S_t} and a single hypothesis index. This 
+#' option first completes the forest, because the algorithm needs that, and the completion fails if the input is a pruned forest (see [pruning()]), 
+#' so if a pruned forest is given as input, it MUST be said with the \code{is.pruned} argument 
+#' so that the function skips completion.}
+#' }
+#'
+#' @param perm An integer vector of elements in \code{1:m}, all different, and of size up to \code{m} (in which case it's a permutation, hence the name). 
+#' The set \eqn{S_t} is represented by \code{perm[1:t]}.
+#' @param C A list of list representing the forest structure. See [V.star()] for more information.
+#' @param ZL A list of integer vectors representing the upper bounds \eqn{zeta_k} of the forest structure. See [V.star()] for more information.
+#' @param leaf_list A list of vectors representing the atoms of the forest structure. See [V.star()] for more information.
+#' @param pruning A boolean, \code{FALSE} by default. Whether to prune the forest (see [pruning()]) before computing the bounds.
+#' @param is.pruned A boolean, \code{FALSE} by default. If \code{TRUE}, assumes that the forest structure has already been completed and then pruned 
+#' and so skips the completion step. Must be set to \code{TRUE} if giving a pruned forest because in that case the completion step must be skipped or it will fail.
+#' 
+#' @return A vector of length of same length as \code{perm}, where the \code{t}-th
+#' element is \eqn{V^*(S_t)}.
+#' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
+#' @references Durand G., preprint to appear with the description of pruning and of the fast algorithm to compute the curve.
+#' @export
+#' @examples
+#' m <- 20
+#' C <- list(
+#'   list(c(2, 5), c(8, 15), c(16, 19)),
+#'   list(c(3, 5), c(8, 10), c(12, 15), c(16, 16), c(17, 19)),
+#'   list(c(4, 5), c(8, 9), c(10, 10), c(12, 12), c(13, 15), c(17, 17), c(18, 19)),
+#'   list(c(8, 8), c(9, 9), c(13, 13), c(14, 15), c(18, 18), c(19, 19))
+#' )
+#' ZL <- list(
+#'   c(4, 8, 4),
+#'   c(3, 3, 4, 1, 3),
+#'   c(2, 2, 1, 1, 2, 1, 2),
+#'   c(1, 1, 1, 2, 1, 1)
+#' )
+#' leaf_list <- as.list(1:m)
+#' curve.V.star.forest.naive(1:m, C, ZL, leaf_list, pruning = FALSE)
+#' 
+#' curve.V.star.forest.naive(1:m, C, ZL, leaf_list, pruning = TRUE)
+#' 
+#' curve.V.star.forest.fast(1:m, C, ZL, leaf_list, pruning = FALSE)
+#' 
+#' curve.V.star.forest.fast(1:m, C, ZL, leaf_list, pruning = TRUE)
+
+
+# TODO BEFORE MERGE: change call of V.star
+#' @rdname curve.V.star.forest
+#' @export
 curve.V.star.forest.naive <- function(perm, C, ZL, leaf_list, pruning = FALSE){
   vstars <- numeric(length(perm))
   
@@ -681,11 +742,8 @@ forest.completion <- function(C, ZL, leaf_list) {
   return(list(C = C, ZL = ZL))
 }
 
-
-# The completion fails if the input is a pruned forest,
-# so if a pruned forest is input, it MUST be said with the is.pruned argument
-# so that the function skips completion.
-# TODO BEFORE MERGE: document
+#' @rdname curve.V.star.forest
+#' @export
 curve.V.star.forest.fast <- function(perm, C, ZL, leaf_list, pruning = FALSE, is.pruned = FALSE){
   
   vstars <- numeric(length(perm))
@@ -810,16 +868,6 @@ curve.V.star.forest.fast <- function(perm, C, ZL, leaf_list, pruning = FALSE, is
   return(vstars)
 }
 
-
-#' Post hoc bound on the number of false positives
-#' 
-#' @param S A subset of hypotheses
-#' @param C Tree
-#' @param ZL Zeta tree
-#' @param leaf_list List of leaves
-#' @return An integer value, upper bound on the number false positives in S
-#' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
-#' @export
 # TODO BEFORE MERGE: delete this
 V.star <- function(S, C, ZL, leaf_list) {
   all_leaves <- tree.expand(C, ZL, leaf_list)
