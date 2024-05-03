@@ -20,9 +20,7 @@
 #' str(dd)
 #'
 #' leaf_list <- dd$leaf_list
-
 NULL
-
 
 #' @param leaf_list A list of leaves
 #' @param method A numeric value. If \code{method == 1}, start from the leaves
@@ -32,7 +30,6 @@ NULL
 #' @return A list of lists containing the dyadic structure
 #' @export
 #' @rdname dyadic
-#' 
 dyadic.from.leaf_list <- function(leaf_list, method) {
   leaves <- length(leaf_list)
   if (method == 1) {
@@ -93,7 +90,6 @@ dyadic.from.leaf_list <- function(leaf_list, method) {
 #' }
 #' @export
 #' @rdname dyadic
-
 dyadic.from.window.size <- function(m, s, method) {
   leaves <- floor(m/s)
   leaf_list <- list()
@@ -113,7 +109,6 @@ dyadic.from.window.size <- function(m, s, method) {
 #' @param H An integer value, the desired maximal height of the tree
 #' @export
 #' @rdname dyadic
-
 dyadic.from.height <- function(m, H = NULL, method) {
   if (is.null(H)) {
     H <- ifelse(m == 1, 1, floor(2 + log2(m - 1)))
@@ -145,13 +140,6 @@ dyadic.from.height <- function(m, H = NULL, method) {
 #' @param pval A vector of \eqn{p}-values
 #' @param lambda A numeric value in \eqn{[0,1]}, the target level of the test 
 #' @name zeta
-#' @examples
-#' x <- rnorm(100, mean = c(rep(c(0, 2), each = 50)))
-#' pval <- 1-pnorm(x)
-#' zeta.trivial(pval)
-#' zeta.HB(pval, 0.05)
-#' zeta.DKWM(pval, 0.05)
-NULL
 #' @return The numer of true nulls is estimated as follows:
 #' \describe{
 #' \item{\code{zeta.DKWM}}{Dvoretzky-Kiefer-Wolfowitz-Massart inequality (related to the Storey estimator of the proportion of true nulls) with parameter \code{lambda}}
@@ -163,9 +151,16 @@ NULL
 #' @references Holm, S. A simple sequentially rejective multiple test procedure. Scandinavian Journal of Statistics 6 (1979), pp. 65-70.
 #' @references Massart, P. (1990). The tight constant in the Dvoretzky-Kiefer-Wolfowitz inequality. The Annals of Probability, pages 1269-1283.
 #' @references Storey, J. D. (2002). A direct approach to false discovery rates. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 64(3):479-498.
+#' @examples
+#' x <- rnorm(100, mean = c(rep(c(0, 2), each = 50)))
+#' pval <- 1-pnorm(x)
+#' zeta.trivial(pval)
+#' zeta.HB(pval, 0.05)
+#' zeta.DKWM(pval, 0.05)
+NULL
 
-#' @export
 #' @rdname zeta
+#' @export
 zeta.HB <- function(pval, lambda) {
   m <- length(pval)
   sorted.pval <- sort(pval)
@@ -193,14 +188,14 @@ zeta.HB <- function(pval, lambda) {
 }
 # TODO: zeta.HB.sorted that assumes that the pvalues are sorted and doesn't sort them
 
-#' @export
 #' @rdname zeta
+#' @export
 zeta.trivial <- function(pval, lambda) {
   return(length(pval))
 }
 
-#' @export
 #' @rdname zeta
+#' @export
 zeta.DKWM <- function(pval, lambda) {
   s <- length(pval)
   sorted.pval <- c(0, sort(pval))
@@ -210,7 +205,6 @@ zeta.DKWM <- function(pval, lambda) {
   return(min(s, floor(dkwm)))
 }
 
-# number of unique regions in a given tree
 # TODO BEFORE MERGE: delete this
 nb.elements <- function(C) {
   H <- length(C)
@@ -235,6 +229,12 @@ nb.elements <- function(C) {
 
 # TODO BEFORE MERGE: rename nb.elements, document
 #' Number of unique regions in a reference family with forest structure
+#' 
+#' @param C A list of list representing the forest structure. See [V.star()] for more information.
+#' 
+#' @return An integer, the number of regions.
+#' 
+#' @export
 nb.elements.no.extension <- function(C) {
   H <- length(C)
   count <- 0
@@ -279,8 +279,7 @@ zetas.tree <- function(C, leaf_list, method, pvalues, alpha) {
   return(ZL)
 }
 
-# TODO BEFORE MERGE: rename zetas.tree, change call of nb.elements, complete documentation
-# with refinement
+# TODO BEFORE MERGE: rename zetas.tree, change call of nb.elements
 #' Estimate of the proportion of true nulls in each node of a tree
 #' 
 #' @description
