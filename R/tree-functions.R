@@ -2,12 +2,28 @@
 # dyadic.from.leaf_list is not documented and not in the examples, stranges last line in examples
 #' Create a complete dyadic tree structure
 #' 
+#' @description
+#' Produce a set of regions with forest structure, with a single tree, which is dyadic.
+#' 
+#' 
 #' @name dyadic
 #' @details \describe{
-#' \item{\code{dyadic.from.window.size}}{Dyadic tree structure from window size: the number of elements in each leaf is set to \code{s}}
-#' \item{\code{dyadic.from.height}}{Dyadic tree structure from height: the total height of tree is set to \code{H}}
-#' \item{\code{dyadic.from.max.size}}{Dyadic tree structure from maximum achievable height: the total height of tree is set to the maximum possible height, ie \code{floor(2 + log2(m - 1))}}
+#' \item{\code{dyadic.from.leaf_list}}{Dyadic tree structure from a given list of atoms/leafs}
+#' \item{\code{dyadic.from.window.size}}{Dyadic tree structure from window size: the number of elements in each atom/leaf is set to \code{s}}
+#' \item{\code{dyadic.from.height}}{Dyadic tree structure from height: the total height of the tree is set to \code{H}}
 #' }
+#' 
+#' @param method A numeric value. If \code{method == 1}, start from the leaves
+#' and group nodes of a same height 2 by 2 as long as possible. If
+#' \code{method==2}, start from the root and divide nodes in 2 nodes of equal
+#' size as long as possible
+#' 
+#' @return A list with two named elements:\describe{
+#' \item{\code{leaf_list}}{A list of vectors representing the atoms of the forest structure. See [V.star()] for more information.}
+#' \item{\code{C}}{A list of list representing the forest structure. See [V.star()] for more information.}
+#' }
+#' 
+#' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
 #' @examples
 #' m <- 6
 #' dd <- dyadic.from.window.size(m, s = 2, method = 2)
@@ -16,18 +32,15 @@
 #' dd <- dyadic.from.height(m, H = 3, method = 2)
 #' str(dd)
 #' 
-#' dd <- dyadic.from.height(m, method=2)
+#' dd <- dyadic.from.height(m, method = 2)
 #' str(dd)
 #'
 #' leaf_list <- dd$leaf_list
+#' dd <- dyadic.from.leaf_list(leaf_list, method = 2)
+#' str(dd)
 NULL
 
-#' @param leaf_list A list of leaves
-#' @param method A numeric value. If \code{method == 1}, start from the leaves
-#'   and group nodes of a same height 2 by 2 as long as possible. If
-#'   \code{method==2}, start from the root and divide nodes in 2 nodes of equal
-#'   size as long as possible
-#' @return A list of lists containing the dyadic structure
+#' @param leaf_list A list of vectors representing the atoms of the forest structure. See [V.star()] for more information.
 #' @export
 #' @rdname dyadic
 dyadic.from.leaf_list <- function(leaf_list, method) {
@@ -79,15 +92,11 @@ dyadic.from.leaf_list <- function(leaf_list, method) {
       C <- c(C, list(Ch))
     }
   }
-  return(C)
+  return(list(leaf_list = leaf_list, C = C))
 }
 
-#' @param m An integer value, the number of elements in the structure
-#' @param s An integer value, the number of elements in each leaf
-#' @return A list with two elements:\describe{
-#' \item{\code{leaf_list}}{A list of leaves}
-#' \item{\code{C}}{A list of lists containing the dyadic structure}
-#' }
+#' @param m An integer value, the number of hypotheses to have in the structure
+#' @param s An integer value, the number of elements in each atom/leaf
 #' @export
 #' @rdname dyadic
 dyadic.from.window.size <- function(m, s, method) {
@@ -102,11 +111,12 @@ dyadic.from.window.size <- function(m, s, method) {
     leaf_list <- c(leaf_list, list(leaf))
     # leaves<-leaves+1
   }
-  C <- dyadic.from.leaf_list(leaf_list, method)
+  C <- dyadic.from.leaf_list(leaf_list, method)$C
   return(list(leaf_list = leaf_list, C = C))
 }
 
-#' @param H An integer value, the desired maximal height of the tree
+#' @param H An integer value, the desired maximal height of the tree. If NULL (by default), 
+#' use \code{floor(2 + log2(m - 1))} which gives the maximum achievable height given \code{m}.
 #' @export
 #' @rdname dyadic
 dyadic.from.height <- function(m, H = NULL, method) {
@@ -131,7 +141,7 @@ dyadic.from.height <- function(m, H = NULL, method) {
       leaf_list <- c(leaf_list, list(plus1 * (base + 1) + seq_len(base) + (i - 1) * base))
     }
   }
-  C <- dyadic.from.leaf_list(leaf_list, method)
+  C <- dyadic.from.leaf_list(leaf_list, method)$C
   return(list(leaf_list = leaf_list, C = C))
 }
 
