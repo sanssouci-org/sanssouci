@@ -136,15 +136,22 @@ dyadic.from.height <- function(m, H = NULL, method) {
 }
 
 #' Estimate the number of true null hypotheses among a set of p-values
+#' 
+#' @description
+#' An upper bound on the number of true null hypotheses in the region associated to 
+#' the \eqn{p}-values \code{pval}
+#' is computed with confidence \code{1 - lambda}. 
+#' The functions described here can be used as the \code{method} argument 
+#' of [zetas.tree()].
 #'
 #' @param pval A vector of \eqn{p}-values
-#' @param lambda A numeric value in \eqn{[0,1]}, the target level of the test 
+#' @param lambda A numeric value in \eqn{[0,1]}, the target error level of the test 
 #' @name zeta
-#' @return The numer of true nulls is estimated as follows:
+#' @return The number of true nulls is over-estimated as follows:
 #' \describe{
-#' \item{\code{zeta.DKWM}}{Dvoretzky-Kiefer-Wolfowitz-Massart inequality (related to the Storey estimator of the proportion of true nulls) with parameter \code{lambda}}
-#' \item{\code{zeta.HB}}{Holm-Bonferroni test with parameter \code{lambda}}
-#' \item{\code{zeta.trivial}}{the size of the p-value set (\eqn{lambda} is not used)}
+#' \item{\code{zeta.DKWM}}{Inversion of the Dvoretzky-Kiefer-Wolfowitz-Massart inequality (related to the Storey estimator of the proportion of true nulls) with parameter \code{lambda}}
+#' \item{\code{zeta.HB}}{Number of conserved hypotheses of the Holm-Bonferroni procedure with parameter \code{lambda}}
+#' \item{\code{zeta.trivial}}{The size of the p-value set which is the trivial upper bound (\eqn{lambda} is not used)}
 #' }
 #' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
 #' @references Dvoretzky, A., Kiefer, J., and Wolfowitz, J. (1956). Asymptotic minimax character of the sample distribution function and of the classical multinomial estimator. The Annals of Mathematical Statistics, pages 642-669.
@@ -153,10 +160,13 @@ dyadic.from.height <- function(m, H = NULL, method) {
 #' @references Storey, J. D. (2002). A direct approach to false discovery rates. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 64(3):479-498.
 #' @examples
 #' x <- rnorm(100, mean = c(rep(c(0, 2), each = 50)))
-#' pval <- 1-pnorm(x)
-#' zeta.trivial(pval)
-#' zeta.HB(pval, 0.05)
-#' zeta.DKWM(pval, 0.05)
+#' pval <- 1 - pnorm(x)
+#' lambda <- 0.05
+#' zeta.trivial(pval, lambda)
+#' 
+#' zeta.HB(pval, lambda)
+#' 
+#' zeta.DKWM(pval, lambda)
 NULL
 
 #' @rdname zeta
