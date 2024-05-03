@@ -1,4 +1,3 @@
-# TODO BEFORE MERGE: rename zetas.tree
 library(sanssouci)
 library(microbenchmark)
 
@@ -15,7 +14,7 @@ pval <- runif(n = m)
 alpha <- 0.05
 method <- zeta.HB
 pval[13:16] <- 1e-15
-ZL <- zetas.tree.no.extension(C, leaf_list, method, pval, alpha, refine = TRUE, verbose = FALSE)
+ZL <- zetas.tree(C, leaf_list, method, pval, alpha, refine = TRUE, verbose = FALSE)
 
 print("The pvalues are:")
 print(pval)
@@ -114,7 +113,7 @@ C <- example$C
 pval <- runif(n = m)
 alpha <- 0.05
 method <- zeta.trivial
-ZL <- zetas.tree.no.extension(C, leaf_list, method, pval, alpha, refine = TRUE, verbose = FALSE)
+ZL <- zetas.tree(C, leaf_list, method, pval, alpha, refine = TRUE, verbose = FALSE)
 
 print("The pvalues are:")
 print(pval)

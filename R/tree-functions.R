@@ -1,5 +1,3 @@
-# TODO dyadic.from.max.size doesn't exist !! and not in the examples
-# dyadic.from.leaf_list is not documented and not in the examples, stranges last line in examples
 #' Create a complete dyadic tree structure
 #' 
 #' @description
@@ -225,29 +223,6 @@ zeta.DKWM <- function(pval, lambda) {
   return(min(s, floor(dkwm)))
 }
 
-# TODO BEFORE MERGE: delete this
-nb.elements <- function(C) {
-  H <- length(C)
-  count <- length(C[[H]])
-  if (H > 1) {
-    for (h in (H - 1):1) {
-      Ch <- C[[h]]
-      for (j in 1:length(Ch)) {
-        Chj <- Ch[[j]]
-        # the following check allows to use an extended
-        # tree where leaves are duplicated  at multiple
-        # depths so as to appear at the larger depth H
-        # or else the function would be simpler : just sum
-        # the length of all C[[h]]
-        if (Chj[1] < Chj[2])
-          count <- count + 1
-      }
-    }
-  }
-  return(count)
-}
-
-# TODO BEFORE MERGE: rename nb.elements, document
 #' Number of unique regions in a reference family with forest structure
 #' 
 #' @param C A list of list representing the forest structure. See [V.star()] for more information.
@@ -255,7 +230,7 @@ nb.elements <- function(C) {
 #' @return An integer, the number of regions.
 #' 
 #' @export
-nb.elements.no.extension <- function(C) {
+nb.elements <- function(C) {
   H <- length(C)
   count <- 0
   for (h in H:1) {
@@ -264,42 +239,6 @@ nb.elements.no.extension <- function(C) {
   return(count)
 }
 
-# TODO BEFORE MERGE: delete this
-zetas.tree <- function(C, leaf_list, method, pvalues, alpha) {
-  H <- length(C)
-  K <- nb.elements(C)
-  leaves <- length(leaf_list)
-  zeta_leaves <- numeric(leaves)
-  CH <- C[[H]]
-  for (i in 1:length(CH)) {
-    CHi <- CH[[i]]
-    if (CHi[1] == CHi[2]) { # useless leaf check because every bottom region is a leaf? <- NO, not necessarily
-      # oh it's worse than that, this piece of code ASSUMES that the tree is extended
-      # to have all leaves at the bottom and WILL fail if that's not the case
-      # this is a bug
-      zeta_leaves[CHi[1]] <- method(pvalues[leaf_list[[CHi[1]]]], alpha/K)
-    }
-  }
-  ZL <- list()
-  for (h in H:1) {
-    Ch <- C[[h]]
-    len <- length(Ch)
-    zeta_inter <- numeric(len)
-    for (j in 1:len) {
-      Chj <- Ch[[j]]
-      if (Chj[1] < Chj[2]) {
-        pvals <- pvalues[unlist(leaf_list[Chj[1]:Chj[2]])]
-        zeta_inter[j] <- method(pvals, alpha/K)
-      } else {
-        zeta_inter[j] <- zeta_leaves[Chj[1]]
-      }
-    }
-    ZL[[h]] <- zeta_inter
-  }
-  return(ZL)
-}
-
-# TODO BEFORE MERGE: rename zetas.tree, change call of nb.elements
 #' Estimate of the proportion of true nulls in each node of a tree
 #' 
 #' @description
@@ -337,9 +276,9 @@ zetas.tree <- function(C, leaf_list, method, pvalues, alpha) {
 #' method <- zeta.trivial
 #' ZL <- zetas.tree(C, leaf_list, method, pvalues, alpha = 0.05)
 #' ZL
-zetas.tree.no.extension <- function(C, leaf_list, method, pvalues, alpha, refine=FALSE, verbose=FALSE) {
+zetas.tree <- function(C, leaf_list, method, pvalues, alpha, refine=FALSE, verbose=FALSE) {
   H <- length(C)
-  K <- nb.elements.no.extension(C)
+  K <- nb.elements(C)
   ZL <- list()
   new_K <- K
   continue <- TRUE
@@ -375,53 +314,6 @@ zetas.tree.no.extension <- function(C, leaf_list, method, pvalues, alpha, refine
     if (verbose)
       print(paste0("loop number=", nb_loop, ", usage_K=", usage_K, ", new_K=", new_K))
     continue <- refine && (new_K < usage_K)
-  }
-  return(ZL)
-}
-
-# TODO BEFORE MERGE: delete this
-zetas.tree.refined <- function(C, leaf_list, method, pvalues, alpha) {
-  H <- length(C)
-  K <- nb.elements(C)
-  leaves <- length(leaf_list)
-  zeta_leaves <- numeric(leaves)
-  continue <- TRUE
-  new_K <- K
-  while (continue) {
-    usage_K <- new_K
-    new_K <- K
-    CH <- C[[H]]
-    for (i in 1:length(CH)) {
-      CHi <- CH[[i]]
-      if (CHi[1] == CHi[2]) {
-        pvals <- pvalues[leaf_list[[CHi[1]]]]
-        zeta_leaves[CHi[1]] <- method(pvals, alpha/usage_K)
-        if (zeta_leaves[CHi[1]] == 0) {
-          new_K <- new_K - 1
-        }
-      }
-    }
-    ZL <- list()
-    for (h in H:1) {
-      Ch <- C[[h]]
-      len <- length(Ch)
-      zeta_inter <- numeric(len)
-      for (j in 1:len) {
-        Chj <- Ch[[j]]
-        if (Chj[1] < Chj[2]) {
-          pvals <- pvalues[unlist(leaf_list[Chj[1]:Chj[2]])]
-          zeta_inter[j] <- method(pvals, alpha/usage_K)
-          if (zeta_inter[j] == 0) 
-            new_K <- new_K - 1
-        } else {
-          zeta_inter[j] <- zeta_leaves[Chj[1]]
-        }
-      }
-      ZL[[h]] <- zeta_inter
-    }
-    if (new_K == usage_K) {
-      continue <- FALSE
-    }
   }
   return(ZL)
 }

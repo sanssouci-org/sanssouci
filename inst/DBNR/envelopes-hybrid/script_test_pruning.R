@@ -20,7 +20,7 @@ pval[1:4] <- 1e-15
 print("The pvalues are:")
 print(pval)
 
-zetas <- zetas.tree.no.extension(C, leaf_list, method, pval, alpha, refine = TRUE, verbose = FALSE)
+zetas <- zetas.tree(C, leaf_list, method, pval, alpha, refine = TRUE, verbose = FALSE)
 print("The zetas are:")
 print(zetas)
 
