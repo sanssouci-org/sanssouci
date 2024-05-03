@@ -128,4 +128,3 @@ gen.p.values <- function(m, mu = rep(0, m), rho = 0, alternative = c("two.sided"
     	return(pnorm(Y + mu, lower.tail = FALSE))
     }
 }
-
