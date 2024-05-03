@@ -426,69 +426,6 @@ zetas.tree.refined <- function(C, leaf_list, method, pvalues, alpha) {
   return(ZL)
 }
 
-# TODO BEFORE MERGE: delete this
-V.star.all.leaves <- function(S, C, ZL, leaf_list) {
-  H <- length(C)
-  leaves <- length(leaf_list)
-  Vec <- numeric(length = leaves)
-  id <- seq_len(length.out = leaves)
-  for (i in 1:leaves) {
-    # len <- length(intersect(S, leaf_list[[i]]))
-    len <- sum(S %in% leaf_list[[i]])
-    Vec[i] <- min(ZL[[H]][i], len) # this is the part that assumes that the forest is extended
-  }
-  if (H > 1) {
-    for (h in (H - 1):1) {
-      len <- length(C[[h]])
-      vec_inter <- numeric(length = leaves)
-      new_id <- numeric(len)
-      for (j in 1:len) {
-        Chj <- C[[h]][[j]]
-        # len <- length(intersect(S, leaves))
-        lvs <- unlist(leaf_list[Chj[1]:Chj[2]])
-        len <- sum(S %in% lvs) # 2 OBJECTS NAMED len !!!!
-        rm(lvs)
-        ss <- sum(Vec[id[which((Chj[1] <= id) & (Chj[2] >= id))]]) # id is totally useless
-        # just use ss <- sum(Vec[Chj[1]:Chj[2]]) lol
-        intra <- min(ZL[[h]][j], len, ss)
-        vec_inter[Chj[1]] <- intra
-        new_id[j] <- Chj[1]
-      }
-      Vec <- vec_inter
-      id <- new_id
-    }
-  }
-  return(sum(Vec[id])) # could also just be sum(Vec) given that Vec has 0 values outside of id
-}
-
-# TODO BEFORE MERGE: delete this
-V.star.all.leaves.no.id <- function(S, C, ZL, leaf_list) {
-  H <- length(C)
-  nb_leaves <- length(leaf_list)
-  Vec <- numeric(nb_leaves)
-  for (i in 1:nb_leaves) {
-    len_inter <- sum(S %in% leaf_list[[i]])
-    Vec[i] <- min(ZL[[H]][i], len_inter) # this is the part that assumes that the forest is extended
-  }
-  if (H > 1) {
-    for (h in (H - 1):1) {
-      nb_regions <- length(C[[h]])
-      vec_inter <- numeric(nb_leaves)
-      for (j in 1:nb_regions) {
-        Chj <- C[[h]][[j]]
-        region_vector <- unlist(leaf_list[Chj[1]:Chj[2]])
-        len_inter <- sum(S %in% region_vector)
-        sum_succ <- sum(Vec[Chj[1]:Chj[2]]) # this part too assumes that the forest is extended
-        res <- min(ZL[[h]][j], len_inter, sum_succ)
-        vec_inter[Chj[1]] <- res
-      }
-      Vec <- vec_inter
-    }
-  }
-  return(sum(Vec))
-}
-
-# TODO BEFORE MERGE: rename V.star
 #' Post hoc bound on the number of false positives
 #' 
 #' @description Computes the post hoc upper bound \eqn{V^*(S)} on the number of false positives in a 
@@ -539,7 +476,7 @@ V.star.all.leaves.no.id <- function(S, C, ZL, leaf_list) {
 #' 
 #' V.star(1:m, C, ZL, leaf_list)
 #' @export
-V.star.no.extension <- function(S, C, ZL, leaf_list) {
+V.star <- function(S, C, ZL, leaf_list) {
   H <- length(C)
   nb_leaves <- length(leaf_list)
   Vec <- numeric(nb_leaves) 
@@ -699,8 +636,6 @@ pruning <- function(C, ZL, leaf_list, prune.leafs = FALSE) {
 #' 
 #' curve.V.star.forest.fast(1:m, C, ZL, leaf_list, pruning = TRUE)
 
-
-# TODO BEFORE MERGE: change call of V.star
 #' @rdname curve.V.star.forest
 #' @export
 curve.V.star.forest.naive <- function(perm, C, ZL, leaf_list, pruning = FALSE){
@@ -732,7 +667,7 @@ curve.V.star.forest.naive <- function(perm, C, ZL, leaf_list, pruning = FALSE){
   for (t in perm){
     j <- j + 1
     S <- c(S, t)
-    vstars[j] <- V.star.no.extension(S, C, ZL, leaf_list) 
+    vstars[j] <- V.star(S, C, ZL, leaf_list) 
   }
   return(vstars)
 }

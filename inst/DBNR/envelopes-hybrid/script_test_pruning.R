@@ -1,4 +1,4 @@
-# TODO BEFORE MERGE: rename zetas.tree and V.star
+# TODO BEFORE MERGE: rename zetas.tree
 library(sanssouci)
 library(microbenchmark)
 
@@ -32,10 +32,10 @@ print("New associated zetas:")
 print(pruned$ZL)
 
 print("Testing the pruned structure")
-print(paste0("V^*({1, ..., ", m, "})=", V.star.no.extension(1:m, pruned$C, pruned$ZL, leaf_list)))
-print(paste0("V^*({1, ..., ", 5, "})=", V.star.no.extension(1:5, pruned$C, pruned$ZL, leaf_list)))
-print(paste0("V^*({1, ..., ", 8, "})=", V.star.no.extension(1:8, pruned$C, pruned$ZL, leaf_list)))
-print(paste0("V^*({9, ..., ", 16, "})=", V.star.no.extension(9:16, pruned$C, pruned$ZL, leaf_list)))
+print(paste0("V^*({1, ..., ", m, "})=", V.star(1:m, pruned$C, pruned$ZL, leaf_list)))
+print(paste0("V^*({1, ..., ", 5, "})=", V.star(1:5, pruned$C, pruned$ZL, leaf_list)))
+print(paste0("V^*({1, ..., ", 8, "})=", V.star(1:8, pruned$C, pruned$ZL, leaf_list)))
+print(paste0("V^*({9, ..., ", 16, "})=", V.star(9:16, pruned$C, pruned$ZL, leaf_list)))
 
 
 print("Changing for an arbitrary zeta tree to run more tests")
@@ -54,25 +54,25 @@ print("New associated zetas:")
 print(pruned2$ZL)
 
 print("Testing the pruned structure")
-print(paste0("V^*({1, ..., ", m, "})=", V.star.no.extension(1:m, pruned2$C, pruned2$ZL, leaf_list)))
-print(paste0("V^*({1, ..., ", 5, "})=", V.star.no.extension(1:5, pruned2$C, pruned2$ZL, leaf_list)))
-print(paste0("V^*({1, ..., ", 8, "})=", V.star.no.extension(1:8, pruned2$C, pruned2$ZL, leaf_list)))
-print(paste0("V^*({9, ..., ", 16, "})=", V.star.no.extension(9:16, pruned2$C, pruned2$ZL, leaf_list)))
+print(paste0("V^*({1, ..., ", m, "})=", V.star(1:m, pruned2$C, pruned2$ZL, leaf_list)))
+print(paste0("V^*({1, ..., ", 5, "})=", V.star(1:5, pruned2$C, pruned2$ZL, leaf_list)))
+print(paste0("V^*({1, ..., ", 8, "})=", V.star(1:8, pruned2$C, pruned2$ZL, leaf_list)))
+print(paste0("V^*({9, ..., ", 16, "})=", V.star(9:16, pruned2$C, pruned2$ZL, leaf_list)))
 
 print("Now we test the computation time enhancement provided by the pruning, on S={1, ..., m} and S={5}")
 pruned3 <- pruning(C, zetas, leaf_list, FALSE)
 
-mbench <- microbenchmark(no_pruning = V.star.no.extension(1:m, C, zetas, leaf_list), 
-							 pruning = V.star.no.extension(1:m, pruned3$C, pruned3$ZL, leaf_list),
-							 super_pruning = V.star.no.extension(1:m, pruned$C, pruned$ZL, leaf_list),
+mbench <- microbenchmark(no_pruning = V.star(1:m, C, zetas, leaf_list), 
+							 pruning = V.star(1:m, pruned3$C, pruned3$ZL, leaf_list),
+							 super_pruning = V.star(1:m, pruned$C, pruned$ZL, leaf_list),
 							 check = "equal",
 							 times = 1000
 							 )
 print(mbench)
 
-mbench <- microbenchmark(no_pruning = V.star.no.extension(5, C, zetas, leaf_list), 
-												 pruning = V.star.no.extension(5, pruned3$C, pruned3$ZL, leaf_list),
-												 super_pruning = V.star.no.extension(5, pruned$C, pruned$ZL, leaf_list),
+mbench <- microbenchmark(no_pruning = V.star(5, C, zetas, leaf_list), 
+												 pruning = V.star(5, pruned3$C, pruned3$ZL, leaf_list),
+												 super_pruning = V.star(5, pruned$C, pruned$ZL, leaf_list),
 												 check = "equal",
 												 times = 1000
 )
