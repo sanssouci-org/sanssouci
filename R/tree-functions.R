@@ -763,21 +763,3 @@ forest.completion <- function(C, ZL, leaf_list) {
   
   return(list(C = C, ZL = ZL))
 }
-
-# TODO BEFORE MERGE: delete this
-V.star <- function(S, C, ZL, leaf_list) {
-  all_leaves <- tree.expand(C, ZL, leaf_list)
-  return(V.star.all.leaves(S, 
-                           all_leaves$C, 
-                           all_leaves$ZL, 
-                           leaf_list))
-}
-
-# TODO BEFORE MERGE: delete this
-V.star.no.id <- function(S, C, ZL, leaf_list) {
-  all_leaves <- tree.expand(C, ZL, leaf_list)
-  return(V.star.all.leaves.no.id(S, 
-                                 all_leaves$C, 
-                                 all_leaves$ZL, 
-                                 leaf_list))
-}
