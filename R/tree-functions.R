@@ -319,14 +319,14 @@ zetas.tree <- function(C, leaf_list, method, pvalues, alpha) {
 #' @references Durand, G. (2018). Multiple testing and post hoc bounds for heterogeneous data. PhD thesis, see Appendix B.2 for the step-down refinement.
 #' @export
 #' @examples
-#' m <- 1000 
+#' m <- 1000
 #' dd <- dyadic.from.window.size(m, s = 10, method = 2)
 #' leaf_list <- dd$leaf_list
-#' mu <- gen.mu.leaves(m, K1 = 3, d = 1, grouped = FALSE, "const", barmu = 4, leaf_list)
-#' pvalues <- gen.p.values(m, mu, rho = 0)
-#' C <- dd$C 
-#' method <- zeta.DKWM
+#' pvalues <- runif(m)
+#' C <- dd$C
+#' method <- zeta.trivial
 #' ZL <- zetas.tree(C, leaf_list, method, pvalues, alpha = 0.05)
+#' ZL
 zetas.tree.no.extension <- function(C, leaf_list, method, pvalues, alpha, refine=FALSE, verbose=FALSE) {
   H <- length(C)
   K <- nb.elements.no.extension(C)
