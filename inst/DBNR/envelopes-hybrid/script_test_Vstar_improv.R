@@ -1,4 +1,3 @@
-# TODO BEFORE MERGE: rename zetas.tree
 library(sanssouci)
 library(microbenchmark)
 
@@ -53,13 +52,8 @@ V.star.2 <- function(S, C, ZL, leaf_list) {
     if (nb_regions>0) {
       for (j in 1:nb_regions) {
         Chj <- C[[h]][[j]]
-        
-        #region_vector <- unlist(leaf_list[Chj[1]:Chj[2]])
-        #len_inter <- sum(S %in% region_vector)
-        sum_succ <- sum(Vec[Chj[1]:Chj[2]]) 
-        # res <- min(ZL[[h]][j], len_inter, sum_succ)
+        sum_succ <- sum(Vec[Chj[1]:Chj[2]])
         res <- min(ZL[[h]][j], sum_succ)
-        
         Vec[Chj[1]:Chj[2]] <- 0
         Vec[Chj[1]] <- res
       }
@@ -131,7 +125,7 @@ C <- example$C
 pval <- runif(n = m)
 alpha <- 0.05
 method <- zeta.trivial
-ZL <- zetas.tree.no.extension(C, leaf_list, method, pval, alpha, refine = TRUE, verbose = FALSE)
+ZL <- zetas.tree(C, leaf_list, method, pval, alpha, refine = TRUE, verbose = FALSE)
 
 
 micr <- microbenchmark(

@@ -1,4 +1,3 @@
-# TODO BEFORE MERGE: rename zetas.tree
 library(sanssouci)
 
 set.seed(12)
