@@ -186,7 +186,7 @@ zeta.HB <- function(pval, lambda) {
   thresholds <- lambda / (m - 1:m + 1)
   v <- sorted.pval - thresholds
   indexes <- which(v > 0)
-  if (!length(indexes)){
+  if (! length(indexes)){
     return(0)
   }
   else{
@@ -284,7 +284,6 @@ zetas.tree <- function(C, leaf_list, method, pvalues, alpha, refine=FALSE, verbo
   continue <- TRUE
   nb_loop <- 0
   while (continue) {
-    nb_loop <- nb_loop + 1
     usage_K <- new_K
     new_K <- K
     for (h in H:1) {
@@ -294,15 +293,15 @@ zetas.tree <- function(C, leaf_list, method, pvalues, alpha, refine=FALSE, verbo
       for (j in 1:len) {
         Chj <- Ch[[j]]
         pvals <- pvalues[unlist(leaf_list[Chj[1]:Chj[2]])]
-        if(typeof(method) == "list"){
-          if(typeof(method[[h]]) == "list"){
+        if(typeof(method) == "list") {
+          if(typeof(method[[h]]) == "list") {
             zeta_method <- method[[h]][[j]]
           }
-          else{
+          else {
             zeta_method <- method[[h]]
           }
         }
-        else{
+        else {
           zeta_method <- method
         }
         zeta_inter[j] <- zeta_method(pvals, alpha / usage_K)
@@ -311,8 +310,10 @@ zetas.tree <- function(C, leaf_list, method, pvalues, alpha, refine=FALSE, verbo
       }
       ZL[[h]] <- zeta_inter
     }
-    if (verbose)
+    if (verbose) {
+      nb_loop <- nb_loop + 1
       print(paste0("loop number=", nb_loop, ", usage_K=", usage_K, ", new_K=", new_K))
+    }
     continue <- refine && (new_K < usage_K)
   }
   return(ZL)
@@ -407,6 +408,8 @@ V.star <- function(S, C, ZL, leaf_list) {
 #' @param prune.leafs A boolean, \code{FALSE} by default. If \code{TRUE}, will also prune atoms/leafs for which \eqn{\zeta_k \geq |R_k|},
 #' this makes the computation of [V.star()] and [curve.V.star.forest.naive()] even faster but should not be used with [curve.V.star.forest.fast()]
 #' because this needs the structure to be complete (i.e., with all its atoms). This is why the default option is \code{FALSE}.
+#' @param delete.gaps A boolean, \code{FALSE} by default. If \code{TRUE}, will also delete the gaps in the structure induced 
+#' by the pruning, see [delete.gaps()].
 #' 
 #' @return A list with three named elements. \describe{
 #' \item{\code{VstarNm}}{\eqn{V^*(\mathbb N_m)} is computed as by-product by the algorithm, so we might as well return it.}
@@ -417,7 +420,8 @@ V.star <- function(S, C, ZL, leaf_list) {
 #' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
 #' @references Durand G., preprint to appear with the description of pruning
 #' @export
-pruning <- function(C, ZL, leaf_list, prune.leafs = FALSE) {
+pruning <- function(C, ZL, leaf_list, prune.leafs = FALSE, delete.gaps = FALSE) {
+  # not sure if prune.leafs and delete.gaps can be both TRUE at the moment
   H <- length(C)
   nb_leaves <- length(leaf_list)
   Vec <- numeric(nb_leaves) 
@@ -460,16 +464,89 @@ pruning <- function(C, ZL, leaf_list, prune.leafs = FALSE) {
       }
     }
   }
+  if (delete.gaps) {
+    gaps.deleted <- delete.gaps(C, ZL, leaf_list)
+    C <- gaps.deleted$C
+    ZL <- gaps.deleted$ZL
+  }
   return(list(VstarNm = sum(Vec),
               C = C,
               ZL = ZL
   )
   )
 }
+
+#' Delete the gaps induced by pruning
+#' 
+#' @description
+#' A small optimization that can be done after pruning
+#' that can speed up computations (it removes the gaps introduced by the pruning)
+#' 
+#' @details
+#' See [pruning()]. This code has not been reviewed since 2023-07-25, use with caution.
+#' 
+#' @param C A list of list representing the forest structure. See [V.star()] for more information.
+#' @param ZL A list of integer vectors representing the upper bounds \eqn{\zeta_k} of the forest structure. See [V.star()] for more information.
+#' @param leaf_list A list of vectors representing the atoms of the forest structure. See [V.star()] for more information.
+#' 
+#' @return A list with two named elements. \describe{
+#' \item{\code{C}}{The new \code{C} after deleting the gaps.}
+#' \item{\code{ZL}}{The new \code{ZL} after deleting the gaps.}
+#' }
+#' 
+#' @export
+delete.gaps <- function(C, ZL, leaf_list) {
+  H <- length(C)
+  nb_leaves <- length(leaf_list)
+  continue <- TRUE
+  newC <- list()
+  newZL <- list()
+  loop.counter <- 1
+  while(continue) {
+    newC[[loop.counter]] <- list()
+    newZL[[loop.counter]] <- numeric(0)
+    leaf.available <- ! logical(nb_leaves)
+    regions.delete <- list()
+    for (h in 1:H) {
+      nb_regions <- length(C[[h]])
+      if (nb_regions > 0) {
+        for (l in 1:nb_regions) {
+          Chl <- C[[h]][[l]]
+          if (all(leaf.available[Chl[1]:Chl[2]])) {
+            newC[[loop.counter]][[Chl[1]]] <- Chl
+            newZL[[loop.counter]][Chl[1]]  <- ZL[[h]][[l]]
+            leaf.available[Chl[1]:Chl[2]] <- FALSE
+            regions.delete <- append(regions.delete, list(c(h, l)))
+          }
+        }
+      }
+    }
+    for (couple in rev(regions.delete)) {
+      h <- couple[1]
+      l <- couple[2]
+      C[[h]][[l]] <- NULL
+      ZL[[h]] <- ZL[[h]][-l]
+    }
+    if(length(newC[[loop.counter]]) > 0) {
+      for(l in length(newC[[loop.counter]]):1) {
+        if (is.null(newC[[loop.counter]][[l]])) {
+          newC[[loop.counter]][[l]] <- NULL
+          newZL[[loop.counter]] <- newZL[[loop.counter]][-l]
+        }
+      }
+    }
+    loop.counter <- loop.counter + 1
+    continue <- any(sapply(X = ZL, FUN = function(vec){length(vec) > 0}))
+  }
+  return(list(C = newC, ZL = newZL))
+}
+
+# the following 'TODO' has been found but maybe should be deleted:
+# curve.Vmax does not exist
 # TODO later: fast curve.Vmax is slower with the pruning
 # which is unexpected, maybe it is because the pruning leaves gaps
 # => maybe revamp to delete gaps? 
-# (??? curve.Vmax not found, maybe this TODO should be deleted)
+
 
 #' Compute a curve of post hoc bounds based on a reference family with forest structure
 #' 
@@ -485,10 +562,11 @@ pruning <- function(C, ZL, leaf_list, prune.leafs = FALSE) {
 #' @details Two functions are available
 #' \describe{
 #' \item{\code{curve.V.star.forest.naive}}{Repeatedly calls [V.star()] on each \eqn{S_t}, which is not optimized and time-consuming, this should be used in practice.}
-#' \item{\code{curve.V.star.forest.fast}}{A fast and optimized version that leverage the fact that\eqn{S_{t+1}} is the union of \eqn{S_t} and a single hypothesis index. This 
-#' option first completes the forest, because the algorithm needs that, and the completion fails if the input is a pruned forest (see [pruning()]), 
+#' \item{\code{curve.V.star.forest.fast}}{A fast and optimized version that leverage the fact that\eqn{S_{t+1}} is the union of \eqn{S_t} and a single hypothesis index. 
+#' The algorithm needs to work on a complete forest, so this version first completes the forest (unless told that the forest has already been completed, see [forest.completion()]), 
+#' and the completion fails if the input is a pruned forest (see [pruning()]), 
 #' so if a pruned forest is given as input, it MUST be said with the \code{is.pruned} argument 
-#' so that the function skips completion.}
+#' so that the function skips completion (so the pruned forest given as input must also be complete).}
 #' }
 #'
 #' @param perm An integer vector of elements in \code{1:m}, all different, and of size up to \code{m} (in which case it's a permutation, hence the name). 
@@ -496,9 +574,13 @@ pruning <- function(C, ZL, leaf_list, prune.leafs = FALSE) {
 #' @param C A list of list representing the forest structure. See [V.star()] for more information.
 #' @param ZL A list of integer vectors representing the upper bounds \eqn{\zeta_k} of the forest structure. See [V.star()] for more information.
 #' @param leaf_list A list of vectors representing the atoms of the forest structure. See [V.star()] for more information.
-#' @param pruning A boolean, \code{FALSE} by default. Whether to prune the forest (see [pruning()]) before computing the bounds.
-#' @param is.pruned A boolean, \code{FALSE} by default. If \code{TRUE}, assumes that the forest structure has already been completed and then pruned 
-#' and so skips the completion step. Must be set to \code{TRUE} if giving a pruned forest because in that case the completion step must be skipped or it will fail.
+#' @param pruning A boolean, \code{FALSE} by default. Whether to prune the forest (see [pruning()]) before computing the bounds. Ignored if \code{is.pruned} is \code{TRUE}.
+#' @param is.pruned A boolean, \code{FALSE} by default. If \code{TRUE}, assumes that the forest structure has already been completed (see [forest.completion()]) and then pruned (see [pruning()])
+#' and so skips the completion step and optional pruning step. Must be set to \code{TRUE} if giving a pruned forest, see Details.
+#' @param is.complete A boolean, \code{FALSE} by default. If \code{TRUE}, assumes that the forest structure has already been completed (see [forest.completion()]) and so skips the completion step.
+#' Ignored if \code{is.pruned} is \code{TRUE}.
+#' @param delete.gaps A boolean, \code{FALSE} by default. If \code{TRUE}, will also delete the gaps in the structure induced 
+#' by the pruning, see [delete.gaps()]. Ignored if \code{pruning} is \code{FALSE}.
 #' 
 #' @return A vector of length of same length as \code{perm}, where the \code{t}-th
 #' element is \eqn{V^*(S_t)}.
@@ -530,7 +612,7 @@ pruning <- function(C, ZL, leaf_list, prune.leafs = FALSE) {
 
 #' @rdname curve.V.star.forest
 #' @export
-curve.V.star.forest.naive <- function(perm, C, ZL, leaf_list, pruning = FALSE){
+curve.V.star.forest.naive <- function(perm, C, ZL, leaf_list, pruning = FALSE, delete.gaps = FALSE){
   vstars <- numeric(length(perm))
   
   # the naive version doesn't need a proper completion of the
@@ -539,7 +621,7 @@ curve.V.star.forest.naive <- function(perm, C, ZL, leaf_list, pruning = FALSE){
   # it can use super pruning
   
   if (pruning){
-    pruned <- pruning(C, ZL, leaf_list, prune.leafs = TRUE)
+    pruned <- pruning(C, ZL, leaf_list, prune.leafs = TRUE, delete.gaps = delete.gaps)
     C <- pruned$C
     ZL <- pruned$ZL
     m <- length(unlist(leaf_list))
@@ -566,21 +648,24 @@ curve.V.star.forest.naive <- function(perm, C, ZL, leaf_list, pruning = FALSE){
 
 #' @rdname curve.V.star.forest
 #' @export
-curve.V.star.forest.fast <- function(perm, C, ZL, leaf_list, pruning = FALSE, is.pruned = FALSE){
+curve.V.star.forest.fast <- function(perm, C, ZL, leaf_list, pruning = FALSE, is.pruned = FALSE, is.complete = FALSE, delete.gaps = FALSE){
   
   vstars <- numeric(length(perm))
   
   if (! is.pruned) {
-    # the fast version needs a proper completion of the
-    # forest structure, and for the same reason
-    # it must not use super pruning
-    completed <- forest.completion(C, ZL, leaf_list)
-    C <- completed$C
-    ZL <- completed$ZL
+    
+    if (! is.complete) {
+      # the fast version needs a proper completion of the
+      # forest structure, and for the same reason
+      # it must not prune the leaves
+      completed <- forest.completion(C, ZL, leaf_list)
+      C <- completed$C
+      ZL <- completed$ZL
+    }
     
     if (pruning) {
       is.pruned <- TRUE # useless atm, but kept for clarity
-      pruned <- pruning(C, ZL, leaf_list, prune.leafs = FALSE)
+      pruned <- pruning(C, ZL, leaf_list, prune.leafs = FALSE, delete.gaps = delete.gaps)
       C <- pruned$C
       ZL <- pruned$ZL
       m <- length(unlist(leaf_list))
