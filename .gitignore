@@ -1,30 +1,41 @@
 # History files
 .Rhistory
 .Rapp.history
+
 # Session Data files
 .RData
+
 # Example code in package build process
 *-Ex.R
+
 # Output files from R CMD build
 /*.tar.gz
+
 # Output files from R CMD check
 /*.Rcheck/
+
 # RStudio files
 .Rproj.user/
+
 # C++ source compiled files
 src/*.o
 src/*.so
+
 # produced vignettes
 vignettes/*.html
 vignettes/*.pdf
+
 # OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
 .httr-oauth
+
 # knitr and R markdown default cache directories
-/*_cache/
-/cache/
+vignettes/*_cache/
+
 # Temporary files created by R markdown
 *.utf8.md
 *.knit.md
+
+# other
 .Rproj.user
 *.Rproj
 .Rproj.user
@@ -32,13 +43,9 @@ vignettes/*.pdf
 .RData
 .Ruserdata
 /inst/doc/
-/png/
-/fig/
-/local/
-/doc/
-/Rout/
-/results/
 /docs
+README_cache
+
 ## OS X
 .DS_Store
 *~
@@ -46,3 +53,4 @@ Meta
 doc
 /Meta/
 resData
+docs

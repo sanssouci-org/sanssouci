@@ -23,6 +23,9 @@ Upper bound for the number of false discoveries among most significant items
 The time and space complexity of this function is O(s), which is
 optimal since s is the length of the returned vector.
 }
+\references{
+Enjalbert-Courrech, N. & Neuvial, P. (2022). Powerful and interpretable control of false discoveries in two-group differential expression studies. Bioinformatics. doi: 10.1093/bioinformatcs/btac693
+}
 \author{
 Gilles Blanchard, Nicolas Enjalbert-Courrech, Pierre Neuvial and
 Etienne Roquain

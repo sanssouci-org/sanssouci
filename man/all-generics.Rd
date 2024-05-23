@@ -33,18 +33,18 @@ Generic functions for S3 class SansSouci
 }
 \section{Functions}{
 \itemize{
-\item \code{nHyp}: ' Get the number of hypotheses
+\item \code{nHyp()}: ' Get the number of hypotheses
 
-\item \code{nObs}: Get the number of observations
+\item \code{nObs()}: Get the number of observations
 
-\item \code{label}: Get the label of hypotheses tested
+\item \code{label()}: Get the label of hypotheses tested
 
-\item \code{pValues}: Get p-values
+\item \code{pValues()}: Get p-values
 
-\item \code{foldChanges}: Get fold changes
+\item \code{foldChanges()}: Get fold changes
 
-\item \code{thresholds}: Get thresholds
+\item \code{thresholds()}: Get thresholds
 
-\item \code{nLeaves}: Get the number of leaves
+\item \code{nLeaves()}: Get the number of leaves
+
 }}
-

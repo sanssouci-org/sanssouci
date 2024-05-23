@@ -23,7 +23,7 @@ This vignettes illustrates the following points
 We start with two-sample tests because we believe they are used more frequently.
 
 ```{r library}
-library("sansSouci")
+library("sanssouci")
 #set.seed(0xBEEF) # for reproducibility
 library("ggplot2")
 ```

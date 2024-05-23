@@ -1,49 +1,49 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# sansSouci
+# sanssouci
 
 <!-- badges: start -->
 
 [![R build
-status](https://github.com/pneuvial/sanssouci/workflows/R-CMD-check/badge.svg)](https://github.com/pneuvial/sanssouci/actions)
+status](https://github.com/sanssouci-org/sanssouci/workflows/R-CMD-check/badge.svg)](https://github.com/sanssouci-org/sanssouci/actions)
 [![Coverage
-Status](https://codecov.io/gh/pneuvial/sanssouci/branch/develop/graph/badge.svg)](https://codecov.io/github/pneuvial/sanssouci/branch/develop)
+Status](https://codecov.io/gh/sanssouci-org/sanssouci/branch/develop/graph/badge.svg)](https://codecov.io/github/sanssouci-org/sanssouci/branch/develop)
 <!-- badges: end -->
 
-The goal of sansSouci is to perform **post hoc inference**: in a
-multiple testing context, sansSouci provides statistical guarantees on
-possibly user-defined and/or data-driven sets of hypotheses.
+The goal of sanssouci \[sãsusi\] is to perform **post hoc inference**:
+in a multiple testing context, sanssouci provides statistical guarantees
+on possibly user-defined and/or data-driven sets of hypotheses.
 
 Typical use cases include:
 
-  - **Differential gene expression (DGE) studies in genomics**:
-      - see vignettes dedicated to [microarray
-        data](https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html)
-        and [RNAseq
-        data](https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression_RNAseq.html)
-      - run [volcano plot shiny
-        app](https://shiny-iidea-sanssouci.apps.math.cnrs.fr/)
-  - **fMRI studies in neuroimaging**: see [fMRI
-    vignette](https://pneuvial.github.io/sanssouci/articles/post-hoc_fMRI.html).
+- **Differential gene expression (DGE) studies in genomics**:
+  - see vignettes dedicated to [microarray
+    data](articles/post-hoc_differential-expression.html) and [RNAseq
+    data](articles/post-hoc_differential-expression_RNAseq.html)
+  - run [volcano plot shiny
+    app](https://shiny-iidea-sanssouci.apps.math.cnrs.fr/)
+- **fMRI studies in neuroimaging**: see [fMRI
+  vignette](articles/post-hoc_fMRI.html).
 
 In both cases, the permutation-based post hoc inference methods
-implemented in the `SansSouci` package outperform classical post hoc
+implemented in the `sanssouci` package outperform classical post hoc
 bounds based on probabilistic inequalities.
 
 ## Example: differential analysis
 
 We briefly illustrate the case of differential gene expression study
 (see dedicated
-[vignette](https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html)
-for more information). We start by creating an object of class
-`SansSouci` from gene expression data available from the
-[sansSouci.data](https://github.com/pneuvial/sanssouci.data) package,
+[vignette](articles/post-hoc_differential-expression.html) for more
+information). We start by creating an object of class `sanssouci` from
+gene expression data available from the
+[sanssouci.data](https://github.com/sanssouci-rog/sanssouci.data)
+package,
 
 ``` r
-library("sansSouci")
-#> remotes::install_github("pneuvial/sanssouci.data")
-data(expr_ALL, package = "sansSouci.data")
+library("sanssouci")
+#> remotes::install_github("sanssouci-org/sanssouci.data")
+data(expr_ALL, package = "sanssouci.data")
 groups <- ifelse(colnames(expr_ALL) == "BCR/ABL", 1, 0) # map to 0/1
 obj <- SansSouci(Y = expr_ALL, groups = groups)
 ```
@@ -57,24 +57,24 @@ res <- fit(obj, alpha = 0.1, B = 1000)
 
 ### Output 1 - Post hoc bound for a subset of genes
 
-Let us assume that we are interested in genes with a \(p\)-value below
-\(10^{-3}\).
+Let us assume that we are interested in genes with a $p$-value below
+$10^{-3}$.
 
 ``` r
 S <- which(pValues(res) < 1e-3)
 predict(res, S)
 #>          TP         FDP 
-#> 123.0000000   0.2360248
+#> 115.0000000   0.2857143
 ```
 
-The method ensures with \(1-\alpha = 90\%\) confidence that there are at
-least 123 truly differentially expressed genes (true positives, TP)
+The method ensures with $1-\alpha = 90\%$ confidence that there are at
+least 115 truly differentially expressed genes (true positives, TP)
 among these 161 genes, corresponding to a false discovery proportion
-(FDP) less than 0.24.
+(FDP) less than 0.29.
 
 ### Output 2 - Confidence curves for “top-k” feature lists
 
-Another output of the method is the following \(1-\alpha\)-level
+Another output of the method is the following $1-\alpha$-level
 confidence curve on FDP (left panel) and corresponding TP (right panel)
 in “top-k” gene lists.
 
@@ -84,6 +84,8 @@ plot(res, xmax = 500) +
   geom_vline(xintercept = length(S), 
              color = "gray", linetype = "dotted", size = 1.5) +
   geom_line(size = 1.5)
+#> Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+#> ℹ Please use `linewidth` instead.
 ```
 
 <img src="man/figures/README-conf-curve-1.png" width="100%" />
@@ -91,7 +93,7 @@ plot(res, xmax = 500) +
 ### Output 3 - Volcano plots
 
 A more refined user selection is obtained by selecting genes based on
-both significance (here, a FDR-adjusted \(p\)-value below 0.05) and fold
+both significance (here, a FDR-adjusted $p$-value below 0.05) and fold
 change (here, fold change above 0.3). Such selections are generally
 represented by volcano plots:
 
@@ -104,17 +106,13 @@ volcanoPlot(res, q = 0.05, r = 0.3, ylim = c(0, 6))
 Importantly, multiple such selections can be made without compromising
 the validity of the bounds. The [IIDEA shiny
 app](https://shiny-iidea-sanssouci.apps.math.cnrs.fr/) makes it possible
-to perform such selections interactively and without
-programming.
+to perform such selections interactively and without programming.
 
 ## Installation
 
-<!-- You can install the released version of sansSouci from [CRAN](https://CRAN.R-project.org) with: -->
-
+<!-- You can install the released version of sanssouci from [CRAN](https://CRAN.R-project.org) with: -->
 <!-- ``` r -->
-
-<!-- install.packages("sansSouci") -->
-
+<!-- install.packages("sanssouci") -->
 <!-- ``` -->
 
 You can install the development version from
@@ -122,5 +120,5 @@ You can install the development version from
 
 ``` r
 # install.packages("remotes")
-remotes::install_github("pneuvial/sanssouci")
+remotes::install_github("sanssouci-org/sanssouci")
 ```
