@@ -2,7 +2,7 @@
 % Please edit documentation in R/tree-simulation-functions.R
 \name{gauss_bloc}
 \alias{gauss_bloc}
-\title{Generate a block of signal of Gaussian shape}
+\title{Generate a block of deterministic signal of Gaussian shape}
 \usage{
 gauss_bloc(barmu, len)
 }
@@ -15,5 +15,5 @@ gauss_bloc(barmu, len)
 A numeric vector of length \code{len}, the signal values in the block
 }
 \description{
-Generate a block of signal of Gaussian shape
+Generate a block of deterministic signal of Gaussian shape
 }

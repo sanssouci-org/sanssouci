@@ -14,7 +14,7 @@ curveMaxFP(p.values, thr)
 \value{
 A vector of size \eqn{s} giving an joint upper confidence bound on
 the number of false discoveries among the \eqn{k} most significant items
-for all \eqn{i \in \{1\ldots s\}}.
+for all \eqn{k \in \{1\ldots s\}}.
 }
 \description{
 Upper bound for the number of false discoveries among most significant items
