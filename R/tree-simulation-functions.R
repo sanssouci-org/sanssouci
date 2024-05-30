@@ -115,6 +115,7 @@ gen.mu.leaves <- function(m, K1, d, grouped, setting, barmu, leaf_list) {
 #' pvals <- gen.p.values(m = m, mu = mu, rho = 0)
 #' plot(-log(pvals), t = 'b')
 gen.p.values <- function(m, mu = rep(0, m), rho = 0, alternative = c("two.sided", "less", "greater")) {
+    alternative <- match.arg(alternative)
     stopifnot(m == length(mu)) ## sanity check
     Z <- rnorm(m + 1, 0, 1)
     Y <- sqrt(1 - rho) * Z[seq_len(m)] + sqrt(rho) * Z[m + 1]
