@@ -17,6 +17,9 @@ gen.p.values(
 \item{mu}{A vector of \eqn{m} signal values}
 
 \item{rho}{A numeric value in \eqn{[0,1]}, the level of equi-correlation between test statistics}
+
+\item{alternative}{A character string specifying the alternative hypothesis.
+Must be one of "two.sided" (default), "greater" or "less".}
 }
 \value{
 A vector of \eqn{m} one-sided \eqn{p}-values

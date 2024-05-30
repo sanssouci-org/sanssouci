@@ -99,6 +99,8 @@ gen.mu.leaves <- function(m, K1, d, grouped, setting, barmu, leaf_list) {
 #' @param m An integer value, the number of hypotheses
 #' @param mu A vector of \eqn{m} signal values
 #' @param rho A numeric value in \eqn{[0,1]}, the level of equi-correlation between test statistics
+#' @param alternative A character string specifying the alternative hypothesis.
+#'   Must be one of "two.sided" (default), "greater" or "less".
 #' @return A vector of \eqn{m} one-sided \eqn{p}-values
 #' @export
 #' @importFrom stats pnorm
