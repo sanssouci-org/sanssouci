@@ -48,7 +48,7 @@ simu.hulk <- function(m,
             V <- V[idxs]
         } else if (meth == "Simes") {
             thr <- alpha * 1:m/m
-            FP_Simes <- sansSouci:::curveMaxFP(pvalues, thr)
+            FP_Simes <- sanssouci:::curveMaxFP(pvalues, thr)
             V <- FP_Simes[idxs]
             # V2 <- idxs - sapply(idxs, FUN = function(ii) {
             #     posthocBySimes(pvalues, oo[1:ii], alpha) ## slow!

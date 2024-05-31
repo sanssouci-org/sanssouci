@@ -7,19 +7,58 @@
 V.star(S, C, ZL, leaf_list)
 }
 \arguments{
-\item{S}{A subset of hypotheses}
+\item{S}{An integer vector with the indices of the hypotheses of the selection set. Does not need to be ordered.}
 
-\item{C}{Tree}
+\item{C}{A list of list representing the forest structure. Each list of \code{C} represents a level of
+depth in the forest structure. So, \code{C[[1]]} lists the regions at depth 1, \code{C[[2]]} lists the regions at depth 2,
+and so on. We then use the fact that each region of the reference family
+is the union of some of its atom over an integer interval.
+So he elements of each list \code{C[[i]]} are integer vectors of length 2 representing this interval.
+For example, \code{C[[1]][[1]] = c(1, 5)} means that the first region at depth 1 is the union of the first 5 atoms,
+\code{C[[2]][[3]] = c(4, 5)} means that the third region at depth 2 is the union of the atoms 4 and 5, and
+\code{C[[3]][[5]] = c(5, 5)} means that the fifth region at depth 3 is simply the fifth atom.}
 
-\item{ZL}{Zeta tree}
+\item{ZL}{A list of integer vectors representing the upper bound \eqn{\zeta_k} associated to a region \eqn{R_k} in the reference family.
+\code{ZL[[h]][j]} is the \eqn{\zeta_k} associated to the \eqn{R_k} described by \code{C[[h]][[j]]}.}
 
-\item{leaf_list}{List of leaves}
+\item{leaf_list}{A list of vectors. Each vector is an integer array. The i-th vector contains the indices
+of the hypotheses in the i-th atom. Atoms form a partition of the set of hypotheses indices :
+there cannot be overlap, and each index has to be inside one of the atoms.}
 }
 \value{
-An integer value, upper bound on the number false positives in S
+An integer value, the post hoc upper bound \eqn{V^*(S)}.
 }
 \description{
-Post hoc bound on the number of false positives
+Computes the post hoc upper bound \eqn{V^*(S)} on the number of false positives in a
+given selection set \eqn{S} of hypotheses, using a reference family \eqn{(R_k, \zeta_k)} that possess the forest structure
+(see Reference).
+}
+\details{
+For \code{V.star}, the forest structure doesn't need to be complete. That is,
+in \code{C}, some trivial intervals \code{c(i,i)} corresponding to regions that are atoms may be missing.
+}
+\examples{
+m <- 20
+C <- list(
+  list(c(2, 5), c(8, 15), c(16, 19)),
+  list(c(3, 5), c(8, 10), c(12, 15), c(16, 16), c(17, 19)),
+  list(c(4, 5), c(8, 9), c(10, 10), c(12, 12), c(13, 15), c(17, 17), c(18, 19)),
+  list(c(8, 8), c(9, 9), c(13, 13), c(14, 15), c(18, 18), c(19, 19))
+)
+ZL <- list(
+  c(4, 8, 4),
+  c(3, 3, 4, 1, 3),
+  c(2, 2, 1, 1, 2, 1, 2),
+  c(1, 1, 1, 2, 1, 1)
+)
+leaf_list <- as.list(1:m)
+V.star(1, C, ZL, leaf_list)
+
+V.star(1:5, C, ZL, leaf_list)
+
+V.star(13:15, C, ZL, leaf_list)
+
+V.star(1:m, C, ZL, leaf_list)
 }
 \references{
 Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
