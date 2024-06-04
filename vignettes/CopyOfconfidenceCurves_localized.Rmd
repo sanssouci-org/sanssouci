@@ -35,7 +35,7 @@ q <- 7
 m <- s*2^q
 ```
 
-Therefore, we have $m = `r m`$.Our goal is to compare three post hoc bounds. These bounds are obtained by interpolation from a *reference family* where the amount of signal is estimated by probabilistic inequalities, following the general principle laid down by @blanchard20post-hoc, and they differ by the choice of the reference family:
+Therefore, we have $m = `r m`$. Our goal is to compare three post hoc bounds. These bounds are obtained by interpolation from a *reference family* where the amount of signal is estimated by probabilistic inequalities, following the general principle laid down by @blanchard20post-hoc, and they differ by the choice of the reference family:
 
 - "Simes": the bound derived from the @simes86improved inequality as proposed by @GS2011 and further studied by @blanchard20post-hoc. This bound was introduced in a context where the signal is not localized.
 
@@ -59,9 +59,9 @@ More precisely, quoting @durand20post-hoc:
 We start by creating a binary tree structure and generating the signal:
 
 ```{r simulation}
-obj <- SansSouciDyadic(m, leaf_size = s, direction = "top-down")
+family <- dyadic.from.window.size(m, s = s, method = 2)
 mu <- gen.mu.leaves(m = m, K1 = K1, d = r, grouped = TRUE, setting = "const", 
-                    barmu = barmu, leaf_list = obj$input$leaves)
+                    barmu = barmu, leaf_list = family$leaf_list)
 ```
 
 This construction is illustrated in the figure below (Figure 11 in @durand20post-hoc) in the case where $q=3$.
@@ -90,8 +90,9 @@ alpha <- 0.05
 
 ```{r ordered-p-values}
 ord <- order(pvalues)
-idxs <- seq_len(nHyp(obj))
 res <- list()
+x <- 1:m
+stat <- rep("FP", m)
 ```
 
 
@@ -100,10 +101,10 @@ res <- list()
 The true number of false positives will be called "Oracle" bound in the plots below.
 
 ```{r oracle}
-obj$input$truth <- as.numeric(mu != 0)
-res_Oracle <- fit(obj, alpha = alpha, p.values = pvalues, family = "Oracle")
-res[["Oracle"]] <- predict(res_Oracle, what = "FP", all = TRUE)
-res[["Oracle"]]$method <- "Oracle"
+label <- rep("Oracle", m)
+method <- rep("Oracle", m)
+oracle_bound <- cumsum(mu[ord] == 0)
+res[["Oracle"]] <- data.frame(x = x, label = label, stat = stat, bound = oracle_bound, method = method)
 ```
 
 ### 2- Simes-based confidence curve
@@ -111,9 +112,10 @@ res[["Oracle"]]$method <- "Oracle"
 Here we use the @simes86improved inequality to bound the number of false positives in each node of the tree, as proposed by @GS2011 and further studied by @blanchard20post-hoc, both in a context where the signal is not localized. 
 
 ```{r simes}
-res_Simes <- fit(obj, alpha = alpha, p.values = pvalues, family = "Simes")
-res[["Simes"]] <- predict(res_Simes, what = "FP", all = TRUE)
-res[["Simes"]]$method <- "Simes"
+simes_bound <- curveMaxFP(pvalues, alpha * 1:m / m)
+label <- rep("Simes", m)
+method <- rep("Simes", m)
+res[["Simes"]] <- data.frame(x = x, label = label, stat = stat, bound = simes_bound, method = method)
 ```
 
 ### 3- DKWM-based confidence curve
@@ -121,17 +123,21 @@ res[["Simes"]]$method <- "Simes"
 Here we use the DKWM inequality (@dvoretzky1956asymptotic, @massart1990tight) to bound the number of false positives in each node of the tree, as suggested in @durand20post-hoc.
 
 ```{r tree}
-res_DKWM <- fit(obj, alpha, p.values = pvalues, family = "DKWM")
-res[["Tree"]] <- predict(res_DKWM, what = "FP", n_out = 40)
-res[["Tree"]]$method <- "Tree"
+label <- rep("DKWM(tree)", m)
+method <- rep("Tree", m)
+C_tree <- family$C[8]
+ZL_tree <- zetas.tree(C_tree, family$leaf_list, zeta.DKWM, pvalues, alpha)
+tree_bound <- curve.V.star.forest.fast(ord, C_tree, ZL_tree, family$leaf_list, pruning = TRUE)
+res[["Tree"]] <- data.frame(x = x, label = label, stat = stat, bound = tree_bound, method = method)
 ```
 
 
 ```{r part}
-res_DKWM_part <- fit(obj, alpha, p.values = pvalues, 
-                family = "DKWM", flavor = "partition")
-res[["Partition"]] <- predict(res_DKWM_part, what = "FP", n_out = 40)
-res[["Partition"]]$method <- "Partition"
+label <- rep("DKWM(partition)", m)
+method <- rep("Partition", m)
+ZL_part <- zetas.tree(family$C, family$leaf_list, zeta.DKWM, pvalues, alpha)
+part_bound <- curve.V.star.forest.fast(ord, family$C, ZL_part, family$leaf_list, pruning = TRUE)
+res[["Partition"]] <- data.frame(x = x, label = label, stat = stat, bound = part_bound, method = method)
 ```
 
 ## Plot confidence curves
