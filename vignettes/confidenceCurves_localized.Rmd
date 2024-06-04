@@ -75,7 +75,7 @@ We generate $p$-values according to the simulation setup in @durand20post-hoc:
 > The true null $p$-values are distributed as i.i.d. $\mathcal{N}(0,1)$, and false null $p$-values are distributed as i.i.d. $\mathcal{N}(\bar{\mu}, 1)$, where [$\bar{\mu}= `r barmu`$].
 
 ```{r p-values}
-pvalues <- gen.p.values(m = m, mu = mu, rho = 0)
+pvalues <- gen.p.values(m = m, mu = mu, rho = 0, alternative = "greater")
 ```
 
 ## Calculate confidence curves
