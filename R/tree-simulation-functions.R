@@ -122,7 +122,7 @@ gen.p.values <- function(m, mu = rep(0, m), rho = 0, alternative = c("two.sided"
     Z <- rnorm(m + 1, 0, 1)
     Y <- sqrt(1 - rho) * Z[seq_len(m)] + sqrt(rho) * Z[m + 1]
     if (alternative == "two.sided"){
-    	2 * return(pnorm(abs(Y + mu), lower.tail = FALSE))
+      return(2 * pnorm(abs(Y + mu), lower.tail = FALSE))
     }
     else if (alternative == "less"){
     	return(pnorm(Y + mu, lower.tail = TRUE))
