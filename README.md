@@ -116,9 +116,16 @@ to perform such selections interactively and without programming.
 <!-- ``` -->
 
 You can install the development version from
-[GitHub](https://github.com/) with:
+[GitHub](https://github.com/) with `remotes`:
 
 ``` r
 # install.packages("remotes")
 remotes::install_github("sanssouci-org/sanssouci")
+```
+
+or with `pak`:
+
+``` r
+# install.packages("pak")
+pak::pkg_install("sanssouci-org/sanssouci")
 ```
