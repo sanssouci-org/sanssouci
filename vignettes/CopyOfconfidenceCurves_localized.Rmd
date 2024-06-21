@@ -9,7 +9,7 @@ output:
     keep_tex: true
 bibliography: sanssouci.bib
 vignette: >
-  %\VignetteIndexEntry{Confidence curves for structured hypotheses}
+  %\VignetteIndexEntry{copy of vignette: Confidence curves for structured hypotheses}
   %\VignetteEngine{knitr::knitr}
 ---
 
