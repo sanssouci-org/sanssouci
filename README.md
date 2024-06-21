@@ -1,6 +1,4 @@
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
 # sanssouci
 
 <!-- badges: start -->
@@ -9,6 +7,7 @@
 status](https://github.com/sanssouci-org/sanssouci/workflows/R-CMD-check/badge.svg)](https://github.com/sanssouci-org/sanssouci/actions)
 [![Coverage
 Status](https://codecov.io/gh/sanssouci-org/sanssouci/branch/develop/graph/badge.svg)](https://codecov.io/github/sanssouci-org/sanssouci/branch/develop)
+[![R-CMD-check](https://github.com/sanssouci-org/sanssouci/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sanssouci-org/sanssouci/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The goal of sanssouci \[sãsusi\] is to perform **post hoc inference**:
@@ -86,6 +85,9 @@ plot(res, xmax = 500) +
   geom_line(size = 1.5)
 #> Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
 #> ℹ Please use `linewidth` instead.
+#> This warning is displayed once every 8 hours.
+#> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+#> generated.
 ```
 
 <img src="man/figures/README-conf-curve-1.png" width="100%" />
@@ -111,21 +113,11 @@ to perform such selections interactively and without programming.
 ## Installation
 
 <!-- You can install the released version of sanssouci from [CRAN](https://CRAN.R-project.org) with: -->
-<!-- ``` r -->
-<!-- install.packages("sanssouci") -->
-<!-- ``` -->
 
 You can install the development version from
-[GitHub](https://github.com/) with `remotes`:
-
-``` r
-# install.packages("remotes")
-remotes::install_github("sanssouci-org/sanssouci")
-```
-
-or with `pak`:
+[GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("pak")
-pak::pkg_install("sanssouci-org/sanssouci")
+pak::install_github("sanssouci-org/sanssouci")
 ```

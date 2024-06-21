@@ -2,8 +2,6 @@
 output: github_document
 ---
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -89,14 +87,10 @@ Importantly, multiple such selections can be made without compromising the valid
 
 <!-- You can install the released version of sanssouci from [CRAN](https://CRAN.R-project.org) with: -->
 
-<!-- ``` r -->
-<!-- install.packages("sanssouci") -->
-<!-- ``` -->
-
 You can install the development version from [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("remotes")
-remotes::install_github("sanssouci-org/sanssouci")
+# install.packages("pak")
+pak::install_github("sanssouci-org/sanssouci")
 ```
 
