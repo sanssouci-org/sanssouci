@@ -119,5 +119,5 @@ You can install the development version from
 
 ``` r
 # install.packages("pak")
-pak::install_github("sanssouci-org/sanssouci")
+pak::pkg_install("sanssouci-org/sanssouci")
 ```
