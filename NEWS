@@ -2,10 +2,26 @@
 Package: sanssouci
 ==================
 
+Version 0.13.0 [2024-06-17]
+
+* New algorithm to compute a curve of post hoc bounds on a path of selection sets
+when using a reference family with a forest structure, see DBNR paper (PR #109)
+* The DBNR vignette is back in line with the settings used in the simulations
+of the paper (PR #110)
+* Multiple code optimization and tricks added for the functions linked to DBNR
+* According to the points above, new functions: pruning, delete.gaps,
+curve.V.star.forest.naive, curve.V.star.forest.fast, forest.completion
+* Some functions removed, in particular zetas.tree.refined, now an option of
+zetas.tree does the same
+* gen.p.values now allow to generate p-values for the three types of alternative
+* Multiple issues closed (#86 #88 #89 #101 #102 #106 #107)
+* Scripts illustrating the various computationnal time improvements added
+* Documentation greatly improved for all the functions linked to DBNR
+
 Version 0.12.9 [2023-07-18]
 
-* export curveMaxFP and formatBounds (#108)
-* cleanup in different versions of curveMaxFP
+* Export curveMaxFP and formatBounds (#108)
+* Cleanup in different versions of curveMaxFP
 
 Version 0.12.8 [2022-11-11]
 

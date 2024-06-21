@@ -24,6 +24,7 @@ appveyor.yml
 ^vignettes/.*_cache
 ^inst/shiny-examples/volcano-plot/.*\.rds$
 
+TODO-package.md
 TODO*.txt
 ^doc$
 ^Meta$
