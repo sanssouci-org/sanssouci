@@ -4,6 +4,9 @@
     <loc>https://sanssouci-org.github.io/sanssouci/404.html</loc>
   </url>
   <url>
+    <loc>https://sanssouci-org.github.io/sanssouci/articles/CopyOfconfidenceCurves_localized.html</loc>
+  </url>
+  <url>
     <loc>https://sanssouci-org.github.io/sanssouci/articles/IIDEA.html</loc>
   </url>
   <url>
@@ -64,10 +67,16 @@
     <loc>https://sanssouci-org.github.io/sanssouci/reference/confCurveFromFam.html</loc>
   </url>
   <url>
+    <loc>https://sanssouci-org.github.io/sanssouci/reference/curve.V.star.forest.html</loc>
+  </url>
+  <url>
     <loc>https://sanssouci-org.github.io/sanssouci/reference/curveMaxFP.html</loc>
   </url>
   <url>
-    <loc>https://sanssouci-org.github.io/sanssouci/reference/curveVstar_tree.html</loc>
+    <loc>https://sanssouci-org.github.io/sanssouci/reference/curveMaxFP_alternatives.html</loc>
+  </url>
+  <url>
+    <loc>https://sanssouci-org.github.io/sanssouci/reference/delete.gaps.html</loc>
   </url>
   <url>
     <loc>https://sanssouci-org.github.io/sanssouci/reference/dyadic.html</loc>
@@ -77,6 +86,12 @@
   </url>
   <url>
     <loc>https://sanssouci-org.github.io/sanssouci/reference/fit.SansSouciStruct.html</loc>
+  </url>
+  <url>
+    <loc>https://sanssouci-org.github.io/sanssouci/reference/forest.completion.html</loc>
+  </url>
+  <url>
+    <loc>https://sanssouci-org.github.io/sanssouci/reference/formatBounds.html</loc>
   </url>
   <url>
     <loc>https://sanssouci-org.github.io/sanssouci/reference/gauss_bloc.html</loc>
@@ -118,6 +133,9 @@
     <loc>https://sanssouci-org.github.io/sanssouci/reference/minTP.html</loc>
   </url>
   <url>
+    <loc>https://sanssouci-org.github.io/sanssouci/reference/nb.elements.html</loc>
+  </url>
+  <url>
     <loc>https://sanssouci-org.github.io/sanssouci/reference/plot.SansSouci.html</loc>
   </url>
   <url>
@@ -128,6 +146,9 @@
   </url>
   <url>
     <loc>https://sanssouci-org.github.io/sanssouci/reference/predict.SansSouci.html</loc>
+  </url>
+  <url>
+    <loc>https://sanssouci-org.github.io/sanssouci/reference/pruning.html</loc>
   </url>
   <url>
     <loc>https://sanssouci-org.github.io/sanssouci/reference/reexports.html</loc>
