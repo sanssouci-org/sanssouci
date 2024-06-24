@@ -153,7 +153,7 @@ calibrate0 <- function(p0, m, alpha,
     if (is.null(pivStat)) {
         pivStat <- get_pivotal_stat(p0, m, t_inv, min(nrow(p0), K))
     }
-    lambda <- stats::quantile(pivStat, alpha, type = 1)
+    lambda <- stats::quantile(pivStat, alpha, type = 1) # 'type=1' corresponds to inverse empirical cdf as per (20) in BNR 2020
     thr <- t_(lambda, 1:K, m)
     res <- list(thr = thr,
                 piv_stat = pivStat,
