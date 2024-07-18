@@ -417,8 +417,10 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
       } else if (n_groups > 2) { # continuous covariate
         null_groups <- replicate(B, sample(groups))
       }
-      rwt0 <- rowTestFUN(Y, null_groups, alternative = alternative)
-      p0 <- rwt0$p.value
+      p0 <- mini_batch_rowTestFUN(rowTestFUN = rowTestFUN, Y = Y, 
+                                  categ = null_groups, 
+                                  alternative = alternative, 
+                                  max_batch_size = 1e6)
       if (verbose) {
         dt <- Sys.time() - t0
         cat("done (", format(dt), ")\n", sep = "")
