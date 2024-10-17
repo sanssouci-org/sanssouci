@@ -65,9 +65,10 @@ rowWelchTests <- function(X, categ,
 
   nX <- as.matrix(colSums(categ0))
   nY <- as.matrix(colSums(categ1))
-
+  
+  XX <- X * X
   sumX <- X %*% categ0  
-  sum2X <- (X * X) %*% categ0  
+  sum2X <- (XX) %*% categ0  
   mX <- divide_cols(sumX, nX) 
   
   num <- sum2X - divide_cols(sumX^2, nX)  
@@ -79,8 +80,9 @@ rowWelchTests <- function(X, categ,
   
   
   sumY <- X %*% categ1  
-  sum2Y <- (X * X) %*% categ1  
+  sum2Y <- (XX) %*% categ1  
   mY <- divide_cols(sumY, nY)  
+  rm(XX)
   
   num <- sum2Y - divide_cols(sumY^2, nY)  
   num <- abs(num) # fix rare corner cases where num ~= -1e-15  
@@ -88,6 +90,8 @@ rowWelchTests <- function(X, categ,
   rm(sum2Y)  
   gc()
   sY <- sqrt(divide_cols(num, nY - 1)) 
+  rm(num)
+  gc()
 
   suffWelchTests(mX, mY, sX, sY, nX, nY, alternative = alternative)
 }

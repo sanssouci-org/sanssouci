@@ -1,3 +1,18 @@
+#' Mini batch version of a rowTestFUN function.
+#'
+#' @param rowTestFUN a function taking as inputs Y, categ and Alternative and 
+#' giving as a result a matrix of $p$-values. Example \code{\link{rowWelchTests}} or 
+#' \code{\link{rowWilcoxonTests}}.
+#' @param Y a $m \times n$ numeric matrix whose rows correspond to variables
+#' and columns to observations
+#' @param categ 
+#' @param alternative 
+#' @param max_batch_size 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 mini_batch_rowTestFUN <- function(rowTestFUN, Y, categ,
                                   alternative = c("two.sided", "less", "greater"), 
                                   max_batch_size = 1e6){
