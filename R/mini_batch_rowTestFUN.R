@@ -9,10 +9,17 @@
 #' @param alternative 
 #' @param max_batch_size 
 #'
-#' @return
+#' @return the p-values for the test
 #' @export
 #'
-#' @examples
+#' @examples 
+#' p <- 53 
+#' n <- 35
+#' mat <- matrix(rnorm(p * n), ncol = n)
+#' cls <- rep(c(0, 1), times = c(10, n - 10))
+#' mini_batch_rowTestFUN(rowTestFUN = rowWelchTests, Y = mat, 
+#'                       categ = cls, alternative = alt, 
+#'                       max_batch_size = 1e6)
 mini_batch_rowTestFUN <- function(rowTestFUN, Y, categ,
                                   alternative = c("two.sided", "less", "greater"), 
                                   max_batch_size = 1e6){
