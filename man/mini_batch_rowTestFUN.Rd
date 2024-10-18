@@ -13,18 +13,24 @@ mini_batch_rowTestFUN(
 )
 }
 \arguments{
-\item{rowTestFUN}{a function taking as inputs Y, categ and Alternative and
+\item{rowTestFUN}{A function taking as inputs Y, categ and Alternative and
 giving as a result a matrix of $p$-values. Example \code{\link{rowWelchTests}} or
 \code{\link{rowWilcoxonTests}}.}
 
-\item{Y}{a $m \times n$ numeric matrix whose rows correspond to variables
+\item{Y}{A \eqn{m \times n} numeric matrix whose rows correspond to variables
 and columns to observations}
 
-\item{categ}{}
+\item{categ}{Either a numeric vector of \code{n} categories in \eqn{0, 1} for
+the observations, or a \code{n x B} matrix stacking \code{B} such vectors
+(typically permutations of an original vector of size \code{n})}
 
-\item{alternative}{}
+\item{alternative}{A character string specifying the alternative hypothesis.
+Must be one of "two.sided" (default), "greater" or "less". As in
+\code{\link{t.test}}, alternative = "greater" is the alternative that class
+1 has a larger mean than class 0.}
 
-\item{max_batch_size}{}
+\item{max_batch_size}{A number specifying the maximum size of information in
+each batch}
 }
 \value{
 the p-values for the test
@@ -38,6 +44,6 @@ n <- 35
 mat <- matrix(rnorm(p * n), ncol = n)
 cls <- rep(c(0, 1), times = c(10, n - 10))
 mini_batch_rowTestFUN(rowTestFUN = rowWelchTests, Y = mat, 
-                      categ = cls, alternative = alt, 
+                      categ = cls, alternative = "two.sided", 
                       max_batch_size = 1e6)
 }
