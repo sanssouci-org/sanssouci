@@ -778,9 +778,6 @@ curve.V.star.forest.fast <- function(perm, C, ZL, leaf_list, pruning = FALSE, is
   return(vstars)
 }
 
-# the forest must not be pruned beforehand
-# the following code fails if the input is a pruned forest
-# TODO BEFORE MERGE: document
 #' Complete a forest structure
 #' 
 #' @description Completes the forest in the sens of the Reference: adds the missing atoms/leafs 
