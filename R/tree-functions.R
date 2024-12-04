@@ -426,7 +426,6 @@ V.star <- function(S, C, ZL, leaf_list) {
 #' @references Durand G., preprint to appear with the description of pruning
 #' @export
 pruning <- function(C, ZL, leaf_list, prune.leafs = FALSE, delete.gaps = FALSE) {
-  # not sure if prune.leafs and delete.gaps can be both TRUE at the moment
   H <- length(C)
   nb_leaves <- length(leaf_list)
   Vec <- numeric(nb_leaves) 
@@ -488,7 +487,7 @@ pruning <- function(C, ZL, leaf_list, prune.leafs = FALSE, delete.gaps = FALSE) 
 #' that can speed up computations (it removes the gaps introduced by the pruning)
 #' 
 #' @details
-#' See [pruning()]. This code has not been reviewed since 2023-07-25, use with caution.
+#' See [pruning()].
 #' 
 #' @param C A list of list representing the forest structure. See [V.star()] for more information.
 #' @param ZL A list of integer vectors representing the upper bounds \eqn{\zeta_k} of the forest structure. See [V.star()] for more information.
