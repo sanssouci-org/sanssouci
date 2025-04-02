@@ -760,6 +760,8 @@ curve.V.star.forest.fast <- function(perm, C, ZL, leaf_list, pruning = FALSE, is
             }
           }
           if (! is.found) {
+            # there is no k^{(t,h)} because there is a 
+            # gap in the structure (because of pruning)
             next
           }
           etas[[h]][[j]] <- etas[[h]][[j]] + 1
