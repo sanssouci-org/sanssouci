@@ -589,7 +589,7 @@ delete.gaps <- function(C, ZL, leaf_list) {
 #' @return A vector of length of same length as \code{perm}, where the \code{t}-th
 #' element is \eqn{V^*(S_t)}.
 #' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
-#' @references Durand G., preprint to appear with the description of pruning and of the fast algorithm to compute the curve.
+#' @references Durand G. (2025). A fast algorithm to compute a curve of confidence upper bounds for the False Discovery Proportion using a reference family with a forest structure. arXiv:2502.03849
 #' @export
 #' @examples
 #' m <- 20
