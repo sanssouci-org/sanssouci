@@ -33,17 +33,27 @@ curve.V.star.forest.fast.14hypcol <- function(perm, C, ZL, leaf_list, pruning = 
   }
   
   H <- length(C)
+  m <- length(unlist(leaf_list))
   
+  # preparation of the initial value of the etas (a copy of zetas but 
+  # with only zeroes), of the initial value of K^- (with the R_k's
+  # such that zeta_k = 0) and of a H x m matrix M such that
+  # M[h, i] gives the index k of C[[h]] such that hypothesis i
+  # is in the R_k given by C[[h]][[k]]
   etas <- ZL
   K.minus <- list()
+  M <- matrix(0, ncol = m, nrow = H)
   for (h in 1:H){
-    etas[[h]] <- rep(0, length(ZL[[h]]))
+    zeta_depth_h <- ZL[[h]]
+    length_zeta_depth_h <- length(zeta_depth_h)
+    etas[[h]] <- rep(0, length_zeta_depth_h)
     K.minus[[h]] <- list()
-    if (length(ZL[[h]]) > 0){
-      for (j in 1:length(ZL[[h]])){
-        if (ZL[[h]][j] == 0){
-          K.minus[[h]][[j]] <- C[[h]][[j]]
+    if (length_zeta_depth_h > 0){
+      for (k in 1:length_zeta_depth_h){
+        if (zeta_depth_h[k] == 0){
+          K.minus[[h]][[k]] <- C[[h]][[k]]
         }
+        M[h, leaf_list[[C[[h]][[k]][1]]][1]:rev(leaf_list[[C[[h]][[k]][2]]])[1]] <- k
       }
     }
   }
@@ -162,17 +172,27 @@ curve.V.star.forest.fast.14hyprow <- function(perm, C, ZL, leaf_list, pruning = 
   }
   
   H <- length(C)
+  m <- length(unlist(leaf_list))
   
+  # preparation of the initial value of the etas (a copy of zetas but 
+  # with only zeroes), of the initial value of K^- (with the R_k's
+  # such that zeta_k = 0) and of a m x H matrix M such that
+  # M[i, h] gives the index k of C[[h]] such that hypothesis i
+  # is in the R_k given by C[[h]][[k]]
   etas <- ZL
   K.minus <- list()
+  M <- matrix(0, ncol = m, nrow = H)
   for (h in 1:H){
-    etas[[h]] <- rep(0, length(ZL[[h]]))
+    zeta_depth_h <- ZL[[h]]
+    length_zeta_depth_h <- length(zeta_depth_h)
+    etas[[h]] <- rep(0, length_zeta_depth_h)
     K.minus[[h]] <- list()
-    if (length(ZL[[h]]) > 0){
-      for (j in 1:length(ZL[[h]])){
-        if (ZL[[h]][j] == 0){
-          K.minus[[h]][[j]] <- C[[h]][[j]]
+    if (length_zeta_depth_h > 0){
+      for (k in 1:length_zeta_depth_h){
+        if (zeta_depth_h[k] == 0){
+          K.minus[[h]][[k]] <- C[[h]][[k]]
         }
+        M[leaf_list[[C[[h]][[k]][1]]][1]:rev(leaf_list[[C[[h]][[k]][2]]])[1], h] <- k
       }
     }
   }
