@@ -75,22 +75,27 @@ curve.V.star.forest.fast.14hypcol <- function(perm, C, ZL, leaf_list, pruning = 
     # and we just go next to step t+1
     go.next <- FALSE
     for (h in 1:H) {
-      if (go.next) {
-        break
-      }
-      for (couple in K.minus[[h]]) {
-        if (! is.null(couple)) {
-          lower_leaf <- leaf_list[[couple[1]]]
-          lower_hyp <- lower_leaf[1]
-          upper_leaf <- leaf_list[[couple[2]]]
-          upper_hyp <- upper_leaf[length(upper_leaf)]
-          if ((i.t >= lower_hyp) && (i.t <= upper_hyp)) {
-            go.next <- TRUE
-            # print(paste0(i.t, " is in K minus"))
-            break
-          }
-        }
-      }
+      # if (go.next) {
+      #   break
+      # }
+      # for (couple in K.minus[[h]]) {
+      #   if (! is.null(couple)) {
+      #     lower_leaf <- leaf_list[[couple[1]]]
+      #     lower_hyp <- lower_leaf[1]
+      #     upper_leaf <- leaf_list[[couple[2]]]
+      #     upper_hyp <- upper_leaf[length(upper_leaf)]
+      #     if ((i.t >= lower_hyp) && (i.t <= upper_hyp)) {
+      #       go.next <- TRUE
+      #       # print(paste0(i.t, " is in K minus"))
+      #       break
+      #     }
+      #   }
+      # }
+    	k <- M[h, i.t]
+    	if ((k > 0) && (! is.null(K.minus[[h]][[k]]))){
+    		go.next <- TRUE
+    		break
+    	}
     }
     # print(paste0(i.t, " isn't in K minus"))
     #########################################
@@ -216,22 +221,27 @@ curve.V.star.forest.fast.14hyprow <- function(perm, C, ZL, leaf_list, pruning = 
     # and we just go next to step t+1
     go.next <- FALSE
     for (h in 1:H) {
-      if (go.next) {
-        break
-      }
-      for (couple in K.minus[[h]]) {
-        if (! is.null(couple)) {
-          lower_leaf <- leaf_list[[couple[1]]]
-          lower_hyp <- lower_leaf[1]
-          upper_leaf <- leaf_list[[couple[2]]]
-          upper_hyp <- upper_leaf[length(upper_leaf)]
-          if ((i.t >= lower_hyp) && (i.t <= upper_hyp)) {
-            go.next <- TRUE
-            # print(paste0(i.t, " is in K minus"))
-            break
-          }
-        }
-      }
+      # if (go.next) {
+      #   break
+      # }
+      # for (couple in K.minus[[h]]) {
+      #   if (! is.null(couple)) {
+      #     lower_leaf <- leaf_list[[couple[1]]]
+      #     lower_hyp <- lower_leaf[1]
+      #     upper_leaf <- leaf_list[[couple[2]]]
+      #     upper_hyp <- upper_leaf[length(upper_leaf)]
+      #     if ((i.t >= lower_hyp) && (i.t <= upper_hyp)) {
+      #       go.next <- TRUE
+      #       # print(paste0(i.t, " is in K minus"))
+      #       break
+      #     }
+      #   }
+      # }
+    	k <- M[i.t, h]
+    	if ((k > 0) && (! is.null(K.minus[[h]][[k]]))){
+    		go.next <- TRUE
+    		break
+    	}
     }
     # print(paste0(i.t, " isn't in K minus"))
     #########################################

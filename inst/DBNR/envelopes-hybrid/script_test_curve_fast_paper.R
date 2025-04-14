@@ -21,7 +21,7 @@ vec_factor <- c(1, 10)
 vec_n_repl <- c(100, 10)
 vec_method <- c(zeta.DKWM, zeta.trivial)
 
-for (i in 1:4){
+for (i in 1:1){
   
   factor <- vec_factor[floor((i+1)/2)]
   n_repl <- vec_n_repl[floor((i+1)/2)]
@@ -53,6 +53,10 @@ for (i in 1:4){
                            #naive.pruned = curve.V.star.forest.naive(perm, pruned.no.gaps$C, pruned.no.gaps$ZL, leaf_list),
                            fast13.not.pruned = curve.V.star.forest.fast(perm, C, ZL, leaf_list),
                            fast13.pruned = curve.V.star.forest.fast(perm, pruned.no.gaps$C, pruned.no.gaps$ZL, leaf_list, is.pruned = TRUE),
+                           fast14hypcol.not.pruned = curve.V.star.forest.fast.14hypcol(perm, C, ZL, leaf_list),
+                           fast14hypcol.pruned = curve.V.star.forest.fast.14hypcol(perm, pruned.no.gaps$C, pruned.no.gaps$ZL, leaf_list, is.pruned = TRUE),
+                           fast14hyprow.not.pruned = curve.V.star.forest.fast.14hyprow(perm, C, ZL, leaf_list),
+                           fast14hyprow.pruned = curve.V.star.forest.fast.14hyprow(perm, pruned.no.gaps$C, pruned.no.gaps$ZL, leaf_list, is.pruned = TRUE),
                            times = n_repl, check = "equal")
   print(mbench)
   #write.csv(mbench, paste0("benchmark_0", i, ".csv"), row.names = F)
