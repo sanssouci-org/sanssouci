@@ -53,7 +53,9 @@ curve.V.star.forest.fast.14hypcol <- function(perm, C, ZL, leaf_list, pruning = 
         if (zeta_depth_h[k] == 0){
           K.minus[[h]][[k]] <- C[[h]][[k]]
         }
-        M[h, leaf_list[[C[[h]][[k]][1]]][1]:rev(leaf_list[[C[[h]][[k]][2]]])[1]] <- k
+      	first_leaf <- leaf_list[[C[[h]][[k]][1]]]
+      	last_leaf <- leaf_list[[C[[h]][[k]][2]]]
+        M[h, first_leaf[1]:last_leaf[length(last_leaf)]] <- k
       }
     }
   }
@@ -192,7 +194,9 @@ curve.V.star.forest.fast.14hyprow <- function(perm, C, ZL, leaf_list, pruning = 
         if (zeta_depth_h[k] == 0){
           K.minus[[h]][[k]] <- C[[h]][[k]]
         }
-        M[leaf_list[[C[[h]][[k]][1]]][1]:rev(leaf_list[[C[[h]][[k]][2]]])[1], h] <- k
+      	first_leaf <- leaf_list[[C[[h]][[k]][1]]]
+      	last_leaf <- leaf_list[[C[[h]][[k]][2]]]
+      	M[first_leaf[1]:last_leaf[length(last_leaf)], h] <- k
       }
     }
   }
