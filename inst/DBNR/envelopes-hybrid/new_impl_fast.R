@@ -183,7 +183,7 @@ curve.V.star.forest.fast.14hyprow <- function(perm, C, ZL, leaf_list, pruning = 
   # is in the R_k given by C[[h]][[k]]
   etas <- ZL
   K.minus <- list()
-  M <- matrix(0, ncol = m, nrow = H)
+  M <- matrix(0, ncol = H, nrow = m)
   for (h in 1:H){
     zeta_depth_h <- ZL[[h]]
     length_zeta_depth_h <- length(zeta_depth_h)
