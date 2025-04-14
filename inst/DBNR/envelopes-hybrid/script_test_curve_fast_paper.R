@@ -21,7 +21,7 @@ vec_factor <- c(1, 10)
 vec_n_repl <- c(100, 10)
 vec_method <- c(zeta.DKWM, zeta.trivial)
 
-for (i in 1:1){
+for (i in 1:4){
   
   factor <- vec_factor[floor((i+1)/2)]
   n_repl <- vec_n_repl[floor((i+1)/2)]
