@@ -47,7 +47,7 @@ curve.V.star.forest.fast.14hypcol <- function(perm, C, ZL, leaf_list, pruning = 
     zeta_depth_h <- ZL[[h]]
     length_zeta_depth_h <- length(zeta_depth_h)
     etas[[h]] <- rep(0, length_zeta_depth_h)
-    K.minus[[h]] <- list()
+    K.minus[[h]] <- vector("list", length(C[[h]]))
     if (length_zeta_depth_h > 0){
       for (k in 1:length_zeta_depth_h){
         if (zeta_depth_h[k] == 0){
@@ -188,7 +188,7 @@ curve.V.star.forest.fast.14hyprow <- function(perm, C, ZL, leaf_list, pruning = 
     zeta_depth_h <- ZL[[h]]
     length_zeta_depth_h <- length(zeta_depth_h)
     etas[[h]] <- rep(0, length_zeta_depth_h)
-    K.minus[[h]] <- list()
+    K.minus[[h]] <- vector("list", length(C[[h]]))
     if (length_zeta_depth_h > 0){
       for (k in 1:length_zeta_depth_h){
         if (zeta_depth_h[k] == 0){
