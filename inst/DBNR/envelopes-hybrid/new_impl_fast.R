@@ -136,15 +136,16 @@ curve.V.star.forest.fast.14hypcol <- function(perm, C, ZL, leaf_list, pruning = 
         #   }
         # }
       	k <- M[h, i.t]
-      	if (k == 0){
-      		# there is no k^{(t,h)} because there is a 
-      		# gap in the structure (because of pruning)
-      		next
-      	}
-      	etas[[h]][[k]] <- etas[[h]][[k]] + 1
-      	if(etas[[h]][[k]] >= ZL[[h]][[k]]){
-      		K.minus[[h]][[k]] <- C[[h]][[k]]
-      		break
+      	if (k > 0){
+      	  # if k == 0,
+      	  # there is no k^{(t,h)} because there is a 
+      	  # gap in the structure (because of pruning)
+      	  # in this case we don't do anything
+      	  etas[[h]][[k]] <- etas[[h]][[k]] + 1
+      	  if(etas[[h]][[k]] >= ZL[[h]][[k]]){
+      	    K.minus[[h]][[k]] <- C[[h]][[k]]
+      	    break
+      	  }
       	}
       }
       vstars[t] <- previous.vstar + 1
@@ -293,15 +294,16 @@ curve.V.star.forest.fast.14hyprow <- function(perm, C, ZL, leaf_list, pruning = 
         #   }
         # }
         k <- M[i.t, h]
-        if (k == 0){
-        	# there is no k^{(t,h)} because there is a 
-        	# gap in the structure (because of pruning)
-        	next
-        }
-        etas[[h]][[k]] <- etas[[h]][[k]] + 1
-        if(etas[[h]][[k]] >= ZL[[h]][[k]]){
-        	K.minus[[h]][[k]] <- C[[h]][[k]]
-        	break
+        if (k > 0){
+          # if k == 0,
+          # there is no k^{(t,h)} because there is a 
+          # gap in the structure (because of pruning)
+          # in this case we don't do anything
+          etas[[h]][[k]] <- etas[[h]][[k]] + 1
+          if(etas[[h]][[k]] >= ZL[[h]][[k]]){
+            K.minus[[h]][[k]] <- C[[h]][[k]]
+            break
+          }
         }
       }
       vstars[t] <- previous.vstar + 1
