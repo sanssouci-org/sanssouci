@@ -59,5 +59,5 @@ for (i in 1:4){
                            fast14hyprow.pruned = curve.V.star.forest.fast.14hyprow(perm, pruned.no.gaps$C, pruned.no.gaps$ZL, leaf_list, is.pruned = TRUE),
                            times = n_repl, check = "equal")
   print(mbench)
-  #write.csv(mbench, paste0("benchmark_0", i, ".csv"), row.names = F)
+  write.csv(mbench, paste0("new_fast_implementation_0", i, ".csv"), row.names = F)
 }
