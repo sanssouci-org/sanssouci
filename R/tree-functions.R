@@ -153,8 +153,9 @@ dyadic.from.height <- function(m, H = NULL, method) {
 #' The functions described here can be used as the \code{method} argument 
 #' of [zetas.tree()].
 #'
-#' @param pval A vector of \eqn{p}-values
-#' @param lambda A numeric value in \eqn{[0,1]}, the target error level of the test 
+#' @param pval A vector of \eqn{p}-values.
+#' @param lambda A numeric value in \eqn{[0,1]}, the target error level of the test.
+#' @param ... Additional arguments that may be passed to specific \code{zeta} functions.
 #' @name zeta
 #' @return The number of true nulls is over-estimated as follows:
 #' \describe{
@@ -181,7 +182,7 @@ NULL
 
 #' @rdname zeta
 #' @export
-zeta.HB <- function(pval, lambda) {
+zeta.HB <- function(pval, lambda, ...) {
   m <- length(pval)
   sorted.pval <- sort(pval)
   
@@ -199,13 +200,13 @@ zeta.HB <- function(pval, lambda) {
 
 #' @rdname zeta
 #' @export
-zeta.trivial <- function(pval, lambda) {
+zeta.trivial <- function(pval, lambda, ...) {
   return(length(pval))
 }
 
 #' @rdname zeta
 #' @export
-zeta.DKWM <- function(pval, lambda) {
+zeta.DKWM <- function(pval, lambda, ...) {
   s <- length(pval)
   sorted.pval <- c(0, sort(pval))
   dkwm <- min((sqrt(log(1/lambda)/2)/(2 * (1 - sorted.pval)) + 
@@ -251,6 +252,7 @@ nb.elements <- function(C) {
 #' @param alpha A target error level in \eqn{]0,1[]}.
 #' @param refine A boolean, \code{FALSE} by default. Whether to use the step-down refinement to try to produce smaller \eqn{\zeta_k}'s, see Details.
 #' @param verbose A boolean, \code{FALSE} by default. Whether to print information about the (possibly multiple) round(s) of step-down refinement.
+#' @param ... Additional arguments that may be passed to specific \code{zeta} functions.
 #' 
 #' @return \code{ZL}: A list of integer vectors representing the upper bounds \eqn{\zeta_k} of the forest structure. See [V.star()] for more information.
 #' 
@@ -273,7 +275,7 @@ nb.elements <- function(C) {
 #' method <- zeta.trivial
 #' ZL <- zetas.tree(C, leaf_list, method, pvalues, alpha = 0.05)
 #' ZL
-zetas.tree <- function(C, leaf_list, method, pvalues, alpha, refine=FALSE, verbose=FALSE) {
+zetas.tree <- function(C, leaf_list, method, pvalues, alpha, refine=FALSE, verbose=FALSE, ...) {
   H <- length(C)
   K <- nb.elements(C)
   ZL <- list()
@@ -287,23 +289,29 @@ zetas.tree <- function(C, leaf_list, method, pvalues, alpha, refine=FALSE, verbo
       Ch <- C[[h]]
       len <- length(Ch)
       zeta_inter <- numeric(len)
-      for (j in 1:len) {
-        Chj <- Ch[[j]]
-        pvals <- pvalues[unlist(leaf_list[Chj[1]:Chj[2]])]
-        if(typeof(method) == "list") {
-          if(typeof(method[[h]]) == "list") {
-            zeta_method <- method[[h]][[j]]
+      if (len > 0) {
+        for (k in 1:len) {
+          Rk <- Ch[[k]]
+          pval <- pvalues[unlist(leaf_list[Rk[1]:Rk[2]])]
+          args_zeta = list(...)
+          if ("pCDFlist" %in% names(args_zeta)){
+            args_zeta$pCDFlist <- args_zeta$pCDFlist[unlist(leaf_list[Rk[1]:Rk[2]])]
+          }
+          if(typeof(method) == "list") {
+            if(typeof(method[[h]]) == "list") {
+              zeta_method <- method[[h]][[k]]
+            }
+            else {
+              zeta_method <- method[[h]]
+            }
           }
           else {
-            zeta_method <- method[[h]]
+            zeta_method <- method
           }
+          zeta_inter[k] <- do.call(zeta_method, c(list(pval = pval, lambda = alpha / usage_K), args_zeta))
+          if (zeta_inter[k] == 0)
+            new_K <- new_K - 1
         }
-        else {
-          zeta_method <- method
-        }
-        zeta_inter[j] <- zeta_method(pvals, alpha / usage_K)
-        if (zeta_inter[j] == 0)
-          new_K <- new_K - 1
       }
       ZL[[h]] <- zeta_inter
     }
