@@ -155,14 +155,19 @@ dyadic.from.height <- function(m, H = NULL, method) {
 #'
 #' @param pval A vector of \eqn{p}-values.
 #' @param lambda A numeric value in \eqn{[0,1]}, the target error level of the test.
+#' @param k The positive integer \eqn{k} used by the \eqn{k}-Bonferroni procedure. By default it is equal to 1.
 #' @param ... Additional arguments that may be passed to specific \code{zeta} functions.
 #' @name zeta
 #' @return The number of true nulls is over-estimated as follows:
 #' \describe{
 #' \item{\code{zeta.DKWM}}{Inversion of the Dvoretzky-Kiefer-Wolfowitz-Massart inequality (related to the Storey estimator of the proportion of true nulls) with parameter \code{lambda}}
-#' \item{\code{zeta.HB}}{Number of conserved hypotheses of the Holm-Bonferroni procedure with parameter \code{lambda}}
+#' \item{\code{zeta.HB}}{Number of conserved hypotheses by the Holm-Bonferroni procedure with parameter \code{lambda}}
+#' \item{\code{zeta.kBonf}}{Number of conserved hypotheses by the \eqn{k}-Bonferroni procedure with parameter \code{lambda}, plus \eqn{k-1}}
 #' \item{\code{zeta.trivial}}{The size of the p-value set which is the trivial upper bound (\eqn{lambda} is not used)}
 #' }
+#' @details The \eqn{k}-Bonferroni procedure controls the \eqn{k}-Familywise Error Rate (FWER) at the desired level, hence the number of conserved hypotheses, plus \eqn{k-1},
+#' is a suitable upper bound (because up to \eqn{k-1} rejected hypotheses are also true nulls). For \eqn{k=1} (the default), it is the regular Bonferroni procedure.
+#' The Holm-Bonferroni procedure controls the FWER, hence the number of conserved hypotheses is a suitable upper bound.
 #' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
 #' @references Dvoretzky, A., Kiefer, J., and Wolfowitz, J. (1956). Asymptotic minimax character of the sample distribution function and of the classical multinomial estimator. The Annals of Mathematical Statistics, pages 642-669.
 #' @references Holm, S. A simple sequentially rejective multiple test procedure. Scandinavian Journal of Statistics 6 (1979), pp. 65-70.
@@ -197,6 +202,16 @@ zeta.HB <- function(pval, lambda, ...) {
   }
 }
 # TODO: zeta.HB.sorted that assumes that the pvalues are sorted and doesn't sort them
+
+#' @rdname zeta
+#' @export
+zeta.kBonf <- function(pval, lambda, k=1, ...) {
+  m <- length(pval)
+  threshold <- lambda * k / m
+  indexes <- which(pval <= threshold)
+  bound <- m - length(indexes) + (k - 1)
+  return(min(bound, m))
+}
 
 #' @rdname zeta
 #' @export
