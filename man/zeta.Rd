@@ -3,26 +3,34 @@
 \name{zeta}
 \alias{zeta}
 \alias{zeta.HB}
+\alias{zeta.kBonf}
 \alias{zeta.trivial}
 \alias{zeta.DKWM}
 \title{Estimate the number of true null hypotheses among a set of p-values}
 \usage{
-zeta.HB(pval, lambda)
+zeta.HB(pval, lambda, ...)
 
-zeta.trivial(pval, lambda)
+zeta.kBonf(pval, lambda, k = 1, ...)
 
-zeta.DKWM(pval, lambda)
+zeta.trivial(pval, lambda, ...)
+
+zeta.DKWM(pval, lambda, ...)
 }
 \arguments{
-\item{pval}{A vector of \eqn{p}-values}
+\item{pval}{A vector of \eqn{p}-values.}
 
-\item{lambda}{A numeric value in \eqn{[0,1]}, the target error level of the test}
+\item{lambda}{A numeric value in \eqn{[0,1]}, the target error level of the test.}
+
+\item{...}{Additional arguments that may be passed to specific \code{zeta} functions.}
+
+\item{k}{The positive integer \eqn{k} used by the \eqn{k}-Bonferroni procedure. By default it is equal to 1.}
 }
 \value{
 The number of true nulls is over-estimated as follows:
 \describe{
 \item{\code{zeta.DKWM}}{Inversion of the Dvoretzky-Kiefer-Wolfowitz-Massart inequality (related to the Storey estimator of the proportion of true nulls) with parameter \code{lambda}}
-\item{\code{zeta.HB}}{Number of conserved hypotheses of the Holm-Bonferroni procedure with parameter \code{lambda}}
+\item{\code{zeta.HB}}{Number of conserved hypotheses by the Holm-Bonferroni procedure with parameter \code{lambda}}
+\item{\code{zeta.kBonf}}{Number of conserved hypotheses by the \eqn{k}-Bonferroni procedure with parameter \code{lambda}, plus \eqn{k-1}}
 \item{\code{zeta.trivial}}{The size of the p-value set which is the trivial upper bound (\eqn{lambda} is not used)}
 }
 }
@@ -32,6 +40,11 @@ the \eqn{p}-values \code{pval}
 is computed with confidence \code{1 - lambda}.
 The functions described here can be used as the \code{method} argument
 of \code{\link[=zetas.tree]{zetas.tree()}}.
+}
+\details{
+The \eqn{k}-Bonferroni procedure controls the \eqn{k}-Familywise Error Rate (FWER) at the desired level, hence the number of conserved hypotheses, plus \eqn{k-1},
+is a suitable upper bound (because up to \eqn{k-1} rejected hypotheses are also true nulls). For \eqn{k=1} (the default), it is the regular Bonferroni procedure.
+The Holm-Bonferroni procedure controls the FWER, hence the number of conserved hypotheses is a suitable upper bound.
 }
 \examples{
 x <- rnorm(100, mean = c(rep(c(0, 2), each = 50)))
@@ -53,4 +66,6 @@ Holm, S. A simple sequentially rejective multiple test procedure. Scandinavian J
 Massart, P. (1990). The tight constant in the Dvoretzky-Kiefer-Wolfowitz inequality. The Annals of Probability, pages 1269-1283.
 
 Storey, J. D. (2002). A direct approach to false discovery rates. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 64(3):479-498.
+
+Durand G. (2025). A fast algorithm to compute a curve of confidence upper bounds for the False Discovery Proportion using a reference family with a forest structure. arXiv:2502.03849.
 }

@@ -11,7 +11,8 @@ zetas.tree(
   pvalues,
   alpha,
   refine = FALSE,
-  verbose = FALSE
+  verbose = FALSE,
+  ...
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ of lists of such functions, mimicking the structure of \code{C} itself, that is,
 \item{refine}{A boolean, \code{FALSE} by default. Whether to use the step-down refinement to try to produce smaller \eqn{\zeta_k}'s, see Details.}
 
 \item{verbose}{A boolean, \code{FALSE} by default. Whether to print information about the (possibly multiple) round(s) of step-down refinement.}
+
+\item{...}{Additional arguments that may be passed to specific \code{zeta} functions.}
 }
 \value{
 \code{ZL}: A list of integer vectors representing the upper bounds \eqn{\zeta_k} of the forest structure. See \code{\link[=V.star]{V.star()}} for more information.
@@ -60,4 +63,6 @@ ZL
 Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
 
 Durand, G. (2018). Multiple testing and post hoc bounds for heterogeneous data. PhD thesis, see Appendix B.2 for the step-down refinement.
+
+Durand G. (2025). A fast algorithm to compute a curve of confidence upper bounds for the False Discovery Proportion using a reference family with a forest structure. arXiv:2502.03849.
 }
