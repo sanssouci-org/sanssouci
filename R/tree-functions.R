@@ -687,17 +687,29 @@ curve.V.star.forest.fast <- function(perm, C, ZL, leaf_list, pruning = FALSE, is
   }
   
   H <- length(C)
+  m <- length(unlist(leaf_list))
   
+  # preparation of the initial value of the etas (a copy of zetas but 
+  # with only zeroes), of the initial value of K^- (with the R_k's
+  # such that zeta_k = 0) and of a m x H matrix M such that
+  # M[i, h] gives the index k of C[[h]] such that hypothesis i
+  # is in the R_k given by C[[h]][[k]]
   etas <- ZL
   K.minus <- list()
+  M <- matrix(0, ncol = H, nrow = m)
   for (h in 1:H){
-    etas[[h]] <- rep(0, length(ZL[[h]]))
-    K.minus[[h]] <- list()
-    if (length(ZL[[h]]) > 0){
-      for (j in 1:length(ZL[[h]])){
-        if (ZL[[h]][j] == 0){
-          K.minus[[h]][[j]] <- C[[h]][[j]]
+    zeta_depth_h <- ZL[[h]]
+    length_zeta_depth_h <- length(zeta_depth_h)
+    etas[[h]] <- rep(0, length_zeta_depth_h)
+    K.minus[[h]] <- vector("list", length(C[[h]]))
+    if (length_zeta_depth_h > 0){
+      for (k in 1:length_zeta_depth_h){
+        if (zeta_depth_h[k] == 0){
+          K.minus[[h]][[k]] <- C[[h]][[k]]
         }
+        first_leaf <- leaf_list[[C[[h]][[k]][1]]]
+        last_leaf <- leaf_list[[C[[h]][[k]][2]]]
+        M[first_leaf[1]:last_leaf[length(last_leaf)], h] <- k
       }
     }
   }
@@ -711,71 +723,40 @@ curve.V.star.forest.fast <- function(perm, C, ZL, leaf_list, pruning = FALSE, is
       previous.vstar <- 0
     }
     
-    ################################
     # SEARCHING IF i_t IS IN K MINUS
     # if so, go.next == TRUE
     # and we just go next to step t+1
     go.next <- FALSE
     for (h in 1:H) {
-      if (go.next) {
+      k <- M[i.t, h]
+      if ((k > 0) && (! is.null(K.minus[[h]][[k]]))){
+        go.next <- TRUE
         break
-      }
-      for (couple in K.minus[[h]]) {
-        if (! is.null(couple)) {
-          lower_leaf <- leaf_list[[couple[1]]]
-          lower_hyp <- lower_leaf[1]
-          upper_leaf <- leaf_list[[couple[2]]]
-          upper_hyp <- upper_leaf[length(upper_leaf)]
-          if ((i.t >= lower_hyp) && (i.t <= upper_hyp)) {
-            go.next <- TRUE
-            # print(paste0(i.t, " is in K minus"))
-            break
-          }
-        }
       }
     }
     # print(paste0(i.t, " isn't in K minus"))
-    #########################################
     
     # COMPUTING V.STAR AND UPDATING K.MINUS AND ETAS
-    ################################################
     if (go.next) {
       vstars[t] <- previous.vstar
     } else {
       # Here, i_t isn't in K minus
       for (h in 1:H) {
-        nb_regions <- length(C[[h]])
-        if(nb_regions > 0){
-          is.found <- FALSE
-          for (j in 1:nb_regions) {
-            couple <- C[[h]][[j]]
-            lower_leaf <- leaf_list[[couple[1]]]
-            lower_hyp <- lower_leaf[1]
-            upper_leaf <- leaf_list[[couple[2]]]
-            upper_hyp <- upper_leaf[length(upper_leaf)]
-            if((i.t >= lower_hyp) && (i.t <= upper_hyp)){
-              # we found k^{(t,h)}
-              is.found <- TRUE
-              break
-            }
-          }
-          if (! is.found) {
-            # there is no k^{(t,h)} because there is a 
-            # gap in the structure (because of pruning)
-            next
-          }
-          etas[[h]][[j]] <- etas[[h]][[j]] + 1
-          if(etas[[h]][[j]] < ZL[[h]][[j]]){
-            # pass
-          } else {
-            K.minus[[h]][[j]] <- C[[h]][[j]]
+        k <- M[i.t, h]
+        if (k > 0){
+          # if k == 0,
+          # there is no k^{(t,h)} because there is a 
+          # gap in the structure (because of pruning)
+          # in this case we don't do anything
+          etas[[h]][[k]] <- etas[[h]][[k]] + 1
+          if(etas[[h]][[k]] >= ZL[[h]][[k]]){
+            K.minus[[h]][[k]] <- C[[h]][[k]]
             break
           }
         }
       }
       vstars[t] <- previous.vstar + 1
     }
-    ################################################
     
   }
   return(vstars)
