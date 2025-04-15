@@ -249,8 +249,6 @@ nb.elements <- function(C) {
   return(count)
 }
 
-# TODO : allow zetas.tree to take additional arguments to pass to method
-
 #' Estimate of the proportion of true nulls in each node of a tree
 #' 
 #' @description
