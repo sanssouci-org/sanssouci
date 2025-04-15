@@ -31,7 +31,7 @@ The number of true nulls is over-estimated as follows:
 \item{\code{zeta.DKWM}}{Inversion of the Dvoretzky-Kiefer-Wolfowitz-Massart inequality (related to the Storey estimator of the proportion of true nulls) with parameter \code{lambda}}
 \item{\code{zeta.HB}}{Number of conserved hypotheses by the Holm-Bonferroni procedure with parameter \code{lambda}}
 \item{\code{zeta.kBonf}}{Number of conserved hypotheses by the \eqn{k}-Bonferroni procedure with parameter \code{lambda}, plus \eqn{k-1}}
-\item{\code{zeta.trivial}}{The size of the p-value set which is the trivial upper bound (\eqn{lambda} is not used)}
+\item{\code{zeta.trivial}}{The size of the p-value set which is the trivial upper bound (\code{lambda} is not used)}
 }
 }
 \description{

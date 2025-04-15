@@ -163,7 +163,7 @@ dyadic.from.height <- function(m, H = NULL, method) {
 #' \item{\code{zeta.DKWM}}{Inversion of the Dvoretzky-Kiefer-Wolfowitz-Massart inequality (related to the Storey estimator of the proportion of true nulls) with parameter \code{lambda}}
 #' \item{\code{zeta.HB}}{Number of conserved hypotheses by the Holm-Bonferroni procedure with parameter \code{lambda}}
 #' \item{\code{zeta.kBonf}}{Number of conserved hypotheses by the \eqn{k}-Bonferroni procedure with parameter \code{lambda}, plus \eqn{k-1}}
-#' \item{\code{zeta.trivial}}{The size of the p-value set which is the trivial upper bound (\eqn{lambda} is not used)}
+#' \item{\code{zeta.trivial}}{The size of the p-value set which is the trivial upper bound (\code{lambda} is not used)}
 #' }
 #' @details The \eqn{k}-Bonferroni procedure controls the \eqn{k}-Familywise Error Rate (FWER) at the desired level, hence the number of conserved hypotheses, plus \eqn{k-1},
 #' is a suitable upper bound (because up to \eqn{k-1} rejected hypotheses are also true nulls). For \eqn{k=1} (the default), it is the regular Bonferroni procedure.
