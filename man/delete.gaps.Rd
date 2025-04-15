@@ -24,5 +24,5 @@ A small optimization that can be done after pruning
 that can speed up computations (it removes the gaps introduced by the pruning)
 }
 \details{
-See \code{\link[=pruning]{pruning()}}. This code has not been reviewed since 2023-07-25, use with caution.
+See \code{\link[=pruning]{pruning()}}.
 }
