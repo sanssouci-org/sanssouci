@@ -378,13 +378,13 @@ V.star <- function(S, C, ZL, leaf_list) {
   # between \zeta_k and card(S inter R_k)
   for (h in H:1) {
     nb_regions <- length(C[[h]])
-    if (nb_regions>0) {
-      for (j in 1:nb_regions) {
-        Chj <- C[[h]][[j]]
-        sum_succ <- sum(Vec[Chj[1]:Chj[2]])
-        res <- min(ZL[[h]][j], sum_succ)
-        Vec[Chj[1]:Chj[2]] <- 0
-        Vec[Chj[1]] <- res
+    if (nb_regions > 0) {
+      for (K in 1:nb_regions) {
+        Rk <- C[[h]][[K]]
+        sum_succ <- sum(Vec[Rk[1]:Rk[2]])
+        res <- min(ZL[[h]][K], sum_succ)
+        Vec[Rk[1]:Rk[2]] <- 0
+        Vec[Rk[1]] <- res
       }
     }
   }
