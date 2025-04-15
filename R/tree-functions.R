@@ -379,10 +379,10 @@ V.star <- function(S, C, ZL, leaf_list) {
   for (h in H:1) {
     nb_regions <- length(C[[h]])
     if (nb_regions > 0) {
-      for (K in 1:nb_regions) {
-        Rk <- C[[h]][[K]]
+      for (k in 1:nb_regions) {
+        Rk <- C[[h]][[k]]
         sum_succ <- sum(Vec[Rk[1]:Rk[2]])
-        res <- min(ZL[[h]][K], sum_succ)
+        res <- min(ZL[[h]][k], sum_succ)
         Vec[Rk[1]:Rk[2]] <- 0
         Vec[Rk[1]] <- res
       }
