@@ -192,17 +192,6 @@ zeta.HB <- function(pval, lambda) {
   else{
     return(m - indexes[1] + 1)
   }
-  # legacy code using a while loop:
-  # k <- 0
-  # CONT <- TRUE
-  # while ((k < m) && CONT) {
-  #     if (sorted.pval[k + 1] > lambda/(m - k)) {
-  #         CONT <- FALSE
-  #     } else {
-  #         k <- k + 1
-  #     }
-  # }
-  # return(m - k)
 }
 # TODO: zeta.HB.sorted that assumes that the pvalues are sorted and doesn't sort them
 
