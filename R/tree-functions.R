@@ -22,6 +22,7 @@
 #' }
 #' 
 #' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
+#' @references Durand G. (2025). A fast algorithm to compute a curve of confidence upper bounds for the False Discovery Proportion using a reference family with a forest structure. arXiv:2502.03849.
 #' @examples
 #' m <- 6
 #' dd <- dyadic.from.window.size(m, s = 2, method = 2)
@@ -166,6 +167,7 @@ dyadic.from.height <- function(m, H = NULL, method) {
 #' @references Holm, S. A simple sequentially rejective multiple test procedure. Scandinavian Journal of Statistics 6 (1979), pp. 65-70.
 #' @references Massart, P. (1990). The tight constant in the Dvoretzky-Kiefer-Wolfowitz inequality. The Annals of Probability, pages 1269-1283.
 #' @references Storey, J. D. (2002). A direct approach to false discovery rates. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 64(3):479-498.
+#' @references Durand G. (2025). A fast algorithm to compute a curve of confidence upper bounds for the False Discovery Proportion using a reference family with a forest structure. arXiv:2502.03849.
 #' @examples
 #' x <- rnorm(100, mean = c(rep(c(0, 2), each = 50)))
 #' pval <- 1 - pnorm(x)
@@ -260,6 +262,7 @@ nb.elements <- function(C) {
 #'
 #' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
 #' @references Durand, G. (2018). Multiple testing and post hoc bounds for heterogeneous data. PhD thesis, see Appendix B.2 for the step-down refinement.
+#' @references Durand G. (2025). A fast algorithm to compute a curve of confidence upper bounds for the False Discovery Proportion using a reference family with a forest structure. arXiv:2502.03849.
 #' @export
 #' @examples
 #' m <- 1000
@@ -412,7 +415,7 @@ V.star <- function(S, C, ZL, leaf_list) {
 #' }
 #' 
 #' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
-#' @references Durand G., preprint to appear with the description of pruning
+#' @references Durand G. (2025). A fast algorithm to compute a curve of confidence upper bounds for the False Discovery Proportion using a reference family with a forest structure. arXiv:2502.03849.
 #' @export
 pruning <- function(C, ZL, leaf_list, prune.leafs = FALSE, delete.gaps = FALSE) {
   H <- length(C)
@@ -571,7 +574,7 @@ delete.gaps <- function(C, ZL, leaf_list) {
 #' @return A vector of length of same length as \code{perm}, where the \code{t}-th
 #' element is \eqn{V^*(S_t)}.
 #' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
-#' @references Durand G. (2025). A fast algorithm to compute a curve of confidence upper bounds for the False Discovery Proportion using a reference family with a forest structure. arXiv:2502.03849
+#' @references Durand G. (2025). A fast algorithm to compute a curve of confidence upper bounds for the False Discovery Proportion using a reference family with a forest structure. arXiv:2502.03849.
 #' @export
 #' @examples
 #' m <- 20
@@ -765,6 +768,7 @@ curve.V.star.forest.fast <- function(perm, C, ZL, leaf_list, pruning = FALSE, is
 #' }
 #' 
 #' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
+#' @references Durand G. (2025). A fast algorithm to compute a curve of confidence upper bounds for the False Discovery Proportion using a reference family with a forest structure. arXiv:2502.03849.
 #' @export
 forest.completion <- function(C, ZL, leaf_list) {
   H <- length(C)
