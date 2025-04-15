@@ -545,13 +545,6 @@ delete.gaps <- function(C, ZL, leaf_list) {
   return(list(C = newC, ZL = newZL))
 }
 
-# the following 'TODO' has been found but maybe should be deleted:
-# curve.Vmax does not exist
-# TODO later: fast curve.Vmax is slower with the pruning
-# which is unexpected, maybe it is because the pruning leaves gaps
-# => maybe revamp to delete gaps? 
-
-
 #' Compute a curve of post hoc bounds based on a reference family with forest structure
 #' 
 #' @name curve.V.star.forest
