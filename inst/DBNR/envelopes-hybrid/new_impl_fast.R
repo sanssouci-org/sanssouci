@@ -75,22 +75,6 @@ curve.V.star.forest.fast.14hypcol <- function(perm, C, ZL, leaf_list, pruning = 
     # and we just go next to step t+1
     go.next <- FALSE
     for (h in 1:H) {
-      # if (go.next) {
-      #   break
-      # }
-      # for (couple in K.minus[[h]]) {
-      #   if (! is.null(couple)) {
-      #     lower_leaf <- leaf_list[[couple[1]]]
-      #     lower_hyp <- lower_leaf[1]
-      #     upper_leaf <- leaf_list[[couple[2]]]
-      #     upper_hyp <- upper_leaf[length(upper_leaf)]
-      #     if ((i.t >= lower_hyp) && (i.t <= upper_hyp)) {
-      #       go.next <- TRUE
-      #       # print(paste0(i.t, " is in K minus"))
-      #       break
-      #     }
-      #   }
-      # }
     	k <- M[h, i.t]
     	if ((k > 0) && (! is.null(K.minus[[h]][[k]]))){
     		go.next <- TRUE
@@ -107,34 +91,6 @@ curve.V.star.forest.fast.14hypcol <- function(perm, C, ZL, leaf_list, pruning = 
     } else {
       # Here, i_t isn't in K minus
       for (h in 1:H) {
-        # nb_regions <- length(C[[h]])
-        # if(nb_regions > 0){
-        #   is.found <- FALSE
-        #   for (j in 1:nb_regions) {
-        #     couple <- C[[h]][[j]]
-        #     lower_leaf <- leaf_list[[couple[1]]]
-        #     lower_hyp <- lower_leaf[1]
-        #     upper_leaf <- leaf_list[[couple[2]]]
-        #     upper_hyp <- upper_leaf[length(upper_leaf)]
-        #     if((i.t >= lower_hyp) && (i.t <= upper_hyp)){
-        #       # we found k^{(t,h)}
-        #       is.found <- TRUE
-        #       break
-        #     }
-        #   }
-        #   if (! is.found) {
-        #     # there is no k^{(t,h)} because there is a 
-        #     # gap in the structure (because of pruning)
-        #     next
-        #   }
-        #   etas[[h]][[j]] <- etas[[h]][[j]] + 1
-        #   if(etas[[h]][[j]] < ZL[[h]][[j]]){
-        #     # pass
-        #   } else {
-        #     K.minus[[h]][[j]] <- C[[h]][[j]]
-        #     break
-        #   }
-        # }
       	k <- M[h, i.t]
       	if (k > 0){
       	  # if k == 0,
@@ -233,22 +189,6 @@ curve.V.star.forest.fast.14hyprow <- function(perm, C, ZL, leaf_list, pruning = 
     # and we just go next to step t+1
     go.next <- FALSE
     for (h in 1:H) {
-      # if (go.next) {
-      #   break
-      # }
-      # for (couple in K.minus[[h]]) {
-      #   if (! is.null(couple)) {
-      #     lower_leaf <- leaf_list[[couple[1]]]
-      #     lower_hyp <- lower_leaf[1]
-      #     upper_leaf <- leaf_list[[couple[2]]]
-      #     upper_hyp <- upper_leaf[length(upper_leaf)]
-      #     if ((i.t >= lower_hyp) && (i.t <= upper_hyp)) {
-      #       go.next <- TRUE
-      #       # print(paste0(i.t, " is in K minus"))
-      #       break
-      #     }
-      #   }
-      # }
     	k <- M[i.t, h]
     	if ((k > 0) && (! is.null(K.minus[[h]][[k]]))){
     		go.next <- TRUE
@@ -265,34 +205,6 @@ curve.V.star.forest.fast.14hyprow <- function(perm, C, ZL, leaf_list, pruning = 
     } else {
       # Here, i_t isn't in K minus
       for (h in 1:H) {
-        # nb_regions <- length(C[[h]])
-        # if(nb_regions > 0){
-        #   is.found <- FALSE
-        #   for (j in 1:nb_regions) {
-        #     couple <- C[[h]][[j]]
-        #     lower_leaf <- leaf_list[[couple[1]]]
-        #     lower_hyp <- lower_leaf[1]
-        #     upper_leaf <- leaf_list[[couple[2]]]
-        #     upper_hyp <- upper_leaf[length(upper_leaf)]
-        #     if((i.t >= lower_hyp) && (i.t <= upper_hyp)){
-        #       # we found k^{(t,h)}
-        #       is.found <- TRUE
-        #       break
-        #     }
-        #   }
-        #   if (! is.found) {
-        #     # there is no k^{(t,h)} because there is a 
-        #     # gap in the structure (because of pruning)
-        #     next
-        #   }
-        #   etas[[h]][[j]] <- etas[[h]][[j]] + 1
-        #   if(etas[[h]][[j]] < ZL[[h]][[j]]){
-        #     # pass
-        #   } else {
-        #     K.minus[[h]][[j]] <- C[[h]][[j]]
-        #     break
-        #   }
-        # }
         k <- M[i.t, h]
         if (k > 0){
           # if k == 0,
