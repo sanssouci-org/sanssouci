@@ -27,6 +27,7 @@ Suggests:
     knitr,
     limma,
     markdown,
+    rbibutils,
     rmarkdown,
     RColorBrewer,
     sanssouci.data,
