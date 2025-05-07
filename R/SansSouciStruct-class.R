@@ -2,7 +2,7 @@
 #' 
 #' @param struct A (dyadic) structure
 #' @param leaves A list of leaves
-#' @param truth An optional numeric vector of $m$ values in ${0,1}$, the status of each null hypothesis (0 means H0 is true, 1 means H1 is true). Typically used in simulations.
+#' @param truth An optional numeric vector of $m$ values in $\{0,1\}$, the status of each null hypothesis (0 means H0 is true, 1 means H1 is true). Typically used in simulations.
 #' @return An object of class 'SansSouciStruct'
 #' @export
 #' @seealso SansSouciDyadic
