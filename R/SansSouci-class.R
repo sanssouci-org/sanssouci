@@ -3,7 +3,7 @@
 #' @param Y A matrix of \eqn{m} variables (hypotheses) by \eqn{n} observations
 #' @param groups A numeric vector of \eqn{n} values in \eqn{0, 1}, the groups of
 #'   observations on which to perform two-sample tests
-#' @param truth An optional numeric vector of $m$ values in ${0,1}$, the status
+#' @param truth An optional numeric vector of $m$ values in $\{0,1\}$, the status
 #'   of each null hypothesis (0 means H0 is true, 1 means H1 is true). Typically
 #'   used in simulations.
 #' @return An object of class "SansSouci"
