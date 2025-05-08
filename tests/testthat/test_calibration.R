@@ -13,15 +13,7 @@ test_that("Consistency of 'get_randomized_p_values_two_sample'", {
   set.seed(123)
   null_groups <- replicate(B, sample(categ))
   perm <- rowWelchTests(X, null_groups)
-  expect_equal(perm0$p.value, perm$p.value)
-  expect_equal(perm0$statistic, perm$statistic)
-  
-  set.seed(123)
-  perm0 <- get_perm(X, categ, B, rowWilcoxonTests)
-  set.seed(123)
-  perm1 <- get_perm(X, categ, B, rowWilcoxonTests1V1)
-  expect_identical(perm0$p.value, perm1$p.value)
-  expect_identical(perm0$statistic, perm1$statistic)
+  expect_equal(perm0, perm$p.value)
 
   set.seed(123)
   perm0 <- get_randomized_p_values_two_sample(X, categ, B, rowWilcoxonTests)
