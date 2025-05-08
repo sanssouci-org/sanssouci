@@ -2,3 +2,87 @@ url: https://sanssouci-org.github.io/sanssouci/
 template:
   bootstrap: 5
 
+reference:
+- title: "Main functions"
+  desc: > 
+    Functions to perform post hoc inference for 
+    one- and two sample tests as described in the 
+    BNR (2020) paper
+  contents:
+  - SansSouci
+  - fit.SansSouci
+  - predict.SansSouci
+  - volcanoPlot.SansSouci
+  - SansSouciSim
+  - SansSouci-methods
+
+- title: "Structured hypotheses"
+  desc: > 
+    Functions to perform post hoc inference for structured 
+    hypotheses as described in the Durand et al. (2020) paper
+  contents:
+  - SansSouciStruct
+  - fit.SansSouciStruct
+  - SansSouciDyadic
+  - SansSouciStruct-methods
+
+- title: internal
+  contents:
+  - all-generics
+  - calibrate
+  - calibrate_jer
+  - calibrate_simes_one_sample
+  - confCurveFromFam
+  - curveMaxFP
+  - curveMaxFP_old
+  - dichotomy
+  - estimate_jer
+  - gaussianSamples
+  - gaussianTestStatistics
+  - get_data_driven_template
+  - get_pivotal_stat
+  - get_randomized_p_values_one_sample
+  - get_randomized_p_values_two_sample
+  - volcanoPlot
+  - maxFP
+  - maxFDP
+  - minTP
+  - minTDP
+  - plot.SansSouci
+  - plotConfCurve
+  - posthocBySimes0Rcpp
+  - reference-families
+  - rowTtestsOneSample
+  - rowWilcoxonTests
+  - rowWelchTests
+  - rowZTests
+  - rowBinomialTests
+  - testByRandomization
+  - volcanoPlot.numeric
+  - curveVstar_tree
+  - dyadic.from.leaf_list
+  - dyadic
+  - gauss_bloc
+  - gen.mu.leaves
+  - gen.mu.noleaves
+  - gen.p.values
+  - V.star
+  - zeta
+  - zetas.tree 
+
+home:
+  links:
+  - text: Run volcano plot shiny app
+    href:  https://shiny-iidea-sanssouci.apps.math.cnrs.fr/
+
+authors:
+  Gilles Blanchard:
+    href: https://www.imo.universite-paris-saclay.fr/~blanchard/
+  Guillermo Durand:
+    href: https://durandg12.github.io/
+  Nicolas Enjalbert-Courrech:
+    https://nicolas-enjalbert.github.io/
+  Pierre Neuvial:
+    href: https://www.math.univ-toulouse.fr/~pneuvial/
+  Etienne Roquain:
+    href: https://etienneroquain-81.webself.net/

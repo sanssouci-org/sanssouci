@@ -1,3 +1,4 @@
+
 #' Welch T-tests for rows of a matrix
 #'
 #' @param X A \code{m x n} numeric matrix whose rows correspond to variables
@@ -74,7 +75,7 @@ rowWelchTests <- function(X, categ,
   num <- sum2X - divide_cols(sumX^2, nX)  
   rm(sumX)  
   rm(sum2X)  
-  gc()
+
   num <- abs(num) # fix rare corner cases where num ~= -1e-15  
   sX <- sqrt(divide_cols(num, nX - 1)) 
   
@@ -88,10 +89,8 @@ rowWelchTests <- function(X, categ,
   num <- abs(num) # fix rare corner cases where num ~= -1e-15  
   rm(sumY)  
   rm(sum2Y)  
-  gc()
   sY <- sqrt(divide_cols(num, nY - 1)) 
   rm(num)
-  gc()
 
   suffWelchTests(mX, mY, sX, sY, nX, nY, alternative = alternative)
 }
