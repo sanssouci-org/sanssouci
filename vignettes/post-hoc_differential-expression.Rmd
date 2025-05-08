@@ -24,7 +24,7 @@ fig.height=6
 )
 ```
 
-This vignette reproduces figures from Section 9 in the book chapter: @BNR:chap. It demonstrates how the [`sanssouci`](https://github.com/pneuvial/sanssouci) package may be used to obtain post hoc confidence bounds on false positives in the case of differential gene expression analysis. After showing the output of a classical differential analysis based on False Discovery Rate control we illustrate the application of basic post-hoc bounds derived from probabilistic inequalities. 
+This vignette reproduces figures from Section 9 in the book chapter: @BNR:chap. It demonstrates how the [`sanssouci`](https://github.com/sanssouci-org/sanssouci) package may be used to obtain post hoc confidence bounds on false positives in the case of differential gene expression analysis. After showing the output of a classical differential analysis based on False Discovery Rate control we illustrate the application of basic post-hoc bounds derived from probabilistic inequalities. 
 Then, we introduce more powerful post hoc methods (introduced by @blanchard20post-hoc) that yield tighter bounds by adapting to unknown dependence by randomization. Finally we demonstrate the use of these methods on two applications of post hoc methods:
 
 - confidence curves (envelopes) for the true or false positives
@@ -34,8 +34,8 @@ The methods described in this vignette are described in detail in the book chapt
 
 ```{r install-r-packages, results='hide', message=FALSE, eval=FALSE}
 require("ggplot2") # install.packages("ggplot2")
-require("sanssouci") # remotes::install_github("pneuvial/sanssouci@develop")
-require("sanssouci.data") # remotes::install_github("pneuvial/sanssouci.data")
+require("sanssouci") # remotes::install_github("sanssouci-org/sanssouci@develop")
+require("sanssouci.data") # remotes::install_github("sanssouci-org/sanssouci.data")
 ```
 
 

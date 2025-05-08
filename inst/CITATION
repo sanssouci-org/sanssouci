@@ -7,17 +7,19 @@ title <- meta$Title
 citEntry(entry="Manual",
          title = paste("sanssouci:", title),
          author   = personList(as.person("Pierre Neuvial"),
+                               as.person("Gilles Blanchard"),
                                as.person("Guillermo Durand"),
-                               as.person("Nicolas Enjalbert-Courrech")),
+                               as.person("Nicolas Enjalbert-Courrech"),
+                               as.person("Etienne Roquain")),
          year = year,
          note = vers,
-         url =  "https://pneuvial.github.io/sanssouci",
+         url =  "https://sanssouci-org.github.io/sanssouci",
          textVersion =
-         paste("Pierre Neuvial, Guillermo Durand and Nicolas Enjalbert-Courrech (",
+         paste("Pierre Neuvial, Gilles Blanchard, Guillermo Durand, Etienne Roquain and Nicolas Enjalbert-Courrech (",
                year,
                "). sanssouci: ",
                title, ". ",
-               vers, ". https://pneuvial.github.io/sanssouci", sep=""))
+               vers, ". https://sanssouci-org.github.io/sanssouci", sep=""))
 
 citEntry(
   entry     = "InBook",
@@ -63,4 +65,15 @@ citEntry(
   url      = "https://projecteuclid.org/euclid.aos/1594972818",
   textVersion = "Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148."
   )
+  
+citEntry(
+  entry       = "Article", 
+  title       = "Powerful and interpretable control of false discoveries in two-group differential expression studies", 
+  author      = personList(as.person("Nicolas Enjalbert-Courrech"), 
+                           as.person("Pierre Neuvial")), 
+  journal      = "Bioinformatics", 
+  year        = 2022, 
+  url         = "https://doi.org/10.1093/bioinformatics/btac693",
+  textVersion = "Enjalbert-Courrech, N. & Neuvial, P. (2022). Powerful and interpretable control of false discoveries in two-group differential expression studies. Bioinformatics. doi: 10.1093/bioinformatcs/btac693"
+)
 

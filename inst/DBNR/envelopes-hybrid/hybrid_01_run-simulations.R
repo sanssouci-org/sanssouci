@@ -1,19 +1,20 @@
 library("future")
 
-plan(multisession, workers = 100) # multiprocess est déprécié
+plan(multisession, workers = 100)
 
 resPath <- "resData/DBNR/confidenceEnvelopes"
-resPath <- file.path(resPath, Sys.Date())
-#resPath <- file.path(resPath, "2018-05-31")
+date <- format(Sys.time(), "%Y-%m-%d-%H%M%S")
+# date <- "2023-01-11-164513"
+resPath <- file.path(resPath, date)
 resPath <- R.utils::Arguments$getWritablePath(resPath)
 
 nb <- nrow(configs)
-#nb <- 40
-#cc <- 220 ## (a nice one)
+# nb <- 40
+# cc <- 220 ## (a nice one)
 
-#alphas <- c(0.001, 0.01, 0.05, 0.2, 0.5)
-#alphas <- c(0.001, 0.05, 0.05-0.001)
-alphas <- c(0.0001, 0.001, 0.05, 0.05-0.0001, 0.05-0.001)[3] #alphas == 0.05
+# alphas <- c(0.001, 0.01, 0.05, 0.2, 0.5)
+# alphas <- c(0.001, 0.05, 0.05-0.001)
+alphas <- c(0.0001, 0.001, 0.05, 0.05-0.0001, 0.05-0.001)
 
 for (cc in 1:nb) {
     print(cc)
@@ -30,7 +31,7 @@ for (cc in 1:nb) {
                   "setting=", conf[["setting"]], sep = "")
     filename <- sprintf("conf-env_%s.rds", stag)
     # print(filename)
-    dummy %<-% {
+    futureAssign(paste0("dummy", cc), {
         sdatList <- list()
         for (rr in 1:repl) {
             res <- simu.hulk(m = conf[["m"]], 
@@ -51,6 +52,6 @@ for (cc in 1:nb) {
         dat <- cbind(dat, conf)
         pathname <- file.path(resPath, filename)
         saveRDS(dat, pathname)
-        ## dat <- readRDS(pathname)
-    }
+        # dat <- readRDS(pathname)
+    }, seed=TRUE)
 }

@@ -29,7 +29,7 @@ fig.height=6
 ```
 
 
-This vignette shows how to use the [`sanssouci`](https://github.com/pneuvial/sanssouci) package to perform permutation-based post hoc inference for fMRI data. We focus on a motor task (left versus right click) from the Localizer data set by @orfanos2017brainomics. The data set is included in the [`sanssouci.data`](https://github.com/pneuvial/sanssouci.data) package. It has been obtained using the Python module [nilearn](http://nilearn.github.io/), see @abraham2014machine-learning.
+This vignette shows how to use the [`sanssouci`](https://github.com/sanssouci-org/sanssouci) package to perform permutation-based post hoc inference for fMRI data. We focus on a motor task (left versus right click) from the Localizer data set by @orfanos2017brainomics. The data set is included in the [`sanssouci.data`](https://github.com/sanssouci-org/sanssouci.data) package. It has been obtained using the Python module [nilearn](http://nilearn.github.io/), see @abraham2014machine-learning.
 
 # Setup
 
@@ -37,8 +37,8 @@ We first make sure that the required R packages are installed and loaded.
 
 ```{r install-r-packages, results='hide', message=FALSE, eval=FALSE}
 require("ggplot2") || install.packages("ggplot2")
-require("sanssouci") || remotes::install_github("pneuvial/sanssouci@develop")
-require("sanssouci.data") || remotes::install_github("pneuvial/sanssouci.data")
+require("sanssouci") || remotes::install_github("sanssouci-org/sanssouci@develop")
+require("sanssouci.data") || remotes::install_github("sanssouci-org/sanssouci.data")
 ```
 
 

@@ -4,7 +4,12 @@
 \alias{gen.p.values}
 \title{Generate one-sided p-values associated to a given signal with equi-correlated noise}
 \usage{
-gen.p.values(m, mu = rep(0, length(mu)), rho = 0)
+gen.p.values(
+  m,
+  mu = rep(0, m),
+  rho = 0,
+  alternative = c("two.sided", "less", "greater")
+)
 }
 \arguments{
 \item{m}{An integer value, the number of hypotheses}
@@ -12,6 +17,9 @@ gen.p.values(m, mu = rep(0, length(mu)), rho = 0)
 \item{mu}{A vector of \eqn{m} signal values}
 
 \item{rho}{A numeric value in \eqn{[0,1]}, the level of equi-correlation between test statistics}
+
+\item{alternative}{A character string specifying the alternative hypothesis.
+Must be one of "two.sided" (default), "greater" or "less".}
 }
 \value{
 A vector of \eqn{m} one-sided \eqn{p}-values

@@ -1,4 +1,6 @@
-url: https://pneuvial.github.io/sanssouci
+url: https://sanssouci-org.github.io/sanssouci/
+template:
+  bootstrap: 5
 
 reference:
 - title: "Main functions"
@@ -79,6 +81,7 @@ authors:
   Guillermo Durand:
     href: https://durandg12.github.io/
   Nicolas Enjalbert-Courrech:
+    https://nicolas-enjalbert.github.io/
   Pierre Neuvial:
     href: https://www.math.univ-toulouse.fr/~pneuvial/
   Etienne Roquain:

@@ -101,7 +101,7 @@ rm(expr_ALL)
 
 This data set consists of gene expression measurements for  $n = `r ncol(dat)`$ patients with B-cell acute lymphoblastic leukemia (ALL) @CLGV+2005. These patients are classified into two subgoups, depending on whether or not they harbor a specific mutation called "BCR/ABL". A Welch $T$test of equality of group mean expression is applied to each gene. 
 
-This data set is available from the R package [`sanssouci.data`](https://github.com/pneuvial/sanssouci.data), and also studied in the [differential expression vignette](https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html) of the SansSouci package.
+This data set is available from the R package [`sanssouci.data`](https://github.com/sanssouci-org/sanssouci.data), and also studied in the [differential expression vignette](post-hoc_differential-expression.html) of the SansSouci package.
 
 ### GSEAbenchmarkeR data
 
@@ -115,12 +115,16 @@ If "Use public data" is unchecked, users can upload their own gene expression da
 
 ### Gene expression
 
-Gene expression data data must be in of the two following formats (see also the example data files that can be downloaded from IIDEA):
+Gene expression data must be in of the two following formats (see also the example data files that can be downloaded from IIDEA):
 
 - A matrix containing gene expression data, in the form of a gene $\times$ condition matrix. The first row of this matrix should be a header containing category labels 0 or 1. The first column contains an unique gene identifier per row. One current limitation of IIDEA in this case is that it performs Welch $T$ tests for differential expression, which is only suitable for microarray data;
 
 - A matrix containing $p$-values and fold changes for each gene. This matrix can be obtained from any standard differential expression method (e.g. DESeq2, edgeR, limma-voom). 
 
+
+Gene expression data must be stored in a csv file. the first row must contain the name of the columns. The separator should be a ','. Nevertheless, ';' and '\t' are allowed.
+
+From a statistical perspective, an important limitation when only $p$-values and fold changes are provided is that post hoc inference can only be performed using the original post hoc bound of @GS2011, and not using the more powerful bounds of @blanchard20post-hoc. Indeed, the latter require the full expression matrix to be available in order to use permutations and obtain bounds that are adaptive to the dependence in the data set at hand.  An important perspective for IIDEA is to directly implement differential expression methods dedicated to count data, so that the powerful bounds of @blanchard20post-hoc can be used.
 
 ### Gene sets
 
@@ -131,10 +135,10 @@ While only the gene expression matrix is mandatory to obtain interactive volcano
 # Running the app on a local computer
 
 IIDEA is deployed at \url{https://shiny-iidea-sanssouci.apps.math.cnrs.fr/}. No login is required, and the data sets uploaded by users are not stored on the server side. 
-The source code of the R package \texttt{sanssouci} which contains the source files for IIDEA, is available at \url{https://github.com/pneuvial/sanssouci}. This allows users to run IIDEA on a local machine or deploy it on their own servers if desired. Once the 'remotes' package is installed, IIDEA can be run locally from an R session by executing the following commands:
+The source code of the R package \texttt{sanssouci} which contains the source files for IIDEA, is available at \url{https://github.com/sanssouci-org/sanssouci}. This allows users to run IIDEA on a local machine or deploy it on their own servers if desired. Once the 'remotes' package is installed, IIDEA can be run locally from an R session by executing the following commands:
 
 ```{r local, eval=FALSE}
-remotes::install_github("pneuvial/sanssouci")
+remotes::install_github("sanssouci-org/sanssouci")
 shiny::runApp(system.file("shiny-examples/volcano-plot", package = "sanssouci"))
 ```
 
@@ -150,11 +154,11 @@ This code uses functions of the [GSEABenchmarkeR](https://bioconductor.org/packa
 
 # Methods
 
-IIDEA leverages post hoc inference methods implemented in the R package  [`sanssouci`](https://github.com/pneuvial/sanssouci). 
+IIDEA leverages post hoc inference methods implemented in the R package  [`sanssouci`](https://github.com/sanssouci-org/sanssouci). 
 
 Post hoc inference is a recent field stemming from the multiple testing literature where users are allowed to freely select hypotheses of interest after "seeing the data", without compromising statistical validity despite the issue of "cherry-picking" (@BNR:chap, @blanchard20post-hoc, @GS2011).
 
-The methods implemented by IIDEA allow for valid inference without requiring assumptions on the dependence between genes. Instead, such dependencies are *estimated* from the data using permutation techniques, making our methods both mathematically valid and statistically powerful (see e.g. https://pneuvial.github.io/sanssouci/articles/post-hoc_differential-expression.html).
+The methods implemented by IIDEA allow for valid inference without requiring assumptions on the dependence between genes. Instead, such dependencies are *estimated* from the data using permutation techniques, making our methods both mathematically valid and statistically powerful (see e.g. https://sanssouci-org.github.io/sanssouci/articles/post-hoc_differential-expression.html).
 
 The parameters for this estimation step can be customized by clicking "Advanced parameters". 
 

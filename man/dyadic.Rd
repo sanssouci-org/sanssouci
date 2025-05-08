@@ -14,37 +14,34 @@ dyadic.from.window.size(m, s, method)
 dyadic.from.height(m, H = NULL, method)
 }
 \arguments{
-\item{leaf_list}{A list of leaves}
+\item{leaf_list}{A list of vectors representing the atoms of the forest structure. See \code{\link[=V.star]{V.star()}} for more information.}
 
 \item{method}{A numeric value. If \code{method == 1}, start from the leaves
 and group nodes of a same height 2 by 2 as long as possible. If
 \code{method==2}, start from the root and divide nodes in 2 nodes of equal
 size as long as possible}
 
-\item{m}{An integer value, the number of elements in the structure}
+\item{m}{An integer value, the number of hypotheses to have in the structure}
 
-\item{s}{An integer value, the number of elements in each leaf}
+\item{s}{An integer value, the number of elements in each atom/leaf}
 
-\item{H}{An integer value, the desired maximal height of the tree}
+\item{H}{An integer value, the desired maximal height of the tree. If NULL (by default),
+use \code{floor(2 + log2(m - 1))} which gives the maximum achievable height given \code{m}.}
 }
 \value{
-A list of lists containing the dyadic structure
-
-A list with two elements:\describe{
-\item{leaf_list}{A list of leaves}
-\item{C}{A list of lists containing the dyadic structure}
+A list with two named elements:\describe{
+\item{\code{leaf_list}}{A list of vectors representing the atoms of the forest structure. See \code{\link[=V.star]{V.star()}} for more information.}
+\item{\code{C}}{A list of list representing the forest structure. See \code{\link[=V.star]{V.star()}} for more information.}
 }
 }
 \description{
-Create a complete dyadic tree structure
-
-Create a complete dyadic tree structure
+Produce a set of regions with forest structure, with a single tree, which is dyadic.
 }
 \details{
 \describe{
-\item{\code{dyadic.from.window.size}}{Dyadic tree structure from window size: the number of elements in each leaf is set to \code{s}}
-\item{\code{dyadic.from.height}}{Dyadic tree structure from height: the total height of tree is set to \code{H}}
-\item{\code{dyadic.from.max.size}}{Dyadic tree structure from maximum achievable height: the total height of tree is set to the maximum possible height, ie \code{floor(2 + log2(m - 1))}}
+\item{\code{dyadic.from.leaf_list}}{Dyadic tree structure from a given list of atoms/leafs}
+\item{\code{dyadic.from.window.size}}{Dyadic tree structure from window size: the number of elements in each atom/leaf is set to \code{s}}
+\item{\code{dyadic.from.height}}{Dyadic tree structure from height: the total height of the tree is set to \code{H}}
 }
 }
 \examples{
@@ -55,8 +52,15 @@ str(dd)
 dd <- dyadic.from.height(m, H = 3, method = 2)
 str(dd)
 
-dd <- dyadic.from.height(m, method=2)
+dd <- dyadic.from.height(m, method = 2)
 str(dd)
 
 leaf_list <- dd$leaf_list
+dd <- dyadic.from.leaf_list(leaf_list, method = 2)
+str(dd)
+}
+\references{
+Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
+
+Durand G. (2025). A fast algorithm to compute a curve of confidence upper bounds for the False Discovery Proportion using a reference family with a forest structure. arXiv:2502.03849.
 }

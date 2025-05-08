@@ -1,9 +1,13 @@
+library("magrittr")
+library("dplyr")
 library("ggplot2")
 
 resPath <- "resData/DBNR/confidenceEnvelopes"
 resPath <- R.utils::Arguments$getReadablePath(resPath)
 
 figPath <- R.utils::Arguments$getReadablePath("fig/DBNR")
+figPath <- file.path(figPath, date)
+figPath <- R.utils::Arguments$getWritablePath(figPath)
 
 # line colors
 lvls <- c("Oracle", "Partition", "Simes", "Tree", "Hybrid")
@@ -20,14 +24,11 @@ pheight <- 6.40
 #filename <- sprintf("conf-env-alpha-hybrid_grouped=%s_setting=%s.rds", grouped, setting)
 #filename <- sprintf("conf-env-alpha_grouped=%s_setting=%s.rds", grouped, setting)
 figName <- "all-conf-env"
-filename <- sprintf("2018-06-15_%s.rds", figName)
+filename <- sprintf("%s/%s.rds", date, figName)
 pathname <- file.path(resPath, filename)
 dat <- readRDS(pathname)
 rm(pathname)
 dim(dat)
-library("magrittr")
-library("dplyr")
-library("ggplot2")
 
 dat$method <- recode_factor(dat$method, 
                             "tree" = "Tree",

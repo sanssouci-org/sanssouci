@@ -19,7 +19,7 @@ gen.mu.noleaves <- function(m, pi0, barmu) {
     mu
 }
 
-#' Generate a block of signal of Gaussian shape
+#' Generate a block of deterministic signal of Gaussian shape
 #' 
 #' @param barmu A numeric value, the strength of the signal 
 #' @param len An integer value, the length of the block
@@ -83,9 +83,10 @@ gen.mu.leaves <- function(m, K1, d, grouped, setting, barmu, leaf_list) {
         }, rgauss = {
             rnorm(m1loc, mean = barmu, sd = sqrt(barmu))
         }, gauss = {
-            gauss_bloc(barmu, length_leaf)[signal]
-          # why did I make this choice and not just gauss_bloc(barmu, m1loc) ? 
-          # Strange, because in the current way the signal doesn't have mean barmu but lesser mean as soon as d<1
+        	  gauss_bloc(barmu, m1loc)
+            # gauss_bloc(barmu, length_leaf)[signal] # old code, broken because
+        	  # that way the signal doesn't have mean barmu 
+        	  # but lesser mean as soon as d<1
         }, poisson = {
             rpois(m1loc, 999 * barmu/1000) + barmu/1000
         })
@@ -98,6 +99,8 @@ gen.mu.leaves <- function(m, K1, d, grouped, setting, barmu, leaf_list) {
 #' @param m An integer value, the number of hypotheses
 #' @param mu A vector of \eqn{m} signal values
 #' @param rho A numeric value in \eqn{[0,1]}, the level of equi-correlation between test statistics
+#' @param alternative A character string specifying the alternative hypothesis.
+#'   Must be one of "two.sided" (default), "greater" or "less".
 #' @return A vector of \eqn{m} one-sided \eqn{p}-values
 #' @export
 #' @importFrom stats pnorm
@@ -113,75 +116,18 @@ gen.mu.leaves <- function(m, K1, d, grouped, setting, barmu, leaf_list) {
 #'                     setting = "const", barmu = barmu, leaf_list =leaf_list)
 #' pvals <- gen.p.values(m = m, mu = mu, rho = 0)
 #' plot(-log(pvals), t = 'b')
-gen.p.values <- function(m, mu = rep(0, length(mu)), rho = 0) {
+gen.p.values <- function(m, mu = rep(0, m), rho = 0, alternative = c("two.sided", "less", "greater")) {
+    alternative <- match.arg(alternative)
     stopifnot(m == length(mu)) ## sanity check
     Z <- rnorm(m + 1, 0, 1)
     Y <- sqrt(1 - rho) * Z[seq_len(m)] + sqrt(rho) * Z[m + 1]
-    return(pnorm(Y + mu, lower.tail = FALSE))
-}
-
-
-#' Generate one-sided p-values associated to a given signal with equi-correlated
-#' noise
-#'
-#' @param treeFam A tree-based reference family, see example below
-#' @param ordering A permutation of \code{1, ..., m}, the ordering of the
-#'   \eqn{m} null hypotheses
-#' @return A vector of length \eqn{m}, whose \eqn{k}-th element is a lower
-#'   bound \eqn{V^*(S_k)} on the number of true positives in the set \eqn{S_k}
-#'   of the first \eqn{k} hypotheses according to the specified ordering
-#' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
-#' @export
-#' @examples
-#' m <- 250
-#' s <- 25
-#' K1 <- floor(m/(s * 4))
-#' d <- 1
-#' m1 <- s*K1*d
-#' barmu <- 4
-#' dd <- dyadic.from.window.size(m, s, method = 2)
-#' leaf_list <- dd$leaf_list
-#' mu <- gen.mu.leaves(m = m, K1 = K1, d = d,
-#'   grouped = TRUE, setting = "const",
-#'   barmu = barmu, leaf_list =leaf_list)
-#' pvals <- gen.p.values(m = m, mu = mu, rho = 0)
-#' alpha <- 0.1
-#' ZL <- zetas.tree(dd$C, leaf_list, zeta.DKWM, pvals, alpha = alpha)
-#' treeFam <- list(tree = dd$C, leaves = leaf_list, zetas = ZL)
-#' # order by p-value (favorable to Simes)
-#' op <- order(pvals)
-#' Vp <- curveVstar_tree(treeFam, op)
-#'
-#' # Simes
-#' VpS <- sapply(1:m, FUN=function(kk) posthocBySimes(pvals, op[1:kk], alpha))
-#'
-#' plot(1:m, 1:m-Vp, t = 's',
-#'      xlim = c(0, 2*m1), ylim = c(0, m1), 
-#'      ylab = "Lower bound on true positives")
-#' lines(1:m, 1:m-VpS, t = 's', col = 3)
-#'
-#' # order by 'mu' (favorable to DKWM)
-#' omu <- order(mu, decreasing = TRUE)
-#' Vmu <- curveVstar_tree(treeFam, omu)
-#' thrSimes <- t_linear(alpha, seq_len(m), m)
-#' SmuS <- sapply(1:m, FUN=function(kk) posthocBySimes(pvals, omu[1:kk], alpha))
-#'
-#' plot(1:m, 1:m-Vmu, t = 's',
-#'      xlim = c(0, 2*m1), ylim = c(0, m1),
-#'      ylab = "Lower bound on true positives")
-#' lines(1:m, SmuS, t = 's', col = 3)
-curveVstar_tree <- function(treeFam, ordering) {
-    C <- treeFam$tree
-    leaf_list <- treeFam$leaves
-    ZL <- treeFam$zetas
-    
-    m <- length(ordering)
-    stopifnot(length(unlist(leaf_list)) == m) ## sanity check
-    
-    vecVstar <- numeric(m)
-    for (ii in 1:m) {
-        vecVstar[ii] <- V.star(ordering[1:ii], C, ZL, leaf_list)
+    if (alternative == "two.sided"){
+      return(2 * pnorm(abs(Y + mu), lower.tail = FALSE))
     }
-    vecVstar
+    else if (alternative == "less"){
+    	return(pnorm(Y + mu, lower.tail = TRUE))
+    }
+    else if (alternative == "greater"){
+    	return(pnorm(Y + mu, lower.tail = FALSE))
+    }
 }
-

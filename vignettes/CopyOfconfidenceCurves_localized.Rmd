@@ -1,0 +1,207 @@
+---
+title: "Confidence curves for structured hypotheses"
+author: "G. Durand, G. Blanchard, P. Neuvial, E. Roquain"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+  pdf_document: 
+    citation_package: natbib
+    keep_tex: true
+bibliography: sanssouci.bib
+vignette: >
+  %\VignetteIndexEntry{copy of vignette: Confidence curves for structured hypotheses}
+  %\VignetteEngine{knitr::knitr}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+The goal of this vignette is to illustrate the post hoc bounds on the number of true/false positives proposed in @durand20post-hoc for localized signals. More specifically, we reproduce one of the plots of Figure 12 in @durand20post-hoc using the R package `sanssouci`. We will explicitly quote @durand20post-hoc when relevant.
+
+```{r library, message = FALSE}
+library("sanssouci")
+```
+
+## Objective
+
+We consider $m$ null ordered hypotheses partitioned in intervals of size $s$. For simplicity we set the number of intervals to be a power of 2: $m = s 2^q$ for some integer $q$:
+
+```{r param1}
+s <- 100
+q <- 7
+m <- s*2^q
+```
+
+Therefore, we have $m = `r m`$. Our goal is to compare three post hoc bounds. These bounds are obtained by interpolation from a *reference family* where the amount of signal is estimated by probabilistic inequalities, following the general principle laid down by @blanchard20post-hoc, and they differ by the choice of the reference family:
+
+- "Simes": the bound derived from the @simes86improved inequality as proposed by @GS2011 and further studied by @blanchard20post-hoc. This bound was introduced in a context where the signal is not localized.
+
+- "Tree" and "Partition": two bounds derived from the DKWM inequality (@dvoretzky1956asymptotic, @massart1990tight), as proposed in @durand20post-hoc. For the "Partition" bound, the reference family is the original partition $(P_k)_k$ of the $m$ null hypotheses into $K=2^q$ intervals. For the "Tree" bound, the reference family is the perfect binary tree whose leaves are the elements of the original partition.
+
+## Settings
+
+We define the following numerical parameters, which characterize the true/false null hypothesis configuration considered in Section 5 of @durand20post-hoc:
+
+```{r param2}
+K1 <- 8
+r <- 0.9
+m1 <-  r*K1*s
+barmu <- 3
+```
+
+More precisely, quoting @durand20post-hoc:
+
+> the false null hypotheses are contained in $P_k$ for $1 \leq k \leq K_1$, for some fixed value of $K_1$. The quantity $r$ is defined similarly as in (20), as the fraction of false null hypotheses in those $P_k$, and is set to $r =`r r`$. All of the other partition pieces only contain true null hypotheses.
+
+We start by creating a binary tree structure and generating the signal:
+
+```{r simulation}
+family <- dyadic.from.window.size(m, s = s, method = 2)
+mu <- gen.mu.leaves(m = m, K1 = K1, d = r, grouped = TRUE, setting = "const", 
+                    barmu = barmu, leaf_list = family$leaf_list)
+```
+
+This construction is illustrated in the figure below (Figure 11 in @durand20post-hoc) in the case where $q=3$.
+
+```{r figure-simulation-tree, out.width = '100%', echo = FALSE, fig.cap="Figure 11 in Durand et al."}
+knitr::include_graphics("DBNR_graph-simu.png")
+```
+
+We generate $p$-values according to the simulation setup in @durand20post-hoc:
+
+> The true null $p$-values are distributed as i.i.d. $\mathcal{N}(0,1)$, and false null $p$-values are distributed as i.i.d. $\mathcal{N}(\bar{\mu}, 1)$, where [$\bar{\mu}= `r barmu`$].
+
+```{r p-values}
+pvalues <- gen.p.values(m = m, mu = mu, rho = 0, alternative = "greater")
+```
+
+## Calculate confidence curves
+
+The confidence level for post hoc inference is set to $\alpha = 0.05$.
+
+```{r conf-level}
+alpha <- 0.05
+```
+
+> Below, we will be considering confidence curves of the form $(k, V(S_k))_{1 \leq k \leq m}$, where $S_k$ is the set of the $k$ smallest $p$-values (regardless of the ordering given by the partition). Note that focusing on such sets is a priori favorable to the Simes bound, for which the elements of the reference family are among the $S_k$.
+
+```{r ordered-p-values}
+ord <- order(pvalues)
+res <- list()
+x <- 1:m
+stat <- rep("FP", m)
+```
+
+
+### 1- True number of false positives
+
+The true number of false positives will be called "Oracle" bound in the plots below.
+
+```{r oracle}
+label <- rep("Oracle", m)
+method <- rep("Oracle", m)
+oracle_bound <- cumsum(mu[ord] == 0)
+res[["Oracle"]] <- data.frame(x = x, label = label, stat = stat, bound = oracle_bound, method = method)
+```
+
+### 2- Simes-based confidence curve
+
+Here we use the @simes86improved inequality to bound the number of false positives in each node of the tree, as proposed by @GS2011 and further studied by @blanchard20post-hoc, both in a context where the signal is not localized. 
+
+```{r simes}
+simes_bound <- curveMaxFP(pvalues, alpha * 1:m / m)
+label <- rep("Simes", m)
+method <- rep("Simes", m)
+res[["Simes"]] <- data.frame(x = x, label = label, stat = stat, bound = simes_bound, method = method)
+```
+
+### 3- DKWM-based confidence curve
+
+Here we use the DKWM inequality (@dvoretzky1956asymptotic, @massart1990tight) to bound the number of false positives in each node of the tree, as suggested in @durand20post-hoc.
+
+```{r tree}
+label <- rep("DKWM(tree)", m)
+method <- rep("Tree", m)
+C_tree <- family$C[8]
+ZL_tree <- zetas.tree(C_tree, family$leaf_list, zeta.DKWM, pvalues, alpha)
+tree_bound <- curve.V.star.forest.fast(ord, C_tree, ZL_tree, family$leaf_list, pruning = TRUE)
+res[["Tree"]] <- data.frame(x = x, label = label, stat = stat, bound = tree_bound, method = method)
+```
+
+
+```{r part}
+label <- rep("DKWM(partition)", m)
+method <- rep("Partition", m)
+ZL_part <- zetas.tree(family$C, family$leaf_list, zeta.DKWM, pvalues, alpha)
+part_bound <- curve.V.star.forest.fast(ord, family$C, ZL_part, family$leaf_list, pruning = TRUE)
+res[["Partition"]] <- data.frame(x = x, label = label, stat = stat, bound = part_bound, method = method)
+```
+
+## Plot confidence curves
+
+```{r fig-params}
+library("ggplot2")
+dat <- Reduce(rbind, res)
+lvls <- c("Oracle", "Partition", "Simes", "Tree", "Hybrid")
+cols <- RColorBrewer::brewer.pal(length(lvls), "Set1")
+names(cols) <- lvls
+```
+
+### Upper bound on the number of false positives
+
+```{r plot-confidence-curve}
+xymax <- m1;
+pV <- ggplot(dat, aes(x, bound, colour = method)) + 
+    geom_line() +
+    ylab("Upper bound on the number of false positives") +
+    xlab("sorted hypotheses") +
+    scale_colour_manual(values = cols)
+pV
+```
+
+The "Tree" and "Partition" bounds are sharper than the "Simes" bound as soon as we are considering "large" sets of hypotheses.  The fact that the "Tree" and "Partition" bounds are not as sharp as the "Simes" bound for the first hundred of hypotheses can be explained by our choice of the ordering of the null hypotheses in the sets $S_k$, which as discussed above is favorable to the "Simes" bound.
+
+Zooming on the first `r xymax` null hypotheses (in the order of the $p$-values):
+
+```{r zoom-plot-confidence-curve, warning=FALSE}
+pV + coord_cartesian(xlim = c(1, xymax),
+                     ylim = c(0, xymax))
+```
+
+## Lower bound on the number of true positives
+
+The same information can be displayed as a lower bound on the number of true positives, defined for any $S \subset \{1 \dots m\}$ by $|S| - V(S)$:
+
+```{r lower-bound}
+dat$S <- dat$x - dat$bound
+```
+
+```{r plot-lower-bound}
+xmax <- m1;
+ymax <- max(dat$S[m1]);
+pS <- ggplot(dat, aes(x, S, colour = method)) + 
+    geom_line() +
+    ylab("Lower bound on the number of true positives") +
+    xlab("sorted hypotheses") +
+    scale_colour_manual(values = cols)
+pS
+```
+
+
+Zooming in the first `r xymax` null hypotheses (in the order of the $p$-values), we recover the middle plot in Figure 12 of @durand20post-hoc.
+
+```{r zoom-plot-lower-bound, warning=FALSE}
+pS + xlim(1, xmax) + ylim(0, ymax)
+```
+
+
+## Session information
+
+```{r session-information}
+sessionInfo()
+```
+
+## References

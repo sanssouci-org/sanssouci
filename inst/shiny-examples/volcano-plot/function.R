@@ -22,6 +22,22 @@ cleanGo.GS <- function(go.gs){
   
 }
 
+readCSV_sep<- function(file, ... ){
+  df <- read.csv(file, sep = c(","), ...)
+  if (dim(df)[2] > 1) {
+    return(df)
+  }
+  df <- read.csv(file, sep = c(";"), ...)
+  if (dim(df)[2] > 1) {
+    return(df)
+  } 
+  df <- read.csv(file,  sep = c("\t"), ...)
+  if (dim(df)[2] > 1) {
+    return(df)
+  } 
+  stop("Only ',', ';', '\\t' separators are allowed. Please adapte your csv file.")  
+}
+
 
 exampleData <- function(){
   
@@ -424,10 +440,10 @@ posthoc_bound2 <- function (p.values, S = seq_along(p.values), thr = NULL, lab =
       max_FP <- maxFP(sorted_p, thr)
       idxs <- length(idxs)
     } else {
-      max_FP <- sansSouci:::curveMaxFP(sorted_p, thr)
+      max_FP <- sanssouci:::curveMaxFP(sorted_p, thr)
     }
   }
-  bounds <- sansSouci:::formatBounds(max_FP, idxs = idxs, lab = lab, what = what, 
+  bounds <- sanssouci:::formatBounds(max_FP, idxs = idxs, lab = lab, what = what, 
                                      all = all)
   bounds
 }
@@ -543,7 +559,7 @@ thrYaxis <- function(thr, maxlogp){
 }
 
 
-curveMaxFP <- sansSouci:::curveMaxFP
+curveMaxFP <- sanssouci:::curveMaxFP
 
 plotMaxFP <- function(pval, thr){
   sort_pval <- sort(pval)

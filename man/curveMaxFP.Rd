@@ -14,7 +14,7 @@ curveMaxFP(p.values, thr)
 \value{
 A vector of size \eqn{s} giving an joint upper confidence bound on
 the number of false discoveries among the \eqn{k} most significant items
-for all \eqn{i \in \{1\ldots s\}}.
+for all \eqn{k \in \{1\ldots s\}}.
 }
 \description{
 Upper bound for the number of false discoveries among most significant items
@@ -22,6 +22,9 @@ Upper bound for the number of false discoveries among most significant items
 \details{
 The time and space complexity of this function is O(s), which is
 optimal since s is the length of the returned vector.
+}
+\references{
+Enjalbert-Courrech, N. & Neuvial, P. (2022). Powerful and interpretable control of false discoveries in two-group differential expression studies. Bioinformatics. doi: 10.1093/bioinformatcs/btac693
 }
 \author{
 Gilles Blanchard, Nicolas Enjalbert-Courrech, Pierre Neuvial and

@@ -2,42 +2,67 @@
 % Please edit documentation in R/tree-functions.R
 \name{zetas.tree}
 \alias{zetas.tree}
-\alias{zetas.tree.refined}
 \title{Estimate of the proportion of true nulls in each node of a tree}
 \usage{
-zetas.tree(C, leaf_list, method, pvalues, alpha)
-
-zetas.tree.refined(C, leaf_list, method, pvalues, alpha)
+zetas.tree(
+  C,
+  leaf_list,
+  method,
+  pvalues,
+  alpha,
+  refine = FALSE,
+  verbose = FALSE,
+  ...
+)
 }
 \arguments{
-\item{C}{Tree structure}
+\item{C}{A list of list representing the forest structure. See \code{\link[=V.star]{V.star()}} for more information.}
 
-\item{leaf_list}{A list of leaves}
+\item{leaf_list}{A list of vectors representing the atoms of the forest structure. See \code{\link[=V.star]{V.star()}} for more information.}
 
-\item{method}{A function to compute the estimators}
+\item{method}{A function with arguments \code{(pval, lambda)} that can compute an upper bound on the false positives in the region associated to
+the \eqn{p}-values \code{pval} at confidence level \code{1 - lambda}. It can also be a list of such functions, where the \code{h}-th function
+is used at depth \code{h} in the tree structure, that is on the \eqn{R_k}'s represented by the elements found in \code{C[[h]]}. Finally, it can also be a list
+of lists of such functions, mimicking the structure of \code{C} itself, that is, \code{method[[h]][[j]]} is applied the \eqn{R_k} represented by \code{C[[h]][[j]]}.}
 
-\item{pvalues}{A vector of \eqn{p}-values}
+\item{pvalues}{A vector of \eqn{p}-values, must be of size \code{m}, with \code{m} the highest element found in the vectors of \code{leaf_list}.}
 
-\item{alpha}{A target level}
+\item{alpha}{A target error level in \eqn{]0,1[]}.}
+
+\item{refine}{A boolean, \code{FALSE} by default. Whether to use the step-down refinement to try to produce smaller \eqn{\zeta_k}'s, see Details.}
+
+\item{verbose}{A boolean, \code{FALSE} by default. Whether to print information about the (possibly multiple) round(s) of step-down refinement.}
+
+\item{...}{Additional arguments that may be passed to specific \code{zeta} functions.}
+}
+\value{
+\code{ZL}: A list of integer vectors representing the upper bounds \eqn{\zeta_k} of the forest structure. See \code{\link[=V.star]{V.star()}} for more information.
 }
 \description{
-Estimate of the proportion of true nulls in each node of a tree
+Takes a forest structure as input, given by the couple \code{C}, \code{leaf_list}
+and returns the corresponding \eqn{\zeta_k}'s according to the method(s) chosen.
 }
 \details{
-The proportion of true nulls in each node is estimated by an union bound on the regions. That is, the provided method is applied at level \code{alpha/nR} where \code{nR} is the number of regions.
-
-In \code{zetas.tree.refined}, one tries to estimate the number of regions containing only signal.
+The proportion of true nulls in each node is estimated by an union bound on the regions.
+That is, the provided method(s) is/are applied at level \eqn{\frac{\alpha}{K}} where \eqn{K} is the number of regions.
+In the step-down refinement, if we find a \eqn{R_k} with associated \eqn{\zeta_k=0}, that is, we think that the region
+contains only false null hypotheses, we can remove it and run again the \eqn{\zeta_k}'s computation using \eqn{K-1} instead of
+\eqn{K} in the union bound, and so on until we don't reduce the "effective" number of regions.
 }
 \examples{
-
-m <- 1000 
+m <- 1000
 dd <- dyadic.from.window.size(m, s = 10, method = 2)
 leaf_list <- dd$leaf_list
-mu <- gen.mu.leaves(m, K1 = 3, d = 1, grouped = FALSE, "const", barmu = 4, leaf_list)
-pvalues<-gen.p.values(m, mu, rho = 0)
-C <- dd$C 
-ZL<-zetas.tree(C, leaf_list, zeta.DKWM, pvalues, alpha = 0.05)
+pvalues <- runif(m)
+C <- dd$C
+method <- zeta.trivial
+ZL <- zetas.tree(C, leaf_list, method, pvalues, alpha = 0.05)
+ZL
 }
 \references{
 Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
+
+Durand, G. (2018). Multiple testing and post hoc bounds for heterogeneous data. PhD thesis, see Appendix B.2 for the step-down refinement.
+
+Durand G. (2025). A fast algorithm to compute a curve of confidence upper bounds for the False Discovery Proportion using a reference family with a forest structure. arXiv:2502.03849.
 }

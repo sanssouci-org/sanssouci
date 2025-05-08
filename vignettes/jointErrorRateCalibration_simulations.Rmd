@@ -5,7 +5,7 @@ author: "P. Neuvial"
 date: "2018-03-27"
 output: 
   html_document: 
-    toc: yes
+    toc: true
 vignette: >
   %\VignetteIndexEntry{Joint Error Rate calibration}
   %\VignetteEngine{knitr::knitr}
