@@ -128,9 +128,11 @@ plotConfCurve <- function(conf_bound, xmax, cols = NULL) {
     }    
     
     p <- ggplot2::ggplot(conf_bound, 
-                         ggplot2::aes_string(x = "x", y = "bound"))
+                         ggplot2::aes(x = .data[["x"]], 
+                                      y = .data[["bound"]]))
     if (nb > 1) {
-        p <- p + ggplot2::aes_string(color = "Template", linetype = "Template")
+      p <- p + ggplot2::aes(color = .data[["Template"]], 
+                            linetype = .data[["Template"]])
     }
     p + ggplot2::geom_line() +
         ggplot2::facet_wrap(~ stat, scales = "free_y") + 
