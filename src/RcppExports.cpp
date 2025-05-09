@@ -46,19 +46,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// posthocBySimes0Rcpp
-double posthocBySimes0Rcpp(NumericVector p, NumericVector select, double alpha);
-RcppExport SEXP _sanssouci_posthocBySimes0Rcpp(SEXP pSEXP, SEXP selectSEXP, SEXP alphaSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type p(pSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type select(selectSEXP);
-    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
-    rcpp_result_gen = Rcpp::wrap(posthocBySimes0Rcpp(p, select, alpha));
-    return rcpp_result_gen;
-END_RCPP
-}
 // testBySignFlipping
 arma::mat testBySignFlipping(arma::mat X, double B);
 RcppExport SEXP _sanssouci_testBySignFlipping(SEXP XSEXP, SEXP BSEXP) {
@@ -76,7 +63,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_sanssouci_colSort", (DL_FUNC) &_sanssouci_colSort, 1},
     {"_sanssouci_partialColSortDescCpp", (DL_FUNC) &_sanssouci_partialColSortDescCpp, 2},
     {"_sanssouci_partialColSortCpp", (DL_FUNC) &_sanssouci_partialColSortCpp, 2},
-    {"_sanssouci_posthocBySimes0Rcpp", (DL_FUNC) &_sanssouci_posthocBySimes0Rcpp, 3},
     {"_sanssouci_testBySignFlipping", (DL_FUNC) &_sanssouci_testBySignFlipping, 2},
     {NULL, NULL, 0}
 };

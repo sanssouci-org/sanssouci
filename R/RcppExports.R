@@ -13,12 +13,6 @@ partialColSortCpp <- function(X, k) {
     .Call('_sanssouci_partialColSortCpp', PACKAGE = 'sanssouci', X, k)
 }
 
-#' @describeIn posthocBySimes Rcpp version
-#' @export
-posthocBySimes0Rcpp <- function(p, select, alpha) {
-    .Call('_sanssouci_posthocBySimes0Rcpp', PACKAGE = 'sanssouci', p, select, alpha)
-}
-
 testBySignFlipping <- function(X, B) {
     .Call('_sanssouci_testBySignFlipping', PACKAGE = 'sanssouci', X, B)
 }
