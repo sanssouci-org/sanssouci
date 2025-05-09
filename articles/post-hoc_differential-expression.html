@@ -5,68 +5,54 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="sanssouci">
 <title>Permutation-based post hoc inference for differential gene expression studies • sanssouci</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha512-7O5pXpc0oCRrxk8RUfDYFgn0nO1t+jLuIOQdOMRp4APB7uZ4vSjspzp5y6YDtDs4VzUSTbWzBFZ/LKJhnyFOKw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Permutation-based post hoc inference for differential gene expression studies">
-<meta property="og:description" content="sanssouci">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Permutation-based post hoc inference for differential gene expression studies">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-    
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light" data-bs-theme="light"><div class="container">
-    
+
+    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">sanssouci</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.13.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
 
-    
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item">
-  <a class="nav-link" href="../reference/index.html">Reference</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/confidenceCurves_localized.html">Confidence curves for structured hypotheses</a>
-    <a class="dropdown-item" href="../articles/CopyOfconfidenceCurves_localized.html">Confidence curves for structured hypotheses</a>
-    <a class="dropdown-item" href="../articles/IIDEA.html">IIDEA: Interactive Inference for Differential Expression Analyses</a>
-    <a class="dropdown-item" href="../articles/jointErrorRateCalibration_simulations.html">Joint Error Rate calibration</a>
-    <a class="dropdown-item" href="../articles/post-hoc_differential-expression_RNAseq.html">Permutation-based post hoc inference for differential gene expression studies: RNAseq data</a>
-    <a class="dropdown-item" href="../articles/post-hoc_differential-expression.html">Permutation-based post hoc inference for differential gene expression studies</a>
-    <a class="dropdown-item" href="../articles/post-hoc_fMRI.html">Permutation-based post hoc inference for fMRI studies</a>
-    <a class="dropdown-item" href="../articles/Simes_equi-correlation.html">Conservativeness of the Simes inequality under positive dependence</a>
-  </div>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/confidenceCurves_localized.html">Confidence curves for structured hypotheses</a></li>
+    <li><a class="dropdown-item" href="../articles/CopyOfconfidenceCurves_localized.html">Confidence curves for structured hypotheses</a></li>
+    <li><a class="dropdown-item" href="../articles/IIDEA.html">IIDEA: Interactive Inference for Differential Expression Analyses</a></li>
+    <li><a class="dropdown-item" href="../articles/jointErrorRateCalibration_simulations.html">Joint Error Rate calibration</a></li>
+    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression_RNAseq.html">Permutation-based post hoc inference for differential gene expression studies: RNAseq data</a></li>
+    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression.html">Permutation-based post hoc inference for differential gene expression studies</a></li>
+    <li><a class="dropdown-item" href="../articles/post-hoc_fMRI.html">Permutation-based post hoc inference for fMRI studies</a></li>
+    <li><a class="dropdown-item" href="../articles/Simes_equi-correlation.html">Conservativeness of the Simes inequality under positive dependence</a></li>
+  </ul>
 </li>
       </ul>
-<form class="form-inline my-2 my-lg-0" role="search">
-        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
-</form>
-
-      <ul class="navbar-nav">
-<li class="nav-item">
-  <a class="external-link nav-link" href="https://github.com/sanssouci-org/sanssouci/" aria-label="github">
-    <span class="fab fa fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
+</form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/sanssouci-org/sanssouci/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
-    
+
   </div>
 </nav><div class="container template-article">
 
@@ -75,13 +61,14 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="" class="logo" alt=""><h1>Permutation-based post hoc inference for differential gene expression studies</h1>
+
+      <h1>Permutation-based post hoc inference for differential gene expression studies</h1>
                         <h4 data-toc-skip class="author">Gilles
 Blanchard, Pierre Neuvial and Etienne Roquain</h4>
             
-            <h4 data-toc-skip class="date">2024-06-24</h4>
+            <h4 data-toc-skip class="date">2025-05-09</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/sanssouci-org/sanssouci/blob/HEAD/vignettes/post-hoc_differential-expression.Rmd" class="external-link"><code>vignettes/post-hoc_differential-expression.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sanssouci-org/sanssouci/blob/v0.14.0/vignettes/post-hoc_differential-expression.Rmd" class="external-link"><code>vignettes/post-hoc_differential-expression.Rmd</code></a></small>
       <div class="d-none name"><code>post-hoc_differential-expression.Rmd</code></div>
     </div>
 
@@ -131,23 +118,22 @@ populations. Specifically, we consider a data set studied in <span class="citati
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">expr_ALL</span>, package <span class="op">=</span> <span class="st">"sanssouci.data"</span><span class="op">)</span></span>
 <span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="va">expr_ALL</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">expr_ALL</span><span class="op">)</span></span></code></pre></div>
-<p>This data set consists of gene expression measurements for <span class="math inline">\(n = 79\)</span> patients with B-cell acute
-lymphoblastic leukemia (ALL) <span class="citation">Chiaretti et al.
-(2005)</span>. These patients are classified into two subgoups,
-depending on whether or not they harbor a specific mutation called
-“BCR/ABL”:</p>
+<p>This data set consists of gene expression measurements for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><mn>79</mn></mrow><annotation encoding="application/x-tex">n = 79</annotation></semantics></math>
+patients with B-cell acute lymphoblastic leukemia (ALL) <span class="citation">Chiaretti et al. (2005)</span>. These patients are
+classified into two subgoups, depending on whether or not they harbor a
+specific mutation called “BCR/ABL”:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; BCR/ABL     NEG </span></span>
-<span><span class="co">#&gt;      37      42</span></span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co">#&gt;      37      42</span></span>
+<span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></span></code></pre></div>
 <p>The goal of this study is to understand the molecular differences at
 the gene expression level between the populations of BCR/ABL positive
 and negative (“NEG”) patients. For each patient, we observe a vector of
-<span class="math inline">\(m = 9038\)</span> gene expression
-values.</p>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mo>=</mo><mn>9038</mn></mrow><annotation encoding="application/x-tex">m = 9038</annotation></semantics></math>
+gene expression values.</p>
 <p>The most basic question to ask is:</p>
 <blockquote>
 <p>For which genes is there a difference in the mean expression level of
@@ -159,19 +145,22 @@ expressed” genes as those passing some significance threshold.</p>
 <p>Below, the Welch test for differential expression is applied to each
 gene. This can be done e.g. using the
 <code><a href="../reference/rowWelchTests.html">sanssouci::rowWelchTests</a></code> function:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">categ</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span> <span class="op">==</span> <span class="st">"BCR/ABL"</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span> <span class="co"># map to 0/1</span></span>
 <span><span class="va">dex</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="fu"><a href="../reference/rowWelchTests.html">rowWelchTests</a></span><span class="op">(</span><span class="va">dat</span>, <span class="va">categ</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">pval</span> <span class="op">&lt;-</span> <span class="va">dex</span><span class="op">[[</span><span class="st">"p.value"</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
-<p>We plot a histogram of the corresponding <span class="math inline">\(p\)</span>-values:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<p>We plot a histogram of the corresponding
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>-values:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">pval</span>, probability <span class="op">=</span> <span class="cn">TRUE</span>, breaks <span class="op">=</span> <span class="fl">20</span>,</span>
 <span>     xlab <span class="op">=</span> <span class="st">"p-value"</span>, main <span class="op">=</span> <span class="st">"p-value distributon"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="post-hoc_differential-expression_files/figure-html/hist-1.png" width="768"></p>
-<p>As expected, the distribution presents a large number of small <span class="math inline">\(p\)</span>-values (which include signals,
-i.e. differentially expressed genes) mixed with uniformly distributed
-<span class="math inline">\(p\)</span>-values (corresponding to
-non-differentially expressed genes).</p>
+<p>As expected, the distribution presents a large number of small
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>-values
+(which include signals, i.e. differentially expressed genes) mixed with
+uniformly distributed
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>-values
+(corresponding to non-differentially expressed genes).</p>
 <div class="section level3">
 <h3 id="multiple-testing-correction-false-discovery-rate-control">Multiple testing correction: False Discovery Rate control<a class="anchor" aria-label="anchor" href="#multiple-testing-correction-false-discovery-rate-control"></a>
 </h3>
@@ -184,10 +173,10 @@ procedure, which has been shown to control the FDR when the hypotheses
 corresponding to the non-differentially expressed genes are independent
 <span class="citation">Benjamini and Hochberg (1995)</span> or satisfy a
 specific type of positive dependence called Positive Regression
-Dependence on the Subset (PRDS) <span class="math inline">\(\mathcal{H}_0\)</span> of truly non-differentially
-expressed genes <span class="citation">Benjamini and Yekutieli
-(2001)</span>.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+Dependence on the Subset (PRDS)
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ℋ</mi><mn>0</mn></msub><annotation encoding="application/x-tex">\mathcal{H}_0</annotation></semantics></math>
+of truly non-differentially expressed genes <span class="citation">Benjamini and Yekutieli (2001)</span>.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">q</span> <span class="op">&lt;-</span> <span class="fl">0.05</span></span>
 <span><span class="va">adjp_BH</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/p.adjust.html" class="external-link">p.adjust</a></span><span class="op">(</span><span class="va">pval</span>, method <span class="op">=</span> <span class="st">"BH"</span><span class="op">)</span></span>
 <span><span class="va">dex</span><span class="op">$</span><span class="va">adjp</span> <span class="op">&lt;-</span> <span class="va">adjp_BH</span></span>
@@ -195,10 +184,11 @@ expressed genes <span class="citation">Benjamini and Yekutieli
 <span><span class="va">nBH</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">S_BH</span><span class="op">)</span></span>
 <span><span class="va">nBH</span></span>
 <span><span class="co">#&gt; [1] 150</span></span></code></pre></div>
-<p>The application of the BH procedure at level <span class="math inline">\(q = 0.05\)</span> is illustrated in the figures
-below (all genes are displayed in the first one, second one is a zoom on
-the top genes):</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<p>The application of the BH procedure at level
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><mn>0.05</mn></mrow><annotation encoding="application/x-tex">q = 0.05</annotation></semantics></math>
+is illustrated in the figures below (all genes are displayed in the
+first one, second one is a zoom on the top genes):</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">my_col</span> <span class="op">&lt;-</span> <span class="st">"#FF000080"</span></span>
 <span><span class="va">dexo</span> <span class="op">&lt;-</span> <span class="va">dex</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">pval</span><span class="op">)</span>, <span class="op">]</span>  <span class="co">## order genes by increasing p-values</span></span>
 <span><span class="va">dexo</span><span class="op">[[</span><span class="st">"gene_order"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">dex</span><span class="op">)</span></span>
@@ -218,13 +208,12 @@ the top genes):</p>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use `linewidth` instead.</span></span>
 <span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span></code></pre></div>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#geom_text(x = 0, y = q, label = expression(alpha), color = my_col)</span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span>
+<span><span class="co">#geom_text(x = 0, y = q, label = expression(alpha), color = my_col)</span></span>
 <span></span>
 <span><span class="va">bh_plot</span></span></code></pre></div>
 <p><img src="post-hoc_differential-expression_files/figure-html/bh-plot-1.png" width="768"></p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">xmax</span> <span class="op">&lt;-</span> <span class="va">nBH</span><span class="op">*</span><span class="fl">2.5</span></span>
 <span><span class="va">ymax</span> <span class="op">&lt;-</span> <span class="va">dexo</span><span class="op">$</span><span class="va">p.value</span><span class="op">[</span><span class="va">xmax</span><span class="op">]</span></span>
 <span><span class="va">bh_plot</span> <span class="op">+</span> </span>
@@ -245,28 +234,45 @@ the top genes):</p>
 <h3 id="basic-posthoc-bounds">Basic posthoc bounds<a class="anchor" aria-label="anchor" href="#basic-posthoc-bounds"></a>
 </h3>
 <p>Post hoc inference makes it possible to build confidence statements
-on the number of true/false positives within any set <span class="math inline">\(S\)</span> of genes: <span class="math inline">\(S\)</span> may be selected after seing the data
-(e.g., <span class="math inline">\(S\)</span> may be the set of
-rejections by the BH prcedure), and multiple choices of <span class="math inline">\(S\)</span> are allowed. Post hoc inference has
-been popularized by <span class="citation">Goeman and Solari
-(2011)</span>.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+on the number of true/false positives within any set
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>
+of genes:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>
+may be selected after seing the data (e.g.,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>
+may be the set of rejections by the BH prcedure), and multiple choices
+of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>
+are allowed. Post hoc inference has been popularized by <span class="citation">Goeman and Solari (2011)</span>.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">alpha</span> <span class="op">&lt;-</span> <span class="fl">0.1</span></span>
 <span><span class="va">pvalo</span> <span class="op">&lt;-</span> <span class="va">dexo</span><span class="op">$</span><span class="va">p.value</span></span></code></pre></div>
 <div class="section level4">
 <h4 id="k_0-bonferroni-bound">
-<span class="math inline">\(k_0\)</span>-Bonferroni bound<a class="anchor" aria-label="anchor" href="#k_0-bonferroni-bound"></a>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>k</mi><mn>0</mn></msub><annotation encoding="application/x-tex">k_0</annotation></semantics></math>-Bonferroni
+bound<a class="anchor" aria-label="anchor" href="#k_0-bonferroni-bound"></a>
 </h4>
-<p>For a fixed <span class="math inline">\(k_0\)</span>, the generalized
-Bonferroni procedure consisting in rejecting the hypotheses in <span class="math inline">\(R_{k_0} = \{i: p_i \leq \alpha k_0/m\}\)</span>
-controls the <span class="math inline">\(k_0\)</span>-Family-Wise Error
-Rate: it ensures that with probability larger than <span class="math inline">\(1-\alpha\)</span>, the number of false positives
-in <span class="math inline">\(R_{k_0}\)</span> is not larger than <span class="math inline">\(k_0-1\)</span>. As noted in <span class="citation">Blanchard, Neuvial, and Roquain (2021)</span>, this
-leads to the post hoc bound:</p>
-<p><span class="math display">\[V(S)=\sum_{i\in S} 1_{\{p_i \geq \alpha
-k_0 /|S|\}} + k_0-1\]</span></p>
-<p>As an application we calculate the bound associated to <span class="math inline">\(k_0=100\)</span> for <span class="math inline">\(\alpha = 0.1\)</span>:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<p>For a fixed
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>k</mi><mn>0</mn></msub><annotation encoding="application/x-tex">k_0</annotation></semantics></math>,
+the generalized Bonferroni procedure consisting in rejecting the
+hypotheses in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>R</mi><msub><mi>k</mi><mn>0</mn></msub></msub><mo>=</mo><mo stretchy="false" form="prefix">{</mo><mi>i</mi><mo>:</mo><msub><mi>p</mi><mi>i</mi></msub><mo>≤</mo><mi>α</mi><msub><mi>k</mi><mn>0</mn></msub><mi>/</mi><mi>m</mi><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">R_{k_0} = \{i: p_i \leq \alpha k_0/m\}</annotation></semantics></math>
+controls the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>k</mi><mn>0</mn></msub><annotation encoding="application/x-tex">k_0</annotation></semantics></math>-Family-Wise
+Error Rate: it ensures that with probability larger than
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>−</mo><mi>α</mi></mrow><annotation encoding="application/x-tex">1-\alpha</annotation></semantics></math>,
+the number of false positives in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>R</mi><msub><mi>k</mi><mn>0</mn></msub></msub><annotation encoding="application/x-tex">R_{k_0}</annotation></semantics></math>
+is not larger than
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>k</mi><mn>0</mn></msub><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">k_0-1</annotation></semantics></math>.
+As noted in <span class="citation">Blanchard, Neuvial, and Roquain
+(2021)</span>, this leads to the post hoc bound:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>S</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><munder><mo>∑</mo><mrow><mi>i</mi><mo>∈</mo><mi>S</mi></mrow></munder><msub><mn>1</mn><mrow><mo stretchy="false" form="prefix">{</mo><msub><mi>p</mi><mi>i</mi></msub><mo>≥</mo><mi>α</mi><msub><mi>k</mi><mn>0</mn></msub><mi>/</mi><mrow><mo stretchy="true" form="prefix">|</mo><mi>S</mi><mo stretchy="true" form="postfix">|</mo></mrow><mo stretchy="false" form="postfix">}</mo></mrow></msub><mo>+</mo><msub><mi>k</mi><mn>0</mn></msub><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">V(S)=\sum_{i\in S} 1_{\{p_i \geq \alpha k_0 /|S|\}} + k_0-1</annotation></semantics></math></p>
+<p>As an application we calculate the bound associated to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>k</mi><mn>0</mn></msub><mo>=</mo><mn>100</mn></mrow><annotation encoding="application/x-tex">k_0=100</annotation></semantics></math>
+for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi><mo>=</mo><mn>0.1</mn></mrow><annotation encoding="application/x-tex">\alpha = 0.1</annotation></semantics></math>:</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">k0</span> <span class="op">&lt;-</span> <span class="fl">100</span></span>
 <span><span class="va">S</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="va">nBH</span></span>
 <span><span class="va">FP_k0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">pvalo</span><span class="op">[</span><span class="va">S</span><span class="op">]</span> <span class="op">&gt;=</span> <span class="va">alpha</span><span class="op">*</span><span class="va">k0</span><span class="op">/</span><span class="va">m</span><span class="op">)</span> <span class="op">+</span> <span class="va">k0</span> <span class="op">-</span> <span class="fl">1</span></span>
@@ -274,8 +280,9 @@ k_0 /|S|\}} + k_0-1\]</span></p>
 <span><span class="co">#&gt; [1] 0.66</span></span></code></pre></div>
 <p>This implies that with probability larger than 0.9 the false
 discovery proportion among the genes selected by the BH procedure at
-level <span class="math inline">\(q= 0.05\)</span> is upper bounded by
-0.66.</p>
+level
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><mn>0.05</mn></mrow><annotation encoding="application/x-tex">q= 0.05</annotation></semantics></math>
+is upper bounded by 0.66.</p>
 </div>
 <div class="section level4">
 <h4 id="simes-bound">Simes bound<a class="anchor" aria-label="anchor" href="#simes-bound"></a>
@@ -285,16 +292,23 @@ assumption. In the framework of <span class="citation">Blanchard,
 Neuvial, and Roquain (2021)</span> this bound is a direct consequence of
 the <span class="citation">Simes (1986)</span> inequality. It can be
 applied to the 150 rejections of the BH procedure as follows:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SansSouci.html">SansSouci</a></span><span class="op">(</span>Y <span class="op">=</span> <span class="va">dat</span>, groups <span class="op">=</span> <span class="va">categ</span><span class="op">)</span></span>
 <span><span class="va">res_Simes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">obj</span>, B <span class="op">=</span> <span class="fl">0</span>, family <span class="op">=</span> <span class="st">"Simes"</span>, alpha <span class="op">=</span> <span class="va">alpha</span><span class="op">)</span> <span class="co">## B=0 =&gt; no calibration!</span></span>
 <span><span class="va">FP_Simes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">res_Simes</span>, <span class="va">S_BH</span>, what <span class="op">=</span> <span class="st">"FP"</span><span class="op">)</span></span></code></pre></div>
 <p>The Simes bound implies that with probability larger than 0.9, the
 false discovery proportion among the genes selected by the BH procedure
-at level <span class="math inline">\(q= 0.05\)</span> is upper bounded
-by 0.44. The Simes bound is sharper than the <span class="math inline">\(k_0\)</span>-Bonferroni bound because it is
-obtained from a <em>joint</em> control of all <span class="math inline">\(k\)</span>-FWER for all <span class="math inline">\(k=1, \dots, m\)</span>. The <span class="math inline">\(k_0\)</span>-Bonferroni bound will therefore not
-be considered further in this vignette.</p>
+at level
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><mn>0.05</mn></mrow><annotation encoding="application/x-tex">q= 0.05</annotation></semantics></math>
+is upper bounded by 0.44. The Simes bound is sharper than the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>k</mi><mn>0</mn></msub><annotation encoding="application/x-tex">k_0</annotation></semantics></math>-Bonferroni
+bound because it is obtained from a <em>joint</em> control of all
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>-FWER
+for all
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>=</mo><mn>1</mn><mo>,</mo><mi>…</mi><mo>,</mo><mi>m</mi></mrow><annotation encoding="application/x-tex">k=1, \dots, m</annotation></semantics></math>.
+The
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>k</mi><mn>0</mn></msub><annotation encoding="application/x-tex">k_0</annotation></semantics></math>-Bonferroni
+bound will therefore not be considered further in this vignette.</p>
 </div>
 </div>
 </div>
@@ -306,31 +320,35 @@ Roquain (2020)</span>, the above-described bound has two major
 limitations, being a consequence of the Simes inequality:</p>
 <ul>
 <li><p>It is known to be valid only under certain positive dependence
-assumptions (PRDS) on the joint <span class="math inline">\(p\)</span>-value distribution. Although the PRDS
-assumption is generally accepted in the case of differential expression
-studies (which justifies the application of the BH procedure itself), it
-has not been formally proved to hold in this case.</p></li>
+assumptions (PRDS) on the joint
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>-value
+distribution. Although the PRDS assumption is generally accepted in the
+case of differential expression studies (which justifies the application
+of the BH procedure itself), it has not been formally proved to hold in
+this case.</p></li>
 <li><p>It is not <em>adaptive</em> to the specific type of dependence at
 hand for a particular data set.</p></li>
 </ul>
 <p>To bypass these limitations, <span class="citation">Blanchard,
 Neuvial, and Roquain (2020)</span> have proposed a randomization-based
-procedure known as <span class="math inline">\(\lambda\)</span>-calibration, which yields tighter
-bounds that are adapted to the dependency observed in the data set at
-hand. A closely related approach has been proposed by <span class="citation">Hemerik, Solari, and Goeman (2019)</span>. In the case
-of two-sample tests, this calibration can be achieved by permutation of
-class labels:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+procedure known as
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>λ</mi><annotation encoding="application/x-tex">\lambda</annotation></semantics></math>-calibration,
+which yields tighter bounds that are adapted to the dependency observed
+in the data set at hand. A closely related approach has been proposed by
+<span class="citation">Hemerik, Solari, and Goeman (2019)</span>. In the
+case of two-sample tests, this calibration can be achieved by
+permutation of class labels:</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">B</span> <span class="op">&lt;-</span> <span class="fl">1000</span></span>
 <span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">obj</span>, B <span class="op">=</span> <span class="va">B</span>, alpha <span class="op">=</span> <span class="va">alpha</span>, family <span class="op">=</span> <span class="st">"Simes"</span><span class="op">)</span></span></code></pre></div>
 <p>An alternative to the Simes/Linear reference family is the Beta
 reference family:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">K</span> <span class="op">&lt;-</span> <span class="fl">50</span></span>
 <span><span class="va">res_Beta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">res</span>, B <span class="op">=</span> <span class="va">B</span>, alpha <span class="op">=</span> <span class="va">alpha</span>, family <span class="op">=</span> <span class="st">"Beta"</span>, K <span class="op">=</span> <span class="va">K</span><span class="op">)</span></span></code></pre></div>
 <p>As expected from the theory, the post hoc bounds obtained after
 calibration by these methods is much tighter than the Simes bound:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">resList</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"Simes"</span> <span class="op">=</span> <span class="va">res_Simes</span>,</span>
 <span>            <span class="st">"Linear"</span> <span class="op">=</span> <span class="va">res</span>,</span>
 <span>            <span class="st">"Beta"</span> <span class="op">=</span> <span class="va">res_Beta</span><span class="op">)</span></span>
@@ -376,7 +394,8 @@ bounds in order to build</p>
 </ul>
 </div>
 <div class="section level2">
-<h2 id="confidence-curves-on-top-k-lists">Confidence curves on “top-<span class="math inline">\(k\)</span>”
+<h2 id="confidence-curves-on-top-k-lists">Confidence curves on
+“top-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>”
 lists<a class="anchor" aria-label="anchor" href="#confidence-curves-on-top-k-lists"></a>
 </h2>
 <p>In the absence of prior information on genes, a natural idea is to
@@ -389,15 +408,18 @@ genes?</p>
 </blockquote>
 <p>We illustrate the use of post-hoc methods to provide this type of
 information. More specifcally, we build confidence statements on the
-number of true/false positives within the top <span class="math inline">\(k\)</span> most significant genes in a
-differential gene expression study, where <span class="math inline">\(k\)</span> may be defined by the user after seing
-the data, and multiple choices of <span class="math inline">\(k\)</span>
+number of true/false positives within the top
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
+most significant genes in a differential gene expression study, where
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
+may be defined by the user after seing the data, and multiple choices of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
 are allowed.</p>
 <p>The confidence curves obtained by calibration of the Simes and Beta
 families can be compared graphically to the (parametric) Simes curve
 that can be obtained from <span class="citation">Goeman and Solari
 (2011)</span>:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">conf_bounds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">resList</span>, <span class="va">predict</span>, all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co"># cols &lt;- c("lightgray", "black", "darkgray")</span></span>
 <span><span class="va">cols</span> <span class="op">&lt;-</span> <span class="fu">RColorBrewer</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html" class="external-link">brewer.pal</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">conf_bounds</span><span class="op">)</span>, <span class="st">"Dark2"</span><span class="op">)</span></span>
@@ -413,18 +435,20 @@ example.</p>
 </h2>
 <p>For an interactive volcano plot, see the <a href="https://shiny-iidea-sanssouci.apps.math.cnrs.fr/" class="external-link">volcano plot
 shiny application</a>.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">q</span> <span class="op">&lt;-</span> <span class="fl">0.05</span></span>
 <span><span class="va">r</span> <span class="op">&lt;-</span>  <span class="fl">0.3</span></span></code></pre></div>
 <p>Let us assume that we are interested in genes selected by the BH
-procedure at level <span class="math inline">\(q = 0.05\)</span> and
-whose fold change is larger than <span class="math inline">\(r =
-0.3\)</span> in absolute value. The “fold change” is defined as the
-difference between the expression means of the two groups compared; it
-is an estimate of the effect size of a gene. This double selection
-corresponds to two sets of genes, with positive/negative fold change,
-which can be represented in the following plot:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+procedure at level
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><mn>0.05</mn></mrow><annotation encoding="application/x-tex">q = 0.05</annotation></semantics></math>
+and whose fold change is larger than
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mo>=</mo><mn>0.3</mn></mrow><annotation encoding="application/x-tex">r = 0.3</annotation></semantics></math>
+in absolute value. The “fold change” is defined as the difference
+between the expression means of the two groups compared; it is an
+estimate of the effect size of a gene. This double selection corresponds
+to two sets of genes, with positive/negative fold change, which can be
+represented in the following plot:</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ylim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">6</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/volcanoPlot.html">volcanoPlot</a></span><span class="op">(</span><span class="va">res_Simes</span>, q <span class="op">=</span> <span class="va">q</span>, r <span class="op">=</span> <span class="va">r</span>, ylim <span class="op">=</span> <span class="va">ylim</span><span class="op">)</span></span></code></pre></div>
 <p><img src="post-hoc_differential-expression_files/figure-html/volcano-Simes-1.png" width="768"></p>
@@ -434,16 +458,16 @@ the ones represented in the above figure.</p>
 <p>The substantial gain in power offered by the above-described
 calibration is illustrated as follows for the Simes reference
 family:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/volcanoPlot.html">volcanoPlot</a></span><span class="op">(</span><span class="va">res</span>, q <span class="op">=</span> <span class="va">q</span>, r <span class="op">=</span> <span class="va">r</span>, ylim <span class="op">=</span> <span class="va">ylim</span><span class="op">)</span></span></code></pre></div>
 <p><img src="post-hoc_differential-expression_files/figure-html/volcano-Simes-cal-1.png" width="768"></p>
 <p>and for the Beta reference family.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/volcanoPlot.html">volcanoPlot</a></span><span class="op">(</span><span class="va">res_Beta</span>, q <span class="op">=</span> <span class="va">q</span>, r <span class="op">=</span> <span class="va">r</span>, ylim <span class="op">=</span> <span class="va">ylim</span><span class="op">)</span></span></code></pre></div>
 <p><img src="post-hoc_differential-expression_files/figure-html/volcano-Beta-cal-1.png" width="768"></p>
 <p>The comparison between these bounds may be summarized by the
 following Table:</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/all-generics.html">foldChanges</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
 <span><span class="va">S_pos</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">fc</span> <span class="op">&gt;=</span> <span class="va">r</span> <span class="op">&amp;</span> <span class="va">adjp_BH</span> <span class="op">&lt;=</span> <span class="va">q</span><span class="op">)</span></span>
 <span><span class="va">S_neg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">fc</span> <span class="op">&lt;=</span> <span class="op">-</span><span class="va">r</span> <span class="op">&amp;</span> <span class="va">adjp_BH</span> <span class="op">&lt;=</span> <span class="va">q</span><span class="op">)</span></span>
@@ -511,15 +535,15 @@ selections</caption>
 <div class="section level2">
 <h2 id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
 </h2>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; R version 4.4.1 (2024-06-14)</span></span>
+<span><span class="co">#&gt; R version 4.5.0 (2025-04-11)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 22.04.4 LTS</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 24.04.2 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
 <span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
-<span><span class="co">#&gt; LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.20.so;  LAPACK version 3.10.0</span></span>
+<span><span class="co">#&gt; LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; locale:</span></span>
 <span><span class="co">#&gt;  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       </span></span>
@@ -534,29 +558,27 @@ selections</caption>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] sanssouci_0.13.0 ggplot2_3.5.1   </span></span>
+<span><span class="co">#&gt; [1] sanssouci_0.14.0 ggplot2_3.5.2   </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] Matrix_1.7-0       gtable_0.3.5       jsonlite_1.8.8     crayon_1.5.3      </span></span>
-<span><span class="co">#&gt;  [5] highr_0.11         compiler_4.4.1     Rcpp_1.0.12        jquerylib_0.1.4   </span></span>
-<span><span class="co">#&gt;  [9] systemfonts_1.1.0  scales_1.3.0       textshaping_0.4.0  yaml_2.3.8        </span></span>
-<span><span class="co">#&gt; [13] fastmap_1.2.0      lattice_0.22-6     R6_2.5.1           labeling_0.4.3    </span></span>
-<span><span class="co">#&gt; [17] generics_0.1.3     knitr_1.47         tibble_3.2.1       desc_1.4.3        </span></span>
-<span><span class="co">#&gt; [21] munsell_0.5.1      RColorBrewer_1.1-3 bslib_0.7.0        pillar_1.9.0      </span></span>
-<span><span class="co">#&gt; [25] rlang_1.1.4        utf8_1.2.4         cachem_1.1.0       xfun_0.45         </span></span>
-<span><span class="co">#&gt; [29] fs_1.6.4           sass_0.4.9         memoise_2.0.1      cli_3.6.3         </span></span>
-<span><span class="co">#&gt; [33] pkgdown_2.0.9      withr_3.0.0        magrittr_2.0.3     matrixTests_0.2.3 </span></span>
-<span><span class="co">#&gt; [37] digest_0.6.35      grid_4.4.1         lifecycle_1.0.4    vctrs_0.6.5       </span></span>
-<span><span class="co">#&gt; [41] evaluate_0.24.0    glue_1.7.0         farver_2.1.2       codetools_0.2-20  </span></span>
-<span><span class="co">#&gt; [45] ragg_1.3.2         fansi_1.0.6        colorspace_2.1-0   rmarkdown_2.27    </span></span>
-<span><span class="co">#&gt; [49] purrr_1.0.2        matrixStats_1.3.0  tools_4.4.1        pkgconfig_2.0.3   </span></span>
-<span><span class="co">#&gt; [53] htmltools_0.5.8.1</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] Matrix_1.7-3       gtable_0.3.6       jsonlite_2.0.0     compiler_4.5.0    </span></span>
+<span><span class="co">#&gt;  [5] crayon_1.5.3       Rcpp_1.0.14        jquerylib_0.1.4    systemfonts_1.2.3 </span></span>
+<span><span class="co">#&gt;  [9] scales_1.4.0       textshaping_1.0.1  yaml_2.3.10        fastmap_1.2.0     </span></span>
+<span><span class="co">#&gt; [13] lattice_0.22-6     R6_2.6.1           labeling_0.4.3     generics_0.1.3    </span></span>
+<span><span class="co">#&gt; [17] knitr_1.50         tibble_3.2.1       desc_1.4.3         bslib_0.9.0       </span></span>
+<span><span class="co">#&gt; [21] pillar_1.10.2      RColorBrewer_1.1-3 rlang_1.1.6        cachem_1.1.0      </span></span>
+<span><span class="co">#&gt; [25] xfun_0.52          fs_1.6.6           sass_0.4.10        cli_3.6.5         </span></span>
+<span><span class="co">#&gt; [29] pkgdown_2.1.2      withr_3.0.2        magrittr_2.0.3     matrixTests_0.2.3 </span></span>
+<span><span class="co">#&gt; [33] digest_0.6.37      grid_4.5.0         lifecycle_1.0.4    vctrs_0.6.5       </span></span>
+<span><span class="co">#&gt; [37] evaluate_1.0.3     glue_1.8.0         farver_2.1.2       codetools_0.2-20  </span></span>
+<span><span class="co">#&gt; [41] ragg_1.4.0         rmarkdown_2.29     matrixStats_1.5.0  tools_4.5.0       </span></span>
+<span><span class="co">#&gt; [45] pkgconfig_2.0.3    htmltools_0.5.8.1</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="reproducibility">Reproducibility<a class="anchor" aria-label="anchor" href="#reproducibility"></a>
 </h2>
 <p>To re-build this vignette from its source, use:</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://pkgs.rstudio.com/rmarkdown/reference/render.html" class="external-link">render</a></span><span class="op">(</span><span class="st">"post-hoc_differential-expression.Rmd"</span>, output_format <span class="op">=</span> <span class="st">"pdf_document"</span><span class="op">)</span></span>
 <span><span class="co"># To keep intermediate files, add option 'clean = FALSE'</span></span>
 <span><span class="fu">rmarkdown</span><span class="fu">::</span><span class="fu"><a href="https://pkgs.rstudio.com/rmarkdown/reference/render.html" class="external-link">render</a></span><span class="op">(</span><span class="st">"post-hoc_differential-expression.Rmd"</span>, output_format <span class="op">=</span> <span class="st">"html_document"</span><span class="op">)</span></span></code></pre></div>
@@ -623,7 +645,7 @@ procedure for multiple tests of significance</span>.”</span>
 </div>
 </div>
 </div>
-  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
 
@@ -634,15 +656,15 @@ procedure for multiple tests of significance</span>.”</span>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
 </div>
 
     </footer>
 </div>
 
-  
 
-  
+
+
 
   </body>
 </html>
