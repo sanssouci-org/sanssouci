@@ -18,9 +18,7 @@ Imports:
     Matrix,
     matrixStats,
     matrixTests,
-    Rcpp (>= 0.12.3),
     rlang
-LinkingTo: Rcpp, RcppArmadillo
 Suggests:
     cherry,
     edgeR,
