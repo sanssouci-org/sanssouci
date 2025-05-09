@@ -2,6 +2,16 @@
 Package: sanssouci
 ==================
 
+Version 0.14.1 [2025-05-09]
+
+* Misc cleanups (PR #253)
+  - Fix NOTE about C++1
+  - Fix #113 (side effect: Import rlang)
+  - Fix R-CMD-check badge
+  - remove explicit calls to gc()
+  - Add tests
+  
+  
 Version 0.14.0 [2025-05-08]
 * New, much faster, implementation of 'curve.V.star.forest.fast' (PR #117)
 * Possibility to have additional arguments in 'zetas.tree' and the functions that 
