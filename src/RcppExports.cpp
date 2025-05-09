@@ -11,17 +11,6 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// colSort
-arma::mat colSort(arma::mat X);
-RcppExport SEXP _sanssouci_colSort(SEXP XSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
-    rcpp_result_gen = Rcpp::wrap(colSort(X));
-    return rcpp_result_gen;
-END_RCPP
-}
 // partialColSortDescCpp
 arma::mat partialColSortDescCpp(arma::mat X, int k);
 RcppExport SEXP _sanssouci_partialColSortDescCpp(SEXP XSEXP, SEXP kSEXP) {
@@ -60,7 +49,6 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_sanssouci_colSort", (DL_FUNC) &_sanssouci_colSort, 1},
     {"_sanssouci_partialColSortDescCpp", (DL_FUNC) &_sanssouci_partialColSortDescCpp, 2},
     {"_sanssouci_partialColSortCpp", (DL_FUNC) &_sanssouci_partialColSortCpp, 2},
     {"_sanssouci_testBySignFlipping", (DL_FUNC) &_sanssouci_testBySignFlipping, 2},
