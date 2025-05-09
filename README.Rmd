@@ -94,3 +94,7 @@ You can install the development version from [GitHub](https://github.com/) with:
 pak::pkg_install("sanssouci-org/sanssouci")
 ```
 
+## Miscellaneous
+
+This project uses [Semantic Versioning](https://semver.org/).
+

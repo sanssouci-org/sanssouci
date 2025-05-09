@@ -63,13 +63,13 @@ $10^{-3}$.
 S <- which(pValues(res) < 1e-3)
 predict(res, S)
 #>          TP         FDP 
-#> 115.0000000   0.2857143
+#> 118.0000000   0.2670807
 ```
 
 The method ensures with $1-\alpha = 90\%$ confidence that there are at
-least 115 truly differentially expressed genes (true positives, TP)
+least 118 truly differentially expressed genes (true positives, TP)
 among these 161 genes, corresponding to a false discovery proportion
-(FDP) less than 0.29.
+(FDP) less than 0.27.
 
 ### Output 2 - Confidence curves for “top-k” feature lists
 
@@ -121,3 +121,7 @@ You can install the development version from
 # install.packages("pak")
 pak::pkg_install("sanssouci-org/sanssouci")
 ```
+
+## Miscellaneous
+
+This project uses [Semantic Versioning](https://semver.org/).

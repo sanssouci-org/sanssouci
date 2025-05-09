@@ -3,7 +3,7 @@
 #' @param Y A matrix of \eqn{m} variables (hypotheses) by \eqn{n} observations
 #' @param groups A numeric vector of \eqn{n} values in \eqn{0, 1}, the groups of
 #'   observations on which to perform two-sample tests
-#' @param truth An optional numeric vector of $m$ values in ${0,1}$, the status
+#' @param truth An optional numeric vector of $m$ values in $\{0,1\}$, the status
 #'   of each null hypothesis (0 means H0 is true, 1 means H1 is true). Typically
 #'   used in simulations.
 #' @return An object of class "SansSouci"
@@ -417,8 +417,10 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
       } else if (n_groups > 2) { # continuous covariate
         null_groups <- replicate(B, sample(groups))
       }
-      rwt0 <- rowTestFUN(Y, null_groups, alternative = alternative)
-      p0 <- rwt0$p.value
+      p0 <- mini_batch_rowTestFUN(rowTestFUN = rowTestFUN, Y = Y, 
+                                  categ = null_groups, 
+                                  alternative = alternative, 
+                                  max_batch_size = 1e6)
       if (verbose) {
         dt <- Sys.time() - t0
         cat("done (", format(dt), ")\n", sep = "")

@@ -12,7 +12,7 @@ SansSouci(Y, groups, truth = NULL)
 \item{groups}{A numeric vector of \eqn{n} values in \eqn{0, 1}, the groups of
 observations on which to perform two-sample tests}
 
-\item{truth}{An optional numeric vector of $m$ values in ${0,1}$, the status
+\item{truth}{An optional numeric vector of $m$ values in $\{0,1\}$, the status
 of each null hypothesis (0 means H0 is true, 1 means H1 is true). Typically
 used in simulations.}
 }

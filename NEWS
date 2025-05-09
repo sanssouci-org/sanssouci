@@ -2,6 +2,16 @@
 Package: sanssouci
 ==================
 
+Version 0.14.0 [2025-05-08]
+* New, much faster, implementation of 'curve.V.star.forest.fast' (PR #117)
+* Possibility to have additional arguments in 'zetas.tree' and the functions that 
+compute the individual zetas, as demonstrated by the new 'zeta.kBonf' (PR #117)
+* Reorganization of the 'rowWelchTests' function 
+to reduce the amount of memory used (PR #112)
+* Creation of a mini-batch test function for smaller matrix calculations, 
+this function is used in the 'fit' method to compute permuted p -values (PR #112)
+
+
 Version 0.13.0 [2024-06-17]
 
 * New algorithm to compute a curve of post hoc bounds on a path of selection sets

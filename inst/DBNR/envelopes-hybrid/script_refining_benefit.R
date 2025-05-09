@@ -7,8 +7,9 @@ example <- dyadic.from.height(m, 3, 2)
 leaf_list <- example$leaf_list
 C <- example$C
 
-pval_idx <- unlist(leaf_list)
-pval <- runif(n = max(pval_idx))
+# pval_idx <- unlist(leaf_list)
+# pval <- runif(n = max(pval_idx))
+pval <- runif(m)
 
 alpha = 0.05
 method <- zeta.HB
