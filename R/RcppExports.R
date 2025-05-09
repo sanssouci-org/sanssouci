@@ -9,7 +9,3 @@ partialColSortCpp <- function(X, k) {
     .Call('_sanssouci_partialColSortCpp', PACKAGE = 'sanssouci', X, k)
 }
 
-testBySignFlipping <- function(X, B) {
-    .Call('_sanssouci_testBySignFlipping', PACKAGE = 'sanssouci', X, B)
-}
-

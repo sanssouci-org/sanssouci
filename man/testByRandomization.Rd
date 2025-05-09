@@ -78,7 +78,8 @@ For sign-flipping, we test the null hypothesis: "the mean is 0" against the
 alternative specified by parameter \code{alternative}. We use the
 (rescaled) empirical mean of the observations as a test statistic.
 Sign-flipped test statistics are calculated by flipping the sign of each
-observation with probability 1/2.
+observation with probability 1/2. Note that this function has not been
+optimized for speed and may be slow for large n\emph{m}B.
 }
 \examples{
 

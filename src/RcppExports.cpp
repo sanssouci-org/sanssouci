@@ -35,23 +35,10 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// testBySignFlipping
-arma::mat testBySignFlipping(arma::mat X, double B);
-RcppExport SEXP _sanssouci_testBySignFlipping(SEXP XSEXP, SEXP BSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
-    Rcpp::traits::input_parameter< double >::type B(BSEXP);
-    rcpp_result_gen = Rcpp::wrap(testBySignFlipping(X, B));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_sanssouci_partialColSortDescCpp", (DL_FUNC) &_sanssouci_partialColSortDescCpp, 2},
     {"_sanssouci_partialColSortCpp", (DL_FUNC) &_sanssouci_partialColSortCpp, 2},
-    {"_sanssouci_testBySignFlipping", (DL_FUNC) &_sanssouci_testBySignFlipping, 2},
     {NULL, NULL, 0}
 };
 

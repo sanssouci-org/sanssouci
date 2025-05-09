@@ -39,7 +39,8 @@
 #'   alternative specified by parameter \code{alternative}. We use the
 #'   (rescaled) empirical mean of the observations as a test statistic.
 #'   Sign-flipped test statistics are calculated by flipping the sign of each
-#'   observation with probability 1/2.
+#'   observation with probability 1/2. Note that this function has not been 
+#'   optimized for speed and may be slow for large n*m*B.
 #'
 #' @references Ge, Y., Dudoit, S. and Speed, T.P., 2003. Resampling-based
 #'   multiple testing for microarray data analysis. _Test_, 12(1), pp.1-77.
@@ -190,7 +191,7 @@ testByRandomization <- function(X, categ, B,
     return(res)
 }
 
-testBySignFlippingR <- function(X, B) {
+testBySignFlipping <- function(X, B) {
     m <- nrow(X)
     n <- ncol(X)
     
