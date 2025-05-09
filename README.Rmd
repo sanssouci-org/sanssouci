@@ -14,7 +14,6 @@ knitr::opts_chunk$set(
 # sanssouci
 
 <!-- badges: start -->
-[![R build status](https://github.com/sanssouci-org/sanssouci/workflows/R-CMD-check/badge.svg)](https://github.com/sanssouci-org/sanssouci/actions)
 [![Coverage Status](https://codecov.io/gh/sanssouci-org/sanssouci/branch/develop/graph/badge.svg)](https://codecov.io/github/sanssouci-org/sanssouci/branch/develop)
 [![R-CMD-check](https://github.com/sanssouci-org/sanssouci/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sanssouci-org/sanssouci/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
