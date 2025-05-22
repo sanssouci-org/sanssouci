@@ -85,7 +85,8 @@ dyadic.from.leaf_list <- function(leaf_list, method) {
           if (cut2 > 1) 
             continue <- TRUE
         } else {
-          Ch <- c(Ch, oldCh[i])
+          Ch <- c(Ch, oldCh[i]) # this part is causing unnecessary repetition
+          # and is the cause of issue #122
         }
       }
       C <- c(C, list(Ch))
