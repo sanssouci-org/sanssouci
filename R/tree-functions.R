@@ -356,7 +356,11 @@ zetas.tree <- function(C, leaf_list, method, pvalues, alpha, refine=FALSE, verbo
 #' \code{ZL[[h]][j]} is the \eqn{\zeta_k} associated to the \eqn{R_k} described by \code{C[[h]][[j]]}.
 #' @param leaf_list A list of vectors. Each vector is an integer array. The i-th vector contains the indices
 #' of the hypotheses in the i-th atom. Atoms form a partition of the set of hypotheses indices : 
-#' there cannot be overlap, and each index has to be inside one of the atoms.
+#' there cannot be overlap, and each index has to be inside one of the atoms. It is really important, for all functions
+#' using \code{leaf_list} in this package, that each vector is sorted. Because functions of the package 
+#' implicitly use that
+#' \code{leaf_list[[i]][1]} is the lowest hypothesis index in leaf \eqn{P_i} and that 
+#' \code{leaf_list[[i]][length(leaf_list[[i]])]} is the largest
 #' 
 #' @return An integer value, the post hoc upper bound \eqn{V^*(S)}.
 #' 
@@ -510,6 +514,8 @@ pruning <- function(C, ZL, leaf_list, prune.leafs = FALSE, delete.gaps = FALSE) 
 #' \item{\code{C}}{The new \code{C} after deleting the gaps.}
 #' \item{\code{ZL}}{The new \code{ZL} after deleting the gaps.}
 #' }
+#' 
+#' @usage delete.gaps(C, ZL, leaf_list)
 #' 
 #' @export
 delete.gaps <- function(C, ZL, leaf_list) {
