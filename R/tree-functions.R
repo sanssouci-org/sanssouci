@@ -393,15 +393,22 @@ V.star <- function(S, C, ZL, leaf_list) {
   H <- length(C)
   nb_leaves <- length(leaf_list)
   Vec <- numeric(nb_leaves) 
-  for (i in 1:nb_leaves) {
-    Vec[i] <- sum(S %in% leaf_list[[i]])
-  }
   # the initialization term for each atom P_i
   # is equivalent to completing the family if it isn't,
   # assuming that leaf_list does indeed contain all leaves
   # and some were just eventually missing in C and ZL
   # this initialization also takes care of the minima
   # between \zeta_k and card(S inter R_k)
+  for (i in 1:nb_leaves) {
+    Vec[i] <- sum(leaf_list[[i]][length(leaf_list[[i]])] >= S)
+  }
+  Vec <- Vec - c(0, Vec[1:(nb_leaves-1)])
+  # this way of initializing is much faster than the following naive approach,
+  # the downside is that it heavily uses that the elements of leaf_list are sorted
+  # naive approach:
+  # for (i in 1:nb_leaves) {
+  #   Vec[i] <- sum(S %in% leaf_list[[i]])
+  # }
   for (h in H:1) {
     nb_regions <- length(C[[h]])
     if (nb_regions > 0) {
