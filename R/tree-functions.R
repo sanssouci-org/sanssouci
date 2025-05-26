@@ -740,8 +740,8 @@ curve.V.star.forest.fast <- function(perm, C, ZL, leaf_list, pruning = FALSE, is
       previous.vstar <- 0
     }
     
-    # SEARCHING IF i_t IS IN K MINUS
-    # if so, go.next == TRUE
+    # SEARCHING IF i_t IS IN K.MINUS
+    # if so, we let go.next = TRUE
     # and we just go next to step t+1
     go.next <- FALSE
     for (h in 1:H) {
@@ -755,16 +755,19 @@ curve.V.star.forest.fast <- function(perm, C, ZL, leaf_list, pruning = FALSE, is
     
     # COMPUTING V.STAR AND UPDATING K.MINUS AND ETAS
     if (go.next) {
+      # Here, i_t is in K.minus
       vstars[t] <- previous.vstar
     } else {
-      # Here, i_t isn't in K minus
+      # Here, i_t isn't in K.minus
       for (h in 1:H) {
         k <- M[i.t, h]
         if (k > 0){
           # if k == 0,
-          # there is no k^{(t,h)} because there is a 
-          # gap in the structure (because of pruning)
-          # in this case we don't do anything
+          # there is no k^{(t,h)} because either there is a 
+          # gap in the structure (maybe because of pruning, or because
+          # of the way the structure has been built),
+          # either because we are past the max depth of i.t;
+          # in this case we just don't do anything
           etas[[h]][[k]] <- etas[[h]][[k]] + 1
           if(etas[[h]][[k]] >= ZL[[h]][[k]]){
             K.minus[[h]][[k]] <- C[[h]][[k]]
