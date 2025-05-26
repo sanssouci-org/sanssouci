@@ -12,8 +12,8 @@
 #' }
 #' 
 #' @param method A numeric value. If \code{method == 1}, start from the leaves
-#' and group nodes of a same height 2 by 2 as long as possible. If
-#' \code{method==2}, start from the root and divide nodes in 2 nodes of equal
+#' and group nodes of a same height 2 by 2 as long as possible (note that this can introduce gaps). 
+#' If \code{method==2}, start from the root and divide nodes in 2 nodes of equal
 #' size as long as possible
 #' 
 #' @return A list with two named elements:\describe{
@@ -54,12 +54,8 @@ dyadic.from.leaf_list <- function(leaf_list, method) {
         break
       new_Ch <- list()
       j <- 1
-      while (j <= len) {
-        if (j == len) {
-          #new_Ch <- c(new_Ch, Ch[j])
-        } else {
-          new_Ch <- c(new_Ch, list(c(Ch[[j]][1], Ch[[j + 1]][2])))
-        }
+      while (j < len) {
+        new_Ch <- c(new_Ch, list(c(Ch[[j]][1], Ch[[j + 1]][2])))
         j <- j + 2
       }
       Ch <- new_Ch
