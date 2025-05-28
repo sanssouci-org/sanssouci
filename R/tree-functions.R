@@ -620,7 +620,7 @@ curve.V.star.forest.naive <- function(perm, C, ZL, leaf_list, pruning = FALSE, d
   vstars <- numeric(length(perm))
   
   # the naive version doesn't need a proper completion of the
-  # forest structure because V.star.no.extension
+  # forest structure because V.star
   # implicitly completes, and for the same reason
   # it can use super pruning
   
