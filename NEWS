@@ -2,6 +2,33 @@
 Package: sanssouci
 ==================
 
+Version 0.14.2 [2025-05-26]
+
+* Correct a bug in 'dyadic.from.leaf_list' that could produced duplicate nodes (PR #123)
+* Clarify some points in the documentation of 'V.star' (PR #123)
+* Implement a faster 'V.star' (PR #123)
+
+Version 0.14.1 [2025-05-09]
+
+* Misc cleanups (PR #253)
+  - Fix NOTE about C++1
+  - Fix #113 (side effect: Import rlang)
+  - Fix R-CMD-check badge
+  - remove explicit calls to gc()
+  - Add tests
+  
+  
+Version 0.14.0 [2025-05-08]
+
+* New, much faster, implementation of 'curve.V.star.forest.fast' (PR #117)
+* Possibility to have additional arguments in 'zetas.tree' and the functions that 
+compute the individual zetas, as demonstrated by the new 'zeta.kBonf' (PR #117)
+* Reorganization of the 'rowWelchTests' function 
+to reduce the amount of memory used (PR #112)
+* Creation of a mini-batch test function for smaller matrix calculations, 
+this function is used in the 'fit' method to compute permuted p -values (PR #112)
+
+
 Version 0.13.0 [2024-06-17]
 
 * New algorithm to compute a curve of post hoc bounds on a path of selection sets

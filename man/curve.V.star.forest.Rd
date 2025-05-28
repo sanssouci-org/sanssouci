@@ -61,7 +61,7 @@ using a reference family \eqn{(R_k, \zeta_k)} that possess the forest structure
 \details{
 Two functions are available
 \describe{
-\item{\code{curve.V.star.forest.naive}}{Repeatedly calls \code{\link[=V.star]{V.star()}} on each \eqn{S_t}, which is not optimized and time-consuming, this should be used in practice.}
+\item{\code{curve.V.star.forest.naive}}{Repeatedly calls \code{\link[=V.star]{V.star()}} on each \eqn{S_t}, which is not optimized and time-consuming, this should not be used in practice.}
 \item{\code{curve.V.star.forest.fast}}{A fast and optimized version that leverage the fact that\eqn{S_{t+1}} is the union of \eqn{S_t} and a single hypothesis index.
 The algorithm needs to work on a complete forest, so this version first completes the forest (unless told that the forest has already been completed, see \code{\link[=forest.completion]{forest.completion()}}),
 and the completion fails if the input is a pruned forest (see \code{\link[=pruning]{pruning()}}),
@@ -95,5 +95,5 @@ curve.V.star.forest.fast(1:m, C, ZL, leaf_list, pruning = TRUE)
 \references{
 Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
 
-Durand G., preprint to appear with the description of pruning and of the fast algorithm to compute the curve.
+Durand G. (2025). A fast algorithm to compute a curve of confidence upper bounds for the False Discovery Proportion using a reference family with a forest structure. arXiv:2502.03849.
 }

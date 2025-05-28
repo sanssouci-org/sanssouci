@@ -87,6 +87,7 @@ formatBounds <- function(max_FP, idxs = seq_len(max_FP), lab = NULL,
 #' @param cols A vector of colors of the same length as `conf_bound`
 #' @references Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc confidence bounds on false positives using reference families. Annals of Statistics, 48(3), 1281-1303.
 #' @export
+#' @importFrom rlang .data
 #' @examples
 #' # Generate Gaussian data and perform multiple tests
 #' obj <- SansSouciSim(m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
@@ -128,9 +129,11 @@ plotConfCurve <- function(conf_bound, xmax, cols = NULL) {
     }    
     
     p <- ggplot2::ggplot(conf_bound, 
-                         ggplot2::aes_string(x = "x", y = "bound"))
+                         ggplot2::aes(x = .data[["x"]], 
+                                      y = .data[["bound"]]))
     if (nb > 1) {
-        p <- p + ggplot2::aes_string(color = "Template", linetype = "Template")
+      p <- p + ggplot2::aes(color = .data[["Template"]], 
+                            linetype = .data[["Template"]])
     }
     p + ggplot2::geom_line() +
         ggplot2::facet_wrap(~ stat, scales = "free_y") + 

@@ -180,12 +180,12 @@ testByRandomization <- function(X, categ, B,
         ## by sorting null test statistics as proposed by Ge et al (2003)
         TT <- cbind(T0, T)
         pB <- switch(alternative, 
-                     "two.sided" = rowRanks(-abs(TT)) / (B+1),
-                     "greater" = rowRanks(-TT) / (B+1),
-                     "less" = rowRanks(TT) / (B+1))
+                     "two.sided" = rowRanks(-abs(TT), ties.method = "max") / (B + 1),
+                     "greater" = rowRanks(-TT, ties.method = "max") / (B + 1),
+                     "less" = rowRanks(TT, ties.method = "max") / (B + 1))
         
-        res$rand.p <- pB[, B+1]
-        res$rand.p0 <- pB[, -(B+1), drop = FALSE]
+        res$rand.p <- pB[, B + 1]
+        res$rand.p0 <- pB[, -(B + 1), drop = FALSE]
     }
     return(res)
 }

@@ -11,7 +11,7 @@ SansSouciStruct(struct, leaves, truth = NULL)
 
 \item{leaves}{A list of leaves}
 
-\item{truth}{An optional numeric vector of $m$ values in ${0,1}$, the status of each null hypothesis (0 means H0 is true, 1 means H1 is true). Typically used in simulations.}
+\item{truth}{An optional numeric vector of $m$ values in $\{0,1\}$, the status of each null hypothesis (0 means H0 is true, 1 means H1 is true). Typically used in simulations.}
 }
 \value{
 An object of class 'SansSouciStruct'

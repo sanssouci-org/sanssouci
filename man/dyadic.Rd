@@ -17,8 +17,8 @@ dyadic.from.height(m, H = NULL, method)
 \item{leaf_list}{A list of vectors representing the atoms of the forest structure. See \code{\link[=V.star]{V.star()}} for more information.}
 
 \item{method}{A numeric value. If \code{method == 1}, start from the leaves
-and group nodes of a same height 2 by 2 as long as possible. If
-\code{method==2}, start from the root and divide nodes in 2 nodes of equal
+and group nodes of a same height 2 by 2 as long as possible (note that this can introduce gaps).
+If \code{method==2}, start from the root and divide nodes in 2 nodes of equal
 size as long as possible}
 
 \item{m}{An integer value, the number of hypotheses to have in the structure}
@@ -61,4 +61,6 @@ str(dd)
 }
 \references{
 Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
+
+Durand G. (2025). A fast algorithm to compute a curve of confidence upper bounds for the False Discovery Proportion using a reference family with a forest structure. arXiv:2502.03849.
 }

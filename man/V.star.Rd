@@ -23,7 +23,11 @@ For example, \code{C[[1]][[1]] = c(1, 5)} means that the first region at depth 1
 
 \item{leaf_list}{A list of vectors. Each vector is an integer array. The i-th vector contains the indices
 of the hypotheses in the i-th atom. Atoms form a partition of the set of hypotheses indices :
-there cannot be overlap, and each index has to be inside one of the atoms.}
+there cannot be overlap, and each index has to be inside one of the atoms. It is really important, for all functions
+using \code{leaf_list} in this package, that each vector is sorted. Because functions of the package
+implicitly use that
+\code{leaf_list[[i]][1]} is the lowest hypothesis index in leaf \eqn{P_i} and that
+\code{leaf_list[[i]][length(leaf_list[[i]])]} is the largest}
 }
 \value{
 An integer value, the post hoc upper bound \eqn{V^*(S)}.
