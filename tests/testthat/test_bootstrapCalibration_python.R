@@ -1,3 +1,6 @@
+skip_on_ci()
+skip_on_cran()
+
 library(reticulate)
 if (!virtualenv_exists("env_test")) {
   virtualenv_create("env_test")
