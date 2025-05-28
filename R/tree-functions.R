@@ -635,7 +635,7 @@ curve.V.star.forest.naive <- function(perm, C, ZL, leaf_list, pruning = FALSE, d
   # the naive version doesn't need a proper completion of the
   # forest structure because V.star
   # implicitly completes, and for the same reason
-  # it can use super pruning
+  # it is allowed to prune leaves
   
   if (pruning){
     pruned <- pruning(C, ZL, leaf_list, prune.leafs = TRUE, delete.gaps = delete.gaps)
