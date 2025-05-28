@@ -6,6 +6,9 @@
 #' @param p A numeric vector of \code{m} p-values for all tested hypotheses.
 #' @param select A vector of indices in \eqn{[1, \dots m]} of the hypotheses to be selected.
 #' @param alpha A numeric value, the significance level of the test procedure.
+#' @param flavor A character value to specify whether to run the "single step",
+#'   "one step down" or "full step down" versions of the Simes posthoc bound.
+#'   Defaults to "full step down" (equivalent to cherry::pickSimes)
 #' @return A integer value, Simes's lower bound on the number of
 #'  correct rejections within the selected hypotheses
 #' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain

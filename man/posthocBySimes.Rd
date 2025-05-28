@@ -17,6 +17,10 @@ posthocBySimes(
 \item{select}{A vector of indices in \eqn{[1, \dots m]} of the hypotheses to be selected.}
 
 \item{alpha}{A numeric value, the significance level of the test procedure.}
+
+\item{flavor}{A character value to specify whether to run the "single step",
+"one step down" or "full step down" versions of the Simes posthoc bound.
+Defaults to "full step down" (equivalent to cherry::pickSimes)}
 }
 \value{
 A integer value, Simes's lower bound on the number of
