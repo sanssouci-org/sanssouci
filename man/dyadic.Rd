@@ -17,8 +17,8 @@ dyadic.from.height(m, H = NULL, method)
 \item{leaf_list}{A list of vectors representing the atoms of the forest structure. See \code{\link[=V.star]{V.star()}} for more information.}
 
 \item{method}{A numeric value. If \code{method == 1}, start from the leaves
-and group nodes of a same height 2 by 2 as long as possible. If
-\code{method==2}, start from the root and divide nodes in 2 nodes of equal
+and group nodes of a same height 2 by 2 as long as possible (note that this can introduce gaps).
+If \code{method==2}, start from the root and divide nodes in 2 nodes of equal
 size as long as possible}
 
 \item{m}{An integer value, the number of hypotheses to have in the structure}
