@@ -29,6 +29,7 @@ Suggests:
     limma,
     markdown,
     rbibutils,
+    reticulate,
     rmarkdown,
     RColorBrewer,
     sanssouci.data,
