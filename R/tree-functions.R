@@ -12,8 +12,8 @@
 #' }
 #' 
 #' @param method A numeric value. If \code{method == 1}, start from the leaves
-#' and group nodes of a same height 2 by 2 as long as possible. If
-#' \code{method==2}, start from the root and divide nodes in 2 nodes of equal
+#' and group nodes of a same height 2 by 2 as long as possible (note that this can introduce gaps). 
+#' If \code{method==2}, start from the root and divide nodes in 2 nodes of equal
 #' size as long as possible
 #' 
 #' @return A list with two named elements:\describe{
@@ -54,12 +54,8 @@ dyadic.from.leaf_list <- function(leaf_list, method) {
         break
       new_Ch <- list()
       j <- 1
-      while (j <= len) {
-        if (j == len) {
-          new_Ch <- c(new_Ch, Ch[j])
-        } else {
-          new_Ch <- c(new_Ch, list(c(Ch[[j]][1], Ch[[j + 1]][2])))
-        }
+      while (j < len) {
+        new_Ch <- c(new_Ch, list(c(Ch[[j]][1], Ch[[j + 1]][2])))
         j <- j + 2
       }
       Ch <- new_Ch
@@ -84,8 +80,6 @@ dyadic.from.leaf_list <- function(leaf_list, method) {
                   list(c(oi[1] + cut2, oi[2])))
           if (cut2 > 1) 
             continue <- TRUE
-        } else {
-          Ch <- c(Ch, oldCh[i])
         }
       }
       C <- c(C, list(Ch))
@@ -356,7 +350,11 @@ zetas.tree <- function(C, leaf_list, method, pvalues, alpha, refine=FALSE, verbo
 #' \code{ZL[[h]][j]} is the \eqn{\zeta_k} associated to the \eqn{R_k} described by \code{C[[h]][[j]]}.
 #' @param leaf_list A list of vectors. Each vector is an integer array. The i-th vector contains the indices
 #' of the hypotheses in the i-th atom. Atoms form a partition of the set of hypotheses indices : 
-#' there cannot be overlap, and each index has to be inside one of the atoms.
+#' there cannot be overlap, and each index has to be inside one of the atoms. It is really important, for all functions
+#' using \code{leaf_list} in this package, that each vector is sorted. Because functions of the package 
+#' implicitly use that
+#' \code{leaf_list[[i]][1]} is the lowest hypothesis index in leaf \eqn{P_i} and that 
+#' \code{leaf_list[[i]][length(leaf_list[[i]])]} is the largest
 #' 
 #' @return An integer value, the post hoc upper bound \eqn{V^*(S)}.
 #' 
@@ -391,15 +389,22 @@ V.star <- function(S, C, ZL, leaf_list) {
   H <- length(C)
   nb_leaves <- length(leaf_list)
   Vec <- numeric(nb_leaves) 
-  for (i in 1:nb_leaves) {
-    Vec[i] <- sum(S %in% leaf_list[[i]])
-  }
   # the initialization term for each atom P_i
   # is equivalent to completing the family if it isn't,
   # assuming that leaf_list does indeed contain all leaves
   # and some were just eventually missing in C and ZL
   # this initialization also takes care of the minima
   # between \zeta_k and card(S inter R_k)
+  for (i in 1:nb_leaves) {
+    Vec[i] <- sum(leaf_list[[i]][length(leaf_list[[i]])] >= S)
+  }
+  Vec <- Vec - c(0, Vec[1:(nb_leaves-1)])
+  # this way of initializing is much faster than the following naive approach,
+  # the downside is that it heavily uses that the elements of leaf_list are sorted
+  # naive approach:
+  # for (i in 1:nb_leaves) {
+  #   Vec[i] <- sum(S %in% leaf_list[[i]])
+  # }
   for (h in H:1) {
     nb_regions <- length(C[[h]])
     if (nb_regions > 0) {
@@ -511,6 +516,8 @@ pruning <- function(C, ZL, leaf_list, prune.leafs = FALSE, delete.gaps = FALSE) 
 #' \item{\code{ZL}}{The new \code{ZL} after deleting the gaps.}
 #' }
 #' 
+#' @usage delete.gaps(C, ZL, leaf_list)
+#' 
 #' @export
 delete.gaps <- function(C, ZL, leaf_list) {
   H <- length(C)
@@ -571,7 +578,7 @@ delete.gaps <- function(C, ZL, leaf_list) {
 #' 
 #' @details Two functions are available
 #' \describe{
-#' \item{\code{curve.V.star.forest.naive}}{Repeatedly calls [V.star()] on each \eqn{S_t}, which is not optimized and time-consuming, this should be used in practice.}
+#' \item{\code{curve.V.star.forest.naive}}{Repeatedly calls [V.star()] on each \eqn{S_t}, which is not optimized and time-consuming, this should not be used in practice.}
 #' \item{\code{curve.V.star.forest.fast}}{A fast and optimized version that leverage the fact that\eqn{S_{t+1}} is the union of \eqn{S_t} and a single hypothesis index. 
 #' The algorithm needs to work on a complete forest, so this version first completes the forest (unless told that the forest has already been completed, see [forest.completion()]), 
 #' and the completion fails if the input is a pruned forest (see [pruning()]), 
@@ -729,8 +736,8 @@ curve.V.star.forest.fast <- function(perm, C, ZL, leaf_list, pruning = FALSE, is
       previous.vstar <- 0
     }
     
-    # SEARCHING IF i_t IS IN K MINUS
-    # if so, go.next == TRUE
+    # SEARCHING IF i_t IS IN K.MINUS
+    # if so, we let go.next = TRUE
     # and we just go next to step t+1
     go.next <- FALSE
     for (h in 1:H) {
@@ -744,16 +751,19 @@ curve.V.star.forest.fast <- function(perm, C, ZL, leaf_list, pruning = FALSE, is
     
     # COMPUTING V.STAR AND UPDATING K.MINUS AND ETAS
     if (go.next) {
+      # Here, i_t is in K.minus
       vstars[t] <- previous.vstar
     } else {
-      # Here, i_t isn't in K minus
+      # Here, i_t isn't in K.minus
       for (h in 1:H) {
         k <- M[i.t, h]
         if (k > 0){
           # if k == 0,
-          # there is no k^{(t,h)} because there is a 
-          # gap in the structure (because of pruning)
-          # in this case we don't do anything
+          # there is no k^{(t,h)} because either there is a 
+          # gap in the structure (maybe because of pruning, or because
+          # of the way the structure has been built),
+          # either because we are past the max depth of i.t;
+          # in this case we just don't do anything
           etas[[h]][[k]] <- etas[[h]][[k]] + 1
           if(etas[[h]][[k]] >= ZL[[h]][[k]]){
             K.minus[[h]][[k]] <- C[[h]][[k]]

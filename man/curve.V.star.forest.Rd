@@ -61,7 +61,7 @@ using a reference family \eqn{(R_k, \zeta_k)} that possess the forest structure
 \details{
 Two functions are available
 \describe{
-\item{\code{curve.V.star.forest.naive}}{Repeatedly calls \code{\link[=V.star]{V.star()}} on each \eqn{S_t}, which is not optimized and time-consuming, this should be used in practice.}
+\item{\code{curve.V.star.forest.naive}}{Repeatedly calls \code{\link[=V.star]{V.star()}} on each \eqn{S_t}, which is not optimized and time-consuming, this should not be used in practice.}
 \item{\code{curve.V.star.forest.fast}}{A fast and optimized version that leverage the fact that\eqn{S_{t+1}} is the union of \eqn{S_t} and a single hypothesis index.
 The algorithm needs to work on a complete forest, so this version first completes the forest (unless told that the forest has already been completed, see \code{\link[=forest.completion]{forest.completion()}}),
 and the completion fails if the input is a pruned forest (see \code{\link[=pruning]{pruning()}}),

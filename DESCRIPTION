@@ -1,6 +1,6 @@
 Package: sanssouci
-Version: 0.14.1
-Date: 2025-05-09
+Version: 0.15.0
+Date: 2025-05-29
 Title: Post Hoc Multiple Testing Inference
 Authors@R: c(person("Pierre", "Neuvial", role=c("aut", "cre"),
                  email="pierre.neuvial@math.univ-toulouse.fr",
@@ -18,9 +18,7 @@ Imports:
     Matrix,
     matrixStats,
     matrixTests,
-    Rcpp (>= 0.12.3),
     rlang
-LinkingTo: Rcpp, RcppArmadillo
 Suggests:
     cherry,
     edgeR,

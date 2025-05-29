@@ -54,22 +54,6 @@ test_that("Correctness of sign-flipping p-values", {
     }    
 })
 
-test_that("Consistency of Rcpp and R sign-flipping p-values", {
-    #testthat::skip("Rcpp version of testBySignFlipping not implemented anymore/yet")
-    m <- 123
-    n <- 38
-    B <- 10
-    
-    X <- matrix(rnorm(m*n), ncol=n)
-
-    set.seed(123)
-    T <- testBySignFlipping(X, B)    ## not exported yet!
-    
-    set.seed(123)
-    TR <- testBySignFlippingR(X, B)  ## not implemented yet!
-    expect_equal(T, TR)
-})
-
 test_that("Consistency of randomization p-values with different alternatives", {
     B <- 10
     for (alt in c("two.sided", "less", "greater")) {
