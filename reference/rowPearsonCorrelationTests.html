@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">sanssouci</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,7 +39,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Pearson's correlation test for rows of a matrix</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sanssouci-org/sanssouci/blob/v0.14.0/R/rowPearsonCorrelationTests.R" class="external-link"><code>R/rowPearsonCorrelationTests.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sanssouci-org/sanssouci/blob/v0.15.0/R/rowPearsonCorrelationTests.R" class="external-link"><code>R/rowPearsonCorrelationTests.R</code></a></small>
       <div class="d-none name"><code>rowPearsonCorrelationTests.Rd</code></div>
     </div>
 
@@ -111,7 +111,7 @@ Must be one of "two.sided" (default), "greater" or "less". As in
 <span class="r-in"><span><span class="va">categ</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>, mean <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">fwt</span> <span class="op">&lt;-</span> <span class="fu">rowPearsonCorrelationTests</span><span class="op">(</span><span class="va">mat</span>, <span class="va">categ</span>, alternative <span class="op">=</span> <span class="st">"greater"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    user  system elapsed </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   0.002   0.000   0.002 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   0.003   0.000   0.003 </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">fwt</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ p.value  : num [1:300] 0.2404 0.8942 0.9924 0.0029 0.8454 ...</span>
@@ -129,7 +129,7 @@ Must be one of "two.sided" (default), "greater" or "less". As in
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer></div>

@@ -11,7 +11,7 @@ given selection set \(S\) of hypotheses, using a reference family \((R_k, \zeta_
 
     <a class="navbar-brand me-2" href="../index.html">sanssouci</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,7 +43,7 @@ given selection set \(S\) of hypotheses, using a reference family \((R_k, \zeta_
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Post hoc bound on the number of false positives</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sanssouci-org/sanssouci/blob/v0.14.0/R/tree-functions.R" class="external-link"><code>R/tree-functions.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sanssouci-org/sanssouci/blob/v0.15.0/R/tree-functions.R" class="external-link"><code>R/tree-functions.R</code></a></small>
       <div class="d-none name"><code>V.star.Rd</code></div>
     </div>
 
@@ -85,7 +85,11 @@ For example, <code>C[[1]][[1]] = c(1, 5)</code> means that the first region at d
 <dt id="arg-leaf-list">leaf_list<a class="anchor" aria-label="anchor" href="#arg-leaf-list"></a></dt>
 <dd><p>A list of vectors. Each vector is an integer array. The i-th vector contains the indices
 of the hypotheses in the i-th atom. Atoms form a partition of the set of hypotheses indices :
-there cannot be overlap, and each index has to be inside one of the atoms.</p></dd>
+there cannot be overlap, and each index has to be inside one of the atoms. It is really important, for all functions
+using <code>leaf_list</code> in this package, that each vector is sorted. Because functions of the package
+implicitly use that
+<code>leaf_list[[i]][1]</code> is the lowest hypothesis index in leaf \(P_i\) and that
+<code>leaf_list[[i]][length(leaf_list[[i]])]</code> is the largest</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -140,7 +144,7 @@ in <code>C</code>, some trivial intervals <code>c(i,i)</code> corresponding to r
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer></div>
