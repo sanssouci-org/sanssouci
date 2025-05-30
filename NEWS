@@ -2,6 +2,10 @@
 Package: sanssouci
 ==================
 
+Version 0.15.0 [2025-05-29]
+
+* Remove all C++ code from the package (PR #121)
+
 Version 0.14.2 [2025-05-26]
 
 * Correct a bug in 'dyadic.from.leaf_list' that could produced duplicate nodes (PR #123)
