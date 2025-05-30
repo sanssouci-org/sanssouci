@@ -8,7 +8,7 @@ Version 0.15.0 [2025-05-29]
 
 Version 0.14.2 [2025-05-26]
 
-* Correct a bug in 'dyadic.from.leaf_list' that could produced duplicate nodes (PR #123)
+* Correct a bug in 'dyadic.from.leaf_list' that could produce duplicate nodes (PR #123)
 * Clarify some points in the documentation of 'V.star' (PR #123)
 * Implement a faster 'V.star' (PR #123)
 
