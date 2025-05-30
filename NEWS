@@ -14,7 +14,7 @@ Version 0.14.2 [2025-05-26]
 
 Version 0.14.1 [2025-05-09]
 
-* Misc cleanups (PR #253)
+* Misc cleanups (PR #120)
   - Fix NOTE about C++1
   - Fix #113 (side effect: Import rlang)
   - Fix R-CMD-check badge
