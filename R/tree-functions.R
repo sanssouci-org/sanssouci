@@ -74,7 +74,7 @@ dyadic.from.leaf_list <- function(leaf_list, method) {
         oi <- oldCh[[i]]
         leaves_in_node <- oi[2] - oi[1] + 1
         if (leaves_in_node > 1) {
-          cut2 <- ceiling(leaves_in_node/2)
+          cut2 <- ceiling(leaves_in_node / 2)
           Ch <- c(Ch, 
                   list(c(oi[1], oi[1] + cut2 - 1)), 
                   list(c(oi[1] + cut2, oi[2])))
