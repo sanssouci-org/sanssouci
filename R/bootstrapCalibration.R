@@ -1,24 +1,28 @@
 #' Perform statistical test from contrast matrix for Linear model.
 #'
-#' @param Y Expression matrix of size $n$ observations (in row) and $D$
-#' dimensions/mesures in columns
+#' @param Y Data matrix of size $n$ observations (in row) and $D$
+#' features in columns
 #' @param X Design matrix of size $n$ observations (in row) and $p$ variables
 #' (in columns)
-#' @param C Contrast matrix of size $L$ tested contrast (in row) and $p$ columns
-#' corresponding to te tested parameters.
+#' @param C Contrast matrix of size $L$ tested contrasts (in row) and $p$ columns
+#' corresponding to the parameters to be tested
 #'
-#' @return epsilon_est, the residuals matrix (size \eqn{n \times D}), stat_test the
-#' test statistic matrix (size \eqn{L \times D}) and p-values, the p-values matrix
-#' (size \eqn{L \times D})
+#' @return A list with elements:
+#'     \describe{
+#'   \item{epsilon_est}{\eqn{n \times D} matrix of residuals}
+#'   \item{stat_test}{\eqn{L \times D} matrix of test statistics}
+#'   \item{pvalues}{\eqn{L \times D} matrix of p-values}
+#'   \item{beta_est}{\eqn{n \times D} matrix of parameter estimates}  
+#' }
 #' @export
 #'
 #' @examples
-#' N = 100
-#' p = 2
-#' D = 2
-#' X <- matrix(0,nrow = N, ncol = p)
-#' X[,1] <- 1
-#' X[,-1] <- runif(N*(p-1), min = 0, max = 3)
+#' N <- 100
+#' p <- 2
+#' D <- 2
+#' X <- matrix(0, nrow = N, ncol = p)
+#' X[, 1] <- 1
+#' X[, -1] <- runif(N*(p-1), min = 0, max = 3)
 #' beta <- matrix(0, nrow = p, ncol = D)
 #' epsilons <- matrix(rnorm(N*D), nrow = N, ncol = D)
 #' Y <- X %*% beta + epsilons
@@ -29,7 +33,7 @@ lm_test <- function(Y, X, C) {
 
   df <- nrow(Y) - qr(X)$rank
 
-  ## model parameters estimation
+  ## estimation of model parameters
   XtX <- crossprod(X) # t(X) %*% X
   XtY <- crossprod(X, Y) # t(X) %*% Y
   XtX_inv <- solve(XtX)
@@ -42,10 +46,10 @@ lm_test <- function(Y, X, C) {
   sigma_est <- sqrt(colSums(epsilon_est^2) / df)
 
   ## test statistic
-  CXtX_invCt <- C %*% XtX_inv %*% t(C) # matrix L x L
-  CXtX_diag <- sqrt(diag(CXtX_invCt)) # vecteur L
+  CXtX_invCt <- C %*% XtX_inv %*% t(C)      # matrix L x L
+  CXtX_diag <- sqrt(diag(CXtX_invCt))       # vector L
   denom <- outer(CXtX_diag, sigma_est, "*") # matrix L x D
-  stat_test <- C %*% beta_est / denom # matrix (L x D)
+  stat_test <- C %*% beta_est / denom       # matrix (L x D)
 
   ## p-values
   pvaleurs <- 2 * pt(-abs(stat_test), df = df)
