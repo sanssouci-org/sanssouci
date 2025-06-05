@@ -7,29 +7,30 @@
 calibration_bootstap(Y, X, C, B = 1000)
 }
 \arguments{
-\item{Y}{Expression matrix of size $n$ observations (in row) and $D$
-dimensions/mesures in columns}
+\item{Y}{A data matrix of size $n$ observations (in row) and $D$ features in
+columns}
 
-\item{X}{Design matrix of size $n$ observations (in row) and $p$ variables
+\item{X}{A design matrix of size $n$ observations (in row) and $p$ variables
 (in columns)}
 
-\item{C}{Contrast matrix of size $L$ tested contrast (in row) and $p$ columns
-corresponding to te tested parameters}
+\item{C}{A contrast matrix of size $L$ tested contrasts (in row) and $p$
+columns corresponding to the parameters to be tested}
 
-\item{B}{scalar, number of bootstrap}
+\item{B}{An integer value, the number of bootstraps}
 }
 \value{
-A list with elements
-\itemize{
-\item thr: A numeric vector of length K, such that the estimated probability that
+A list with elements:
+\describe{
+\item{thr}{A numeric vector of length K, such that the estimated probability that
 there exists an index k between 1 and K such that the k-th maximum of the
-test statistics of is greater than \code{thr[k]}, is less than alpha
-\item piv_stat: A vector of \code{B} pivotal statitics
-\item lambda: A numeric value, the result of the calibration
+test statistics of is greater than \code{thr[k]}, is less than alpha}
+\item{piv_stat}{A vector of \code{B} pivotal statitics}
+\item{lambda}{A numeric value, the result of the calibration}
 }
 }
 \description{
-Calibration of post hoc bound using bootstrap permutations
+Compute by bootstraping a Joint Error Rate controlling threshold family
+associated to a set of contrast in a linear model.
 }
 \examples{
 N = 100
@@ -43,4 +44,12 @@ epsilons <- matrix(rnorm(N*D), nrow = N, ncol = D)
 Y <- X \%*\% beta + epsilons
 C <- diag(p)
 resLM <- calibration_bootstap(Y = Y, X = X, C = C, B = 10)
+}
+\references{
+Davenport, S., Thirion, B., & Neuvial, P. (2025). FDP control in
+mass-univariate linear models using the residual bootstrap. Electronic
+Journal of Statistics, 19(1), 1313-1336.
+
+Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc
+confidence bounds on false positives using reference families.
 }

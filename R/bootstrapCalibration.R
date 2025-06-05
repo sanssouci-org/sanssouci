@@ -1,19 +1,29 @@
-#' Perform statistical test from contrast matrix for Linear model.
+#' Mass-univariate inference for contrasts in a linear model
 #'
-#' @param Y Data matrix of size $n$ observations (in row) and $D$
-#' features in columns
-#' @param X Design matrix of size $n$ observations (in row) and $p$ variables
-#' (in columns)
-#' @param C Contrast matrix of size $L$ tested contrasts (in row) and $p$ columns
-#' corresponding to the parameters to be tested
+#' Compute the marginal t-statistics for a set of contrasts and their
+#' (two-sided) p-value.
+
+#' @param Y A data matrix of size $n$ observations (in row) and $D$ features in
+#'   columns
+#' @param X A design matrix of size $n$ observations (in row) and $p$ variables
+#'   (in columns)
+#' @param C A contrast matrix of size $L$ tested contrasts (in row) and $p$
+#'   columns corresponding to the parameters to be tested
 #'
 #' @return A list with elements:
-#'     \describe{
-#'   \item{epsilon_est}{\eqn{n \times D} matrix of residuals}
-#'   \item{stat_test}{\eqn{L \times D} matrix of test statistics}
-#'   \item{pvalues}{\eqn{L \times D} matrix of p-values}
-#'   \item{beta_est}{\eqn{n \times D} matrix of parameter estimates}  
+#' \describe{
+#'   \item{epsilon_est}{A \eqn{n \times D} matrix of residuals}
+#'   \item{stat_test}{A \eqn{L \times D} matrix of test statistics}
+#'   \item{pvalues}{A \eqn{L \times D} matrix of p-values}
+#'   \item{beta_est}{A \eqn{n \times D} matrix of parameter estimates}
 #' }
+#' @details Based on a python implementation available in the \code{pyperm}
+#'   package: \url{https://github.com/sjdavenport/pyperm/}
+#'
+#' @references Davenport, S., Thirion, B., & Neuvial, P. (2025). FDP control in
+#'   mass-univariate linear models using the residual bootstrap. Electronic
+#'   Journal of Statistics, 19(1), 1313-1336.
+#'   
 #' @export
 #'
 #' @examples
@@ -62,31 +72,37 @@ lm_test <- function(Y, X, C) {
   ))
 }
 
-#' Permuted p-values using bootstrap for linear model
-#' @param Y Expression matrix of size $n$ observations (in row) and $D$
-#' dimensions/mesures in columns
-#' @param X Design matrix of size $n$ observations (in row) and $p$ variables
-#' (in columns)
-#' @param C Contrast matrix of size $L$ tested contrast (in row) and $p$ columns
-#' corresponding to te tested parameters
-#' @param B scalar, number of bootstrap
-#' @param replace Bool. If TRUE (default) then the residuals are sampled with
-#' replacement (i.e. a bootstrap), if FALSE then they are sampled without
-#' replacement resulting in a permutation of the data
+#' Mass-univariate bootstrap-based inference for contrasts in a linear model
 #'
-#' @return matrix of permuted $p$-values. It is an array of dimensions 
-#' \eqn{D \times L \times B}.
+#' Compute the marginal null t-statistics for a set of contrasts and their
+#' (two-sided) p-value by bootstrapping the residuals
+#'
+#' @inheritParams lm_test
+#' @param B An integer value, the number of bootstraps
+#' @param replace A Boolean value. If TRUE (default) then the residuals are
+#'   sampled with replacement (i.e. a bootstrap), if FALSE then they are sampled
+#'   without replacement resulting in a permutation of the data
+#'
+#' @return An array of permuted p-values of dimensions \eqn{D \times L \times B}
+#' @details Performs \code{lm_test} for each permutation. Based on a python
+#'   implementation available in the \code{pyperm} package:
+#'   \url{https://github.com/sjdavenport/pyperm/}
+#'
+#' @references Davenport, S., Thirion, B., & Neuvial, P. (2025). FDP control in
+#'   mass-univariate linear models using the residual bootstrap. Electronic
+#'   Journal of Statistics, 19(1), 1313-1336.
+#'
 #' @export
 #'
 #' @examples
-#' N = 100
-#' p = 2
-#' D = 2
-#' X <- matrix(0,nrow = N, ncol = p)
-#' X[,1] <- 1
-#' X[,-1] <- runif(N*(p-1), min = 0, max = 3)
+#' N <- 100
+#' p <- 2
+#' D <- 2
+#' X <- matrix(0, nrow = N, ncol = p)
+#' X[, 1] <- 1
+#' X[, -1] <- runif(N*(p-1), min = 0, max = 3)
 #' beta <- matrix(0, nrow = p, ncol = D)
-#' epsilons <- matrix(rnorm(N*D), nrow = N, ncol = D)
+#' epsilons <- matrix(rnorm(N * D), nrow = N, ncol = D)
 #' Y <- X %*% beta + epsilons
 #' C <- diag(p)
 #' resLM <- bootstrap_permutation(Y = Y, X = X, C = C, B = 10)
@@ -133,20 +149,26 @@ bootstrap_permutation <- function(Y, X, C, B = 1000, replace = TRUE) {
 
 #' Calibration of post hoc bound using bootstrap permutations
 #'
-#' @param Y Expression matrix of size $n$ observations (in row) and $D$
-#' dimensions/mesures in columns
-#' @param X Design matrix of size $n$ observations (in row) and $p$ variables
-#' (in columns)
-#' @param C Contrast matrix of size $L$ tested contrast (in row) and $p$ columns
-#' corresponding to te tested parameters
-#' @param B scalar, number of bootstrap
+#' Compute by bootstraping a Joint Error Rate controlling threshold family
+#' associated to a set of contrast in a linear model.
 #'
-#' @return A list with elements
-#' - thr: A numeric vector of length K, such that the estimated probability that
+#' @inheritParams bootstrap_permutation
+#' @return A list with elements:
+#' \describe{
+#'   \item{thr}{A numeric vector of length K, such that the estimated probability that
 #' there exists an index k between 1 and K such that the k-th maximum of the
-#' test statistics of is greater than `thr[k]`, is less than alpha
-#' - piv_stat: A vector of `B` pivotal statitics
-#' - lambda: A numeric value, the result of the calibration
+#' test statistics of is greater than `thr[k]`, is less than alpha}
+#'   \item{piv_stat}{A vector of `B` pivotal statitics}
+#'   \item{lambda}{A numeric value, the result of the calibration}
+#' }
+#'
+#' @references Davenport, S., Thirion, B., & Neuvial, P. (2025). FDP control in
+#'   mass-univariate linear models using the residual bootstrap. Electronic
+#'   Journal of Statistics, 19(1), 1313-1336.
+#'
+#' @references Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc
+#'   confidence bounds on false positives using reference families.
+#'
 #' @export
 #'
 #' @examples

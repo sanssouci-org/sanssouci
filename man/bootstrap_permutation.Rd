@@ -2,43 +2,53 @@
 % Please edit documentation in R/bootstrapCalibration.R
 \name{bootstrap_permutation}
 \alias{bootstrap_permutation}
-\title{Permuted p-values using bootstrap for linear model}
+\title{Mass-univariate bootstrap-based inference for contrasts in a linear model}
 \usage{
 bootstrap_permutation(Y, X, C, B = 1000, replace = TRUE)
 }
 \arguments{
-\item{Y}{Expression matrix of size $n$ observations (in row) and $D$
-dimensions/mesures in columns}
+\item{Y}{A data matrix of size $n$ observations (in row) and $D$ features in
+columns}
 
-\item{X}{Design matrix of size $n$ observations (in row) and $p$ variables
+\item{X}{A design matrix of size $n$ observations (in row) and $p$ variables
 (in columns)}
 
-\item{C}{Contrast matrix of size $L$ tested contrast (in row) and $p$ columns
-corresponding to te tested parameters}
+\item{C}{A contrast matrix of size $L$ tested contrasts (in row) and $p$
+columns corresponding to the parameters to be tested}
 
-\item{B}{scalar, number of bootstrap}
+\item{B}{An integer value, the number of bootstraps}
 
-\item{replace}{Bool. If TRUE (default) then the residuals are sampled with
-replacement (i.e. a bootstrap), if FALSE then they are sampled without
-replacement resulting in a permutation of the data}
+\item{replace}{A Boolean value. If TRUE (default) then the residuals are
+sampled with replacement (i.e. a bootstrap), if FALSE then they are sampled
+without replacement resulting in a permutation of the data}
 }
 \value{
-matrix of permuted $p$-values. It is an array of dimensions
-\eqn{D \times L \times B}.
+An array of permuted p-values of dimensions \eqn{D \times L \times B}
 }
 \description{
-Permuted p-values using bootstrap for linear model
+Compute the marginal null t-statistics for a set of contrasts and their
+(two-sided) p-value by bootstrapping the residuals
+}
+\details{
+Performs \code{lm_test} for each permutation. Based on a python
+implementation available in the \code{pyperm} package:
+\url{https://github.com/sjdavenport/pyperm/}
 }
 \examples{
-N = 100
-p = 2
-D = 2
-X <- matrix(0,nrow = N, ncol = p)
-X[,1] <- 1
-X[,-1] <- runif(N*(p-1), min = 0, max = 3)
+N <- 100
+p <- 2
+D <- 2
+X <- matrix(0, nrow = N, ncol = p)
+X[, 1] <- 1
+X[, -1] <- runif(N*(p-1), min = 0, max = 3)
 beta <- matrix(0, nrow = p, ncol = D)
-epsilons <- matrix(rnorm(N*D), nrow = N, ncol = D)
+epsilons <- matrix(rnorm(N * D), nrow = N, ncol = D)
 Y <- X \%*\% beta + epsilons
 C <- diag(p)
 resLM <- bootstrap_permutation(Y = Y, X = X, C = C, B = 10)
+}
+\references{
+Davenport, S., Thirion, B., & Neuvial, P. (2025). FDP control in
+mass-univariate linear models using the residual bootstrap. Electronic
+Journal of Statistics, 19(1), 1313-1336.
 }
