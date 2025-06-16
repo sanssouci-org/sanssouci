@@ -4,7 +4,14 @@
 \alias{bootstrap_permutation}
 \title{Mass-univariate bootstrap-based inference for contrasts in a linear model}
 \usage{
-bootstrap_permutation(Y, X, C, B = 1000, replace = TRUE)
+bootstrap_permutation(
+  Y,
+  X,
+  C,
+  alternative = c("two.sided", "less", "greater"),
+  B = 1000,
+  replace = TRUE
+)
 }
 \arguments{
 \item{Y}{A data matrix of size $n$ observations (in row) and $D$ features in
@@ -15,6 +22,9 @@ columns}
 
 \item{C}{A contrast matrix of size $L$ tested contrasts (in row) and $p$
 columns corresponding to the parameters to be tested}
+
+\item{alternative}{A character string specifying the alternative hypothesis.
+Must be one of "two.sided" (default), "greater" or "less".}
 
 \item{B}{An integer value, the number of bootstraps}
 

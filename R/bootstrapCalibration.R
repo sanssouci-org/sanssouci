@@ -9,12 +9,14 @@
 #'   (in columns)
 #' @param C A contrast matrix of size $L$ tested contrasts (in row) and $p$
 #'   columns corresponding to the parameters to be tested
+#' @param alternative A character string specifying the alternative hypothesis.
+#'   Must be one of "two.sided" (default), "greater" or "less".
 #'
 #' @return A list with elements:
 #' \describe{
 #'   \item{epsilon_est}{A \eqn{n \times D} matrix of residuals}
 #'   \item{stat_test}{A \eqn{L \times D} matrix of test statistics}
-#'   \item{pvalues}{A \eqn{L \times D} matrix of p-values}
+#'   \item{p.value}{A \eqn{L \times D} matrix of p-values}
 #'   \item{beta_est}{A \eqn{n \times D} matrix of parameter estimates}
 #' }
 #' @details Based on a python implementation available in the \code{pyperm}
@@ -38,36 +40,41 @@
 #' Y <- X %*% beta + epsilons
 #' C <- diag(p)
 #' resLM <- lm_test(Y = Y, X = X, C = C)
-lm_test <- function(Y, X, C) {
+lm_test <- function(Y, X, C, alternative = c("two.sided", "less", "greater")) {
+  alternative <- match.arg(alternative)
   .check_lm_test(Y, X, C)
-
+  
   df <- nrow(Y) - qr(X)$rank
-
+  
   ## estimation of model parameters
   XtX <- crossprod(X) # t(X) %*% X
   XtY <- crossprod(X, Y) # t(X) %*% Y
   XtX_inv <- solve(XtX)
   beta_est <- crossprod(XtX_inv, XtY)
-
+  
   ## residuals
   epsilon_est <- Y - X %*% beta_est
-
+  
   ## estimation of residual standard deviation
   sigma_est <- sqrt(colSums(epsilon_est^2) / df)
-
+  
   ## test statistic
   CXtX_invCt <- C %*% XtX_inv %*% t(C)      # matrix L x L
   CXtX_diag <- sqrt(diag(CXtX_invCt))       # vector L
   denom <- outer(CXtX_diag, sigma_est, "*") # matrix L x D
   stat_test <- C %*% beta_est / denom       # matrix (L x D)
-
+  
   ## p-values
-  pvaleurs <- 2 * pt(-abs(stat_test), df = df)
-
+  pval <- switch(alternative,
+                 "two.sided" = 2 * (1 - pt(abs(stat_test), df = df)),
+                 "greater" = 1 - pt(stat_test, df = df),
+                 "less" = pt(stat_test, df = df)
+  )
+  
   return(list(
     epsilon_est = epsilon_est,
     stat_test = stat_test,
-    pvalues = pvaleurs,
+    p.value = pval,
     beta_est = beta_est
   ))
 }
@@ -106,22 +113,26 @@ lm_test <- function(Y, X, C) {
 #' Y <- X %*% beta + epsilons
 #' C <- diag(p)
 #' resLM <- bootstrap_permutation(Y = Y, X = X, C = C, B = 10)
-bootstrap_permutation <- function(Y, X, C, B = 1000, replace = TRUE) {
+bootstrap_permutation <- function(Y, X, C, 
+                                  alternative = c("two.sided", "less",
+                                                  "greater"), B = 1000, 
+                                  replace = TRUE) {
   .check_lm_test(Y, X, C)
   if (!is.numeric(B) || B < 0) {
     stop("B must be a positive numeric value",
-      call. = FALSE
+         call. = FALSE
     )
   }
-
+  alternative <- match.arg(alternative)
+  
   n <- nrow(Y)
   D <- ncol(Y)
   L <- nrow(C)
-
+  
   ## perform LM test to obtain esiduals
   resLM <- lm_test(Y = Y, X = X, C = C)
   epsilon_hat <- resLM$epsilon_est
-
+  
   ## Bootstrapping of residuals
   epsilon_perm <- array(NA, dim = c(dim(epsilon_hat), B))
   for (b in 1:B) {
@@ -129,20 +140,20 @@ bootstrap_permutation <- function(Y, X, C, B = 1000, replace = TRUE) {
     epsilon_perm[, , b] <- epsilon_hat[shuffle_idx, ]
   }
   # Xhatbeta <- X %*% resLM$beta_est
-
+  
   ## computation of permuted expression Y_n^{(b)}
   Y_perm <- epsilon_perm
   # Y_perm <- sweep(epsilon_perm, 1:2, Xhatbeta, "+")
-
+  
   ## Test contrasts for each permuted expression matrix
   pval_perm <- array(NA, dim = c(D, L, B))
   for (b in 1:B) {
     pval_perm[, , b] <- lm_test(
       Y = as.matrix(Y_perm[, , b]),
       X = X, C = C
-    )$pvalues
+    )$p.value
   }
-
+  
   return(pval_perm)
 }
 
@@ -198,29 +209,32 @@ bootstrap_permutation <- function(Y, X, C, B = 1000, replace = TRUE) {
 #' Y <- X %*% beta + epsilons
 #' C <- diag(p)
 #' resLM <- calibration_bootstap(Y = Y, X = X, C = C, B = 10)
-calibration_bootstap <- function(Y, X, C, B = 1000, alpha = 0.05, 
+calibration_bootstap <- function(Y, X, C, 
+                                 alternative = c("two.sided", "less", "greater"), 
+                                 B = 1000, alpha = 0.05, 
                                  family = c("Simes", "Linear", "Beta", "Oracle")) {
   .check_lm_test(Y, X, C)
   if (!is.numeric(B) || B < 0) {
     stop("B must be a positive numeric value",
-      call. = FALSE
+         call. = FALSE
     )
   }
   family <- match.arg(family)
-
+  alternative <- match.arg(alternative)
+  
   D <- dim(Y)[2]
   L <- dim(C)[1]
-
+  
   ## perform permuted pvalues
   pval_perm <- bootstrap_permutation(Y = Y, X = X, C = C, B = B, replace = TRUE)
-
+  
   ## transform 3 dimensional problem (D, L, B) into a matrix (D*L, B)
   pval_perm_martix <- matrix(pval_perm, nrow = D * L, ncol = B)
-
+  
   ## The next steps of the calibration are already implemented in sanssouci
   return(calibrate0(pval_perm_martix,
-    m = D * L, alpha = alpha,
-    family = family
+                    m = D * L, alpha = alpha,
+                    family = family
   ))
 }
 
@@ -232,17 +246,17 @@ calibration_bootstap <- function(Y, X, C, B = 1000, alpha = 0.05,
       stop(sprintf("'%s' must be a matrix", names[i]), call. = FALSE)
     }
   }
-
+  
   if (nrow(Y) != nrow(X)) {
     stop("nrow(Y) must be equal to nrow(X). This is
                               corresponding to $n$ the number of observations",
-      call. = FALSE
+         call. = FALSE
     )
   }
   if (ncol(X) != ncol(C)) {
     stop("ncol(X) must be equal to ncol(C). This is
                               corresponding to $p$ the number of variables",
-      call. = FALSE
+         call. = FALSE
     )
   }
   invisible(TRUE)

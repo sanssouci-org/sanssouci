@@ -4,7 +4,7 @@
 \alias{lm_test}
 \title{Mass-univariate inference for contrasts in a linear model}
 \usage{
-lm_test(Y, X, C)
+lm_test(Y, X, C, alternative = c("two.sided", "less", "greater"))
 }
 \arguments{
 \item{Y}{A data matrix of size $n$ observations (in row) and $D$ features in
@@ -15,13 +15,16 @@ columns}
 
 \item{C}{A contrast matrix of size $L$ tested contrasts (in row) and $p$
 columns corresponding to the parameters to be tested}
+
+\item{alternative}{A character string specifying the alternative hypothesis.
+Must be one of "two.sided" (default), "greater" or "less".}
 }
 \value{
 A list with elements:
 \describe{
 \item{epsilon_est}{A \eqn{n \times D} matrix of residuals}
 \item{stat_test}{A \eqn{L \times D} matrix of test statistics}
-\item{pvalues}{A \eqn{L \times D} matrix of p-values}
+\item{p.value}{A \eqn{L \times D} matrix of p-values}
 \item{beta_est}{A \eqn{n \times D} matrix of parameter estimates}
 }
 }

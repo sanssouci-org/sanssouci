@@ -101,7 +101,8 @@ test_that('R/python consistency of `bootstrap_permutation`', {
                                     contrast_matrix = C,
                                     n_bootstraps = B, store_boots = TRUE)
     pval_perm <- bootstrap_permutation(Y = Y, X = X, C = C, B, 
-                                       replace = TRUE )
+                                       replace = TRUE, 
+                                       alternative = "two.sided" )
     pval_perm_R <- matrix(pval_perm, nrow = D*nrow(C), ncol = B)
     
     pval_perm_py <- t(res_py[[4]])
@@ -138,7 +139,8 @@ test_that('R/python consistency of `bootstrap_permutation`', {
   res_py <- pyperm$boot_contrasts(lat_data = Y, design = X, contrast_matrix = C,
                                   n_bootstraps = B, store_boots = TRUE)
   pval_perm <- bootstrap_permutation(Y = t(Y), X = X, C = C, B, 
-                                     replace = TRUE )
+                                     replace = TRUE, 
+                                     alternative = "two.sided" )
   pval_perm_R <- matrix(pval_perm, nrow = nrow(Y)*nrow(C), ncol = B)
   
   pval_perm_py <- t(res_py[[4]])

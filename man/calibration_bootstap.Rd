@@ -8,6 +8,7 @@ calibration_bootstap(
   Y,
   X,
   C,
+  alternative = c("two.sided", "less", "greater"),
   B = 1000,
   alpha = 0.05,
   family = c("Simes", "Linear", "Beta", "Oracle")
@@ -22,6 +23,9 @@ columns}
 
 \item{C}{A contrast matrix of size $L$ tested contrasts (in row) and $p$
 columns corresponding to the parameters to be tested}
+
+\item{alternative}{A character string specifying the alternative hypothesis.
+Must be one of "two.sided" (default), "greater" or "less".}
 
 \item{B}{An integer value, the number of bootstraps}
 
