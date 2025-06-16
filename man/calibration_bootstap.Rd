@@ -4,7 +4,14 @@
 \alias{calibration_bootstap}
 \title{Calibration of post hoc bound using bootstrap permutations}
 \usage{
-calibration_bootstap(Y, X, C, B = 1000)
+calibration_bootstap(
+  Y,
+  X,
+  C,
+  B = 1000,
+  alpha = 0.05,
+  family = c("Simes", "Linear", "Beta", "Oracle")
+)
 }
 \arguments{
 \item{Y}{A data matrix of size $n$ observations (in row) and $D$ features in
@@ -17,6 +24,22 @@ columns}
 columns corresponding to the parameters to be tested}
 
 \item{B}{An integer value, the number of bootstraps}
+
+\item{alpha}{A numeric value in \verb{[0,1]}, the target (JER) risk}
+
+\item{family}{A character value, the name of a threshold family. Should be
+one of "Linear", "Beta" and "Simes", or "Oracle". "Linear" and "Simes"
+families are identical.
+\itemize{
+\item Simes/Linear: The classical family of thresholds introduced by Simes (1986).
+This family yields JER control if the test statistics are positively
+dependent (PRDS) under H0.
+\item Beta: A family of thresholds that achieves marginal kFWER control under
+independence
+\item Oracle A family such that the associated bounds correspond to the true
+numbers/proportions of true/false positives. "truth" must be available in
+object$input$truth.
+}}
 }
 \value{
 A list with elements:

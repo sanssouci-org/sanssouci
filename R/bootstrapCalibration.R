@@ -107,7 +107,6 @@ lm_test <- function(Y, X, C) {
 #' C <- diag(p)
 #' resLM <- bootstrap_permutation(Y = Y, X = X, C = C, B = 10)
 bootstrap_permutation <- function(Y, X, C, B = 1000, replace = TRUE) {
-  set.seed(13012024)
   .check_lm_test(Y, X, C)
   if (!is.numeric(B) || B < 0) {
     stop("B must be a positive numeric value",
@@ -153,6 +152,22 @@ bootstrap_permutation <- function(Y, X, C, B = 1000, replace = TRUE) {
 #' associated to a set of contrast in a linear model.
 #'
 #' @inheritParams bootstrap_permutation
+#' @param alpha A numeric value in `[0,1]`, the target (JER) risk
+#' @param family A character value, the name of a threshold family. Should be
+#'   one of "Linear", "Beta" and "Simes", or "Oracle". "Linear" and "Simes"
+#'   families are identical.
+#'
+#'   - Simes/Linear: The classical family of thresholds introduced by Simes (1986).
+#'   This family yields JER control if the test statistics are positively
+#'   dependent (PRDS) under H0.
+#'
+#'   - Beta: A family of thresholds that achieves marginal kFWER control under
+#'   independence
+#'
+#'   - Oracle A family such that the associated bounds correspond to the true
+#'   numbers/proportions of true/false positives. "truth" must be available in
+#'   object$input$truth.
+#'
 #' @return A list with elements:
 #' \describe{
 #'   \item{thr}{A numeric vector of length K, such that the estimated probability that
@@ -183,13 +198,15 @@ bootstrap_permutation <- function(Y, X, C, B = 1000, replace = TRUE) {
 #' Y <- X %*% beta + epsilons
 #' C <- diag(p)
 #' resLM <- calibration_bootstap(Y = Y, X = X, C = C, B = 10)
-calibration_bootstap <- function(Y, X, C, B = 1000) {
+calibration_bootstap <- function(Y, X, C, B = 1000, alpha = 0.05, 
+                                 family = c("Simes", "Linear", "Beta", "Oracle")) {
   .check_lm_test(Y, X, C)
   if (!is.numeric(B) || B < 0) {
     stop("B must be a positive numeric value",
       call. = FALSE
     )
   }
+  family <- match.arg(family)
 
   D <- dim(Y)[2]
   L <- dim(C)[1]
@@ -201,9 +218,9 @@ calibration_bootstap <- function(Y, X, C, B = 1000) {
   pval_perm_martix <- matrix(pval_perm, nrow = D * L, ncol = B)
 
   ## The next steps of the calibration are already implemented in sanssouci
-  return(sanssouci::calibrate0(pval_perm_martix,
-    m = D * L, alpha = 0.05,
-    family = "Linear"
+  return(calibrate0(pval_perm_martix,
+    m = D * L, alpha = alpha,
+    family = family
   ))
 }
 
