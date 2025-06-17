@@ -130,7 +130,7 @@ bootstrap_permutation <- function(Y, X, C,
   L <- nrow(C)
   
   ## perform LM test to obtain esiduals
-  resLM <- lm_test(Y = Y, X = X, C = C)
+  resLM <- lm_test(Y = Y, X = X, C = C, alternative = alternative)
   epsilon_hat <- resLM$epsilon_est
   
   ## Bootstrapping of residuals
@@ -150,7 +150,8 @@ bootstrap_permutation <- function(Y, X, C,
   for (b in 1:B) {
     pval_perm[, , b] <- lm_test(
       Y = as.matrix(Y_perm[, , b]),
-      X = X, C = C
+      X = X, C = C, 
+      alternative = alternative
     )$p.value
   }
   

@@ -13,8 +13,8 @@ test_that('Consistency between `sanssouci::lm_test` and stat::lm', {
       epsilons <- matrix(rnorm(N*D), nrow = N, ncol = D)
       Y <- X %*% beta + epsilons
       C <- diag(p)
-      
-      resLM <- lm_test(Y = Y, X = X, C = C)
+      alternative <- sample(c("two.sided", "less", "greater"), size= 1)
+      resLM <- lm_test(Y = Y, X = X, C = C, alternative = alternative)
       
       expect_type(resLM, "list")
       expect_true("epsilon_est" %in% names(resLM))
@@ -27,12 +27,19 @@ test_that('Consistency between `sanssouci::lm_test` and stat::lm', {
       expect_equal(dim(resLM$beta_est), c(ncol(X), ncol(Y)))
       
       for (j in 1:ncol(Y)) {
-        fit <- lm(Y[, j] ~ X[, -1])  
+        fit <- lm(Y[, j] ~ X[, -1], )  
         s <- summary(fit)
-        p_lm <- unname(coef(s)[, 4])  # p-value
-        expect_equal(resLM$p.value[, j], p_lm, tolerance = 1e-6)
         stat_lm <- unname(coef(s)[, 3])  # stat
         expect_equal(resLM$stat_test[, j], stat_lm, tolerance = 1e-6)
+        p_lm <- unname(coef(s)[, 4])  # p-value
+        p_lm <- switch(alternative,
+                       "two.sided" = p_lm,
+                       "greater" = 1 - pt(stat_lm, 
+                                          df = nrow(Y) - qr(X)$rank),
+                       "less" = pt(stat_lm, 
+                                   df = nrow(Y) - qr(X)$rank)
+        )
+        expect_equal(resLM$p.value[, j], p_lm, tolerance = 1e-6)
         beta_lm <- unname(coef(s)[, "Estimate"]) # estimated beta
         expect_equal(resLM$beta_est[, j], beta_lm, tolerance = 1e-6)
       }
@@ -106,6 +113,12 @@ test_that('Consistency between `sanssouci::lm_test` and stat::lm', {
   Y <- matrix(1, nrow = N, ncol = D)
   C <- matrix(1, nrow = L, ncol = D+1)
   expect_error(lm_test(Y = Y, X = X, C = C))
+  
+  # test mismatch in alternative
+  X <- matrix(0,nrow = N, ncol = p)
+  Y <- matrix(1, nrow = N, ncol = D)
+  C <- matrix(1, nrow = L, ncol = D)
+  expect_error(lm_test(Y = Y, X = X, C = C, alternative = "testerror"))
 })
 
 
@@ -125,15 +138,21 @@ test_that("`bootstrap_permutation`", {
         epsilons <- matrix(rnorm(N*D), nrow = N, ncol = D)
         Y <- X %*% beta + epsilons
         C <- diag(p)
-        
+        alternative <- sample(c("two.sided", "less", "greater"), size = 1)
         pval_perm <- bootstrap_permutation(Y = Y, X = X, C = C, B, 
                                            replace = TRUE, 
-                                           alternative = "two.sided")
+                                           alternative = alternative)
         
         expect_equal(class(pval_perm), "array")
         expect_equal(dim(pval_perm), c(ncol(Y), nrow(C), B ))
         expect_true(all(pval_perm <= 1))
         expect_true(all(pval_perm >= 0))
+        pval_perm_R <- matrix(pval_perm, nrow = ncol(Y)*nrow(C), ncol = B)
+        m <- nrow(pval_perm_R)
+        sample_m <- sample(1:m, min(m, 20), replace = FALSE)
+        for (mm in sample_m) {
+          expect_true(ks.test(pval_perm_R[mm,], "punif")$p.value > 1e-4)
+        }
       }
     }
   }
@@ -177,6 +196,20 @@ test_that("`bootstrap_permutation`", {
   Y <- matrix(1, nrow = N, ncol = D)
   C <- matrix(1, nrow = L, ncol = D + 1)
   expect_error(bootstrap_permutation(Y = Y, X = X, C = C, B = B, 
+                                     alternative = "two.sided"))
+  
+  # test values of B
+  X <- matrix(0,nrow = N, ncol = p)
+  Y <- matrix(1, nrow = N, ncol = D)
+  C <- matrix(1, nrow = L, ncol = D)
+  expect_error(bootstrap_permutation(Y = Y, X = X, C = C, B = "a", 
+                                     alternative = "two.sided"))
+  expect_error(bootstrap_permutation(Y = Y, X = X, C = C, 
+                                     B = matrix(1, nrow = 2, ncol = 3), 
+                                     alternative = "two.sided"))
+  expect_error(bootstrap_permutation(Y = Y, X = X, C = C, B = list("a"), 
+                                     alternative = "two.sided"))
+  expect_error(bootstrap_permutation(Y = Y, X = X, C = C, B = -5, 
                                      alternative = "two.sided"))
   
   # test values of B
