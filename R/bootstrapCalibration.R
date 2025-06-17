@@ -226,7 +226,8 @@ calibration_bootstap <- function(Y, X, C,
   L <- dim(C)[1]
   
   ## perform permuted pvalues
-  pval_perm <- bootstrap_permutation(Y = Y, X = X, C = C, B = B, replace = TRUE)
+  pval_perm <- bootstrap_permutation(Y = Y, X = X, C = C, B = B, replace = TRUE, 
+                                     alternative = alternative) 
   
   ## transform 3 dimensional problem (D, L, B) into a matrix (D*L, B)
   pval_perm_martix <- matrix(pval_perm, nrow = D * L, ncol = B)
