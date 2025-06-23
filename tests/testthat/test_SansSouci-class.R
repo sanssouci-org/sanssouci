@@ -15,19 +15,25 @@ test_that("Correctness of the constructor of SansSouci", {
   obj1 <- SansSouci(Y = sim$X, groups = sim$categ, truth = sim$H)
   expect_s3_class(obj1, "SansSouci")
   expect_identical(obj1, obj)
-
+  
   expect_equal(names(obj), c("input", "parameters", "output"))
   expect_null(obj$parameters)
   expect_null(obj$output)
-
+  
   Y <- obj$input$Y
   expect_equal(nHyp(obj), m)
   expect_equal(obj$input$m, m)
   expect_equal(nrow(Y), m)
-
+  
   expect_equal(nObs(obj), n)
   expect_equal(ncol(Y), n)
-
+  expect_equal(obj$input$n_obs, n)
+  
+  expect_equal(obj$input$n_contrasts, 1)
+  expect_equal(obj$input$n_dimensions, m)
+  expect_equal(obj$input$n_variables, 1)
+  expect_equal(obj$input$type, "2 samples")
+  
   expect_error(
     SansSouci(Y = sim$X, groups = sim$categ + 1),
     "'groups' should consist only of '0' and '1' or distinct continuous values."
@@ -36,6 +42,63 @@ test_that("Correctness of the constructor of SansSouci", {
     SansSouci(Y = sim$X, groups = sim$categ, truth = sim$H + 1),
     "'truth' should consist only of '0' and '1' or distinct continuous values."
   )
+  
+  obj <- SansSouci(Y = Y) 
+  expect_equal(names(obj), c("input", "parameters", "output"))
+  expect_null(obj$parameters)
+  expect_null(obj$output)
+  
+  Y <- obj$input$Y
+  expect_equal(nHyp(obj), m)
+  expect_equal(obj$input$m, m)
+  expect_equal(nrow(Y), m)
+  
+  expect_equal(nObs(obj), n)
+  expect_equal(ncol(Y), n)
+  expect_equal(obj$input$n_obs, n)
+  
+  expect_equal(obj$input$n_contrasts, 1)
+  expect_equal(obj$input$n_dimensions, m)
+  expect_equal(obj$input$n_variables, 1)
+  expect_equal(obj$input$type, "1 sample")
+  
+  p <- L <- 2
+  D <- m/L
+  X <- matrix(0,nrow = p, ncol = n)
+  X[1,] <- 1
+  X[-1,] <- runif(n*(p-1), min = 0, max = 3)
+  beta <- matrix(0, nrow = D, ncol = p)
+  epsilons <- matrix(rnorm(n*D), nrow = D, ncol = n)
+  Y <- beta %*% X  + epsilons
+  C <- diag(p)
+  obj <- SansSouci(Y = Y, X = t(X), Contrast = C) 
+  expect_equal(names(obj), c("input", "parameters", "output"))
+  expect_null(obj$parameters)
+  expect_null(obj$output)
+  
+  Y <- obj$input$Y
+  expect_equal(nHyp(obj), m)
+  expect_equal(obj$input$m, m)
+  expect_equal(nrow(Y), D)
+  
+  expect_equal(nObs(obj), n)
+  expect_equal(ncol(Y), n)
+  expect_equal(obj$input$n_obs, n)
+  
+  expect_equal(obj$input$n_contrasts, L)
+  expect_equal(obj$input$n_dimensions, D)
+  expect_equal(obj$input$n_variables, p)
+  expect_equal(obj$input$type, "linear model")
+  
+  expect_error(SansSouci(Y = Y, X = X), "Please give a contrast matrix in `Contrast`")
+  expect_error(SansSouci(Y = Y, Contrast = C), "Please give a design matrix in `X`")
+  expect_error(SansSouci(Y = Y, X = X, groups = sim$categ),"Please provide either an `X` design matrix and a `Contrast`  matrix,
+         or only a `groups` design vector.")
+  expect_error(SansSouci(Y = Y, Contrast = C, groups = sim$categ), "Please provide either an `X` design matrix and a `Contrast`  matrix,
+         or only a `groups` design vector.")
+  expect_error(SansSouci(Y = Y, X = t(X), Contrast = C, groups = sim$categ), "Please provide either an `X` design matrix and a `Contrast`  matrix,
+         or only a `groups` design vector.")
+  
 })
 
 
@@ -86,7 +149,7 @@ test_that("Correctness of elements of fitted  'SansSouci' object", {
   expect_gte(output$steps_down, 0)
 
   expect_error(fit(obj, alpha = "alpha"))
-  expect_error(fit(obj, alpha = "alpha"))
+  expect_error(fit(obj, alpha = 10))
   expect_error(fit(obj))
 })
 
@@ -251,7 +314,7 @@ test_that("Continuous covariate", {
   groups <- rnorm(n)
 
   alpha <- 0.05
-  obj <- SansSouci(Y, groups)
+  obj <- SansSouci(Y, groups = groups)
   res_oracle <- fit(obj, alpha = alpha)
   FP <- predict(res_oracle, what = "FP", all = TRUE)$bound
   expect_equal(FP, 1:m)
@@ -279,4 +342,111 @@ test_that("Continuous covariate", {
 
   FP <- predict(res_oracle, S = integer(0L), what = "FP")
   expect_equal(FP, 0)
+})
+
+test_that("Correctness of elements of fitted  'SansSouci' object in linear model", {
+  D <- 54
+  n <- 132
+  p <- 2
+  L <- 2
+  m <- D*L
+  X <- matrix(0,nrow = n, ncol = p)
+  X[,1] <- 1
+  X[,-1] <- rbinom(n*(p-1),size = 1, prob = 0.5)
+  beta <- matrix(sample(c(0), size = p * D, replace = TRUE), 
+                 nrow = p, ncol = D)
+  epsilons <- matrix(rnorm(n*D), nrow = n, ncol = D)
+  Y <- X %*% beta + epsilons
+  C <- diag(p)
+  obj <- SansSouci(Y = t(Y), X = X, Contrast = C) 
+  
+  alpha <- 0.1
+  B <- 25
+  K <- m / 2
+  
+  alt <- "greater"
+  fam <- "Beta"
+  res <- fit(obj, alpha = alpha, B = B, K = K, alternative = alt, family = fam)
+  expect_s3_class(res, "SansSouci")
+  expect_identical(names(res), names(obj))
+  
+  params <- res$parameters
+  names(params)
+  expect_equal(params$alpha, alpha)
+  expect_equal(params$B, B)
+  expect_equal(params$alternative, alt)
+  expect_equal(params$family, fam)
+  expect_equal(params$K, K)
+  
+  output <- res$output
+  nms <- c(
+    "p.value", "statistic", "p0", "thr",
+    "piv_stat", "lambda", "steps_down"
+  )
+  expect_identical(names(output), nms)
+  expect_length(output$statistic, m)
+  # expect_length(output$parameter, m)
+  expect_length(output$p.value, m)
+  # expect_length(output$estimate, m)
+  p0 <- output$p0
+  expect_equal(nrow(p0), m)
+  expect_equal(ncol(p0), B)
+  expect_lte(max(p0), 1)
+  expect_gte(min(p0), 0)
+  expect_length(output$thr, K)
+  expect_length(output$piv_stat, B)
+  expect_gte(output$lambda, 0)
+  expect_lte(output$lambda, 1)
+  expect_gte(output$steps_down, 0)
+  
+  expect_error(fit(obj, alpha = "alpha"))
+  expect_error(fit(obj, alpha = 10))
+  expect_error(fit(obj))
+})
+
+
+test_that("'fit.SansSouci' reproduces the results of 'calibrate' for linear model", {
+  D <- 54
+  n <- 132
+  p <- 2
+  L <- 2
+  m <- D*L
+  X <- matrix(0,nrow = n, ncol = p)
+  X[,1] <- 1
+  X[,-1] <- rbinom(n*(p-1),size = 1, prob = 0.5)
+  beta <- matrix(sample(c(0), size = p * D, replace = TRUE), 
+                 nrow = p, ncol = D)
+  epsilons <- matrix(rnorm(n*D), nrow = n, ncol = D)
+  Y <- X %*% beta + epsilons
+  C <- diag(p)
+  obj <- SansSouci(Y = t(Y), X = X, Contrast = C) 
+  
+  alpha <- 0.07
+  B <- 123
+  K <- m / 2
+  
+  configs <- expand.grid(
+    alternative = c(
+      "two.sided", "less",
+      "greater"
+    ),
+    family = c("Simes", "Beta"),
+    stringsAsFactors = FALSE
+  )
+  cc <- sample(nrow(configs), 1) ## perform just one at random at each execution
+  alt <- configs[cc, "alternative"]
+  fam <- configs[cc, "family"]
+  set.seed(20250623)
+  res <- fit(obj,
+             alpha = alpha, B = B, K = K,
+             alternative = alt, family = fam, max_steps_down = 0
+  )
+  set.seed(20250623)
+  p0 <- bootstrap_permutation(Y, X, C, alternative = alt, B = B)
+  p0 <- matrix(p0, nrow = D * L, ncol = B)
+  expect_equal(p0, res$output$p0)
+  t_inv <- ifelse(fam == "Simes", t_inv_linear, t_inv_beta)
+  t_ <- ifelse(fam == "Simes", t_linear, t_beta)
+  pivStat <- get_pivotal_stat(p0, m, t_inv, K = K)
+  expect_equal(pivStat, res$output$piv_stat)
 })

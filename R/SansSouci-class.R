@@ -1,6 +1,9 @@
 #' Create an object of class 'SansSouci'
 #'
 #' @param Y A matrix of \eqn{m} variables (hypotheses) by \eqn{n} observations
+#' @param X A design matrix of \eqn{n} observations by \eqn{p} explenable variables in linear model
+#' @param Contrast A contrast matrix of size \eqn{L} tested contrasts (in row) and \eqn{p}
+#'   columns corresponding to the parameters to be tested
 #' @param groups A numeric vector of \eqn{n} values in \eqn{0, 1}, the groups of
 #'   observations on which to perform two-sample tests
 #' @param truth An optional numeric vector of $m$ values in $\{0,1\}$, the status
@@ -19,16 +22,65 @@
 #' res_beta <- fit(res, B = 100, alpha = 0.1, family = "Beta", K = 10)
 #' plot(res_beta, xmax = 500)
 #'
-SansSouci <- function(Y, groups, truth = NULL) {
-  if (missing(groups)) { # one-sample tests
+SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
+         truth = NULL) {
+  
+  # Are the arguments present?
+  signature <- c(!is.null(X), !is.null(Contrast), !is.null(groups))
+  
+  
+  n = ncol(Y)
+  D <- nrow(Y)
+  
+  #None arguments: one sample case
+  if (identical(signature, c(FALSE, FALSE, FALSE))){
     groups <- rep(1, ncol(Y))
+    type = "1 sample"
+    L = 1
+    P = 1
+    ## Only groups is given: detection of one, two samples or continuous
+  } else if (identical(signature, c(FALSE, FALSE, TRUE))){
+    ugroups <- unique(groups)
+    n_groups <- length(ugroups)
+    
+    if (n_groups > 1) {
+      categCheck(groups, ncol(Y))
+    }
+    if (n_groups == 1) {
+      type = "1 sample"
+    } else if (n_groups == 2) {
+      type = "2 samples"
+    # } else if (n_groups == n) {
+    } else { #by default consider a continuous 
+      type = "Continuous case, correlation test"
+      if(n_groups != n){
+      message("Ties were detected in the grouping variable, but a continuous vector was provided for groups, and a correlation test is being performed. If you intend to test associations across more than two groups, please provide a full design matrix using the X argument instead.")
+    }
+    } 
+    
+    L = 1
+    P = 1
+    
+    ## X and contrast are given: linear model case
+  } else if (identical(signature, c(TRUE, TRUE, FALSE))) {
+    .check_lm_test(t(Y), X, Contrast)
+    type = "linear model"
+    L = nrow(Contrast)
+    P = ncol(X)
+    ## The contrast matrix is not provided
+  } else if (identical(signature, c(TRUE, FALSE, FALSE))) {
+    stop("Please give a contrast matrix in `Contrast`")
+    ## The design matrix is not provided
+  } else if (identical(signature, c(FALSE, TRUE, FALSE))) {
+    stop("Please give a design matrix in `X`")
+    ## The vector groups is provided with the contrast or the design matrix
+  } else if (identical(signature, c(TRUE, FALSE, TRUE)) | 
+             identical(signature, c(FALSE, TRUE, TRUE)) |
+             identical(signature, c(TRUE, TRUE, TRUE))){
+    stop("Please provide either an `X` design matrix and a `Contrast`  matrix,
+         or only a `groups` design vector.")
   }
-  ugroups <- unique(groups)
-  n_groups <- length(ugroups)
-
-  if (n_groups > 1) {
-    categCheck(groups, ncol(Y))
-  }
+  
   if (!is.null(truth)) {
     all_0 <- identical(truth, rep(0, nrow(Y)))
     all_1 <- identical(truth, rep(1, nrow(Y)))
@@ -38,9 +90,15 @@ SansSouci <- function(Y, groups, truth = NULL) {
   }
   input <- list(
     Y = Y,
-    groups = groups,
-    n_groups = n_groups,
-    m = nrow(Y)
+    X = X,
+    C = Contrast,
+    groups = groups, 
+    n_obs = n, 
+    n_contrasts = L, 
+    n_dimensions = D, 
+    n_variables = P,
+    m = D * L, 
+    type= type
   )
   input$truth <- truth
   obj <- structure(list(
@@ -339,27 +397,35 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
     }
   }
   Y <- object$input$Y
+  X <- object$input$X
+  C <- object$input$C
   groups <- object$input$groups
   n_groups <- object$input$n_groups
-  m <- nHyp(object)
-  n <- nObs(object)
+  m <- sanssouci::nHyp(object)
+  n <- sanssouci::nObs(object)
   funName <- NA_character_
-
+  type <- object$input$type
+  
   if (is.null(rowTestFUN)) {
-    if (n_groups == 1) {
+    if (type == "1 sample") {
       rowTestFUN <- rowZTests
       funName <- "rowZTests"
-    } else if (n_groups == 2) {
+    } else if (type == "2 samples") {
       rowTestFUN <- rowWelchTests
       funName <- "rowWelchTests"
-    } else if (n_groups == n) {
+    } else if (type == "Continuous case, correlation test") {
       rowTestFUN <- rowPearsonCorrelationTests
       funName <- "rowPearsonCorrelationTests"
+    } else if(type == "linear model"){
+      row_lm_test_XC <- function(...) {row_lm_test(..., X = X, C = C)}
+      rowTestFUN <- row_lm_test_XC
+      funName <- "row_lm_test"
+      groups <- matrix(1:n, ncol=1)
     }
   } else {
     funName <- as.character(substitute(rowTestFUN))
   }
-
+  
   ## should we re-calculate p0?
   params <- object$parameters
   p0 <- object$output$p0
@@ -372,7 +438,7 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
       do_p0 <- (!cond_B) || (!cond_F) || (!cond_A)
     }
   }
-
+  
   ## should we re-calculate the (first) pivotal statistic ?
   params <- object$parameters
   pivStat0 <- NULL
@@ -384,23 +450,22 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
       pivStat0 <- object$output$piv_stat
     }
   }
-  ttype <- sprintf("%s-sample", n_groups)
   object$parameters <- list(
     alpha = alpha,
     B = B,
     alternative = alternative,
     rowTestFUN = rowTestFUN,
     funName = funName,
-    type = ttype,
+    type = type,
     family = family,
     max_steps_down = max_steps_down,
     K = K
   )
-
+  
   if (family == "Beta" && K == m) {
     warning("For the 'Beta' family we recommend choosing K < m")
   }
-
+  
   cal <- rowTestFUN(Y, groups, alternative = alternative)
   p.values <- cal$p.value
   if (B > 0 && family != "Oracle") {
@@ -410,17 +475,20 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
     }
     if (do_p0) {
       null_groups <- NULL
-      if (n_groups == 1) { # sign-flipping
+      if (type == "1 sample") { # sign-flipping
         null_groups <- replicate(B, rbinom(n, 1, 0.5) * 2 - 1)
-      } else if (n_groups == 2) { # permutation
+      } else if (type == "2 samples") { # permutation
         null_groups <- replicate(B, sample(groups))
-      } else if (n_groups > 2) { # continuous covariate
+      } else if (type == "Continuous case, correlation test") { # continuous covariate
         null_groups <- replicate(B, sample(groups))
+      } else if (type == "linear model") {
+        null_groups <- replicate(B, sample(1:n, n, replace = TRUE))
       }
       p0 <- mini_batch_rowTestFUN(rowTestFUN = rowTestFUN, Y = Y, 
                                   categ = null_groups, 
                                   alternative = alternative, 
-                                  max_batch_size = 1e6)
+                                  max_batch_size = 1e6, m = m)
+      
       if (verbose) {
         dt <- Sys.time() - t0
         cat("done (", format(dt), ")\n", sep = "")
@@ -432,7 +500,7 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
     if (verbose) {
       cat("Calibration...")
     }
-    calib <- calibrate(
+    calib <- sanssouci::calibrate(
       p0 = p0, m = m, alpha = alpha,
       family = family, K = K,
       p = p.values,
@@ -443,16 +511,16 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
       dt <- Sys.time() - t0
       cat("done (", format(dt), ")\n", sep = "")
     }
-
+    
     cal$p0 <- p0
     cal <- c(cal, calib)
   } else { # no calibration!
     cal$lambda <- alpha
     thr <- switch(family,
-      "Linear" = t_linear(alpha, seq_len(m), m),
-      "Simes" = t_linear(alpha, seq_len(m), m),
-      "Beta" = t_beta(alpha, seq_len(m), m),
-      "Oracle" = object$input$truth
+                  "Linear" = t_linear(alpha, seq_len(m), m),
+                  "Simes" = t_linear(alpha, seq_len(m), m),
+                  "Beta" = t_beta(alpha, seq_len(m), m),
+                  "Oracle" = object$input$truth
     )
     cal$thr <- thr
   }

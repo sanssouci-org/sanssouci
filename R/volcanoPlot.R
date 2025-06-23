@@ -38,7 +38,7 @@ volcanoPlot.SansSouci <- function(x,
     y <- force(p_values)
     x <- force(fold_changes)
 
-    if (object$input$n_group == 1) {
+    if (object$input$type == "1 sample") {
         stop("Can't do a volcano plot for one-sample tests!")
     }
     
