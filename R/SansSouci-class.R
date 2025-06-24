@@ -224,7 +224,7 @@ nObs <- function(object) UseMethod("nObs")
 #' @param object An object of class `SansSouci`
 #' @export
 nObs.SansSouci <- function(object) {
-  ncol(object$input$Y)
+  object$input$n_obs
 }
 
 #' @describeIn all-generics Get the label of hypotheses tested
@@ -267,7 +267,7 @@ print.SansSouci <- function(x, ..., verbose = FALSE) {
     if (!is.null(nObs(object))) {
       cat("\tNumber of observations:\t", nObs(object), "\n")
     }
-    cat("\t", input$n_group, "-sample data", "\n", sep = "")
+    cat("\t", input$type, "\n", sep = "")
     cat("\n")
     if (verbose) {
       cat("Data:")

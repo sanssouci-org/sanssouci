@@ -380,14 +380,14 @@ test_that("Correctness of elements of fitted  'SansSouci' object in linear model
   
   output <- res$output
   nms <- c(
-    "p.value", "statistic", "p0", "thr",
+    "p.value", "statistic", "estimate", "p0", "thr",
     "piv_stat", "lambda", "steps_down"
   )
   expect_identical(names(output), nms)
   expect_length(output$statistic, m)
   # expect_length(output$parameter, m)
   expect_length(output$p.value, m)
-  # expect_length(output$estimate, m)
+  expect_length(output$estimate, m)
   p0 <- output$p0
   expect_equal(nrow(p0), m)
   expect_equal(ncol(p0), B)

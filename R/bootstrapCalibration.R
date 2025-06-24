@@ -199,7 +199,9 @@ row_lm_test <- function(Y, X, C,
   epsilon_hat <- resLM$epsilon_est
   
   if(all(groups == 1:n) & ncol(matrix(groups)) == 1){
-    return(list(p.value = resLM$p.value, statistic = resLM$stat_test))
+    estimate <- C %*% resLM$beta_est
+    return(list(p.value = resLM$p.value, statistic = resLM$stat_test, 
+                estimate = estimate))
   }
   
   ## Bootstrapping of residuals
@@ -213,12 +215,15 @@ row_lm_test <- function(Y, X, C,
                         alternative = alternative)
     pval_perm[, , b] <- res_perm$p.value
     stat_perm[, , b] <- res_perm$stat_test
+    estimate_perm[, , b] <- C %*% res_perm$beta_est
   }
   ## transform 3 dimensional problem (D, L, B) into a matrix (D*L, B)
   pval_perm_martix <- matrix(pval_perm, nrow = D * L, ncol = B)
   stat_perm_martix <- matrix(stat_perm, nrow = D * L, ncol = B)
+  estimate_perm_martix <- matrix(estimate_perm, nrow = D * L, ncol = B)
   
-  return(list(p.value = pval_perm_martix, statistic = stat_perm_martix))
+  return(list(p.value = pval_perm_martix, statistic = stat_perm_martix, 
+              estimate = estimate_perm_martix))
   
 }
 
