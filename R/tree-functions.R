@@ -282,7 +282,7 @@ nb.elements <- function(C) {
 #' method <- zeta.trivial
 #' ZL <- zetas.tree(C, leaf_list, method, pvalues, alpha = 0.05)
 #' ZL
-zetas.tree <- function(C, leaf_list, method, pvalues, alpha, refine=FALSE, verbose=FALSE, ...) {
+zetas.tree <- function(C, leaf_list, method, pvalues, alpha, refine = FALSE, verbose = FALSE, ...) {
   H <- length(C)
   K <- nb.elements(C)
   ZL <- list()
