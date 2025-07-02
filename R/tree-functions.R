@@ -831,9 +831,11 @@ forest.completion <- function(C, ZL, leaf_list) {
       l <- l + 1
     }
     
-    leaves.to.place <- leaves.to.place[-to.delete]
-    len.to.place <- length(leaves.to.place)
-    to.delete <- numeric(0)
+    if (length(to.delete) > 0){
+      leaves.to.place <- leaves.to.place[-to.delete]
+      len.to.place <- length(leaves.to.place)
+      to.delete <- numeric(0)
+    }
     
   }
   
