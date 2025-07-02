@@ -501,7 +501,7 @@ pruning <- function(C, ZL, leaf_list, prune.leafs = FALSE, delete.gaps = FALSE) 
 #' Delete the gaps induced by pruning
 #' 
 #' @description
-#' A small optimization that can be done after pruning
+#' A small optimization that can be done after pruning and
 #' that can speed up computations (it removes the gaps introduced by the pruning)
 #' 
 #' @details
