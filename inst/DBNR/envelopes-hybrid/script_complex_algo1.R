@@ -5,7 +5,6 @@ library(r2r)
 
 set.seed(12)
 
-
 pow <- 10
 alpha <- 0.05
 
@@ -35,8 +34,8 @@ for (i in 1:length(vec_factor)){
   print(paste0("N = ", length(leaf_list)))
 
   print("Comparing execution times:")
-  mbench <- microbenchmark(tree = V.star2(1:m, C, ZL, leaf_list),
-                           part = V.star2(1:m, C2, ZL2, leaf_list),
+  mbench <- microbenchmark(tree = V.star(1:m, C, ZL, leaf_list),
+                           part = V.star(1:m, C2, ZL2, leaf_list),
                            times = n_repl, check="equal")
   print(mbench, unit="milliseconds")
   record_time_tree[i] <- summary(mbench, unit="milliseconds")$median[1]
@@ -82,9 +81,9 @@ for (i in 1:length(vec_factor)){
   print(paste0("N = ", length(leaf_list)))
   
   print("Comparing execution times:")
-  mbench <- microbenchmark(#tree = V.star2(1:m, C, ZL, leaf_list),
-                           part = V.star2(1:m, C2, ZL2, leaf_list),
-                           part_stacked = V.star2(1:m, stackC, stackZL, leaf_list),
+  mbench <- microbenchmark(#tree = V.star(1:m, C, ZL, leaf_list),
+                           part = V.star(1:m, C2, ZL2, leaf_list),
+                           part_stacked = V.star(1:m, stackC, stackZL, leaf_list),
                            times = n_repl, check="equal")
   print(mbench, unit="milliseconds")
   record_time_part[i] <- summary(mbench, unit="milliseconds")$median[1]
@@ -117,9 +116,9 @@ for (i in 1:length(vec_factor)){
   print(paste0("N = ", length(leaf_list)))
   
   print("Comparing execution times:")
-  mbench <- microbenchmark(#tree = V.star2(1:m, C, ZL, leaf_list),
-    part = V.star2(1:m, C2, ZL2, leaf_list),
-    part_stacked = V.star2(1:m, stackC, stackZL, leaf_list),
+  mbench <- microbenchmark(#tree = V.star(1:m, C, ZL, leaf_list),
+    part = V.star(1:m, C2, ZL2, leaf_list),
+    part_stacked = V.star(1:m, stackC, stackZL, leaf_list),
     times = n_repl, check="equal")
   print(mbench, unit="milliseconds")
   record_time_part_half[i] <- summary(mbench, unit="milliseconds")$median[1]
@@ -148,7 +147,7 @@ points((2 ^ pow) * vec_factor, record_time_part_stacked_half, col="green")
 # 
 # print("Comparing execution times:")
 # mbench <- microbenchmark(V.star = V.star(S, C, ZL, leaf_list),
-#                          V.star2 = V.star2(S, C, ZL, leaf_list),
+#                          V.star = V.star(S, C, ZL, leaf_list),
 #                          times = n_repl, check="equal")
 # print(mbench)
 
