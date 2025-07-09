@@ -122,6 +122,7 @@ conf_bounds <- lapply(resList, predict, all = TRUE)
 cols <- c("black", "darkgray")
 p <- plotConfCurve(conf_bounds, xmax = 5000, cols = cols) + 
   geom_line(size = 1.5)
+p
 # ggsave(p, file = "conf-curve.pdf", width = 6, height = 4)
 ```
 
@@ -155,6 +156,7 @@ p <- plotConfCurve(FDP, xmax = 2.5*n_DEG, col = cols) +
   geom_hline(yintercept = q, linetype = "dashed", size = size) +
   geom_vline(xintercept = n_DEG, linetype = "dotted", col = cols, size = size) + 
   geom_line(size = size)
+p
 # ggsave(p, file = "conf-curve_DEG.pdf", width = 6, height = 4)
 ```
 
@@ -214,7 +216,7 @@ TT <- topTable(res_eb, sort.by = "none", number = Inf)
 The next plot suggests that the $p$-values obtained from limma-voom and from Wilcoxon tests are consistent.
 
 ```{r compare-p-values}
-df <- data.frame(wilcox = -log10(pValues(res)), limma = -log10(TT$P.Value))
+df <- data.frame(wilcox = -log10(as.vector(pValues(res))), limma = -log10(TT$P.Value))
 ggplot(df, aes(x = limma, y = wilcox)) + 
   geom_point(color = "#10101010") + 
   ggtitle("p-values (log-scale)")

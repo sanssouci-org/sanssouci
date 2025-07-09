@@ -38,6 +38,7 @@ SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
     type = "1 sample"
     L = 1
     P = 1
+    name_contrast <- "one sample test"
     ## Only groups is given: detection of one, two samples or continuous
   } else if (identical(signature, c(FALSE, FALSE, TRUE))){
     ugroups <- unique(groups)
@@ -48,11 +49,14 @@ SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
     }
     if (n_groups == 1) {
       type = "1 sample"
+      name_contrast <- "One sample test"
     } else if (n_groups == 2) {
       type = "2 samples"
+      name_contrast <- "Group 1 vs group 0"
     # } else if (n_groups == n) {
     } else { #by default consider a continuous 
       type = "Continuous case, correlation test"
+      name_contrast <- "Correlation test"
       if(n_groups != n){
       message("Ties were detected in the grouping variable, but a continuous vector was provided for groups, and a correlation test is being performed. If you intend to test associations across more than two groups, please provide a full design matrix using the X argument instead.")
     }
@@ -67,6 +71,11 @@ SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
     type = "linear model"
     L = nrow(Contrast)
     P = ncol(X)
+    if (is.null(rownames(Contrast))) {
+      name_contrast <- paste("Contrast", seq_len(L))
+    } else {
+      name_contrast <- rownames(Contrast)
+    }
     ## The contrast matrix is not provided
   } else if (identical(signature, c(TRUE, FALSE, FALSE))) {
     stop("Please give a contrast matrix in `Contrast`")
@@ -97,6 +106,7 @@ SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
     n_contrasts = L, 
     n_dimensions = D, 
     n_variables = P,
+    name_contrast = name_contrast,
     m = D * L, 
     type= type
   )
@@ -401,8 +411,9 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
   C <- object$input$C
   groups <- object$input$groups
   n_groups <- object$input$n_groups
-  m <- sanssouci::nHyp(object)
-  n <- sanssouci::nObs(object)
+  m <- nHyp(object)
+  n <- nObs(object)
+  L <- object$input$n_contrasts
   funName <- NA_character_
   type <- object$input$type
   
@@ -467,6 +478,14 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
   }
   
   cal <- rowTestFUN(Y, groups, alternative = alternative)
+  if(!is.matrix(cal$p.value)){
+    cal$p.value <- matrix(cal$p.value, nrow = L)
+    rownames(cal$p.value) <- object$input$name_contrast
+  }
+  if(!is.null(cal$estimate) & !is.matrix(cal$estimate)){
+    cal$estimate <- matrix(cal$estimate, nrow = L)
+    rownames(cal$estimate) <- object$input$name_contrast
+  }
   p.values <- cal$p.value
   if (B > 0 && family != "Oracle") {
     t0 <- Sys.time()

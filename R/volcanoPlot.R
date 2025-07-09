@@ -9,6 +9,7 @@ volcanoPlot <- function(x, ...) UseMethod("volcanoPlot")
 #' @param x An object of class `SansSouci`
 #' @param fold_changes An optional vector of fold changes, of the same length as `nHyp(object)`, use for volcanoPlot x-axis. If not specified, 
 #' @param p_values A vector of p-values, of the same length as `nHyp(object)`, use for volcanoPlot x-axis
+#' @param contrast A charactor value, the tested contrast print in the volcano plot
 #' @param p A numeric value, the p-value threshold under which genes are selected
 #' @param q A numeric value, the q-value (or FDR-adjusted p-value) threshold under which genes are selected
 #' @param r A numeric value, the absolute fold change above which genes are selected
@@ -28,24 +29,33 @@ volcanoPlot <- function(x, ...) UseMethod("volcanoPlot")
 #' res <- fit(a, B = 100, alpha = 0.1)
 #' volcanoPlot(res, q = 0.2, r = 0.2, ylim = c(0, 4))
 volcanoPlot.SansSouci <- function(x, 
-                                  fold_changes = foldChanges(x), 
-                                  p_values = pValues(x), 
+                                  fold_changes = foldChanges(x)[contrast,], 
+                                  p_values = pValues(x)[contrast,], 
                                   p = 1, q = 1, r = 0,
+                                  contrast = x$input$name_contrast[1],
                                   cex = c(0.2, 0.6), 
                                   col = c("#33333333", "#FF0000", "#FF666633"),
                                   pch = 19, ylim = NULL, ...) {
     object <- x;
+    if(!(contrast %in% rownames(pValues(object)))) {
+        stop(paste("Choose a contrast in", 
+                   paste(rownames(pValues(object)), 
+                         collapse = ", "))
+        )
+    }
     y <- force(p_values)
     x <- force(fold_changes)
-
+    
+    
+    
     if (object$input$type == "1 sample") {
         stop("Can't do a volcano plot for one-sample tests!")
     }
-    
-    stopifnot(nHyp(object) == length(x))
-    stopifnot(nHyp(object) == length(y))
-    pval <- pValues(object)
-    thr <- thresholds(object)
+    m <- object$input$n_dimensions
+    stopifnot(m == length(x))
+    stopifnot(m == length(y))
+    pval <- pValues(object)[contrast, ]
+    thr <- thresholds(object)[1:m]
     
     volcanoPlot(x = x, y = y, pval = pval, thr = thr, 
                 p = p, q = q, r = r,
@@ -83,10 +93,10 @@ volcanoPlot.SansSouci <- function(x,
 #' @importFrom stats p.adjust
 #' @seealso Volcano plot shiny app at \url{ https://shiny-iidea-sanssouci.apps.math.cnrs.fr/}
 volcanoPlot.numeric <- function(x, y, pval, thr,
-                        p = 1, q = 1, r = 0,
-                        cex = c(0.2, 0.6), 
-                        col = c("#33333333", "#FF0000", "#FF666633"),
-                        pch = 19, ylim = NULL, bounds = TRUE, ...) {
+                                p = 1, q = 1, r = 0,
+                                cex = c(0.2, 0.6), 
+                                col = c("#33333333", "#FF0000", "#FF666633"),
+                                pch = 19, ylim = NULL, bounds = TRUE, ...) {
     # pval <- x; rm(x);
     if (p < 1 && q < 1) {
         warning("Filtering both on p-values and BH-adjusted p-values")
@@ -134,7 +144,7 @@ volcanoPlot.numeric <- function(x, y, pval, thr,
     
     cexs <- rep(cex[1], m)
     cexs[sel12] <- cex[2]
-
+    
     xlab <- "Fold change (log scale)"
     ylab <- bquote("p-value (-" ~ log[10] ~ "scale)")
     infty <- 100
@@ -152,7 +162,7 @@ volcanoPlot.numeric <- function(x, y, pval, thr,
          col = col[3], border = NA, lwd = 2)
     abline(h = y_thr, col = "gray")
     abline(v = c(-1, 1)*r, col = "gray")
-
+    
     if (bounds) {
         bq <- bquote(atop(.(n1) ~ "genes", 
                           "TP"  >= .(TP1) ~ ";  FDP" <= .(FDP1)))

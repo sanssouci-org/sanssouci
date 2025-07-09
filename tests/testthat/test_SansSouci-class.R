@@ -33,6 +33,7 @@ test_that("Correctness of the constructor of SansSouci", {
   expect_equal(obj$input$n_dimensions, m)
   expect_equal(obj$input$n_variables, 1)
   expect_equal(obj$input$type, "2 samples")
+  expect_equal(obj$input$name_contrast, "Group 1 vs group 0")
   
   expect_error(
     SansSouci(Y = sim$X, groups = sim$categ + 1),
@@ -89,6 +90,7 @@ test_that("Correctness of the constructor of SansSouci", {
   expect_equal(obj$input$n_dimensions, D)
   expect_equal(obj$input$n_variables, p)
   expect_equal(obj$input$type, "linear model")
+  expect_equal(obj$input$name_contrast, c("Contrast 1", "Contrast 2"))
   
   expect_error(SansSouci(Y = Y, X = X), "Please give a contrast matrix in `Contrast`")
   expect_error(SansSouci(Y = Y, Contrast = C), "Please give a design matrix in `X`")
