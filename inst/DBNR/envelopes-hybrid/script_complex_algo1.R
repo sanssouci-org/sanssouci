@@ -5,40 +5,6 @@ library(r2r)
 
 set.seed(12)
 
-V.star2 <- function(S, C, ZL, leaf_list) {
-  H <- length(C)
-  nb_leaves <- length(leaf_list)
-  Vec <- numeric(nb_leaves) 
-  # the initialization term for each atom P_i
-  # is equivalent to completing the family if it isn't,
-  # assuming that leaf_list does indeed contain all leaves
-  # and some were just eventually missing in C and ZL
-  # this initialization also takes care of the minima
-  # between \zeta_k and card(S inter R_k)
-  for (i in 1:nb_leaves) {
-    Vec[i] <- sum(leaf_list[[i]][length(leaf_list[[i]])] >= S)
-  }
-  Vec <- Vec - c(0, Vec[1:(nb_leaves-1)])
-  # this way of initializing is much faster than the following naive approach,
-  # the downside is that it heavily uses that the elements of leaf_list are sorted
-  # naive approach:
-  # for (i in 1:nb_leaves) {
-  #   Vec[i] <- sum(S %in% leaf_list[[i]])
-  # }
-  for (h in H:1) {
-    nb_regions <- length(C[[h]])
-    if (nb_regions > 0) {
-      for (k in 1:nb_regions) {
-        Rk <- C[[h]][[k]]
-        sum_succ <- sum(Vec[Rk[1]:Rk[2]])
-        res <- min(ZL[[h]][k], sum_succ)
-        Vec[Rk[1]:Rk[2]] <- 0
-        Vec[Rk[1]] <- res
-      }
-    }
-  }
-  return(sum(Vec))
-}
 
 pow <- 10
 alpha <- 0.05
