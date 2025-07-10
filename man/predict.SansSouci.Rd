@@ -6,9 +6,10 @@
 \usage{
 \method{predict}{SansSouci}(
   object,
-  S = seq_len(nHyp(object)),
+  S = missing_arg(),
   what = c("TP", "FDP"),
   all = FALSE,
+  contrast = NULL,
   ...
 )
 }
@@ -29,6 +30,8 @@ computed, among:
 Defaults to \code{c("TP", "FDP")}}
 
 \item{all}{A logical value: should the bounds for all ordered subsets of \code{S} be returned? If \code{FALSE} (the default), only the bound for \code{S} is returned}
+
+\item{contrast}{A character value, the studied contrast print in the plot. Value available in x$input$name_contrast.}
 
 \item{...}{Not used}
 }

@@ -9,7 +9,7 @@ volcanoPlot <- function(x, ...) UseMethod("volcanoPlot")
 #' @param x An object of class `SansSouci`
 #' @param fold_changes An optional vector of fold changes, of the same length as `nHyp(object)`, use for volcanoPlot x-axis. If not specified, 
 #' @param p_values A vector of p-values, of the same length as `nHyp(object)`, use for volcanoPlot x-axis
-#' @param contrast A charactor value, the tested contrast print in the volcano plot
+#' @param contrast A character value, the tested contrast print in the volcano plot. Value available in x$input$name_contrast.
 #' @param p A numeric value, the p-value threshold under which genes are selected
 #' @param q A numeric value, the q-value (or FDR-adjusted p-value) threshold under which genes are selected
 #' @param r A numeric value, the absolute fold change above which genes are selected

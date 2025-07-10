@@ -107,7 +107,7 @@ test_that("Correctness of the constructor of SansSouci", {
 test_that("Correctness of elements of fitted  'SansSouci' object", {
   m <- 54
   n <- 132
-
+  
   alpha <- 0.1
   B <- 25
   K <- m / 2
@@ -120,7 +120,7 @@ test_that("Correctness of elements of fitted  'SansSouci' object", {
   res <- fit(obj, alpha = alpha, B = B, K = K, alternative = alt, family = fam)
   expect_s3_class(res, "SansSouci")
   expect_identical(names(res), names(obj))
-
+  
   params <- res$parameters
   names(params)
   expect_equal(params$alpha, alpha)
@@ -128,7 +128,7 @@ test_that("Correctness of elements of fitted  'SansSouci' object", {
   expect_equal(params$alternative, alt)
   expect_equal(params$family, fam)
   expect_equal(params$K, K)
-
+  
   output <- res$output
   nms <- c(
     "statistic", "parameter", "p.value", "estimate", "p0", "thr",
@@ -149,7 +149,7 @@ test_that("Correctness of elements of fitted  'SansSouci' object", {
   expect_gte(output$lambda, 0)
   expect_lte(output$lambda, 1)
   expect_gte(output$steps_down, 0)
-
+  
   expect_error(fit(obj, alpha = "alpha"))
   expect_error(fit(obj, alpha = 10))
   expect_error(fit(obj))
@@ -183,8 +183,8 @@ test_that("'fit.SansSouci' reproduces the results of 'calibrate'", {
   fam <- configs[cc, "family"]
   set.seed(20210311)
   res <- fit(obj,
-    alpha = alpha, B = B, K = K,
-    alternative = alt, family = fam, max_steps_down = 0
+             alpha = alpha, B = B, K = K,
+             alternative = alt, family = fam, max_steps_down = 0
   )
   set.seed(20210311)
   p0 <- get_perm(obj$input$Y, obj$input$groups, B, alternative = alt)$p.value
@@ -200,7 +200,7 @@ test_that("'fit.SansSouci' reproduces the results of 'calibrate'", {
 test_that("Consistency of output of 'bound.SansSouci'", {
   m <- 54
   n <- 132
-
+  
   alpha <- 0.1
   B <- 25
   K <- m / 2
@@ -213,28 +213,28 @@ test_that("Consistency of output of 'bound.SansSouci'", {
   res <- fit(obj, alpha = alpha, B = B, K = K, alternative = alt, family = fam)
   res <- fit(obj, alpha = alpha, B = B)
   what0 <- c("FP", "TP", "FDP", "TDP")
-
+  
   # 'all=FALSE' => return a vector
   b <- predict(res, what = what0)
   expect_type(b, "double")
   expect_identical(names(b), what0)
   expect_equal(b[["FDP"]] + b[["TDP"]], 1)
   expect_equal(b[["FP"]] + b[["TP"]], m)
-
-  # 'all=FALSE' => return a data.frame
+  
+  # 'all=TRUE' => return a data.frame
   b <- predict(res, what = what0, all = TRUE)
   expect_s3_class(b, "data.frame")
   expect_equal(nrow(b), m * length(what0))
-
+  
   # strict subset
   S <- order(pValues(res))[seq_len(m - 10)]
   bb <- predict(res, S, what = what0, all = TRUE)
   expect_s3_class(bb, "data.frame")
   expect_equal(nrow(bb), length(S) * length(what0))
   names(bb)
-
+  
   expect_equivalent(subset(b, x <= length(S)), bb)
-
+  
   ww <- which(bb$x == length(S))
   w <- which(b$x == length(S))
   expect_equivalent(b[w, ], bb[ww, ])
@@ -244,7 +244,7 @@ test_that("Consistency of output of 'bound.SansSouci'", {
 test_that("'predict.SansSouci' reproduces the results of 'curveMaxFP'", {
   m <- 54
   n <- 132
-
+  
   alpha <- 0.1
   B <- 25
   K <- m / 2
@@ -256,7 +256,7 @@ test_that("'predict.SansSouci' reproduces the results of 'curveMaxFP'", {
   fam <- "Beta"
   res <- fit(obj, alpha = alpha, B = B, K = K, alternative = alt, family = fam)
   what0 <- c("FP", "TP", "FDP", "TDP")
-
+  
   pvals <- sort(pValues(res))
   FP <- sanssouci:::curveMaxFP(
     p.values = pvals,
@@ -266,13 +266,71 @@ test_that("'predict.SansSouci' reproduces the results of 'curveMaxFP'", {
   expect_identical(FPb, FP)
 })
 
+test_that("Consistency and correctness of 'predict.SansSouci' with linear model", {
+  m <- 54
+  n <- 132
+  set.seed(0xBEEF)
+  p <- L <- 2
+  D <- m/L
+  X <- matrix(0,nrow = p, ncol = n)
+  X[1,] <- 1
+  X[-1,] <- runif(n*(p-1), min = 0, max = 3)
+  beta <- matrix(0, nrow = D, ncol = p)
+  epsilons <- matrix(rnorm(n*D), nrow = D, ncol = n)
+  Y <- beta %*% X  + epsilons
+  C <- diag(p)
+  obj <- SansSouci(Y = Y, X = t(X), Contrast = C) 
+  res <- fit(obj, alpha = 0.1, B = 100)
+  what0 <- c("FP", "TP", "FDP", "TDP")
+  
+  contrast <- "Contrast 1"
+  
+  # 'all=FALSE' => return a vector
+  b <- predict(res, what = what0, contrast = contrast) 
+  expect_type(b, "double")
+  expect_identical(names(b), what0)
+  expect_equal(b[["FDP"]] + b[["TDP"]], 1)
+  expect_equal(b[["FP"]] + b[["TP"]], D)
+  
+  # 'all=TRUE' => return a data.frame
+  b <- predict(res, what = what0, all = TRUE, contrast = contrast)
+  expect_s3_class(b, "data.frame")
+  expect_equal(nrow(b), D * length(what0))
+  
+  # strict subset
+  S <- order(pValues(res)[contrast,])[seq_len(D - 10)]
+  bb <- predict(res, S, what = what0, all = TRUE, contrast = contrast)
+  expect_s3_class(bb, "data.frame")
+  expect_equal(nrow(bb), length(S) * length(what0))
+  
+  expect_equivalent(subset(b, x <= length(S)), bb)
+  
+  ww <- which(bb$x == length(S))
+  w <- which(b$x == length(S))
+  expect_equivalent(b[w, ], bb[ww, ])
+  
+  # wrong subset
+  # S <- order(pValues(res))[seq_len(D - 10)]
+  S <- sample(D:(2*D), D)
+  expect_error(predict(res, S, what = what0, all = TRUE, contrast = contrast))
+  
+  # correctnes with curMaxFP
+  pvals <- sort(pValues(res)[contrast,])
+  FP <- sanssouci:::curveMaxFP(
+    p.values = pvals,
+    thr = thresholds(res)
+  )
+  FPb <- predict(res, what = "FP", all = TRUE, contrast = contrast)$bound
+  expect_identical(FPb, FP)
+})
+
 test_that("Correctness of Oracle predictions", {
   m <- 54
   pi0 <- 0.5
   m0 <- m * pi0
   m1 <- m - m0
   n <- 132
-
+  
   alpha <- 0.05
   obj <- SansSouciSim(
     m = m, rho = 0, n = n,
@@ -281,28 +339,28 @@ test_that("Correctness of Oracle predictions", {
   res_oracle <- fit(obj, alpha = alpha, family = "Oracle")
   FP <- predict(res_oracle, what = "FP", all = TRUE)$bound
   expect_equal(FP, c(rep(0, m1), 1:m0))
-
+  
   # random selection of m/2 hypotheses should contain at least
   # one true and one false positive with overwhelming proba
   S <- sample(m, m / 2)
   FP <- predict(res_oracle, S = S, what = "FP")
   expect_lt(FP, length(S))
   expect_gt(FP, 0)
-
+  
   # selection of first 10 hyps in the order of p-values
   # should contain only signal
   p_values <- pValues(res_oracle)
   S <- head(order(p_values), 10)
   FP <- predict(res_oracle, S = S, what = "FP")
   expect_equal(FP, 0)
-
+  
   # selection of last 10 hyps in the order of p-values
   # should contain only noise
   p_values <- pValues(res_oracle)
   S <- tail(order(p_values), 10)
   FP <- predict(res_oracle, S = S, what = "FP")
   expect_equal(FP, length(S))
-
+  
   FP <- predict(res_oracle, S = integer(0L), what = "FP")
   expect_equal(FP, 0)
 })
@@ -311,37 +369,37 @@ test_that("Continuous covariate", {
   m <- 52
   n <- 25
   B <- 10
-
+  
   Y <- matrix(rnorm(m * n), nrow = m, ncol = n)
   groups <- rnorm(n)
-
+  
   alpha <- 0.05
   obj <- SansSouci(Y, groups = groups)
   res_oracle <- fit(obj, alpha = alpha)
   FP <- predict(res_oracle, what = "FP", all = TRUE)$bound
   expect_equal(FP, 1:m)
-
+  
   # random selection of m/2 hypotheses should contain at least
   # one true and one false positive with overwhelming proba
   S <- sample(m, m / 2)
   FP <- predict(res_oracle, S = S, what = "FP")
   expect_lte(FP, length(S))
   expect_gte(FP, 0)
-
+  
   # selection of first 10 hyps in the order of p-values
   # should contain only signal
   p_values <- pValues(res_oracle)
   S <- head(order(p_values), 10)
   FP <- predict(res_oracle, S = S, what = "FP")
   expect_lte(FP, 10)
-
+  
   # selection of last 10 hyps in the order of p-values
   # should contain only noise
   p_values <- pValues(res_oracle)
   S <- tail(order(p_values), 10)
   FP <- predict(res_oracle, S = S, what = "FP")
   expect_equal(FP, length(S))
-
+  
   FP <- predict(res_oracle, S = integer(0L), what = "FP")
   expect_equal(FP, 0)
 })

@@ -37,7 +37,7 @@ volcanoPlot(x, ...)
 
 \item{r}{A numeric value, the absolute fold change above which genes are selected}
 
-\item{contrast}{A charactor value, the tested contrast print in the volcano plot}
+\item{contrast}{A character value, the tested contrast print in the volcano plot. Value available in x$input$name_contrast.}
 
 \item{cex}{A numeric vector of length 2, the relative magnification factor for unselected (\code{cex[1]}) and unselected (\code{cex[2]}) genes.}
 

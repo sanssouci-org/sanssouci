@@ -73,6 +73,7 @@ SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
     P = ncol(X)
     if (is.null(rownames(Contrast))) {
       name_contrast <- paste("Contrast", seq_len(L))
+      rownames(Contrast) <- name_contrast
     } else {
       name_contrast <- rownames(Contrast)
     }
@@ -631,6 +632,7 @@ plot.SansSouci <- function(x, y, xmax = nHyp(x), ...) {
 #'
 #' Defaults to `c("TP", "FDP")`
 #' @param all A logical value: should the bounds for all ordered subsets of `S` be returned? If `FALSE` (the default), only the bound for `S` is returned
+#' @param contrast A character value, the studied contrast print in the plot. Value available in x$input$name_contrast.
 #' @param ... Not used
 #'
 #' @return If `all` is `FALSE` (the default), only the value of the bound is returned. Otherwise, a `data.frame` is return, with |S| rows and 4 columns:
@@ -640,6 +642,7 @@ plot.SansSouci <- function(x, y, xmax = nHyp(x), ...) {
 #' - stat: Type of post hoc bound, as specified by argument `bound`.
 #'
 #' @importFrom stats predict
+#' @importFrom rlang missing_arg is_missing
 #' @export
 #' @examples
 #'
@@ -657,9 +660,23 @@ plot.SansSouci <- function(x, y, xmax = nHyp(x), ...) {
 #' # post hoc bound on a subset
 #' S <- which(pValues(res) < 0.01)
 #' predict(res, S)
-predict.SansSouci <- function(object, S = seq_len(nHyp(object)),
-                              what = c("TP", "FDP"), all = FALSE, ...) {
+predict.SansSouci <- function(object, S = missing_arg(),
+                              what = c("TP", "FDP"), all = FALSE, 
+                              contrast = NULL, ...) {
+  # Explicit detection of S 
+  user_provided_S <- !missing(S)
+  
+  # If contrast is not null and S is not provided
+  if (!is.null(contrast) && !user_provided_S) {
+    S <- seq.int(object$input$n_dimensions)
+  } else if (!user_provided_S) {
+    S <- seq_len(nHyp(object))
+  }
+  
   p.values <- pValues(object)
+  if(!is.null(contrast)){
+    p.values <- p.values[contrast,]
+  }
   thr <- thresholds(object)
   lab <- label(object)
   bounds <- posthoc_bound(p.values, S = S, thr = thr, lab = lab, what = what, all = all)
