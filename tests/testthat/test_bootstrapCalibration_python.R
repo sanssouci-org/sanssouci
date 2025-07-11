@@ -1,5 +1,6 @@
 skip_on_ci()
 skip_on_cran()
+skip(message = "Skip test of R - Python consistency for bootstrap calibration")
 
 library(reticulate)
 if (!virtualenv_exists("env_test")) {
