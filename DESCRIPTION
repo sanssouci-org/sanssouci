@@ -1,5 +1,5 @@
 Package: sanssouci
-Version: 0.15.0
+Version: 0.16.0
 Date: 2025-05-29
 Title: Post Hoc Multiple Testing Inference
 Authors@R: c(person("Pierre", "Neuvial", role=c("aut", "cre"),
