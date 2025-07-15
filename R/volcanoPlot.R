@@ -9,7 +9,7 @@ volcanoPlot <- function(x, ...) UseMethod("volcanoPlot")
 #' @param x An object of class `SansSouci`
 #' @param fold_changes An optional vector of fold changes, of the same length as `nHyp(object)`, use for volcanoPlot x-axis. If not specified, 
 #' @param p_values A vector of p-values, of the same length as `nHyp(object)`, use for volcanoPlot x-axis
-#' @param contrast A character value, the tested contrast print in the volcano plot. Value available in x$input$name_contrast.
+#' @param contrast_name A character value, the selected contrast. Should be chosen in \code{x$input$contrast_name}.
 #' @param p A numeric value, the p-value threshold under which genes are selected
 #' @param q A numeric value, the q-value (or FDR-adjusted p-value) threshold under which genes are selected
 #' @param r A numeric value, the absolute fold change above which genes are selected
@@ -29,15 +29,15 @@ volcanoPlot <- function(x, ...) UseMethod("volcanoPlot")
 #' res <- fit(a, B = 100, alpha = 0.1)
 #' volcanoPlot(res, q = 0.2, r = 0.2, ylim = c(0, 4))
 volcanoPlot.SansSouci <- function(x, 
-                                  fold_changes = foldChanges(x)[contrast,], 
-                                  p_values = pValues(x)[contrast,], 
+                                  fold_changes = foldChanges(x)[contrast_name,], 
+                                  p_values = pValues(x)[contrast_name,], 
                                   p = 1, q = 1, r = 0,
-                                  contrast = x$input$name_contrast[1],
+                                  contrast_name = x$input$contrast_name[1],
                                   cex = c(0.2, 0.6), 
                                   col = c("#33333333", "#FF0000", "#FF666633"),
                                   pch = 19, ylim = NULL, ...) {
     object <- x;
-    if(!(contrast %in% rownames(pValues(object)))) {
+    if(!(contrast_name %in% rownames(pValues(object)))) {
         stop(paste("Choose a contrast in", 
                    paste(rownames(pValues(object)), 
                          collapse = ", "))
@@ -54,8 +54,8 @@ volcanoPlot.SansSouci <- function(x,
     m <- object$input$n_dimensions
     stopifnot(m == length(x))
     stopifnot(m == length(y))
-    pval <- pValues(object)[contrast, ]
-    thr <- thresholds(object)[1:m]
+    pval <- pValues(object)[contrast_name, ]
+    thr <- thresholds(object)[1:m] # we select at most m hypotheses here
     
     volcanoPlot(x = x, y = y, pval = pval, thr = thr, 
                 p = p, q = q, r = r,

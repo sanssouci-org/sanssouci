@@ -218,12 +218,12 @@ row_lm_test <- function(Y, X, C,
     estimate_perm[, , b] <- C %*% res_perm$beta_est
   }
   ## transform 3 dimensional problem (D, L, B) into a matrix (D*L, B)
-  pval_perm_martix <- matrix(pval_perm, nrow = D * L, ncol = B)
-  stat_perm_martix <- matrix(stat_perm, nrow = D * L, ncol = B)
-  estimate_perm_martix <- matrix(estimate_perm, nrow = D * L, ncol = B)
+  pval_perm_matrix <- matrix(pval_perm, nrow = D * L, ncol = B)
+  stat_perm_matrix <- matrix(stat_perm, nrow = D * L, ncol = B)
+  estimate_perm_matrix <- matrix(estimate_perm, nrow = D * L, ncol = B)
   
-  return(list(p.value = pval_perm_martix, statistic = stat_perm_martix, 
-              estimate = estimate_perm_martix))
+  return(list(p.value = pval_perm_matrix, statistic = stat_perm_matrix, 
+              estimate = estimate_perm_matrix))
   
 }
 
@@ -300,10 +300,10 @@ calibration_bootstap <- function(Y, X, C,
                                      alternative = alternative) 
   
   ## transform 3 dimensional problem (D, L, B) into a matrix (D*L, B)
-  pval_perm_martix <- matrix(pval_perm, nrow = D * L, ncol = B)
+  pval_perm_matrix <- matrix(pval_perm, nrow = D * L, ncol = B)
   
   ## The next steps of the calibration are already implemented in sanssouci
-  return(calibrate0(pval_perm_martix,
+  return(calibrate0(pval_perm_matrix,
                     m = D * L, alpha = alpha,
                     family = family
   ))

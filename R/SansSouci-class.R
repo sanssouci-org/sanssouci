@@ -1,12 +1,12 @@
 #' Create an object of class 'SansSouci'
 #'
-#' @param Y A matrix of \eqn{m} variables (hypotheses) by \eqn{n} observations
-#' @param X A design matrix of \eqn{n} observations by \eqn{p} explenable variables in linear model
+#' @param Y A matrix of \eqn{D} variables (hypotheses) by \eqn{n} observations
+#' @param X A design matrix of \eqn{n} observations by \eqn{p} explanatory variables in the linear model
 #' @param Contrast A contrast matrix of size \eqn{L} tested contrasts (in row) and \eqn{p}
 #'   columns corresponding to the parameters to be tested
 #' @param groups A numeric vector of \eqn{n} values in \eqn{0, 1}, the groups of
 #'   observations on which to perform two-sample tests
-#' @param truth An optional numeric vector of $m$ values in $\{0,1\}$, the status
+#' @param truth An optional numeric vector of \eqn{m} values in \eqn{0, 1}, the status
 #'   of each null hypothesis (0 means H0 is true, 1 means H1 is true). Typically
 #'   used in simulations.
 #' @return An object of class "SansSouci"
@@ -38,7 +38,7 @@ SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
     type = "1 sample"
     L = 1
     P = 1
-    name_contrast <- "one sample test"
+    contrast_name <- "one sample test"
     ## Only groups is given: detection of one, two samples or continuous
   } else if (identical(signature, c(FALSE, FALSE, TRUE))){
     ugroups <- unique(groups)
@@ -49,14 +49,14 @@ SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
     }
     if (n_groups == 1) {
       type = "1 sample"
-      name_contrast <- "One sample test"
+      contrast_name <- "One sample test"
     } else if (n_groups == 2) {
       type = "2 samples"
-      name_contrast <- "Group 1 vs group 0"
+      contrast_name <- "Group 1 vs group 0"
     # } else if (n_groups == n) {
     } else { #by default consider a continuous 
       type = "Continuous case, correlation test"
-      name_contrast <- "Correlation test"
+      contrast_name <- "Correlation test"
       if(n_groups != n){
       message("Ties were detected in the grouping variable, but a continuous vector was provided for groups, and a correlation test is being performed. If you intend to test associations across more than two groups, please provide a full design matrix using the X argument instead.")
     }
@@ -72,10 +72,10 @@ SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
     L = nrow(Contrast)
     P = ncol(X)
     if (is.null(rownames(Contrast))) {
-      name_contrast <- paste("Contrast", seq_len(L))
-      rownames(Contrast) <- name_contrast
+      contrast_name <- paste("Contrast", seq_len(L))
+      rownames(Contrast) <- contrast_name
     } else {
-      name_contrast <- rownames(Contrast)
+      contrast_name <- rownames(Contrast)
     }
     ## The contrast matrix is not provided
   } else if (identical(signature, c(TRUE, FALSE, FALSE))) {
@@ -107,7 +107,7 @@ SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
     n_contrasts = L, 
     n_dimensions = D, 
     n_variables = P,
-    name_contrast = name_contrast,
+    contrast_name = contrast_name,
     m = D * L, 
     type= type
   )
@@ -481,11 +481,11 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
   cal <- rowTestFUN(Y, groups, alternative = alternative)
   if(!is.matrix(cal$p.value)){
     cal$p.value <- matrix(cal$p.value, nrow = L)
-    rownames(cal$p.value) <- object$input$name_contrast
+    rownames(cal$p.value) <- object$input$contrast_name
   }
   if(!is.null(cal$estimate) & !is.matrix(cal$estimate)){
     cal$estimate <- matrix(cal$estimate, nrow = L)
-    rownames(cal$estimate) <- object$input$name_contrast
+    rownames(cal$estimate) <- object$input$contrast_name
   }
   p.values <- cal$p.value
   if (B > 0 && family != "Oracle") {
@@ -632,7 +632,7 @@ plot.SansSouci <- function(x, y, xmax = nHyp(x), ...) {
 #'
 #' Defaults to `c("TP", "FDP")`
 #' @param all A logical value: should the bounds for all ordered subsets of `S` be returned? If `FALSE` (the default), only the bound for `S` is returned
-#' @param contrast A character value, the studied contrast print in the plot. Value available in x$input$name_contrast.
+#' @param contrast_name A character value, the selected contrast. Should be chosen in \code{x$input$contrast_name}.
 #' @param ... Not used
 #'
 #' @return If `all` is `FALSE` (the default), only the value of the bound is returned. Otherwise, a `data.frame` is return, with |S| rows and 4 columns:
@@ -662,20 +662,20 @@ plot.SansSouci <- function(x, y, xmax = nHyp(x), ...) {
 #' predict(res, S)
 predict.SansSouci <- function(object, S = missing_arg(),
                               what = c("TP", "FDP"), all = FALSE, 
-                              contrast = NULL, ...) {
+                              contrast_name = NULL, ...) {
   # Explicit detection of S 
   user_provided_S <- !missing(S)
   
-  # If contrast is not null and S is not provided
-  if (!is.null(contrast) && !user_provided_S) {
+  # If contrast_name is not null and S is not provided
+  if (!is.null(contrast_name) && !user_provided_S) {
     S <- seq.int(object$input$n_dimensions)
   } else if (!user_provided_S) {
     S <- seq_len(nHyp(object))
   }
   
   p.values <- pValues(object)
-  if(!is.null(contrast)){
-    p.values <- p.values[contrast,]
+  if(!is.null(contrast_name)){
+    p.values <- p.values[contrast_name,]
   }
   thr <- thresholds(object)
   lab <- label(object)

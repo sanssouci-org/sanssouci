@@ -9,12 +9,12 @@ volcanoPlot(x, ...)
 
 \method{volcanoPlot}{SansSouci}(
   x,
-  fold_changes = foldChanges(x)[contrast, ],
-  p_values = pValues(x)[contrast, ],
+  fold_changes = foldChanges(x)[contrast_name, ],
+  p_values = pValues(x)[contrast_name, ],
   p = 1,
   q = 1,
   r = 0,
-  contrast = x$input$name_contrast[1],
+  contrast_name = x$input$contrast_name[1],
   cex = c(0.2, 0.6),
   col = c("#33333333", "#FF0000", "#FF666633"),
   pch = 19,
@@ -37,7 +37,7 @@ volcanoPlot(x, ...)
 
 \item{r}{A numeric value, the absolute fold change above which genes are selected}
 
-\item{contrast}{A character value, the tested contrast print in the volcano plot. Value available in x$input$name_contrast.}
+\item{contrast_name}{A character value, the selected contrast. Should be chosen in \code{x$input$contrast_name}.}
 
 \item{cex}{A numeric vector of length 2, the relative magnification factor for unselected (\code{cex[1]}) and unselected (\code{cex[2]}) genes.}
 
