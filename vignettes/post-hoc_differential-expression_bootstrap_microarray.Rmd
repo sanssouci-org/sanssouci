@@ -261,7 +261,7 @@ Compared to the first volcano plot, the selected genes are the same because the 
 
 
 ```{r volcano-contrast-age}
-volcanoPlot(x = res2, contrast = "age_enroll", p = 0.001, r = 0.01)
+volcanoPlot(x = res, contrast = "age_enroll", p = 0.001, r = 0.01)
 ```
 
 As noted above, the association of variable `age_enrol` with gene expression is much weaker.
