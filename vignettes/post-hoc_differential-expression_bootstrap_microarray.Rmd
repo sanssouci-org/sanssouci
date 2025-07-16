@@ -142,10 +142,20 @@ p <- plotConfCurve(conf_bounds, xmax = 5000, cols = cols) +
   geom_line(linewidth = 1.5)
 p
 ```
+```{r, echo=FALSE}
+cbound_sanssouci <- conf_bounds$SansSouci[conf_bounds$SansSouci$x == 2000, ]
+bound_sanssouci <- cbound_sanssouci$bound
+names(bound_sanssouci) <- cbound_sanssouci$stat
 
-This plot can be interpreted as follows: among the 2000 most significant genes, the number of truly differentially expressed genes is at least 1060 (right panel). Equivalently, the FDP among these 2000 genes is at most 0.47 (left panel).
+cbound_simes <- conf_bounds$`Simes (parametric)`[conf_bounds$`Simes (parametric)`$x == 2000, ]
+bound_simes <- cbound_simes$bound
+names(bound_simes) <- cbound_simes$stat
+bound_sanssouci["TP"]
+```
 
-The dashed gray curve is obtained by the parametric Simes method introduced by Goeman and Solari (2011). The comparison between the two curves illustrates the gain in power obtained by using permutation methods to adapt to the dependence between genes. In this example, the parametric Simes method gives the following guarantees: among the 2000 most significant genes, the number of truly differentially expressed genes is at least 492 (right panel). Equivalently, the FDP among these 2000 genes is at most 0.754 (left panel).
+This plot can be interpreted as follows: among the 2000 most significant genes, the number of truly differentially expressed genes is at least `r bound_sanssouci["TP"]` (right panel). Equivalently, the FDP among these 2000 genes is at most `r round(bound_sanssouci["FDP"], 2)` (left panel).
+
+The dashed gray curve is obtained by the parametric Simes method introduced by Goeman and Solari (2011). The comparison between the two curves illustrates the gain in power obtained by using permutation methods to adapt to the dependence between genes. In this example, the parametric Simes method gives the following guarantees: among the 2000 most significant genes, the number of truly differentially expressed genes is at least `r bound_simes["TP"]` (right panel). Equivalently, the FDP among these 2000 genes is at most `r round(bound_simes["FDP"], 2)` (left panel).
 
 ## Differentially expressed genes
 
