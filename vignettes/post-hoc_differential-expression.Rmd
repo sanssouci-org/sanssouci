@@ -1,5 +1,5 @@
 ---
-title: "Permutation-based post hoc inference for differential gene expression studies"
+title: "Permutation-based post hoc inference for two-group differential gene expression studies"
 author: "Gilles Blanchard, Pierre Neuvial and Etienne Roquain"
 date: "`r Sys.Date()`"
 output:
@@ -9,7 +9,7 @@ output:
   pdf_document: default
 bibliography: sanssouci.bib
 vignette: |
-  %\VignetteIndexEntry{Permutation-based post hoc inference for differential gene expression studies}
+  %\VignetteIndexEntry{Permutation-based post hoc inference for two-groupe differential gene expression studies}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteDepends{sanssouci.data}
