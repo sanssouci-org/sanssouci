@@ -23,7 +23,7 @@
 #' plot(res_beta, xmax = 500)
 #'
 SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
-         truth = NULL) {
+                      truth = NULL) {
   
   # Are the arguments present?
   signature <- c(!is.null(X), !is.null(Contrast), !is.null(groups))
@@ -53,13 +53,13 @@ SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
     } else if (n_groups == 2) {
       type = "2 samples"
       contrast_name <- "Group 1 vs group 0"
-    # } else if (n_groups == n) {
+      # } else if (n_groups == n) {
     } else { #by default consider a continuous 
       type = "Continuous case, correlation test"
       contrast_name <- "Correlation test"
       if(n_groups != n){
-      message("Ties were detected in the grouping variable, but a continuous vector was provided for groups, and a correlation test is being performed. If you intend to test associations across more than two groups, please provide a full design matrix using the X argument instead.")
-    }
+        message("Ties were detected in the grouping variable, but a continuous vector was provided for groups, and a correlation test is being performed. If you intend to test associations across more than two groups, please provide a full design matrix using the X argument instead.")
+      }
     } 
     
     L = 1
@@ -660,31 +660,48 @@ plot.SansSouci <- function(x, y, xmax = nHyp(x), ...) {
 #' # post hoc bound on a subset
 #' S <- which(pValues(res) < 0.01)
 #' predict(res, S)
-predict.SansSouci <- function(object, S = missing_arg(),
+predict.SansSouci <- function(object, 
+                              S= seq_len(min(nHyp(object), 
+                                             object$input$n_dimensions)),
                               what = c("TP", "FDP"), all = FALSE, 
-                              contrast_name = NULL, ...) {
-  # Explicit detection of S 
-  user_provided_S <- !missing(S)
-  
-  # If contrast_name is not null and S is not provided
-  if (!is.null(contrast_name) && !user_provided_S) {
-    S <- seq.int(object$input$n_dimensions)
-  } else if (!user_provided_S) {
-    S <- seq_len(nHyp(object))
+                              contrast_name = object$input$contrast_name, ...) {
+  if(!all(contrast_name %in% object$input$contrast_name)){
+    stop("contrast_name must be in object$input$contrast_name")
   }
-  
   p.values <- pValues(object)
-  if(!is.null(contrast_name)){
-    p.values <- p.values[contrast_name,]
-  }
   thr <- thresholds(object)
   lab <- label(object)
-  bounds <- posthoc_bound(p.values, S = S, thr = thr, lab = lab, what = what, all = all)
-  if (!all) {
-    bounds <- bounds[, "bound"]
-    if (length(bounds) > 1) {
-      names(bounds) <- what
+  
+  
+  if(length(object$input$contrast_name) <= 1){
+    bounds <- posthoc_bound(p.values, S = S, thr = thr, lab = lab, 
+                            what = what, all = all)
+    if (!all) {
+      bounds <- bounds[, "bound"]
+      if (length(bounds) > 1) {
+        names(bounds) <- what
+      }
     }
+    
+    return(bounds)
+  } else {
+    
+    bounds_list <- list()
+    for(contrasts in contrast_name){
+      p.values.contrast <- p.values[contrasts,]
+      bounds <- posthoc_bound(p.values.contrast, S = S, thr = thr, lab = lab, 
+                              what = what, all = all)
+      if (!all) {
+        bounds <- bounds[, "bound"]
+        if (length(bounds) > 1) {
+          names(bounds) <- what
+        }
+      }
+      bounds_list[[contrasts]] <- bounds
+    }
+    if(length(contrast_name) == 1){return(bounds_list[[1]])}
+    return(bounds_list)
   }
-  return(bounds)
+  
+  
 }

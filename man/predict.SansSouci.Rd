@@ -6,10 +6,10 @@
 \usage{
 \method{predict}{SansSouci}(
   object,
-  S = missing_arg(),
+  S = seq_len(min(nHyp(object), object$input$n_dimensions)),
   what = c("TP", "FDP"),
   all = FALSE,
-  contrast_name = NULL,
+  contrast_name = object$input$contrast_name,
   ...
 )
 }

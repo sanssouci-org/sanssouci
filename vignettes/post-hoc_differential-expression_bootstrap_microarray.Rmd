@@ -138,7 +138,7 @@ The confidence curve obtained by calibration is the solid black line in the figu
 ```{r conf-curve-1}
 conf_bounds <- lapply(resList, predict, all = TRUE)
 cols <- c("black", "darkgray")
-p <- plotConfCurve(conf_bounds, xmax = 5000, cols = cols) + 
+p <- plotConfCurve(conf_bounds, xmax = 5000, cols = cols, legend.title = "Template") + 
   geom_line(linewidth = 1.5)
 p
 ```
@@ -150,7 +150,6 @@ names(bound_sanssouci) <- cbound_sanssouci$stat
 cbound_simes <- conf_bounds$`Simes (parametric)`[conf_bounds$`Simes (parametric)`$x == 2000, ]
 bound_simes <- cbound_simes$bound
 names(bound_simes) <- cbound_simes$stat
-bound_sanssouci["TP"]
 ```
 
 This plot can be interpreted as follows: among the 2000 most significant genes, the number of truly differentially expressed genes is at least `r bound_sanssouci["TP"]` (right panel). Equivalently, the FDP among these 2000 genes is at most `r round(bound_sanssouci["FDP"], 2)` (left panel).
@@ -171,7 +170,7 @@ FDP <- lapply(resList, predict, what = "FDP", all = TRUE)
 n_DEG <- sapply(FDP, function(x) sum(x <= q))
 
 size <- 1.5
-p <- plotConfCurve(FDP, xmax = 2.5*n_DEG, col = cols) +
+p <- plotConfCurve(FDP, xmax = 2.5*n_DEG, col = cols, legend.title = "Template") +
   geom_hline(yintercept = q, linetype = "dashed", linewidth = size) +
   geom_vline(xintercept = n_DEG, linetype = "dotted", col = cols, linewidth = size) + 
   geom_line(linewidth = size)
@@ -229,11 +228,11 @@ To do so for the lung function (corresponding to the contrast `fev1_fvc_utah`), 
 
 ```{r post-hoc-FDP-control-contrast-fev}
 q <- 0.1 # FDP budget (user-defined)
-FDP <- predict(res, all = TRUE, contrast = "fev1_fvc_utah", what = "FDP")
+FDP <- predict(res, all = TRUE, contrast_name = "fev1_fvc_utah", what = "FDP")
 n_DEG <- sum(FDP$bound <= q)
 
 size <- 1.5
-p <- plot(res, xmax = 2.5*n_DEG, contrast = "fev1_fvc_utah", what = c("FDP")) +
+p <- plot(res, xmax = 2.5*n_DEG, contrast_name = "fev1_fvc_utah", what = c("FDP")) +
   geom_hline(yintercept = q, linetype = "dashed", linewidth = size) +
   geom_vline(xintercept = n_DEG, linetype = "dotted",  linewidth = size) + 
   geom_line(linewidth = size)
@@ -246,11 +245,11 @@ Using $q = `r q`$, we obtain `r `n_DEG` differentially expressed genes. Note tha
 The same analyses can be made for the contrast on `age_enroll`. 
 ```{r post-hoc-FDP-control-contrast-age}
 q <- 0.5 # FDP budget (user-defined)
-FDP <- predict(res, all = TRUE, contrast = "age_enroll", what = "FDP")
+FDP <- predict(res, all = TRUE, contrast_name = "age_enroll", what = "FDP")
 n_DEG <- sum(FDP$bound <= q)
 
 size <- 1.5
-p <- plot(res, xmax = 2.5*n_DEG, contrast = "age_enroll", what = c("FDP")) +
+p <- plot(res, xmax = 2.5*n_DEG, contrast_name = "age_enroll", what = c("FDP")) +
   geom_hline(yintercept = q, linetype = "dashed", linewidth = size) +
   geom_vline(xintercept = n_DEG, linetype = "dotted",  linewidth = size) + 
   geom_line(linewidth = size)
@@ -259,19 +258,35 @@ p
 
 In this case, we had to increase the target FDP level $q$ in order to obtain a relatively large set of genes selected: this is explained by the fact that the variable `age_enrol` is weakly associated with gene expression.
 
+These two confidence curves can be displayed on the same plot, allowing for direct comparison of the signal across multiple contrasts. In the example below, we can clearly observe that the signal associated with the `fev1_fvc_utah` variable is stronger than that of `age_enroll`.
+
+```{r}
+q <- 0.1 # FDP budget (user-defined)
+FDP <- predict(res, all = TRUE, contrast_name = c("age_enroll", "fev1_fvc_utah"), what = "FDP")
+n_DEG <- sapply(FDP, function(x) sum(x <= q))
+
+size <- 1.5
+p <- plot(res, xmax = 2.5*n_DEG, contrast_name = c("age_enroll", "fev1_fvc_utah"), what = c("FDP")) +
+  geom_hline(yintercept = q, linetype = "dashed", linewidth = size) +
+  geom_vline(xintercept = n_DEG, linetype = "dotted",  linewidth = size) +
+  geom_line(linewidth = size)
+p
+```
+
+
 ## Selection on Volcano Plot
 
 The volcano plot can be used to make selection of interest genes. We print the volcano plot for each contrast. 
 
 ```{r volcano-contrast-fev}
-volcanoPlot(x = res, contrast = "fev1_fvc_utah", p = 1e-3, r = 0.5)
+volcanoPlot(x = res, contrast_name = "fev1_fvc_utah", p = 1e-3, r = 0.5)
 ```
 Compared to the first volcano plot, the selected genes are the same because the $p$-values are identical. However, the confidence bounds are less tight. This is explained by the fact that two contrasts are tested instead of one: the total number of hypotheses tested is twice as large as previously, resulting in a more severe multiple testing correction.
 
 
 
 ```{r volcano-contrast-age}
-volcanoPlot(x = res, contrast = "age_enroll", p = 0.001, r = 0.01)
+volcanoPlot(x = res, contrast_name = "age_enroll", p = 0.001, r = 0.01)
 ```
 
 As noted above, the association of variable `age_enrol` with gene expression is much weaker.

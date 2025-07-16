@@ -286,21 +286,21 @@ test_that("Consistency and correctness of 'predict.SansSouci' with linear model"
   contrast <- "Contrast 1"
   
   # 'all=FALSE' => return a vector
-  b <- predict(res, what = what0, contrast = contrast) 
+  b <- predict(res, what = what0, contrast_name = contrast) 
   expect_type(b, "double")
   expect_identical(names(b), what0)
   expect_equal(b[["FDP"]] + b[["TDP"]], 1)
   expect_equal(b[["FP"]] + b[["TP"]], D)
   
   # 'all=TRUE' => return a data.frame
-  b <- predict(res, what = what0, all = TRUE, contrast = contrast)
+  b <- predict(res, what = what0, all = TRUE, contrast_name = contrast)
   expect_s3_class(b, "data.frame")
   expect_equal(nrow(b), D * length(what0))
   
   # strict subset
   S <- order(pValues(res)[contrast,])[seq_len(D - 10)]
-  bb <- predict(res, S, what = what0, all = TRUE, contrast = contrast)
-  expect_s3_class(bb, "data.frame")
+  bb <- predict(res, S, what = what0, all = TRUE, contrast_name = contrast)
+  expect_s3_class(b, "data.frame")
   expect_equal(nrow(bb), length(S) * length(what0))
   
   expect_equivalent(subset(b, x <= length(S)), bb)
@@ -312,7 +312,7 @@ test_that("Consistency and correctness of 'predict.SansSouci' with linear model"
   # wrong subset
   # S <- order(pValues(res))[seq_len(D - 10)]
   S <- sample(D:(2*D), D)
-  expect_error(predict(res, S, what = what0, all = TRUE, contrast = contrast))
+  expect_error(predict(res, S, what = what0, all = TRUE, contrast_name = contrast))
   
   # correctnes with curMaxFP
   pvals <- sort(pValues(res)[contrast,])
@@ -320,7 +320,7 @@ test_that("Consistency and correctness of 'predict.SansSouci' with linear model"
     p.values = pvals,
     thr = thresholds(res)
   )
-  FPb <- predict(res, what = "FP", all = TRUE, contrast = contrast)$bound
+  FPb <- predict(res, what = "FP", all = TRUE, contrast_name  = contrast)$bound
   expect_identical(FPb, FP)
 })
 

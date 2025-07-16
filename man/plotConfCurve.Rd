@@ -4,7 +4,7 @@
 \alias{plotConfCurve}
 \title{Plot confidence bound}
 \usage{
-plotConfCurve(conf_bound, xmax, cols = NULL)
+plotConfCurve(conf_bound, xmax, cols = NULL, legend.title = "Contrast")
 }
 \arguments{
 \item{conf_bound}{A data.frame or a list of data.frames as output by \link{predict}}
@@ -12,6 +12,8 @@ plotConfCurve(conf_bound, xmax, cols = NULL)
 \item{xmax}{Right limit of the plot}
 
 \item{cols}{A vector of colors of the same length as \code{conf_bound}}
+
+\item{legend.title}{a character for the title of the legend}
 }
 \description{
 Plot confidence bound
