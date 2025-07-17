@@ -158,6 +158,75 @@ bootstrap_permutation <- function(Y, X, C,
   return(pval_perm)
 }
 
+#' Mass-univariate bootstrap-based inference for contrasts in a linear model
+#'
+#' Compute the marginal null t-statistics for a set of contrasts and their
+#' (two-sided) p-value by bootstrapping the residuals
+#'
+#' @inheritParams lm_test
+#' @param alternative  A character string specifying the alternative hypothesis.
+#'   Must be one of "two.sided" (default), "greater" or "less".
+#' @param groups A numeric matrix of \eqn{n} rows and \eqn{B} columns values in 
+#' \eqn{1, ..., n},  the indicator 
+#' of the sample used in the test.
+#'
+#' @return A list containing the following components:
+#' \describe{
+#'   \item{statistic}{the value of the t-statistics}
+#'   \item{p.value}{the p-values for the tests}
+#'   Each of these elements is a matrix of size \code{m x B}, 
+#'   coerced to a vector of length \code{m} if \code{B=1}
+#' }
+#' @export
+row_lm_test <- function(Y, X, C,
+                        alternative = c("two.sided", "less", "greater"), 
+                        groups = matrix(1:ncol(Y), ncol = 1)){
+  Y <- t(Y)
+  .check_lm_test(Y, X, C)
+  if (nrow(X) != nrow(groups)) {
+    stop("groups must be a matrix with $n = nrow(X)$ rows",
+         call. = FALSE
+    )
+  }
+  alternative <- match.arg(alternative)
+  
+  n <- nrow(Y)
+  D <- ncol(Y)
+  L <- nrow(C)
+  B <- ncol(groups)
+  
+  resLM <- lm_test(Y = Y, X = X, C = C, alternative = alternative)
+  epsilon_hat <- resLM$epsilon_est
+  
+  if(all(groups == 1:n) & ncol(matrix(groups)) == 1){
+    estimate <- C %*% resLM$beta_est
+    return(list(p.value = resLM$p.value, statistic = resLM$stat_test, 
+                estimate = estimate))
+  }
+  
+  ## Bootstrapping of residuals
+  pval_perm <- array(NA, dim = c(D, L, B))
+  stat_perm <- array(NA, dim = c(D, L, B))
+  estimate_perm <- array(NA, dim = c(D, L, B))
+  for (b in 1:B) {
+    shuffle_idx <- groups[,b]
+    Y_perm <- epsilon_hat[shuffle_idx, ]
+    res_perm <- lm_test(Y = as.matrix(Y_perm), X = X, C = C, 
+                        alternative = alternative)
+    pval_perm[, , b] <- res_perm$p.value
+    stat_perm[, , b] <- res_perm$stat_test
+    estimate_perm[, , b] <- C %*% res_perm$beta_est
+  }
+  ## transform 3 dimensional problem (D, L, B) into a matrix (D*L, B)
+  pval_perm_matrix <- matrix(pval_perm, nrow = D * L, ncol = B)
+  stat_perm_matrix <- matrix(stat_perm, nrow = D * L, ncol = B)
+  estimate_perm_matrix <- matrix(estimate_perm, nrow = D * L, ncol = B)
+  
+  return(list(p.value = pval_perm_matrix, statistic = stat_perm_matrix, 
+              estimate = estimate_perm_matrix))
+  
+}
+
 #' Calibration of post hoc bound using bootstrap permutations
 #'
 #' Compute by bootstraping a Joint Error Rate controlling threshold family
@@ -231,14 +300,16 @@ calibration_bootstap <- function(Y, X, C,
                                      alternative = alternative) 
   
   ## transform 3 dimensional problem (D, L, B) into a matrix (D*L, B)
-  pval_perm_martix <- matrix(pval_perm, nrow = D * L, ncol = B)
+  pval_perm_matrix <- matrix(pval_perm, nrow = D * L, ncol = B)
   
   ## The next steps of the calibration are already implemented in sanssouci
-  return(calibrate0(pval_perm_martix,
+  return(calibrate0(pval_perm_matrix,
                     m = D * L, alpha = alpha,
                     family = family
   ))
 }
+
+
 
 .check_lm_test <- function(Y, X, C) {
   vars <- list(Y, X, C)

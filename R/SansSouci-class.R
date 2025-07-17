@@ -1,9 +1,12 @@
 #' Create an object of class 'SansSouci'
 #'
-#' @param Y A matrix of \eqn{m} variables (hypotheses) by \eqn{n} observations
+#' @param Y A matrix of \eqn{D} variables (hypotheses) by \eqn{n} observations
+#' @param X A design matrix of \eqn{n} observations by \eqn{p} explanatory variables in the linear model
+#' @param Contrast A contrast matrix of size \eqn{L} tested contrasts (in row) and \eqn{p}
+#'   columns corresponding to the parameters to be tested
 #' @param groups A numeric vector of \eqn{n} values in \eqn{0, 1}, the groups of
 #'   observations on which to perform two-sample tests
-#' @param truth An optional numeric vector of $m$ values in $\{0,1\}$, the status
+#' @param truth An optional numeric vector of \eqn{m} values in \eqn{0, 1}, the status
 #'   of each null hypothesis (0 means H0 is true, 1 means H1 is true). Typically
 #'   used in simulations.
 #' @return An object of class "SansSouci"
@@ -19,16 +22,75 @@
 #' res_beta <- fit(res, B = 100, alpha = 0.1, family = "Beta", K = 10)
 #' plot(res_beta, xmax = 500)
 #'
-SansSouci <- function(Y, groups, truth = NULL) {
-  if (missing(groups)) { # one-sample tests
+SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
+                      truth = NULL) {
+  
+  # Are the arguments present?
+  signature <- c(!is.null(X), !is.null(Contrast), !is.null(groups))
+  
+  
+  n = ncol(Y)
+  D <- nrow(Y)
+  
+  #None arguments: one sample case
+  if (identical(signature, c(FALSE, FALSE, FALSE))){
     groups <- rep(1, ncol(Y))
+    type = "1 sample"
+    L = 1
+    P = 1
+    contrast_name <- "one sample test"
+    ## Only groups is given: detection of one, two samples or continuous
+  } else if (identical(signature, c(FALSE, FALSE, TRUE))){
+    ugroups <- unique(groups)
+    n_groups <- length(ugroups)
+    
+    if (n_groups > 1) {
+      categCheck(groups, ncol(Y))
+    }
+    if (n_groups == 1) {
+      type = "1 sample"
+      contrast_name <- "One sample test"
+    } else if (n_groups == 2) {
+      type = "2 samples"
+      contrast_name <- "Group 1 vs group 0"
+      # } else if (n_groups == n) {
+    } else { #by default consider a continuous 
+      type = "Continuous case, correlation test"
+      contrast_name <- "Correlation test"
+      if(n_groups != n){
+        message("Ties were detected in the grouping variable, but a continuous vector was provided for groups, and a correlation test is being performed. If you intend to test associations across more than two groups, please provide a full design matrix using the X argument instead.")
+      }
+    } 
+    
+    L = 1
+    P = 1
+    
+    ## X and contrast are given: linear model case
+  } else if (identical(signature, c(TRUE, TRUE, FALSE))) {
+    .check_lm_test(t(Y), X, Contrast)
+    type = "linear model"
+    L = nrow(Contrast)
+    P = ncol(X)
+    if (is.null(rownames(Contrast))) {
+      contrast_name <- paste("Contrast", seq_len(L))
+      rownames(Contrast) <- contrast_name
+    } else {
+      contrast_name <- rownames(Contrast)
+    }
+    ## The contrast matrix is not provided
+  } else if (identical(signature, c(TRUE, FALSE, FALSE))) {
+    stop("Please give a contrast matrix in `Contrast`")
+    ## The design matrix is not provided
+  } else if (identical(signature, c(FALSE, TRUE, FALSE))) {
+    stop("Please give a design matrix in `X`")
+    ## The vector groups is provided with the contrast or the design matrix
+  } else if (identical(signature, c(TRUE, FALSE, TRUE)) | 
+             identical(signature, c(FALSE, TRUE, TRUE)) |
+             identical(signature, c(TRUE, TRUE, TRUE))){
+    stop("Please provide either an `X` design matrix and a `Contrast`  matrix,
+         or only a `groups` design vector.")
   }
-  ugroups <- unique(groups)
-  n_groups <- length(ugroups)
-
-  if (n_groups > 1) {
-    categCheck(groups, ncol(Y))
-  }
+  
   if (!is.null(truth)) {
     all_0 <- identical(truth, rep(0, nrow(Y)))
     all_1 <- identical(truth, rep(1, nrow(Y)))
@@ -38,9 +100,16 @@ SansSouci <- function(Y, groups, truth = NULL) {
   }
   input <- list(
     Y = Y,
-    groups = groups,
-    n_groups = n_groups,
-    m = nrow(Y)
+    X = X,
+    C = Contrast,
+    groups = groups, 
+    n_obs = n, 
+    n_contrasts = L, 
+    n_dimensions = D, 
+    n_variables = P,
+    contrast_name = contrast_name,
+    m = D * L, 
+    type= type
   )
   input$truth <- truth
   obj <- structure(list(
@@ -166,7 +235,7 @@ nObs <- function(object) UseMethod("nObs")
 #' @param object An object of class `SansSouci`
 #' @export
 nObs.SansSouci <- function(object) {
-  ncol(object$input$Y)
+  object$input$n_obs
 }
 
 #' @describeIn all-generics Get the label of hypotheses tested
@@ -209,7 +278,7 @@ print.SansSouci <- function(x, ..., verbose = FALSE) {
     if (!is.null(nObs(object))) {
       cat("\tNumber of observations:\t", nObs(object), "\n")
     }
-    cat("\t", input$n_group, "-sample data", "\n", sep = "")
+    cat("\t", input$type, "\n", sep = "")
     cat("\n")
     if (verbose) {
       cat("Data:")
@@ -339,27 +408,36 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
     }
   }
   Y <- object$input$Y
+  X <- object$input$X
+  C <- object$input$C
   groups <- object$input$groups
   n_groups <- object$input$n_groups
   m <- nHyp(object)
   n <- nObs(object)
+  L <- object$input$n_contrasts
   funName <- NA_character_
-
+  type <- object$input$type
+  
   if (is.null(rowTestFUN)) {
-    if (n_groups == 1) {
+    if (type == "1 sample") {
       rowTestFUN <- rowZTests
       funName <- "rowZTests"
-    } else if (n_groups == 2) {
+    } else if (type == "2 samples") {
       rowTestFUN <- rowWelchTests
       funName <- "rowWelchTests"
-    } else if (n_groups == n) {
+    } else if (type == "Continuous case, correlation test") {
       rowTestFUN <- rowPearsonCorrelationTests
       funName <- "rowPearsonCorrelationTests"
+    } else if(type == "linear model"){
+      row_lm_test_XC <- function(...) {row_lm_test(..., X = X, C = C)}
+      rowTestFUN <- row_lm_test_XC
+      funName <- "row_lm_test"
+      groups <- matrix(1:n, ncol=1)
     }
   } else {
     funName <- as.character(substitute(rowTestFUN))
   }
-
+  
   ## should we re-calculate p0?
   params <- object$parameters
   p0 <- object$output$p0
@@ -372,7 +450,7 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
       do_p0 <- (!cond_B) || (!cond_F) || (!cond_A)
     }
   }
-
+  
   ## should we re-calculate the (first) pivotal statistic ?
   params <- object$parameters
   pivStat0 <- NULL
@@ -384,24 +462,31 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
       pivStat0 <- object$output$piv_stat
     }
   }
-  ttype <- sprintf("%s-sample", n_groups)
   object$parameters <- list(
     alpha = alpha,
     B = B,
     alternative = alternative,
     rowTestFUN = rowTestFUN,
     funName = funName,
-    type = ttype,
+    type = type,
     family = family,
     max_steps_down = max_steps_down,
     K = K
   )
-
+  
   if (family == "Beta" && K == m) {
     warning("For the 'Beta' family we recommend choosing K < m")
   }
-
+  
   cal <- rowTestFUN(Y, groups, alternative = alternative)
+  if(!is.matrix(cal$p.value)){
+    cal$p.value <- matrix(cal$p.value, nrow = L)
+    rownames(cal$p.value) <- object$input$contrast_name
+  }
+  if(!is.null(cal$estimate) & !is.matrix(cal$estimate)){
+    cal$estimate <- matrix(cal$estimate, nrow = L)
+    rownames(cal$estimate) <- object$input$contrast_name
+  }
   p.values <- cal$p.value
   if (B > 0 && family != "Oracle") {
     t0 <- Sys.time()
@@ -410,17 +495,20 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
     }
     if (do_p0) {
       null_groups <- NULL
-      if (n_groups == 1) { # sign-flipping
+      if (type == "1 sample") { # sign-flipping
         null_groups <- replicate(B, rbinom(n, 1, 0.5) * 2 - 1)
-      } else if (n_groups == 2) { # permutation
+      } else if (type == "2 samples") { # permutation
         null_groups <- replicate(B, sample(groups))
-      } else if (n_groups > 2) { # continuous covariate
+      } else if (type == "Continuous case, correlation test") { # continuous covariate
         null_groups <- replicate(B, sample(groups))
+      } else if (type == "linear model") {
+        null_groups <- replicate(B, sample(1:n, n, replace = TRUE))
       }
       p0 <- mini_batch_rowTestFUN(rowTestFUN = rowTestFUN, Y = Y, 
                                   categ = null_groups, 
                                   alternative = alternative, 
-                                  max_batch_size = 1e6)
+                                  max_batch_size = 1e6, m = m)
+      
       if (verbose) {
         dt <- Sys.time() - t0
         cat("done (", format(dt), ")\n", sep = "")
@@ -432,7 +520,7 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
     if (verbose) {
       cat("Calibration...")
     }
-    calib <- calibrate(
+    calib <- sanssouci::calibrate(
       p0 = p0, m = m, alpha = alpha,
       family = family, K = K,
       p = p.values,
@@ -443,16 +531,16 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
       dt <- Sys.time() - t0
       cat("done (", format(dt), ")\n", sep = "")
     }
-
+    
     cal$p0 <- p0
     cal <- c(cal, calib)
   } else { # no calibration!
     cal$lambda <- alpha
     thr <- switch(family,
-      "Linear" = t_linear(alpha, seq_len(m), m),
-      "Simes" = t_linear(alpha, seq_len(m), m),
-      "Beta" = t_beta(alpha, seq_len(m), m),
-      "Oracle" = object$input$truth
+                  "Linear" = t_linear(alpha, seq_len(m), m),
+                  "Simes" = t_linear(alpha, seq_len(m), m),
+                  "Beta" = t_beta(alpha, seq_len(m), m),
+                  "Oracle" = object$input$truth
     )
     cal$thr <- thr
   }
@@ -544,6 +632,7 @@ plot.SansSouci <- function(x, y, xmax = nHyp(x), ...) {
 #'
 #' Defaults to `c("TP", "FDP")`
 #' @param all A logical value: should the bounds for all ordered subsets of `S` be returned? If `FALSE` (the default), only the bound for `S` is returned
+#' @param contrast_name A character value, the selected contrast. Should be chosen in \code{x$input$contrast_name}.
 #' @param ... Not used
 #'
 #' @return If `all` is `FALSE` (the default), only the value of the bound is returned. Otherwise, a `data.frame` is return, with |S| rows and 4 columns:
@@ -553,6 +642,7 @@ plot.SansSouci <- function(x, y, xmax = nHyp(x), ...) {
 #' - stat: Type of post hoc bound, as specified by argument `bound`.
 #'
 #' @importFrom stats predict
+#' @importFrom rlang missing_arg is_missing
 #' @export
 #' @examples
 #'
@@ -570,17 +660,51 @@ plot.SansSouci <- function(x, y, xmax = nHyp(x), ...) {
 #' # post hoc bound on a subset
 #' S <- which(pValues(res) < 0.01)
 #' predict(res, S)
-predict.SansSouci <- function(object, S = seq_len(nHyp(object)),
-                              what = c("TP", "FDP"), all = FALSE, ...) {
+predict.SansSouci <- function(object, 
+                              S= seq_len(min(nHyp(object), 
+                                             object$input$n_dimensions)),
+                              what = c("TP", "FDP"), all = FALSE, 
+                              contrast_name = object$input$contrast_name, ...) {
+  # S should be size of D 
+  if(!all(contrast_name %in% object$input$contrast_name)){
+    stop("contrast_name must be in object$input$contrast_name")
+  }
   p.values <- pValues(object)
   thr <- thresholds(object)
   lab <- label(object)
-  bounds <- posthoc_bound(p.values, S = S, thr = thr, lab = lab, what = what, all = all)
-  if (!all) {
-    bounds <- bounds[, "bound"]
-    if (length(bounds) > 1) {
-      names(bounds) <- what
+  
+  # If sansSouci object is two sample test (1 contrast) /struct (0 contrast)
+  if(length(object$input$contrast_name) <= 1){
+    bounds <- posthoc_bound(p.values, S = S, thr = thr, lab = lab, 
+                            what = what, all = all)
+    if (!all) {
+      bounds <- bounds[, "bound"]
+      if (length(bounds) > 1) {
+        names(bounds) <- what
+      }
     }
+    
+    return(bounds)
+    #If there are more than 1 tested contrast
+  } else {
+    
+    bounds_list <- list()
+    for(contrasts in contrast_name){
+      p.values.contrast <- p.values[contrasts,] #Only keep p-values of contrasts
+      bounds <- posthoc_bound(p.values.contrast, S = S, thr = thr, lab = lab, 
+                              what = what, all = all)
+      if (!all) {
+        bounds <- bounds[, "bound"]
+        if (length(bounds) > 1) {
+          names(bounds) <- what
+        }
+      }
+      bounds_list[[contrasts]] <- bounds 
+    }
+    #when only one contrast is display, a data.frame is returned
+    if(length(contrast_name) == 1){return(bounds_list[[1]])}
+    return(bounds_list)
   }
-  return(bounds)
+  
+  
 }

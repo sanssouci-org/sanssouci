@@ -9,7 +9,8 @@ mini_batch_rowTestFUN(
   Y,
   categ,
   alternative = c("two.sided", "less", "greater"),
-  max_batch_size = 1e+06
+  max_batch_size = 1e+06,
+  m = nrow(Y)
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ Must be one of "two.sided" (default), "greater" or "less". As in
 
 \item{max_batch_size}{A number specifying the maximum size of information in
 each batch}
+
+\item{m}{the number of hypotheses}
 }
 \value{
 the p-values for the test

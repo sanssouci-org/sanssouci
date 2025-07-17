@@ -4,15 +4,20 @@
 \alias{SansSouci}
 \title{Create an object of class 'SansSouci'}
 \usage{
-SansSouci(Y, groups, truth = NULL)
+SansSouci(Y, X = NULL, Contrast = NULL, groups = NULL, truth = NULL)
 }
 \arguments{
-\item{Y}{A matrix of \eqn{m} variables (hypotheses) by \eqn{n} observations}
+\item{Y}{A matrix of \eqn{D} variables (hypotheses) by \eqn{n} observations}
+
+\item{X}{A design matrix of \eqn{n} observations by \eqn{p} explanatory variables in the linear model}
+
+\item{Contrast}{A contrast matrix of size \eqn{L} tested contrasts (in row) and \eqn{p}
+columns corresponding to the parameters to be tested}
 
 \item{groups}{A numeric vector of \eqn{n} values in \eqn{0, 1}, the groups of
 observations on which to perform two-sample tests}
 
-\item{truth}{An optional numeric vector of $m$ values in $\{0,1\}$, the status
+\item{truth}{An optional numeric vector of \eqn{m} values in \eqn{0, 1}, the status
 of each null hypothesis (0 means H0 is true, 1 means H1 is true). Typically
 used in simulations.}
 }

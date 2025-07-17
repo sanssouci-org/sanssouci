@@ -2,6 +2,11 @@
 Package: sanssouci
 ==================
 
+Version 0.16.0 [2025-07-15]
+
+* Update SansSouci object and methods to linear model with bootstrap calibration (PR#117)
+* Add vignette for Differential analysis with linear model on microarray data
+
 Version 0.15.0 [2025-05-29]
 
 * Remove all C++ code from the package (PR #121)
