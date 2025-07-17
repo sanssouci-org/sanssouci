@@ -665,6 +665,7 @@ predict.SansSouci <- function(object,
                                              object$input$n_dimensions)),
                               what = c("TP", "FDP"), all = FALSE, 
                               contrast_name = object$input$contrast_name, ...) {
+  # S should be size of D 
   if(!all(contrast_name %in% object$input$contrast_name)){
     stop("contrast_name must be in object$input$contrast_name")
   }
@@ -672,7 +673,7 @@ predict.SansSouci <- function(object,
   thr <- thresholds(object)
   lab <- label(object)
   
-  
+  # If sansSouci object is two sample test (1 contrast) /struct (0 contrast)
   if(length(object$input$contrast_name) <= 1){
     bounds <- posthoc_bound(p.values, S = S, thr = thr, lab = lab, 
                             what = what, all = all)
@@ -684,11 +685,12 @@ predict.SansSouci <- function(object,
     }
     
     return(bounds)
+    #If there are more than 1 tested contrast
   } else {
     
     bounds_list <- list()
     for(contrasts in contrast_name){
-      p.values.contrast <- p.values[contrasts,]
+      p.values.contrast <- p.values[contrasts,] #Only keep p-values of contrasts
       bounds <- posthoc_bound(p.values.contrast, S = S, thr = thr, lab = lab, 
                               what = what, all = all)
       if (!all) {
@@ -697,8 +699,9 @@ predict.SansSouci <- function(object,
           names(bounds) <- what
         }
       }
-      bounds_list[[contrasts]] <- bounds
+      bounds_list[[contrasts]] <- bounds 
     }
+    #when only one contrast is display, a data.frame is returned
     if(length(contrast_name) == 1){return(bounds_list[[1]])}
     return(bounds_list)
   }
