@@ -199,7 +199,7 @@ This type of plot is called a "volcano plot" @CC2003. Post hoc inference makes i
 # Test several contrasts simultaneously
 
 If several contrasts are studied, to obtain post hoc guarantees, we have to consider all tests (for all genes and all tested contrasts) simultaneously at the inference step.
-The contrast matrix $C$ contains all contrasts, one by row. For example, we want to test the lung function variable `fev1_fvc_utah` and the `age_enroll` variable. Then the contrast matrix is : 
+The contrast matrix $C$ contains all contrasts, one by row. For example, let us assume that we we want to test the lung function variable `fev1_fvc_utah` and the `age_enroll` variable. Then the contrast matrix is then: 
 
 ```{r contrast-2}
 tested_variables <- c("age_enroll", "fev1_fvc_utah")
@@ -209,22 +209,33 @@ rownames(C) <- colnames(X)[which(colnames(X) %in% tested_variables)]
 C
 ```
 
-Then we build another `SansSouci` object with this contrast matrix and fit the model and calibrate the post hoc bounds.
+We build another `SansSouci` object with this contrast matrix, fit the model and calibrate the post hoc bounds.
 
 ```{r calibration-2}
 object <- SansSouci(Y = Y, X = X, Contrast = C)
 res <- fit(object = object, alpha = alpha, B = 100)
 ```
 
-Using information from all contrasts simultaneously is important to ensure valid post hoc inference. This step requires knowledge of all tested hypotheses. However, the identification and selection of differentially expressed (DE) genes are typically performed contrast by contrast, in response to specific scientific questions. To support this, the package provides visualization tools such as confidence curves and volcano plots, which help interpret the results for a given contrast. The contrast of interest must be specified using the contrast argument in the plot() and volcanoPlot() functions.
+Using information from all contrasts simultaneously is important to ensure valid post hoc inference. However, the identification and selection of differentially expressed (DE) genes are typically performed contrast by contrast, in response to specific scientific questions. To support this, the package provides visualization tools such as confidence curves and volcano plots, which help interpret the results for a given contrast. 
 
 ## Confidence curves
 
-In this section we show how to the above curves may be used to address the question:
+By default, the confidence curves associated to each contrast are displayed on the same plot, allowing for direct comparison of the signal across multiple contrasts. In the example below, we can clearly observe that the signal associated with the `fev1_fvc_utah` variable is stronger than that of `age_enroll`.
 
-> Which genes have their expression associated with lung function and/or to the age at enrollment with high probability?
+```{r}
+q <- 0.1 # FDP budget (user-defined)
+FDP <- predict(res, all = TRUE, contrast_name = c("age_enroll", "fev1_fvc_utah"), what = "FDP")
+n_DEG <- sapply(FDP, function(x) sum(x <= q))
 
-To do so for the lung function (corresponding to the contrast `fev1_fvc_utah`), we *define* differentially expressed genes as the largest set of genes for which the FDP bound is less than a user-given value, for example $q = 0.1$. This corresponds to drawing a horizontal line in the confidence curves on the FDP:
+size <- 1.5
+p <- plot(res, xmax = 2.5*n_DEG, contrast_name = c("age_enroll", "fev1_fvc_utah"), what = c("FDP")) +
+  geom_hline(yintercept = q, linetype = "dashed", linewidth = size) +
+  geom_vline(xintercept = n_DEG, linetype = "dotted",  linewidth = size) +
+  geom_line(linewidth = size)
+p
+```
+
+It is also possible to specify the contrast of interest. To do so for the lung function (corresponding to the contrast `fev1_fvc_utah`), we *define* differentially expressed genes as the largest set of genes for which the FDP bound is less than a user-given value, for example $q = 0.1$. This corresponds to drawing a horizontal line in the confidence curves on the FDP:
 
 ```{r post-hoc-FDP-control-contrast-fev}
 q <- 0.1 # FDP budget (user-defined)
@@ -242,7 +253,7 @@ p
 Using $q = `r q`$, we obtain `r `n_DEG` differentially expressed genes. Note that this gene list has a clear statistical interpretation: with probability $1-\alpha = `r 1-alpha`$, the proportion of false positives (that is, genes that are called DE by mistake) is less than $q = `r q`$.
 
 
-The same analyses can be made for the contrast on `age_enroll`. 
+The same analysis can be made for the contrast on `age_enroll`. 
 ```{r post-hoc-FDP-control-contrast-age}
 q <- 0.5 # FDP budget (user-defined)
 FDP <- predict(res, all = TRUE, contrast_name = "age_enroll", what = "FDP")
@@ -256,33 +267,18 @@ p <- plot(res, xmax = 2.5*n_DEG, contrast_name = "age_enroll", what = c("FDP")) 
 p
 ```
 
-In this case, we had to increase the target FDP level $q$ in order to obtain a relatively large set of genes selected: this is explained by the fact that the variable `age_enrol` is weakly associated with gene expression.
-
-These two confidence curves can be displayed on the same plot, allowing for direct comparison of the signal across multiple contrasts. In the example below, we can clearly observe that the signal associated with the `fev1_fvc_utah` variable is stronger than that of `age_enroll`.
-
-```{r}
-q <- 0.1 # FDP budget (user-defined)
-FDP <- predict(res, all = TRUE, contrast_name = c("age_enroll", "fev1_fvc_utah"), what = "FDP")
-n_DEG <- sapply(FDP, function(x) sum(x <= q))
-
-size <- 1.5
-p <- plot(res, xmax = 2.5*n_DEG, contrast_name = c("age_enroll", "fev1_fvc_utah"), what = c("FDP")) +
-  geom_hline(yintercept = q, linetype = "dashed", linewidth = size) +
-  geom_vline(xintercept = n_DEG, linetype = "dotted",  linewidth = size) +
-  geom_line(linewidth = size)
-p
-```
+Due to the weaker signal in this case, we had to increase the target FDP level $q$ in order to obtain a relatively large set of genes selected.
 
 
 ## Selection on Volcano Plot
 
-The volcano plot can be used to make selection of interest genes. We print the volcano plot for each contrast. 
+The volcano plot can be used to make selection of interest genes. Here, the name of the contrast has to be specified explicilty. 
 
 ```{r volcano-contrast-fev}
 volcanoPlot(x = res, contrast_name = "fev1_fvc_utah", p = 1e-3, r = 0.5)
 ```
-Compared to the first volcano plot, the selected genes are the same because the $p$-values are identical. However, the confidence bounds are less tight. This is explained by the fact that two contrasts are tested instead of one: the total number of hypotheses tested is twice as large as previously, resulting in a more severe multiple testing correction.
 
+Compared to the volcano plot obtained in the preceding section, the selected genes are the same because the $p$-values are identical. However, the confidence bounds are less tight. This is explained by the fact that here two contrasts are tested instead of one: the total number of hypotheses tested is twice as large as previously, resulting in a more severe multiple testing correction.
 
 
 ```{r volcano-contrast-age}
