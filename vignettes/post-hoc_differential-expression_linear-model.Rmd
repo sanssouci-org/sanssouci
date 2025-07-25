@@ -26,13 +26,12 @@ cache = TRUE
 )
 ```
 
-This vignette illustrates the relevance of bootstrap-based post hoc bounds on false positives for the differential analysis of gene expression measurements (microarray data). We illustrate how the post hoc methods introduced by @blanchard20post-hoc and extended to linear model by @davenport2025fdp may be used to 
+This vignette addresses the problem of testing contrasts in linear models arising from the differential analysis of gene expression measurements (microarray data). We illustrate how the post hoc methods introduced by @blanchard20post-hoc and extended to linear models by @davenport2025fdp may be used to 
 
-- build confidence curves (envelopes) for the true or false positives and defined differentially expressed genes accordingly
+- build confidence curves (envelopes) for the true or false positives and define differentially expressed genes accordingly
 - perform statistical inference on the output of volcano plots
 
-The methods described in this vignette have been extended by @davenport2025fdp for complex experimental design witch need linear models. In this vignette we reproduce some of the results obtained in Section 5.2 of @davenport2025fdp.
-<!-- A shiny application for volcano plots is also available from  https://shiny-iidea-sanssouci.apps.math.cnrs.fr/. -->
+In this vignette we reproduce some of the results obtained in Section 5.2 of @davenport2025fdp. These bootstrap-based methods are *not yet implemented* in the shiny application for volcano plots available at https://shiny-iidea-sanssouci.apps.math.cnrs.fr/.
 
 ```{r install-r-packages, results='hide', message=FALSE, eval=FALSE}
 require("ggplot2") || install.packages("ggplot2")

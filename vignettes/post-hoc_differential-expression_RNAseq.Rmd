@@ -28,10 +28,10 @@ cache = TRUE
 
 This vignette illustrates the relevance of permutation-based post hoc bounds on false positives for the differential analysis of (bulk) RNA sequencing (RNAseq) data. We illustrate how the post hoc methods introduced by @blanchard20post-hoc may be used to 
 
-- build confidence curves (envelopes) for the true or false positives and defined differentially expressed genes accordingly
+- build confidence curves (envelopes) for the true or false positives and define differentially expressed genes accordingly
 - perform statistical inference on the output of volcano plots
 
-The methods described in this vignette have been introduced in the paper @blanchard20post-hoc and in the book chapter @BNR:chap. A shiny application for volcano plots is also available from  https://shiny-iidea-sanssouci.apps.math.cnrs.fr/.
+The methods described in this vignette have been introduced in the paper @blanchard20post-hoc and in the book chapter @BNR:chap. A shiny application for volcano plots is also available at  https://shiny-iidea-sanssouci.apps.math.cnrs.fr/.
 
 
 ```{r install-r-packages, results='hide', message=FALSE, eval=FALSE}

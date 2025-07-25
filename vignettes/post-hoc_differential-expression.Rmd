@@ -27,10 +27,10 @@ fig.height=6
 This vignette reproduces figures from Section 9 in the book chapter: @BNR:chap. It demonstrates how the [`sanssouci`](https://github.com/sanssouci-org/sanssouci) package may be used to obtain post hoc confidence bounds on false positives in the case of differential gene expression analysis. After showing the output of a classical differential analysis based on False Discovery Rate control we illustrate the application of basic post-hoc bounds derived from probabilistic inequalities. 
 Then, we introduce more powerful post hoc methods (introduced by @blanchard20post-hoc) that yield tighter bounds by adapting to unknown dependence by randomization. Finally we demonstrate the use of these methods on two applications of post hoc methods:
 
-- confidence curves (envelopes) for the true or false positives
-- statistical inference on volcano plots
+- build confidence curves (envelopes) for the true or false positives and define differentially expressed genes accordingly
+- perform statistical inference on the output of volcano plots
 
-The methods described in this vignette are described in detail in the book chapter @BNR:chap and in the paper @blanchard20post-hoc. A shiny application for volcano plots is also available from  https://shiny-iidea-sanssouci.apps.math.cnrs.fr/.
+The methods described in this vignette are described in detail in the book chapter @BNR:chap and in the paper @blanchard20post-hoc. A shiny application for volcano plots is also available at https://shiny-iidea-sanssouci.apps.math.cnrs.fr/.
 
 ```{r install-r-packages, results='hide', message=FALSE, eval=FALSE}
 require("ggplot2") # install.packages("ggplot2")
