@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">sanssouci</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.16.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -22,8 +22,9 @@
     <li><a class="dropdown-item" href="../articles/CopyOfconfidenceCurves_localized.html">Confidence curves for structured hypotheses</a></li>
     <li><a class="dropdown-item" href="../articles/IIDEA.html">IIDEA: Interactive Inference for Differential Expression Analyses</a></li>
     <li><a class="dropdown-item" href="../articles/jointErrorRateCalibration_simulations.html">Joint Error Rate calibration</a></li>
-    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression_RNAseq.html">Permutation-based post hoc inference for differential gene expression studies: RNAseq data</a></li>
-    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression.html">Permutation-based post hoc inference for differential gene expression studies</a></li>
+    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression_linear-model.html">Bootstrap-based post hoc inference for differential gene expression studies in linear models</a></li>
+    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression_RNAseq.html">Permutation-based post hoc inference for two-group differential gene expression studies: RNAseq data</a></li>
+    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression.html">Permutation-based post hoc inference for two-group differential gene expression studies</a></li>
     <li><a class="dropdown-item" href="../articles/post-hoc_fMRI.html">Permutation-based post hoc inference for fMRI studies</a></li>
     <li><a class="dropdown-item" href="../articles/Simes_equi-correlation.html">Conservativeness of the Simes inequality under positive dependence</a></li>
   </ul></li>
@@ -102,10 +103,22 @@
         <dd>Generic functions for S3 class SansSouci</dd>
       </dl><dl><dt>
 
+          <code><a href="bootstrap_permutation.html">bootstrap_permutation()</a></code>
+
+        </dt>
+        <dd>Mass-univariate bootstrap-based inference for contrasts in a linear model</dd>
+      </dl><dl><dt>
+
           <code><a href="calibrate.html">calibrate()</a></code> <code><a href="calibrate.html">calibrate0()</a></code>
 
         </dt>
         <dd>Perform JER calibration from randomization p-values</dd>
+      </dl><dl><dt>
+
+          <code><a href="calibration_bootstap.html">calibration_bootstap()</a></code>
+
+        </dt>
+        <dd>Calibration of post hoc bound using bootstrap permutations</dd>
       </dl><dl><dt>
 
           <code><a href="confCurveFromFam.html">confCurveFromFam()</a></code>
@@ -216,6 +229,12 @@
         <dd>Get a vector of pivotal statistics associated to permutation p-values and to a reference family</dd>
       </dl><dl><dt>
 
+          <code><a href="lm_test.html">lm_test()</a></code>
+
+        </dt>
+        <dd>Mass-univariate inference for contrasts in a linear model</dd>
+      </dl><dl><dt>
+
           <code><a href="maxFDP.html">maxFDP()</a></code>
 
         </dt>
@@ -316,6 +335,12 @@
 
         </dt>
         <dd>Z tests for rows of a matrix</dd>
+      </dl><dl><dt>
+
+          <code><a href="row_lm_test.html">row_lm_test()</a></code>
+
+        </dt>
+        <dd>Mass-univariate bootstrap-based inference for contrasts in a linear model</dd>
       </dl><dl><dt>
 
           <code><a href="testByRandomization.html">testByRandomization()</a></code>

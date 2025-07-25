@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">sanssouci</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.16.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -22,8 +22,9 @@
     <li><a class="dropdown-item" href="../articles/CopyOfconfidenceCurves_localized.html">Confidence curves for structured hypotheses</a></li>
     <li><a class="dropdown-item" href="../articles/IIDEA.html">IIDEA: Interactive Inference for Differential Expression Analyses</a></li>
     <li><a class="dropdown-item" href="../articles/jointErrorRateCalibration_simulations.html">Joint Error Rate calibration</a></li>
-    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression_RNAseq.html">Permutation-based post hoc inference for differential gene expression studies: RNAseq data</a></li>
-    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression.html">Permutation-based post hoc inference for differential gene expression studies</a></li>
+    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression_linear-model.html">Bootstrap-based post hoc inference for differential gene expression studies in linear models</a></li>
+    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression_RNAseq.html">Permutation-based post hoc inference for two-group differential gene expression studies: RNAseq data</a></li>
+    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression.html">Permutation-based post hoc inference for two-group differential gene expression studies</a></li>
     <li><a class="dropdown-item" href="../articles/post-hoc_fMRI.html">Permutation-based post hoc inference for fMRI studies</a></li>
     <li><a class="dropdown-item" href="../articles/Simes_equi-correlation.html">Conservativeness of the Simes inequality under positive dependence</a></li>
   </ul></li>
@@ -39,7 +40,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Post hoc confidence bounds on the true/false positives</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sanssouci-org/sanssouci/blob/v0.15.0/R/SansSouci-class.R" class="external-link"><code>R/SansSouci-class.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sanssouci-org/sanssouci/blob/master/R/SansSouci-class.R" class="external-link"><code>R/SansSouci-class.R</code></a></small>
       <div class="d-none name"><code>predict.SansSouci.Rd</code></div>
     </div>
 
@@ -52,9 +53,10 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for class 'SansSouci'</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span></span>
 <span>  <span class="va">object</span>,</span>
-<span>  S <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="all-generics.html">nHyp</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  S <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="fu"><a href="all-generics.html">nHyp</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span>, <span class="va">object</span><span class="op">$</span><span class="va">input</span><span class="op">$</span><span class="va">n_dimensions</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  what <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TP"</span>, <span class="st">"FDP"</span><span class="op">)</span>,</span>
 <span>  all <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  contrast_name <span class="op">=</span> <span class="va">object</span><span class="op">$</span><span class="va">input</span><span class="op">$</span><span class="va">contrast_name</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -84,6 +86,10 @@ computed, among:</p><ul><li><p>FP: Upper bound on the number of false positives 
 <dd><p>A logical value: should the bounds for all ordered subsets of <code>S</code> be returned? If <code>FALSE</code> (the default), only the bound for <code>S</code> is returned</p></dd>
 
 
+<dt id="arg-contrast-name">contrast_name<a class="anchor" aria-label="anchor" href="#arg-contrast-name"></a></dt>
+<dd><p>A character value, the selected contrast. Should be chosen in <code>x$input$contrast_name</code>.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Not used</p></dd>
 
@@ -105,25 +111,25 @@ computed, among:</p><ul><li><p>FP: Upper bound on the number of false positives 
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># post hoc bound on the set of all hypotheses</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        TP       FDP </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4.0000000 0.9920319 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         TP        FDP </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 76.0000000  0.8486056 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># idem for all possible subsets (sorted by p-value)</span></span></span>
 <span class="r-in"><span><span class="va">bounds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">res</span>, all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">bounds</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   x label stat bound</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 1 Simes   TP     0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2 Simes   TP     0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 3 Simes   TP     0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 4 Simes   TP     0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 5 Simes   TP     0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 6 Simes   TP     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 1 Simes   TP     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2 Simes   TP     2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 3 Simes   TP     3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 4 Simes   TP     4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 5 Simes   TP     5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 6 Simes   TP     6</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># post hoc bound on a subset</span></span></span>
 <span class="r-in"><span><span class="va">S</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="fu"><a href="all-generics.html">pValues</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fl">0.01</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">res</span>, <span class="va">S</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        TP       FDP </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4.0000000 0.8461538 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         TP        FDP </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 76.0000000  0.1827957 </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

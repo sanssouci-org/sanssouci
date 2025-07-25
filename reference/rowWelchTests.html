@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">sanssouci</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.16.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -22,8 +22,9 @@
     <li><a class="dropdown-item" href="../articles/CopyOfconfidenceCurves_localized.html">Confidence curves for structured hypotheses</a></li>
     <li><a class="dropdown-item" href="../articles/IIDEA.html">IIDEA: Interactive Inference for Differential Expression Analyses</a></li>
     <li><a class="dropdown-item" href="../articles/jointErrorRateCalibration_simulations.html">Joint Error Rate calibration</a></li>
-    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression_RNAseq.html">Permutation-based post hoc inference for differential gene expression studies: RNAseq data</a></li>
-    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression.html">Permutation-based post hoc inference for differential gene expression studies</a></li>
+    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression_linear-model.html">Bootstrap-based post hoc inference for differential gene expression studies in linear models</a></li>
+    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression_RNAseq.html">Permutation-based post hoc inference for two-group differential gene expression studies: RNAseq data</a></li>
+    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression.html">Permutation-based post hoc inference for two-group differential gene expression studies</a></li>
     <li><a class="dropdown-item" href="../articles/post-hoc_fMRI.html">Permutation-based post hoc inference for fMRI studies</a></li>
     <li><a class="dropdown-item" href="../articles/Simes_equi-correlation.html">Conservativeness of the Simes inequality under positive dependence</a></li>
   </ul></li>
@@ -39,7 +40,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Welch T-tests for rows of a matrix</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sanssouci-org/sanssouci/blob/v0.15.0/R/rowWelchTests.R" class="external-link"><code>R/rowWelchTests.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sanssouci-org/sanssouci/blob/master/R/rowWelchTests.R" class="external-link"><code>R/rowWelchTests.R</code></a></small>
       <div class="d-none name"><code>rowWelchTests.Rd</code></div>
     </div>
 
@@ -118,13 +119,13 @@ alternative approach. Biometrika, <em>38</em>, 330-336</p>
 <span class="r-in"><span><span class="va">categ</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>, times <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">27</span>, <span class="va">n</span> <span class="op">-</span> <span class="fl">27</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">fwt</span> <span class="op">&lt;-</span> <span class="fu">rowWelchTests</span><span class="op">(</span><span class="va">mat</span>, <span class="va">categ</span>, alternative <span class="op">=</span> <span class="st">"greater"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    user  system elapsed </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   0.001   0.004   0.002 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   0.002   0.003   0.001 </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">fwt</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ statistic: num [1:300] 0.806 -0.305 -1.436 2.597 -1.178 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ parameter: num [1:300] 12.7 21.8 26.8 16.1 19 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ p.value  : num [1:300] 0.2175 0.6184 0.9187 0.0097 0.8733 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ estimate : num [1:300] 0.4168 -0.0956 -0.4225 1.1302 -0.4744 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ statistic: num [1:300] 0.579 -0.94 0.563 -1.242 3.333 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ parameter: num [1:300] 20.9 22.3 16.4 22.5 21.9 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ p.value  : num [1:300] 0.28442 0.82143 0.29044 0.88648 0.00152 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ estimate : num [1:300] 0.184 -0.296 0.149 -0.421 1.054 ...</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># compare with ordinary t.test:</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">pwt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">mat</span>, <span class="fl">1</span>, FUN <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span></span>
@@ -140,13 +141,13 @@ alternative approach. Biometrika, <em>38</em>, 330-336</p>
 <span class="r-in"><span><span class="va">categ_perm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">replicate</a></span><span class="op">(</span><span class="va">B</span>, <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="va">categ</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">fwt_perm</span> <span class="op">&lt;-</span> <span class="fu">rowWelchTests</span><span class="op">(</span><span class="va">mat</span>, <span class="va">categ_perm</span>, alternative <span class="op">=</span> <span class="st">"greater"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    user  system elapsed </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   0.019   0.033   0.013 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   0.023   0.030   0.013 </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">fwt_perm</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ statistic: num [1:300, 1:100] 0.7065 -0.6406 -1.2612 -0.0412 0.8499 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ parameter: num [1:300, 1:100] 12.1 21.9 14.2 15.5 21.2 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ p.value  : num [1:300, 1:100] 0.247 0.736 0.886 0.516 0.202 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ estimate : num [1:300, 1:100] 0.3803 -0.1996 -0.4983 -0.0202 0.3292 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ statistic: num [1:300, 1:100] -0.95 -1.652 0.495 -0.653 -1.585 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ parameter: num [1:300, 1:100] 17.9 20.3 19.8 13.8 18 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ p.value  : num [1:300, 1:100] 0.823 0.943 0.313 0.738 0.935 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ estimate : num [1:300, 1:100] -0.322 -0.528 0.12 -0.288 -0.594 ...</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

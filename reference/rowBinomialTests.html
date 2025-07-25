@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">sanssouci</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.16.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -22,8 +22,9 @@
     <li><a class="dropdown-item" href="../articles/CopyOfconfidenceCurves_localized.html">Confidence curves for structured hypotheses</a></li>
     <li><a class="dropdown-item" href="../articles/IIDEA.html">IIDEA: Interactive Inference for Differential Expression Analyses</a></li>
     <li><a class="dropdown-item" href="../articles/jointErrorRateCalibration_simulations.html">Joint Error Rate calibration</a></li>
-    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression_RNAseq.html">Permutation-based post hoc inference for differential gene expression studies: RNAseq data</a></li>
-    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression.html">Permutation-based post hoc inference for differential gene expression studies</a></li>
+    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression_linear-model.html">Bootstrap-based post hoc inference for differential gene expression studies in linear models</a></li>
+    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression_RNAseq.html">Permutation-based post hoc inference for two-group differential gene expression studies: RNAseq data</a></li>
+    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression.html">Permutation-based post hoc inference for two-group differential gene expression studies</a></li>
     <li><a class="dropdown-item" href="../articles/post-hoc_fMRI.html">Permutation-based post hoc inference for fMRI studies</a></li>
     <li><a class="dropdown-item" href="../articles/Simes_equi-correlation.html">Conservativeness of the Simes inequality under positive dependence</a></li>
   </ul></li>
@@ -39,7 +40,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Binomial proportion tests for each row of a matrix</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sanssouci-org/sanssouci/blob/v0.15.0/R/rowBinomialTests.R" class="external-link"><code>R/rowBinomialTests.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sanssouci-org/sanssouci/blob/master/R/rowBinomialTests.R" class="external-link"><code>R/rowBinomialTests.R</code></a></small>
       <div class="d-none name"><code>rowBinomialTests.Rd</code></div>
     </div>
 
@@ -128,9 +129,9 @@ the effect size (as e.g. done by 't.test'))</p>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Two-sided p-value not vectorized yet! Looping for now.</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">fbt</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ statistic: num [1:100] 0 1 0 1 2 0 0 0 0 1 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ p.value  : num [1:100] 0.6446 1 0.0303 0.4895 1 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ estimate : num [1:100] -0.03333 -0.00833 -0.1 0.00833 0 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ statistic: num [1:100] 0 1 1 2 0 3 1 0 1 2 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ p.value  : num [1:100] 1 0.722 0.52 1 0.645 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ estimate : num [1:100] -0.0167 -0.025 -0.0417 0 -0.0333 ...</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># compare with ordinary binom.test:</span></span></span>
 <span class="r-in"><span><span class="va">pbt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">p</span>, FUN<span class="op">=</span><span class="kw">function</span><span class="op">(</span><span class="va">ii</span><span class="op">)</span> <span class="op">{</span></span></span>

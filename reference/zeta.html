@@ -15,7 +15,7 @@ of zetas.tree()."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">sanssouci</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.16.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,8 +30,9 @@ of zetas.tree()."></head><body>
     <li><a class="dropdown-item" href="../articles/CopyOfconfidenceCurves_localized.html">Confidence curves for structured hypotheses</a></li>
     <li><a class="dropdown-item" href="../articles/IIDEA.html">IIDEA: Interactive Inference for Differential Expression Analyses</a></li>
     <li><a class="dropdown-item" href="../articles/jointErrorRateCalibration_simulations.html">Joint Error Rate calibration</a></li>
-    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression_RNAseq.html">Permutation-based post hoc inference for differential gene expression studies: RNAseq data</a></li>
-    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression.html">Permutation-based post hoc inference for differential gene expression studies</a></li>
+    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression_linear-model.html">Bootstrap-based post hoc inference for differential gene expression studies in linear models</a></li>
+    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression_RNAseq.html">Permutation-based post hoc inference for two-group differential gene expression studies: RNAseq data</a></li>
+    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression.html">Permutation-based post hoc inference for two-group differential gene expression studies</a></li>
     <li><a class="dropdown-item" href="../articles/post-hoc_fMRI.html">Permutation-based post hoc inference for fMRI studies</a></li>
     <li><a class="dropdown-item" href="../articles/Simes_equi-correlation.html">Conservativeness of the Simes inequality under positive dependence</a></li>
   </ul></li>
@@ -47,7 +48,7 @@ of zetas.tree()."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Estimate the number of true null hypotheses among a set of p-values</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sanssouci-org/sanssouci/blob/v0.15.0/R/tree-functions.R" class="external-link"><code>R/tree-functions.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sanssouci-org/sanssouci/blob/master/R/tree-functions.R" class="external-link"><code>R/tree-functions.R</code></a></small>
       <div class="d-none name"><code>zeta.Rd</code></div>
     </div>
 
@@ -134,7 +135,7 @@ The Holm-Bonferroni procedure controls the FWER, hence the number of conserved h
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 97</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">zeta.DKWM</span><span class="op">(</span><span class="va">pval</span>, <span class="va">lambda</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 53</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 70</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

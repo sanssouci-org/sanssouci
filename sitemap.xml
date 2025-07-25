@@ -8,6 +8,7 @@
 <url><loc>https://sanssouci-org.github.io/sanssouci/articles/jointErrorRateCalibration_simulations.html</loc></url>
 <url><loc>https://sanssouci-org.github.io/sanssouci/articles/post-hoc_differential-expression.html</loc></url>
 <url><loc>https://sanssouci-org.github.io/sanssouci/articles/post-hoc_differential-expression_RNAseq.html</loc></url>
+<url><loc>https://sanssouci-org.github.io/sanssouci/articles/post-hoc_differential-expression_linear-model.html</loc></url>
 <url><loc>https://sanssouci-org.github.io/sanssouci/articles/post-hoc_fMRI.html</loc></url>
 <url><loc>https://sanssouci-org.github.io/sanssouci/authors.html</loc></url>
 <url><loc>https://sanssouci-org.github.io/sanssouci/index.html</loc></url>
@@ -19,7 +20,9 @@
 <url><loc>https://sanssouci-org.github.io/sanssouci/reference/SansSouciStruct.html</loc></url>
 <url><loc>https://sanssouci-org.github.io/sanssouci/reference/V.star.html</loc></url>
 <url><loc>https://sanssouci-org.github.io/sanssouci/reference/all-generics.html</loc></url>
+<url><loc>https://sanssouci-org.github.io/sanssouci/reference/bootstrap_permutation.html</loc></url>
 <url><loc>https://sanssouci-org.github.io/sanssouci/reference/calibrate.html</loc></url>
+<url><loc>https://sanssouci-org.github.io/sanssouci/reference/calibration_bootstap.html</loc></url>
 <url><loc>https://sanssouci-org.github.io/sanssouci/reference/confCurveFromFam.html</loc></url>
 <url><loc>https://sanssouci-org.github.io/sanssouci/reference/curve.V.star.forest.html</loc></url>
 <url><loc>https://sanssouci-org.github.io/sanssouci/reference/curveMaxFP.html</loc></url>
@@ -39,6 +42,7 @@
 <url><loc>https://sanssouci-org.github.io/sanssouci/reference/get_perm.html</loc></url>
 <url><loc>https://sanssouci-org.github.io/sanssouci/reference/get_pivotal_stat.html</loc></url>
 <url><loc>https://sanssouci-org.github.io/sanssouci/reference/index.html</loc></url>
+<url><loc>https://sanssouci-org.github.io/sanssouci/reference/lm_test.html</loc></url>
 <url><loc>https://sanssouci-org.github.io/sanssouci/reference/maxFDP.html</loc></url>
 <url><loc>https://sanssouci-org.github.io/sanssouci/reference/maxFP.html</loc></url>
 <url><loc>https://sanssouci-org.github.io/sanssouci/reference/minTDP.html</loc></url>
@@ -57,6 +61,7 @@
 <url><loc>https://sanssouci-org.github.io/sanssouci/reference/rowWelchTests.html</loc></url>
 <url><loc>https://sanssouci-org.github.io/sanssouci/reference/rowWilcoxonTests.html</loc></url>
 <url><loc>https://sanssouci-org.github.io/sanssouci/reference/rowZTests.html</loc></url>
+<url><loc>https://sanssouci-org.github.io/sanssouci/reference/row_lm_test.html</loc></url>
 <url><loc>https://sanssouci-org.github.io/sanssouci/reference/testByRandomization.html</loc></url>
 <url><loc>https://sanssouci-org.github.io/sanssouci/reference/volcanoPlot.html</loc></url>
 <url><loc>https://sanssouci-org.github.io/sanssouci/reference/volcanoPlot.numeric.html</loc></url>

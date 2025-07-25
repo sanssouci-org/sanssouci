@@ -9,7 +9,7 @@ equi-correlated model"></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">sanssouci</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.16.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -24,8 +24,9 @@ equi-correlated model"></head><body>
     <li><a class="dropdown-item" href="../articles/CopyOfconfidenceCurves_localized.html">Confidence curves for structured hypotheses</a></li>
     <li><a class="dropdown-item" href="../articles/IIDEA.html">IIDEA: Interactive Inference for Differential Expression Analyses</a></li>
     <li><a class="dropdown-item" href="../articles/jointErrorRateCalibration_simulations.html">Joint Error Rate calibration</a></li>
-    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression_RNAseq.html">Permutation-based post hoc inference for differential gene expression studies: RNAseq data</a></li>
-    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression.html">Permutation-based post hoc inference for differential gene expression studies</a></li>
+    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression_linear-model.html">Bootstrap-based post hoc inference for differential gene expression studies in linear models</a></li>
+    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression_RNAseq.html">Permutation-based post hoc inference for two-group differential gene expression studies: RNAseq data</a></li>
+    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression.html">Permutation-based post hoc inference for two-group differential gene expression studies</a></li>
     <li><a class="dropdown-item" href="../articles/post-hoc_fMRI.html">Permutation-based post hoc inference for fMRI studies</a></li>
     <li><a class="dropdown-item" href="../articles/Simes_equi-correlation.html">Conservativeness of the Simes inequality under positive dependence</a></li>
   </ul></li>
@@ -41,7 +42,7 @@ equi-correlated model"></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Create an object of class 'SansSouci' from simulations</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sanssouci-org/sanssouci/blob/v0.15.0/R/SansSouci-class.R" class="external-link"><code>R/SansSouci-class.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sanssouci-org/sanssouci/blob/master/R/SansSouci-class.R" class="external-link"><code>R/SansSouci-class.R</code></a></small>
       <div class="d-none name"><code>SansSouciSim.Rd</code></div>
     </div>
 
@@ -87,8 +88,8 @@ equi-correlated model</p>
 <span class="r-in"><span><span class="co"># upper bound on number of signals if the entire data set</span></span></span>
 <span class="r-in"><span><span class="co"># (and corresponding lower bound on FDP)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        TP       FDP </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29.000000  0.946593 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         TP        FDP </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 39.0000000  0.9281768 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># confidence curve</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></span>
@@ -101,7 +102,7 @@ equi-correlated model</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 'SansSouci' object:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Number of hypotheses:	 543 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Number of observations:	 210 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	2-sample data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	2 samples</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Truth: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	 109 false null hypotheses (signals) out of 543 (pi0=0.799)</span>
@@ -121,7 +122,7 @@ equi-correlated model</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 'SansSouci' object:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Number of hypotheses:	 543 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Number of observations:	 210 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	2-sample data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	2 samples</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Truth: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	 109 false null hypotheses (signals) out of 543 (pi0=0.799)</span>

@@ -5,12 +5,12 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Permutation-based post hoc inference for differential gene expression studies • sanssouci</title>
+<title>Permutation-based post hoc inference for two-group differential gene expression studies • sanssouci</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Permutation-based post hoc inference for differential gene expression studies">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Permutation-based post hoc inference for two-group differential gene expression studies">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">sanssouci</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.16.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,8 +37,9 @@
     <li><a class="dropdown-item" href="../articles/CopyOfconfidenceCurves_localized.html">Confidence curves for structured hypotheses</a></li>
     <li><a class="dropdown-item" href="../articles/IIDEA.html">IIDEA: Interactive Inference for Differential Expression Analyses</a></li>
     <li><a class="dropdown-item" href="../articles/jointErrorRateCalibration_simulations.html">Joint Error Rate calibration</a></li>
-    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression_RNAseq.html">Permutation-based post hoc inference for differential gene expression studies: RNAseq data</a></li>
-    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression.html">Permutation-based post hoc inference for differential gene expression studies</a></li>
+    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression_linear-model.html">Bootstrap-based post hoc inference for differential gene expression studies in linear models</a></li>
+    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression_RNAseq.html">Permutation-based post hoc inference for two-group differential gene expression studies: RNAseq data</a></li>
+    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression.html">Permutation-based post hoc inference for two-group differential gene expression studies</a></li>
     <li><a class="dropdown-item" href="../articles/post-hoc_fMRI.html">Permutation-based post hoc inference for fMRI studies</a></li>
     <li><a class="dropdown-item" href="../articles/Simes_equi-correlation.html">Conservativeness of the Simes inequality under positive dependence</a></li>
   </ul>
@@ -62,13 +63,13 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>Permutation-based post hoc inference for differential gene expression studies</h1>
+      <h1>Permutation-based post hoc inference for two-group differential gene expression studies</h1>
                         <h4 data-toc-skip class="author">Gilles
 Blanchard, Pierre Neuvial and Etienne Roquain</h4>
             
-            <h4 data-toc-skip class="date">2025-05-30</h4>
+            <h4 data-toc-skip class="date">2025-07-25</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/sanssouci-org/sanssouci/blob/v0.15.0/vignettes/post-hoc_differential-expression.Rmd" class="external-link"><code>vignettes/post-hoc_differential-expression.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sanssouci-org/sanssouci/blob/master/vignettes/post-hoc_differential-expression.Rmd" class="external-link"><code>vignettes/post-hoc_differential-expression.Rmd</code></a></small>
       <div class="d-none name"><code>post-hoc_differential-expression.Rmd</code></div>
     </div>
 
@@ -423,7 +424,7 @@ that can be obtained from <span class="citation">Goeman and Solari
 <code class="sourceCode R"><span><span class="va">conf_bounds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">resList</span>, <span class="va">predict</span>, all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co"># cols &lt;- c("lightgray", "black", "darkgray")</span></span>
 <span><span class="va">cols</span> <span class="op">&lt;-</span> <span class="fu">RColorBrewer</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html" class="external-link">brewer.pal</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">conf_bounds</span><span class="op">)</span>, <span class="st">"Dark2"</span><span class="op">)</span></span>
-<span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plotConfCurve.html">plotConfCurve</a></span><span class="op">(</span><span class="va">conf_bounds</span>, xmax <span class="op">=</span> <span class="fl">300</span>, cols <span class="op">=</span> <span class="va">cols</span><span class="op">)</span></span>
+<span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plotConfCurve.html">plotConfCurve</a></span><span class="op">(</span><span class="va">conf_bounds</span>, xmax <span class="op">=</span> <span class="fl">300</span>, cols <span class="op">=</span> <span class="va">cols</span>, legend.title <span class="op">=</span> <span class="st">"Template"</span><span class="op">)</span></span>
 <span><span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="va">nBH</span>, color <span class="op">=</span> <span class="st">"gray"</span>, linetype <span class="op">=</span> <span class="st">"dotted"</span>, size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span></span></code></pre></div>
 <p><img src="post-hoc_differential-expression_files/figure-html/conf-env-plot-1.png" width="768"></p>
@@ -537,7 +538,7 @@ selections</caption>
 </h2>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; R version 4.5.0 (2025-04-11)</span></span>
+<span><span class="co">#&gt; R version 4.5.1 (2025-06-13)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
 <span><span class="co">#&gt; Running under: Ubuntu 24.04.2 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -558,20 +559,20 @@ selections</caption>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] sanssouci_0.15.0 ggplot2_3.5.2   </span></span>
+<span><span class="co">#&gt; [1] sanssouci_0.16.0 ggplot2_3.5.2   </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] Matrix_1.7-3       gtable_0.3.6       jsonlite_2.0.0     compiler_4.5.0    </span></span>
+<span><span class="co">#&gt;  [1] Matrix_1.7-3       gtable_0.3.6       jsonlite_2.0.0     compiler_4.5.1    </span></span>
 <span><span class="co">#&gt;  [5] crayon_1.5.3       jquerylib_0.1.4    systemfonts_1.2.3  scales_1.4.0      </span></span>
-<span><span class="co">#&gt;  [9] textshaping_1.0.1  yaml_2.3.10        fastmap_1.2.0      lattice_0.22-6    </span></span>
+<span><span class="co">#&gt;  [9] textshaping_1.0.1  yaml_2.3.10        fastmap_1.2.0      lattice_0.22-7    </span></span>
 <span><span class="co">#&gt; [13] R6_2.6.1           labeling_0.4.3     generics_0.1.4     knitr_1.50        </span></span>
-<span><span class="co">#&gt; [17] tibble_3.2.1       desc_1.4.3         bslib_0.9.0        pillar_1.10.2     </span></span>
+<span><span class="co">#&gt; [17] tibble_3.3.0       desc_1.4.3         bslib_0.9.0        pillar_1.11.0     </span></span>
 <span><span class="co">#&gt; [21] RColorBrewer_1.1-3 rlang_1.1.6        cachem_1.1.0       xfun_0.52         </span></span>
 <span><span class="co">#&gt; [25] fs_1.6.6           sass_0.4.10        cli_3.6.5          pkgdown_2.1.3     </span></span>
 <span><span class="co">#&gt; [29] withr_3.0.2        magrittr_2.0.3     matrixTests_0.2.3  digest_0.6.37     </span></span>
-<span><span class="co">#&gt; [33] grid_4.5.0         lifecycle_1.0.4    vctrs_0.6.5        evaluate_1.0.3    </span></span>
+<span><span class="co">#&gt; [33] grid_4.5.1         lifecycle_1.0.4    vctrs_0.6.5        evaluate_1.0.4    </span></span>
 <span><span class="co">#&gt; [37] glue_1.8.0         farver_2.1.2       codetools_0.2-20   ragg_1.4.0        </span></span>
-<span><span class="co">#&gt; [41] rmarkdown_2.29     matrixStats_1.5.0  tools_4.5.0        pkgconfig_2.0.3   </span></span>
+<span><span class="co">#&gt; [41] rmarkdown_2.29     matrixStats_1.5.0  tools_4.5.1        pkgconfig_2.0.3   </span></span>
 <span><span class="co">#&gt; [45] htmltools_0.5.8.1</span></span></code></pre></div>
 </div>
 <div class="section level2">

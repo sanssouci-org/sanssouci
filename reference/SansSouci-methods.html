@@ -19,7 +19,7 @@ thresholds: get thresholds"></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">sanssouci</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.16.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -34,8 +34,9 @@ thresholds: get thresholds"></head><body>
     <li><a class="dropdown-item" href="../articles/CopyOfconfidenceCurves_localized.html">Confidence curves for structured hypotheses</a></li>
     <li><a class="dropdown-item" href="../articles/IIDEA.html">IIDEA: Interactive Inference for Differential Expression Analyses</a></li>
     <li><a class="dropdown-item" href="../articles/jointErrorRateCalibration_simulations.html">Joint Error Rate calibration</a></li>
-    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression_RNAseq.html">Permutation-based post hoc inference for differential gene expression studies: RNAseq data</a></li>
-    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression.html">Permutation-based post hoc inference for differential gene expression studies</a></li>
+    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression_linear-model.html">Bootstrap-based post hoc inference for differential gene expression studies in linear models</a></li>
+    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression_RNAseq.html">Permutation-based post hoc inference for two-group differential gene expression studies: RNAseq data</a></li>
+    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression.html">Permutation-based post hoc inference for two-group differential gene expression studies</a></li>
     <li><a class="dropdown-item" href="../articles/post-hoc_fMRI.html">Permutation-based post hoc inference for fMRI studies</a></li>
     <li><a class="dropdown-item" href="../articles/Simes_equi-correlation.html">Conservativeness of the Simes inequality under positive dependence</a></li>
   </ul></li>
@@ -51,7 +52,7 @@ thresholds: get thresholds"></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Basic methods for class <code>SansSouci</code></h1>
-      <small class="dont-index">Source: <a href="https://github.com/sanssouci-org/sanssouci/blob/v0.15.0/R/SansSouci-class.R" class="external-link"><code>R/SansSouci-class.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sanssouci-org/sanssouci/blob/master/R/SansSouci-class.R" class="external-link"><code>R/SansSouci-class.R</code></a></small>
       <div class="d-none name"><code>SansSouci-methods.Rd</code></div>
     </div>
 
@@ -123,7 +124,7 @@ thresholds: get thresholds"></head><body>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 'SansSouci' object:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Number of hypotheses:	 9038 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Number of observations:	 79 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	2-sample data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	2 samples</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu"><a href="all-generics.html">nHyp</a></span><span class="op">(</span><span class="va">a</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 9038</span>
@@ -139,7 +140,7 @@ thresholds: get thresholds"></head><body>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 'SansSouci' object:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Number of hypotheses:	 9038 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Number of observations:	 79 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 	2-sample data</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 	2 samples</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Parameters: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Test function:		rowWelchTests</span>
@@ -151,11 +152,15 @@ thresholds: get thresholds"></head><body>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Output:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 	Calibration parameter:	lambda=0.1210904</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu"><a href="all-generics.html">pValues</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Named num [1:9038] 0.9647 0.5203 0.9516 0.8438 0.0045 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "names")= chr [1:9038] "ENSG00000000003" "ENSG00000000419" "ENSG00000000457" "ENSG00000000460" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  num [1, 1:9038] 0.9647 0.5203 0.9516 0.8438 0.0045 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "dimnames")=List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : chr "Group 1 vs group 0"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : NULL</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu"><a href="all-generics.html">foldChanges</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Named num [1:9038] -0.0044 0.09394 -0.00426 -0.00886 0.27775 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "names")= chr [1:9038] "ENSG00000000003" "ENSG00000000419" "ENSG00000000457" "ENSG00000000460" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  num [1, 1:9038] -0.0044 0.09394 -0.00426 -0.00886 0.27775 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "dimnames")=List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : chr "Group 1 vs group 0"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : NULL</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu"><a href="all-generics.html">thresholds</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  num [1:9038] 1.34e-05 2.68e-05 4.02e-05 5.36e-05 6.70e-05 ...</span>
 <span class="r-in"><span><span class="fu"><a href="volcanoPlot.html">volcanoPlot</a></span><span class="op">(</span><span class="va">res</span>, q <span class="op">=</span> <span class="fl">0.05</span>, r <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>

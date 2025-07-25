@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">sanssouci</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.16.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -22,8 +22,9 @@
     <li><a class="dropdown-item" href="../articles/CopyOfconfidenceCurves_localized.html">Confidence curves for structured hypotheses</a></li>
     <li><a class="dropdown-item" href="../articles/IIDEA.html">IIDEA: Interactive Inference for Differential Expression Analyses</a></li>
     <li><a class="dropdown-item" href="../articles/jointErrorRateCalibration_simulations.html">Joint Error Rate calibration</a></li>
-    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression_RNAseq.html">Permutation-based post hoc inference for differential gene expression studies: RNAseq data</a></li>
-    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression.html">Permutation-based post hoc inference for differential gene expression studies</a></li>
+    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression_linear-model.html">Bootstrap-based post hoc inference for differential gene expression studies in linear models</a></li>
+    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression_RNAseq.html">Permutation-based post hoc inference for two-group differential gene expression studies: RNAseq data</a></li>
+    <li><a class="dropdown-item" href="../articles/post-hoc_differential-expression.html">Permutation-based post hoc inference for two-group differential gene expression studies</a></li>
     <li><a class="dropdown-item" href="../articles/post-hoc_fMRI.html">Permutation-based post hoc inference for fMRI studies</a></li>
     <li><a class="dropdown-item" href="../articles/Simes_equi-correlation.html">Conservativeness of the Simes inequality under positive dependence</a></li>
   </ul></li>
@@ -39,7 +40,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Pearson's correlation test for rows of a matrix</h1>
-      <small class="dont-index">Source: <a href="https://github.com/sanssouci-org/sanssouci/blob/v0.15.0/R/rowPearsonCorrelationTests.R" class="external-link"><code>R/rowPearsonCorrelationTests.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sanssouci-org/sanssouci/blob/master/R/rowPearsonCorrelationTests.R" class="external-link"><code>R/rowPearsonCorrelationTests.R</code></a></small>
       <div class="d-none name"><code>rowPearsonCorrelationTests.Rd</code></div>
     </div>
 
@@ -114,9 +115,9 @@ Must be one of "two.sided" (default), "greater" or "less". As in
 <span class="r-out co"><span class="r-pr">#&gt;</span>   0.003   0.000   0.003 </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">fwt</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ p.value  : num [1:300] 0.2404 0.8942 0.9924 0.0029 0.8454 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ statistic: num [1:300] 0.713 -1.272 -2.55 2.933 -1.031 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ estimate : num [1:300] 0.118 -0.207 -0.391 0.439 -0.169 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ p.value  : num [1:300] 0.3935 0.9307 0.5571 0.8579 0.0335 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ statistic: num [1:300] 0.272 -1.515 -0.145 -1.087 1.889 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ estimate : num [1:300] 0.0453 -0.2448 -0.0241 -0.1783 0.3002 ...</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
