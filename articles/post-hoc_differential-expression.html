@@ -88,14 +88,15 @@ yield tighter bounds by adapting to unknown dependence by randomization.
 Finally we demonstrate the use of these methods on two applications of
 post hoc methods:</p>
 <ul>
-<li>confidence curves (envelopes) for the true or false positives</li>
-<li>statistical inference on volcano plots</li>
+<li>build confidence curves (envelopes) for the true or false positives
+and define differentially expressed genes accordingly</li>
+<li>perform statistical inference on the output of volcano plots</li>
 </ul>
 <p>The methods described in this vignette are described in detail in the
 book chapter <span class="citation">Blanchard, Neuvial, and Roquain
 (2021)</span> and in the paper <span class="citation">Blanchard,
 Neuvial, and Roquain (2020)</span>. A shiny application for volcano
-plots is also available from <a href="https://shiny-iidea-sanssouci.apps.math.cnrs.fr/" class="external-link uri">https://shiny-iidea-sanssouci.apps.math.cnrs.fr/</a>.</p>
+plots is also available at <a href="https://shiny-iidea-sanssouci.apps.math.cnrs.fr/" class="external-link uri">https://shiny-iidea-sanssouci.apps.math.cnrs.fr/</a>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span> <span class="co"># install.packages("ggplot2")</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://github.com/sanssouci-org/sanssouci" class="external-link">"sanssouci"</a></span><span class="op">)</span> <span class="co"># remotes::install_github("sanssouci-org/sanssouci@develop")</span></span>
