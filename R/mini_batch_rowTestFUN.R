@@ -14,6 +14,7 @@
 #'   1 has a larger mean than class 0.
 #' @param max_batch_size A number specifying the maximum size of information in 
 #'   each batch
+#' @param m the number of hypotheses
 #'
 #' @return the p-values for the test
 #' @export
@@ -28,11 +29,11 @@
 #'                       max_batch_size = 1e6)
 mini_batch_rowTestFUN <- function(rowTestFUN, Y, categ,
                                   alternative = c("two.sided", "less", "greater"), 
-                                  max_batch_size = 1e6){
+                                  max_batch_size = 1e6, m = nrow(Y)){
   alternative <- match.arg(alternative)
   categ <- as.matrix(categ)
 
-  m <- dim(Y)[1]
+  # m <- dim(Y)[1]
   B <- dim(categ)[2]
   nb_batch <- ceiling(B*m/max_batch_size)
   

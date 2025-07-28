@@ -6,9 +6,10 @@
 \usage{
 \method{predict}{SansSouci}(
   object,
-  S = seq_len(nHyp(object)),
+  S = seq_len(min(nHyp(object), object$input$n_dimensions)),
   what = c("TP", "FDP"),
   all = FALSE,
+  contrast_name = object$input$contrast_name,
   ...
 )
 }
@@ -29,6 +30,8 @@ computed, among:
 Defaults to \code{c("TP", "FDP")}}
 
 \item{all}{A logical value: should the bounds for all ordered subsets of \code{S} be returned? If \code{FALSE} (the default), only the bound for \code{S} is returned}
+
+\item{contrast_name}{A character value, the selected contrast. Should be chosen in \code{x$input$contrast_name}.}
 
 \item{...}{Not used}
 }

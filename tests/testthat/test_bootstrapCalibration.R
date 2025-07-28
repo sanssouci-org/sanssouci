@@ -227,4 +227,47 @@ test_that("`bootstrap_permutation`", {
                                      alternative = "two.sided"))
 })
 
+test_that("test row_lm_test function", {
+  
+  N = 53
+  p = L = 2
+  D = 1
+  
+  X <- matrix(0, nrow = N, ncol = p)
+  X[,1] <- 1
+  X[, -1] <- runif(N*(p - 1), min = 0, max = 3)
+  beta <- matrix(0, nrow = p, ncol = D)
+  epsilons <- matrix(rnorm(N*D), nrow = N, ncol = D)
+  Y <- X %*% beta + epsilons
+  C <- diag(p)
+  alternative <- sample(c("two.sided", "less", "greater"), size= 1)
+  resrowLM <- row_lm_test(t(Y), X, C, alternative = alternative, 
+                          groups = matrix(1:nrow(Y), ncol = 1))
+  
+  resLM <- lm_test(Y, X, C, alternative = alternative)
+  
+  expect_equal(resrowLM$p.value, resLM$p.value)
+  
+  B = 10
+  set.seed(20250623)
+  groups <- replicate(B, sample(1:N, replace = TRUE))
+  resrowLM <- row_lm_test(t(Y), X, C, alternative = alternative, 
+                          groups = groups)
+  lmt <- apply(groups, 2, FUN = function(x) {
+    lmt <- lm_test(matrix(resLM$epsilon_est[x,]), X, C, alternative)
+    lmt$p.value
+  })
+  expect_equal(lmt, resrowLM$p.value)
+  
+  set.seed(20250623)
+  pval_perm <- bootstrap_permutation(Y = Y, X = X, C = C, B, 
+                                     replace = TRUE, 
+                                     alternative = alternative)
+  pval_perm <- matrix(pval_perm, nrow = D*L, ncol = B)
+  expect_equal(lmt, pval_perm)
+  
+})
+
+
+
 
