@@ -74,7 +74,7 @@ dyadic.from.leaf_list <- function(leaf_list, method) {
         oi <- oldCh[[i]]
         leaves_in_node <- oi[2] - oi[1] + 1
         if (leaves_in_node > 1) {
-          cut2 <- ceiling(leaves_in_node/2)
+          cut2 <- ceiling(leaves_in_node / 2)
           Ch <- c(Ch, 
                   list(c(oi[1], oi[1] + cut2 - 1)), 
                   list(c(oi[1] + cut2, oi[2])))
@@ -282,7 +282,7 @@ nb.elements <- function(C) {
 #' method <- zeta.trivial
 #' ZL <- zetas.tree(C, leaf_list, method, pvalues, alpha = 0.05)
 #' ZL
-zetas.tree <- function(C, leaf_list, method, pvalues, alpha, refine=FALSE, verbose=FALSE, ...) {
+zetas.tree <- function(C, leaf_list, method, pvalues, alpha, refine = FALSE, verbose = FALSE, ...) {
   H <- length(C)
   K <- nb.elements(C)
   ZL <- list()
@@ -501,7 +501,7 @@ pruning <- function(C, ZL, leaf_list, prune.leafs = FALSE, delete.gaps = FALSE) 
 #' Delete the gaps induced by pruning
 #' 
 #' @description
-#' A small optimization that can be done after pruning
+#' A small optimization that can be done after pruning and
 #' that can speed up computations (it removes the gaps introduced by the pruning)
 #' 
 #' @details
@@ -633,9 +633,9 @@ curve.V.star.forest.naive <- function(perm, C, ZL, leaf_list, pruning = FALSE, d
   vstars <- numeric(length(perm))
   
   # the naive version doesn't need a proper completion of the
-  # forest structure because V.star.no.extension
+  # forest structure because V.star
   # implicitly completes, and for the same reason
-  # it can use super pruning
+  # it is allowed to prune leaves
   
   if (pruning){
     pruned <- pruning(C, ZL, leaf_list, prune.leafs = TRUE, delete.gaps = delete.gaps)
