@@ -85,6 +85,7 @@ formatBounds <- function(max_FP, idxs = seq_len(max_FP), lab = NULL,
 #' @param conf_bound A data.frame or a list of data.frames as output by [predict]
 #' @param xmax Right limit of the plot
 #' @param cols A vector of colors of the same length as `conf_bound`
+#' @param legend.title a character for the title of the legend
 #' @references Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc confidence bounds on false positives using reference families. Annals of Statistics, 48(3), 1281-1303.
 #' @export
 #' @importFrom rlang .data
@@ -104,7 +105,7 @@ formatBounds <- function(max_FP, idxs = seq_len(max_FP), lab = NULL,
 #' plotConfCurve(bounds, xmax = 200)
 #' 
 
-plotConfCurve <- function(conf_bound, xmax, cols = NULL) {
+plotConfCurve <- function(conf_bound, xmax, cols = NULL, legend.title = "Contrast") {
     nb <- 1
     if (inherits(conf_bound, "data.frame")) {    # (assume) a single conf. bound
         ## do nothing!
@@ -138,7 +139,9 @@ plotConfCurve <- function(conf_bound, xmax, cols = NULL) {
     p + ggplot2::geom_line() +
         ggplot2::facet_wrap(~ stat, scales = "free_y") + 
         ggplot2::labs(x = "Number of top features selected", 
-                      y = "Post hoc confidence bounds") +
+                      y = "Post hoc confidence bounds", 
+                      color = legend.title, 
+                      linetype = legend.title) +
         ggplot2::theme_bw() + 
         ggplot2::theme(strip.background = NULL) +
         ggplot2::scale_color_manual(values = cols) 
