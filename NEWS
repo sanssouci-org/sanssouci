@@ -2,8 +2,13 @@
 Package: sanssouci
 ==================
 
+Version 0.16.1 [2025-07-28]
+
+* Correct a bug in 'forest.completion' (PR #123)
+
 Version 0.16.0 [2025-07-15]
 
+* Add bootstrap calibration functions (PR #124)
 * Update SansSouci object and methods to linear model with bootstrap calibration (PR#117)
 * Add vignette for Differential analysis with linear model on microarray data
 
