@@ -20,7 +20,7 @@ A list with two named elements. \describe{
 }
 }
 \description{
-A small optimization that can be done after pruning
+A small optimization that can be done after pruning and
 that can speed up computations (it removes the gaps introduced by the pruning)
 }
 \details{
