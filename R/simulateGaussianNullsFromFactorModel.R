@@ -48,12 +48,12 @@ simulateGaussianNullsFromFactorModel <- function(
     rho = 0, cov = FALSE) {
     flavor <- match.arg(flavor)
     
-    if (flavor=="independent") {
+    if (flavor == "independent") {
         h <- numeric(0)
         P <- Matrix(nrow=m, ncol=length(h))
         rho <- 0
         Y <- replicate(n, simulateFactorModelNullsFromSingularValuesAndLoadings(m, h=h, P=P, rho=rho)$Y)
-    } else if (flavor=="equi-correlated") {
+    } else if (flavor == "equi-correlated") {
         h <- 1
         P <- Matrix(1, m, length(h))
         if (FALSE) { ## possibly slow for large m*n
@@ -61,7 +61,7 @@ simulateGaussianNullsFromFactorModel <- function(
         } else {
             Y <- simulateGaussianEquiCorrelatedNulls(m, n, rho)
         }
-    } else if (flavor=="3-factor") {
+    } else if (flavor == "3-factor") {
         if (m != 4*floor(m/4)) {
             stop("Argument 'm' should be a multiplier of 4 for flavor '3-factor'")
         }
