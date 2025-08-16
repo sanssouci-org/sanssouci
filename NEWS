@@ -2,6 +2,12 @@
 Package: sanssouci
 ==================
 
+Version 0.16.1.999
+
+* Use withr::with_preserve_seed in tests to avoid fixing seed
+* Add tests for 'simulateGaussianNullsFromFactorModel'
+* Add tests for 'rowZTests'.
+
 Version 0.16.1 [2025-07-28]
 
 * Correct a bug in 'forest.completion' (PR #123)
