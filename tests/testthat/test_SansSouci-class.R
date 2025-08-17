@@ -5,20 +5,19 @@ test_that("Correctness of the constructor of SansSouci", {
   withr::with_preserve_seed({
     obj <- SansSouciSim(m = m, rho = 0, n = n, pi0 = 0.8, SNR = 0, prob = 0.4)
   })
+  withr::with_preserve_seed({
+    sim <- gaussianSamples(m = m, rho = 0, n = n, pi0 = 0.8, SNR = 0, prob = 0.4)
+  })
+  obj1 <- SansSouci(Y = sim$X, groups = sim$categ, truth = sim$H)
   expect_s3_class(obj, "SansSouci")
+  expect_s3_class(obj1, "SansSouci")
+  expect_identical(obj1, obj)
 
   res <- capture_output(print(obj))
   expect_type(res, "character")
   res <- capture_output(print(obj, verbose = TRUE))
   expect_type(res, "character")
-  
-  withr::with_preserve_seed({
-    sim <- gaussianSamples(m = m, rho = 0, n = n, pi0 = 0.8, SNR = 0, prob = 0.4)
-  })
-  obj1 <- SansSouci(Y = sim$X, groups = sim$categ, truth = sim$H)
-  expect_s3_class(obj1, "SansSouci")
-  expect_identical(obj1, obj)
-  
+    
   expect_equal(names(obj), c("input", "parameters", "output"))
   expect_null(obj$parameters)
   expect_null(obj$output)
