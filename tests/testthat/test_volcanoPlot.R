@@ -13,6 +13,9 @@ test_that("Vanilla test for 'volcanoPlot'", {
     vp <- volcanoPlot(cal, p = 1, q = 1, r = 0, bounds = FALSE)
     expect_equal(vp, seq_len(m))     ## no active filter: all genes selected
     
+    vp_bounds <- volcanoPlot(cal, p = 1, q = 1, r = 0, bounds = TRUE)
+    expect_identical(vp, vp_bounds)
+      
     vp <- volcanoPlot(cal, 
                       p = 1, q = 1, r = Inf, bounds = FALSE)
     expect_equal(length(vp), 0)      ## too stringent filtering on fold change
