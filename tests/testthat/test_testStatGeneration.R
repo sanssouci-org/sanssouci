@@ -59,7 +59,9 @@ test_that("Simulation of null hypotheses from factor model", {
                                                rho = rho)
     expect_identical(Y3[, 1], sim3$Y)
     
-    
+    Sigma <- getFactorModelCovarianceMatrix(m, h, P = P, rho = rho)
+    expect_equal(nrow(Sigma), ncol(Sigma))
+    expect_equal(nrow(Sigma), m)
 })
 
 test_that("Simulation of Gaussian null hypotheses from covariance matrix", {
