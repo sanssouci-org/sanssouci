@@ -6,7 +6,8 @@ Version 0.16.1.999
 
 * Use withr::with_preserve_seed in tests to avoid fixing seed
 * Add tests for 'simulateGaussianNullsFromFactorModel', 'rowZTests'
-* Improve coverage of 'check_ref_fam', 'confCurveFromFam'
+* Improve test coverage of 'check_ref_fam', 'confCurveFromFam'
+* Improve test coverage of 'zeta.*', 'curve.V.star.*'
 
 Version 0.16.1 [2025-07-28]
 
