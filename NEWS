@@ -5,9 +5,8 @@ Package: sanssouci
 Version 0.16.1.999
 
 * Use withr::with_preserve_seed in tests to avoid fixing seed
-* Add tests for 'simulateGaussianNullsFromFactorModel'
-* Add tests for 'rowZTests'
-* Improve coverage of 'check_ref_fam'
+* Add tests for 'simulateGaussianNullsFromFactorModel', 'rowZTests'
+* Improve coverage of 'check_ref_fam', 'confCurveFromFam'
 
 Version 0.16.1 [2025-07-28]
 

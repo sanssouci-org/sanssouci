@@ -20,6 +20,11 @@ test_that("Beta reference family", {
 test_that("check_ref_fam", {
   res <- check_ref_fam(Simes)
   expect_null(res)
+  
   res <- check_ref_fam(Beta)
   expect_null(res)
+
+  Simes2 <- list(name = "Simes",
+                 t = function(lambda, k, m) lambda * k / m)
+  expect_error(check_ref_fam(Simes2), "Element 't_inv' missing")
 })
