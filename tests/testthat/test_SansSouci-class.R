@@ -1,17 +1,20 @@
 test_that("Correctness of the constructor of SansSouci", {
   m <- 54
   n <- 132
-  set.seed(0xBEEF)
-  obj <- SansSouciSim(
-    m = m, rho = 0, n = n,
-    pi0 = 0.8, SNR = 0, prob = 0.4
-  )
+  
+  withr::with_preserve_seed({
+    obj <- SansSouciSim(m = m, rho = 0, n = n, pi0 = 0.8, SNR = 0, prob = 0.4)
+  })
   expect_s3_class(obj, "SansSouci")
-  set.seed(0xBEEF)
-  sim <- gaussianSamples(
-    m = m, rho = 0, n = n,
-    pi0 = 0.8, SNR = 0, prob = 0.4
-  )
+
+  res <- capture_output(print(obj))
+  expect_type(res, "character")
+  res <- capture_output(print(obj, verbose = TRUE))
+  expect_type(res, "character")
+  
+  withr::with_preserve_seed({
+    sim <- gaussianSamples(m = m, rho = 0, n = n, pi0 = 0.8, SNR = 0, prob = 0.4)
+  })
   obj1 <- SansSouci(Y = sim$X, groups = sim$categ, truth = sim$H)
   expect_s3_class(obj1, "SansSouci")
   expect_identical(obj1, obj)
@@ -129,6 +132,7 @@ test_that("Correctness of elements of fitted  'SansSouci' object", {
   expect_equal(params$family, fam)
   expect_equal(params$K, K)
   
+  capture_output(print(res))
   output <- res$output
   nms <- c(
     "statistic", "parameter", "p.value", "estimate", "p0", "thr",
