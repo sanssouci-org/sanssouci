@@ -1,6 +1,6 @@
 Package: sanssouci
-Version: 0.16.1
-Date: 2025-05-29
+Version: 0.16.2
+Date: 2025-08-16
 Title: Post Hoc Multiple Testing Inference
 Authors@R: c(person("Pierre", "Neuvial", role=c("aut", "cre"),
                  email="pierre.neuvial@math.univ-toulouse.fr",
@@ -20,6 +20,7 @@ Imports:
     matrixTests,
     rlang
 Suggests:
+    covr,
     cherry,
     edgeR,
     ggplot2,
@@ -33,7 +34,7 @@ Suggests:
     sanssouci.data,
     scales,
     testthat,
-    covr
+    withr
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2

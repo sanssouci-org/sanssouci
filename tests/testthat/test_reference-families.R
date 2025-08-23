@@ -16,3 +16,15 @@ test_that("Beta reference family", {
     thr_inv <- t_inv_beta(thr, 1:m, m)
     expect_equal(thr_inv, rep(alpha, m))
 })
+
+test_that("check_ref_fam", {
+  res <- check_ref_fam(Simes)
+  expect_null(res)
+  
+  res <- check_ref_fam(Beta)
+  expect_null(res)
+
+  Simes2 <- list(name = "Simes",
+                 t = function(lambda, k, m) lambda * k / m)
+  expect_error(check_ref_fam(Simes2), "Element 't_inv' missing")
+})
