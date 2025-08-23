@@ -10,7 +10,7 @@ test_that("Correctness of the constructor of SansSouci", {
   obj1 <- SansSouci(Y = sim$X, groups = sim$categ, truth = sim$H)
   expect_s3_class(obj, "SansSouci")
   expect_s3_class(obj1, "SansSouci")
-  expect_identical(obj1, obj)
+  expect_identical(obj, obj1)
 
   res <- capture_output(print(obj))
   expect_type(res, "character")
