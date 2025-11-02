@@ -34,8 +34,8 @@ This vignette addresses the problem of testing contrasts in linear models arisin
 In this vignette we reproduce some of the results obtained in Section 5.2 of @davenport2025fdp. These bootstrap-based methods are *not yet implemented* in the shiny application for volcano plots available at https://shiny-iidea-sanssouci.apps.math.cnrs.fr/.
 
 ```{r install-r-packages, results='hide', message=FALSE, eval=FALSE}
-require("ggplot2") || install.packages("ggplot2")
-require("sanssouci") || remotes::install_github("sanssouci-org/sanssouci@bootstrap-calibration")
+require("ggplot2") # install.packages("ggplot2")
+require("sanssouci") # remotes::install_github("sanssouci-org/sanssouci@develop")
 ```
 
 ```{r load-r-packages, results='hide', message=FALSE}
@@ -70,6 +70,7 @@ if(sum(is.na(X))!=0){
 
 
 The data consists of $D = `r nrow(Y)`$ gene expression measurements for $n = `r ncol(Y)`$ patients. For each gene, we fit a linear model including the pulmonary obstruction ratio (`fev1_fvc_utah`), along with the following covariates (see also `?sanssouci.data::expr_COPD_design`):
+
 - `age_enroll`: age of the participant at the time of enrollment in the study
 - `gender`
 - `bmi`: body mass index
