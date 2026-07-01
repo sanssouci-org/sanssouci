@@ -8,6 +8,7 @@ status](https://github.com/sanssouci-org/sanssouci/workflows/R-CMD-check/badge.s
 [![Coverage
 Status](https://codecov.io/gh/sanssouci-org/sanssouci/branch/develop/graph/badge.svg)](https://codecov.io/github/sanssouci-org/sanssouci/branch/develop)
 [![R-CMD-check](https://github.com/sanssouci-org/sanssouci/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sanssouci-org/sanssouci/actions/workflows/R-CMD-check.yaml)
+[![SWH](https://archive.softwareheritage.org/badge/origin/https://github.com/sanssouci-org/sanssouci/)](https://archive.softwareheritage.org/browse/origin/?origin_url=https://github.com/sanssouci-org/sanssouci)
 <!-- badges: end -->
 
 The goal of sanssouci \[sãsusi\] is to perform **post hoc inference**:
