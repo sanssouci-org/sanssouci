@@ -15,9 +15,10 @@ volcanoPlot(x, ...)
   q = 1,
   r = 0,
   contrast_name = x$input$contrast_name[1],
-  cex = c(0.2, 0.6),
+  cex = c(0.4, 1.5),
   col = c("#33333333", "#FF0000", "#FF666633"),
   pch = 19,
+  variable_label = "variable",
   ylim = NULL,
   ...
 )
@@ -44,6 +45,9 @@ volcanoPlot(x, ...)
 \item{col}{A vector of length 3}
 
 \item{pch}{An integer or single character string specifying the plotting character, see \link{par}}
+
+\item{variable_label}{A character, the type of variable to print in title
+(e.g. "gene", "proteins", "test", ...)}
 
 \item{ylim}{A numeric vector of length 2, the \code{y} limits of the plot}
 }
