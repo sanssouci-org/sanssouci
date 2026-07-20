@@ -25,30 +25,31 @@ volcanoPlot <- function(x, ...) UseMethod("volcanoPlot")
 #'
 #' @examples
 #' data(expr_ALL, package = "sanssouci.data")
-#' groups <- ifelse(colnames(expr_ALL)=="NEG", 0, 1)
+#' groups <- ifelse(colnames(expr_ALL) == "NEG", 0, 1)
 #' a <- SansSouci(Y = expr_ALL, groups = groups)
 #'
 #' res <- fit(a, B = 100, alpha = 0.1)
-#' volcanoPlot(res, q = 0.2, r = 0.2, ylim = c(0, 4))
+#' volcanoPlot(res, q = 0.2, r = 0.2, ylim = c(0, 4), variable_label = "gene")
 volcanoPlot.SansSouci <- function(x,
-                                  fold_changes = foldChanges(x)[contrast_name,],
-                                  p_values = pValues(x)[contrast_name,],
+                                  fold_changes = foldChanges(x)[contrast_name, ],
+                                  p_values = pValues(x)[contrast_name, ],
                                   p = 1, q = 1, r = 0,
                                   contrast_name = x$input$contrast_name[1],
                                   cex = c(0.4, 1.5),
                                   col = c("#33333333", "#FF0000", "#FF666633"),
                                   pch = 19, variable_label = "variable",
                                   ylim = NULL, ...) {
-  object <- x;
-  if(!(contrast_name %in% rownames(pValues(object)))) {
-    stop(paste("Choose a contrast in",
-               paste(rownames(pValues(object)),
-                     collapse = ", "))
-    )
+  object <- x
+  if (!(contrast_name %in% rownames(pValues(object)))) {
+    stop(paste(
+      "Choose a contrast in",
+      paste(rownames(pValues(object)),
+            collapse = ", "
+      )
+    ))
   }
   y <- force(p_values)
   x <- force(fold_changes)
-
 
 
   if (object$input$type == "1 sample") {
@@ -60,11 +61,15 @@ volcanoPlot.SansSouci <- function(x,
   pval <- pValues(object)[contrast_name, ]
   thr <- thresholds(object)[1:m] # we select at most m hypotheses here
 
-  volcanoPlot(x = x, y = y, pval = pval, thr = thr,
-              p = p, q = q, r = r,
-              cex = cex,
-              col = col,
-              pch = pch, ylim = ylim, ...)
+  volcanoPlot(
+    x = x, y = y, pval = pval, thr = thr,
+    p = p, q = q, r = r,
+    cex = cex,
+    col = col,
+    pch = pch,
+    variable_label = variable_label,
+    ylim = ylim, ...
+  )
 }
 
 #' Volcano plot
@@ -116,12 +121,12 @@ volcanoPlot.numeric <- function(x, y, pval, thr,
   stopifnot(length(x) == m)
 
   logp <- -log10(y)
-  adjp <- p.adjust(y, method = "BH")  ## adjusted p-values
-  y_sel <- which((adjp <= q) &           ## selected by q-value
-                   (y <= p))        ##          or p-value
+  adjp <- p.adjust(y, method = "BH") ## adjusted p-values
+  y_sel <- which((adjp <= q) & ## selected by q-value
+                   (y <= p)) ##          or p-value
   y_thr <- Inf
   if (length(y_sel) > 0) {
-    y_thr <- min(logp[y_sel])       ## threshold on the log(p-value) scale
+    y_thr <- min(logp[y_sel]) ## threshold on the log(p-value) scale
   }
 
   ## gene selections
@@ -133,17 +138,17 @@ volcanoPlot.numeric <- function(x, y, pval, thr,
   n1 <- length(sel1)
   FP1 <- maxFP(pval[sel1], thr = thr)
   TP1 <- n1 - FP1
-  FDP1 <- round(FP1/max(n1, 1), 2)
+  FDP1 <- round(FP1 / max(n1, 1), 2)
 
   n2 <- length(sel2)
   FP2 <- maxFP(pval[sel2], thr = thr)
   TP2 <- n2 - FP2
-  FDP2 <- round(FP2/max(n2, 1), 2)
+  FDP2 <- round(FP2 / max(n2, 1), 2)
 
   n12 <- length(sel12)
   FP12 <- maxFP(pval[sel12], thr = thr)
   TP12 <- n12 - FP12
-  FDP12 <- round(FP12/max(n12, 1), 2)
+  FDP12 <- round(FP12 / max(n12, 1), 2)
 
   ## graphical parameters
   cols <- rep(col[1], m)
@@ -154,16 +159,14 @@ volcanoPlot.numeric <- function(x, y, pval, thr,
 
   xlab <- "Fold change (log scale)"
   ylab <- bquote("p-value (-" ~ log[10] ~ "scale)")
-  infty <- 100
-  if (is.null(ylim)) {
-    ylim <- c(0, max(logp))
-  }
 
 
-
-  df <- data.frame(log_pval = logp, logfc = x,
-                   selected = factor(ifelse(seq(m) %in% sel12, "In", "Out"),
-                                     levels = c("Out", "In")))
+  df <- data.frame(
+    log_pval = logp, logfc = x,
+    selected = factor(ifelse(seq(m) %in% sel12, "In", "Out"),
+                      levels = c("Out", "In")
+    )
+  )
   title <- sprintf(
     "%d %s selected\nAt least %d true positives (FDP ≤ %.2f)",
     n12, pluralize(word = variable_label, n = n12), TP12, FDP12
@@ -197,7 +200,7 @@ volcanoPlot.numeric <- function(x, y, pval, thr,
     ) +
     ggplot2::geom_point(ggplot2::aes(size = selected)) +
     ggplot2::scale_color_manual(values = col[1:2]) +
-    ggplot2::scale_size_manual(values = cex) + #cex = c(0.2, 0.6)
+    ggplot2::scale_size_manual(values = cex) + # cex = c(0.2, 0.6)
     ggplot2::theme_bw() +
     ggplot2::labs(
       title = title,
@@ -208,7 +211,7 @@ volcanoPlot.numeric <- function(x, y, pval, thr,
       legend.position = "none",
       plot.title = ggplot2::element_text(hjust = 0.5)
     ) +
-    #color selected zone
+    # color selected zone
     ggplot2::annotate(
       "rect",
       xmin = -Inf, xmax = -r,
@@ -222,33 +225,33 @@ volcanoPlot.numeric <- function(x, y, pval, thr,
       fill = col[3], alpha = 0.3
     )
 
-    if(bounds){
-      txt_right <- sprintf(
-        "%d %s\nTP ≥ %d ; FDP ≤ %.2f",
-        n1, pluralize(word = variable_label, n = n1), TP1, FDP1
-      )
+  if (bounds) {
+    txt_right <- sprintf(
+      "%d %s\nTP ≥ %d ; FDP ≤ %.2f",
+      n1, pluralize(word = variable_label, n = n1), TP1, FDP1
+    )
 
-      txt_left <- sprintf(
-        "%d %s\nTP ≥ %d ; FDP ≤ %.2f",
-        n2, pluralize(word = variable_label, n = n2), TP2, FDP2
+    txt_left <- sprintf(
+      "%d %s\nTP ≥ %d ; FDP ≤ %.2f",
+      n2, pluralize(word = variable_label, n = n2), TP2, FDP2
+    )
+    # bounds
+    vp <- vp +
+      ggplot2::annotate(
+        "text",
+        x = Inf, y = Inf,
+        label = txt_right,
+        hjust = 1.05,
+        vjust = 1.2
+      ) +
+      ggplot2::annotate(
+        "text",
+        x = -Inf, y = Inf,
+        label = txt_left,
+        hjust = -0.05,
+        vjust = 1.2
       )
-      #bounds
-      vp <- vp +
-        ggplot2::annotate(
-          "text",
-          x = Inf, y = Inf,
-          label = txt_right,
-          hjust = 1.05,
-          vjust = 1.2
-        ) +
-        ggplot2::annotate(
-          "text",
-          x = -Inf, y = Inf,
-          label = txt_left,
-          hjust = -0.05,
-          vjust = 1.2
-        )
-    }
+  }
 
   return(vp)
 }
