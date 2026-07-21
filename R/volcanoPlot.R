@@ -20,6 +20,9 @@ volcanoPlot <- function(x, ...) UseMethod("volcanoPlot")
 #' @param variable_label A character, the type of variable to print in title
 #' (e.g. "gene", "proteins", "test", ...)
 #' @param ylim A numeric vector of length 2, the `y` limits of the plot
+#' @param return_selection A logical value, if TRUE the function return a list
+#' with the volcanoplot and a vector of selected variables. If FALSE only the
+#' volcanoplot is return.
 #' @param ... Other arguments to be passed to volcanoPlot.numeric
 #' @export
 #'
@@ -38,7 +41,7 @@ volcanoPlot.SansSouci <- function(x,
                                   cex = c(0.4, 1.5),
                                   col = c("#33333333", "#FF0000", "#FF666633"),
                                   pch = 19, variable_label = "variable",
-                                  ylim = NULL, ...) {
+                                  ylim = NULL, return_selection = FALSE, ...) {
   object <- x
   if (!(contrast_name %in% rownames(pValues(object)))) {
     stop(paste(
@@ -68,7 +71,7 @@ volcanoPlot.SansSouci <- function(x,
     col = col,
     pch = pch,
     variable_label = variable_label,
-    ylim = ylim, ...
+    ylim = ylim, return_selection = return_selection, ...
   )
 }
 
@@ -91,6 +94,9 @@ volcanoPlot.SansSouci <- function(x,
 #' (e.g. "gene", "proteins", "test", ...)
 #' @param ylim A numeric vector of length 2, the \eqn{y} limits of the plot
 #' @param bounds A boolean value: should the post hoc bounds be displayed on the plot? Defaults to TRUE
+#' @param return_selection A logical value, if TRUE the function return a list
+#' with the volcanoplot and a vector of selected variables. If FALSE only the
+#' volcanoplot is return.
 #' @param ... Not used
 #'
 #' @details A Welch T-test of differential expression between the two categories
@@ -108,7 +114,8 @@ volcanoPlot.numeric <- function(x, y, pval, thr,
                                 cex = c(0.4, 1.5),
                                 col = c("#33333333", "#FF0000", "#FF666633"),
                                 pch = 19, variable_label = "variable",
-                                ylim = NULL, bounds = TRUE, ...) {
+                                ylim = NULL, bounds = TRUE,
+                                return_selection = FALSE, ...) {
   # pval <- x; rm(x);
   if (p < 1 && q < 1) {
     warning("Filtering both on p-values and BH-adjusted p-values")
@@ -168,7 +175,7 @@ volcanoPlot.numeric <- function(x, y, pval, thr,
     )
   )
   title <- sprintf(
-    "%d %s selected\nAt least %d true positives (FDP ≤ %.2f)",
+    "%d %s selected\nAt least %d true positives (FDP \u2264 %.2f)",
     n12, pluralize(word = variable_label, n = n12), TP12, FDP12
   )
 
@@ -227,12 +234,12 @@ volcanoPlot.numeric <- function(x, y, pval, thr,
 
   if (bounds) {
     txt_right <- sprintf(
-      "%d %s\nTP ≥ %d ; FDP ≤ %.2f",
+      "%d %s\nTP \u2265 %d ; FDP \u2264 %.2f",
       n1, pluralize(word = variable_label, n = n1), TP1, FDP1
     )
 
     txt_left <- sprintf(
-      "%d %s\nTP ≥ %d ; FDP ≤ %.2f",
+      "%d %s\nTP \u2265 %d ; FDP \u2264 %.2f",
       n2, pluralize(word = variable_label, n = n2), TP2, FDP2
     )
     # bounds
@@ -252,6 +259,9 @@ volcanoPlot.numeric <- function(x, y, pval, thr,
         vjust = 1.2
       )
   }
-
-  return(vp)
+  if(return_selection){
+    return(list(volcanoplot = vp, selection = sel12))
+  } else {
+    return(vp)
+  }
 }

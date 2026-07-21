@@ -18,6 +18,7 @@
   variable_label = "variable",
   ylim = NULL,
   bounds = TRUE,
+  return_selection = FALSE,
   ...
 )
 }
@@ -48,6 +49,10 @@
 \item{ylim}{A numeric vector of length 2, the \eqn{y} limits of the plot}
 
 \item{bounds}{A boolean value: should the post hoc bounds be displayed on the plot? Defaults to TRUE}
+
+\item{return_selection}{A logical value, if TRUE the function return a list
+with the volcanoplot and a vector of selected variables. If FALSE only the
+volcanoplot is return.}
 
 \item{...}{Not used}
 }

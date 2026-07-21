@@ -20,6 +20,7 @@ volcanoPlot(x, ...)
   pch = 19,
   variable_label = "variable",
   ylim = NULL,
+  return_selection = FALSE,
   ...
 )
 }
@@ -50,15 +51,19 @@ volcanoPlot(x, ...)
 (e.g. "gene", "proteins", "test", ...)}
 
 \item{ylim}{A numeric vector of length 2, the \code{y} limits of the plot}
+
+\item{return_selection}{A logical value, if TRUE the function return a list
+with the volcanoplot and a vector of selected variables. If FALSE only the
+volcanoplot is return.}
 }
 \description{
 Volcano plot
 }
 \examples{
 data(expr_ALL, package = "sanssouci.data")
-groups <- ifelse(colnames(expr_ALL)=="NEG", 0, 1)
+groups <- ifelse(colnames(expr_ALL) == "NEG", 0, 1)
 a <- SansSouci(Y = expr_ALL, groups = groups)
 
 res <- fit(a, B = 100, alpha = 0.1)
-volcanoPlot(res, q = 0.2, r = 0.2, ylim = c(0, 4))
+volcanoPlot(res, q = 0.2, r = 0.2, ylim = c(0, 4), variable_label = "gene")
 }
