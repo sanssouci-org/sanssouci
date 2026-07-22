@@ -1,81 +1,14 @@
 #' Volcano plot
 #'
+#' Volcano plot for differential expression studies
+#'
+#' @rdname volcanoPlot
 #' @param x An object. See individual methods for specifics
 #' @param ... Other arguments passed to methods
 #' @export
 volcanoPlot <- function(x, ...) UseMethod("volcanoPlot")
 
 #' @rdname volcanoPlot
-#' @param x An object of class `SansSouci`
-#' @param fold_changes An optional vector of fold changes, of the same length as `nHyp(object)`, use for volcanoPlot x-axis. If not specified,
-#' @param p_values A vector of p-values, of the same length as `nHyp(object)`, use for volcanoPlot x-axis
-#' @param contrast_name A character value, the selected contrast. Should be chosen in \code{x$input$contrast_name}.
-#' @param p A numeric value, the p-value threshold under which features are selected
-#' @param q A numeric value, the q-value (or FDR-adjusted p-value) threshold under which features are selected
-#' @param r A numeric value, the absolute fold change above which features are selected
-#' @param cex A numeric vector of length 2, the relative magnification factor for unselected (`cex[1]`) and unselected (`cex[2]`) features.
-#'
-#' @param col A vector of length 3
-#' @param pch An integer or single character string specifying the plotting character, see [par]
-#' @param feature_label A character, the label to be used to designate individual hypotheses in the plot title
-#' (e.g. "gene", "proteins", ...)
-#' @param ylim A numeric vector of length 2, the `y` limits of the plot
-#' @param ... Other arguments to be passed to volcanoPlot.numeric
-#' @export
-#'
-#' @examples
-#' data(expr_ALL, package = "sanssouci.data")
-#' groups <- ifelse(colnames(expr_ALL) == "NEG", 0, 1)
-#' a <- SansSouci(Y = expr_ALL, groups = groups)
-#'
-#' res <- fit(a, B = 100, alpha = 0.1)
-#' volcanoPlot(res, q = 0.2, r = 0.2, ylim = c(0, 4), feature_label = "gene")
-volcanoPlot.SansSouci <- function(x,
-                                  fold_changes = foldChanges(x)[contrast_name, ],
-                                  p_values = pValues(x)[contrast_name, ],
-                                  p = 1, q = 1, r = 0,
-                                  contrast_name = x$input$contrast_name[1],
-                                  cex = c(0.4, 1.5),
-                                  col = c("#33333333", "#FF0000", "#FF666633"),
-                                  pch = 19, feature_label = "feature",
-                                  ylim = NULL, ...) {
-  object <- x
-  if (!(contrast_name %in% rownames(pValues(object)))) {
-    stop(paste(
-      "Choose a contrast in",
-      paste(rownames(pValues(object)),
-            collapse = ", "
-      )
-    ))
-  }
-  y <- force(p_values)
-  x <- force(fold_changes)
-
-
-  if (object$input$type == "1 sample") {
-    stop("Can't do a volcano plot for one-sample tests!")
-  }
-  m <- object$input$n_dimensions
-  stopifnot(m == length(x))
-  stopifnot(m == length(y))
-  pval <- pValues(object)[contrast_name, ]
-  thr <- thresholds(object)[1:m] # we select at most m hypotheses here
-
-  volcanoPlot(
-    x = x, y = y, pval = pval, thr = thr,
-    p = p, q = q, r = r,
-    cex = cex,
-    col = col,
-    pch = pch,
-    feature_label = feature_label,
-    ylim = ylim, ...
-  )
-}
-
-#' Volcano plot
-#'
-#' Volcano plot for differential expression studies
-#'
 #' @param x A vector of fold changes (x axis of the volcano plot)
 #' @param y A vector of p-values (y axis of the volcano plot)
 #' @param pval A vector of p-values, of the same length as `x`, use to estimate post-hoc bounds
@@ -255,4 +188,62 @@ volcanoPlot.numeric <- function(x, y, pval, thr,
   }
   attr(vp, "selection") <- sel12
   return(vp)
+}
+
+
+#' @rdname volcanoPlot
+#' @param x An object of class `SansSouci`
+#' @param fold_changes An optional vector of fold changes, of the same length as `nHyp(object)`, use for volcanoPlot x-axis. If not specified,
+#' @param p_values A vector of p-values, of the same length as `nHyp(object)`, use for volcanoPlot x-axis
+#' @param contrast_name A character value, the selected contrast. Should be chosen in \code{x$input$contrast_name}.
+#' @inheritParams volcanoPlot.numeric
+#' @export
+#'
+#' @examples
+#' data(expr_ALL, package = "sanssouci.data")
+#' groups <- ifelse(colnames(expr_ALL) == "NEG", 0, 1)
+#' a <- SansSouci(Y = expr_ALL, groups = groups)
+#'
+#' res <- fit(a, B = 100, alpha = 0.1)
+#' volcanoPlot(res, q = 0.2, r = 0.2, ylim = c(0, 4), feature_label = "gene")
+volcanoPlot.SansSouci <- function(x,
+                                  fold_changes = foldChanges(x)[contrast_name, ],
+                                  p_values = pValues(x)[contrast_name, ],
+                                  p = 1, q = 1, r = 0,
+                                  contrast_name = x$input$contrast_name[1],
+                                  cex = c(0.4, 1.5),
+                                  col = c("#33333333", "#FF0000", "#FF666633"),
+                                  pch = 19, feature_label = "feature",
+                                  ylim = NULL, ...) {
+  object <- x
+  if (!(contrast_name %in% rownames(pValues(object)))) {
+    stop(paste(
+      "Choose a contrast in",
+      paste(rownames(pValues(object)),
+            collapse = ", "
+      )
+    ))
+  }
+  y <- force(p_values)
+  x <- force(fold_changes)
+  
+  
+  if (object$input$type == "1 sample") {
+    stop("Can't do a volcano plot for one-sample tests!")
+  }
+  m <- object$input$n_dimensions
+  stopifnot(m == length(x))
+  stopifnot(m == length(y))
+  pval <- pValues(object)[contrast_name, ]
+  thr <- thresholds(object)[1:m] # we select at most m hypotheses here
+  
+  volcanoPlot(
+    x = x, y = y, pval = pval, thr = thr,
+    p = p, q = q, r = r,
+    cex = cex,
+    col = col,
+    pch = pch,
+    feature_label = feature_label,
+    ylim = ylim, ...
+  )
 }
