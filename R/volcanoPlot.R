@@ -10,19 +10,16 @@ volcanoPlot <- function(x, ...) UseMethod("volcanoPlot")
 #' @param fold_changes An optional vector of fold changes, of the same length as `nHyp(object)`, use for volcanoPlot x-axis. If not specified,
 #' @param p_values A vector of p-values, of the same length as `nHyp(object)`, use for volcanoPlot x-axis
 #' @param contrast_name A character value, the selected contrast. Should be chosen in \code{x$input$contrast_name}.
-#' @param p A numeric value, the p-value threshold under which genes are selected
-#' @param q A numeric value, the q-value (or FDR-adjusted p-value) threshold under which genes are selected
-#' @param r A numeric value, the absolute fold change above which genes are selected
-#' @param cex A numeric vector of length 2, the relative magnification factor for unselected (`cex[1]`) and unselected (`cex[2]`) genes.
+#' @param p A numeric value, the p-value threshold under which features are selected
+#' @param q A numeric value, the q-value (or FDR-adjusted p-value) threshold under which features are selected
+#' @param r A numeric value, the absolute fold change above which features are selected
+#' @param cex A numeric vector of length 2, the relative magnification factor for unselected (`cex[1]`) and unselected (`cex[2]`) features.
 #'
 #' @param col A vector of length 3
 #' @param pch An integer or single character string specifying the plotting character, see [par]
-#' @param variable_label A character, the type of variable to print in title
-#' (e.g. "gene", "proteins", "test", ...)
+#' @param feature_label A character, the label to be used to designate individual hypotheses in the plot title
+#' (e.g. "gene", "proteins", ...)
 #' @param ylim A numeric vector of length 2, the `y` limits of the plot
-#' @param return_selection A logical value, if TRUE the function return a list
-#' with the volcanoplot and a vector of selected variables. If FALSE only the
-#' volcanoplot is return.
 #' @param ... Other arguments to be passed to volcanoPlot.numeric
 #' @export
 #'
@@ -32,7 +29,7 @@ volcanoPlot <- function(x, ...) UseMethod("volcanoPlot")
 #' a <- SansSouci(Y = expr_ALL, groups = groups)
 #'
 #' res <- fit(a, B = 100, alpha = 0.1)
-#' volcanoPlot(res, q = 0.2, r = 0.2, ylim = c(0, 4), variable_label = "gene")
+#' volcanoPlot(res, q = 0.2, r = 0.2, ylim = c(0, 4), feature_label = "gene")
 volcanoPlot.SansSouci <- function(x,
                                   fold_changes = foldChanges(x)[contrast_name, ],
                                   p_values = pValues(x)[contrast_name, ],
@@ -40,8 +37,8 @@ volcanoPlot.SansSouci <- function(x,
                                   contrast_name = x$input$contrast_name[1],
                                   cex = c(0.4, 1.5),
                                   col = c("#33333333", "#FF0000", "#FF666633"),
-                                  pch = 19, variable_label = "variable",
-                                  ylim = NULL, return_selection = FALSE, ...) {
+                                  pch = 19, feature_label = "feature",
+                                  ylim = NULL, ...) {
   object <- x
   if (!(contrast_name %in% rownames(pValues(object)))) {
     stop(paste(
@@ -70,8 +67,8 @@ volcanoPlot.SansSouci <- function(x,
     cex = cex,
     col = col,
     pch = pch,
-    variable_label = variable_label,
-    ylim = ylim, return_selection = return_selection, ...
+    feature_label = feature_label,
+    ylim = ylim, ...
   )
 }
 
@@ -83,27 +80,24 @@ volcanoPlot.SansSouci <- function(x,
 #' @param y A vector of p-values (y axis of the volcano plot)
 #' @param pval A vector of p-values, of the same length as `x`, use to estimate post-hoc bounds
 #' @param thr A numeric vector of length K, a JER controlling family, used to estimate post-hoc bounds
-#' @param p A numeric value, the p-value threshold under which genes are selected
-#' @param q A numeric value, the q-value (or FDR-adjusted p-value) threshold under which genes are selected
-#' @param r A numeric value, the absolute fold change above which genes are selected
-#' @param cex A numeric vector of length 2, the relative magnification factor for unselected (\code{cex[1]}) and unselected (\code{cex[2]}) genes.
+#' @param p A numeric value, the p-value threshold under which features are selected
+#' @param q A numeric value, the q-value (or FDR-adjusted p-value) threshold under which features are selected
+#' @param r A numeric value, the absolute fold change above which features are selected
+#' @param cex A numeric vector of length 2, the relative magnification factor for unselected (\code{cex[1]}) and unselected (\code{cex[2]}) features.
 #'
 #' @param col A vector of length 3
 #' @param pch An integer or single character string specifying the plotting character, see \code{\link{par}}
-#' @param variable_label A character, the type of variable to print in title
-#' (e.g. "gene", "proteins", "test", ...)
+#' @param feature_label A character, the label to be used to designate individual hypotheses in the plot title
+#' (e.g. "gene", "proteins", ...)
 #' @param ylim A numeric vector of length 2, the \eqn{y} limits of the plot
 #' @param bounds A boolean value: should the post hoc bounds be displayed on the plot? Defaults to TRUE
-#' @param return_selection A logical value, if TRUE the function return a list
-#' with the volcanoplot and a vector of selected variables. If FALSE only the
-#' volcanoplot is return.
 #' @param ... Not used
 #'
 #' @details A Welch T-test of differential expression between the two categories
-#'   defined by \code{categ} are applied for each gene using the
+#'   defined by \code{categ} are applied for each feature using the
 #'   \code{\link{rowWelchTests}} function, which also outputs the "fold change"
 #'   (mean difference in log scale) between the two categories.
-#' @return The indices of selected genes (returned invisibly)
+#' @return A 'ggplot' object containing the volcano plot, with the indices of selected features returned as an attribute named 'selection'
 #'
 #' @exportS3Method
 #' @importFrom graphics abline legend rect title
@@ -113,7 +107,7 @@ volcanoPlot.numeric <- function(x, y, pval, thr,
                                 p = 1, q = 1, r = 0,
                                 cex = c(0.4, 1.5),
                                 col = c("#33333333", "#FF0000", "#FF666633"),
-                                pch = 19, variable_label = "variable",
+                                pch = 19, feature_label = "feature",
                                 ylim = NULL, bounds = TRUE,
                                 return_selection = FALSE, ...) {
   # pval <- x; rm(x);
@@ -129,14 +123,14 @@ volcanoPlot.numeric <- function(x, y, pval, thr,
 
   logp <- -log10(y)
   adjp <- p.adjust(y, method = "BH") ## adjusted p-values
-  y_sel <- which((adjp <= q) & ## selected by q-value
-                   (y <= p)) ##          or p-value
+  y_sel <- which((adjp <= q) &       ## selected by q-value
+                   (y <= p))         ## and/or p-value
   y_thr <- Inf
   if (length(y_sel) > 0) {
     y_thr <- min(logp[y_sel]) ## threshold on the log(p-value) scale
   }
 
-  ## gene selections
+  ## feature selections
   sel1 <- which(logp >= y_thr & x >= r)
   sel2 <- which(logp >= y_thr & x <= -r)
   sel12 <- sort(union(sel1, sel2))
@@ -176,7 +170,7 @@ volcanoPlot.numeric <- function(x, y, pval, thr,
   )
   title <- sprintf(
     "%d %s selected\nAt least %d true positives (FDP \u2264 %.2f)",
-    n12, pluralize(word = variable_label, n = n12), TP12, FDP12
+    n12, pluralize(word = feature_label, n = n12), TP12, FDP12
   )
 
   vp <- ggplot2::ggplot(
@@ -235,12 +229,12 @@ volcanoPlot.numeric <- function(x, y, pval, thr,
   if (bounds) {
     txt_right <- sprintf(
       "%d %s\nTP \u2265 %d ; FDP \u2264 %.2f",
-      n1, pluralize(word = variable_label, n = n1), TP1, FDP1
+      n1, pluralize(word = feature_label, n = n1), TP1, FDP1
     )
 
     txt_left <- sprintf(
       "%d %s\nTP \u2265 %d ; FDP \u2264 %.2f",
-      n2, pluralize(word = variable_label, n = n2), TP2, FDP2
+      n2, pluralize(word = feature_label, n = n2), TP2, FDP2
     )
     # bounds
     vp <- vp +
@@ -259,9 +253,6 @@ volcanoPlot.numeric <- function(x, y, pval, thr,
         vjust = 1.2
       )
   }
-  if(return_selection){
-    return(list(volcanoplot = vp, selection = sel12))
-  } else {
-    return(vp)
-  }
+  attr(vp, "selection") <- sel12
+  return(vp)
 }
