@@ -9,10 +9,10 @@
 volcanoPlot <- function(x, ...) UseMethod("volcanoPlot")
 
 #' @rdname volcanoPlot
-#' @param x A vector of fold changes (x axis of the volcano plot)
-#' @param y A vector of p-values (y axis of the volcano plot)
-#' @param pval A vector of p-values, of the same length as `x`, use to estimate post-hoc bounds
+#' @param x A numeric vector of fold changes (x axis of the volcano plot)
+#' @param p_value A numeric vector of p-values, of the same length as `x` (y axis of the volcano plot)
 #' @param thr A numeric vector of length K, a JER controlling family, used to estimate post-hoc bounds
+#' @param p_value_bound A numeric vector of p-values, of the same length as `x`, used to estimate post-hoc bounds
 #' @param p A numeric value, the p-value threshold under which features are selected
 #' @param q A numeric value, the q-value (or FDR-adjusted p-value) threshold under which features are selected
 #' @param r A numeric value, the absolute fold change above which features are selected
@@ -23,7 +23,7 @@ volcanoPlot <- function(x, ...) UseMethod("volcanoPlot")
 #' @param feature_label A character, the label to be used to designate individual hypotheses in the plot title
 #' (e.g. "gene", "proteins", ...)
 #' @param ylim A numeric vector of length 2, the \eqn{y} limits of the plot
-#' @param bounds A boolean value: should the post hoc bounds be displayed on the plot? Defaults to TRUE
+#' @param add_signed_selections A boolean value: should the post hoc bounds for the subselections corresponding to positive and negative fold change be displayed? Defaults to TRUE
 #' @param ... Not used
 #'
 #' @details A Welch T-test of differential expression between the two categories
@@ -36,51 +36,52 @@ volcanoPlot <- function(x, ...) UseMethod("volcanoPlot")
 #' @importFrom graphics abline legend rect title
 #' @importFrom stats p.adjust
 #' @seealso Volcano plot shiny app at \url{ https://shiny-iidea-sanssouci.apps.math.cnrs.fr/}
-volcanoPlot.numeric <- function(x, y, pval, thr,
+volcanoPlot.numeric <- function(x, p_value, thr, p_value_bound = p_value, 
                                 p = 1, q = 1, r = 0,
                                 cex = c(0.4, 1.5),
                                 col = c("#33333333", "#FF0000", "#FF666633"),
                                 pch = 19, feature_label = "feature",
-                                ylim = NULL, bounds = TRUE,
-                                return_selection = FALSE, ...) {
-  # pval <- x; rm(x);
+                                ylim = NULL, show_signed_selections = TRUE,
+                                ...) {
+  fold_change <- x
   if (p < 1 && q < 1) {
     warning("Filtering both on p-values and BH-adjusted p-values")
   }
-  m <- length(pval)
+  m <- length(p_value)
 
   ## sanity checks
-  stopifnot(length(y) == m)
+  stopifnot(length(fold_change) == m)
+  stopifnot(length(p_value) == m)
+  stopifnot(length(p_value_bound) == m)
   stopifnot(length(thr) <= m)
-  stopifnot(length(x) == m)
-
-  logp <- -log10(y)
-  adjp <- p.adjust(y, method = "BH") ## adjusted p-values
+  
+  logp <- -log10(p_value)
+  adjp <- p.adjust(p_value, method = "BH") ## adjusted p-values
   y_sel <- which((adjp <= q) &       ## selected by q-value
-                   (y <= p))         ## and/or p-value
+                   (p_value <= p))         ## and/or p-value
   y_thr <- Inf
   if (length(y_sel) > 0) {
     y_thr <- min(logp[y_sel]) ## threshold on the log(p-value) scale
   }
 
   ## feature selections
-  sel1 <- which(logp >= y_thr & x >= r)
-  sel2 <- which(logp >= y_thr & x <= -r)
+  sel1 <- which(logp >= y_thr & fold_change >= r)
+  sel2 <- which(logp >= y_thr & fold_change <= -r)
   sel12 <- sort(union(sel1, sel2))
 
   ## post hoc bounds in selections
   n1 <- length(sel1)
-  FP1 <- maxFP(pval[sel1], thr = thr)
+  FP1 <- maxFP(p_value_bound[sel1], thr = thr)
   TP1 <- n1 - FP1
   FDP1 <- round(FP1 / max(n1, 1), 2)
 
   n2 <- length(sel2)
-  FP2 <- maxFP(pval[sel2], thr = thr)
+  FP2 <- maxFP(p_value_bound[sel2], thr = thr)
   TP2 <- n2 - FP2
   FDP2 <- round(FP2 / max(n2, 1), 2)
 
   n12 <- length(sel12)
-  FP12 <- maxFP(pval[sel12], thr = thr)
+  FP12 <- maxFP(p_value_bound[sel12], thr = thr)
   TP12 <- n12 - FP12
   FDP12 <- round(FP12 / max(n12, 1), 2)
 
@@ -159,7 +160,7 @@ volcanoPlot.numeric <- function(x, y, pval, thr,
       fill = col[3], alpha = 0.3
     )
 
-  if (bounds) {
+  if (show_signed_selections) {
     txt_right <- sprintf(
       "%d %s\nTP \u2265 %d ; FDP \u2264 %.2f",
       n1, pluralize(word = feature_label, n = n1), TP1, FDP1
@@ -193,9 +194,9 @@ volcanoPlot.numeric <- function(x, y, pval, thr,
 
 #' @rdname volcanoPlot
 #' @param x An object of class `SansSouci`
-#' @param fold_changes An optional vector of fold changes, of the same length as `nHyp(object)`, use for volcanoPlot x-axis. If not specified,
-#' @param p_values A vector of p-values, of the same length as `nHyp(object)`, use for volcanoPlot x-axis
-#' @param contrast_name A character value, the selected contrast. Should be chosen in \code{x$input$contrast_name}.
+#' @param fold_change An optional vector of fold changes, of the same length as `nHyp(object)`, used for volcanoPlot x-axis. If not specified, `foldChanges(x)` is used.
+#' @param p_value A vector of p-values, of the same length as `nHyp(object)`, used for volcanoPlot y-axis. If not specified, `pValues(x)` is used
+#' @param contrast_name A character value, the selected contrast. Should be chosen in `x$input$contrast_name`.
 #' @inheritParams volcanoPlot.numeric
 #' @export
 #'
@@ -207,8 +208,8 @@ volcanoPlot.numeric <- function(x, y, pval, thr,
 #' res <- fit(a, B = 100, alpha = 0.1)
 #' volcanoPlot(res, q = 0.2, r = 0.2, ylim = c(0, 4), feature_label = "gene")
 volcanoPlot.SansSouci <- function(x,
-                                  fold_changes = foldChanges(x)[contrast_name, ],
-                                  p_values = pValues(x)[contrast_name, ],
+                                  fold_change = foldChanges(x)[contrast_name, ],
+                                  p_value = pValues(x)[contrast_name, ],
                                   p = 1, q = 1, r = 0,
                                   contrast_name = x$input$contrast_name[1],
                                   cex = c(0.4, 1.5),
@@ -224,21 +225,21 @@ volcanoPlot.SansSouci <- function(x,
       )
     ))
   }
-  y <- force(p_values)
-  x <- force(fold_changes)
-  
+  fold_change <- force(fold_change)
+  p_value <- force(p_value)
   
   if (object$input$type == "1 sample") {
     stop("Can't do a volcano plot for one-sample tests!")
   }
   m <- object$input$n_dimensions
-  stopifnot(m == length(x))
-  stopifnot(m == length(y))
-  pval <- pValues(object)[contrast_name, ]
+  stopifnot(m == length(fold_change))
+  stopifnot(m == length(p_value))
+  p_value_bound <- pValues(object)[contrast_name, ]
   thr <- thresholds(object)[1:m] # we select at most m hypotheses here
   
   volcanoPlot(
-    x = x, y = y, pval = pval, thr = thr,
+    x = fold_change, p_value = p_value, 
+    thr = thr, p_value_bound = p_value_bound,
     p = p, q = q, r = r,
     cex = cex,
     col = col,
