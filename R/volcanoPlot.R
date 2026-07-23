@@ -3,16 +3,21 @@
 #' Volcano plot for differential expression studies
 #'
 #' @rdname volcanoPlot
-#' @param x An object. See individual methods for specifics
+#' @param x An object of class `SansSouci`, or alternatively a numeric vector
+#'   of fold changes when calling `volcanoPlot.numeric` directly (x axis of
+#'   the volcano plot). See [volcanoPlot.numeric()] or [volcanoPlot.SansSouci()]
+#'   for specifics
 #' @param ... Other arguments passed to methods
 #' @export
 volcanoPlot <- function(x, ...) UseMethod("volcanoPlot")
 
-#' @rdname volcanoPlot
+
+#' Volcano plot for a numeric vector of fold changes and p-values
 #' @param x A numeric vector of fold changes (x axis of the volcano plot)
-#' @param p_value A numeric vector of p-values, of the same length as `x` (y axis of the volcano plot)
+#' @param p_value A numeric vector of p-values, of the same length as `x`
+#'   (y axis of the volcano plot)
 #' @param thr A numeric vector of length K, a JER controlling family, used to estimate post-hoc bounds
-#' @param p_value_bound A numeric vector of p-values, of the same length as `x`, used to estimate post-hoc bounds
+#' @param p_value_bound A numeric vector of p-values, of the same length as `x`, used to estimate post-hoc bounds. Defaults to 'p_value'
 #' @param p A numeric value, the p-value threshold under which features are selected
 #' @param q A numeric value, the q-value (or FDR-adjusted p-value) threshold under which features are selected
 #' @param r A numeric value, the absolute fold change above which features are selected
@@ -24,18 +29,32 @@ volcanoPlot <- function(x, ...) UseMethod("volcanoPlot")
 #' (e.g. "gene", "proteins", ...)
 #' @param ylim A numeric vector of length 2, the \eqn{y} limits of the plot
 #' @param add_signed_selections A boolean value: should the post hoc bounds for the subselections corresponding to positive and negative fold change be displayed? Defaults to TRUE
-#' @param ... Not used
 #'
-#' @details A Welch T-test of differential expression between the two categories
-#'   defined by \code{categ} are applied for each feature using the
-#'   \code{\link{rowWelchTests}} function, which also outputs the "fold change"
-#'   (mean difference in log scale) between the two categories.
+#' @details The p-values play two distinct roles here: they are displayed as the
+#'   y axis of the volcano plot, and they are also used to compute post hoc
+#'   bounds. In general the same p-values are used. See the vignette
+#'   <https://sanssouci-org.github.io/sanssouci/articles/post-hoc_differential-expression_RNAseq.html#custom-statistics-example-using-limma-voom>
+#'   for an example where two different sets of p-values are used.
 #' @return A 'ggplot' object containing the volcano plot, with the indices of selected features returned as an attribute named 'selection'
 #'
 #' @exportS3Method
 #' @importFrom graphics abline legend rect title
 #' @importFrom stats p.adjust
+#' @export
+#' @examples
+#' data(expr_ALL, package = "sanssouci.data")
+#' groups <- ifelse(colnames(expr_ALL) == "NEG", 0, 1)
+#' a <- SansSouci(Y = expr_ALL, groups = groups)
+#'
+#' res <- fit(a, B = 100, alpha = 0.1)
+#' fold_changes <- foldChanges(res)
+#' p_values <- pValues(res)
+#' thr <- thresholds(res)
+#' volcanoPlot(x = fold_changes[1, ], p_value = p_values[1, ], thr = thr, 
+#'   q = 0.2, r = 0.2, ylim = c(0, 4), feature_label = "gene")
+#'
 #' @seealso Volcano plot shiny app at \url{ https://shiny-iidea-sanssouci.apps.math.cnrs.fr/}
+#' @seealso Volcano plot for objects of class 'SansSouci': [volcanoPlot.SansSouci()]
 volcanoPlot.numeric <- function(x, p_value, thr, p_value_bound = p_value, 
                                 p = 1, q = 1, r = 0,
                                 cex = c(0.4, 1.5),
@@ -97,7 +116,7 @@ volcanoPlot.numeric <- function(x, p_value, thr, p_value_bound = p_value,
 
 
   df <- data.frame(
-    log_pval = logp, logfc = x,
+    log_pval = logp, logfc = fold_change,
     selected = factor(ifelse(seq(m) %in% sel12, "In", "Out"),
                       levels = c("Out", "In")
     )
@@ -192,12 +211,16 @@ volcanoPlot.numeric <- function(x, p_value, thr, p_value_bound = p_value,
 }
 
 
-#' @rdname volcanoPlot
-#' @param x An object of class `SansSouci`
-#' @param fold_change An optional vector of fold changes, of the same length as `nHyp(object)`, used for volcanoPlot x-axis. If not specified, `foldChanges(x)` is used.
-#' @param p_value A vector of p-values, of the same length as `nHyp(object)`, used for volcanoPlot y-axis. If not specified, `pValues(x)` is used
+#' Volcano plot for a `SansSouci` object
+#' 
+#' @param fold_change An optional vector of fold changes, of the same length as `nHyp(x)`, used for volcanoPlot x-axis. If not specified, `foldChanges(x)` is used.
+#' @param p_value A vector of p-values, of the same length as `nHyp(x)`, used for volcanoPlot y-axis. If not specified, `pValues(x)` is used
 #' @param contrast_name A character value, the selected contrast. Should be chosen in `x$input$contrast_name`.
 #' @inheritParams volcanoPlot.numeric
+#' @details The default is to use the fold changes and p-values from the input SansSouci object. See the vignette
+#'   <https://sanssouci-org.github.io/sanssouci/articles/post-hoc_differential-expression_RNAseq.html#custom-statistics-example-using-limma-voom>
+#'   for an example where custom fold changes and p-values are used.
+#' 
 #' @export
 #'
 #' @examples
