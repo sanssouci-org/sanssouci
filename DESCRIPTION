@@ -44,3 +44,4 @@ URL: https://github.com/sanssouci-org/sanssouci,
 BugReports: https://github.com/sanssouci-org/sanssouci/issues
 Remotes: github::sanssouci-org/sanssouci.data
 Config/roxygen2/version: 8.0.0
+RoxygenNote: 7.3.2

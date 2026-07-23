@@ -2,72 +2,84 @@
 % Please edit documentation in R/volcanoPlot.R
 \name{volcanoPlot.numeric}
 \alias{volcanoPlot.numeric}
-\title{Volcano plot}
+\title{Volcano plot for a numeric vector of fold changes and p-values}
 \usage{
 \method{volcanoPlot}{numeric}(
   x,
-  y,
-  pval,
+  p_value,
   thr,
+  p_value_bound = p_value,
   p = 1,
   q = 1,
   r = 0,
   cex = c(0.4, 1.5),
   col = c("#33333333", "#FF0000", "#FF666633"),
   pch = 19,
-  variable_label = "variable",
+  feature_label = "feature",
   ylim = NULL,
-  bounds = TRUE,
-  return_selection = FALSE,
+  add_signed_selections = TRUE,
   ...
 )
 }
 \arguments{
-\item{x}{A vector of fold changes (x axis of the volcano plot)}
+\item{x}{A numeric vector of fold changes (x axis of the volcano plot)}
 
-\item{y}{A vector of p-values (y axis of the volcano plot)}
-
-\item{pval}{A vector of p-values, of the same length as \code{x}, use to estimate post-hoc bounds}
+\item{p_value}{A numeric vector of p-values, of the same length as \code{x}
+(y axis of the volcano plot)}
 
 \item{thr}{A numeric vector of length K, a JER controlling family, used to estimate post-hoc bounds}
 
-\item{p}{A numeric value, the p-value threshold under which genes are selected}
+\item{p_value_bound}{A numeric vector of p-values, of the same length as \code{x}, used to estimate post-hoc bounds. Defaults to 'p_value'}
 
-\item{q}{A numeric value, the q-value (or FDR-adjusted p-value) threshold under which genes are selected}
+\item{p}{A numeric value, the p-value threshold under which features are selected}
 
-\item{r}{A numeric value, the absolute fold change above which genes are selected}
+\item{q}{A numeric value, the q-value (or FDR-adjusted p-value) threshold under which features are selected}
 
-\item{cex}{A numeric vector of length 2, the relative magnification factor for unselected (\code{cex[1]}) and unselected (\code{cex[2]}) genes.}
+\item{r}{A numeric value, the absolute fold change above which features are selected}
+
+\item{cex}{A numeric vector of length 2, the relative magnification factor for unselected (\code{cex[1]}) and unselected (\code{cex[2]}) features.}
 
 \item{col}{A vector of length 3}
 
 \item{pch}{An integer or single character string specifying the plotting character, see \code{\link{par}}}
 
-\item{variable_label}{A character, the type of variable to print in title
-(e.g. "gene", "proteins", "test", ...)}
+\item{feature_label}{A character, the label to be used to designate individual hypotheses in the plot title
+(e.g. "gene", "proteins", ...)}
 
 \item{ylim}{A numeric vector of length 2, the \eqn{y} limits of the plot}
 
-\item{bounds}{A boolean value: should the post hoc bounds be displayed on the plot? Defaults to TRUE}
-
-\item{return_selection}{A logical value, if TRUE the function return a list
-with the volcanoplot and a vector of selected variables. If FALSE only the
-volcanoplot is return.}
+\item{add_signed_selections}{A boolean value: should the post hoc bounds for the subselections corresponding to positive and negative fold change be displayed? Defaults to TRUE}
 
 \item{...}{Not used}
 }
 \value{
-The indices of selected genes (returned invisibly)
+A 'ggplot' object containing the volcano plot, with the indices of selected features returned as an attribute named 'selection'
 }
 \description{
-Volcano plot for differential expression studies
+Volcano plot for a numeric vector of fold changes and p-values
 }
 \details{
-A Welch T-test of differential expression between the two categories
-defined by \code{categ} are applied for each gene using the
-\code{\link{rowWelchTests}} function, which also outputs the "fold change"
-(mean difference in log scale) between the two categories.
+The p-values play two distinct roles here: they are displayed as the
+y axis of the volcano plot, and they are also used to compute post hoc
+bounds. In general the same p-values are used. See the vignette
+\url{https://sanssouci-org.github.io/sanssouci/articles/post-hoc_differential-expression_RNAseq.html#custom-statistics-example-using-limma-voom}
+for an example where two different sets of p-values are used.
+}
+\examples{
+data(expr_ALL, package = "sanssouci.data")
+groups <- ifelse(colnames(expr_ALL) == "NEG", 0, 1)
+a <- SansSouci(Y = expr_ALL, groups = groups)
+
+res <- fit(a, B = 100, alpha = 0.1)
+fold_changes <- foldChanges(res)
+p_values <- pValues(res)
+thr <- thresholds(res)
+volcanoPlot(x = fold_changes[1, ], p_value = p_values[1, ], thr = thr, 
+  q = 0.2, r = 0.2, ylim = c(0, 4), feature_label = "gene")
+
 }
 \seealso{
 Volcano plot shiny app at \url{ https://shiny-iidea-sanssouci.apps.math.cnrs.fr/}
+
+Volcano plot for objects of class 'SansSouci': \code{\link[=volcanoPlot.SansSouci]{volcanoPlot.SansSouci()}}
 }

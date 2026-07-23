@@ -29,7 +29,7 @@ volcanoPlot <- function(x, ...) UseMethod("volcanoPlot")
 #' (e.g. "gene", "proteins", ...)
 #' @param ylim A numeric vector of length 2, the \eqn{y} limits of the plot
 #' @param add_signed_selections A boolean value: should the post hoc bounds for the subselections corresponding to positive and negative fold change be displayed? Defaults to TRUE
-#'
+#' @param ... Not used
 #' @details The p-values play two distinct roles here: they are displayed as the
 #'   y axis of the volcano plot, and they are also used to compute post hoc
 #'   bounds. In general the same p-values are used. See the vignette
@@ -60,7 +60,7 @@ volcanoPlot.numeric <- function(x, p_value, thr, p_value_bound = p_value,
                                 cex = c(0.4, 1.5),
                                 col = c("#33333333", "#FF0000", "#FF666633"),
                                 pch = 19, feature_label = "feature",
-                                ylim = NULL, show_signed_selections = TRUE,
+                                ylim = NULL, add_signed_selections = TRUE,
                                 ...) {
   fold_change <- x
   if (p < 1 && q < 1) {
@@ -128,7 +128,7 @@ volcanoPlot.numeric <- function(x, p_value, thr, p_value_bound = p_value,
 
   vp <- ggplot2::ggplot(
     df,
-    ggplot2::aes(x = logfc, y = log_pval, color = selected)
+    ggplot2::aes(x = .data$logfc, y = .data$log_pval, color = .data$selected)
   ) +
     ggplot2::geom_hline(
       yintercept = y_thr,
@@ -152,7 +152,7 @@ volcanoPlot.numeric <- function(x, p_value, thr, p_value_bound = p_value,
       color = "black",
       alpha = 0.4
     ) +
-    ggplot2::geom_point(ggplot2::aes(size = selected)) +
+    ggplot2::geom_point(ggplot2::aes(size = .data$selected)) +
     ggplot2::scale_color_manual(values = col[1:2]) +
     ggplot2::scale_size_manual(values = cex) + # cex = c(0.2, 0.6)
     ggplot2::theme_bw() +
@@ -179,7 +179,7 @@ volcanoPlot.numeric <- function(x, p_value, thr, p_value_bound = p_value,
       fill = col[3], alpha = 0.3
     )
 
-  if (show_signed_selections) {
+  if (add_signed_selections) {
     txt_right <- sprintf(
       "%d %s\nTP \u2265 %d ; FDP \u2264 %.2f",
       n1, pluralize(word = feature_label, n = n1), TP1, FDP1
