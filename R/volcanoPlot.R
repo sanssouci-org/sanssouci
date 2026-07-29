@@ -114,21 +114,34 @@ volcanoPlot.numeric <- function(x, p_value, thr, p_value_bound = p_value,
   xlab <- "Fold change (log scale)"
   ylab <- bquote("p-value (-" ~ log[10] ~ "scale)")
 
-
+  feature_names <- names(logp)
+  if (is.null(feature_names)) {
+    feature_names <- seq_along(logp)
+  }
+  
+  
   df <- data.frame(
-    log_pval = logp, logfc = fold_change,
+    log_p_value = logp, 
+    log_fold_change = fold_change,
+    feature_name = feature_names,
     selected = factor(ifelse(seq(m) %in% sel12, "In", "Out"),
                       levels = c("Out", "In")
     )
   )
   title <- sprintf(
-    "%d %s selected\nAt least %d true positives (FDP \u2264 %.2f)",
-    n12, pluralize(word = feature_label, n = n12), TP12, FDP12
+    "%d %s selected\nAt least %d true %s (FDP \u2264 %.2f)",
+    n12, 
+    pluralize(word = feature_label, n = n12), 
+    TP12, 
+    pluralize(word = "positive", n = TP12), 
+    FDP12
   )
 
   vp <- ggplot2::ggplot(
     df,
-    ggplot2::aes(x = .data$logfc, y = .data$log_pval, color = .data$selected)
+    ggplot2::aes(x = .data$log_fold_change, 
+                 y = .data$log_p_value, 
+                 color = .data$selected)
   ) +
     ggplot2::geom_hline(
       yintercept = y_thr,
@@ -144,15 +157,13 @@ volcanoPlot.numeric <- function(x, p_value, thr, p_value_bound = p_value,
       yintercept = 0,
       linetype = "solid",
       color = "black",
-      alpha = 0.4
     ) +
     ggplot2::geom_vline(
       xintercept = 0,
       linetype = "solid",
       color = "black",
-      alpha = 0.4
     ) +
-    ggplot2::geom_point(ggplot2::aes(size = .data$selected)) +
+    ggplot2::geom_point() +
     ggplot2::scale_color_manual(values = col[1:2]) +
     ggplot2::scale_size_manual(values = cex) + # cex = c(0.2, 0.6)
     ggplot2::theme_bw() +
