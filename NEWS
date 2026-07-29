@@ -2,6 +2,10 @@
 Package: sanssouci
 ==================
 
+Version 0.16.3
+
+* volcanoPlot now uses ggplot
+
 Version 0.16.2
 
 * Use withr::with_preserve_seed in tests to avoid fixing seed
