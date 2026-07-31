@@ -44,4 +44,8 @@ test_that("Vanilla test for 'volcanoPlot'", {
   ## filtering both on p-values and q-values
   expect_warning(vp <- volcanoPlot(cal, p = 0.01, q = 0.05, r = 0,
                                    ylim = c(0, 6)))
+
+  vp <- volcanoPlot(cal, p = 0.5, q = 1, r = 0, interactive = TRUE)
+  expect_null(vp$selection)
+  expect_is(vp, "plotly")
 })
