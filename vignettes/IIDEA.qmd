@@ -74,7 +74,7 @@ The table displays, for each user selection of a set of genes, the following sta
 
 - Click on the 'Gene sets' tab in the left panel:  the table at the bottom of the left panel now displays statistical guarantees obtained by post hoc bounds for a list of GO terms (corresponding to the Biological Process ontology in the example below).
 - Clicking on the line corresponding to GO a term highlights the corresponding genes in the volcano plot (see next Figure).
-- Clicking on a GO term opens the associated QuickGO page (@binns2009quickgo), e.g. https://www.ebi.ac.uk/QuickGO/term/GO:0002576.
+- Clicking on a GO term opens the associated QuickGO page (@binns2009quickgo), e.g. <https://www.ebi.ac.uk/QuickGO/term/GO:0002576>.
 - Post hoc bounds can be downloaded as a CSV file.
 
 By default, all available gene sets are listed.  As noted by @ebrahimpoor2020simultaneous, post hoc inference makes it possible to perform enrichment analyses for both the "self-contained" and "competitive" hypotheses. Quoting @ebrahimpoor2020simultaneous:
@@ -170,7 +170,7 @@ IIDEA leverages post hoc inference methods implemented in the R package  [`sanss
 
 Post hoc inference is a recent field stemming from the multiple testing literature where users are allowed to freely select hypotheses of interest after "seeing the data", without compromising statistical validity despite the issue of "cherry-picking" (@BNR:chap, @blanchard20post-hoc, @GS2011).
 
-The methods implemented by IIDEA allow for valid inference without requiring assumptions on the dependence between genes. Instead, such dependencies are *estimated* from the data using permutation techniques, making our methods both mathematically valid and statistically powerful (see e.g. https://sanssouci-org.github.io/sanssouci/articles/post-hoc_differential-expression.html).
+The methods implemented by IIDEA allow for valid inference without requiring assumptions on the dependence between genes. Instead, such dependencies are *estimated* from the data using permutation techniques, making our methods both mathematically valid and statistically powerful (see e.g. <https://sanssouci-org.github.io/sanssouci/articles/post-hoc_differential-expression.html>).
 
 The parameters for this estimation step can be customized by clicking "Advanced parameters".
 

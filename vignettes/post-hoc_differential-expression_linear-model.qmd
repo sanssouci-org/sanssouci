@@ -36,7 +36,7 @@ This vignette addresses the problem of testing contrasts in linear models arisin
 - build confidence curves (envelopes) for the true or false positives and define differentially expressed genes accordingly
 - perform statistical inference on the output of volcano plots
 
-In this vignette we reproduce some of the results obtained in Section 5.2 of @davenport2025fdp. These bootstrap-based methods are *not yet implemented* in the shiny application for volcano plots available at https://shiny-iidea-sanssouci.apps.math.cnrs.fr/.
+In this vignette we reproduce some of the results obtained in Section 5.2 of @davenport2025fdp. These bootstrap-based methods are *not yet implemented* in the shiny application for volcano plots available at <https://shiny-iidea-sanssouci.apps.math.cnrs.fr/>.
 
 ```{r}
 #| label: install-r-packages
@@ -200,7 +200,7 @@ The above example also illustrates the increase in power obtained by calibration
 
 ## Volcano plots
 
-<!-- For an interactive volcano plot, see the [volcano plot shiny application]( https://shiny-iidea-sanssouci.apps.math.cnrs.fr/). -->
+<!-- For an interactive volcano plot, see the [volcano plot shiny application](https://shiny-iidea-sanssouci.apps.math.cnrs.fr/). -->
 
 A classical practice in gene expression studies is to define DE genes as those passing both a significance filter (small $p$-value) and an effect size or "fold change" filter. Here, the fold change of a gene is defined as the estimate of the tested contrast $c\hat\beta$. This double selection by $p$-value and fold change corresponds to two sets of genes, with positive/negative fold change, which can be represented in the following plot:
 
