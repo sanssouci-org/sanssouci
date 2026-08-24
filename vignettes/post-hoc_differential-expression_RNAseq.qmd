@@ -12,23 +12,18 @@ bibliography: sanssouci.bib
 vignette: |
   %\VignetteIndexEntry{Permutation-based post hoc inference for two-group differential gene expression studies: RNAseq data}
   %\VignetteEncoding{UTF-8}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{quarto::html}
   %\VignetteDepends{sanssouci.data}
 execute:
   cache: true
+knitr:
+  opts_chunk:
+    collapse: true
+    comment: "#>"
+    fig.width: 8
+    fig.height: 6
 ---
 
-```{r}
-#| label: setup
-#| include: false
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.width = 8,
-  fig.height = 6,
-  cache = TRUE
-)
-```
 
 This vignette illustrates the relevance of permutation-based post hoc bounds on false positives for the differential analysis of (bulk) RNA sequencing (RNAseq) data. We illustrate how the post hoc methods introduced by @blanchard20post-hoc may be used to
 

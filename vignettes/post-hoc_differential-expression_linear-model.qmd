@@ -12,24 +12,17 @@ bibliography: sanssouci.bib
 vignette: |
   %\VignetteIndexEntry{Bootstrap-based post hoc inference for differential gene expression studies in linear models}
   %\VignetteEncoding{UTF-8}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{quarto::html}
   %\VignetteDepends{sanssouci.data}
 execute:
   cache: true
+knitr:
+  opts_chunk:
+    collapse: true
+    comment: "#>"
+    fig.width: 6
+    fig.height: 4
 ---
-
-```{r}
-#| label: setup
-#| include: false
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.width = 6,
-  fig.height = 4,
-  # eval = FALSE,
-  cache = TRUE
-)
-```
 
 This vignette addresses the problem of testing contrasts in linear models arising from the differential analysis of gene expression measurements (microarray data). We illustrate how the post hoc methods introduced by @blanchard20post-hoc and extended to linear models by @davenport2025fdp may be used to
 

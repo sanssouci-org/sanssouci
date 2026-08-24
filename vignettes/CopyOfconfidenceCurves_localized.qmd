@@ -10,14 +10,10 @@ format:
 bibliography: sanssouci.bib
 vignette: >
   %\VignetteIndexEntry{copy of vignette: Confidence curves for structured hypotheses}
-  %\VignetteEngine{knitr::knitr}
+  %\VignetteEngine{quarto::html}
+execute:
+  echo: true
 ---
-
-```{r}
-#| label: setup
-#| include: false
-knitr::opts_chunk$set(echo = TRUE)
-```
 
 ## Introduction
 
@@ -73,13 +69,7 @@ mu <- gen.mu.leaves(m = m, K1 = K1, d = r, grouped = TRUE, setting = "const",
 
 This construction is illustrated in the figure below (Figure 11 in @durand20post-hoc) in the case where $q=3$.
 
-```{r}
-#| label: figure-simulation-tree
-#| out-width: "100%"
-#| echo: false
-#| fig-cap: "Figure 11 in Durand et al."
-knitr::include_graphics("DBNR_graph-simu.png")
-```
+![Figure 11 in Durand et al.](DBNR_graph-simu.png){#fig-simulation-tree width="100%"}
 
 We generate $p$-values according to the simulation setup in @durand20post-hoc:
 

@@ -13,20 +13,16 @@ bibliography: sanssouci.bib
 vignette: |
   %\VignetteIndexEntry{Permutation-based post hoc inference for fMRI studies}
   %\VignetteEncoding{UTF-8}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{quarto::html}
   %\VignetteDepends{sanssouci.data}
+knitr:
+  opts_chunk:
+    collapse: true
+    comment: "#>"
+    fig.width: 8
+    fig.height: 6
 ---
 
-```{r}
-#| label: setup
-#| include: false
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.width = 8,
-  fig.height = 6
-)
-```
 
 This vignette shows how to use the [`sanssouci`](https://github.com/sanssouci-org/sanssouci) package to perform permutation-based post hoc inference for fMRI data. We focus on a motor task (left versus right click) from the Localizer data set by @orfanos2017brainomics. The data set is included in the [`sanssouci.data`](https://github.com/sanssouci-org/sanssouci.data) package. It has been obtained using the Python module [nilearn](http://nilearn.github.io/), see @abraham2014machine-learning.
 

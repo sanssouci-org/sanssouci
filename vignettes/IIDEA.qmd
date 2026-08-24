@@ -12,20 +12,17 @@ bibliography: sanssouci.bib
 vignette: |
   %\VignetteIndexEntry{IIDEA: Interactive Inference for Differential Expression Analyses}
   %\VignetteEncoding{UTF-8}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{quarto::html}
   %\VignetteDepends{sanssouci.data}
+execute:
+  cache: true
+knitr:
+  opts_chunk:
+    collapse: true
+    comment: "#>"
+    fig.width: 8
+    fig.height: 6
 ---
-
-```{r}
-#| label: setup
-#| include: false
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.width = 8,
-  fig.height = 6
-)
-```
 
 # Introduction
 
@@ -40,23 +37,13 @@ The main distinctive feature of this app is that it makes it possible for users 
 
 - This launches the analysis of an example data set (described below): a volcano plot is displayed in the right panel, together with a table at the bottom of the left panel.
 
-```{r}
-#| label: IIDEA_overview
-#| out-width: "600px"
-#| echo: false
-knitr::include_graphics("img/IIDEA_overview.png")
-```
+![](img/IIDEA_overview.png){width="600px"}
 
 # Interactive statistical guarantees
 
 ## Default output
 
-```{r}
-#| label: IIDEA_post-hoc-table
-#| out-width: "400px"
-#| echo: false
-knitr::include_graphics("img/IIDEA_post-hoc-table.png")
-```
+![](img/IIDEA_post-hoc-table.png){width="400px"}
 
 The table displays, for each user selection of a set of genes, the following statistical guarantees:
 
@@ -86,12 +73,8 @@ Both approaches are readily avialable via a drop-down menu, which makes it possi
 
 For example, in the Leukemia data set, the GO term Platelet degranulation (GO:0002576) is significant both for the competitive and the self-contained null hypotheses. This GO term is highlighted in the next plot, which has been obtained by clicking on the associated line in the gene set table.
 
-```{r}
-#| label: GO-plot
-#| out-width: "600px"
-#| echo: false
-knitr::include_graphics("img/IIDEA_GO-0002576.png")
-```
+
+![](img/IIDEA_GO-0002576.png){width="600px"}
 
 # Data
 

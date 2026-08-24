@@ -8,14 +8,10 @@ format:
     toc: true
 vignette: >
   %\VignetteIndexEntry{Joint Error Rate calibration}
-  %\VignetteEngine{knitr::knitr}
+  %\VignetteEngine{quarto::html}
+execute:
+  echo: true
 ---
-
-```{r}
-#| label: setup
-#| include: false
-knitr::opts_chunk$set(echo = TRUE)
-```
 
 This vignettes illustrates the following points
 

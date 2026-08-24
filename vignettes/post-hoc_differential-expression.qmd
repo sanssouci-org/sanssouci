@@ -12,20 +12,17 @@ bibliography: sanssouci.bib
 vignette: |
   %\VignetteIndexEntry{Permutation-based post hoc inference for two-group differential gene expression studies}
   %\VignetteEncoding{UTF-8}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{quarto::html}
   %\VignetteDepends{sanssouci.data}
+execute:
+  cache: true
+knitr:
+  opts_chunk:
+    collapse: true
+    comment: "#>"
+    fig.width: 8
+    fig.height: 6
 ---
-
-```{r}
-#| label: setup
-#| include: false
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.width = 8,
-  fig.height = 6
-)
-```
 
 This vignette reproduces figures from Section 9 in the book chapter: @BNR:chap. It demonstrates how the [`sanssouci`](https://github.com/sanssouci-org/sanssouci) package may be used to obtain post hoc confidence bounds on false positives in the case of differential gene expression analysis. After showing the output of a classical differential analysis based on False Discovery Rate control we illustrate the application of basic post-hoc bounds derived from probabilistic inequalities.
 Then, we introduce more powerful post hoc methods (introduced by @blanchard20post-hoc) that yield tighter bounds by adapting to unknown dependence by randomization. Finally we demonstrate the use of these methods on two applications of post hoc methods:
@@ -299,7 +296,8 @@ volcanoPlot(res_Beta, q = q, r = r, ylim = ylim)
 The comparison between these bounds may be summarized by the following Table:
 
 ```{r}
-#| label: compare-volcano-bounds
+#| label: tbl-compare-volcano-bounds
+#| tbl-cap: "Post hoc bounds on true positives in user-defined gene selections"
 fc <- foldChanges(res)
 S_pos <- which(fc >= r & adjp_BH <= q)
 S_neg <- which(fc <= -r & adjp_BH <= q)
@@ -316,9 +314,7 @@ lab <- c(paste(plab, "&", " fold change  > ", r),
          paste(plab, "&", " fold change  < ", -r),
          paste(plab, "&", "|fold change| > ", r))
 tab <- cbind(lab, tab)
-cap <- "Post hoc bounds on true positives in user-defined gene selections"
-#knitr::kable(tab, caption = cap, format = "latex")
-knitr::kable(tab, caption = cap)
+knitr::kable(tab)
 ```
 
 # Session information

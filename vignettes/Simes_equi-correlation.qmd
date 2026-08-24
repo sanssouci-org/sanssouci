@@ -10,15 +10,12 @@ header-includes:
   - \renewcommand{\P}{\mathbb{P}}
 bibliography: sanssouci.bib
 vignette: >
-  %\VignetteEngine{knitr::knitr}
+  %\VignetteEngine{quarto::html}
   %\VignetteIndexEntry{Conservativeness of the Simes inequality under positive dependence}
+execute:
+  echo: true
 ---
 
-```{r}
-#| label: setup
-#| include: false
-knitr::opts_chunk$set(echo = TRUE)
-```
 
 ## The Simes inequality
 

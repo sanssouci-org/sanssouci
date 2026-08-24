@@ -1,6 +1,6 @@
 Package: sanssouci
-Version: 0.16.3
-Date: 2026-07-23
+Version: 0.16.4
+Date: 2026-08-25
 Title: Post Hoc Multiple Testing Inference
 Authors@R: c(person("Pierre", "Neuvial", role=c("aut", "cre"),
                  email="pierre.neuvial@math.univ-toulouse.fr",
@@ -27,6 +27,7 @@ Suggests:
     knitr,
     limma,
     markdown,
+    quarto,
     rbibutils,
     reticulate,
     rmarkdown,
@@ -35,7 +36,7 @@ Suggests:
     scales,
     testthat,
     withr
-VignetteBuilder: knitr
+VignetteBuilder: quarto
 Roxygen: list(markdown = TRUE)
 LazyData: true
 Encoding: UTF-8
