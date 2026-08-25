@@ -179,11 +179,11 @@ q <- 0.1 # FDP budget (user-defined)
 FDP <- lapply(resList, predict, what = "FDP", all = TRUE)
 n_DEG <- sapply(FDP, function(x) sum(x <= q))
 
-size <- 1.5
+linewidth <- 1.5
 p <- plotConfCurve(FDP, xmax = 2.5*n_DEG, col = cols, legend.title = "Template") +
-  geom_hline(yintercept = q, linetype = "dashed", linewidth = size) +
-  geom_vline(xintercept = n_DEG, linetype = "dotted", col = cols, linewidth = size) +
-  geom_line(linewidth = size)
+  geom_hline(yintercept = q, linetype = "dashed", linewidth = linewidth) +
+  geom_vline(xintercept = n_DEG, linetype = "dotted", col = cols, linewidth = linewidth) +
+  geom_line(linewidth = linewidth)
 p
 ```
 
@@ -237,11 +237,11 @@ q <- 0.1 # FDP budget (user-defined)
 FDP <- predict(res, all = TRUE, contrast_name = c("age_enroll", "fev1_fvc_utah"), what = "FDP")
 n_DEG <- sapply(FDP, function(x) sum(x <= q))
 
-size <- 1.5
+linewidth <- 1.5
 p <- plot(res, xmax = 2.5*n_DEG, contrast_name = c("age_enroll", "fev1_fvc_utah"), what = c("FDP")) +
-  geom_hline(yintercept = q, linetype = "dashed", linewidth = size) +
-  geom_vline(xintercept = n_DEG, linetype = "dotted",  linewidth = size) +
-  geom_line(linewidth = size)
+  geom_hline(yintercept = q, linetype = "dashed", linewidth = linewidth) +
+  geom_vline(xintercept = n_DEG, linetype = "dotted",  linewidth = linewidth) +
+  geom_line(linewidth = linewidth)
 p
 ```
 
@@ -253,11 +253,11 @@ q <- 0.1 # FDP budget (user-defined)
 FDP <- predict(res, all = TRUE, contrast_name = "fev1_fvc_utah", what = "FDP")
 n_DEG <- sum(FDP$bound <= q)
 
-size <- 1.5
+linewidth <- 1.5
 p <- plot(res, xmax = 2.5*n_DEG, contrast_name = "fev1_fvc_utah", what = c("FDP")) +
-  geom_hline(yintercept = q, linetype = "dashed", linewidth = size) +
-  geom_vline(xintercept = n_DEG, linetype = "dotted",  linewidth = size) +
-  geom_line(linewidth = size)
+  geom_hline(yintercept = q, linetype = "dashed", linewidth = linewidth) +
+  geom_vline(xintercept = n_DEG, linetype = "dotted",  linewidth = linewidth) +
+  geom_line(linewidth = linewidth)
 p
 ```
 
@@ -271,11 +271,11 @@ q <- 0.5 # FDP budget (user-defined)
 FDP <- predict(res, all = TRUE, contrast_name = "age_enroll", what = "FDP")
 n_DEG <- sum(FDP$bound <= q)
 
-size <- 1.5
+linewidth <- 1.5
 p <- plot(res, xmax = 2.5*n_DEG, contrast_name = "age_enroll", what = c("FDP")) +
-  geom_hline(yintercept = q, linetype = "dashed", linewidth = size) +
-  geom_vline(xintercept = n_DEG, linetype = "dotted",  linewidth = size) +
-  geom_line(linewidth = size)
+  geom_hline(yintercept = q, linetype = "dashed", linewidth = linewidth) +
+  geom_vline(xintercept = n_DEG, linetype = "dotted",  linewidth = linewidth) +
+  geom_line(linewidth = linewidth)
 p
 ```
 

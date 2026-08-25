@@ -128,11 +128,11 @@ dexo[["gene_order"]] <- 1:nrow(dex)
 bh_plot <- ggplot(dexo, aes(x = gene_order, y = p.value)) +
   geom_line() +
   xlab("Number of top genes") + ylab("Ordered p-value") +
-  geom_abline(slope = 1/m, intercept = 0, linetype = 2, size = 1) +
-  geom_abline(slope = q/m, color = my_col, size = 2) +
+  geom_abline(slope = 1/m, intercept = 0, linetype = 2, linewidth = 1) +
+  geom_abline(slope = q/m, color = my_col, linewidth = 2) +
   # geom_segment(aes(x = nBH, y = 0, yend = q*nBH/m, xend = nBH), linetype = "dotted") +
   # geom_segment(aes(x = 0, y = q*nBH/m, xend = nBH, yend = q*nBH/m), linetype = "dotted") +
-  geom_abline(slope = 0, intercept = q, linetype = "dotted", color = my_col, size = 2) +
+  geom_abline(slope = 0, intercept = q, linetype = "dotted", color = my_col, linewidth = 2) +
   theme_bw() +
   theme(axis.text = element_text(size = 14),
         axis.title = element_text(size = 18))
@@ -253,8 +253,8 @@ conf_bounds <- lapply(resList, predict, all = TRUE)
 # cols <- c("lightgray", "black", "darkgray")
 cols <- RColorBrewer::brewer.pal(length(conf_bounds), "Dark2")
 p <- plotConfCurve(conf_bounds, xmax = 300, cols = cols, legend.title = "Template")
-p + geom_vline(xintercept = nBH, color = "gray", linetype = "dotted", size = 1.5) +
-  geom_line(size = 1.5)
+p + geom_vline(xintercept = nBH, color = "gray", linetype = "dotted", linewidth = 1.5) +
+  geom_line(linewidth = 1.5)
 ```
 
 Both calibrated curves outperform the Simes curve in this example.
