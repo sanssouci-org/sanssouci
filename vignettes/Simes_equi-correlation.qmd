@@ -5,9 +5,6 @@ date: today
 format:
   html: default
   pdf: default
-header-includes:
-  - \newcommand{\cH}{}
-  - \renewcommand{\P}{\mathbb{P}}
 bibliography: sanssouci.bib
 vignette: >
   %\VignetteEngine{quarto::html}
