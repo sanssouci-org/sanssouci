@@ -1,10 +1,13 @@
 ---
 title: "Conservativeness of the Simes inequality under positive dependence"
-author: "P. Neuvial"
+author: "Pierre Neuvial"
 date: today
 format:
-  html: default
-  pdf: default
+  html:
+    toc: true
+    number-sections: true
+  pdf:
+    number-sections: true
 bibliography: sanssouci.bib
 vignette: >
   %\VignetteEngine{quarto::html}

@@ -1,11 +1,14 @@
 ---
 title: "Joint Error Rate calibration"
 subtitle: "Simulations for one and two-sample tests"
-author: "P. Neuvial"
+author: "Pierre Neuvial"
 date: "2018-03-27"
 format:
   html:
     toc: true
+    number-sections: true
+  pdf:
+    number-sections: true
 vignette: >
   %\VignetteIndexEntry{Joint Error Rate calibration}
   %\VignetteEngine{quarto::html}

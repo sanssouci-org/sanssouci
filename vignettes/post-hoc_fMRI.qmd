@@ -6,7 +6,6 @@ format:
   html:
     toc: true
     number-sections: true
-    toc-depth: 1
   pdf:
     number-sections: true
 bibliography: sanssouci.bib

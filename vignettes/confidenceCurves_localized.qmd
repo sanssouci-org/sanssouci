@@ -1,9 +1,11 @@
 ---
 title: "Confidence curves for structured hypotheses"
-author: "G. Durand, G. Blanchard, P. Neuvial, E. Roquain"
+author: "Guillermo Durand, Gilles Blanchard, Pierre Neuvial and Etienne Roquain"
 date: today
 format:
-  html: default
+  html:
+    toc: true
+    number-sections: true
   pdf:
     cite-method: natbib
     keep-tex: true
@@ -99,7 +101,7 @@ x <- 1:m
 stat <- rep("FP", m)
 ```
 
-### 1- True number of false positives
+### True number of false positives
 
 The true number of false positives will be called "Oracle" bound in the plots below.
 
@@ -111,7 +113,7 @@ oracle_bound <- cumsum(mu[ord] == 0)
 res[["Oracle"]] <- data.frame(x = x, label = label, stat = stat, bound = oracle_bound, method = method)
 ```
 
-### 2- Simes-based confidence curve
+### Simes-based confidence curve
 
 Here we use the @simes86improved inequality to bound the number of false positives in each node of the tree, as proposed by @GS2011 and further studied by @blanchard20post-hoc, both in a context where the signal is not localized.
 
@@ -123,7 +125,7 @@ method <- rep("Simes", m)
 res[["Simes"]] <- data.frame(x = x, label = label, stat = stat, bound = simes_bound, method = method)
 ```
 
-### 3- DKWM-based confidence curve
+### DKWM-based confidence curve
 
 Here we use the DKWM inequality (@dvoretzky1956asymptotic, @massart1990tight) to bound the number of false positives in each node of the tree, as suggested in @durand20post-hoc.
 
