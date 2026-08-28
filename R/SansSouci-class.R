@@ -24,14 +24,14 @@
 #'
 SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
                       truth = NULL) {
-  
+
   # Are the arguments present?
   signature <- c(!is.null(X), !is.null(Contrast), !is.null(groups))
-  
-  
+
+
   n = ncol(Y)
   D <- nrow(Y)
-  
+
   #None arguments: one sample case
   if (identical(signature, c(FALSE, FALSE, FALSE))){
     groups <- rep(1, ncol(Y))
@@ -43,7 +43,7 @@ SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
   } else if (identical(signature, c(FALSE, FALSE, TRUE))){
     ugroups <- unique(groups)
     n_groups <- length(ugroups)
-    
+
     if (n_groups > 1) {
       categCheck(groups, ncol(Y))
     }
@@ -54,17 +54,17 @@ SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
       type = "2 samples"
       contrast_name <- "Group 1 vs group 0"
       # } else if (n_groups == n) {
-    } else { #by default consider a continuous 
+    } else { #by default consider a continuous
       type = "Continuous case, correlation test"
       contrast_name <- "Correlation test"
       if(n_groups != n){
         message("Ties were detected in the grouping variable, but a continuous vector was provided for groups, and a correlation test is being performed. If you intend to test associations across more than two groups, please provide a full design matrix using the X argument instead.")
       }
-    } 
-    
+    }
+
     L = 1
     P = 1
-    
+
     ## X and contrast are given: linear model case
   } else if (identical(signature, c(TRUE, TRUE, FALSE))) {
     .check_lm_test(t(Y), X, Contrast)
@@ -84,13 +84,13 @@ SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
   } else if (identical(signature, c(FALSE, TRUE, FALSE))) {
     stop("Please give a design matrix in `X`")
     ## The vector groups is provided with the contrast or the design matrix
-  } else if (identical(signature, c(TRUE, FALSE, TRUE)) | 
+  } else if (identical(signature, c(TRUE, FALSE, TRUE)) |
              identical(signature, c(FALSE, TRUE, TRUE)) |
              identical(signature, c(TRUE, TRUE, TRUE))){
     stop("Please provide either an `X` design matrix and a `Contrast`  matrix,
          or only a `groups` design vector.")
   }
-  
+
   if (!is.null(truth)) {
     all_0 <- identical(truth, rep(0, nrow(Y)))
     all_1 <- identical(truth, rep(1, nrow(Y)))
@@ -102,13 +102,13 @@ SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
     Y = Y,
     X = X,
     C = Contrast,
-    groups = groups, 
-    n_obs = n, 
-    n_contrasts = L, 
-    n_dimensions = D, 
+    groups = groups,
+    n_obs = n,
+    n_contrasts = L,
+    n_dimensions = D,
     n_variables = P,
     contrast_name = contrast_name,
-    m = D * L, 
+    m = D * L,
     type= type
   )
   input$truth <- truth
@@ -417,7 +417,7 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
   L <- object$input$n_contrasts
   funName <- NA_character_
   type <- object$input$type
-  
+
   if (is.null(rowTestFUN)) {
     if (type == "1 sample") {
       rowTestFUN <- rowZTests
@@ -437,7 +437,7 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
   } else {
     funName <- as.character(substitute(rowTestFUN))
   }
-  
+
   ## should we re-calculate p0?
   params <- object$parameters
   p0 <- object$output$p0
@@ -450,7 +450,7 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
       do_p0 <- (!cond_B) || (!cond_F) || (!cond_A)
     }
   }
-  
+
   ## should we re-calculate the (first) pivotal statistic ?
   params <- object$parameters
   pivStat0 <- NULL
@@ -473,11 +473,11 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
     max_steps_down = max_steps_down,
     K = K
   )
-  
+
   if (family == "Beta" && K == m) {
     warning("For the 'Beta' family we recommend choosing K < m")
   }
-  
+
   cal <- rowTestFUN(Y, groups, alternative = alternative)
   if(!is.matrix(cal$p.value)){
     cal$p.value <- matrix(cal$p.value, nrow = L)
@@ -504,11 +504,11 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
       } else if (type == "linear model") {
         null_groups <- replicate(B, sample(1:n, n, replace = TRUE))
       }
-      p0 <- mini_batch_rowTestFUN(rowTestFUN = rowTestFUN, Y = Y, 
-                                  categ = null_groups, 
-                                  alternative = alternative, 
+      p0 <- mini_batch_rowTestFUN(rowTestFUN = rowTestFUN, Y = Y,
+                                  categ = null_groups,
+                                  alternative = alternative,
                                   max_batch_size = 1e6, m = m)
-      
+
       if (verbose) {
         dt <- Sys.time() - t0
         cat("done (", format(dt), ")\n", sep = "")
@@ -531,7 +531,7 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
       dt <- Sys.time() - t0
       cat("done (", format(dt), ")\n", sep = "")
     }
-    
+
     cal$p0 <- p0
     cal <- c(cal, calib)
   } else { # no calibration!
@@ -660,22 +660,22 @@ plot.SansSouci <- function(x, y, xmax = nHyp(x), ...) {
 #' # post hoc bound on a subset
 #' S <- which(pValues(res) < 0.01)
 #' predict(res, S)
-predict.SansSouci <- function(object, 
-                              S= seq_len(min(nHyp(object), 
+predict.SansSouci <- function(object,
+                              S= seq_len(min(nHyp(object),
                                              object$input$n_dimensions)),
-                              what = c("TP", "FDP"), all = FALSE, 
+                              what = c("TP", "FDP"), all = FALSE,
                               contrast_name = object$input$contrast_name, ...) {
-  # S should be size of D 
+  # S should be size of D
   if(!all(contrast_name %in% object$input$contrast_name)){
     stop("contrast_name must be in object$input$contrast_name")
   }
   p.values <- pValues(object)
   thr <- thresholds(object)
   lab <- label(object)
-  
+
   # If sansSouci object is two sample test (1 contrast) /struct (0 contrast)
   if(length(object$input$contrast_name) <= 1){
-    bounds <- posthoc_bound(p.values, S = S, thr = thr, lab = lab, 
+    bounds <- posthoc_bound(p.values, S = S, thr = thr, lab = lab,
                             what = what, all = all)
     if (!all) {
       bounds <- bounds[, "bound"]
@@ -683,15 +683,15 @@ predict.SansSouci <- function(object,
         names(bounds) <- what
       }
     }
-    
+
     return(bounds)
     #If there are more than 1 tested contrast
   } else {
-    
+
     bounds_list <- list()
     for(contrasts in contrast_name){
       p.values.contrast <- p.values[contrasts,] #Only keep p-values of contrasts
-      bounds <- posthoc_bound(p.values.contrast, S = S, thr = thr, lab = lab, 
+      bounds <- posthoc_bound(p.values.contrast, S = S, thr = thr, lab = lab,
                               what = what, all = all)
       if (!all) {
         bounds <- bounds[, "bound"]
@@ -699,26 +699,29 @@ predict.SansSouci <- function(object,
           names(bounds) <- what
         }
       }
-      bounds_list[[contrasts]] <- bounds 
+      bounds_list[[contrasts]] <- bounds
     }
     #when only one contrast is display, a data.frame is returned
     if(length(contrast_name) == 1){return(bounds_list[[1]])}
     return(bounds_list)
   }
-  
-  
+
+
 }
 
 #' Volcano plot for a `SansSouci` object
-#' 
+#'
 #' @param fold_change An optional vector of fold changes, of the same length as `nHyp(x)`, used for volcanoPlot x-axis. If not specified, `foldChanges(x)` is used.
 #' @param p_value A vector of p-values, of the same length as `nHyp(x)`, used for volcanoPlot y-axis. If not specified, `pValues(x)` is used
 #' @param contrast_name A character value, the selected contrast. Should be chosen in `x$input$contrast_name`.
 #' @inheritParams volcanoPlot.numeric
+#' @param interactive logical. If TRUE, a plotly object is returned then a
+#' ggplot2 object is returned.
 #' @details The default is to use the fold changes and p-values from the input SansSouci object. See the vignette
 #'   <https://sanssouci-org.github.io/sanssouci/articles/post-hoc_differential-expression_RNAseq.html#custom-statistics-example-using-limma-voom>
 #'   for an example where custom fold changes and p-values are used.
-#' 
+#'
+#' @importFrom plotly ggplotly
 #' @export
 #'
 #' @examples
@@ -736,7 +739,9 @@ volcanoPlot.SansSouci <- function(x,
                                   cex = c(0.4, 1.5),
                                   col = c("#33333333", "#FF0000", "#FF666633"),
                                   pch = 19, feature_label = "feature",
-                                  ylim = NULL, ...) {
+                                  ylim = NULL,
+                                  interactive = FALSE,
+                                  ...) {
   object <- x
   if (!(contrast_name %in% rownames(pValues(object)))) {
     stop(paste(
@@ -748,7 +753,7 @@ volcanoPlot.SansSouci <- function(x,
   }
   fold_change <- force(fold_change)
   p_value <- force(p_value)
-  
+
   if (object$input$type == "1 sample") {
     stop("Can't do a volcano plot for one-sample tests!")
   }
@@ -757,9 +762,9 @@ volcanoPlot.SansSouci <- function(x,
   stopifnot(m == length(p_value))
   p_value_bound <- pValues(object)[contrast_name, ]
   thr <- thresholds(object)[1:m] # we select at most m hypotheses here
-  
-  volcanoPlot(
-    x = fold_change, p_value = p_value, 
+
+  vp <- volcanoPlot(
+    x = fold_change, p_value = p_value,
     thr = thr, p_value_bound = p_value_bound,
     p = p, q = q, r = r,
     cex = cex,
@@ -768,4 +773,14 @@ volcanoPlot.SansSouci <- function(x,
     feature_label = feature_label,
     ylim = ylim, ...
   )
+
+  if (interactive) {
+    vp <- plotly::ggplotly(vp + ggplot2::labs(y = "p-value (-log10 scale)"),
+                           tooltip = "text"
+    ) |>
+      plotly::layout(
+        margin = list(t = 60, b = 70)
+      )
+  }
+  return(vp)
 }
