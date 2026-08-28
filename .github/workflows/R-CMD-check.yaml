@@ -42,8 +42,13 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::rcmdcheck
+          extra-packages: any::rcmdcheck, any::quarto
           needs: check
+          
+      - name: Install package for vignette building
+        run: |
+          install.packages(".", repos = NULL, type = "source", dependencies = TRUE)
+        shell: Rscript {0}
 
       - uses: r-lib/actions/check-r-package@v2
         with:
