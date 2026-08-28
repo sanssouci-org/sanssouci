@@ -2,6 +2,10 @@
 Package: sanssouci
 ==================
 
+Version 0.16.4
+
+* vignettes are now in quarto format instead of Rmarkdown
+
 Version 0.16.3
 
 * volcanoPlot now uses ggplot
