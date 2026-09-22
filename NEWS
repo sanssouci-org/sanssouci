@@ -2,6 +2,12 @@
 Package: sanssouci
 ==================
 
+Version 0.16.5
+
+* fix URLs in README (issue 141)
+* minor updates in vignettes
+* update doc
+
 Version 0.16.4
 
 * vignettes are now in quarto format instead of Rmarkdown

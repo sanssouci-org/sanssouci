@@ -11,6 +11,10 @@ knitr::opts_chunk$set(
 )
 ```
 
+```{r, include = FALSE}
+pkg_link <- function(path) file.path(yaml::read_yaml("_pkgdown.yml")$url, path)
+```
+
 # sanssouci
 
 <!-- badges: start -->
@@ -23,15 +27,16 @@ The goal of sanssouci [sãsusi] is to perform **post hoc inference**: in a multi
 Typical use cases include:
 
 - **Differential gene expression (DGE) studies in genomics**: 
-  - see vignettes dedicated to [microarray data](articles/post-hoc_differential-expression.html) and [RNAseq data](articles/post-hoc_differential-expression_RNAseq.html) 
+  - see vignettes dedicated to [microarray data](`r pkg_link("articles/post-hoc_differential-expression.html")`) and [RNAseq data](`r pkg_link("articles/post-hoc_differential-expression_RNAseq.html")`)
   - run [volcano plot shiny app](https://shiny-iidea-sanssouci.apps.math.cnrs.fr/)
-- **fMRI studies in neuroimaging**: see [fMRI vignette](articles/post-hoc_fMRI.html). 
+- **fMRI studies in neuroimaging**: see [fMRI vignette](`r pkg_link("articles/post-hoc_fMRI.html")`). 
 
 In both cases, the permutation-based post hoc inference methods implemented in the `sanssouci` package outperform classical post hoc bounds based on probabilistic inequalities.
 
 ## Example: differential analysis
 
-We briefly illustrate the case of differential gene expression study (see dedicated [vignette](articles/post-hoc_differential-expression.html) for more information). We start by creating an object of class `sanssouci` from gene expression data available from the [sanssouci.data](https://github.com/sanssouci-rog/sanssouci.data) package, 
+We briefly illustrate the case of differential gene expression study (see dedicated [vignette](`r pkg_link("articles/post-hoc_differential-expression.html")`) for more information). We start by creating an object of class `sanssouci` from gene expression data available from the [sanssouci.data](https://github.com/sanssouci-org/sanssouci.data) package, 
+
 
 ```{r load-data}
 library("sanssouci")
@@ -68,7 +73,7 @@ library("ggplot2")
 plot(res, xmax = 500) +
   geom_vline(xintercept = length(S), 
              color = "gray", linetype = "dotted", size = 1.5) +
-  geom_line(size = 1.5)
+  geom_line(linewidth = 1.5)
 ```
 
 
