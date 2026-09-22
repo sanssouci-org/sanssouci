@@ -220,7 +220,7 @@ get_perm <- function(X, categ, B,
 #' Get a vector of pivotal statistics associated
 #'   to permutation p-values and to a reference family
 #'
-#' @param p0 A matrix with B rows. Each row is a vector of null p-values
+#' @param p0 A matrix with B columns. Each column is a vector of null p-values
 #' @param m The total number of tested hypotheses
 #' @param t_inv  An inverse threshold function (same I/O as 't_inv_linear')
 #' @param K An integer value in `[1,m]`, the number of elements in the reference family. Defaults to `m`

@@ -4,9 +4,10 @@ Package: sanssouci
 
 Version 0.16.5
 
-* fix URLs in README (issue 141)
+* fix URLs in README (#141)
 * minor updates in vignettes
-* update doc
+* update doc (and fix #134)
+
 
 Version 0.16.4
 
