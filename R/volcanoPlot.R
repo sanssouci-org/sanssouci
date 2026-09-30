@@ -116,7 +116,7 @@ volcanoPlot.numeric <- function(x, p_value,
   cexs[sel12] <- cex[2]
 
   xlab <- "Fold change (log scale)"
-  ylab <- bquote("p-value (-" ~ log[10] ~ "scale)")
+  ylab <- "p-value (-log₁₀ scale)"
 
   feature_names <- names(logp)
   if (is.null(feature_names)) {
