@@ -1,6 +1,6 @@
 ---
 title: "Bootstrap-based post hoc inference for differential gene expression studies in linear models"
-author: "Nicolas Enjalbert Courrech, Pierre Neuvial"
+author: "Nicolas Enjalbert Courrech and Pierre Neuvial"
 date: "2025-07-02"
 format:
   html:
@@ -298,5 +298,12 @@ volcanoPlot(x = res, contrast_name = "age_enroll", p = 0.001, r = 0.01)
 ```
 
 As noted above, the association of variable `age_enrol` with gene expression is much weaker.
+
+# Session information
+
+```{r}
+#| label: session-info
+sessionInfo()
+```
 
 # References
