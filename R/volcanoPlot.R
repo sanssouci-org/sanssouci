@@ -125,7 +125,7 @@ volcanoPlot.numeric <- function(x, p_value,
   tooltip_hover <- paste0(
     feature_label, ": ",feature_names, "<br>",
     "logFC: ", round(fold_change, 3), "<br>",
-    "p-value: ", round(p_value, 3), sep = ""
+    "p-value: ", round(adjp, 6), sep = ""
   )
 
 
