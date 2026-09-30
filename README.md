@@ -50,7 +50,7 @@ Then we fit the method by with `B=1000` permutations, and with a target
 risk `alpha = 0.1`.
 
 ``` r
-res <- fit(obj, alpha = 0.1, B = 0)
+res <- fit(obj, alpha = 0.1, B = 1000)
 ```
 
 ### Output 1 - Post hoc bound for a subset of genes
@@ -61,14 +61,14 @@ $10^{-3}$.
 ``` r
 S <- which(pValues(res) < 1e-3)
 predict(res, S)
-#>         TP        FDP 
-#> 85.0000000  0.4720497
+#>          TP         FDP 
+#> 129.0000000   0.1987578
 ```
 
 The method ensures with $1-\alpha = 90\%$ confidence that there are at
-least 85 truly differentially expressed genes (true positives, TP) among
-these 161 genes, corresponding to a false discovery proportion (FDP)
-less than 0.48.
+least 129 truly differentially expressed genes (true positives, TP)
+among these 161 genes, corresponding to a false discovery proportion
+(FDP) less than 0.2.
 
 ### Output 2 - Confidence curves for “top-k” feature lists
 
