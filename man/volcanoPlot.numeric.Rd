@@ -25,7 +25,8 @@
 \item{x}{A numeric vector of fold changes (x axis of the volcano plot)}
 
 \item{p_value}{A numeric vector of p-values, of the same length as \code{x}
-(y axis of the volcano plot)}
+(y axis of the volcano plot). If it is a named vector, then it is used in
+hover text for transformed ggplotly.}
 
 \item{thr}{A numeric vector of length K, a JER controlling family, used to estimate post-hoc bounds}
 
@@ -74,7 +75,7 @@ res <- fit(a, B = 100, alpha = 0.1)
 fold_changes <- foldChanges(res)
 p_values <- pValues(res)
 thr <- thresholds(res)
-volcanoPlot(x = fold_changes[1, ], p_value = p_values[1, ], thr = thr, 
+volcanoPlot(x = fold_changes[1, ], p_value = p_values[1, ], thr = thr,
   q = 0.2, r = 0.2, ylim = c(0, 4), feature_label = "gene")
 
 }

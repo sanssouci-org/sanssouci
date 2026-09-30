@@ -17,6 +17,7 @@
   pch = 19,
   feature_label = "feature",
   ylim = NULL,
+  interactive = FALSE,
   ...
 )
 }
@@ -45,6 +46,9 @@
 (e.g. "gene", "proteins", ...)}
 
 \item{ylim}{A numeric vector of length 2, the \eqn{y} limits of the plot}
+
+\item{interactive}{logical. If TRUE, a plotly object is returned then a
+ggplot2 object is returned.}
 
 \item{...}{Not used}
 }
