@@ -1,6 +1,6 @@
 Package: sanssouci
-Version: 0.16.4
-Date: 2026-08-25
+Version: 0.16.5
+Date: 2026-09-22
 Title: Post Hoc Multiple Testing Inference
 Authors@R: c(person("Pierre", "Neuvial", role=c("aut", "cre"),
                  email="pierre.neuvial@math.univ-toulouse.fr",
@@ -45,4 +45,4 @@ URL: https://github.com/sanssouci-org/sanssouci,
 BugReports: https://github.com/sanssouci-org/sanssouci/issues
 Remotes: github::sanssouci-org/sanssouci.data
 Config/roxygen2/version: 8.0.0
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
