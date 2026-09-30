@@ -775,7 +775,10 @@ volcanoPlot.SansSouci <- function(x,
   )
 
   if (interactive) {
-    vp <- plotly::ggplotly(vp + ggplot2::labs(y = "p-value (-log10 scale)"),
+    vp <- plotly::ggplotly(vp +
+                             ggplot2::labs(
+                               y = "p-value (-log<sub>10</sub> scale)"
+                             ),
                            tooltip = "text"
     ) |>
       plotly::layout(
