@@ -230,7 +230,9 @@ volcanoPlot.numeric <- function(x, p_value,
         vjust = 1.2
       )
   }
-  attr(vp, "selection") <- sel12
+  attr(vp, "selection") <- list(sel12 = sel12,
+                                n1 = n1, TP1 = TP1, FDP1 = FDP1,
+                                n2 = n2, TP2 = TP2, FDP2 = FDP2)
   return(vp)
 }
 

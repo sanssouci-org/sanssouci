@@ -771,10 +771,12 @@ volcanoPlot.SansSouci <- function(x,
     col = col,
     pch = pch,
     feature_label = feature_label,
-    ylim = ylim, ...
+    ylim = ylim,
+    add_signed_selections = TRUE, ...
   )
 
   if (interactive) {
+    sel <- attr(vp, "selection")
     vp <- plotly::ggplotly(vp +
                              ggplot2::labs(
                                y = "p-value (-log<sub>10</sub> scale)"
@@ -783,6 +785,43 @@ volcanoPlot.SansSouci <- function(x,
     ) |>
       plotly::layout(
         margin = list(t = 60, b = 70)
+      )
+
+    txt_right <- sprintf(
+      "%d %s\nTP \u2265 %d ; FDP \u2264 %.2f",
+      sel$n1, pluralize(word = feature_label, n = sel$n1), sel$TP1, sel$FDP1
+    )
+
+    txt_left <- sprintf(
+      "%d %s\nTP \u2265 %d ; FDP \u2264 %.2f",
+      sel$n2, pluralize(word = feature_label, n = sel$n2), sel$TP2, sel$FDP2
+    )
+    vp <- vp |>
+      plotly::layout(
+        annotations = list(
+          list(
+            x = 1,
+            y = 1,
+            xref = "paper",
+            yref = "paper",
+            text = txt_right,
+            showarrow = FALSE,
+            xanchor = "right",
+            yanchor = "top",
+            align = "right"
+          ),
+          list(
+            x = 0,
+            y = 1,
+            xref = "paper",
+            yref = "paper",
+            text = txt_left,
+            showarrow = FALSE,
+            xanchor = "left",
+            yanchor = "top",
+            align = "left"
+          )
+        )
       )
   }
   return(vp)
