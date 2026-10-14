@@ -19,7 +19,6 @@ Imports:
     Matrix,
     matrixStats,
     matrixTests,
-    plotly,
     rlang
 Suggests:
     covr,
@@ -28,6 +27,7 @@ Suggests:
     knitr,
     limma,
     markdown,
+    plotly,
     rbibutils,
     reticulate,
     rmarkdown,

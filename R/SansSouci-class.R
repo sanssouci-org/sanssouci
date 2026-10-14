@@ -198,7 +198,7 @@ SansSouciSim <- function(...) {
 #' str(pValues(res))
 #' str(foldChanges(res))
 #' str(thresholds(res))
-#' volcanoPlot(res, q = 0.05, r = 0.5)
+#' vp <- volcanoPlot(res, q = 0.05, r = 0.5)
 #'
 NULL
 #> NULL
@@ -715,13 +715,11 @@ predict.SansSouci <- function(object,
 #' @param p_value A vector of p-values, of the same length as `nHyp(x)`, used for volcanoPlot y-axis. If not specified, `pValues(x)` is used
 #' @param contrast_name A character value, the selected contrast. Should be chosen in `x$input$contrast_name`.
 #' @inheritParams volcanoPlot.numeric
-#' @param interactive logical. If TRUE, a plotly object is returned then a
-#' ggplot2 object is returned.
+#'
 #' @details The default is to use the fold changes and p-values from the input SansSouci object. See the vignette
 #'   <https://sanssouci-org.github.io/sanssouci/articles/post-hoc_differential-expression_RNAseq.html#custom-statistics-example-using-limma-voom>
 #'   for an example where custom fold changes and p-values are used.
 #'
-#' @importFrom plotly ggplotly
 #' @export
 #'
 #' @examples
@@ -740,7 +738,6 @@ volcanoPlot.SansSouci <- function(x,
                                   col = c("#33333333", "#FF0000", "#FF666633"),
                                   pch = 19, feature_label = "feature",
                                   ylim = NULL,
-                                  interactive = FALSE,
                                   ...) {
   object <- x
   if (!(contrast_name %in% rownames(pValues(object)))) {
@@ -775,54 +772,5 @@ volcanoPlot.SansSouci <- function(x,
     add_signed_selections = TRUE, ...
   )
 
-  if (interactive) {
-    sel <- attr(vp, "selection")
-    vp <- plotly::ggplotly(vp +
-                             ggplot2::labs(
-                               y = "p-value (-log<sub>10</sub> scale)"
-                             ),
-                           tooltip = "text"
-    ) |>
-      plotly::layout(
-        margin = list(t = 60, b = 70)
-      )
-
-    txt_right <- sprintf(
-      "%d %s\nTP \u2265 %d ; FDP \u2264 %.2f",
-      sel$n1, pluralize(word = feature_label, n = sel$n1), sel$TP1, sel$FDP1
-    )
-
-    txt_left <- sprintf(
-      "%d %s\nTP \u2265 %d ; FDP \u2264 %.2f",
-      sel$n2, pluralize(word = feature_label, n = sel$n2), sel$TP2, sel$FDP2
-    )
-    vp <- vp |>
-      plotly::layout(
-        annotations = list(
-          list(
-            x = 1,
-            y = 1,
-            xref = "paper",
-            yref = "paper",
-            text = txt_right,
-            showarrow = FALSE,
-            xanchor = "right",
-            yanchor = "top",
-            align = "right"
-          ),
-          list(
-            x = 0,
-            y = 1,
-            xref = "paper",
-            yref = "paper",
-            text = txt_left,
-            showarrow = FALSE,
-            xanchor = "left",
-            yanchor = "top",
-            align = "left"
-          )
-        )
-      )
-  }
   return(vp)
 }
