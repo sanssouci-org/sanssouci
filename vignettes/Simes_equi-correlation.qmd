@@ -1,22 +1,21 @@
 ---
 title: "Conservativeness of the Simes inequality under positive dependence"
-author: "P. Neuvial"
-date: "`r Sys.Date()`"
-output:
-  html_document: default
-  pdf_document: default
-header-includes:
-  - \newcommand{\cH}{}
-  - \renewcommand{\P}{\mathbb{P}}
+author: "Pierre Neuvial"
+date: today
+format:
+  html:
+    toc: true
+    number-sections: true
+  pdf:
+    number-sections: true
 bibliography: sanssouci.bib
 vignette: >
-  %\VignetteEngine{knitr::knitr}
+  %\VignetteEngine{quarto::html}
   %\VignetteIndexEntry{Conservativeness of the Simes inequality under positive dependence}
+execute:
+  echo: true
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
 ## The Simes inequality
 
@@ -25,7 +24,7 @@ Let $\mathbf{q}=(q_i)_{1 \leq i \leq m}$ be a vector of random variables such th
 * for each $i=1 \ldots m$, $q_i \sim \mathcal{U}[0,1]$
 * $\mathbf{q}$ satisfies positive regression dependency on a subset (PRDS)
 
-We refer to @sarkar98probability for a formal definition of this form of positive dependence. Here, we simply note that it holds in particular of Gaussian equi-correlated random variables. 
+We refer to @sarkar98probability for a formal definition of this form of positive dependence. Here, we simply note that it holds in particular of Gaussian equi-correlated random variables.
 
 Then, letting $(q_{(1)}, \ldots q_{(m)} )$ be the corresponding order statistics, we have:
 
@@ -34,7 +33,8 @@ This inequality is due to @simes86improved. It is sharp under independence of th
 
 ## Estimating the size of the Simes test
 
-```{r library}
+```{r}
+#| label: library
 library("sanssouci")
 library("matrixStats")
 library("knitr")
@@ -42,7 +42,8 @@ library("knitr")
 
 We write a small function to estimate the size of the Simes test, that is, the level actually achieved by the left-hand side in the above inequality.
 
-```{r size-Simes}
+```{r}
+#| label: size-Simes
 size <- function(rho, m, B, alpha=0.05) {
     X0 <- gaussianTestStatistics(m, B, dep = "equi", param = rho)$X0
     p0 <- pnorm(X0, lower.tail = FALSE)
@@ -56,7 +57,8 @@ size <- function(rho, m, B, alpha=0.05) {
 
 Our simulation parameters are set as follows:
 
-```{r params}
+```{r}
+#| label: params
 m <- 1e3
 rhos <- c(0, 0.1, 0.2, 0.4, 0.8)
 alpha <- 0.2
@@ -70,15 +72,17 @@ That is:
 * target level of the Simes test: $`r alpha`$
 * $`r B`$ replications are used to estimate the size of the test
 
-
-```{r simulations}
+```{r}
+#| label: simulations
 ahat <- sapply(rhos, size, m, B, alpha=alpha)
 ses <- sqrt(ahat*(1-ahat)/B)
 ```
 
 We estimate the size of the test as the average size $\hat{\alpha}$ achieved across replications, and  the corresponding standard error as $\sqrt{\hat{\alpha}(1-\hat{\alpha})/B}$.
 
-```{r results-table, results="as.is"}
+```{r}
+#| label: results-table
+#| results: asis
 tb <- rbind(ahat/alpha, ses/alpha)
 colnames(tb) <- rhos
 rownames(tb) <- c("Achieved level/target level", "Standard error")
@@ -88,7 +92,7 @@ knitr::kable(tb, digits = 2)
 This table illustrates the sharpness of the Simes test under independence ($\rho=0$), and the conservativeness of this test under positive dependence ($\rho>0$). For example, when $\rho=0.4$, the size of the Simes test is less than half the target level.
 
 > This conservativeness is one of the motivations of the development of post hoc inference methods that use randomization to adapt to dependence. See the following vignettes:
-> 
+>
 > - [Joint Error Rate Calibration](jointErrorRateCalibration_simulations.html)
 > - [Permutation-based post hoc inference for differential gene expression studies](post-hoc_differential-expression.html)
 > - [Permutation-based post hoc inference for fMRI studies](post-hoc_fMRI.html)
