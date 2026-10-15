@@ -1,0 +1,36 @@
+name: coverage
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup R
+        uses: r-lib/actions/setup-r@v2
+
+      - name: Install dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::covr
+
+      - name: Generate coverage report
+        shell: Rscript {0}
+        run: |
+          cov <- covr::package_coverage()
+
+          print(cov)
+
+          percent <- covr::percent_coverage(cov)
+          cat("\nCoverage:", percent, "%\n")
+          
+          if (percent < 90) {
+            stop("Coverage below threshold")
+          }
