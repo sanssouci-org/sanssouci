@@ -33,3 +33,4 @@ TODO*.txt
 ^pkgdown$
 ^README\.Rmd$
 ^codecov\.yml$
+^.lintr$
