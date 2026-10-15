@@ -23,14 +23,18 @@ jobs:
 
       - name: Generate coverage report
         shell: Rscript {0}
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: |
           cov <- covr::package_coverage()
-
           print(cov)
 
           percent <- covr::percent_coverage(cov)
           cat("\nCoverage:", percent, "%\n")
-          
+
+          # Upload the coverage report to Codecov
+          covr::codecov(coverage = cov, quiet = FALSE)
+
           if (percent < 90) {
             stop("Coverage below threshold")
           }
