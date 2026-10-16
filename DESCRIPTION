@@ -27,6 +27,7 @@ Suggests:
     knitr,
     limma,
     markdown,
+    plotly,
     quarto,
     rbibutils,
     reticulate,
