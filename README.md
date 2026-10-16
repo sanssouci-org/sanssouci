@@ -3,9 +3,14 @@
 
 <!-- badges: start -->
 
-[![Coverage
+<!-- [![Coverage
 Status](https://codecov.io/gh/sanssouci-org/sanssouci/branch/develop/graph/badge.svg)](https://codecov.io/github/sanssouci-org/sanssouci/branch/develop)
+-->
+
 [![R-CMD-check](https://github.com/sanssouci-org/sanssouci/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sanssouci-org/sanssouci/actions/workflows/R-CMD-check.yaml)
+[![coverage > 90%](https://github.com/sanssouci-org/sanssouci/actions/workflows/test_covr.yaml/badge.svg)](https://github.com/sanssouci-org/sanssouci/actions/workflows/test_covr.yaml)
+[![codecov](https://codecov.io/gh/sanssouci-org/sanssouci/graph/badge.svg)](https://codecov.io/gh/sanssouci-org/sanssouci)
+
 <!-- badges: end -->
 
 The goal of sanssouci \[sãsusi\] is to perform **post hoc inference**:
