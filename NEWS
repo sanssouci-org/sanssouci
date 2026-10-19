@@ -2,6 +2,11 @@
 Package: sanssouci
 ==================
 
+Version 0.16.6
+
+* Compatible volcanoPlot with ggplotly (#142)
+* Add hover text in genom_point (#137)
+
 Version 0.16.5
 
 * fix URLs in README (#141)
@@ -20,9 +25,9 @@ Version 0.16.3
 Version 0.16.2
 
 * Use withr::with_preserve_seed in tests to avoid fixing seed
-* Add tests for 'simulateGaussianNullsFromFactorModel', 'rowZTests', 
+* Add tests for 'simulateGaussianNullsFromFactorModel', 'rowZTests',
   'particalColSort*'
-* Improve test coverage of 'check_ref_fam', 'confCurveFromFam', 
+* Improve test coverage of 'check_ref_fam', 'confCurveFromFam',
   'rowBinomialTests', 'zeta.*', 'curve.V.star.*'
 
 Version 0.16.1 [2025-07-28]
@@ -53,16 +58,16 @@ Version 0.14.1 [2025-05-09]
   - Fix R-CMD-check badge
   - remove explicit calls to gc()
   - Add tests
-  
-  
+
+
 Version 0.14.0 [2025-05-08]
 
 * New, much faster, implementation of 'curve.V.star.forest.fast' (PR #117)
-* Possibility to have additional arguments in 'zetas.tree' and the functions that 
+* Possibility to have additional arguments in 'zetas.tree' and the functions that
 compute the individual zetas, as demonstrated by the new 'zeta.kBonf' (PR #117)
-* Reorganization of the 'rowWelchTests' function 
+* Reorganization of the 'rowWelchTests' function
 to reduce the amount of memory used (PR #112)
-* Creation of a mini-batch test function for smaller matrix calculations, 
+* Creation of a mini-batch test function for smaller matrix calculations,
 this function is used in the 'fit' method to compute permuted p -values (PR #112)
 
 
@@ -116,10 +121,10 @@ Version 0.12.4 [2021-11-05]
 
 Version 0.12.3 [2021-10-11]
 
-* volcano plot made more generic: different p-values can be used for 
+* volcano plot made more generic: different p-values can be used for
   selection/display and for calculating post hoc bounds (#66).
 * 'colSort' becomes a wrapper around the C++ function arma::sort (which natively handles matrices).
-* BUG FIX: curveMaxFP would raise an error on empty p-value vector. Now returns 0. 
+* BUG FIX: curveMaxFP would raise an error on empty p-value vector. Now returns 0.
 * volcano plot made more generic: different p-values can be used for selection/display and for calculating post hoc bounds (#66).
 >>>>>>> develop
 * SPEEDUP: curveMaxFP now always has O(|S|) complexity (#65).
@@ -133,14 +138,14 @@ Version 0.12.2 [2021-09-21]
 
 Version 0.12.1 [2021-06-11]
 
-* [IIDEA] Speedup: data sets from the GSEABenchmarkeR package and associated gene sets are preprocessed on the deployment server. 
-* [IIDEA] Added script "GSEABenchmarkeR/export-data.R" to preprocess a subset of the 40 microarray data sets of GSEABenchmarkeR and store them locally. 
+* [IIDEA] Speedup: data sets from the GSEABenchmarkeR package and associated gene sets are preprocessed on the deployment server.
+* [IIDEA] Added script "GSEABenchmarkeR/export-data.R" to preprocess a subset of the 40 microarray data sets of GSEABenchmarkeR and store them locally.
 * [IIDEA] Cleanups in the UI.
 
 
 Version 0.12.0 [2021-04-30]
 
-* Major cleanup: removed 'calibrateJER' and friends. 
+* Major cleanup: removed 'calibrateJER' and friends.
 
 Version 0.11.0 [2021-04-20]
 
@@ -174,7 +179,7 @@ Version 0.10.0 [2021-03-12]
 * Updated documentation, vignettes and test scripts
 * Vocabulary: confidence envelopes are now called confidence curves
 * Added S3 class 'SansSouciStruct' (DBNR framework)
-* Implemented method 'SansSouci.fit' 
+* Implemented method 'SansSouci.fit'
 * Implemented method 'SansSouci.bound'
 * Added S3 class 'SansSouci' (generic BNR framework)
 * Implemented method 'SansSouci.fit' (wrapper around 'calibrateJER')
@@ -199,7 +204,7 @@ Version 0.9.3 [2020-11-25]
 
 Version 0.9.2 [2020-11-14]
 
-* Volcano plot shiny app: improved user interface + add interaction with Gene Ontology 
+* Volcano plot shiny app: improved user interface + add interaction with Gene Ontology
 
 Version 0.9.1 [2020-11-07]
 
@@ -220,7 +225,7 @@ Version 0.8.5 [2020-09-10]
 
 Version 0.8.4 [2020-08-18]
 * Removed testByRandomization.cpp and functions 'testByNnnR' (unused) to address #17
-* Dropped data/ex-rMAPS.rda (unused) 
+* Dropped data/ex-rMAPS.rda (unused)
 * Renamed data/volcano.rda to data/volcano_plot.rda to fix #18
 
 Version 0.8.3 [2020-07-21]
@@ -241,13 +246,13 @@ Version 0.8.1 [2019-10-16]
 
 * Added a shiny app to illustrate the bounds of the DBNR paper.
 
-* Implemented the "Beta template" via BetaPivotalStatistic() and 
-  BetaThresholdFamily(). The correspondig lambda-calibration is obtained by 
+* Implemented the "Beta template" via BetaPivotalStatistic() and
+  BetaThresholdFamily(). The correspondig lambda-calibration is obtained by
   calibrateJER(refFamily = "Beta").
-  
-* Added a (crude) vignette showing how to perform lambda-calibration for 
+
+* Added a (crude) vignette showing how to perform lambda-calibration for
   two-sample tests of differential gene expression: two-sample.Rmd.
-  
+
 * posthocBySimes() now incorporates the free lunch mentioned in #12.
 
 SIGNIFICANT CHANGES:
@@ -258,26 +263,26 @@ SIGNIFICANT CHANGES:
 
 * calibrateJER() gained argument rowTestFUN in order to perform other
   tests than the classical Welch (Student-T) test, in the two-sample
-  case. 
+  case.
 
-* Added rowBinomialTests() for vectorized Binomial tests, and corresponding 
-  tests scripts. Note that two-sided Binomial tests are in fact not vecorized 
+* Added rowBinomialTests() for vectorized Binomial tests, and corresponding
+  tests scripts. Note that two-sided Binomial tests are in fact not vecorized
   yet.
-  
-* Added rowWilcoxonTests() for vectorized Wilcoxon rank sum tests, and 
-  corresponding tests scripts. Removed wilcoxStats() which had become 
-  redundant, and simulateMein() which was using it and which was not being 
-  used. 
+
+* Added rowWilcoxonTests() for vectorized Wilcoxon rank sum tests, and
+  corresponding tests scripts. Removed wilcoxStats() which had become
+  redundant, and simulateMein() which was using it and which was not being
+  used.
 
 * BUG FIG in rowWilcoxonTests(): ties were not handled the same way	as in
   wilcox.test() because the default of matrixStats::rowRanks(ties = "max")
   is not the same as the default of rank(ties = "average"). Now also
   *rounding* the ranks in order to make use of matrixStats::rowTabulates(),
   which itself only works with	integer	values.
-   
+
 SOFTWARE QUALITY:
 
-* Added more tests for the "direction" of the lambda-calibration in 
+* Added more tests for the "direction" of the lambda-calibration in
   calibrateJER().
 
 DEPRECATION & DEFUNCT:
@@ -287,13 +292,13 @@ DEPRECATION & DEFUNCT:
 
 MISC
 
-* Renamed NEWS.md to NEWS and reformatted for news(package = "sansSouci") to 
+* Renamed NEWS.md to NEWS and reformatted for news(package = "sansSouci") to
   become informative.
 
-* calibrateJER() gained argument 'maxStepsDown' to control the maximal number 
+* calibrateJER() gained argument 'maxStepsDown' to control the maximal number
   of steps down.
 
-* In calibrateJER0() suppressed the warning occurring when the maximal number 
+* In calibrateJER0() suppressed the warning occurring when the maximal number
   of steps down is reached without convergence.
 
 
@@ -304,7 +309,7 @@ Version 0.7.0 [2018-06-19]
 
 * Added support for one-sided tests in 'calibrateJER' and 'testByRandomization' (this feature has been imported from the branch generic-randomization-tests). Added corresponding tests.
 
-* Cleanups in 'testByRandomization': "parametric" p-values are now the default, randomization p-values are not computed by default. Note that permutation test statistics are not mapped to the one-sided N(0,1) scale under the null (this is done by calibrateJER). 
+* Cleanups in 'testByRandomization': "parametric" p-values are now the default, randomization p-values are not computed by default. Note that permutation test statistics are not mapped to the one-sided N(0,1) scale under the null (this is done by calibrateJER).
 
 * Updated vignettes.
 
@@ -312,9 +317,9 @@ Version 0.6.0 [2018-03-26]
 
 * Added vignette 'jointErrorRateCalibration_simulations.Rmd'.
 
-* Added function maxFP and minTP to calculate post hoc bound among user-defined selections. Renamed function 'upperBoundFP' to 'curveMaxFP' for internal consistency. Removed functions 'falseDiscoveryEnvelope', 'falseDiscoveryProportionControl' and 'falseDiscoveryProportionEnvelope' which provided correct but conservative bounds. 
+* Added function maxFP and minTP to calculate post hoc bound among user-defined selections. Renamed function 'upperBoundFP' to 'curveMaxFP' for internal consistency. Removed functions 'falseDiscoveryEnvelope', 'falseDiscoveryProportionControl' and 'falseDiscoveryProportionEnvelope' which provided correct but conservative bounds.
 
-* Added function 'calibrateJER' as the main user-level entry point for calibrating JER thresholds. Renamed 'jointFWERControl' into 'calibrateJER0', which is not exported anymore. (Fixes #7). 
+* Added function 'calibrateJER' as the main user-level entry point for calibrating JER thresholds. Renamed 'jointFWERControl' into 'calibrateJER0', which is not exported anymore. (Fixes #7).
 
 * Cleanup: user-level entry point for simulating test statistics is now 'gaussianTestStatistics'.
 
@@ -324,7 +329,7 @@ Version 0.6.0 [2018-03-26]
 
 * Cleanups in 'inst' scripts.
 
-* Cleanup: *many* lower-level functions are not exported anymore; their documentation is still available in the form of comments but not as .Rd files. 
+* Cleanup: *many* lower-level functions are not exported anymore; their documentation is still available in the form of comments but not as .Rd files.
 
 * Some code cleanups (spacing; comments)
 

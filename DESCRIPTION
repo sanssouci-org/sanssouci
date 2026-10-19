@@ -1,6 +1,6 @@
 Package: sanssouci
-Version: 0.16.5
-Date: 2026-09-22
+Version: 0.16.6
+Date: 2026-10-19
 Title: Post Hoc Multiple Testing Inference
 Authors@R: c(person("Pierre", "Neuvial", role=c("aut", "cre"),
                  email="pierre.neuvial@math.univ-toulouse.fr",
@@ -27,6 +27,7 @@ Suggests:
     knitr,
     limma,
     markdown,
+    plotly,
     quarto,
     rbibutils,
     reticulate,
