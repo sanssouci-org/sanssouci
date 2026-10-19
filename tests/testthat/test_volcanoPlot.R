@@ -33,7 +33,7 @@ test_that("Vanilla test for 'volcanoPlot'", {
 
   vp_build <- ggplot2::ggplot_build(vp)
 
-  # Test 1 : vérifier le format de text_hover
+  # Test 1: check text_hover format
   point_data <- vp_build$data[[5]]
 
   expect_match(
@@ -41,7 +41,7 @@ test_that("Vanilla test for 'volcanoPlot'", {
     "^feature: \\d+<br>logFC: -?\\d+(\\.\\d+)?([eE][+-]?\\d+)?<br>p-value: \\d+(\\.\\d+)?([eE][+-]?\\d+)?$"
   )
 
-  # Test 2 : check mapping text and colone in dataframe
+  # Test 2: check mapping between text and column in data?frame
   expect_identical(
     rlang::get_expr(vp$layers[[5]]$mapping$text),
     quote(.data$text_hover)
@@ -69,7 +69,7 @@ test_that("Convert volcanoplot with ggploty", {
   vpi <- plotly::ggplotly(vp)
   expect_s3_class(vpi, "plotly")
 
-  ## expect reproduce ggplot2 plot with all information
+  ## expect to reproduce ggplot2 plot with all information
   feature_label = "feature"
   sel <- attr(vp, "selection")
   vp <- plotly::ggplotly(vp +
