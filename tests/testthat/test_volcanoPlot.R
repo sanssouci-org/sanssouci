@@ -31,15 +31,22 @@ test_that("Vanilla test for 'volcanoPlot'", {
   expect_null(vp$selection)
   expect_is(vp, "ggplot")
 
+  vp_build <- ggplot2::ggplot_build(vp)
+
+  # Test 1 : vérifier le format de text_hover
+  point_data <- vp_build$data[[5]]
 
   expect_match(
-    vp@data$text_hover[1],
+    point_data$text,
     "^feature: \\d+<br>logFC: -?\\d+(\\.\\d+)?([eE][+-]?\\d+)?<br>p-value: \\d+(\\.\\d+)?([eE][+-]?\\d+)?$"
   )
+
+  # Test 2 : check mapping text and colone in dataframe
   expect_identical(
-    rlang::get_expr(vp@layers$geom_point$mapping$text),
+    rlang::get_expr(vp$layers[[5]]$mapping$text),
     quote(.data$text_hover)
   )
+
 
   ## filtering both on p-values and q-values
   expect_warning(vp <- volcanoPlot(cal, p = 0.01, q = 0.05, r = 0,
