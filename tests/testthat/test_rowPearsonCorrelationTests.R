@@ -24,32 +24,39 @@ test_that("rowPearsonCorrelationTests <=> cor.test", {
 })
 
 
-test_that("rowPearsonCorrelationTests <=> cor.test (several contrasts at a time)", {
-  alt <- sample(c("two.sided", "greater", "less"), 1)
-  mat_small <- mat
-  B <- 10
-  cls_perm <- replicate(B, sample(cls))
-  fwt <- rowPearsonCorrelationTests(mat_small, categ = cls_perm, alternative = alt)
+test_that(
+  "rowPearsonCorrelationTests <=> cor.test (several contrasts at a time)",
+  {
+    alt <- sample(c("two.sided", "greater", "less"), 1)
+    mat_small <- mat
+    B <- 10
+    cls_perm <- replicate(B, sample(cls))
+    fwt <- rowPearsonCorrelationTests(mat_small,
+      categ = cls_perm,
+      alternative = alt
+    )
 
-  # Ordinary Pearson's correlation-test (reasonably fast for small number of tests)
-  nr <- nrow(mat_small)
-  nc <- ncol(cls_perm)
-  res <- matrix(NA_real_, nr, nc)
-  stat <- matrix(NA_real_, nr, nc)
-  est <- matrix(NA_real_, nr, nc)
-  for (rr in seq_len(nr)) {
-    xy <- mat_small[rr, ]
-    for (cc in seq_len(nc)) {
-      cp <- cls_perm[, cc]
-      tt <- cor.test(xy,
-        cp,
-        alternative = alt
-      ) ## test stat positive if "1 > 0"
-      res[rr, cc] <- tt$p.value
-      stat[rr, cc] <- tt$statistic
+    # Ordinary Pearson's correlation-test
+    # (reasonably fast for small number of tests)
+    nr <- nrow(mat_small)
+    nc <- ncol(cls_perm)
+    res <- matrix(NA_real_, nr, nc)
+    stat <- matrix(NA_real_, nr, nc)
+    est <- matrix(NA_real_, nr, nc)
+    for (rr in seq_len(nr)) {
+      xy <- mat_small[rr, ]
+      for (cc in seq_len(nc)) {
+        cp <- cls_perm[, cc]
+        tt <- cor.test(xy,
+          cp,
+          alternative = alt
+        ) ## test stat positive if "1 > 0"
+        res[rr, cc] <- tt$p.value
+        stat[rr, cc] <- tt$statistic
+      }
     }
-  }
 
-  expect_equivalent(fwt$p.value, res)
-  expect_equivalent(fwt$statistic, stat)
-})
+    expect_equivalent(fwt$p.value, res)
+    expect_equivalent(fwt$statistic, stat)
+  }
+)

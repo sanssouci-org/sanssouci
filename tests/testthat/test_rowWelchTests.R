@@ -11,7 +11,8 @@ test_that("rowWelchTests <=> welch.test", {
 
   # Ordinary Welch t-test (reasonably fast for small number of tests)
   wt <- apply(mat, 1, FUN = function(x) {
-    tt <- t.test(x[cls == 1], x[cls == 0], alternative = alt) ## test stat positive if "1 > 0"
+    tt <- t.test(x[cls == 1], x[cls == 0], alternative = alt)
+    ## test stat positive if "1 > 0"
     c(tt$p.value, tt$statistic, tt$parameter)
   })
   dwt <- as.data.frame(t(wt))
@@ -104,7 +105,10 @@ test_that("suffWelchTest gives identical results to welch.test", {
     y <- rnorm(2345)
     target <- t.test(x, y)
     swt <- suffWelchTests(mean(x), mean(y), sd(x), sd(y), length(x), length(y))
-    swt1 <- suffWelchTests1(mean(x), mean(y), sd(x), sd(y), length(x), length(y))
+    swt1 <- suffWelchTests1(
+      mean(x), mean(y), sd(x), sd(y), length(x),
+      length(y)
+    )
     expect_identical(swt, swt1)
 
     expect_equivalent(swt$statistic, target$statistic)
@@ -126,22 +130,19 @@ test_that("Sanity checks of 'categCheck' throw errors when expected to", {
 
   categCheck(c(0, 1, 0, 1), 4)
 
-  # expect_error(categCheck(c(1,2,1,2), 4),
-  #              "'c1212' should consist only of '0' and '1'! Or distinct values (for a covariate).")
-
   categCheck(c(1, 2, 3, 4), 4)
 })
 
 test_that("Corner case with almost null within-group level variance", {
-  file <-  system.file("testdata", "issue-94_y.rds", package = "sanssouci")
+  file <- system.file("testdata", "issue-94_y.rds", package = "sanssouci")
   y <- readRDS(file)
   groups <- c(1, 0, 0, 0, 0, 1, 1, 0, 0, 0)
-  
-  res_stat <- t.test(y~groups)
+
+  res_stat <- t.test(y ~ groups)
   res_sanssouci <- sanssouci::rowWelchTests(y, groups)
   names(res_sanssouci)
-  expect_equivalent(res_stat$statistic, -res_sanssouci$statistic) # inconsistent direction??
+  expect_equivalent(res_stat$statistic, -res_sanssouci$statistic)
+  # inconsistent direction??
   expect_equivalent(res_stat$p.value, res_sanssouci$p.value)
   expect_equivalent(res_stat$parameter, res_sanssouci$parameter)
 })
-
