@@ -326,7 +326,7 @@ zetas.tree <- function(C, leaf_list, method, pvalues, alpha, refine = FALSE, ver
       nb_loop <- nb_loop + 1
       print(paste0("loop number=", nb_loop, ", usage_K=", usage_K, ", new_K=", new_K))
     }
-    continue <- refine && (new_K < usage_K)
+    continue <- refine && (new_K < usage_K) && (new_K > 0)
   }
   return(ZL)
 }
