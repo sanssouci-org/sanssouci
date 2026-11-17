@@ -25,21 +25,25 @@ A list containing the following components:
 \item{parameter}{the degrees of freedom for the t-statistics}
 \item{p.value}{the p-values for the tests}
 \item{estimate}{the correlation}}
-Each of these elements is a matrix of size \code{m x B}, coerced to a vector of length \code{m} if \code{B=1}
+Each of these elements is a matrix of size \code{m x B},
+coerced to a vector of length \code{m} if \code{B=1}
 }
 \description{
 Pearson's correlation test for rows of a matrix
 }
 \details{
-This function is a wrapper around the \code{row_cor_pearson function} in the 'matrixTests' package.
+This function is a wrapper around the
+\code{row_cor_pearson function} in the 'matrixTests' package.
 }
 \examples{
 
 m <- 300
 n <- 38
-mat <- matrix(rnorm(m*n), ncol=n)
+mat <- matrix(rnorm(m * n), ncol = n)
 categ <- rnorm(n, mean = 10)
-system.time(fwt <- rowPearsonCorrelationTests(mat, categ, alternative = "greater"))
+system.time(fwt <- rowPearsonCorrelationTests(mat, categ,
+  alternative = "greater"
+))
 str(fwt)
 
 }

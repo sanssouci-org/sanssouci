@@ -28,33 +28,43 @@
 (y axis of the volcano plot). If it is a named vector, then it is used in
 hover text for transformed ggplotly.}
 
-\item{thr}{A numeric vector of length K, a JER controlling family, used to estimate post-hoc bounds}
+\item{thr}{A numeric vector of length K, a JER controlling family, used to
+estimate post-hoc bounds}
 
-\item{p_value_bound}{A numeric vector of p-values, of the same length as \code{x}, used to estimate post-hoc bounds. Defaults to 'p_value'}
+\item{p_value_bound}{A numeric vector of p-values, of the same length as
+\code{x}, used to estimate post-hoc bounds. Defaults to 'p_value'}
 
-\item{p}{A numeric value, the p-value threshold under which features are selected}
+\item{p}{A numeric value, the p-value threshold under which features are
+selected}
 
-\item{q}{A numeric value, the q-value (or FDR-adjusted p-value) threshold under which features are selected}
+\item{q}{A numeric value, the q-value (or FDR-adjusted p-value) threshold
+under which features are selected}
 
-\item{r}{A numeric value, the absolute fold change above which features are selected}
+\item{r}{A numeric value, the absolute fold change above which features are
+selected}
 
-\item{cex}{A numeric vector of length 2, the relative magnification factor for unselected (\code{cex[1]}) and unselected (\code{cex[2]}) features.}
+\item{cex}{A numeric vector of length 2, the relative magnification factor
+for unselected (\code{cex[1]}) and unselected (\code{cex[2]}) features.}
 
 \item{col}{A vector of length 3}
 
-\item{pch}{An integer or single character string specifying the plotting character, see \code{\link{par}}}
+\item{pch}{An integer or single character string specifying the plotting
+character, see \code{\link{par}}}
 
-\item{feature_label}{A character, the label to be used to designate individual hypotheses in the plot title
-(e.g. "gene", "proteins", ...)}
+\item{feature_label}{A character, the label to be used to designate
+individual hypotheses in the plot title (e.g. "gene", "proteins", ...)}
 
 \item{ylim}{A numeric vector of length 2, the \eqn{y} limits of the plot}
 
-\item{add_signed_selections}{A boolean value: should the post hoc bounds for the subselections corresponding to positive and negative fold change be displayed? Defaults to TRUE}
+\item{add_signed_selections}{A boolean value: should the post hoc bounds for
+the subselections corresponding to positive and negative fold change be
+displayed? Defaults to TRUE}
 
 \item{...}{Not used}
 }
 \value{
-A 'ggplot' object containing the volcano plot, with the indices of selected features returned as an attribute named 'selection'
+A 'ggplot' object containing the volcano plot, with the indices of
+selected features returned as an attribute named 'selection'
 }
 \description{
 Volcano plot for a numeric vector of fold changes and p-values
@@ -75,12 +85,16 @@ res <- fit(a, B = 100, alpha = 0.1)
 fold_changes <- foldChanges(res)
 p_values <- pValues(res)
 thr <- thresholds(res)
-volcanoPlot(x = fold_changes[1, ], p_value = p_values[1, ], thr = thr,
-  q = 0.2, r = 0.2, ylim = c(0, 4), feature_label = "gene")
+volcanoPlot(
+  x = fold_changes[1, ], p_value = p_values[1, ], thr = thr,
+  q = 0.2, r = 0.2, ylim = c(0, 4), feature_label = "gene"
+)
 
 }
 \seealso{
-Volcano plot shiny app at \url{ https://shiny-iidea-sanssouci.apps.math.cnrs.fr/}
+Volcano plot shiny app at
+\url{ https://shiny-iidea-sanssouci.apps.math.cnrs.fr/}
 
-Volcano plot for objects of class 'SansSouci': \code{\link[=volcanoPlot.SansSouci]{volcanoPlot.SansSouci()}}
+Volcano plot for objects of class
+'SansSouci': \code{\link[=volcanoPlot.SansSouci]{volcanoPlot.SansSouci()}}
 }

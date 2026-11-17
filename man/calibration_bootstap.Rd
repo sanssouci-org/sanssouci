@@ -35,9 +35,9 @@ Must be one of "two.sided" (default), "greater" or "less".}
 one of "Linear", "Beta" and "Simes", or "Oracle". "Linear" and "Simes"
 families are identical.
 \itemize{
-\item Simes/Linear: The classical family of thresholds introduced by Simes (1986).
-This family yields JER control if the test statistics are positively
-dependent (PRDS) under H0.
+\item Simes/Linear: The classical family of thresholds introduced by
+Simes (1986). This family yields JER control if the test statistics are
+positively dependent (PRDS) under H0.
 \item Beta: A family of thresholds that achieves marginal kFWER control under
 independence
 \item Oracle A family such that the associated bounds correspond to the true
@@ -48,9 +48,10 @@ object$input$truth.
 \value{
 A list with elements:
 \describe{
-\item{thr}{A numeric vector of length K, such that the estimated probability that
-there exists an index k between 1 and K such that the k-th maximum of the
-test statistics of is greater than \code{thr[k]}, is less than alpha}
+\item{thr}{A numeric vector of length K, such that the estimated
+probability that there exists an index k between 1 and K such that the k-th
+maximum of the test statistics of is greater than \code{thr[k]}, is less than
+alpha}
 \item{piv_stat}{A vector of \code{B} pivotal statitics}
 \item{lambda}{A numeric value, the result of the calibration}
 }
@@ -63,11 +64,11 @@ associated to a set of contrast in a linear model.
 N <- 100
 p <- 2
 D <- 2
-X <- matrix(0,nrow = N, ncol = p)
+X <- matrix(0, nrow = N, ncol = p)
 X[, 1] <- 1
-X[, -1] <- runif(N*(p-1), min = 0, max = 3)
+X[, -1] <- runif(N * (p - 1), min = 0, max = 3)
 beta <- matrix(0, nrow = p, ncol = D)
-epsilons <- matrix(rnorm(N*D), nrow = N, ncol = D)
+epsilons <- matrix(rnorm(N * D), nrow = N, ncol = D)
 Y <- X \%*\% beta + epsilons
 C <- diag(p)
 resLM <- calibration_bootstap(Y = Y, X = X, C = C, B = 10)

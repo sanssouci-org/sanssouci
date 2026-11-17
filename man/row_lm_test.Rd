@@ -9,7 +9,7 @@ row_lm_test(
   X,
   C,
   alternative = c("two.sided", "less", "greater"),
-  groups = matrix(1:ncol(Y), ncol = 1)
+  groups = matrix(seq_len(ncol(Y)), ncol = 1)
 )
 }
 \arguments{

@@ -12,8 +12,8 @@ rowWilcoxonTests(
 )
 }
 \arguments{
-\item{mat}{A \code{m x n} numeric matrix whose rows correspond to variables and columns to
-observations}
+\item{mat}{A \code{m x n} numeric matrix whose rows correspond to variables
+and columns to observations}
 
 \item{categ}{Either a numeric vector of \code{n} categories in \eqn{0, 1} for
 the observations, or a \code{n x B} matrix stacking \code{B} such vectors
@@ -36,8 +36,11 @@ A list containing the following components:
 \describe{
 \item{statistic}{the value of the statistics}
 \item{p.value}{the p-values for the tests}
-\item{estimate}{the median difference between groups (only calculated if \code{B=1} for computational efficiency)}}
-Each of these elements is a matrix of size \code{m x B}, coerced to a vector of length \code{m} if \code{B=1}
+\item{estimate}{the median difference between groups (only calculated if
+\code{B=1} for computational efficiency).}
+}
+Each of these elements is a matrix of size \code{m x B}, coerced to a
+vector of length \code{m} if \code{B=1}.
 }
 \description{
 Wilcoxon rank sum tests for each row of a matrix
@@ -56,14 +59,16 @@ described in the \code{\link{wilcox.test}} function. The exact p-values
 (which can be useful for small samples with no ties) are not implemented
 (yet).
 
-For simplicity, 'estimate' returns the difference between the group medians, which does not match the component 'estimate' output by \code{wilcox.test}
+For simplicity, 'estimate' returns the difference between the group
+medians, which does not match the component 'estimate' output by
+\code{wilcox.test}
 }
 \examples{
 
 p <- 200
 n <- 50
-mat <- matrix(rnorm(p*n), ncol = n)
-cls <- rep(c(0, 1), each = n/2)
+mat <- matrix(rnorm(p * n), ncol = n)
+cls <- rep(c(0, 1), each = n / 2)
 
 stats <- rowWilcoxonTests(mat, categ = cls, alternative = "two.sided")
 str(stats)

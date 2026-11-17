@@ -27,22 +27,27 @@
 
 \item{p_value}{A vector of p-values, of the same length as \code{nHyp(x)}, used for volcanoPlot y-axis. If not specified, \code{pValues(x)} is used}
 
-\item{p}{A numeric value, the p-value threshold under which features are selected}
+\item{p}{A numeric value, the p-value threshold under which features are
+selected}
 
-\item{q}{A numeric value, the q-value (or FDR-adjusted p-value) threshold under which features are selected}
+\item{q}{A numeric value, the q-value (or FDR-adjusted p-value) threshold
+under which features are selected}
 
-\item{r}{A numeric value, the absolute fold change above which features are selected}
+\item{r}{A numeric value, the absolute fold change above which features are
+selected}
 
 \item{contrast_name}{A character value, the selected contrast. Should be chosen in \code{x$input$contrast_name}.}
 
-\item{cex}{A numeric vector of length 2, the relative magnification factor for unselected (\code{cex[1]}) and unselected (\code{cex[2]}) features.}
+\item{cex}{A numeric vector of length 2, the relative magnification factor
+for unselected (\code{cex[1]}) and unselected (\code{cex[2]}) features.}
 
 \item{col}{A vector of length 3}
 
-\item{pch}{An integer or single character string specifying the plotting character, see \code{\link{par}}}
+\item{pch}{An integer or single character string specifying the plotting
+character, see \code{\link{par}}}
 
-\item{feature_label}{A character, the label to be used to designate individual hypotheses in the plot title
-(e.g. "gene", "proteins", ...)}
+\item{feature_label}{A character, the label to be used to designate
+individual hypotheses in the plot title (e.g. "gene", "proteins", ...)}
 
 \item{ylim}{A numeric vector of length 2, the \eqn{y} limits of the plot}
 
