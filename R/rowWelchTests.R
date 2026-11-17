@@ -1,4 +1,3 @@
-
 #' Welch T-tests for rows of a matrix
 #'
 #' @param X A \code{m x n} numeric matrix whose rows correspond to variables
@@ -19,7 +18,8 @@
 #'   \item{parameter}{the degrees of freedom for the t-statistics}
 #'   \item{p.value}{the p-values for the tests}
 #'   \item{estimate}{the mean difference between groups}}
-#'   Each of these elements is a matrix of size \code{m x B}, coerced to a vector of length \code{m} if \code{B=1}
+#'   Each of these elements is a matrix of size \code{m x B}, coerced to a
+#'   vector of length \code{m} if \code{B=1}
 #'
 #' @author Pierre Neuvial
 #'
@@ -53,7 +53,9 @@
 #' # with several contrasts/permutations
 #' B <- 100
 #' categ_perm <- replicate(B, sample(categ))
-#' system.time(fwt_perm <- rowWelchTests(mat, categ_perm, alternative = "greater"))
+#' system.time(fwt_perm <- rowWelchTests(mat, categ_perm,
+#'   alternative = "greater"
+#' ))
 #' str(fwt_perm)
 #'
 rowWelchTests <- function(X, categ,
@@ -66,30 +68,30 @@ rowWelchTests <- function(X, categ,
 
   nX <- as.matrix(colSums(categ0))
   nY <- as.matrix(colSums(categ1))
-  
-  XX <- X * X
-  sumX <- X %*% categ0  
-  sum2X <- (XX) %*% categ0  
-  mX <- divide_cols(sumX, nX) 
-  
-  num <- sum2X - divide_cols(sumX^2, nX)  
-  rm(sumX)  
-  rm(sum2X)  
 
-  num <- abs(num) # fix rare corner cases where num ~= -1e-15  
-  sX <- sqrt(divide_cols(num, nX - 1)) 
-  
-  
-  sumY <- X %*% categ1  
-  sum2Y <- (XX) %*% categ1  
-  mY <- divide_cols(sumY, nY)  
+  XX <- X * X
+  sumX <- X %*% categ0
+  sum2X <- (XX) %*% categ0
+  mX <- divide_cols(sumX, nX)
+
+  num <- sum2X - divide_cols(sumX^2, nX)
+  rm(sumX)
+  rm(sum2X)
+
+  num <- abs(num) # fix rare corner cases where num ~= -1e-15
+  sX <- sqrt(divide_cols(num, nX - 1))
+
+
+  sumY <- X %*% categ1
+  sum2Y <- (XX) %*% categ1
+  mY <- divide_cols(sumY, nY)
   rm(XX)
-  
-  num <- sum2Y - divide_cols(sumY^2, nY)  
-  num <- abs(num) # fix rare corner cases where num ~= -1e-15  
-  rm(sumY)  
-  rm(sum2Y)  
-  sY <- sqrt(divide_cols(num, nY - 1)) 
+
+  num <- sum2Y - divide_cols(sumY^2, nY)
+  num <- abs(num) # fix rare corner cases where num ~= -1e-15
+  rm(sumY)
+  rm(sum2Y)
+  sY <- sqrt(divide_cols(num, nY - 1))
   rm(num)
 
   suffWelchTests(mX, mY, sX, sY, nX, nY, alternative = alternative)
@@ -117,9 +119,9 @@ rowWelchTests <- function(X, categ,
 #'   }
 #' @author Pierre Neuvial
 #'
-#' @details In accordance with the implementation of \code{\link[stats]{t.test}} and friends, we
-#'   follow the rule that 'alternative = "greater"' is the alternative that 'x'
-#'   has a larger  mean than 'y'.
+#' @details In accordance with the implementation of \code{\link[stats]{t.test}}
+#'  and friends, we follow the rule that 'alternative = "greater"' is the
+#'  alternative that 'x' has a larger  mean than 'y'.
 #'
 #' @noRd
 #' @importFrom stats pt
@@ -154,7 +156,10 @@ suffWelchTests <- function(mx, my, sx, sy, nx, ny,
       is.vector(my), is.vector(sx), is.vector(sy),
       is.vector(nx), is.vector(ny)
     )) {
-      stop("All numeric inputs should be of the same type (either vector or matrix)")
+      stop(paste0("All numeric inputs should be of the same type",
+        " (either vector or matrix)",
+        sep = ""
+      ))
     }
     mx <- as.matrix(mx)
     my <- as.matrix(my)
@@ -167,7 +172,10 @@ suffWelchTests <- function(mx, my, sx, sy, nx, ny,
       is.matrix(my), is.matrix(sx), is.matrix(sy),
       is.matrix(nx), is.matrix(ny)
     )) {
-      stop("All numeric inputs should be of the same type (either vector or matrix)")
+      stop(paste0("All numeric inputs should be of the same type",
+        "(either vector or matrix)",
+        sep = " "
+      ))
     }
   } else {
     stop("Numeric inputs should be vectors or matrices")
@@ -180,12 +188,10 @@ suffWelchTests <- function(mx, my, sx, sy, nx, ny,
 
   ## test statistic
   stat <- (mx - my) / sqrt(sse)
-  ## names(stat) <- rep("t", length(stat))
 
   ## approximate degrees of freedom (Welch-Satterthwaite)
   deno <- divide_cols(sse.x^2, nx - 1) + divide_cols(sse.y^2, ny - 1)
   df <- sse2 / deno
-  ## names(df) <- "df"
 
   # mean difference
   meanDiff <- mx - my
@@ -223,8 +229,11 @@ categCheck <- function(categ, n) {
   }
   categ <- as.factor(categ)
   cats <- levels(categ)
-  if (!identical(cats, c("0", "1")) & length(cats) <= 2) {
-    stop("'", name, "' should consist only of '0' and '1' or distinct continuous values.")
+  if (!identical(cats, c("0", "1")) && length(cats) <= 2) {
+    stop(
+      "'", name,
+      "' should consist only of '0' and '1' or distinct continuous values."
+    )
   }
 }
 
@@ -249,9 +258,9 @@ categCheck <- function(categ, n) {
 #'   \item{p.value}{the p-value for the test} }
 #' @author Pierre Neuvial
 #'
-#' @details In accordance with the implementation of \code{\link[stats]{t.test}} and friends, we
-#'   follow the rule that 'alternative = "greater"' is the alternative that 'x'
-#'   has a larger  mean than 'y'.
+#' @details In accordance with the implementation of \code{\link[stats]{t.test}}
+#'  and friends, we follow the rule that 'alternative = "greater"' is the
+#'  alternative that 'x' has a larger  mean than 'y'.
 #'
 #' @importFrom stats pt
 #' @noRd
@@ -279,7 +288,8 @@ categCheck <- function(categ, n) {
 suffWelchTests1 <- function(mx, my, sx, sy, nx, ny,
                             alternative = c("two.sided", "less", "greater")) {
   alternative <- match.arg(alternative)
-  #    if (alternative != "two.sided") stop("altenative", alternative, "not implemented yet!")
+  #    if (alternative != "two.sided") stop("altenative", alternative,
+  #                                         "not implemented yet!")
 
   ## sanity checks
   p <- length(mx)
@@ -289,7 +299,7 @@ suffWelchTests1 <- function(mx, my, sx, sy, nx, ny,
   stopifnot(length(nx) %in% c(1, p))
   stopifnot(length(ny) %in% c(1, p))
 
-  sse.x <- sx^2 / nx ## sc <- sqrt((sum2c - sumc^2/nc)/(nc-1))
+  sse.x <- sx^2 / nx
   sse.y <- sy^2 / ny
 
   sse <- sse.x + sse.y
@@ -297,11 +307,9 @@ suffWelchTests1 <- function(mx, my, sx, sy, nx, ny,
 
   ## test statistic
   stat <- (mx - my) / sqrt(sse)
-  ## names(stat) <- rep("t", length(stat))
 
   ## approximate degrees of freedom (Welch-Satterthwaite)
   df <- sse2 / (sse.x^2 / (nx - 1) + sse.y^2 / (ny - 1))
-  ## names(df) <- "df"
 
   ## p-value
   pval <- switch(alternative,
@@ -318,7 +326,8 @@ suffWelchTests1 <- function(mx, my, sx, sy, nx, ny,
   )
 }
 
-rowWelchTests1 <- function(mat, categ, alternative = c("two.sided", "less", "greater")) {
+rowWelchTests1 <- function(mat, categ,
+                           alternative = c("two.sided", "less", "greater")) {
   alternative <- match.arg(alternative)
   categCheck(categ, ncol(mat))
 
