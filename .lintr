@@ -1,6 +1,12 @@
 linters: linters_with_defaults(
   line_length_linter = line_length_linter(80),
-  object_name_linter = NULL,
+  object_name_linter = object_name_linter(
+    styles = c("snake_case", "camelCase", "UPPERCASE", "dotted.case")
+  ),
+  function_name_linter = (function() {
+    source("tools/function_name_linter.R", local = TRUE)
+    function_name_linter(styles = c("camelCase", "snake_case"))
+  })(),
   indentation_linter = indentation_linter(
     indent = 2L,
     hanging_indent_style = "tidy"
