@@ -1,4 +1,4 @@
-library("sansSouci")
+library("sanssouci")
 
 # create a temporary directory to hold the desired files
 pv <- packageVersion("sansSouci")
@@ -8,21 +8,23 @@ path <- file.path(tempdir(), dirName)
 dir.create(path)
 
 writeFUN <- function(x, filename, outPath = path) {
-    pathname <- file.path(outPath, paste0(filename, ".csv"))
-    write.table(x, file = pathname, 
-                sep = ",", col.names = FALSE, row.names = FALSE)
-    return(pathname)
+  pathname <- file.path(outPath, paste0(filename, ".csv"))
+  write.table(x,
+    file = pathname,
+    sep = ",", col.names = FALSE, row.names = FALSE
+  )
+  return(pathname)
 }
 
 data(fMRI_localizer, package = "sanssouci.data")
 
 # only keep a small subset of the data set
 m <- 543
-X <- head(fMRI_localizer, m) 
+X <- head(fMRI_localizer, m)
 fX <- writeFUN(X, "X")
 
 # map colmun names to 0/1
-categ <- ifelse(colnames(fMRI_localizer) == "left", 0, 1) 
+categ <- ifelse(colnames(fMRI_localizer) == "left", 0, 1)
 fC <- writeFUN(categ, "categ")
 
 
@@ -36,12 +38,11 @@ fperm <- writeFUN(p0, "perm_p")
 pivStat <- sansSouci:::get_pivotal_stat(p0)
 fpiv <- writeFUN(pivStat, "pivotal_stat")
 
-if (FALSE) {  ## sanity check: can we read these data correctly?
-    p0_bak <- as.matrix(read.table(fperm, sep = ","))
-    dimnames(p0_bak) <- NULL
-    stopifnot(all.equal(p0, p0_bak))
-    
-    pivStat_bak <- read.table(fpiv, sep = ",")[, 1]
-    stopifnot(all.equal(pivStat, pivStat_bak))
-}
+if (FALSE) { ## sanity check: can we read these data correctly?
+  p0_bak <- as.matrix(read.table(fperm, sep = ","))
+  dimnames(p0_bak) <- NULL
+  stopifnot(all.equal(p0, p0_bak))
 
+  piv_stat_bak <- read.table(fpiv, sep = ",")[, 1]
+  stopifnot(all.equal(pivStat, piv_stat_bak))
+}
