@@ -14,7 +14,8 @@ posthocBySimes(
 \arguments{
 \item{p}{A numeric vector of \code{m} p-values for all tested hypotheses.}
 
-\item{select}{A vector of indices in \eqn{[1, \dots m]} of the hypotheses to be selected.}
+\item{select}{A vector of indices in \eqn{[1, \dots m]} of the hypotheses
+to be selected.}
 
 \item{alpha}{A numeric value, the significance level of the test procedure.}
 
@@ -54,9 +55,13 @@ if (require("cherry")) {
 }
 }
 \references{
-Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc confidence bounds on false positives using reference families. Annals of Statistics, 48(3), 1281-1303.
+Blanchard, G., Neuvial, P., & Roquain, E. (2020).
+Post hoc confidence bounds on false positives using reference families.
+Annals of Statistics, 48(3), 1281-1303.
 
-Goeman, J. J., & Solari, A. (2011). Multiple testing for exploratory research. Statistical Science, 26(4), 584-597.
+Goeman, J. J., & Solari, A. (2011).
+Multiple testing for exploratory research.
+Statistical Science, 26(4), 584-597.
 }
 \author{
 Gilles Blanchard, Pierre Neuvial and Etienne Roquain

@@ -2,7 +2,8 @@
 % Please edit documentation in R/tree-simulation-functions.R
 \name{gen.p.values}
 \alias{gen.p.values}
-\title{Generate one-sided p-values associated to a given signal with equi-correlated noise}
+\title{Generate one-sided p-values associated to a given signal with equi-correlated
+noise}
 \usage{
 gen.p.values(
   m,
@@ -16,7 +17,8 @@ gen.p.values(
 
 \item{mu}{A vector of \eqn{m} signal values}
 
-\item{rho}{A numeric value in \eqn{[0,1]}, the level of equi-correlation between test statistics}
+\item{rho}{A numeric value in \eqn{[0,1]}, the level of equi-correlation
+between test statistics}
 
 \item{alternative}{A character string specifying the alternative hypothesis.
 Must be one of "two.sided" (default), "greater" or "less".}
@@ -25,18 +27,21 @@ Must be one of "two.sided" (default), "greater" or "less".}
 A vector of \eqn{m} one-sided \eqn{p}-values
 }
 \description{
-Generate one-sided p-values associated to a given signal with equi-correlated noise
+Generate one-sided p-values associated to a given signal with equi-correlated
+noise
 }
 \examples{
 m <- 100
 s <- 10
-K1 <- floor(m/(s * 4))
+K1 <- floor(m / (s * 4))
 d <- 1
 barmu <- 4
 dd <- dyadic.from.window.size(m, s, method = 2)
 leaf_list <- dd$leaf_list
-mu <- gen.mu.leaves(m = m, K1 = K1, d = d, grouped = FALSE, 
-                    setting = "const", barmu = barmu, leaf_list =leaf_list)
+mu <- gen.mu.leaves(
+  m = m, K1 = K1, d = d, grouped = FALSE,
+  setting = "const", barmu = barmu, leaf_list = leaf_list
+)
 pvals <- gen.p.values(m = m, mu = mu, rho = 0)
-plot(-log(pvals), t = 'b')
+plot(-log(pvals), t = "b")
 }

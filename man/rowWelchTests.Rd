@@ -26,7 +26,8 @@ A list containing the following components:
 \item{parameter}{the degrees of freedom for the t-statistics}
 \item{p.value}{the p-values for the tests}
 \item{estimate}{the mean difference between groups}}
-Each of these elements is a matrix of size \code{m x B}, coerced to a vector of length \code{m} if \code{B=1}
+Each of these elements is a matrix of size \code{m x B}, coerced to a
+vector of length \code{m} if \code{B=1}
 }
 \description{
 Welch T-tests for rows of a matrix
@@ -57,7 +58,9 @@ all(abs(fwt$p.value - pwt) < 1e-10) ## same results
 # with several contrasts/permutations
 B <- 100
 categ_perm <- replicate(B, sample(categ))
-system.time(fwt_perm <- rowWelchTests(mat, categ_perm, alternative = "greater"))
+system.time(fwt_perm <- rowWelchTests(mat, categ_perm,
+  alternative = "greater"
+))
 str(fwt_perm)
 
 }

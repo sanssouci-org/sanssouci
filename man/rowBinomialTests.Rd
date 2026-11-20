@@ -33,7 +33,8 @@ A list containing the following components:
 \item{statistic}{the value of the statistics}
 \item{p.value}{the p-values for the tests}
 \item{estimate}{the difference between observed group proportions}}
-Each of these elements is a matrix of size \code{nrow(mat) x B}, coerced to a vector of length \code{nrow(mat)} if \code{B=1}
+Each of these elements is a matrix of size \code{nrow(mat) x B},
+coerced to a vector of length \code{nrow(mat)} if \code{B=1}
 }
 \description{
 Binomial proportion tests for each row of a matrix
@@ -49,25 +50,25 @@ the effect size (as e.g. done by 't.test'))
 alt <- c("two.sided", "less", "greater")[1]
 
 p <- 100
-n0 <- 60; n1 <- 40
-mat0 <- matrix(rbinom(p*n0, size = 1, prob = 0.05), ncol = n0)
-mat1 <- matrix(rbinom(p*n1, size = 1, prob = 0.02), ncol = n1)
+n0 <- 60
+n1 <- 40
+mat0 <- matrix(rbinom(p * n0, size = 1, prob = 0.05), ncol = n0)
+mat1 <- matrix(rbinom(p * n1, size = 1, prob = 0.02), ncol = n1)
 mat <- cbind(mat0, mat1)
 cls <- rep(c(0, 1), times = c(n0, n1))
 fbt <- rowBinomialTests(mat, categ = cls, alternative = alt)
 str(fbt)
 
 # compare with ordinary binom.test:
-pbt <- t(sapply(1:p, FUN=function(ii) {
-  x1 <- mat[ii, cls==1]
-  x0 <- mat[ii, cls==0]
+pbt <- t(sapply(1:p, FUN = function(ii) {
+  x1 <- mat[ii, cls == 1]
+  x0 <- mat[ii, cls == 0]
   bt <- binom.test(sum(x1), length(x1), mean(x0), alternative = alt)
   c(statistic = bt[["statistic"]], p.value = bt[["p.value"]])
 }))
-all(abs(fbt$p.value-pbt[, "p.value"]) < 1e-10)  ## same results
-all(abs(fbt$statistic-pbt[, "statistic.number of successes"]) < 1e-10)  ## same results
-
-
+all(abs(fbt$p.value - pbt[, "p.value"]) < 1e-10) ## same results
+all(abs(fbt$statistic - pbt[, "statistic.number of successes"]) < 1e-10)
+## same results
 
 }
 \seealso{

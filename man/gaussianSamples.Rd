@@ -28,9 +28,9 @@ equi-correlation}
 \value{
 A list with three elements: \describe{
 
-\item{X}{An \eqn{m x n} matrix of \eqn{m}-dimensional Gaussian observations,
-where \eqn{m1} rows are under H1, and \eqn{m0} rows are under H0, with
-\eqn{m0/m = pi0}}
+\item{X}{An \eqn{m x n} matrix of \eqn{m}-dimensional Gaussian
+observations, where \eqn{m1} rows are under H1, and \eqn{m0} rows are
+under H0, with \eqn{m0/m = pi0}}
 
 \item{categ}{A numeric vector of length \eqn{n} matching each observation
 to a sample (in 0 or 1)}
@@ -63,19 +63,19 @@ tests <- testByRandomization(sim$X, sim$categ, B = B)
 
 ## show test statistics
 pch <- 20
-colStat <- 1+sim$H
-plot(tests$T, col=colStat, main="Test statistics", pch=pch)
-legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
+colStat <- 1 + sim$H
+plot(tests$T, col = colStat, main = "Test statistics", pch = pch)
+legend("topleft", c("H0", "H1"), pch = pch, col = 1:2)
 
 ## one-sample data
-sim <- gaussianSamples(m, rho, n, pi0, SNR=2)
+sim <- gaussianSamples(m, rho, n, pi0, SNR = 2)
 tests <- testByRandomization(sim$X, B = B)
 
 ## show test statistics
 pch <- 20
-colStat <- 1+sim$H
-plot(tests$T, col=colStat, main="Test statistics", pch=pch)
-legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
+colStat <- 1 + sim$H
+plot(tests$T, col = colStat, main = "Test statistics", pch = pch)
+legend("topleft", c("H0", "H1"), pch = pch, col = 1:2)
 
 }
 \seealso{

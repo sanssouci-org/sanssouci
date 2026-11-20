@@ -2,7 +2,8 @@
 % Please edit documentation in R/SansSouci-class.R
 \name{plot.SansSouci}
 \alias{plot.SansSouci}
-\title{Plot confidence bound on the true/false positives among most significant items}
+\title{Plot confidence bound on the true/false positives among most significant
+items}
 \usage{
 \method{plot}{SansSouci}(x, y, xmax = nHyp(x), ...)
 }
@@ -16,11 +17,15 @@
 \item{...}{Further arguments to be passed to \code{bound}}
 }
 \description{
-Plot confidence bound on the true/false positives among most significant items
+Plot confidence bound on the true/false positives among most significant
+items
 }
 \examples{
 # Generate Gaussian data and perform multiple tests
-obj <- SansSouciSim(m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
+obj <- SansSouciSim(
+  m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3,
+  prob = 0.5
+)
 res <- fit(obj, B = 100, alpha = 0.1)
 
 # confidence curve

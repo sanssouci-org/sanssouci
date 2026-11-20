@@ -10,34 +10,38 @@
 #' \code{b}-th column of \code{mat}, sorted decreasingly.
 #' @noRd
 #' @examples
-#' 
+#'
 #' A <- matrix(rnorm(15), 5, 3)
 #' print(A)
 #' partialColSortDesc(A, 2)
 #' partialColSort(A, 2)
-#' 
+#'
 partialColSort <- function(
-    mat,
-    k = nrow(mat)) {
-    k <- round(k)  ## make sure 'k' is not converted to the wrong integer as in 'as.integer(1000*(1-0.8))==199'
-    stopifnot( 1 <= k && k <= nrow(mat))
-    pcsd <- apply(mat, 2, sort, partial = 1:k)
-    pcsd <- pcsd[1:k, , drop = FALSE]
+  mat,
+  k = nrow(mat)
+) {
+  k <- round(k) ## make sure 'k' is not converted to the wrong integer
+  # as in 'as.integer(1000*(1-0.8))==199'
+  stopifnot(1 <= k && k <= nrow(mat))
+  pcsd <- apply(mat, 2, sort, partial = 1:k)
+  pcsd <- pcsd[1:k, , drop = FALSE]
 
-    ## sanity checks
-    stopifnot(nrow(pcsd) == k)
-    stopifnot(ncol(pcsd) == ncol(mat))
-    return(pcsd)
+  ## sanity checks
+  stopifnot(nrow(pcsd) == k)
+  stopifnot(ncol(pcsd) == ncol(mat))
+  return(pcsd)
 }
 
 partialColSortDesc <- function(
-    mat,
-    k = nrow(mat)) {
-  k <- round(k)  ## make sure 'k' is not converted to the wrong integer as in 'as.integer(1000*(1-0.8))==199'
-  stopifnot( 1 <= k && k <= nrow(mat))
+  mat,
+  k = nrow(mat)
+) {
+  k <- round(k) ## make sure 'k' is not converted to the wrong
+  ## integer as in 'as.integer(1000*(1-0.8))==199'
+  stopifnot(1 <= k && k <= nrow(mat))
   pcsd <- -apply(-mat, 2, sort, partial = 1:k)
   pcsd <- pcsd[1:k, , drop = FALSE]
-  
+
   ## sanity checks
   stopifnot(nrow(pcsd) == k)
   stopifnot(ncol(pcsd) == ncol(mat))

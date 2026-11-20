@@ -35,7 +35,8 @@ Must be one of "two.sided" (default), "greater" or "less".}
 one of "Linear", "Beta" and "Simes", or "Oracle". "Linear" and "Simes"
 families are identical.
 \itemize{
-\item Simes/Linear: The classical family of thresholds introduced by Simes (1986).
+\item Simes/Linear: The classical family of thresholds introduced by
+Simes (1986).
 This family yields JER control if the test statistics are positively
 dependent (PRDS) under H0.
 \item Beta: A family of thresholds that achieves marginal kFWER control under
@@ -52,14 +53,17 @@ steps).}
 \item{K}{An integer value in \verb{[1,m]}, the number of elements in the
 reference family. Defaults to m}
 
-\item{force}{A boolean value: should the permutation p-values and pivotal statistics be re-calculated ? Defaults to \code{FALSE}}
+\item{force}{A boolean value: should the permutation p-values and pivotal
+statistics be re-calculated ? Defaults to \code{FALSE}}
 
-\item{verbose}{A boolean value: should extra info be printed? Defaults to \code{FALSE}}
+\item{verbose}{A boolean value: should extra info be printed? Defaults to
+\code{FALSE}}
 
 \item{...}{Not used}
 }
 \value{
-A 'fitted' object of class 'SansSouci'. It is a list of three elements
+A 'fitted' object of class 'SansSouci'. It is a list of three
+elements
 \itemize{
 \item input: see \link{SansSouci}
 \item param: the input parameters, given as a list
@@ -71,7 +75,10 @@ Fit SansSouci object
 }
 \examples{
 # Generate Gaussian data and perform multiple tests
-obj <- SansSouciSim(m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
+obj <- SansSouciSim(
+  m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3,
+  prob = 0.5
+)
 res <- fit(obj, B = 100, alpha = 0.1)
 
 # confidence curve

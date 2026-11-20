@@ -23,9 +23,14 @@ gaussianTestStatistics(
 \item{SNR}{Signal to noise ratio. Either a numeric value (a measure of
 distance between H0 and H1) or a vector of length \code{m*(1-pi0)}}
 
-\item{dep}{A character value, the type of dependency between test statistics. Can be one of "equi" for equi-correlation, or "Toeplitz". Defaults to "equi".}
+\item{dep}{A character value, the type of dependency between test statistics.
+Can be one of "equi" for equi-correlation, or "Toeplitz".
+Defaults to "equi".}
 
-\item{param}{A numeric value defaulting to \code{0}. If \code{dep=="equi"}, \code{param} is the level of equi-correlation between pairs of variables. If \code{dep=="Toeplitz"}, the first row of the Toeplitz matrix will be \code{(1:m)^(param)}.}
+\item{param}{A numeric value defaulting to \code{0}. If \code{dep=="equi"},
+\code{param} is the level of equi-correlation between pairs of variables.
+If \code{dep=="Toeplitz"}, the first row of the Toeplitz matrix will be
+\code{(1:m)^(param)}.}
 }
 \value{
 A list with elements \describe{
@@ -54,17 +59,19 @@ sim <- gaussianTestStatistics(m, B)
 sim <- gaussianTestStatistics(m, B, dep = "equi", param = 0.2)
 
 # equi-correlated statistics with some signal
-sim <- gaussianTestStatistics(m, B, pi0 = 0.8, SNR = 1, dep = "equi", param = 0.2)
+sim <- gaussianTestStatistics(m, B, pi0 = 0.8, SNR = 1, dep = "equi",
+                              param = 0.2)
 
 ## show test statistics
 stat <- sim$x
 pch <- 20
-colStat <- 1+sim$H
-plot(stat, col=colStat, main="Test statistics", pch=pch)
-legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
+colStat <- 1 + sim$H
+plot(stat, col = colStat, main = "Test statistics", pch = pch)
+legend("topleft", c("H0", "H1"), pch = pch, col = 1:2)
 
 # Toeplitz statistics with some signal
-sim <- gaussianTestStatistics(m, B, pi0 = 0.8, SNR = 1, dep = "Toeplitz", param = -0.5)
+sim <- gaussianTestStatistics(m, B, pi0 = 0.8, SNR = 1, dep = "Toeplitz",
+                              param = -0.5)
 
 }
 \author{

@@ -9,12 +9,14 @@ gen.mu.noleaves(m, pi0, barmu)
 \arguments{
 \item{m}{An integer value, the number of hypotheses}
 
-\item{pi0}{A numeric value in \eqn{[0,1]}, the proportion of true null signals}
+\item{pi0}{A numeric value in \eqn{[0,1]}, the proportion of true null
+signals}
 
 \item{barmu}{A numeric value, the strength of the signal}
 }
 \value{
-A numeric vector of length \code{m}, the signal values for each hypothesis
+A numeric vector of length \code{m}, the signal values for each
+hypothesis
 }
 \description{
 Generate an unstructured signal
@@ -23,6 +25,6 @@ Generate an unstructured signal
 m <- 100
 pi0 <- 0.7
 barmu <- 4
-mu <- gen.mu.noleaves(m = m, pi0 = pi0, barmu = barmu) 
+mu <- gen.mu.noleaves(m = m, pi0 = pi0, barmu = barmu)
 plot(mu)
 }

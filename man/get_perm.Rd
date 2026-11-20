@@ -22,18 +22,23 @@ specifying the column indices of the first and second samples.}
 
 \item{rowTestFUN}{a vectorized testing function (same I/O as \link{rowWelchTests})}
 
-\item{alternative}{A character string specifying the alternative hypothesis, to be passed to \code{rowTestFUN}. Must be one of "two.sided" (default), "greater" or "less".}
+\item{alternative}{A character string specifying the alternative hypothesis,
+to be passed to \code{rowTestFUN}. Must be one of "two.sided" (default),
+"greater" or "less".}
 }
 \description{
-Get a matrix of statistics and p-values under the null hypothesis obtained by repeated permutation of class labels (two-sample tests)
+Get a matrix of statistics and p-values under the null hypothesis obtained by
+repeated permutation of class labels (two-sample tests)
 }
 \details{
-The element 'p.value' of the output is a \verb{m x B} matrix whose entry i,j corresponds to \verb{p_\{(i)\}(g_j.X)} with notation of the AoS 2020 paper cited below (section 4.5).
+The element 'p.value' of the output is a \verb{m x B} matrix whose entry
+i,j corresponds to \verb{p_\{(i)\}(g_j.X)} with notation of the AoS 2020 paper
+cited below (section 4.5).
 }
 \examples{
 m <- 50
 n <- 45
-X <- matrix(rnorm(m*n), ncol = n, nrow = m)
+X <- matrix(rnorm(m * n), ncol = n, nrow = m)
 categ <- rbinom(n, 1, 0.4)
 
 B <- 10

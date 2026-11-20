@@ -10,9 +10,11 @@ curveMaxFP_BNR2014(p.values, thr)
 curveMaxFP_Mein2006(p.values, thr)
 }
 \arguments{
-\item{p.values}{A vector containing all \eqn{m} p-values, sorted non-decreasingly}
+\item{p.values}{A vector containing all \eqn{m} p-values, sorted
+non-decreasingly}
 
-\item{thr}{A vector of \eqn{K} JER-controlling thresholds, sorted non-decreasingly}
+\item{thr}{A vector of \eqn{K} JER-controlling thresholds, sorted
+non-decreasingly}
 }
 \value{
 A vector of size \eqn{m} giving an joint upper confidence bound on
@@ -23,8 +25,10 @@ for all \eqn{k \in \{1\ldots m\}}.
 Upper bound for the number of false discoveries among most significant items
 }
 \details{
-These older implementations of 'curveMaxFP' are here for the purpose of testing that the current one yields consistent results.
+These older implementations of 'curveMaxFP' are here for the purpose
+of testing that the current one yields consistent results.
 }
 \author{
-Gilles Blanchard, Nicolas Enjalbert-Courrech, Pierre Neuvial and Etienne Roquain
+Gilles Blanchard, Nicolas Enjalbert-Courrech, Pierre Neuvial
+and Etienne Roquain
 }

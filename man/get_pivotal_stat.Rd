@@ -14,7 +14,8 @@ get_pivotal_stat(p0, m, t_inv = t_inv_linear, K = nrow(p0))
 
 \item{t_inv}{An inverse threshold function (same I/O as 't_inv_linear')}
 
-\item{K}{An integer value in \verb{[1,m]}, the number of elements in the reference family. Defaults to \code{m}}
+\item{K}{An integer value in \verb{[1,m]}, the number of elements in the reference
+family. Defaults to \code{m}}
 }
 \value{
 A vector of length \code{B} pivotal statitics, whose j-th entry
@@ -29,14 +30,13 @@ to permutation p-values and to a reference family
 
 m <- 50
 n <- 45
-X <- matrix(rnorm(m*n), ncol = n, nrow = m)
+X <- matrix(rnorm(m * n), ncol = n, nrow = m)
 categ <- rbinom(n, 1, 0.4)
 B <- 10
 null_groups <- replicate(B, sample(categ))
 p0 <- rowWelchTests(X, null_groups)$p.value
 pivStat <- get_pivotal_stat(p0, m)
 quantile(pivStat, 0.2)
-
 
 }
 \references{

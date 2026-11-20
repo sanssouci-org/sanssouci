@@ -23,9 +23,12 @@
 \arguments{
 \item{x}{A numeric vector of fold changes (x axis of the volcano plot)}
 
-\item{fold_change}{An optional vector of fold changes, of the same length as \code{nHyp(x)}, used for volcanoPlot x-axis. If not specified, \code{foldChanges(x)} is used.}
+\item{fold_change}{An optional vector of fold changes, of the same length
+as \code{nHyp(x)}, used for volcanoPlot x-axis. If not specified, \code{foldChanges(x)}
+is used.}
 
-\item{p_value}{A vector of p-values, of the same length as \code{nHyp(x)}, used for volcanoPlot y-axis. If not specified, \code{pValues(x)} is used}
+\item{p_value}{A vector of p-values, of the same length as \code{nHyp(x)},
+used for volcanoPlot y-axis. If not specified, \code{pValues(x)} is used}
 
 \item{p}{A numeric value, the p-value threshold under which features are
 selected}
@@ -36,7 +39,8 @@ under which features are selected}
 \item{r}{A numeric value, the absolute fold change above which features are
 selected}
 
-\item{contrast_name}{A character value, the selected contrast. Should be chosen in \code{x$input$contrast_name}.}
+\item{contrast_name}{A character value, the selected contrast. Should be
+chosen in \code{x$input$contrast_name}.}
 
 \item{cex}{A numeric vector of length 2, the relative magnification factor
 for unselected (\code{cex[1]}) and unselected (\code{cex[2]}) features.}
@@ -57,7 +61,8 @@ individual hypotheses in the plot title (e.g. "gene", "proteins", ...)}
 Volcano plot for a \code{SansSouci} object
 }
 \details{
-The default is to use the fold changes and p-values from the input SansSouci object. See the vignette
+The default is to use the fold changes and p-values from the input
+SansSouci object. See the vignette
 \url{https://sanssouci-org.github.io/sanssouci/articles/post-hoc_differential-expression_RNAseq.html#custom-statistics-example-using-limma-voom}
 for an example where custom fold changes and p-values are used.
 }

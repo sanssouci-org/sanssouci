@@ -12,7 +12,8 @@ maxFP(p.values, thr)
 \item{thr}{A vector of non-decreasing JER-controlling thresholds}
 }
 \value{
-A post hoc upper bound on the number of false discoveries in the selection
+A post hoc upper bound on the number of false discoveries in the
+selection
 }
 \description{
 Upper bound for the number of false discoveries in a selection
@@ -20,8 +21,10 @@ Upper bound for the number of false discoveries in a selection
 \examples{
 
 m <- 123
-sim <- gaussianSamples(m = m, rho = 0.2, n = 100, 
-                       pi0 = 0.8, SNR = 3, prob = 0.5)
+sim <- gaussianSamples(
+  m = m, rho = 0.2, n = 100,
+  pi0 = 0.8, SNR = 3, prob = 0.5
+)
 X <- sim$X
 groups <- sim$categ
 p <- rowWelchTests(X, groups)$p.value
@@ -32,13 +35,15 @@ calib <- calibrate(p0, m, alpha = 0.1)
 thr <- calib$thr
 
 M0 <- maxFP(p, thr)
-M0/m
+M0 / m
 
 sorted_p <- sort(p)
 maxFP(head(sorted_p, 20), thr) # some signal
-maxFP(tail(sorted_p), thr)     # no signal
+maxFP(tail(sorted_p), thr) # no signal
 maxFP(c(head(sorted_p), tail(sorted_p)), thr)
 }
 \references{
-Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc confidence bounds on false positives using reference families. Annals of Statistics, 48(3), 1281-1303.
+Blanchard, G., Neuvial, P., & Roquain, E. (2020).
+Post hoc confidence bounds on false positives using reference families.
+Annals of Statistics, 48(3), 1281-1303.
 }

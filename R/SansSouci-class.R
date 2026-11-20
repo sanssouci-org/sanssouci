@@ -1,14 +1,15 @@
 #' Create an object of class 'SansSouci'
 #'
 #' @param Y A matrix of \eqn{D} variables (hypotheses) by \eqn{n} observations
-#' @param X A design matrix of \eqn{n} observations by \eqn{p} explanatory variables in the linear model
-#' @param Contrast A contrast matrix of size \eqn{L} tested contrasts (in row) and \eqn{p}
-#'   columns corresponding to the parameters to be tested
+#' @param X A design matrix of \eqn{n} observations by \eqn{p} explanatory
+#'   variables in the linear model
+#' @param Contrast A contrast matrix of size \eqn{L} tested contrasts (in row)
+#'   and \eqn{p} columns corresponding to the parameters to be tested
 #' @param groups A numeric vector of \eqn{n} values in \eqn{0, 1}, the groups of
 #'   observations on which to perform two-sample tests
-#' @param truth An optional numeric vector of \eqn{m} values in \eqn{0, 1}, the status
-#'   of each null hypothesis (0 means H0 is true, 1 means H1 is true). Typically
-#'   used in simulations.
+#' @param truth An optional numeric vector of \eqn{m} values in \eqn{0, 1},
+#'   the status of each null hypothesis (0 means H0 is true, 1 means H1 is
+#'   true). Typically used in simulations.
 #' @return An object of class "SansSouci"
 #' @export
 #' @examples
@@ -24,23 +25,22 @@
 #'
 SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
                       truth = NULL) {
-
   # Are the arguments present?
   signature <- c(!is.null(X), !is.null(Contrast), !is.null(groups))
 
 
-  n = ncol(Y)
+  n <- ncol(Y)
   D <- nrow(Y)
 
-  #None arguments: one sample case
-  if (identical(signature, c(FALSE, FALSE, FALSE))){
+  # None arguments: one sample case
+  if (identical(signature, c(FALSE, FALSE, FALSE))) {
     groups <- rep(1, ncol(Y))
-    type = "1 sample"
-    L = 1
-    P = 1
+    type <- "1 sample"
+    L <- 1
+    P <- 1
     contrast_name <- "one sample test"
     ## Only groups is given: detection of one, two samples or continuous
-  } else if (identical(signature, c(FALSE, FALSE, TRUE))){
+  } else if (identical(signature, c(FALSE, FALSE, TRUE))) {
     ugroups <- unique(groups)
     n_groups <- length(ugroups)
 
@@ -48,29 +48,35 @@ SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
       categCheck(groups, ncol(Y))
     }
     if (n_groups == 1) {
-      type = "1 sample"
+      type <- "1 sample"
       contrast_name <- "One sample test"
     } else if (n_groups == 2) {
-      type = "2 samples"
+      type <- "2 samples"
       contrast_name <- "Group 1 vs group 0"
       # } else if (n_groups == n) {
-    } else { #by default consider a continuous
-      type = "Continuous case, correlation test"
+    } else { # by default consider a continuous
+      type <- "Continuous case, correlation test"
       contrast_name <- "Correlation test"
-      if(n_groups != n){
-        message("Ties were detected in the grouping variable, but a continuous vector was provided for groups, and a correlation test is being performed. If you intend to test associations across more than two groups, please provide a full design matrix using the X argument instead.")
+      if (n_groups != n) {
+        message(
+          "Ties were detected in the grouping variable, but a continuous",
+          " vector was provided for groups, and a correlation test is being",
+          " performed. If you intend to test associations across more than",
+          " two groups, please provide a full design matrix using the X",
+          " argument instead."
+        )
       }
     }
 
-    L = 1
-    P = 1
+    L <- 1
+    P <- 1
 
     ## X and contrast are given: linear model case
   } else if (identical(signature, c(TRUE, TRUE, FALSE))) {
     .check_lm_test(t(Y), X, Contrast)
-    type = "linear model"
-    L = nrow(Contrast)
-    P = ncol(X)
+    type <- "linear model"
+    L <- nrow(Contrast)
+    P <- ncol(X)
     if (is.null(rownames(Contrast))) {
       contrast_name <- paste("Contrast", seq_len(L))
       rownames(Contrast) <- contrast_name
@@ -84,9 +90,9 @@ SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
   } else if (identical(signature, c(FALSE, TRUE, FALSE))) {
     stop("Please give a design matrix in `X`")
     ## The vector groups is provided with the contrast or the design matrix
-  } else if (identical(signature, c(TRUE, FALSE, TRUE)) |
-             identical(signature, c(FALSE, TRUE, TRUE)) |
-             identical(signature, c(TRUE, TRUE, TRUE))){
+  } else if (identical(signature, c(TRUE, FALSE, TRUE)) ||
+               identical(signature, c(FALSE, TRUE, TRUE)) ||
+               identical(signature, c(TRUE, TRUE, TRUE))) {
     stop("Please provide either an `X` design matrix and a `Contrast`  matrix,
          or only a `groups` design vector.")
   }
@@ -109,15 +115,16 @@ SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
     n_variables = P,
     contrast_name = contrast_name,
     m = D * L,
-    type= type
+    type = type
   )
   input$truth <- truth
-  obj <- structure(list(
-    input = input,
-    parameters = NULL,
-    output = NULL
-  ),
-  class = "SansSouci"
+  obj <- structure(
+    list(
+      input = input,
+      parameters = NULL,
+      output = NULL
+    ),
+    class = "SansSouci"
   )
   obj
 }
@@ -344,7 +351,8 @@ generics::fit
 #'   one of "Linear", "Beta" and "Simes", or "Oracle". "Linear" and "Simes"
 #'   families are identical.
 #'
-#'   - Simes/Linear: The classical family of thresholds introduced by Simes (1986).
+#'   - Simes/Linear: The classical family of thresholds introduced by
+#'   Simes (1986).
 #'   This family yields JER control if the test statistics are positively
 #'   dependent (PRDS) under H0.
 #'
@@ -360,17 +368,23 @@ generics::fit
 #'   steps).
 #' @param K An integer value in `[1,m]`, the number of elements in the
 #'   reference family. Defaults to m
-#' @param force A boolean value: should the permutation p-values and pivotal statistics be re-calculated ? Defaults to `FALSE`
-#' @param verbose A boolean value: should extra info be printed? Defaults to `FALSE`
+#' @param force A boolean value: should the permutation p-values and pivotal
+#' statistics be re-calculated ? Defaults to `FALSE`
+#' @param verbose A boolean value: should extra info be printed? Defaults to
+#' `FALSE`
 #' @param ... Not used
-#' @return A 'fitted' object of class 'SansSouci'. It is a list of three elements
+#' @return A 'fitted' object of class 'SansSouci'. It is a list of three
+#'    elements
 #'  - input: see [SansSouci]
 #'  - param: the input parameters, given as a list
 #'  - output: the outputs of the calibration, see [calibrate]
 #' @export
 #' @examples
 #' # Generate Gaussian data and perform multiple tests
-#' obj <- SansSouciSim(m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
+#' obj <- SansSouciSim(
+#'   m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3,
+#'   prob = 0.5
+#' )
 #' res <- fit(obj, B = 100, alpha = 0.1)
 #'
 #' # confidence curve
@@ -428,11 +442,13 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
     } else if (type == "Continuous case, correlation test") {
       rowTestFUN <- rowPearsonCorrelationTests
       funName <- "rowPearsonCorrelationTests"
-    } else if(type == "linear model"){
-      row_lm_test_XC <- function(...) {row_lm_test(..., X = X, C = C)}
+    } else if (type == "linear model") {
+      row_lm_test_XC <- function(...) {
+        row_lm_test(..., X = X, C = C)
+      }
       rowTestFUN <- row_lm_test_XC
       funName <- "row_lm_test"
-      groups <- matrix(1:n, ncol=1)
+      groups <- matrix(1:n, ncol = 1)
     }
   } else {
     funName <- as.character(substitute(rowTestFUN))
@@ -479,11 +495,11 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
   }
 
   cal <- rowTestFUN(Y, groups, alternative = alternative)
-  if(!is.matrix(cal$p.value)){
+  if (!is.matrix(cal$p.value)) {
     cal$p.value <- matrix(cal$p.value, nrow = L)
     rownames(cal$p.value) <- object$input$contrast_name
   }
-  if(!is.null(cal$estimate) & !is.matrix(cal$estimate)){
+  if (!is.null(cal$estimate) && !is.matrix(cal$estimate)) {
     cal$estimate <- matrix(cal$estimate, nrow = L)
     rownames(cal$estimate) <- object$input$contrast_name
   }
@@ -499,15 +515,18 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
         null_groups <- replicate(B, rbinom(n, 1, 0.5) * 2 - 1)
       } else if (type == "2 samples") { # permutation
         null_groups <- replicate(B, sample(groups))
-      } else if (type == "Continuous case, correlation test") { # continuous covariate
+      } else if (type == "Continuous case, correlation test") {
+        # continuous covariate
         null_groups <- replicate(B, sample(groups))
       } else if (type == "linear model") {
         null_groups <- replicate(B, sample(1:n, n, replace = TRUE))
       }
-      p0 <- mini_batch_rowTestFUN(rowTestFUN = rowTestFUN, Y = Y,
-                                  categ = null_groups,
-                                  alternative = alternative,
-                                  max_batch_size = 1e6, m = m)
+      p0 <- mini_batch_rowTestFUN(
+        rowTestFUN = rowTestFUN, Y = Y,
+        categ = null_groups,
+        alternative = alternative,
+        max_batch_size = 1e6, m = m
+      )
 
       if (verbose) {
         dt <- Sys.time() - t0
@@ -537,10 +556,10 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
   } else { # no calibration!
     cal$lambda <- alpha
     thr <- switch(family,
-                  "Linear" = t_linear(alpha, seq_len(m), m),
-                  "Simes" = t_linear(alpha, seq_len(m), m),
-                  "Beta" = t_beta(alpha, seq_len(m), m),
-                  "Oracle" = object$input$truth
+      "Linear" = t_linear(alpha, seq_len(m), m),
+      "Simes" = t_linear(alpha, seq_len(m), m),
+      "Beta" = t_beta(alpha, seq_len(m), m),
+      "Oracle" = object$input$truth
     )
     cal$thr <- thr
   }
@@ -595,7 +614,8 @@ thresholds <- function(object) UseMethod("thresholds")
 #' @export
 thresholds.SansSouci <- function(object) object$output$thr
 
-#' Plot confidence bound on the true/false positives among most significant items
+#' Plot confidence bound on the true/false positives among most significant
+#' items
 #'
 #' @param x An object of class 'SansSouci'
 #' @param y Not used
@@ -604,7 +624,10 @@ thresholds.SansSouci <- function(object) object$output$thr
 #' @export
 #' @examples
 #' # Generate Gaussian data and perform multiple tests
-#' obj <- SansSouciSim(m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
+#' obj <- SansSouciSim(
+#'   m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3,
+#'   prob = 0.5
+#' )
 #' res <- fit(obj, B = 100, alpha = 0.1)
 #'
 #' # confidence curve
@@ -625,17 +648,24 @@ plot.SansSouci <- function(x, y, xmax = nHyp(x), ...) {
 #' @param what A character vector, the names of the post hoc bounds to be
 #'   computed, among:
 #'
-#' - FP: Upper bound on the number of false positives in the 'x' most significant items
-#' - TP: Lower bound on the number of true positives in the 'x' most significant items
-#' - FDP: Upper bound on the proportion of false positives in the 'x' most significant items
-#' - TP: Lower bound on the proportion of true positives in the 'x' most significant items
+#' - FP: Upper bound on the number of false positives in the 'x' most
+#' significant items
+#' - TP: Lower bound on the number of true positives in the 'x' most
+#' significant items
+#' - FDP: Upper bound on the proportion of false positives in the 'x' most
+#' significant items
+#' - TP: Lower bound on the proportion of true positives in the 'x' most
+#' significant items
 #'
 #' Defaults to `c("TP", "FDP")`
-#' @param all A logical value: should the bounds for all ordered subsets of `S` be returned? If `FALSE` (the default), only the bound for `S` is returned
-#' @param contrast_name A character value, the selected contrast. Should be chosen in \code{x$input$contrast_name}.
+#' @param all A logical value: should the bounds for all ordered subsets of `S`
+#' be returned? If `FALSE` (the default), only the bound for `S` is returned
+#' @param contrast_name A character value, the selected contrast.
+#' Should be chosen in \code{x$input$contrast_name}.
 #' @param ... Not used
 #'
-#' @return If `all` is `FALSE` (the default), only the value of the bound is returned. Otherwise, a `data.frame` is return, with |S| rows and 4 columns:
+#' @return If `all` is `FALSE` (the default), only the value of the bound is
+#' returned. Otherwise, a `data.frame` is return, with |S| rows and 4 columns:
 #' - x: Number of most significant items selected
 #' - label: Label for the procedure, typically of the form 'family(param)'
 #' - bound: Value of the post hoc bound
@@ -647,7 +677,10 @@ plot.SansSouci <- function(x, y, xmax = nHyp(x), ...) {
 #' @examples
 #'
 #' # Generate Gaussian data and perform multiple tests
-#' obj <- SansSouciSim(m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
+#' obj <- SansSouciSim(
+#'   m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3,
+#'   prob = 0.5
+#' )
 #' res <- fit(obj, B = 100, alpha = 0.1)
 #'
 #' # post hoc bound on the set of all hypotheses
@@ -661,12 +694,14 @@ plot.SansSouci <- function(x, y, xmax = nHyp(x), ...) {
 #' S <- which(pValues(res) < 0.01)
 #' predict(res, S)
 predict.SansSouci <- function(object,
-                              S= seq_len(min(nHyp(object),
-                                             object$input$n_dimensions)),
+                              S = seq_len(min(
+                                nHyp(object),
+                                object$input$n_dimensions
+                              )),
                               what = c("TP", "FDP"), all = FALSE,
                               contrast_name = object$input$contrast_name, ...) {
   # S should be size of D
-  if(!all(contrast_name %in% object$input$contrast_name)){
+  if (!all(contrast_name %in% object$input$contrast_name)) {
     stop("contrast_name must be in object$input$contrast_name")
   }
   p.values <- pValues(object)
@@ -674,9 +709,11 @@ predict.SansSouci <- function(object,
   lab <- label(object)
 
   # If sansSouci object is two sample test (1 contrast) /struct (0 contrast)
-  if(length(object$input$contrast_name) <= 1){
-    bounds <- posthoc_bound(p.values, S = S, thr = thr, lab = lab,
-                            what = what, all = all)
+  if (length(object$input$contrast_name) <= 1) {
+    bounds <- posthoc_bound(p.values,
+      S = S, thr = thr, lab = lab,
+      what = what, all = all
+    )
     if (!all) {
       bounds <- bounds[, "bound"]
       if (length(bounds) > 1) {
@@ -685,14 +722,16 @@ predict.SansSouci <- function(object,
     }
 
     return(bounds)
-    #If there are more than 1 tested contrast
+    # If there are more than 1 tested contrast
   } else {
-
     bounds_list <- list()
-    for(contrasts in contrast_name){
-      p.values.contrast <- p.values[contrasts,] #Only keep p-values of contrasts
-      bounds <- posthoc_bound(p.values.contrast, S = S, thr = thr, lab = lab,
-                              what = what, all = all)
+    for (contrasts in contrast_name) {
+      # Only keep p-values of contrasts
+      p.values.contrast <- p.values[contrasts, ]
+      bounds <- posthoc_bound(p.values.contrast,
+        S = S, thr = thr, lab = lab,
+        what = what, all = all
+      )
       if (!all) {
         bounds <- bounds[, "bound"]
         if (length(bounds) > 1) {
@@ -701,22 +740,27 @@ predict.SansSouci <- function(object,
       }
       bounds_list[[contrasts]] <- bounds
     }
-    #when only one contrast is display, a data.frame is returned
-    if(length(contrast_name) == 1){return(bounds_list[[1]])}
+    # when only one contrast is display, a data.frame is returned
+    if (length(contrast_name) == 1) {
+      return(bounds_list[[1]])
+    }
     return(bounds_list)
   }
-
-
 }
 
 #' Volcano plot for a `SansSouci` object
 #'
-#' @param fold_change An optional vector of fold changes, of the same length as `nHyp(x)`, used for volcanoPlot x-axis. If not specified, `foldChanges(x)` is used.
-#' @param p_value A vector of p-values, of the same length as `nHyp(x)`, used for volcanoPlot y-axis. If not specified, `pValues(x)` is used
-#' @param contrast_name A character value, the selected contrast. Should be chosen in `x$input$contrast_name`.
+#' @param fold_change An optional vector of fold changes, of the same length
+#' as `nHyp(x)`, used for volcanoPlot x-axis. If not specified, `foldChanges(x)`
+#'  is used.
+#' @param p_value A vector of p-values, of the same length as `nHyp(x)`,
+#' used for volcanoPlot y-axis. If not specified, `pValues(x)` is used
+#' @param contrast_name A character value, the selected contrast. Should be
+#' chosen in `x$input$contrast_name`.
 #' @inheritParams volcanoPlot.numeric
 #'
-#' @details The default is to use the fold changes and p-values from the input SansSouci object. See the vignette
+#' @details The default is to use the fold changes and p-values from the input
+#' SansSouci object. See the vignette
 #'   <https://sanssouci-org.github.io/sanssouci/articles/post-hoc_differential-expression_RNAseq.html#custom-statistics-example-using-limma-voom>
 #'   for an example where custom fold changes and p-values are used.
 #'
@@ -744,7 +788,7 @@ volcanoPlot.SansSouci <- function(x,
     stop(paste(
       "Choose a contrast in",
       paste(rownames(pValues(object)),
-            collapse = ", "
+        collapse = ", "
       )
     ))
   }
