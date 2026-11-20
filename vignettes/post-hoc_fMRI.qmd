@@ -87,7 +87,8 @@ We set the target confidence level to $\alpha = `r alpha`$. The Simes bound is i
 #| label: simes-bound
 groups <- ifelse(colnames(Y) == "left", 0, 1) # map to 0/1
 obj <- SansSouci(Y = Y, groups = groups)
-res_Simes <- fit(obj, B = 0, family = "Simes", alpha = alpha) ## B=0 => no calibration!
+res_Simes <- fit(obj, B = 0, family = "Simes", alpha = alpha)
+## B=0 => no calibration!
 ```
 
 Post hoc bounds are obtained from the `bound` function:
@@ -135,8 +136,8 @@ As expected from the theory, the post hoc bounds obtained after calibration by t
 ```{r}
 #| label: tighter-bounds
 resList <- list("Simes/ARI" = res_Simes,
-            "Linear" = res,
-            "Beta" = res_Beta)
+                "Linear" = res,
+                "Beta" = res_Beta)
 names(resList)[3] <- sprintf("Beta (K=%s)", K)
 
 bounds <- sapply(resList, predict, what = "TP")
@@ -161,10 +162,10 @@ The confidence curves obtained by calibration of the Simes and Beta families can
 ```{r}
 #| label: plot-conf-bounds
 conf_bounds <- lapply(resList, predict, all = TRUE)
-# cols <- c("lightgray", "black", "darkgray")
 cols <- RColorBrewer::brewer.pal(length(conf_bounds), "Dark2")
-p <- plotConfCurve(conf_bounds, xmax = 700, cols = cols, legend.title = "Template")
-p + geom_line(size=1.5)
+p <- plotConfCurve(conf_bounds, xmax = 700, cols = cols,
+                   legend.title = "Template")
+p + geom_line(size = 1.5)
 ```
 
 In this example, ARI is outperformed by permutation-based approaches, which are able to adapt to unknown dependency: for the same target risk level ($\alpha = `r alpha`$), both permutation-based bounds are much less conservative than the classical Simes/ARI bound.
@@ -192,9 +193,9 @@ In this particular case, some signal is revealed by the post hoc bound for `r su
 
 ```{r}
 #| label: posthoc-bounds-atlas-table
-ww <- which(colSums(bounds[3:4, ])>0)
-cap <- sprintf("Lower bounds on the number of true positives in %s brain regions.",
-               length(ww))
+ww <- which(colSums(bounds[3:4, ]) > 0)
+cap <- paste("Lower bounds on the number of true positives in",
+             length(ww), "brain regions.")
 knitr::kable(t(bounds[, ww]), caption = cap)
 ```
 

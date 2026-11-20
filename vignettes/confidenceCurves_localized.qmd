@@ -35,7 +35,7 @@ We consider $m$ null ordered hypotheses partitioned in intervals of size $s$. Fo
 #| label: param1
 s <- 100
 q <- 7
-m <- s*2^q
+m <- s * 2^q
 ```
 
 Therefore, we have $m = `r m`$. Our goal is to compare three post hoc bounds. These bounds are obtained by interpolation from a *reference family* where the amount of signal is estimated by probabilistic inequalities, following the general principle laid down by @blanchard20post-hoc, and they differ by the choice of the reference family:
@@ -52,7 +52,7 @@ We define the following numerical parameters, which characterize the true/false 
 #| label: param2
 K1 <- 8
 r <- 0.9
-m1 <-  r*K1*s
+m1 <-  r * K1 * s
 barmu <- 3
 ```
 
@@ -110,7 +110,8 @@ The true number of false positives will be called "Oracle" bound in the plots be
 label <- rep("Oracle", m)
 method <- rep("Oracle", m)
 oracle_bound <- cumsum(mu[ord] == 0)
-res[["Oracle"]] <- data.frame(x = x, label = label, stat = stat, bound = oracle_bound, method = method)
+res[["Oracle"]] <- data.frame(x = x, label = label, stat = stat,
+                              bound = oracle_bound, method = method)
 ```
 
 ### Simes-based confidence curve
@@ -122,7 +123,8 @@ Here we use the @simes86improved inequality to bound the number of false positiv
 simes_bound <- curveMaxFP(pvalues, alpha * 1:m / m)
 label <- rep("Simes", m)
 method <- rep("Simes", m)
-res[["Simes"]] <- data.frame(x = x, label = label, stat = stat, bound = simes_bound, method = method)
+res[["Simes"]] <- data.frame(x = x, label = label, stat = stat,
+                             bound = simes_bound, method = method)
 ```
 
 ### DKWM-based confidence curve
@@ -135,8 +137,10 @@ label <- rep("DKWM(tree)", m)
 method <- rep("Tree", m)
 C_tree <- family$C[8]
 ZL_tree <- zetas.tree(C_tree, family$leaf_list, zeta.DKWM, pvalues, alpha)
-tree_bound <- curve.V.star.forest.fast(ord, C_tree, ZL_tree, family$leaf_list, pruning = TRUE)
-res[["Tree"]] <- data.frame(x = x, label = label, stat = stat, bound = tree_bound, method = method)
+tree_bound <- curve.V.star.forest.fast(ord, C_tree, ZL_tree, family$leaf_list,
+                                       pruning = TRUE)
+res[["Tree"]] <- data.frame(x = x, label = label, stat = stat,
+                            bound = tree_bound, method = method)
 ```
 
 ```{r}
@@ -144,8 +148,10 @@ res[["Tree"]] <- data.frame(x = x, label = label, stat = stat, bound = tree_boun
 label <- rep("DKWM(partition)", m)
 method <- rep("Partition", m)
 ZL_part <- zetas.tree(family$C, family$leaf_list, zeta.DKWM, pvalues, alpha)
-part_bound <- curve.V.star.forest.fast(ord, family$C, ZL_part, family$leaf_list, pruning = TRUE)
-res[["Partition"]] <- data.frame(x = x, label = label, stat = stat, bound = part_bound, method = method)
+part_bound <- curve.V.star.forest.fast(ord, family$C, ZL_part, family$leaf_list,
+                                       pruning = TRUE)
+res[["Partition"]] <- data.frame(x = x, label = label, stat = stat,
+                                 bound = part_bound, method = method)
 ```
 
 ## Plot confidence curves
@@ -163,12 +169,12 @@ names(cols) <- lvls
 
 ```{r}
 #| label: plot-confidence-curve
-xymax <- m1;
+xymax <- m1
 pV <- ggplot(dat, aes(x, bound, colour = method)) +
-    geom_line() +
-    ylab("Upper bound on the number of false positives") +
-    xlab("sorted hypotheses") +
-    scale_colour_manual(values = cols)
+  geom_line() +
+  ylab("Upper bound on the number of false positives") +
+  xlab("sorted hypotheses") +
+  scale_colour_manual(values = cols)
 pV
 ```
 
@@ -194,13 +200,13 @@ dat$S <- dat$x - dat$bound
 
 ```{r}
 #| label: plot-lower-bound
-xmax <- m1;
-ymax <- max(dat$S[m1]);
+xmax <- m1
+ymax <- max(dat$S[m1])
 pS <- ggplot(dat, aes(x, S, colour = method)) +
-    geom_line() +
-    ylab("Lower bound on the number of true positives") +
-    xlab("sorted hypotheses") +
-    scale_colour_manual(values = cols)
+  geom_line() +
+  ylab("Lower bound on the number of true positives") +
+  xlab("sorted hypotheses") +
+  scale_colour_manual(values = cols)
 pS
 ```
 

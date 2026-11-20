@@ -27,7 +27,7 @@ We start with two-sample tests because we believe they are used more frequently.
 ```{r}
 #| label: library
 library("sanssouci")
-#set.seed(0xBEEF) # for reproducibility
+set.seed(0xBEEF) # for reproducibility
 library("ggplot2")
 ```
 

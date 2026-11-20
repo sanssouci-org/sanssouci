@@ -123,32 +123,32 @@ The application of the BH procedure at level $q = `r q`$ is illustrated in the f
 #| label: bh-plot
 my_col <- "#FF000080"
 dexo <- dex[order(pval), ]  ## order genes by increasing p-values
-dexo[["gene_order"]] <- 1:nrow(dex)
+dexo[["gene_order"]] <- seq_len(nrow(dex))
 
 bh_plot <- ggplot(dexo, aes(x = gene_order, y = p.value)) +
   geom_line() +
   xlab("Number of top genes") + ylab("Ordered p-value") +
-  geom_abline(slope = 1/m, intercept = 0, linetype = 2, linewidth = 1) +
-  geom_abline(slope = q/m, color = my_col, linewidth = 2) +
-  # geom_segment(aes(x = nBH, y = 0, yend = q*nBH/m, xend = nBH), linetype = "dotted") +
-  # geom_segment(aes(x = 0, y = q*nBH/m, xend = nBH, yend = q*nBH/m), linetype = "dotted") +
-  geom_abline(slope = 0, intercept = q, linetype = "dotted", color = my_col, linewidth = 2) +
+  geom_abline(slope = 1 / m, intercept = 0, linetype = 2, linewidth = 1) +
+  geom_abline(slope = q / m, color = my_col, linewidth = 2) +
+  geom_abline(slope = 0, intercept = q, linetype = "dotted",
+              color = my_col, linewidth = 2) +
   theme_bw() +
   theme(axis.text = element_text(size = 14),
         axis.title = element_text(size = 18))
-#geom_text(x = 0, y = q, label = expression(alpha), color = my_col)
 
 bh_plot
 ```
 
 ```{r}
 #| label: bh-plot-zoom
-xmax <- nBH*2.5
+xmax <- nBH * 2.5
 ymax <- dexo$p.value[xmax]
 bh_plot +
   xlim(1, xmax) + ylim(0, ymax) +
-  geom_segment(aes(x = nBH, y = 0, yend = q*nBH/m, xend = nBH), linetype = "dotted") +
-  geom_segment(aes(x = 1, y = q*nBH/m, xend = nBH, yend = q*nBH/m), linetype = "dotted", col = 1)
+  geom_segment(aes(x = nBH, y = 0, yend = q * nBH / m, xend = nBH),
+               linetype = "dotted") +
+  geom_segment(aes(x = 1, y = q * nBH / m, xend = nBH, yend = q * nBH / m),
+               linetype = "dotted", col = 1)
 ```
 
 ## Basic posthoc bounds
@@ -173,8 +173,8 @@ As an application we calculate the bound associated to $k_0=100$ for $\alpha = `
 #| label: k0-bonf
 k0 <- 100
 S <- 1:nBH
-FP_k0 <- sum(pvalo[S] >= alpha*k0/m) + k0 - 1
-FP_k0/nBH
+FP_k0 <- sum(pvalo[S] >= alpha * k0 / m) + k0 - 1
+FP_k0 / nBH
 ```
 
 This implies that with probability larger than `r 1-alpha` the false discovery proportion among the genes selected by the BH procedure at level $q= `r q`$ is upper bounded by `r ceiling(FP_k0/nBH*100)/100`.
@@ -186,7 +186,8 @@ A more refined post hoc bound has been proposed by @GS2011 under the PRDS assump
 ```{r}
 #| label: Simes
 obj <- SansSouci(Y = dat, groups = categ)
-res_Simes <- fit(obj, B = 0, family = "Simes", alpha = alpha) ## B=0 => no calibration!
+res_Simes <- fit(obj, B = 0, family = "Simes", alpha = alpha)
+## B=0 => no calibration!
 FP_Simes <- predict(res_Simes, S_BH, what = "FP")
 ```
 
@@ -223,12 +224,13 @@ As expected from the theory, the post hoc bounds obtained after calibration by t
 ```{r}
 #| label: tighter-bounds
 resList <- list("Simes" = res_Simes,
-            "Linear" = res,
-            "Beta" = res_Beta)
+                "Linear" = res,
+                "Beta" = res_Beta)
 names(resList)[3] <- sprintf("Beta (K=%s)", K)
 
 bounds <- sapply(resList, predict, S_BH)
-rownames(bounds) <- c("Lower bound on True Positives", "Upper bound on False Discovery Proportion")
+rownames(bounds) <- c("Lower bound on True Positives",
+                      "Upper bound on False Discovery Proportion")
 knitr::kable(t(bounds), digits = 2)
 ```
 
@@ -250,10 +252,11 @@ The confidence curves obtained by calibration of the Simes and Beta families can
 ```{r}
 #| label: conf-env-plot
 conf_bounds <- lapply(resList, predict, all = TRUE)
-# cols <- c("lightgray", "black", "darkgray")
 cols <- RColorBrewer::brewer.pal(length(conf_bounds), "Dark2")
-p <- plotConfCurve(conf_bounds, xmax = 300, cols = cols, legend.title = "Template")
-p + geom_vline(xintercept = nBH, color = "gray", linetype = "dotted", linewidth = 1.5) +
+p <- plotConfCurve(conf_bounds, xmax = 300, cols = cols,
+                   legend.title = "Template")
+p + geom_vline(xintercept = nBH, color = "gray", linetype = "dotted",
+               linewidth = 1.5) +
   geom_line(linewidth = 1.5)
 ```
 
