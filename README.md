@@ -3,11 +3,10 @@
 
 <!-- badges: start -->
 
-[![R build
-status](https://github.com/sanssouci-org/sanssouci/workflows/R-CMD-check/badge.svg)](https://github.com/sanssouci-org/sanssouci/actions)
 [![Coverage
 Status](https://codecov.io/gh/sanssouci-org/sanssouci/branch/develop/graph/badge.svg)](https://codecov.io/github/sanssouci-org/sanssouci/branch/develop)
 [![R-CMD-check](https://github.com/sanssouci-org/sanssouci/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sanssouci-org/sanssouci/actions/workflows/R-CMD-check.yaml)
+[![SWH](https://archive.softwareheritage.org/badge/origin/https://github.com/sanssouci-org/sanssouci/)](https://archive.softwareheritage.org/browse/origin/?origin_url=https://github.com/sanssouci-org/sanssouci)
 <!-- badges: end -->
 
 The goal of sanssouci \[sãsusi\] is to perform **post hoc inference**:
@@ -63,13 +62,13 @@ $10^{-3}$.
 S <- which(pValues(res) < 1e-3)
 predict(res, S)
 #>          TP         FDP 
-#> 118.0000000   0.2670807
+#> 129.0000000   0.1987578
 ```
 
 The method ensures with $1-\alpha = 90\%$ confidence that there are at
-least 118 truly differentially expressed genes (true positives, TP)
+least 129 truly differentially expressed genes (true positives, TP)
 among these 161 genes, corresponding to a false discovery proportion
-(FDP) less than 0.27.
+(FDP) less than 0.2.
 
 ### Output 2 - Confidence curves for “top-k” feature lists
 
@@ -85,12 +84,15 @@ plot(res, xmax = 500) +
   geom_line(size = 1.5)
 #> Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
 #> ℹ Please use `linewidth` instead.
-#> This warning is displayed once every 8 hours.
+#> This warning is displayed once per session.
 #> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
 #> generated.
+#> Ignoring unknown labels:
+#> • colour : "Contrast"
+#> • linetype : "Contrast"
 ```
 
-<img src="man/figures/README-conf-curve-1.png" width="100%" />
+<img src="man/figures/README-conf-curve-1.png" alt="" width="100%" />
 
 ### Output 3 - Volcano plots
 
@@ -103,7 +105,7 @@ represented by volcano plots:
 volcanoPlot(res, q = 0.05, r = 0.3, ylim = c(0, 6))
 ```
 
-<img src="man/figures/README-volcano-plot-1.png" width="100%" />
+<img src="man/figures/README-volcano-plot-1.png" alt="" width="100%" />
 
 Importantly, multiple such selections can be made without compromising
 the validity of the bounds. The [IIDEA shiny
