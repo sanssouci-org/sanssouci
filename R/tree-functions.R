@@ -254,7 +254,7 @@ nb.elements <- function(C) {
 #' @param method A function with arguments \code{(pval, lambda)} that can compute an upper bound on the false positives in the region associated to 
 #' the \eqn{p}-values \code{pval} at confidence level \code{1 - lambda}. It can also be a list of such functions, where the \code{h}-th function 
 #' is used at depth \code{h} in the tree structure, that is on the \eqn{R_k}'s represented by the elements found in \code{C[[h]]}. Finally, it can also be a list 
-#' of lists of such functions, mimicking the structure of \code{C} itself, that is, \code{method[[h]][[j]]} is applied the \eqn{R_k} represented by \code{C[[h]][[j]]}.
+#' of lists of such functions, mimicking the structure of \code{C} itself, that is, \code{method[[h]][[j]]} is applied to the \eqn{R_k} represented by \code{C[[h]][[j]]}.
 #' @param pvalues A vector of \eqn{p}-values, must be of size \code{m}, with \code{m} the highest element found in the vectors of \code{leaf_list}.
 #' @param alpha A target error level in \eqn{]0,1[]}.
 #' @param refine A boolean, \code{FALSE} by default. Whether to use the step-down refinement to try to produce smaller \eqn{\zeta_k}'s, see Details.
@@ -326,7 +326,7 @@ zetas.tree <- function(C, leaf_list, method, pvalues, alpha, refine = FALSE, ver
       nb_loop <- nb_loop + 1
       print(paste0("loop number=", nb_loop, ", usage_K=", usage_K, ", new_K=", new_K))
     }
-    continue <- refine && (new_K < usage_K)
+    continue <- refine && (new_K < usage_K) && (new_K > 0)
   }
   return(ZL)
 }
