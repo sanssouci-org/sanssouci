@@ -17,12 +17,13 @@ Typical use cases include:
 
 - **Differential gene expression (DGE) studies in genomics**:
   - see vignettes dedicated to [microarray
-    data](articles/post-hoc_differential-expression.html) and [RNAseq
-    data](articles/post-hoc_differential-expression_RNAseq.html)
+    data](https://sanssouci-org.github.io/sanssouci//articles/post-hoc_differential-expression.html)
+    and [RNAseq
+    data](https://sanssouci-org.github.io/sanssouci//articles/post-hoc_differential-expression_RNAseq.html)
   - run [volcano plot shiny
     app](https://shiny-iidea-sanssouci.apps.math.cnrs.fr/)
 - **fMRI studies in neuroimaging**: see [fMRI
-  vignette](articles/post-hoc_fMRI.html).
+  vignette](https://sanssouci-org.github.io/sanssouci//articles/post-hoc_fMRI.html).
 
 In both cases, the permutation-based post hoc inference methods
 implemented in the `sanssouci` package outperform classical post hoc
@@ -32,10 +33,10 @@ bounds based on probabilistic inequalities.
 
 We briefly illustrate the case of differential gene expression study
 (see dedicated
-[vignette](articles/post-hoc_differential-expression.html) for more
-information). We start by creating an object of class `sanssouci` from
-gene expression data available from the
-[sanssouci.data](https://github.com/sanssouci-rog/sanssouci.data)
+[vignette](https://sanssouci-org.github.io/sanssouci//articles/post-hoc_differential-expression.html)
+for more information). We start by creating an object of class
+`sanssouci` from gene expression data available from the
+[sanssouci.data](https://github.com/sanssouci-org/sanssouci.data)
 package,
 
 ``` r
@@ -81,7 +82,7 @@ library("ggplot2")
 plot(res, xmax = 500) +
   geom_vline(xintercept = length(S), 
              color = "gray", linetype = "dotted", size = 1.5) +
-  geom_line(size = 1.5)
+  geom_line(linewidth = 1.5)
 #> Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
 #> ℹ Please use `linewidth` instead.
 #> This warning is displayed once per session.
