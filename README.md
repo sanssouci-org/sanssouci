@@ -3,11 +3,14 @@
 
 <!-- badges: start -->
 
-[![R build
-status](https://github.com/sanssouci-org/sanssouci/workflows/R-CMD-check/badge.svg)](https://github.com/sanssouci-org/sanssouci/actions)
-[![Coverage
+<!-- [![Coverage
 Status](https://codecov.io/gh/sanssouci-org/sanssouci/branch/develop/graph/badge.svg)](https://codecov.io/github/sanssouci-org/sanssouci/branch/develop)
+-->
+
 [![R-CMD-check](https://github.com/sanssouci-org/sanssouci/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sanssouci-org/sanssouci/actions/workflows/R-CMD-check.yaml)
+[![coverage > 90%](https://github.com/sanssouci-org/sanssouci/actions/workflows/test_covr.yaml/badge.svg)](https://github.com/sanssouci-org/sanssouci/actions/workflows/test_covr.yaml)
+[![codecov](https://codecov.io/gh/sanssouci-org/sanssouci/graph/badge.svg)](https://codecov.io/gh/sanssouci-org/sanssouci)
+
 <!-- badges: end -->
 
 The goal of sanssouci \[sãsusi\] is to perform **post hoc inference**:
@@ -18,12 +21,13 @@ Typical use cases include:
 
 - **Differential gene expression (DGE) studies in genomics**:
   - see vignettes dedicated to [microarray
-    data](articles/post-hoc_differential-expression.html) and [RNAseq
-    data](articles/post-hoc_differential-expression_RNAseq.html)
+    data](https://sanssouci-org.github.io/sanssouci//articles/post-hoc_differential-expression.html)
+    and [RNAseq
+    data](https://sanssouci-org.github.io/sanssouci//articles/post-hoc_differential-expression_RNAseq.html)
   - run [volcano plot shiny
     app](https://shiny-iidea-sanssouci.apps.math.cnrs.fr/)
 - **fMRI studies in neuroimaging**: see [fMRI
-  vignette](articles/post-hoc_fMRI.html).
+  vignette](https://sanssouci-org.github.io/sanssouci//articles/post-hoc_fMRI.html).
 
 In both cases, the permutation-based post hoc inference methods
 implemented in the `sanssouci` package outperform classical post hoc
@@ -33,10 +37,10 @@ bounds based on probabilistic inequalities.
 
 We briefly illustrate the case of differential gene expression study
 (see dedicated
-[vignette](articles/post-hoc_differential-expression.html) for more
-information). We start by creating an object of class `sanssouci` from
-gene expression data available from the
-[sanssouci.data](https://github.com/sanssouci-rog/sanssouci.data)
+[vignette](https://sanssouci-org.github.io/sanssouci//articles/post-hoc_differential-expression.html)
+for more information). We start by creating an object of class
+`sanssouci` from gene expression data available from the
+[sanssouci.data](https://github.com/sanssouci-org/sanssouci.data)
 package,
 
 ``` r
@@ -63,13 +67,13 @@ $10^{-3}$.
 S <- which(pValues(res) < 1e-3)
 predict(res, S)
 #>          TP         FDP 
-#> 118.0000000   0.2670807
+#> 129.0000000   0.1987578
 ```
 
 The method ensures with $1-\alpha = 90\%$ confidence that there are at
-least 118 truly differentially expressed genes (true positives, TP)
+least 129 truly differentially expressed genes (true positives, TP)
 among these 161 genes, corresponding to a false discovery proportion
-(FDP) less than 0.27.
+(FDP) less than 0.2.
 
 ### Output 2 - Confidence curves for “top-k” feature lists
 
@@ -82,15 +86,18 @@ library("ggplot2")
 plot(res, xmax = 500) +
   geom_vline(xintercept = length(S), 
              color = "gray", linetype = "dotted", size = 1.5) +
-  geom_line(size = 1.5)
+  geom_line(linewidth = 1.5)
 #> Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
 #> ℹ Please use `linewidth` instead.
-#> This warning is displayed once every 8 hours.
+#> This warning is displayed once per session.
 #> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
 #> generated.
+#> Ignoring unknown labels:
+#> • colour : "Contrast"
+#> • linetype : "Contrast"
 ```
 
-<img src="man/figures/README-conf-curve-1.png" width="100%" />
+<img src="man/figures/README-conf-curve-1.png" alt="" width="100%" />
 
 ### Output 3 - Volcano plots
 
@@ -103,7 +110,7 @@ represented by volcano plots:
 volcanoPlot(res, q = 0.05, r = 0.3, ylim = c(0, 6))
 ```
 
-<img src="man/figures/README-volcano-plot-1.png" width="100%" />
+<img src="man/figures/README-volcano-plot-1.png" alt="" width="100%" />
 
 Importantly, multiple such selections can be made without compromising
 the validity of the bounds. The [IIDEA shiny

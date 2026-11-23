@@ -49,7 +49,7 @@
 #' 
 confCurveFromFam <- function(p.values, refFamily, param, K = length(p.values), what = c("TP", "FDP")) {
     m <- length(p.values)
-    fam0 <- c("Simes", "Beta", "Oracle")
+    fam0 <- c("Simes", "Linear", "Beta", "Oracle")
     if (!(refFamily %in% fam0)) {
         stop("Unknown family: ", refFamily, "\n",
              "Only the following reference families are currently supported: ", 

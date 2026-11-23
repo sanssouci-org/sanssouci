@@ -1,8 +1,9 @@
 context("Calculation of Binomial test statistics and p-values")
 
 test_that("rowBinomialTests <=> binom.test", {
-    p <- 250
-    n0 <- 40; n1 <- 60
+    p <- 25
+    n0 <- 40
+    n1 <- 60
     mat0 <- matrix(rbinom(p*n0, size = 1, prob = 0.05), ncol = n0)
     mat1 <- matrix(rbinom(p*n1, size = 1, prob = 0.02), ncol = n1)
     mat <- cbind(mat0, mat1)
@@ -30,6 +31,16 @@ test_that("rowBinomialTests <=> binom.test", {
     expect_equal(fbt$statistic, pbt$statistic)
     py <- rowMeans(mat[, cls == 0])
     expect_equal(fbt$estimate, pbt$estimate - py)
+    
+    # matrix version
+    cls_perm <- cbind(cls, replicate(3, sample(cls)))
+    fbt_perm <- rowBinomialTests(mat = mat, categ = cls_perm, 
+                            alternative = alt)
+  
+    expect_equal(fbt_perm$statistic[, 1], fbt$statistic)
+    expect_equal(fbt_perm$p.value[, 1], fbt$p.value)
+    expect_equal(fbt_perm$estimate[, 1], fbt$estimate)
+    expect_equal(ncol(fbt_perm$p.value), ncol(cls_perm))
 })
 
 

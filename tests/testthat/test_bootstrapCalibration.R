@@ -269,5 +269,19 @@ test_that("test row_lm_test function", {
 })
 
 
+test_that("calibration_bootstrap", {
+  N <- 100
+  p <- 2
+  D <- 2
+  X <- matrix(0,nrow = N, ncol = p)
+  X[, 1] <- 1
+  X[, -1] <- runif(N*(p-1), min = 0, max = 3)
+  beta <- matrix(0, nrow = p, ncol = D)
+  epsilons <- matrix(rnorm(N*D), nrow = N, ncol = D)
+  Y <- X %*% beta + epsilons
+  C <- diag(p)
+  resLM <- calibration_bootstap(Y = Y, X = X, C = C, B = 10)
+  expect_equal(names(resLM), c("thr", "piv_stat", "lambda"))
+})
 
 

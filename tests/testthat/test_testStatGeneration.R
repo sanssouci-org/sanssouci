@@ -13,10 +13,16 @@ test_that("Simulate equi-correlated null hypotheses", {
 test_that("Simulation of null hypotheses from factor model", {
     m <- 10
     ## independent
-    sim0 <- simulateFactorModelNullsFromSingularValuesAndLoadings(m)
+    withr::with_preserve_seed({
+      sim0 <- simulateFactorModelNullsFromSingularValuesAndLoadings(m)
+    })
     expect_equal(length(sim0$Y), m)
+    expect_null(sim0$w)
     S0 <- getFactorModelCovarianceMatrix(m)
     expect_identical(S0, diag(m))
+    
+    Y0 <- simulateGaussianNullsFromFactorModel(m, flavor = "independent")
+    expect_identical(Y0[, 1], sim0$Y)
     
     # expected error: "t(P) %*% P should be orthonormal" (but encoding issue => can't get the exact string)
     expect_error(simulateFactorModelNullsFromSingularValuesAndLoadings(m, c(0,1)))
@@ -25,8 +31,14 @@ test_that("Simulation of null hypotheses from factor model", {
     rho <- 0.2
     h <- 1
     P <- matrix(1, m, length(h))
-    sim1 <- simulateFactorModelNullsFromSingularValuesAndLoadings(m, h, P, rho=rho)
+    withr::with_preserve_seed({
+      sim1 <- simulateFactorModelNullsFromSingularValuesAndLoadings(m, h, P, rho=rho)
+    })
     expect_equal(length(sim1$Y), m)
+    expect_equal(length(sim1$W), 1)
+    Y1 <- simulateGaussianNullsFromFactorModel(m, flavor = "equi-correlated", 
+                                              rho = rho, cov = TRUE)
+    expect_identical(Y1[, 1], sim1$Y)
     
     ## 3-factor model
     m <- 4*floor(m/4) ## make sure m/4 is an integer
@@ -37,9 +49,19 @@ test_that("Simulation of null hypotheses from factor model", {
     gamma3 <- rep(c(-1, 1), times=m/2)
     P <- cbind(gamma1, gamma2, gamma3)/sqrt(m)
     
-    sim3 <- simulateFactorModelNullsFromSingularValuesAndLoadings(m, h, P, rho=rho)
+    withr::with_preserve_seed({
+      sim3 <- simulateFactorModelNullsFromSingularValuesAndLoadings(m, h, P, rho=rho)
+    })
     expect_equal(length(sim3$Y), m)
     expect_equal(length(sim3$W), length(h))
+    
+    Y3 <- simulateGaussianNullsFromFactorModel(m, flavor = "3-factor", 
+                                               rho = rho)
+    expect_identical(Y3[, 1], sim3$Y)
+    
+    Sigma <- getFactorModelCovarianceMatrix(m, h, P = P, rho = rho)
+    expect_equal(nrow(Sigma), ncol(Sigma))
+    expect_equal(nrow(Sigma), m)
 })
 
 test_that("Simulation of Gaussian null hypotheses from covariance matrix", {

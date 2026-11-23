@@ -26,7 +26,7 @@ calibrate0(
 )
 }
 \arguments{
-\item{p0}{A matrix with B rows. Each row is a vector of null p-values}
+\item{p0}{A matrix with B columns. Each column is a vector of null p-values}
 
 \item{m}{The total number of tested hypotheses}
 

@@ -268,12 +268,12 @@ row_lm_test <- function(Y, X, C,
 #' @export
 #'
 #' @examples
-#' N = 100
-#' p = 2
-#' D = 2
+#' N <- 100
+#' p <- 2
+#' D <- 2
 #' X <- matrix(0,nrow = N, ncol = p)
-#' X[,1] <- 1
-#' X[,-1] <- runif(N*(p-1), min = 0, max = 3)
+#' X[, 1] <- 1
+#' X[, -1] <- runif(N*(p-1), min = 0, max = 3)
 #' beta <- matrix(0, nrow = p, ncol = D)
 #' epsilons <- matrix(rnorm(N*D), nrow = N, ncol = D)
 #' Y <- X %*% beta + epsilons

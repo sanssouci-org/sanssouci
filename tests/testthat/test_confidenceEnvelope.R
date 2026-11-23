@@ -1,11 +1,41 @@
 context("Confidence envelopes on the false positives")
 
+test_that("Basic checks for 'confCurveFromFam'", {
+  m <- 52
+  sim <- gaussianSamples(m = m, rho = 0.5, n = 10, pi0 = 0.8, SNR = 3, prob = 0.5)
+  rwt <- rowWelchTests(sim$X, sim$categ, alternative = "greater")
+  p_vals <- rwt$p.value
+  
+  cb <- confCurveFromFam(p_vals, refFamily = "Simes", param = 0.1,  what = "TP")
+  expect_equal(nrow(cb), m)
+  expect_equal(cb$label, rep("Simes(0.1)", m))
+  
+  cb_lin <- confCurveFromFam(p_vals, refFamily = "Linear", param = 0.1,  what = "TP")
+  expect_equal(cb$stat, cb_lin$stat)
+  
+  cb <- confCurveFromFam(p_vals, refFamily = "Simes", param = 0.1, 
+                         what = c("TP", "FP"))
+  expect_equal(nrow(cb), m * 2)
+  
+  cb <- confCurveFromFam(p_vals, refFamily = "Beta", param = 0.1, what = "TP")
+  expect_equal(nrow(cb), m)
+
+  cb <- confCurveFromFam(p_vals, refFamily = "Oracle",  param = rep(0, m), 
+                         what = "TP")
+  expect_equal(nrow(cb), m)
+  expect_error(confCurveFromFam(rwt$p.value, refFamily = "unknown_fam", 
+                                param = 0.1))
+})
+
 test_that("Consistency of output of 'confCurveFromFam'", {
     m <- 123
     alpha <- 0.1
-    sim <- gaussianSamples(m = m, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3, prob = 0.5)
+    sim <- gaussianSamples(m = m, rho = 0.5, n = 100, pi0 = 0.8, 
+                           SNR = 3, prob = 0.5)
     dex <- rowWelchTests(sim$X, sim$categ)
-    conf_bound <- confCurveFromFam(dex$p.value, refFamily = "Simes", param = alpha, what = c("FP", "TP", "FDP", "TDP"))
+    conf_bound <- confCurveFromFam(dex$p.value, refFamily = "Simes", 
+                                   param = alpha, 
+                                   what = c("FP", "TP", "FDP", "TDP"))
     
     ## FP and TP
     FP <- subset(conf_bound, stat == "FP")$bound

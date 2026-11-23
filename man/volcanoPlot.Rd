@@ -2,59 +2,18 @@
 % Please edit documentation in R/volcanoPlot.R
 \name{volcanoPlot}
 \alias{volcanoPlot}
-\alias{volcanoPlot.SansSouci}
 \title{Volcano plot}
 \usage{
 volcanoPlot(x, ...)
-
-\method{volcanoPlot}{SansSouci}(
-  x,
-  fold_changes = foldChanges(x)[contrast_name, ],
-  p_values = pValues(x)[contrast_name, ],
-  p = 1,
-  q = 1,
-  r = 0,
-  contrast_name = x$input$contrast_name[1],
-  cex = c(0.2, 0.6),
-  col = c("#33333333", "#FF0000", "#FF666633"),
-  pch = 19,
-  ylim = NULL,
-  ...
-)
 }
 \arguments{
-\item{x}{An object of class \code{SansSouci}}
+\item{x}{An object of class \code{SansSouci}, or alternatively a numeric vector
+of fold changes when calling \code{volcanoPlot.numeric} directly (x axis of
+the volcano plot). See \code{\link[=volcanoPlot.numeric]{volcanoPlot.numeric()}} or \code{\link[=volcanoPlot.SansSouci]{volcanoPlot.SansSouci()}}
+for specifics}
 
-\item{...}{Other arguments to be passed to volcanoPlot.numeric}
-
-\item{fold_changes}{An optional vector of fold changes, of the same length as \code{nHyp(object)}, use for volcanoPlot x-axis. If not specified,}
-
-\item{p_values}{A vector of p-values, of the same length as \code{nHyp(object)}, use for volcanoPlot x-axis}
-
-\item{p}{A numeric value, the p-value threshold under which genes are selected}
-
-\item{q}{A numeric value, the q-value (or FDR-adjusted p-value) threshold under which genes are selected}
-
-\item{r}{A numeric value, the absolute fold change above which genes are selected}
-
-\item{contrast_name}{A character value, the selected contrast. Should be chosen in \code{x$input$contrast_name}.}
-
-\item{cex}{A numeric vector of length 2, the relative magnification factor for unselected (\code{cex[1]}) and unselected (\code{cex[2]}) genes.}
-
-\item{col}{A vector of length 3}
-
-\item{pch}{An integer or single character string specifying the plotting character, see \link{par}}
-
-\item{ylim}{A numeric vector of length 2, the \code{y} limits of the plot}
+\item{...}{Other arguments passed to methods}
 }
 \description{
-Volcano plot
-}
-\examples{
-data(expr_ALL, package = "sanssouci.data")
-groups <- ifelse(colnames(expr_ALL)=="NEG", 0, 1)
-a <- SansSouci(Y = expr_ALL, groups = groups)
-
-res <- fit(a, B = 100, alpha = 0.1)
-volcanoPlot(res, q = 0.2, r = 0.2, ylim = c(0, 4))
+Volcano plot for differential expression studies
 }

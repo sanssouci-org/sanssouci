@@ -58,6 +58,9 @@ test_that("'fit.SansSouciStruct' reproduces the results of 'Vstar'", {
     
     mu <- gen.mu.leaves(m = m, K1 = K1, d = r, grouped = TRUE, setting = "const", 
                         barmu = barmu, leaf_list = obj$input$leaves)
+    mu_no <- gen.mu.noleaves(m = m, pi0 = 1, barmu = barmu) 
+    gb <- gauss_bloc(barmu, 10)
+    
     obj$input$truth <- as.numeric(mu != 0)
     pvalues <- gen.p.values(m = m, mu = mu, rho = 0)
     

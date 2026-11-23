@@ -81,7 +81,7 @@ rowBinomialTests <- function(mat, categ,
                                  warn = warn)
         pval0[, bb] <- rwt$p.value
         stat0[, bb] <- rwt$statistic
-        est[, bb] <- rwt$estimate
+        est0[, bb] <- rwt$estimate
     }
     
     list(p.value = pval0,
