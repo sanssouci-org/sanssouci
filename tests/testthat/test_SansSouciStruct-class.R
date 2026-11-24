@@ -49,7 +49,7 @@ test_that("Correctness of the constructor of SansSouciStruct", {
 })
 
 
-test_that("'fit.SansSouciStruct' reproduces the results of 'Vstar'", {
+test_that("'fit.SansSouciStruct' reproduces the results of 'v_star'", {
   s <- 100
   q <- 7
   m <- s * 2^q
@@ -86,7 +86,7 @@ test_that("'fit.SansSouciStruct' reproduces the results of 'Vstar'", {
   V <- V[idxs]
 
   # Oracle 2
-  res <- fit(obj, alpha = alpha, p.values = pvalues, family = "Oracle")
+  res <- fit(obj, alpha = alpha, p_values = pvalues, family = "Oracle")
   expect_s3_class(res, "SansSouci")
   Vmat <- predict(res, what = "FP", all = TRUE)
   VV <- Vmat$bound[idxs]
@@ -100,7 +100,7 @@ test_that("'fit.SansSouciStruct' reproduces the results of 'Vstar'", {
   V <- Vmat$bound[idxs]
 
   # Simes 2
-  res_Simes <- fit(obj, alpha = alpha, p.values = pvalues, family = "Simes")
+  res_Simes <- fit(obj, alpha = alpha, p_values = pvalues, family = "Simes")
   Vmat <- predict(res_Simes, what = "FP", all = TRUE)
   VV <- Vmat$bound[idxs]
   expect_identical(VV, V)
@@ -142,7 +142,7 @@ test_that("'fit.SansSouciStruct' reproduces the results of 'Vstar'", {
   struct <- obj$input$struct
   CC <- struct[length(struct)]
   leaves <- obj$input$leaves
-  ZL <- zetas.tree(CC, leaves, zeta.DKWM, pvalues, alpha = alpha)
+  ZL <- zetas_tree(CC, leaves, zeta.DKWM, pvalues, alpha = alpha)
 
   VV <- sapply(idxs1, FUN = function(ii) {
     V.star(ord[1:ii],
