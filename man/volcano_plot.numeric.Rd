@@ -82,7 +82,7 @@ groups <- ifelse(colnames(expr_ALL) == "NEG", 0, 1)
 a <- SansSouci(Y = expr_ALL, groups = groups)
 
 res <- fit(a, B = 100, alpha = 0.1)
-fold_changes <- foldChanges(res)
+fold_changes <- get_fold_changes(res)
 p_values <- get_p_values(res)
 thr <- thresholds(res)
 volcano_plot(
