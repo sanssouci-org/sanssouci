@@ -329,7 +329,7 @@ nb_elements <- function(C) {
 #' See [v_star()] for more information.
 #' @param leaf_list A list of vectors representing the atoms of the forest
 #' structure. See [v_star()] for more information.
-#' @param method A function with arguments \code{(p_values, lambda, ...)} 
+#' @param method A function with arguments \code{(p_values, lambda, ...)}
 #' that can
 #' compute an upper bound on the false positives in the region associated to
 #' the \eqn{p}-values \code{p_values} at confidence level \code{1 - lambda}.

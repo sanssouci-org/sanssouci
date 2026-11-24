@@ -41,7 +41,7 @@ is built with the desired leaf size.
 \examples{
 s <- 100
 q <- 7
-m <- s*2^q
+m <- s * 2^q
 
 obj <- SansSouciDyadic(m, leaf_size = s, direction = "top-down")
 obj <- SansSouciDyadic(m, height = 8, direction = "top-down")
