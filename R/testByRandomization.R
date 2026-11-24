@@ -7,7 +7,7 @@
 #' @param categ An optional numeric vector of \eqn{n} values in \eqn{0, 1}
 #'   specifying the column indices of the first and second samples. If not
 #'   provided, a one-sample test is performed.
-#'   
+#'
 #' @param B A numeric value, the number of permutations to be performed
 #'
 #' @param rowTestFUN A (vectorized) test function used in the two-sample case.
@@ -39,7 +39,7 @@
 #'   alternative specified by parameter \code{alternative}. We use the
 #'   (rescaled) empirical mean of the observations as a test statistic.
 #'   Sign-flipped test statistics are calculated by flipping the sign of each
-#'   observation with probability 1/2. Note that this function has not been 
+#'   observation with probability 1/2. Note that this function has not been
 #'   optimized for speed and may be slow for large n*m*B.
 #'
 #' @references Ge, Y., Dudoit, S. and Speed, T.P., 2003. Resampling-based
@@ -65,8 +65,10 @@
 #'
 #'   \item{rand}{A \eqn{m \times B} matrix of randomization \eqn{p}-values (only
 #'   if \code{rand.p.value} is \code{TRUE} )}
-#'}
-#' @references Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc confidence bounds on false positives using reference families. Annals of Statistics, 48(3), 1281-1303.
+#'   }
+#' @references Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc
+#'   confidence bounds on false positives using reference families. Annals of
+#'   Statistics, 48(3), 1281-1303.
 #'
 #' @examples
 #'
@@ -79,26 +81,29 @@
 #' ## two-sample data
 #' sim <- gaussianSamples(m, rho, n, pi0, SNR = 2, prob = 0.5)
 #' X <- sim$X
-#' categ <-sim$categ
+#' categ <- sim$categ
 #' tests <- testByRandomization(X = X, categ = categ, B)
-#' testsW <- testByRandomization(X = X, categ = categ, B = 10, rowTestFUN = rowWilcoxonTests)
+#' testsW <- testByRandomization(
+#'   X = X, categ = categ, B = 10,
+#'   rowTestFUN = rowWilcoxonTests
+#' )
 #'
 #' ## show test statistics
 #' pch <- 20
-#' colStat <- 1+sim$H
+#' colStat <- 1 + sim$H
 #' plot(tests$T, col = colStat, main = "T-Test statistics", pch = pch)
-#' legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
+#' legend("topleft", c("H0", "H1"), pch = pch, col = 1:2)
 #'
 #' plot(testsW$T, col = colStat, main = "Wilcoxon test statistics", pch = pch)
-#' legend("topleft", c("H0", "H1"), pch=pch, col=1:2)
-#' 
+#' legend("topleft", c("H0", "H1"), pch = pch, col = 1:2)
+#'
 #' # one-sample data:
-#' sim <- gaussianSamples(m, rho, n, pi0, SNR=2)
+#' sim <- gaussianSamples(m, rho, n, pi0, SNR = 2)
 #' tests <- testByRandomization(X = sim$X, categ = sim$categ, B, alternative = "two.sided")
 #'
 #' ## show test statistics
 #' pch <- 20
-#' colStat <- 1+sim$H
+#' colStat <- 1 + sim$H
 #' plot(tests$T, col = colStat, main = "Test statistics", pch = pch)
 #' legend("topleft", c("H0", "H1"), pch = pch, col = 1:2)
 #'
@@ -107,100 +112,105 @@
 #'
 #' @importFrom matrixStats rowRanks
 #' @export
-#' 
-testByRandomization <- function(X, categ, B, 
+#'
+testByRandomization <- function(X, categ, B,
                                 alternative = c("two.sided", "less", "greater"),
                                 rowTestFUN = rowWelchTests,
-                                rand.p.value = FALSE){
-    alternative <- match.arg(alternative)
-    ## sanity checks
-    n <- ncol(X)
-    if (missing(categ) || (length(unique(categ))==1)) {
-        flavor <- "flip"
+                                rand.p.value = FALSE) {
+  alternative <- match.arg(alternative)
+  ## sanity checks
+  n <- ncol(X)
+  if (missing(categ) || (length(unique(categ)) == 1)) {
+    flavor <- "flip"
+  } else {
+    if (length(unique(categ)) == 2) {
+      stopifnot(all(categ %in% c(0, 1)))
+      flavor <- "perm"
+      tbl <- table(categ)
+      if (min(tbl) < 3) {
+        stop("At least 3 observations from each sample are required for two-sample tests")
+      }
     } else {
-        if (length(unique(categ)) == 2) {
-            stopifnot(all(categ %in% c(0,1)))
-            flavor <- "perm"
-            tbl <- table(categ)
-            if (min(tbl) < 3) {
-                stop("At least 3 observations from each sample are required for two-sample tests")
-            }
-        } else {
-            stop("Tests for more than 2 classes not implemented yet")
-        }
+      stop("Tests for more than 2 classes not implemented yet")
     }
-    m <- nrow(X)
-    
-    if (flavor == "perm") {
-        ## TODO: (cf issue #3)
-        ## * other statistics ? (difference in empirical means, Mann-Whitney)
-        ## * one-sided tests ?
-        
-        ## map class labels to 0-1 for simplicity of implementation of rowTestFUN(s)
-        levels(categ) <- c("0", "1") 
-        ## observed
-        rwt <- rowTestFUN(X, categ = categ, alternative = alternative)
-        T <- rwt$statistic
-        p <- rwt$p.value  ## parametric p-value
-        # df <- rwt$parameter  ## degrees of freedom (for T tests; possibly NULL for other tests)
-        rm(rwt)
-        
-        ## under H0
-        T0 <- matrix(nrow = m, ncol = B) ## test statistics under the null
-        p0 <- matrix(nrow = m, ncol = B) ## parametric p-value
-        # df0 <- matrix(nrow = m, ncol = B) 
-        for (bb in 1:B) {
-#             categ_perm <- sample(categ, length(categ))
-            categ_perm <- sample(categ)
-            rwt <- rowTestFUN(X, categ = categ_perm, alternative = alternative)
-            T0[, bb] <- rwt$statistic
-            p0[, bb] <- rwt$p.value
-        }
-        res <- list(T = T, T0 = T0, 
-                    flavor = flavor,
-                    p = p, p0 = p0)
-                    # df = df, df0 = df0)
-    } else if (flavor == "flip") {
-        ## observed test statistics and p-values
-        T <- rowSums(X)/sqrt(n)
-        p <- switch(alternative, 
-                    "two.sided" = 2*(pnorm(abs(T), lower.tail = FALSE)),
-                    "greater" = pnorm(T, lower.tail = FALSE),
-                    "less" = pnorm(T, lower.tail = TRUE))
-        ## test statistics under H0
-        T0 <- testBySignFlipping(X, B)
-        p0 <- switch(alternative, 
-                     "two.sided" = 2*(pnorm(abs(T0), lower.tail = FALSE)),
-                     "greater" = pnorm(T0, lower.tail = FALSE),
-                     "less" = pnorm(T0, lower.tail = TRUE))
-        res <- list(T = T, T0 = T0, p = p, p0 = p0, flavor = flavor)
+  }
+  m <- nrow(X)
+
+  if (flavor == "perm") {
+    ## TODO: (cf issue #3)
+    ## * other statistics ? (difference in empirical means, Mann-Whitney)
+    ## * one-sided tests ?
+
+    ## map class labels to 0-1 for simplicity of implementation of rowTestFUN(s)
+    levels(categ) <- c("0", "1")
+    ## observed
+    rwt <- rowTestFUN(X, categ = categ, alternative = alternative)
+    T <- rwt$statistic
+    p <- rwt$p.value ## parametric p-value
+    # df <- rwt$parameter  ## degrees of freedom (for T tests; possibly NULL for other tests)
+    rm(rwt)
+
+    ## under H0
+    T0 <- matrix(nrow = m, ncol = B) ## test statistics under the null
+    p0 <- matrix(nrow = m, ncol = B) ## parametric p-value
+    # df0 <- matrix(nrow = m, ncol = B)
+    for (bb in 1:B) {
+      #             categ_perm <- sample(categ, length(categ))
+      categ_perm <- sample(categ)
+      rwt <- rowTestFUN(X, categ = categ_perm, alternative = alternative)
+      T0[, bb] <- rwt$statistic
+      p0[, bb] <- rwt$p.value
     }
-    
-    if (rand.p.value) {
-        ## get m x (B+1) matrix of pvalues under the null (+ original)
-        ## by sorting null test statistics as proposed by Ge et al (2003)
-        TT <- cbind(T0, T)
-        pB <- switch(alternative, 
-                     "two.sided" = rowRanks(-abs(TT), ties.method = "max") / (B + 1),
-                     "greater" = rowRanks(-TT, ties.method = "max") / (B + 1),
-                     "less" = rowRanks(TT, ties.method = "max") / (B + 1))
-        
-        res$rand.p <- pB[, B + 1]
-        res$rand.p0 <- pB[, -(B + 1), drop = FALSE]
-    }
-    return(res)
+    res <- list(
+      T = T, T0 = T0,
+      flavor = flavor,
+      p = p, p0 = p0
+    )
+    # df = df, df0 = df0)
+  } else if (flavor == "flip") {
+    ## observed test statistics and p-values
+    T <- rowSums(X) / sqrt(n)
+    p <- switch(alternative,
+      "two.sided" = 2 * (pnorm(abs(T), lower.tail = FALSE)),
+      "greater" = pnorm(T, lower.tail = FALSE),
+      "less" = pnorm(T, lower.tail = TRUE)
+    )
+    ## test statistics under H0
+    T0 <- testBySignFlipping(X, B)
+    p0 <- switch(alternative,
+      "two.sided" = 2 * (pnorm(abs(T0), lower.tail = FALSE)),
+      "greater" = pnorm(T0, lower.tail = FALSE),
+      "less" = pnorm(T0, lower.tail = TRUE)
+    )
+    res <- list(T = T, T0 = T0, p = p, p0 = p0, flavor = flavor)
+  }
+
+  if (rand.p.value) {
+    ## get m x (B+1) matrix of pvalues under the null (+ original)
+    ## by sorting null test statistics as proposed by Ge et al (2003)
+    TT <- cbind(T0, T)
+    pB <- switch(alternative,
+      "two.sided" = rowRanks(-abs(TT), ties.method = "max") / (B + 1),
+      "greater" = rowRanks(-TT, ties.method = "max") / (B + 1),
+      "less" = rowRanks(TT, ties.method = "max") / (B + 1)
+    )
+
+    res$rand.p <- pB[, B + 1]
+    res$rand.p0 <- pB[, -(B + 1), drop = FALSE]
+  }
+  return(res)
 }
 
 testBySignFlipping <- function(X, B) {
-    m <- nrow(X)
-    n <- ncol(X)
-    
-    T <- matrix(nrow = m, ncol = B)
-    for (bb in 1:B) {
-        eps <- rbinom(n, 1, prob = 0.5)*2 - 1  ## signs
-        eX <- sweep(X, MARGIN = 2, STATS = eps, FUN = `*`)
-        Tb <- rowSums(eX)/sqrt(n)
-        T[, bb] <- Tb
-    }
-    T
+  m <- nrow(X)
+  n <- ncol(X)
+
+  T <- matrix(nrow = m, ncol = B)
+  for (bb in 1:B) {
+    eps <- rbinom(n, 1, prob = 0.5) * 2 - 1 ## signs
+    eX <- sweep(X, MARGIN = 2, STATS = eps, FUN = `*`)
+    Tb <- rowSums(eX) / sqrt(n)
+    T[, bb] <- Tb
+  }
+  T
 }
