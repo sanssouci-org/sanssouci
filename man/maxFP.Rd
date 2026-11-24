@@ -27,10 +27,10 @@ sim <- gaussianSamples(
 )
 X <- sim$X
 groups <- sim$categ
-p <- rowWelchTests(X, groups)$p.value
+p <- row_welch_tests(X, groups)$p.value
 
 null_groups <- replicate(100, sample(groups))
-p0 <- rowWelchTests(X, null_groups)$p.value
+p0 <- row_welch_tests(X, null_groups)$p.value
 calib <- calibrate(p0, m, alpha = 0.1)
 thr <- calib$thr
 

@@ -5,7 +5,7 @@
 #' @param family A character value, the name of a threshold family. Should be
 #'   one of "Linear", "Beta" and "Simes", or "Oracle". "Linear" and "Simes"
 #'   families are identical.
-#' @param p A vector of 'm' p.values, used for step-down control. If not
+#' @param p A vector of 'm' p-values, used for step-down control. If not
 #'   provided, single step control is performed.
 #' @param max_steps_down A numeric value, the maximum number of steps down to
 #'   perform. Defaults to 10 (but the algorithm generally converges in 1 or 2
@@ -39,11 +39,11 @@
 #' )
 #' Y <- sim$X
 #' groups <- sim$categ
-#' p <- rowWelchTests(Y, groups)$p.value
+#' p <- row_welch_tests(Y, groups)$p_value
 #'
 #' B <- 100
 #' null_groups <- replicate(B, sample(groups))
-#' p0 <- rowWelchTests(Y, null_groups)$p.value
+#' p0 <- row_welch_tests(Y, null_groups)$p_value
 #'
 #' calib0 <- calibrate0(p0, m, alpha = 0.1) # single step
 #' calib <- calibrate(p0, m, alpha = 0.1, p = p)
@@ -59,12 +59,12 @@
 #' groups <- ifelse(colnames(X) == "BCR/ABL", 1, 0) # map to 0/1
 #'
 #' null_groups <- replicate(500, sample(groups))
-#' perm <- rowWelchTests(X, null_groups)
-#' p0 <- perm$p.value
+#' perm <- row_welch_tests(X, null_groups)
+#' p0 <- perm$p_value
 #'
 #' alpha <- 0.1
 #' m <- nrow(X)
-#' p <- rowWelchTests(X, groups)$p.value
+#' p <- row_welch_tests(X, groups)$p_value
 #' calib_L <- calibrate(p0, m, alpha, family = "Linear")
 #' calib_B <- calibrate(p0, m, alpha, family = "Beta", K = 100)
 #'
@@ -180,12 +180,12 @@ calibrate0 <- function(p0, m, alpha,
 #' @param categ An numeric vector of `n` values in `0,1`
 #'   specifying the column indices of the first and second samples.
 #' @param B An integer value, the number of permutations to be performed
-#' @param rowTestFUN a vectorized testing function (same I/O as [rowWelchTests])
+#' @param rowTestFUN a vectorized testing function (same I/O as [row_welch_tests])
 #' @param alternative A character string specifying the alternative hypothesis,
 #'  to be passed to `rowTestFUN`. Must be one of "two.sided" (default),
 #'  "greater" or "less".
 #'
-#' @details The element 'p.value' of the output is a `m x B` matrix whose entry
+#' @details The element 'p_value' of the output is a `m x B` matrix whose entry
 #' i,j corresponds to `p_{(i)}(g_j.X)` with notation of the AoS 2020 paper
 #' cited below (section 4.5).
 #'
@@ -199,23 +199,23 @@ calibrate0 <- function(p0, m, alpha,
 #'
 #' B <- 10
 #' set.seed(123)
-#' perm0 <- sanssouci:::get_perm(X, categ, B, rowWelchTests)
+#' perm0 <- sanssouci:::get_perm(X, categ, B, row_welch_tests)
 #'
 #' # for this particular test 'get_perm' can be bypassed
 #' set.seed(123)
 #' null_groups <- replicate(B, sample(categ))
-#' perm <- rowWelchTests(X, null_groups)
-#' identical(perm0$p.value, perm$p.value)
+#' perm <- row_welch_tests(X, null_groups)
+#' identical(perm0$p_value, perm$p_value)
 #' identical(perm0$statistic, perm$statistic)
 
 #' # Wilcoxon tests
 #' set.seed(123)
-#' perm0 <- sanssouci:::get_perm(X, categ, B, rowWilcoxonTests)
-#' perm <- rowWilcoxonTests(X, null_groups)
-#' identical(perm0$p.value, perm$p.value)
+#' perm0 <- sanssouci:::get_perm(X, categ, B, row_wilcoxonTests)
+#' perm <- row_wilcoxonTests(X, null_groups)
+#' identical(perm0$p_value, perm$p_value)
 #' identical(perm0$statistic, perm$statistic)
 get_perm <- function(X, categ, B,
-                     rowTestFUN = rowWelchTests,
+                     rowTestFUN = row_welch_tests,
                      alternative = c("two.sided", "less", "greater")) {
   m <- nrow(X)
 
@@ -224,12 +224,12 @@ get_perm <- function(X, categ, B,
   for (bb in 1:B) {
     categ_perm <- sample(categ)
     rwt <- rowTestFUN(X, categ = categ_perm, alternative = alternative)
-    pval0[, bb] <- rwt$p.value
+    pval0[, bb] <- rwt$p_value
     stat0[, bb] <- rwt$statistic
   }
 
   list(
-    p.value = pval0,
+    p_value = pval0,
     statistic = stat0
   )
 }
@@ -262,7 +262,7 @@ get_perm <- function(X, categ, B,
 #' categ <- rbinom(n, 1, 0.4)
 #' B <- 10
 #' null_groups <- replicate(B, sample(categ))
-#' p0 <- rowWelchTests(X, null_groups)$p.value
+#' p0 <- row_welch_tests(X, null_groups)$p_value
 #' pivStat <- get_pivotal_stat(p0, m)
 #' quantile(pivStat, 0.2)
 #'

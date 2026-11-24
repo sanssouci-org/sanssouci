@@ -11,7 +11,7 @@
 #' @param B A numeric value, the number of permutations to be performed
 #'
 #' @param row_test_fun A (vectorized) test function used in the two-sample case.
-#'   Defaults to \code{\link{rowWelchTests}}
+#'   Defaults to \code{\link{row_welch_tests}}
 #'
 #' @param alternative A character string specifying the alternative hypothesis.
 #'   Must be one of "two.sided" (default), "greater" or "less".
@@ -119,7 +119,7 @@
 test_by_randomization <- function(X, categ, B,
                                   alternative =
                                     c("two.sided", "less", "greater"),
-                                  row_test_fun = rowWelchTests,
+                                  row_test_fun = row_welch_tests,
                                   rand_p_value = FALSE) {
   alternative <- match.arg(alternative)
   ## sanity checks

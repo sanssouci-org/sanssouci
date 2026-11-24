@@ -1,0 +1,58 @@
+#' Z tests for rows of a matrix
+#'
+#' @param mat A numeric matrix whose rows correspond to \code{m} variables and
+#'   columns to \code{n} observations
+#'
+#' @param categ Either a numeric vector of \code{n} values in \eqn{-1, 1} to
+#'   perform sign flips, or a \code{n x B} matrix stacking \code{B} such
+#'   vectors. If missing, coerced to \code{rep(1, n)}
+#'
+#' @param alternative A character string specifying the alternative hypothesis.
+#'   Must be one of "two.sided" (default), "greater" or "less". `Alternative =
+#'   "greater"` corresponds to a positive mean.
+#'
+#' @return A list containing the following components:
+#' \describe{
+#'   \item{statistics}{the value of the statistics}
+#'   \item{p_values}{the p-values for the tests}}
+#'   Each of these elements is a matrix of size \code{nrow(mat) x B}, coerced
+#'   to a vector of length \code{nrow(mat) if \code{B=1}}
+#' @author Pierre Neuvial
+#'
+#' @export
+#'
+#' @examples
+#'
+#' p <- 1e4 + 1
+#' n <- 380
+#' mat <- matrix(rnorm(p * n, mean = 1), ncol = n)
+#' z_tests <- rowZTests(mat, alternative = "greater")
+#' str(z_tests)
+#'
+#' # compare with apply version:
+#' p_values <- apply(mat, 1, FUN = function(x) {
+#'   stat <- sum(x) / sqrt(length(x))
+#'   pnorm(stat, lower.tail = FALSE)
+#' })
+#' all(abs(z_tests$p.value - p_values) < 1e-10) ## same results
+#'
+#' # Sign flipping
+#' B <- 10
+#' eps <- replicate(B, rbinom(n, 1, 0.5) * 2 - 1) ## Rademacher
+#' z_tests_perm <- row_z_tests(mat, eps, alternative = "greater")
+#' str(z_tests_perm)
+row_z_tests <- function(mat, categ, alternative) {
+  n <- ncol(mat)
+  if (missing(categ)) {
+    categ <- rep(1, n)
+  }
+  statistics <- mat %*% categ / sqrt(n)
+  p_values <- switch(alternative,
+    "two.sided" = 2 * (pnorm(abs(statistics),
+      lower.tail = FALSE
+    )),
+    "greater" = pnorm(statistics, lower.tail = FALSE),
+    "less" = pnorm(statistics, lower.tail = TRUE)
+  )
+  list(statistics = statistics, p_values = p_values)
+}

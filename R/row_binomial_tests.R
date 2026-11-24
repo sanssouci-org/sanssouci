@@ -103,7 +103,7 @@ row_binomial_tests1 <- function(mat, categ,
   if (alternative == "two.sided" && warn) {
     warning("Two-sided p-value not vectorized yet! Looping for now.")
   }
-  categCheck(categ, ncol(mat))
+  categ_check(categ, ncol(mat))
 
   nx <- sum(categ == 1)
   x <- rowSums(mat[, categ == 1])

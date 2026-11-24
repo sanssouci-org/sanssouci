@@ -16,7 +16,7 @@
 #' \describe{
 #'   \item{statistic}{the value of the t-statistics}
 #'   \item{parameter}{the degrees of freedom for the t-statistics}
-#'   \item{p.value}{the p-values for the tests}
+#'   \item{p_value}{the p-values for the tests}
 #'   \item{estimate}{the mean difference between groups}}
 #'   Each of these elements is a matrix of size \code{m x B}, coerced to a
 #'   vector of length \code{m} if \code{B=1}
@@ -41,11 +41,11 @@
 #' n <- 38
 #' mat <- matrix(rnorm(m * n), ncol = n)
 #' categ <- rep(c(0, 1), times = c(27, n - 27))
-#' system.time(fwt <- rowWelchTests(mat, categ, alternative = "greater"))
+#' system.time(fwt <- row_welch_tests(mat, categ, alternative = "greater"))
 #' str(fwt)
 #'
 #' # compare with ordinary t.test:
-#' system.time(pwt <- apply(mat, 1, FUN = function(x) {
+#' s_ystem.time(pwt <- apply(mat, 1, FUN = function(x) {
 #'   t.test(x[categ == 1], x[categ == 0], alternative = "greater")$p.value
 #' }))
 #' all(abs(fwt$p.value - pwt) < 1e-10) ## same results
@@ -53,62 +53,61 @@
 #' # with several contrasts/permutations
 #' B <- 100
 #' categ_perm <- replicate(B, sample(categ))
-#' system.time(fwt_perm <- rowWelchTests(mat, categ_perm,
+#' system.time(fwt_perm <- row_welch_tests(mat, categ_perm,
 #'   alternative = "greater"
 #' ))
 #' str(fwt_perm)
 #'
-rowWelchTests <- function(X, categ,
-                          alternative = c("two.sided", "less", "greater")) {
+row_welch_tests <- function(X, categ,
+                            alternative = c("two.sided", "less", "greater")) {
   alternative <- match.arg(alternative)
   stopifnot(all(categ %in% c(0, 1)))
 
   categ0 <- as.matrix(categ)
   categ1 <- 1 - categ0
 
-  nX <- as.matrix(colSums(categ0))
-  nY <- as.matrix(colSums(categ1))
+  n_x <- as.matrix(colSums(categ0))
+  n_y <- as.matrix(colSums(categ1))
 
   XX <- X * X
-  sumX <- X %*% categ0
-  sum2X <- (XX) %*% categ0
-  mX <- divide_cols(sumX, nX)
+  sum_x <- X %*% categ0
+  sum2_x <- (XX) %*% categ0
+  m_x <- divide_cols(sum_x, n_x)
 
-  num <- sum2X - divide_cols(sumX^2, nX)
-  rm(sumX)
-  rm(sum2X)
+  num <- sum2_x - divide_cols(sum_x^2, n_x)
+  rm(sum_x)
+  rm(sum2_x)
 
   num <- abs(num) # fix rare corner cases where num ~= -1e-15
-  sX <- sqrt(divide_cols(num, nX - 1))
+  s_x <- sqrt(divide_cols(num, n_x - 1))
 
-
-  sumY <- X %*% categ1
-  sum2Y <- (XX) %*% categ1
-  mY <- divide_cols(sumY, nY)
+  sum_y <- X %*% categ1
+  sum2_y <- (XX) %*% categ1
+  m_y <- divide_cols(sum_y, n_y)
   rm(XX)
 
-  num <- sum2Y - divide_cols(sumY^2, nY)
+  num <- sum2_y - divide_cols(sum_y^2, n_y)
   num <- abs(num) # fix rare corner cases where num ~= -1e-15
-  rm(sumY)
-  rm(sum2Y)
-  sY <- sqrt(divide_cols(num, nY - 1))
+  rm(sum_y)
+  rm(sum2_y)
+  s_y <- sqrt(divide_cols(num, n_y - 1))
   rm(num)
 
-  suffWelchTests(mX, mY, sX, sY, nX, nY, alternative = alternative)
+  suff_welch_tests(m_x, m_y, s_x, s_y, n_x, n_y, alternative = alternative)
 }
 
 #' Welch test from sufficient statistics
 #'
-#' @param mx A numeric value or vector, the sample average for condition "x"
-#' @param my A numeric value or vector of the same length as 'mx', the sample
+#' @param m_x A numeric value or vector, the sample average for condition "x"
+#' @param m_y A numeric value or vector of the same length as 'm_x', the sample
 #'   average for condition "y"
-#' @param sx A numeric value or vector of the same length as 'mx', the standard
-#'   deviation for condition "x"
-#' @param sy A numeric value or vector of the same length as 'mx', the standard
-#'   deviation for condition "y"
-#' @param nx A numeric value or vector of the same length as 'mx', the sample
+#' @param s_x A numeric value or vector of the same length as 'm_x', the
+#'   standard deviation for condition "x"
+#' @param s_y A numeric value or vector of the same length as 'm_x', the
+#'   standard deviation for condition "y"
+#' @param n_x A numeric value or vector of the same length as 'm_x', the sample
 #'   size for condition "x"
-#' @param ny A numeric value or vector of the same length as 'mx', the sample
+#' @param n_y A numeric value or vector of the same length as 'm_x', the sample
 #'   size for condition "y"
 #' @param alternative A character string specifying the alternative hypothesis.
 #' @return A list with elements:
@@ -120,8 +119,8 @@ rowWelchTests <- function(X, categ,
 #' @author Pierre Neuvial
 #'
 #' @details In accordance with the implementation of \code{\link[stats]{t.test}}
-#'  and friends, we follow the rule that 'alternative = "greater"' is the
-#'  alternative that 'x' has a larger  mean than 'y'.
+#'   and friends, we follow the rule that 'alternative = "greater"' is the
+#'   alternative that 'x' has a larger  mean than 'y'.
 #'
 #' @noRd
 #' @importFrom stats pt
@@ -132,13 +131,13 @@ rowWelchTests <- function(X, categ,
 #' x <- rnorm(100)
 #' y <- rnorm(34, mean = 1)
 #' target <- t.test(x, y)
-#' swt <- suffWelchTests(mean(x), mean(y), sd(x), sd(y), length(x), length(y))
+#' swt <- suff_welch_tests(mean(x), mean(y), sd(x), sd(y), length(x), length(y))
 #' all.equal(swt$statistic, target$statistic, check.attributes = FALSE)
 #' all.equal(swt$p.value, target$p.value, check.attributes = FALSE)
 #' all.equal(swt$parameter, target$parameter, check.attributes = FALSE)
 #'
 #' target <- t.test(x, y, alternative = "greater")
-#' swt <- suffWelchTests(mean(x), mean(y), sd(x), sd(y),
+#' swt <- suff_welch_tests(mean(x), mean(y), sd(x), sd(y),
 #'   length(x), length(y),
 #'   alternative = "greater"
 #' )
@@ -146,31 +145,31 @@ rowWelchTests <- function(X, categ,
 #' all.equal(swt$p.value, target$p.value, check.attributes = FALSE)
 #' all.equal(swt$parameter, target$parameter, check.attributes = FALSE)
 #'
-suffWelchTests <- function(mx, my, sx, sy, nx, ny,
-                           alternative = c("two.sided", "less", "greater")) {
+suff_welch_tests <- function(m_x, m_y, s_x, s_y, n_x, n_y,
+                             alternative = c("two.sided", "less", "greater")) {
   alternative <- match.arg(alternative)
 
 
-  if (is.vector(mx)) {
+  if (is.vector(m_x)) {
     if (!all(
-      is.vector(my), is.vector(sx), is.vector(sy),
-      is.vector(nx), is.vector(ny)
+      is.vector(m_y), is.vector(s_x), is.vector(s_y),
+      is.vector(n_x), is.vector(n_y)
     )) {
       stop(paste0("All numeric inputs should be of the same type",
         " (either vector or matrix)",
         sep = ""
       ))
     }
-    mx <- as.matrix(mx)
-    my <- as.matrix(my)
-    sx <- as.matrix(sx)
-    sy <- as.matrix(sy)
-    nx <- as.matrix(nx)
-    ny <- as.matrix(ny)
-  } else if (is.matrix(mx)) {
+    m_x <- as.matrix(m_x)
+    m_y <- as.matrix(m_y)
+    s_x <- as.matrix(s_x)
+    s_y <- as.matrix(s_y)
+    n_x <- as.matrix(n_x)
+    n_y <- as.matrix(n_y)
+  } else if (is.matrix(m_x)) {
     if (!all(
-      is.matrix(my), is.matrix(sx), is.matrix(sy),
-      is.matrix(nx), is.matrix(ny)
+      is.matrix(m_y), is.matrix(s_x), is.matrix(s_y),
+      is.matrix(n_x), is.matrix(n_y)
     )) {
       stop(paste0("All numeric inputs should be of the same type",
         "(either vector or matrix)",
@@ -180,33 +179,33 @@ suffWelchTests <- function(mx, my, sx, sy, nx, ny,
   } else {
     stop("Numeric inputs should be vectors or matrices")
   }
-  sse.x <- divide_cols(sx^2, nx) ## sc <-> sqrt((sum2c - sumc^2/nc)/(nc-1))
-  sse.y <- divide_cols(sy^2, ny)
+  sse_x <- divide_cols(s_x^2, n_x) ## sc <-> sqrt((sum2c - sumc^2/nc)/(nc-1))
+  sse_y <- divide_cols(s_y^2, n_y)
 
-  sse <- sse.x + sse.y
+  sse <- sse_x + sse_y
   sse2 <- sse^2
 
   ## test statistic
-  stat <- (mx - my) / sqrt(sse)
+  stat <- (m_x - m_y) / sqrt(sse)
 
   ## approximate degrees of freedom (Welch-Satterthwaite)
-  deno <- divide_cols(sse.x^2, nx - 1) + divide_cols(sse.y^2, ny - 1)
+  deno <- divide_cols(sse_x^2, n_x - 1) + divide_cols(sse_y^2, n_y - 1)
   df <- sse2 / deno
 
   # mean difference
-  meanDiff <- mx - my
+  mean_diff <- m_x - m_y
 
   # coerce to vector if single column
   if (ncol(stat) == 1) {
     stat <- stat[, 1]
     stopifnot(ncol(df) == 1)
     df <- df[, 1]
-    stopifnot(ncol(meanDiff) == 1)
-    meanDiff <- meanDiff[, 1]
+    stopifnot(ncol(mean_diff) == 1)
+    mean_diff <- mean_diff[, 1]
   }
 
   ## p-value
-  pval <- switch(alternative,
+  p_value <- switch(alternative,
     "two.sided" = 2 * (1 - pt(abs(stat), df = df)),
     "greater" = 1 - pt(stat, df = df),
     "less" = pt(stat, df = df)
@@ -215,40 +214,25 @@ suffWelchTests <- function(mx, my, sx, sy, nx, ny,
   list(
     statistic = stat,
     parameter = df,
-    p.value = pval,
-    estimate = meanDiff
+    p.value = p_value,
+    estimate = mean_diff
   )
 }
 
 divide_cols <- function(a, b) sweep(a, 2, b, "/")
 
-categCheck <- function(categ, n) {
-  name <- as.character(substitute(categ))
-  if (length(categ) != n) {
-    stop(name, " should be of length ", n, ", not", length(categ))
-  }
-  categ <- as.factor(categ)
-  cats <- levels(categ)
-  if (!identical(cats, c("0", "1")) && length(cats) <= 2) {
-    stop(
-      "'", name,
-      "' should consist only of '0' and '1' or distinct continuous values."
-    )
-  }
-}
-
 #' Welch test from sufficient statistics
 #'
-#' @param mx A numeric value or vector, the sample average for condition "x"
-#' @param my A numeric value or vector of the same length as 'mx', the sample
+#' @param m_x A numeric value or vector, the sample average for condition "x"
+#' @param m_y A numeric value or vector of the same length as 'm_x', the sample
 #'   average for condition "y"
-#' @param sx A numeric value or vector of the same length as 'mx', the standard
-#'   deviation for condition "x"
-#' @param sy A numeric value or vector of the same length as 'mx', the standard
-#'   deviation for condition "y"
-#' @param nx A numeric value or vector of the same length as 'mx', the sample
+#' @param s_x A numeric value or vector of the same length as 'm_x', the
+#'   standard deviation for condition "x"
+#' @param s_y A numeric value or vector of the same length as 'm_x', the
+#'   standard deviation for condition "y"
+#' @param n_x A numeric value or vector of the same length as 'm_x', the sample
 #'   size for condition "x"
-#' @param ny A numeric value or vector of the same length as 'mx', the sample
+#' @param n_y A numeric value or vector of the same length as 'm_x', the sample
 #'   size for condition "y"
 #' @param alternative A character string specifying the alternative hypothesis.
 #'   Currently only "two.sided" is implemented
@@ -259,8 +243,8 @@ categCheck <- function(categ, n) {
 #' @author Pierre Neuvial
 #'
 #' @details In accordance with the implementation of \code{\link[stats]{t.test}}
-#'  and friends, we follow the rule that 'alternative = "greater"' is the
-#'  alternative that 'x' has a larger  mean than 'y'.
+#'   and friends, we follow the rule that 'alternative = "greater"' is the
+#'   alternative that 'x' has a larger  mean than 'y'.
 #'
 #' @importFrom stats pt
 #' @noRd
@@ -270,13 +254,14 @@ categCheck <- function(categ, n) {
 #' x <- rnorm(100)
 #' y <- rnorm(34, mean = 1)
 #' target <- t.test(x, y)
-#' swt <- suffWelchTests1(mean(x), mean(y), sd(x), sd(y), length(x), length(y))
+#' swt <- suff_welch_tests1(mean(x), mean(y),
+#'                          sd(x), sd(y), length(x), length(y))
 #' all.equal(swt$statistic, target$statistic, check.attributes = FALSE)
 #' all.equal(swt$p.value - target$p.value, check.attributes = FALSE)
 #' all.equal(swt$parameter - target$parameter, check.attributes = FALSE)
 #'
 #' target <- t.test(x, y, alternative = "greater")
-#' swt <- suffWelchTests1(mean(x), mean(y), sd(x), sd(y),
+#' swt <- suff_welch_tests1(mean(x), mean(y), sd(x), sd(y),
 #'   length(x), length(y),
 #'   alternative = "greater"
 #' )
@@ -285,34 +270,34 @@ categCheck <- function(categ, n) {
 #' all.equal(swt$parameter, target$parameter, check.attributes = FALSE)
 #'
 #' @noRd
-suffWelchTests1 <- function(mx, my, sx, sy, nx, ny,
-                            alternative = c("two.sided", "less", "greater")) {
+suff_welch_tests1 <- function(m_x, m_y, s_x, s_y, n_x, n_y,
+                              alternative = c("two.sided", "less", "greater")) {
   alternative <- match.arg(alternative)
   #    if (alternative != "two.sided") stop("altenative", alternative,
   #                                         "not implemented yet!")
 
   ## sanity checks
-  p <- length(mx)
-  stopifnot(length(my) == p)
-  stopifnot(length(sx) == p)
-  stopifnot(length(sy) == p)
-  stopifnot(length(nx) %in% c(1, p))
-  stopifnot(length(ny) %in% c(1, p))
+  p <- length(m_x)
+  stopifnot(length(m_y) == p)
+  stopifnot(length(s_x) == p)
+  stopifnot(length(s_y) == p)
+  stopifnot(length(n_x) %in% c(1, p))
+  stopifnot(length(n_y) %in% c(1, p))
 
-  sse.x <- sx^2 / nx
-  sse.y <- sy^2 / ny
+  sse_x <- s_x^2 / n_x
+  sse_y <- s_y^2 / n_y
 
-  sse <- sse.x + sse.y
+  sse <- sse_x + sse_y
   sse2 <- sse^2
 
   ## test statistic
-  stat <- (mx - my) / sqrt(sse)
+  stat <- (m_x - m_y) / sqrt(sse)
 
   ## approximate degrees of freedom (Welch-Satterthwaite)
-  df <- sse2 / (sse.x^2 / (nx - 1) + sse.y^2 / (ny - 1))
+  df <- sse2 / (sse_x^2 / (n_x - 1) + sse_y^2 / (n_y - 1))
 
   ## p-value
-  pval <- switch(alternative,
+  p_value <- switch(alternative,
     "two.sided" = 2 * (1 - pt(abs(stat), df = df)),
     "greater" = 1 - pt(stat, df = df),
     "less" = pt(stat, df = df)
@@ -321,22 +306,22 @@ suffWelchTests1 <- function(mx, my, sx, sy, nx, ny,
   list(
     statistic = stat,
     parameter = df,
-    p.value = pval,
-    estimate = mx - my
+    p.value = p_value,
+    estimate = m_x - m_y
   )
 }
 
-rowWelchTests1 <- function(mat, categ,
-                           alternative = c("two.sided", "less", "greater")) {
+row_welch_tests1 <- function(mat, categ,
+                             alternative = c("two.sided", "less", "greater")) {
   alternative <- match.arg(alternative)
-  categCheck(categ, ncol(mat))
+  categ_check(categ, ncol(mat))
 
-  sstats <- getSummaryStats(mat, categ = categ)
+  sstats <- get_summary_statistics(mat, categ = categ)
   Y <- sstats[["0"]]
   X <- sstats[["1"]] ## as per the doc of t.test:
   ## 'alternative = "greater"' is the alternative that 'x' has a larger  mean
   ## than 'y'.
-  swt <- suffWelchTests1(X[["mean"]], Y[["mean"]],
+  swt <- suff_welch_tests1(X[["mean"]], Y[["mean"]],
     X[["sd"]], Y[["sd"]],
     X[["n"]], Y[["n"]],
     alternative = alternative
@@ -367,8 +352,8 @@ rowWelchTests1 <- function(mat, categ,
 #'
 #' mat <- matrix(rnorm(3051 * 38), ncol = 38)
 #' cls <- rep(c(0, 1), times = c(27, 11))
-#' stats <- getSummaryStats(mat, categ = cls)
-getSummaryStats <- function(mat, categ) {
+#' stats <- get_summary_statistics(mat, categ = cls)
+get_summary_statistics <- function(mat, categ) {
   stopifnot(ncol(mat) == length(categ))
   cats <- sort(unique(categ))
   res <- list()
