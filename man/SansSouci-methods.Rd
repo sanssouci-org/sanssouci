@@ -7,7 +7,7 @@
 \alias{label.SansSouci}
 \alias{print.SansSouci}
 \alias{get_p_values.SansSouci}
-\alias{foldChanges.SansSouci}
+\alias{get_fold_changes.SansSouci}
 \alias{thresholds.SansSouci}
 \title{Basic methods for class \code{SansSouci}}
 \usage{
@@ -21,7 +21,7 @@
 
 \method{get_p_values}{SansSouci}(object)
 
-\method{foldChanges}{SansSouci}(object)
+\method{get_fold_changes}{SansSouci}(object)
 
 \method{thresholds}{SansSouci}(object)
 }
@@ -63,7 +63,7 @@ res <- fit(a, B = 100, alpha = 0.1)
 label(res)
 print(res)
 str(get_p_values(res))
-str(foldChanges(res))
+str(get_fold_changes(res))
 str(thresholds(res))
 vp <- volcano_plot(res, q = 0.05, r = 0.5)
 

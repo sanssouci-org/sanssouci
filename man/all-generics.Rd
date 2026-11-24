@@ -6,7 +6,7 @@
 \alias{nObs}
 \alias{label}
 \alias{get_p_values}
-\alias{foldChanges}
+\alias{get_fold_changes}
 \alias{thresholds}
 \alias{get_nb_leaves}
 \title{Generic functions for S3 class SansSouci}
@@ -19,7 +19,7 @@ label(object)
 
 get_p_values(object)
 
-foldChanges(object)
+get_fold_changes(object)
 
 thresholds(object)
 
@@ -41,7 +41,7 @@ Generic functions for S3 class SansSouci
 
 \item \code{get_p_values()}: Get p-values
 
-\item \code{foldChanges()}: Get fold changes
+\item \code{get_fold_changes()}: Get fold changes
 
 \item \code{thresholds()}: Get thresholds
 

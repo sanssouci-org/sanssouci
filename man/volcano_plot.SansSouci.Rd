@@ -6,7 +6,7 @@
 \usage{
 \method{volcano_plot}{SansSouci}(
   x,
-  fold_change = foldChanges(x)[contrast_name, ],
+  fold_change = get_fold_changes(x)[contrast_name, ],
   p_values = get_p_values(x)[contrast_name, ],
   p = 1,
   q = 1,
@@ -25,7 +25,7 @@
 
 \item{fold_change}{An optional vector of fold changes, of the same length
 as \code{get_nb_hyp(x)}, used for volcano_plot x-axis.
-If not specified, \code{foldChanges(x)}
+If not specified, \code{get_fold_changes(x)}
 is used.}
 
 \item{p_values}{A vector of p-values, of the same length as \code{get_nb_hyp(x)},

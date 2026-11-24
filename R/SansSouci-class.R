@@ -203,7 +203,7 @@ SansSouciSim <- function(...) {
 #' label(res)
 #' print(res)
 #' str(get_p_values(res))
-#' str(foldChanges(res))
+#' str(get_fold_changes(res))
 #' str(thresholds(res))
 #' vp <- volcano_plot(res, q = 0.05, r = 0.5)
 #'
@@ -395,7 +395,7 @@ generics::fit
 #' plot(res)
 #'
 #' # confidence curve for a subset
-#' S <- which(get_p_values(res) < 0.1 & foldChanges(res) > 0.3)
+#' S <- which(get_p_values(res) < 0.1 & get_fold_changes(res) > 0.3)
 #' plot(res, S = S)
 #'
 #' # plot two confidence curves
@@ -589,18 +589,18 @@ get_p_values.SansSouci <- function(object) {
 #' @describeIn all-generics Get fold changes
 #' @param object An object. See individual methods for specifics
 #' @export
-foldChanges <- function(object) UseMethod("foldChanges")
+get_fold_changes <- function(object) UseMethod("get_fold_changes")
 
 #' @rdname SansSouci-methods
 #' @param object An object of class `SansSouci`
 #' @export
-foldChanges.SansSouci <- function(object) {
+get_fold_changes.SansSouci <- function(object) {
   object$output$estimate
 }
 
 ## An attempt with 'setters'
-# 'foldChanges<-' <- function(object, value) UseMethod("foldChanges")
-# 'foldChanges<-.SansSouci' <- function(object, value) {
+# 'set_fold_changes<-' <- function(object, value) UseMethod("set_fold_changes")
+# 'set_fold_changes<-.SansSouci' <- function(object, value) {
 #     object$output$estimate <- value
 #     object
 # }
@@ -638,7 +638,7 @@ thresholds.SansSouci <- function(object) object$output$thr
 #' plot(res)
 #'
 #' # confidence curve for a subset of hypotheses
-#' S <- which(get_p_values(res) < 0.1 & foldChanges(res) > 0.3)
+#' S <- which(get_p_values(res) < 0.1 & get_fold_changes(res) > 0.3)
 #' plot(res, S = S)
 plot.SansSouci <- function(x, y, xmax = get_nb_hyp(x), ...) {
   cb <- predict(x, all = TRUE, ...)
@@ -756,7 +756,7 @@ predict.SansSouci <- function(object,
 #'
 #' @param fold_change An optional vector of fold changes, of the same length
 #' as `get_nb_hyp(x)`, used for volcano_plot x-axis. 
-#' If not specified, `foldChanges(x)`
+#' If not specified, `get_fold_changes(x)`
 #' is used.
 #' @param p_values A vector of p-values, of the same length as `get_nb_hyp(x)`,
 #' used for volcano_plot y-axis. If not specified, `get_p_values(x)` is used
@@ -779,15 +779,15 @@ predict.SansSouci <- function(object,
 #' res <- fit(a, B = 100, alpha = 0.1)
 #' volcano_plot(res, q = 0.2, r = 0.2, ylim = c(0, 4), feature_label = "gene")
 volcano_plot.SansSouci <- function(x,
-                                  fold_change = foldChanges(x)[contrast_name, ],
-                                  p_values = get_p_values(x)[contrast_name, ],
-                                  p = 1, q = 1, r = 0,
-                                  contrast_name = x$input$contrast_name[1],
-                                  cex = c(0.4, 1.5),
-                                  col = c("#33333333", "#FF0000", "#FF666633"),
-                                  pch = 19, feature_label = "feature",
-                                  ylim = NULL,
-                                  ...) {
+                                   fold_change = get_fold_changes(x)[contrast_name, ],
+                                   p_values = get_p_values(x)[contrast_name, ],
+                                   p = 1, q = 1, r = 0,
+                                   contrast_name = x$input$contrast_name[1],
+                                   cex = c(0.4, 1.5),
+                                   col = c("#33333333", "#FF0000", "#FF666633"),
+                                   pch = 19, feature_label = "feature",
+                                   ylim = NULL,
+                                   ...) {
   object <- x
   if (!(contrast_name %in% rownames(get_p_values(object)))) {
     stop(paste(
