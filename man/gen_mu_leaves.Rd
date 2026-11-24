@@ -50,25 +50,21 @@ s <- 10
 K1 <- floor(m / (s * 4))
 d <- 1
 barmu <- 4
-dd <- dyadic.from.window.size(m, s, method = 2)
+dd <- dyadic_from_window_size(m, s, method = 2)
 leaf_list <- dd$leaf_list
-muC <- gen_mu_leaves(
+mu_const <- gen_mu_leaves(
   m = m, K1 = K1, d = d, grouped = FALSE,
   setting = "const", barmu = barmu, leaf_list = leaf_list
 )
-muC <- gen_mu_leaves(
-  m = m, K1 = K1, d = d, grouped = TRUE,
-  setting = "const", barmu = barmu, leaf_list = leaf_list
-)
-muG <- gen_mu_leaves(
+mu_gauss <- gen_mu_leaves(
   m = m, K1 = K1, d = d, grouped = FALSE,
   setting = "gauss", barmu = barmu, leaf_list = leaf_list
 )
-muP <- gen_mu_leaves(
+mu_pois <- gen_mu_leaves(
   m = m, K1 = K1, d = d, grouped = FALSE,
   setting = "poisson", barmu = barmu, leaf_list = leaf_list
 )
-mu <- cbind(constant = muC, Gaussian = muG, Poisson = muP)
+mu <- cbind(constant = mu_const, gaussian = mu_gauss, poisson = mu_pois)
 matplot(mu, t = "s")
 }
 \seealso{

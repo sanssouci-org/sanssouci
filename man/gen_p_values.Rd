@@ -36,12 +36,12 @@ s <- 10
 K1 <- floor(m / (s * 4))
 d <- 1
 barmu <- 4
-dd <- dyadic.from.window.size(m, s, method = 2)
+dd <- dyadic_from_window_size(m, s, method = 2)
 leaf_list <- dd$leaf_list
 mu <- gen_mu_leaves(
   m = m, K1 = K1, d = d, grouped = FALSE,
   setting = "const", barmu = barmu, leaf_list = leaf_list
 )
-pvals <- gen_p_values(m = m, mu = mu, rho = 0)
-plot(-log(pvals), t = "b")
+p_values <- gen_p_values(m = m, mu = mu, rho = 0)
+plot(-log(p_values), t = "b")
 }

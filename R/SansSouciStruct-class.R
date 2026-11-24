@@ -12,7 +12,7 @@
 #' q <- 7
 #' m <- s*2^q
 #' 
-#' dd <- dyadic.from.window.size(m, s, method = 2)
+#' dd <- dyadic_from_window_size(m, s, method = 2)
 #' obj <- SansSouciStruct(dd$C, dd$leaf_list)
 #' 
 SansSouciStruct <- function(struct, leaves, truth = NULL) {
@@ -43,8 +43,7 @@ SansSouciStruct <- function(struct, leaves, truth = NULL) {
 #' @param direction A character value, the direction used for building the tree.
 #'   Must be one of  "bottom-up" or "top-down"
 #' @param ... Further arguments to be passed to 'SansSouciStruct'
-#' @seealso dyadic.from.leave.list dyadic.from.window.size dyadic.from.height
-#'   dyadic.from.max.height
+#' @seealso dyadic_from_leaf_list dyadic_from_window_size dyadic_from_height
 #' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020).
 #'   Post hoc false positive control for structured hypotheses. Scandinavian
 #'   Journal of Statistics, 47(4), 1114-1148.
@@ -91,10 +90,10 @@ SansSouciDyadic <- function(m, leaf_size = NULL, height = NULL,
 #' nLeaves(obj)
 #' mu <- gen_mu_leaves(m = m, K1 = 8, d = 0.9, grouped = TRUE, 
 #'   setting = "const", barmu = 3, leaf_list = obj$input$leaves)
-#' pvalues <- gen_p_values(m = m, mu = mu, rho = 0)
+#' p_values <- gen_p_values(m = m, mu = mu, rho = 0)
 #' 
 #' alpha <- 0.05
-#' res <- fit(obj, alpha, pvalues, "DKWM")
+#' res <- fit(obj, alpha, p_values, "DKWM")
 #' label(res)
 #' str(pValues(res))
 #' 
@@ -129,7 +128,7 @@ nLeaves.SansSouciStruct <- function(object) {
 #' 
 #' @param object An object of class `SansSouciStruct`
 #' @param alpha Target risk (JER) level
-#' @param p.values A vector of length `nHyp(object)`, 
+#' @param p_values A vector of length `nHyp(object)`, 
 #' @param family A character value describing how the number of true nulls in a set is estimated. Can be either:
 #' - "DKWM": estimation by the Dvoretzky-Kiefer-Wolfowitz-Massart inequality (related to the Storey estimator of the proportion of true nulls), valid for independent p-values
 #' - "HB": estimation by the Holm-Bonferroni method, always valid
@@ -144,7 +143,7 @@ nLeaves.SansSouciStruct <- function(object) {
 #'  - input: see [SansSouciStruct]
 #'  - param: the input parameters, given as a list
 #'  - output: a list of two elements
-#'    - p.values: the input argument 'p.values'
+#'    - p_values: the input argument 'p_values'
 #'    - ZL: the output of the "zeta function" associated to the input parameter 'family', see e.g. [zeta_dkwm]
 #' @details In the particular case where `family=="Simes"` or `family=="Oracle"`, the return value is actually of class `SansSouci` and not `SansSouciStruct`
 #' @seealso zeta_dkwm zeta_hb, zeta_trivial
@@ -162,18 +161,18 @@ nLeaves.SansSouciStruct <- function(object) {
 #' 
 #' mu <- gen_mu_leaves(m = m, K1 = 8, d = 0.9, grouped = TRUE, 
 #'   setting = "const", barmu = 3, leaf_list = obj$input$leaves)
-#' pvalues <- gen_p_values(m = m, mu = mu, rho = 0)
+#' p_values <- gen_p_values(m = m, mu = mu, rho = 0)
 #' 
 #' alpha <- 0.05
 #' S1 <- which(mu != 0)
 #' 
-#' res_DKWM <- fit(obj, alpha, pvalues, "DKWM")
+#' res_DKWM <- fit(obj, alpha, p_values, "DKWM")
 #' predict(res_DKWM, S = S1, what = "FP")
 #' 
-#' res_Simes <- fit(obj, alpha, pvalues, "Simes")
+#' res_Simes <- fit(obj, alpha, p_values, "Simes")
 #' predict(res_Simes, S = S1, what = "FP")
 #' 
-fit.SansSouciStruct <- function(object, alpha, p.values, 
+fit.SansSouciStruct <- function(object, alpha, p_values, 
                                 family = c("DKWM", "HB", "trivial", "Simes", "Oracle"), 
                                 flavor = c("tree", "partition"), ...) {
     family <- match.arg(family)
@@ -185,7 +184,7 @@ fit.SansSouciStruct <- function(object, alpha, p.values,
         }
     }
     m <- nHyp(object)
-    stopifnot(length(p.values) == m)
+    stopifnot(length(p_values) == m)
     params <- list(alpha = alpha, family = family, flavor = flavor)
     if (family %in% c("DKWM", "HB", "trivial")) {
         zeta <- switch(family,
@@ -198,15 +197,15 @@ fit.SansSouciStruct <- function(object, alpha, p.values,
             struct <- struct[length(struct)]
         }
         ZL <- zetas_tree(C = struct, leaf_list = leaves, 
-                         method = zeta, pvalues = p.values, alpha = alpha)
-        output <- list(p.values = p.values, ZL = ZL)
+                         method = zeta, p_values = p_values, alpha = alpha)
+        output <- list(p_values = p_values, ZL = ZL)
     } else if (family == "Simes") {
         thr <- t_linear(alpha, seq_len(m), m) ## NB: we are forcing K=m
-        output <- list(p.values = p.values, thr = thr)
+        output <- list(p_values = p_values, thr = thr)
         class(object) <- "SansSouci" ## so that bound.SansSouci is called...
     } else if (family == "Oracle") {
         thr <- object$input$truth
-        output <- list(p.values = p.values, thr = thr)
+        output <- list(p_values = p_values, thr = thr)
         class(object) <- "SansSouci" ## so that bound.SansSouci is called...
     }
     object$output <- output
@@ -239,7 +238,7 @@ label.SansSouciStruct <- function(object) {
 #' @param object An object of class `SansSouci`
 #' @export
 pValues.SansSouciStruct <- function(object) {
-    object$output$p.values
+    object$output$p_values
 }
 
 #' @export

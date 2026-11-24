@@ -40,10 +40,10 @@ nHyp(obj)
 nLeaves(obj)
 mu <- gen_mu_leaves(m = m, K1 = 8, d = 0.9, grouped = TRUE, 
   setting = "const", barmu = 3, leaf_list = obj$input$leaves)
-pvalues <- gen_p_values(m = m, mu = mu, rho = 0)
+p_values <- gen_p_values(m = m, mu = mu, rho = 0)
 
 alpha <- 0.05
-res <- fit(obj, alpha, pvalues, "DKWM")
+res <- fit(obj, alpha, p_values, "DKWM")
 label(res)
 str(pValues(res))
 

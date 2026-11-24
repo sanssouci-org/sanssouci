@@ -7,7 +7,7 @@
 \method{fit}{SansSouciStruct}(
   object,
   alpha,
-  p.values,
+  p_values,
   family = c("DKWM", "HB", "trivial", "Simes", "Oracle"),
   flavor = c("tree", "partition"),
   ...
@@ -18,7 +18,7 @@
 
 \item{alpha}{Target risk (JER) level}
 
-\item{p.values}{A vector of length \code{nHyp(object)},}
+\item{p_values}{A vector of length \code{nHyp(object)},}
 
 \item{family}{A character value describing how the number of true nulls in a set is estimated. Can be either:
 \itemize{
@@ -44,7 +44,7 @@ A 'fitted' object of class 'SansSouciStruct'. It is a list of three elements
 \item param: the input parameters, given as a list
 \item output: a list of two elements
 \itemize{
-\item p.values: the input argument 'p.values'
+\item p_values: the input argument 'p_values'
 \item ZL: the output of the "zeta function" associated to the input parameter 'family', see e.g. \link{zeta_dkwm}
 }
 }
@@ -63,15 +63,15 @@ obj <- SansSouciDyadic(m, leaf_size = s, direction = "top-down")
 
 mu <- gen_mu_leaves(m = m, K1 = 8, d = 0.9, grouped = TRUE, 
   setting = "const", barmu = 3, leaf_list = obj$input$leaves)
-pvalues <- gen_p_values(m = m, mu = mu, rho = 0)
+p_values <- gen_p_values(m = m, mu = mu, rho = 0)
 
 alpha <- 0.05
 S1 <- which(mu != 0)
 
-res_DKWM <- fit(obj, alpha, pvalues, "DKWM")
+res_DKWM <- fit(obj, alpha, p_values, "DKWM")
 predict(res_DKWM, S = S1, what = "FP")
 
-res_Simes <- fit(obj, alpha, pvalues, "Simes")
+res_Simes <- fit(obj, alpha, p_values, "Simes")
 predict(res_Simes, S = S1, what = "FP")
 
 }

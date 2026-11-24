@@ -53,6 +53,5 @@ Post hoc false positive control for structured hypotheses. Scandinavian
 Journal of Statistics, 47(4), 1114-1148.
 }
 \seealso{
-dyadic.from.leave.list dyadic.from.window.size dyadic.from.height
-dyadic.from.max.height
+dyadic_from_leaf_list dyadic_from_window_size dyadic_from_height
 }

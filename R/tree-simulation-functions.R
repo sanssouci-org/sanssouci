@@ -68,25 +68,21 @@ gauss_bloc <- function(barmu, len) {
 #' K1 <- floor(m / (s * 4))
 #' d <- 1
 #' barmu <- 4
-#' dd <- dyadic.from.window.size(m, s, method = 2)
+#' dd <- dyadic_from_window_size(m, s, method = 2)
 #' leaf_list <- dd$leaf_list
-#' muC <- gen_mu_leaves(
+#' mu_const <- gen_mu_leaves(
 #'   m = m, K1 = K1, d = d, grouped = FALSE,
 #'   setting = "const", barmu = barmu, leaf_list = leaf_list
 #' )
-#' muC <- gen_mu_leaves(
-#'   m = m, K1 = K1, d = d, grouped = TRUE,
-#'   setting = "const", barmu = barmu, leaf_list = leaf_list
-#' )
-#' muG <- gen_mu_leaves(
+#' mu_gauss <- gen_mu_leaves(
 #'   m = m, K1 = K1, d = d, grouped = FALSE,
 #'   setting = "gauss", barmu = barmu, leaf_list = leaf_list
 #' )
-#' muP <- gen_mu_leaves(
+#' mu_pois <- gen_mu_leaves(
 #'   m = m, K1 = K1, d = d, grouped = FALSE,
 #'   setting = "poisson", barmu = barmu, leaf_list = leaf_list
 #' )
-#' mu <- cbind(constant = muC, Gaussian = muG, Poisson = muP)
+#' mu <- cbind(constant = mu_const, gaussian = mu_gauss, poisson = mu_pois)
 #' matplot(mu, t = "s")
 gen_mu_leaves <- function(m, K1, d, grouped, setting, barmu, leaf_list) {
   mu <- numeric(m)
@@ -144,14 +140,14 @@ gen_mu_leaves <- function(m, K1, d, grouped, setting, barmu, leaf_list) {
 #' K1 <- floor(m / (s * 4))
 #' d <- 1
 #' barmu <- 4
-#' dd <- dyadic.from.window.size(m, s, method = 2)
+#' dd <- dyadic_from_window_size(m, s, method = 2)
 #' leaf_list <- dd$leaf_list
 #' mu <- gen_mu_leaves(
 #'   m = m, K1 = K1, d = d, grouped = FALSE,
 #'   setting = "const", barmu = barmu, leaf_list = leaf_list
 #' )
-#' pvals <- gen_p_values(m = m, mu = mu, rho = 0)
-#' plot(-log(pvals), t = "b")
+#' p_values <- gen_p_values(m = m, mu = mu, rho = 0)
+#' plot(-log(p_values), t = "b")
 gen_p_values <- function(m, mu = rep(0, m), rho = 0,
                          alternative = c("two.sided", "less", "greater")) {
   alternative <- match.arg(alternative)

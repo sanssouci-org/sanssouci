@@ -24,7 +24,7 @@ s <- 100
 q <- 7
 m <- s*2^q
 
-dd <- dyadic.from.window.size(m, s, method = 2)
+dd <- dyadic_from_window_size(m, s, method = 2)
 obj <- SansSouciStruct(dd$C, dd$leaf_list)
 
 }
