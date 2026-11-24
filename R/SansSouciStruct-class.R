@@ -97,8 +97,8 @@ SansSouciDyadic <- function(m, leaf_size = NULL, height = NULL,
 #' m <- s * 2^q
 #'
 #' obj <- SansSouciDyadic(m, leaf_size = s, direction = "top-down")
-#' nHyp(obj)
-#' nLeaves(obj)
+#' get_nb_hyp(obj)
+#' get_nb_leaves(obj)
 #' mu <- gen_mu_leaves(
 #'   m = m, K1 = 8, d = 0.9, grouped = TRUE,
 #'   setting = "const", barmu = 3, leaf_list = obj$input$leaves
@@ -108,30 +108,30 @@ SansSouciDyadic <- function(m, leaf_size = NULL, height = NULL,
 #' alpha <- 0.05
 #' res <- fit(obj, alpha, p_values, "DKWM")
 #' label(res)
-#' str(pValues(res))
+#' str(get_p_values(res))
 #'
 NULL
 #> NULL
-#' `nHyp`: get the number of hypotheses
+#' `get_nb_hyp`: get the number of hypotheses
 #'
 #' @rdname SansSouciStruct-methods
 #' @param object An object of class `SansSouciStruct`
 #' @export
-nHyp.SansSouciStruct <- function(object) {
+get_nb_hyp.SansSouciStruct <- function(object) {
   object$input$m
 }
 
 #' @describeIn all-generics Get the number of leaves
 #' @param object An object. See individual methods for specifics
 #' @export
-nLeaves <- function(object) UseMethod("nLeaves")
+get_nb_leaves <- function(object) UseMethod("get_nb_leaves")
 
-#' `nLeaves`: get the number of leaves
+#' `get_nb_leaves`: get the number of leaves
 #'
 #' @rdname SansSouciStruct-methods
 #' @param object An object of class `SansSouciStruct`
 #' @export
-nLeaves.SansSouciStruct <- function(object) {
+get_nb_leaves.SansSouciStruct <- function(object) {
   length(object$input$leaves)
 }
 
@@ -140,7 +140,7 @@ nLeaves.SansSouciStruct <- function(object) {
 #'
 #' @param object An object of class `SansSouciStruct`
 #' @param alpha Target risk (JER) level
-#' @param p_values A vector of length `nHyp(object)`,
+#' @param p_values A vector of length `get_nb_hyp(object)`,
 #' @param family A character value describing how the number of true nulls in a
 #' set is estimated. Can be either:
 #' - "DKWM": estimation by the Dvoretzky-Kiefer-Wolfowitz-Massart
@@ -222,7 +222,7 @@ fit.SansSouciStruct <- function(object, alpha, p_values,
       stop("'truth' should be available for 'Oracle'. See ?SansSouci")
     }
   }
-  m <- nHyp(object)
+  m <- get_nb_hyp(object)
   stopifnot(length(p_values) == m)
   params <- list(alpha = alpha, family = family, flavor = flavor)
   if (family %in% c("DKWM", "HB", "trivial")) {
@@ -274,26 +274,26 @@ label.SansSouciStruct <- function(object) {
   return(lab)
 }
 
-#' `pValues`: get p-values
+#' `get_p_values`: get p-values
 #'
 #' @rdname SansSouciStruct-methods
 #' @param object An object of class `SansSouci`
 #' @export
-pValues.SansSouciStruct <- function(object) {
+get_p_values.SansSouciStruct <- function(object) {
   object$output$p_values
 }
 
 #' @export
-predict.SansSouciStruct <- function(object, S = seq_len(nHyp(object)),
+predict.SansSouciStruct <- function(object, S = seq_len(get_nb_hyp(object)),
                                     what = c("TP", "FDP"), n_out = 1,
                                     order_by_p = TRUE, ...) {
   lab <- label(object)
   if (order_by_p) {
-    ordering <- order(pValues(object))
+    ordering <- order(get_p_values(object))
     S <- ordering[S]
   }
 
-  if (max(S) > nHyp(object)) {
+  if (max(S) > get_nb_hyp(object)) {
     stop("'S' is not a subset of hypotheses")
   }
   struct <- object$input$struct

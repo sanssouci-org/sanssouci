@@ -18,7 +18,7 @@
 
 \item{alpha}{Target risk (JER) level}
 
-\item{p_values}{A vector of length \code{nHyp(object)},}
+\item{p_values}{A vector of length \code{get_nb_hyp(object)},}
 
 \item{family}{A character value describing how the number of true nulls in a
 set is estimated. Can be either:

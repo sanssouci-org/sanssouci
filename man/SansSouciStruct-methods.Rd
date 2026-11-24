@@ -2,19 +2,19 @@
 % Please edit documentation in R/SansSouciStruct-class.R
 \name{SansSouciStruct-methods}
 \alias{SansSouciStruct-methods}
-\alias{nHyp.SansSouciStruct}
-\alias{nLeaves.SansSouciStruct}
+\alias{get_nb_hyp.SansSouciStruct}
+\alias{get_nb_leaves.SansSouciStruct}
 \alias{label.SansSouciStruct}
-\alias{pValues.SansSouciStruct}
+\alias{get_p_values.SansSouciStruct}
 \title{Basic methods for class \code{SansSouciStruct}}
 \usage{
-\method{nHyp}{SansSouciStruct}(object)
+\method{get_nb_hyp}{SansSouciStruct}(object)
 
-\method{nLeaves}{SansSouciStruct}(object)
+\method{get_nb_leaves}{SansSouciStruct}(object)
 
 \method{label}{SansSouciStruct}(object)
 
-\method{pValues}{SansSouciStruct}(object)
+\method{get_p_values}{SansSouciStruct}(object)
 }
 \arguments{
 \item{object}{An object of class \code{SansSouci}}
@@ -22,13 +22,13 @@
 \description{
 Basic methods for class \code{SansSouciStruct}
 
-\code{nHyp}: get the number of hypotheses
+\code{get_nb_hyp}: get the number of hypotheses
 
-\code{nLeaves}: get the number of leaves
+\code{get_nb_leaves}: get the number of leaves
 
 \code{label} Get the label of a post hoc method
 
-\code{pValues}: get p-values
+\code{get_p_values}: get p-values
 }
 \examples{
 s <- 100
@@ -36,8 +36,8 @@ q <- 7
 m <- s * 2^q
 
 obj <- SansSouciDyadic(m, leaf_size = s, direction = "top-down")
-nHyp(obj)
-nLeaves(obj)
+get_nb_hyp(obj)
+get_nb_leaves(obj)
 mu <- gen_mu_leaves(
   m = m, K1 = 8, d = 0.9, grouped = TRUE,
   setting = "const", barmu = 3, leaf_list = obj$input$leaves
@@ -47,6 +47,6 @@ p_values <- gen_p_values(m = m, mu = mu, rho = 0)
 alpha <- 0.05
 res <- fit(obj, alpha, p_values, "DKWM")
 label(res)
-str(pValues(res))
+str(get_p_values(res))
 
 }

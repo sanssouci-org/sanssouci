@@ -2,28 +2,28 @@
 % Please edit documentation in R/SansSouci-class.R, R/SansSouciStruct-class.R
 \name{all-generics}
 \alias{all-generics}
-\alias{nHyp}
+\alias{get_nb_hyp}
 \alias{nObs}
 \alias{label}
-\alias{pValues}
+\alias{get_p_values}
 \alias{foldChanges}
 \alias{thresholds}
-\alias{nLeaves}
+\alias{get_nb_leaves}
 \title{Generic functions for S3 class SansSouci}
 \usage{
-nHyp(object)
+get_nb_hyp(object)
 
 nObs(object)
 
 label(object)
 
-pValues(object)
+get_p_values(object)
 
 foldChanges(object)
 
 thresholds(object)
 
-nLeaves(object)
+get_nb_leaves(object)
 }
 \arguments{
 \item{object}{An object. See individual methods for specifics}
@@ -33,18 +33,18 @@ Generic functions for S3 class SansSouci
 }
 \section{Functions}{
 \itemize{
-\item \code{nHyp()}: ' Get the number of hypotheses
+\item \code{get_nb_hyp()}: ' Get the number of hypotheses
 
 \item \code{nObs()}: Get the number of observations
 
 \item \code{label()}: Get the label of hypotheses tested
 
-\item \code{pValues()}: Get p-values
+\item \code{get_p_values()}: Get p-values
 
 \item \code{foldChanges()}: Get fold changes
 
 \item \code{thresholds()}: Get thresholds
 
-\item \code{nLeaves()}: Get the number of leaves
+\item \code{get_nb_leaves()}: Get the number of leaves
 
 }}

@@ -2,16 +2,16 @@
 % Please edit documentation in R/SansSouci-class.R
 \name{SansSouci-methods}
 \alias{SansSouci-methods}
-\alias{nHyp.SansSouci}
+\alias{get_nb_hyp.SansSouci}
 \alias{nObs.SansSouci}
 \alias{label.SansSouci}
 \alias{print.SansSouci}
-\alias{pValues.SansSouci}
+\alias{get_p_values.SansSouci}
 \alias{foldChanges.SansSouci}
 \alias{thresholds.SansSouci}
 \title{Basic methods for class \code{SansSouci}}
 \usage{
-\method{nHyp}{SansSouci}(object)
+\method{get_nb_hyp}{SansSouci}(object)
 
 \method{nObs}{SansSouci}(object)
 
@@ -19,7 +19,7 @@
 
 \method{print}{SansSouci}(x, ..., verbose = FALSE)
 
-\method{pValues}{SansSouci}(object)
+\method{get_p_values}{SansSouci}(object)
 
 \method{foldChanges}{SansSouci}(object)
 
@@ -37,7 +37,7 @@
 \description{
 Basic methods for class \code{SansSouci}
 
-\code{nHyp}: get the number of hypotheses
+\code{get_nb_hyp}: get the number of hypotheses
 
 \code{nObs} Get the number of observations
 
@@ -45,7 +45,7 @@ Basic methods for class \code{SansSouci}
 
 Print 'SansSouci' objects
 
-\code{pValues}: get p-values
+\code{get_p_values}: get p-values
 
 \code{thresholds}: get thresholds
 }
@@ -55,16 +55,16 @@ groups <- ifelse(colnames(expr_ALL) == "NEG", 0, 1)
 table(groups)
 a <- SansSouci(Y = expr_ALL, groups = groups)
 print(a)
-nHyp(a)
+get_nb_hyp(a)
 nObs(a)
 label(a)
 
 res <- fit(a, B = 100, alpha = 0.1)
 label(res)
 print(res)
-str(pValues(res))
+str(get_p_values(res))
 str(foldChanges(res))
 str(thresholds(res))
-vp <- volcanoPlot(res, q = 0.05, r = 0.5)
+vp <- volcano_plot(res, q = 0.05, r = 0.5)
 
 }
