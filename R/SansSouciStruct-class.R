@@ -69,9 +69,9 @@ SansSouciDyadic <- function(m, leaf_size = NULL, height = NULL,
         if (!is.null(height)) {
             warning("Both 'leaf_size' and 'height' provided: ignoring 'height'")
         }
-        dd <- dyadic.from.window.size(m, s = leaf_size, method)
+        dd <- dyadic_from_window_size(m, s = leaf_size, method)
     } else {
-        dd <- dyadic.from.height(m, H = height, method)
+        dd <- dyadic_from_height(m, H = height, method)
     }
     SansSouciStruct(struct = dd$C, leaves = dd$leaf_list, ...)
 }
@@ -147,7 +147,7 @@ nLeaves.SansSouciStruct <- function(object) {
 #'    - p.values: the input argument 'p.values'
 #'    - ZL: the output of the "zeta function" associated to the input parameter 'family', see e.g. [zeta.DKWM]
 #' @details In the particular case where `family=="Simes"` or `family=="Oracle"`, the return value is actually of class `SansSouci` and not `SansSouciStruct`
-#' @seealso zeta.DKWM zeta.HB, zeta.tricial
+#' @seealso zeta_dkwm zeta_hb, zeta_trivial
 #' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
 #' @references Dvoretzky, A., Kiefer, J., and Wolfowitz, J. (1956). Asymptotic minimax character of the sample distribution function and of the classical multinomial estimator. The Annals of Mathematical Statistics, pages 642-669.
 #' @references Holm, S. A simple sequentially rejective multiple test procedure. Scandinavian Journal of Statistics 6 (1979), pp. 65-70.
@@ -189,15 +189,15 @@ fit.SansSouciStruct <- function(object, alpha, p.values,
     params <- list(alpha = alpha, family = family, flavor = flavor)
     if (family %in% c("DKWM", "HB", "trivial")) {
         zeta <- switch(family,
-                       "DKWM" = zeta.DKWM,
-                       "HB" = zeta.HB,
-                       "trivial" = zeta.trivial)
+                       "DKWM" = zeta_dkwm,
+                       "HB" = zeta_hb,
+                       "trivial" = zeta_trivial)
         struct <- object$input$struct
         leaves <- object$input$leaves
         if (flavor == "partition") {
             struct <- struct[length(struct)]
         }
-        ZL <- zetas.tree(C = struct, leaf_list = leaves, 
+        ZL <- zetas_tree(C = struct, leaf_list = leaves, 
                          method = zeta, pvalues = p.values, alpha = alpha)
         output <- list(p.values = p.values, ZL = ZL)
     } else if (family == "Simes") {
@@ -271,7 +271,7 @@ predict.SansSouciStruct <- function(object, S = seq_len(nHyp(object)),
     }
     max_FP <- numeric(length(idxs))
     for (ii in seq(along = idxs)) {
-        max_FP[ii] <- V.star(S[1:idxs[ii]], C = struct, 
+        max_FP[ii] <- v_star(S[1:idxs[ii]], C = struct, 
                              ZL = ZL, leaf_list = leaves)
     }
     bounds <- formatBounds(max_FP, idxs = idxs, lab = lab, what = what, all = TRUE)
