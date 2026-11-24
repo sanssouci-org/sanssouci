@@ -45,7 +45,7 @@ A 'fitted' object of class 'SansSouciStruct'. It is a list of three elements
 \item output: a list of two elements
 \itemize{
 \item p.values: the input argument 'p.values'
-\item ZL: the output of the "zeta function" associated to the input parameter 'family', see e.g. \link{zeta.DKWM}
+\item ZL: the output of the "zeta function" associated to the input parameter 'family', see e.g. \link{zeta_dkwm}
 }
 }
 }
@@ -61,9 +61,9 @@ q <- 7
 m <- s*2^q
 obj <- SansSouciDyadic(m, leaf_size = s, direction = "top-down")
 
-mu <- gen.mu.leaves(m = m, K1 = 8, d = 0.9, grouped = TRUE, 
+mu <- gen_mu_leaves(m = m, K1 = 8, d = 0.9, grouped = TRUE, 
   setting = "const", barmu = 3, leaf_list = obj$input$leaves)
-pvalues <- gen.p.values(m = m, mu = mu, rho = 0)
+pvalues <- gen_p_values(m = m, mu = mu, rho = 0)
 
 alpha <- 0.05
 S1 <- which(mu != 0)
@@ -85,5 +85,5 @@ Holm, S. A simple sequentially rejective multiple test procedure. Scandinavian J
 Massart, P. (1990). The tight constant in the Dvoretzky-Kiefer-Wolfowitz inequality. The Annals of Probability, pages 1269-1283.
 }
 \seealso{
-zeta.DKWM zeta.HB, zeta.tricial
+zeta_dkwm zeta_hb, zeta_trivial
 }

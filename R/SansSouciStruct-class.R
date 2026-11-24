@@ -145,7 +145,7 @@ nLeaves.SansSouciStruct <- function(object) {
 #'  - param: the input parameters, given as a list
 #'  - output: a list of two elements
 #'    - p.values: the input argument 'p.values'
-#'    - ZL: the output of the "zeta function" associated to the input parameter 'family', see e.g. [zeta.DKWM]
+#'    - ZL: the output of the "zeta function" associated to the input parameter 'family', see e.g. [zeta_dkwm]
 #' @details In the particular case where `family=="Simes"` or `family=="Oracle"`, the return value is actually of class `SansSouci` and not `SansSouciStruct`
 #' @seealso zeta_dkwm zeta_hb, zeta_trivial
 #' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
