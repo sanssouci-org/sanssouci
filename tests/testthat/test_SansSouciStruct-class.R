@@ -17,7 +17,7 @@ test_that("Correctness of the constructor of SansSouciStruct", {
   obj <- SansSouciDyadic(m, leaf_size = s, direction = direction)
   expect_s3_class(obj, "SansSouciStruct")
 
-  dd <- dyadic.from.window.size(m, s, method = dir12)
+  dd <- dyadic_from_window_size(m, s, method = dir12)
   obj1 <- SansSouciStruct(dd$C, dd$leaf_list)
   expect_s3_class(obj, "SansSouciStruct")
 
@@ -27,7 +27,6 @@ test_that("Correctness of the constructor of SansSouciStruct", {
   obj <- SansSouciDyadic(m, height = 8, direction = direction)
   expect_s3_class(obj, "SansSouciStruct")
 
-  dd <- dyadic.from.height(m, 8, method = dir12)
   obj1 <- SansSouciStruct(dd$C, dd$leaf_list)
   expect_s3_class(obj, "SansSouciStruct")
 
@@ -62,16 +61,16 @@ test_that("'fit.SansSouciStruct' reproduces the results of 'Vstar'", {
   m1 <- r * K1 * s
   barmu <- 3
 
-  mu <- gen.mu.leaves(
+  mu <- gen_mu_leaves(
     m = m, K1 = K1, d = r, grouped = TRUE,
     setting = "const",
     barmu = barmu, leaf_list = obj$input$leaves
   )
-  mu_no <- gen.mu.noleaves(m = m, pi0 = 1, barmu = barmu)
+  mu_no <- gen_mu_noleaves(m = m, pi0 = 1, barmu = barmu)
   gb <- gauss_bloc(barmu, 10)
 
   obj$input$truth <- as.numeric(mu != 0)
-  pvalues <- gen.p.values(m = m, mu = mu, rho = 0)
+  pvalues <- gen_p_values(m = m, mu = mu, rho = 0)
 
   ord <- order(pvalues)
   idxs <- round(c(
@@ -110,7 +109,7 @@ test_that("'fit.SansSouciStruct' reproduces the results of 'Vstar'", {
 
   # DKWM 1 (tree)
   res_DKWM <- fit(obj, alpha,
-    p.values = pvalues,
+    p_values = pvalues,
     family = "DKWM"
   )
   V <- sapply(idxs1, FUN = function(ii) {
@@ -120,7 +119,7 @@ test_that("'fit.SansSouciStruct' reproduces the results of 'Vstar'", {
   # DKWM 2 (tree)
   struct <- obj$input$struct
   leaves <- obj$input$leaves
-  ZL <- zetas.tree(struct, leaves, zeta.DKWM, pvalues, alpha = alpha)
+  ZL <- zetas_tree(struct, leaves, zeta_dkwm, p_values, alpha = alpha)
   VV <- sapply(idxs1, FUN = function(ii) {
     V.star(ord[1:ii],
       C = struct,
