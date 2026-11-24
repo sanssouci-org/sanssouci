@@ -1,28 +1,48 @@
 #' Create a complete dyadic tree structure
 #'
 #' @description
-#' Produce a set of regions with forest structure, with a single tree, which is dyadic.
+#' Produce a set of regions with forest structure,
+#' with a single tree, which is dyadic.
 #'
 #'
 #' @name dyadic
 #' @details \describe{
-#' \item{\code{dyadic.from.leaf_list}}{Dyadic tree structure from a given list of atoms/leafs}
-#' \item{\code{dyadic.from.window.size}}{Dyadic tree structure from window size: the number of elements in each atom/leaf is set to \code{s}}
-#' \item{\code{dyadic.from.height}}{Dyadic tree structure from height: the total height of the tree is set to \code{H}}
+#' \item{\code{dyadic.from.leaf_list}}{
+#' Dyadic tree structure from a given list of atoms/leafs
+#' }
+#' \item{\code{dyadic.from.window.size}}{
+#' Dyadic tree structure from window size:
+#' the number of elements in each atom/leaf is set to \code{s}
+#' }
+#' \item{\code{dyadic.from.height}}{
+#' Dyadic tree structure from height:
+#' the total height of the tree is set to \code{H}
+#' }
 #' }
 #'
 #' @param method A numeric value. If \code{method == 1}, start from the leaves
-#' and group nodes of a same height 2 by 2 as long as possible (note that this can introduce gaps).
+#' and group nodes of a same height 2 by 2 as
+#' long as possible (note that this can introduce gaps).
 #' If \code{method==2}, start from the root and divide nodes in 2 nodes of equal
 #' size as long as possible
 #'
 #' @return A list with two named elements:\describe{
-#' \item{\code{leaf_list}}{A list of vectors representing the atoms of the forest structure. See [V.star()] for more information.}
-#' \item{\code{C}}{A list of list representing the forest structure. See [V.star()] for more information.}
+#' \item{\code{leaf_list}}{
+#' A list of vectors representing the atoms of the forest structure.
+#' See [V.star()] for more information.
+#' }
+#' \item{\code{C}}{
+#' A list of list representing the forest structure.
+#' See [V.star()] for more information.
+#' }
 #' }
 #'
-#' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
-#' @references Durand G. (2025). A fast algorithm to compute a curve of confidence upper bounds for the False Discovery Proportion using a reference family with a forest structure. arXiv:2502.03849.
+#' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020).
+#' Post hoc false positive control for structured hypotheses.
+#' Scandinavian Journal of Statistics, 47(4), 1114-1148.
+#' @references Durand G. (2025).
+#' Fast confidence bounds for the false discovery
+#' proportion over a path of hypotheses. Computo.
 #' @examples
 #' m <- 6
 #' dd <- dyadic.from.window.size(m, s = 2, method = 2)
@@ -39,7 +59,8 @@
 #' str(dd)
 NULL
 
-#' @param leaf_list A list of vectors representing the atoms of the forest structure. See [V.star()] for more information.
+#' @param leaf_list A list of vectors representing the atoms of the
+#' forest structure. See [V.star()] for more information.
 #' @export
 #' @rdname dyadic
 dyadic.from.leaf_list <- function(leaf_list, method) {
@@ -112,8 +133,10 @@ dyadic.from.window.size <- function(m, s, method) {
   return(list(leaf_list = leaf_list, C = C))
 }
 
-#' @param H An integer value, the desired maximal height of the tree. If NULL (by default),
-#' use \code{floor(2 + log2(m - 1))} which gives the maximum achievable height given \code{m}.
+#' @param H An integer value, the desired maximal height of the tree.
+#' If NULL (by default),
+#' use \code{floor(2 + log2(m - 1))} which gives the
+#' maximum achievable height given \code{m}.
 #' @export
 #' @rdname dyadic
 dyadic.from.height <- function(m, H = NULL, method) {
@@ -123,7 +146,16 @@ dyadic.from.height <- function(m, H = NULL, method) {
   if (m <= 2^(H - 2)) {
     oldH <- H
     H <- ifelse(m == 1, 1, floor(2 + log2(m - 1)))
-    warning("H=", oldH, " is too large for m=", m, ", \nH=", oldH, " reduced to H=", H)
+    warning(
+      "H=",
+      oldH,
+      " is too large for m=",
+      m,
+      ", \nH=",
+      oldH,
+      " reduced to H=",
+      H
+    )
   }
   if (m < 2^(H - 1)) {
     leaf_list <- as.list(1:m)
@@ -135,7 +167,10 @@ dyadic.from.height <- function(m, H = NULL, method) {
       leaf_list <- c(leaf_list, list(seq_len(base + 1) + (i - 1) * (base + 1)))
     }
     for (i in seq_len(2^(H - 1) - plus1)) {
-      leaf_list <- c(leaf_list, list(plus1 * (base + 1) + seq_len(base) + (i - 1) * base))
+      leaf_list <- c(
+        leaf_list,
+        list(plus1 * (base + 1) + seq_len(base) + (i - 1) * base)
+      )
     }
   }
   C <- dyadic.from.leaf_list(leaf_list, method)$C
@@ -145,33 +180,66 @@ dyadic.from.height <- function(m, H = NULL, method) {
 #' Estimate the number of true null hypotheses among a set of p-values
 #'
 #' @description
-#' An upper bound on the number of true null hypotheses in the region associated to
-#' the \eqn{p}-values \code{pval}
+#' An upper bound on the number of true null hypotheses in the region associated
+#' to the \eqn{p}-values \code{pval}
 #' is computed with confidence \code{1 - lambda}.
 #' The functions described here can be used as the \code{method} argument
 #' of [zetas.tree()].
 #'
 #' @param pval A vector of \eqn{p}-values.
-#' @param lambda A numeric value in \eqn{[0,1]}, the target error level of the test.
-#' @param k The positive integer \eqn{k} used by the \eqn{k}-Bonferroni procedure. By default it is equal to 1.
-#' @param ... Additional arguments that may be passed to specific \code{zeta} functions.
+#' @param lambda A numeric value in \eqn{[0,1]},
+#' the target error level of the test.
+#' @param k The positive integer \eqn{k} used by the
+#' \eqn{k}-Bonferroni procedure. By default it is equal to 1.
+#' @param ... Additional arguments that may be passed
+#' to specific \code{zeta} functions.
 #' @name zeta
 #' @return The number of true nulls is over-estimated as follows:
 #' \describe{
-#' \item{\code{zeta.DKWM}}{Inversion of the Dvoretzky-Kiefer-Wolfowitz-Massart inequality (related to the Storey estimator of the proportion of true nulls) with parameter \code{lambda}}
-#' \item{\code{zeta.HB}}{Number of conserved hypotheses by the Holm-Bonferroni procedure with parameter \code{lambda}}
-#' \item{\code{zeta.kBonf}}{Number of conserved hypotheses by the \eqn{k}-Bonferroni procedure with parameter \code{lambda}, plus \eqn{k-1}}
-#' \item{\code{zeta.trivial}}{The size of the p-value set which is the trivial upper bound (\code{lambda} is not used)}
+#' \item{\code{zeta.DKWM}}{
+#' Inversion of the Dvoretzky-Kiefer-Wolfowitz-Massart inequality
+#' (related to the Storey estimator of the proportion of true nulls)
+#' with parameter \code{lambda}
 #' }
-#' @details The \eqn{k}-Bonferroni procedure controls the \eqn{k}-Familywise Error Rate (FWER) at the desired level, hence the number of conserved hypotheses, plus \eqn{k-1},
-#' is a suitable upper bound (because up to \eqn{k-1} rejected hypotheses are also true nulls). For \eqn{k=1} (the default), it is the regular Bonferroni procedure.
-#' The Holm-Bonferroni procedure controls the FWER, hence the number of conserved hypotheses is a suitable upper bound.
-#' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
-#' @references Dvoretzky, A., Kiefer, J., and Wolfowitz, J. (1956). Asymptotic minimax character of the sample distribution function and of the classical multinomial estimator. The Annals of Mathematical Statistics, pages 642-669.
-#' @references Holm, S. A simple sequentially rejective multiple test procedure. Scandinavian Journal of Statistics 6 (1979), pp. 65-70.
-#' @references Massart, P. (1990). The tight constant in the Dvoretzky-Kiefer-Wolfowitz inequality. The Annals of Probability, pages 1269-1283.
-#' @references Storey, J. D. (2002). A direct approach to false discovery rates. Journal of the Royal Statistical Society: Series B (Statistical Methodology), 64(3):479-498.
-#' @references Durand G. (2025). A fast algorithm to compute a curve of confidence upper bounds for the False Discovery Proportion using a reference family with a forest structure. arXiv:2502.03849.
+#' \item{\code{zeta.HB}}{
+#' Number of conserved hypotheses by the Holm-Bonferroni
+#' procedure with parameter \code{lambda}
+#' }
+#' \item{\code{zeta.kBonf}}{
+#' Number of conserved hypotheses by the \eqn{k}-Bonferroni
+#' procedure with parameter \code{lambda}, plus \eqn{k-1}
+#' }
+#' \item{\code{zeta.trivial}}{
+#' The size of the p-value set which is the trivial
+#' upper bound (\code{lambda} is not used)
+#' }
+#' }
+#' @details The \eqn{k}-Bonferroni procedure controls the
+#' \eqn{k}-Familywise Error Rate (FWER) at the desired level,
+#' hence the number of conserved hypotheses, plus \eqn{k-1},
+#' is a suitable upper bound
+#' (because up to \eqn{k-1} rejected hypotheses are also true nulls).
+#' For \eqn{k=1} (the default), it is the regular Bonferroni procedure.
+#' The Holm-Bonferroni procedure controls the FWER, hence the number
+#' of conserved hypotheses is a suitable upper bound.
+#' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020).
+#' Post hoc false positive control for structured hypotheses.
+#' Scandinavian Journal of Statistics, 47(4), 1114-1148.
+#' @references Dvoretzky, A., Kiefer, J., and Wolfowitz, J. (1956).
+#' Asymptotic minimax character of the sample distribution function and of
+#' the classical multinomial estimator.
+#' The Annals of Mathematical Statistics, pages 642-669.
+#' @references Holm, S. A simple sequentially rejective multiple test procedure.
+#' Scandinavian Journal of Statistics 6 (1979), pp. 65-70.
+#' @references Massart, P. (1990). The tight constant in the
+#' Dvoretzky-Kiefer-Wolfowitz inequality.
+#' The Annals of Probability, pages 1269-1283.
+#' @references Storey, J. D. (2002). A direct approach to
+#' false discovery rates.
+#' Journal of the Royal Statistical Society: Series B (Statistical Methodology),
+#' 64(3):479-498.
+#' @references Durand G. (2025). Fast confidence bounds for the false
+#' discovery proportion over a path of hypotheses. Computo.
 #' @examples
 #' x <- rnorm(100, mean = c(rep(c(0, 2), each = 50)))
 #' pval <- 1 - pnorm(x)
@@ -198,7 +266,8 @@ zeta.HB <- function(pval, lambda, ...) {
     return(m - indexes[1] + 1)
   }
 }
-# TODO: zeta.HB.sorted that assumes that the pvalues are sorted and doesn't sort them
+# TODO: zeta.HB.sorted that assumes that the pvalues
+# are sorted and doesn't sort them
 
 #' @rdname zeta
 #' @export
@@ -233,7 +302,8 @@ zeta.DKWM <- function(pval, lambda, ...) {
 
 #' Number of unique regions in a reference family with forest structure
 #'
-#' @param C A list of list representing the forest structure. See [V.star()] for more information.
+#' @param C A list of list representing the forest structure.
+#' See [V.star()] for more information.
 #'
 #' @return An integer, the number of regions.
 #'
@@ -250,32 +320,60 @@ nb.elements <- function(C) {
 #' Estimate of the proportion of true nulls in each node of a tree
 #'
 #' @description
-#' Takes a forest structure as input, given by the couple \code{C}, \code{leaf_list}
-#' and returns the corresponding \eqn{\zeta_k}'s according to the method(s) chosen.
+#' Takes a forest structure as input, given by
+#' the couple \code{C}, \code{leaf_list}
+#' and returns the corresponding \eqn{\zeta_k}'s
+#' according to the method(s) chosen.
 #'
-#' @param C A list of list representing the forest structure. See [V.star()] for more information.
-#' @param leaf_list A list of vectors representing the atoms of the forest structure. See [V.star()] for more information.
-#' @param method A function with arguments \code{(pval, lambda)} that can compute an upper bound on the false positives in the region associated to
-#' the \eqn{p}-values \code{pval} at confidence level \code{1 - lambda}. It can also be a list of such functions, where the \code{h}-th function
-#' is used at depth \code{h} in the tree structure, that is on the \eqn{R_k}'s represented by the elements found in \code{C[[h]]}. Finally, it can also be a list
-#' of lists of such functions, mimicking the structure of \code{C} itself, that is, \code{method[[h]][[j]]} is applied the \eqn{R_k} represented by \code{C[[h]][[j]]}.
-#' @param pvalues A vector of \eqn{p}-values, must be of size \code{m}, with \code{m} the highest element found in the vectors of \code{leaf_list}.
+#' @param C A list of list representing the forest structure.
+#' See [V.star()] for more information.
+#' @param leaf_list A list of vectors representing the atoms of the forest
+#' structure. See [V.star()] for more information.
+#' @param method A function with arguments \code{(pval, lambda)} that can
+#' compute an upper bound on the false positives in the region associated to
+#' the \eqn{p}-values \code{pval} at confidence level \code{1 - lambda}.
+#' It can also be a list of such functions, where the \code{h}-th function
+#' is used at depth \code{h} in the tree structure, that is on the \eqn{R_k}'s
+#' represented by the elements found in \code{C[[h]]}.
+#' Finally, it can also be a list
+#' of lists of such functions, mimicking the structure of \code{C} itself,
+#' that is, \code{method[[h]][[j]]} is applied the \eqn{R_k}
+#' represented by \code{C[[h]][[j]]}.
+#' @param pvalues A vector of \eqn{p}-values, must be of size \code{m},
+#' with \code{m} the highest element found in the vectors of \code{leaf_list}.
 #' @param alpha A target error level in \eqn{]0,1[]}.
-#' @param refine A boolean, \code{FALSE} by default. Whether to use the step-down refinement to try to produce smaller \eqn{\zeta_k}'s, see Details.
-#' @param verbose A boolean, \code{FALSE} by default. Whether to print information about the (possibly multiple) round(s) of step-down refinement.
-#' @param ... Additional arguments that may be passed to specific \code{zeta} functions.
+#' @param refine A boolean, \code{FALSE} by default.
+#' Whether to use the step-down refinement to try to
+#' produce smaller \eqn{\zeta_k}'s, see Details.
+#' @param verbose A boolean, \code{FALSE} by default.
+#' Whether to print information about the (possibly multiple)
+#' round(s) of step-down refinement.
+#' @param ... Additional arguments that may be passed to
+#' specific \code{zeta} functions.
 #'
-#' @return \code{ZL}: A list of integer vectors representing the upper bounds \eqn{\zeta_k} of the forest structure. See [V.star()] for more information.
+#' @return \code{ZL}: A list of integer vectors representing
+#' the upper bounds \eqn{\zeta_k} of the forest structure.
+#' See [V.star()] for more information.
 #'
-#' @details The proportion of true nulls in each node is estimated by an union bound on the regions.
-#' That is, the provided method(s) is/are applied at level \eqn{\frac{\alpha}{K}} where \eqn{K} is the number of regions.
-#' In the step-down refinement, if we find a \eqn{R_k} with associated \eqn{\zeta_k=0}, that is, we think that the region
-#' contains only false null hypotheses, we can remove it and run again the \eqn{\zeta_k}'s computation using \eqn{K-1} instead of
-#' \eqn{K} in the union bound, and so on until we don't reduce the "effective" number of regions.
+#' @details The proportion of true nulls in each node is estimated by
+#' an union bound on the regions.
+#' That is, the provided method(s) is/are applied at level
+#' \eqn{\frac{\alpha}{K}} where \eqn{K} is the number of regions.
+#' In the step-down refinement, if we find a \eqn{R_k} with associated
+#' \eqn{\zeta_k=0}, that is, we think that the region
+#' contains only false null hypotheses, we can remove it and run again
+#' the \eqn{\zeta_k}'s computation using \eqn{K-1} instead of
+#' \eqn{K} in the union bound, and so on until we don't reduce
+#' the "effective" number of regions.
 #'
-#' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
-#' @references Durand, G. (2018). Multiple testing and post hoc bounds for heterogeneous data. PhD thesis, see Appendix B.2 for the step-down refinement.
-#' @references Durand G. (2025). A fast algorithm to compute a curve of confidence upper bounds for the False Discovery Proportion using a reference family with a forest structure. arXiv:2502.03849.
+#' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020).
+#' Post hoc false positive control for structured hypotheses.
+#' Scandinavian Journal of Statistics, 47(4), 1114-1148.
+#' @references Durand, G. (2018). Multiple testing and
+#' post hoc bounds for heterogeneous data.
+#' PhD thesis, see Appendix B.2 for the step-down refinement.
+#' @references Durand G. (2025). Fast confidence bounds for the false discovery
+#' proportion over a path of hypotheses. Computo.
 #' @export
 #' @examples
 #' m <- 1000
@@ -286,7 +384,14 @@ nb.elements <- function(C) {
 #' method <- zeta.trivial
 #' ZL <- zetas.tree(C, leaf_list, method, pvalues, alpha = 0.05)
 #' ZL
-zetas.tree <- function(C, leaf_list, method, pvalues, alpha, refine = FALSE, verbose = FALSE, ...) {
+zetas.tree <- function(C,
+                       leaf_list,
+                       method,
+                       pvalues,
+                       alpha,
+                       refine = FALSE,
+                       verbose = FALSE,
+                       ...) {
   H <- length(C)
   K <- nb.elements(C)
   ZL <- list()
@@ -306,7 +411,9 @@ zetas.tree <- function(C, leaf_list, method, pvalues, alpha, refine = FALSE, ver
           pval <- pvalues[unlist(leaf_list[Rk[1]:Rk[2]])]
           args_zeta <- list(...)
           if ("pCDFlist" %in% names(args_zeta)) {
-            args_zeta$pCDFlist <- args_zeta$pCDFlist[unlist(leaf_list[Rk[1]:Rk[2]])]
+            args_zeta$pCDFlist <- args_zeta$pCDFlist[unlist(
+              leaf_list[Rk[1]:Rk[2]]
+            )]
           }
           if (typeof(method) == "list") {
             if (typeof(method[[h]]) == "list") {
@@ -317,7 +424,16 @@ zetas.tree <- function(C, leaf_list, method, pvalues, alpha, refine = FALSE, ver
           } else {
             zeta_method <- method
           }
-          zeta_inter[k] <- do.call(zeta_method, c(list(pval = pval, lambda = alpha / usage_K), args_zeta))
+          zeta_inter[k] <- do.call(
+            zeta_method,
+            c(
+              list(
+                pval = pval,
+                lambda = alpha / usage_K
+              ),
+              args_zeta
+            )
+          )
           if (zeta_inter[k] == 0) {
             new_K <- new_K - 1
           }
@@ -327,7 +443,14 @@ zetas.tree <- function(C, leaf_list, method, pvalues, alpha, refine = FALSE, ver
     }
     if (verbose) {
       nb_loop <- nb_loop + 1
-      print(paste0("loop number=", nb_loop, ", usage_K=", usage_K, ", new_K=", new_K))
+      print(paste0(
+        "loop number=",
+        nb_loop,
+        ", usage_K=",
+        usage_K,
+        ", new_K=",
+        new_K
+      ))
     }
     continue <- refine && (new_K < usage_K)
   }
@@ -336,41 +459,66 @@ zetas.tree <- function(C, leaf_list, method, pvalues, alpha, refine = FALSE, ver
 
 #' Post hoc bound on the number of false positives
 #'
-#' @description Computes the post hoc upper bound \eqn{V^*(S)} on the number of false positives in a
-#' given selection set \eqn{S} of hypotheses, using a reference family \eqn{(R_k, \zeta_k)} that possess the forest structure
+#' @description Computes the post hoc upper bound \eqn{V^*(S)} on the number
+#' of false positives in a
+#' given selection set \eqn{S} of hypotheses,
+#' using a reference family \eqn{(R_k, \zeta_k)}
+#' that possess the forest structure
 #' (see Reference).
 #'
-#' @param S An integer vector with the indices of the hypotheses of the selection set. Does not need to be ordered.
-#' @param C A list of list representing the forest structure. Each list of \code{C} represents a level of
-#' depth in the forest structure. So, \code{C[[1]]} lists the regions at depth 1, \code{C[[2]]} lists the regions at depth 2,
+#' @param S An integer vector with the indices of the hypotheses of
+#' the selection set. Does not need to be ordered.
+#' @param C A list of list representing the forest structure.
+#' Each list of \code{C} represents a level of
+#' depth in the forest structure.
+#' So, \code{C[[1]]} lists the regions at depth 1,
+#' \code{C[[2]]} lists the regions at depth 2,
 #' and so on. We then use the fact that each region of the reference family
 #' is the union of some of its atom over an integer interval.
-#' So he elements of each list \code{C[[i]]} are integer vectors of length 2 representing this interval.
-#' For example, \code{C[[1]][[1]] = c(1, 5)} means that the first region at depth 1 is the union of the first 5 atoms,
-#' \code{C[[2]][[3]] = c(4, 5)} means that the third region at depth 2 is the union of the atoms 4 and 5, and
-#' \code{C[[3]][[5]] = c(5, 5)} means that the fifth region at depth 3 is simply the fifth atom.
-#' @param ZL A list of integer vectors representing the upper bound \eqn{\zeta_k} associated to a region \eqn{R_k} in the reference family.
-#' \code{ZL[[h]][j]} is the \eqn{\zeta_k} associated to the \eqn{R_k} described by \code{C[[h]][[j]]}.
-#' @param leaf_list A list of vectors. Each vector is an integer array. The i-th vector contains the indices
-#' of the hypotheses in the i-th atom. Atoms form a partition of the set of hypotheses indices :
-#' there cannot be overlap, and each index has to be inside one of the atoms. It is really important, for all functions
-#' using \code{leaf_list} in this package, that each vector is sorted. Because functions of the package
+#' So he elements of each list \code{C[[i]]} are integer vectors of length 2
+#' representing this interval.
+#' For example, \code{C[[1]][[1]] = c(1, 5)} means that the first region
+#' at depth 1 is the union of the first 5 atoms,
+#' \code{C[[2]][[3]] = c(4, 5)} means that the third region at depth 2
+#' is the union of the atoms 4 and 5, and
+#' \code{C[[3]][[5]] = c(5, 5)} means that the fifth region at depth 3
+#' is simply the fifth atom.
+#' @param ZL A list of integer vectors representing the upper bound
+#' \eqn{\zeta_k} associated to a region \eqn{R_k} in the reference family.
+#' \code{ZL[[h]][j]} is the \eqn{\zeta_k} associated to the
+#' \eqn{R_k} described by \code{C[[h]][[j]]}.
+#' @param leaf_list A list of vectors. Each vector is an integer array.
+#' The i-th vector contains the indices
+#' of the hypotheses in the i-th atom.
+#' Atoms form a partition of the set of hypotheses indices :
+#' there cannot be overlap, and each index has to be inside one of the atoms.
+#' It is really important, for all functions
+#' using \code{leaf_list} in this package, that each vector is sorted.
+#' Because functions of the package
 #' implicitly use that
-#' \code{leaf_list[[i]][1]} is the lowest hypothesis index in leaf \eqn{P_i} and that
+#' \code{leaf_list[[i]][1]} is the lowest hypothesis
+#' index in leaf \eqn{P_i} and that
 #' \code{leaf_list[[i]][length(leaf_list[[i]])]} is the largest
 #'
 #' @return An integer value, the post hoc upper bound \eqn{V^*(S)}.
 #'
-#' @details For \code{V.star}, the forest structure doesn't need to be complete. That is,
-#' in \code{C}, some trivial intervals \code{c(i,i)} corresponding to regions that are atoms may be missing.
+#' @details For \code{V.star}, the forest structure doesn't need to be complete.
+#' That is,
+#' in \code{C}, some trivial intervals \code{c(i,i)}
+#' corresponding to regions that are atoms may be missing.
 #'
-#' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
+#' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020).
+#' Post hoc false positive control for structured hypotheses.
+#' Scandinavian Journal of Statistics, 47(4), 1114-1148.
 #' @examples
 #' m <- 20
 #' C <- list(
 #'   list(c(2, 5), c(8, 15), c(16, 19)),
 #'   list(c(3, 5), c(8, 10), c(12, 15), c(16, 16), c(17, 19)),
-#'   list(c(4, 5), c(8, 9), c(10, 10), c(12, 12), c(13, 15), c(17, 17), c(18, 19)),
+#'   list(
+#'     c(4, 5), c(8, 9), c(10, 10), c(12, 12),
+#'     c(13, 15), c(17, 17), c(18, 19)
+#'   ),
 #'   list(c(8, 8), c(9, 9), c(13, 13), c(14, 15), c(18, 18), c(19, 19))
 #' )
 #' ZL <- list(
@@ -403,7 +551,8 @@ V.star <- function(S, C, ZL, leaf_list) {
   }
   Vec <- Vec - c(0, Vec[1:(nb_leaves - 1)])
   # this way of initializing is much faster than the following naive approach,
-  # the downside is that it heavily uses that the elements of leaf_list are sorted
+  # the downside is that it heavily uses
+  # that the elements of leaf_list are sorted
   # naive approach:
   # for (i in 1:nb_leaves) {
   #   Vec[i] <- sum(S %in% leaf_list[[i]])
@@ -428,25 +577,42 @@ V.star <- function(S, C, ZL, leaf_list) {
 #' @description The pruned forest structure makes the computation of [V.star()],
 #' [curve.V.star.forest.naive()] and [curve.V.star.forest.fast()] faster.
 #'
-#' @param C A list of list representing the forest structure. See [V.star()] for more information.
-#' @param ZL A list of integer vectors representing the upper bounds \eqn{\zeta_k} of the forest structure. See [V.star()] for more information.
-#' @param leaf_list A list of vectors representing the atoms of the forest structure. See [V.star()] for more information.
-#' @param prune.leafs A boolean, \code{FALSE} by default. If \code{TRUE}, will also prune atoms/leafs for which \eqn{\zeta_k \geq |R_k|},
-#' this makes the computation of [V.star()] and [curve.V.star.forest.naive()] even faster but should not be used with [curve.V.star.forest.fast()]
-#' because this needs the structure to be complete (i.e., with all its atoms). This is why the default option is \code{FALSE}.
-#' @param delete.gaps A boolean, \code{FALSE} by default. If \code{TRUE}, will also delete the gaps in the structure induced
-#' by the pruning, see [delete.gaps()].
+#' @param C A list of list representing the forest structure.
+#' See [V.star()] for more information.
+#' @param ZL A list of integer vectors representing the upper
+#' bounds \eqn{\zeta_k} of the forest structure.
+#' See [V.star()] for more information.
+#' @param leaf_list A list of vectors representing the atoms
+#' of the forest structure. See [V.star()] for more information.
+#' @param prune.leafs A boolean, \code{FALSE} by default.
+#' If \code{TRUE}, will also prune atoms/leafs for
+#' which \eqn{\zeta_k \geq |R_k|},
+#' this makes the computation of [V.star()] and [curve.V.star.forest.naive()]
+#' even faster but should not be used with [curve.V.star.forest.fast()]
+#' because this needs the structure to be complete (i.e., with all its atoms).
+#' This is why the default option is \code{FALSE}.
+#' @param delete_gaps A boolean, \code{FALSE} by default.
+#' If \code{TRUE}, will also delete the gaps in the structure induced
+#' by the pruning, see [delete_gaps()].
 #'
 #' @return A list with three named elements. \describe{
-#' \item{\code{VstarNm}}{\eqn{V^*(\mathbb N_m)} is computed as by-product by the algorithm, so we might as well return it.}
+#' \item{\code{VstarNm}}{\eqn{V^*(\mathbb N_m)} is computed as by-product by
+#' the algorithm, so we might as well return it.}
 #' \item{\code{C}}{The new \code{C} after pruning.}
 #' \item{\code{ZL}}{The new \code{ZL} after pruning.}
 #' }
 #'
-#' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
-#' @references Durand G. (2025). A fast algorithm to compute a curve of confidence upper bounds for the False Discovery Proportion using a reference family with a forest structure. arXiv:2502.03849.
+#' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020).
+#' Post hoc false positive control for structured hypotheses.
+#' Scandinavian Journal of Statistics, 47(4), 1114-1148.
+#' @references Durand G. (2025). Fast confidence bounds for the false discovery
+#' proportion over a path of hypotheses.
+#' Computo.
 #' @export
-pruning <- function(C, ZL, leaf_list, prune.leafs = FALSE, delete.gaps = FALSE) {
+pruning <- function(C, ZL,
+                    leaf_list,
+                    prune.leafs = FALSE,
+                    delete_gaps = FALSE) {
   H <- length(C)
   nb_leaves <- length(leaf_list)
   Vec <- numeric(nb_leaves)
@@ -488,8 +654,8 @@ pruning <- function(C, ZL, leaf_list, prune.leafs = FALSE, delete.gaps = FALSE) 
       }
     }
   }
-  if (delete.gaps) {
-    gaps.deleted <- delete.gaps(C, ZL, leaf_list)
+  if (delete_gaps) {
+    gaps.deleted <- delete_gaps(C, ZL, leaf_list)
     C <- gaps.deleted$C
     ZL <- gaps.deleted$ZL
   }
@@ -518,10 +684,10 @@ pruning <- function(C, ZL, leaf_list, prune.leafs = FALSE, delete.gaps = FALSE) 
 #' \item{\code{ZL}}{The new \code{ZL} after deleting the gaps.}
 #' }
 #'
-#' @usage delete.gaps(C, ZL, leaf_list)
+#' @usage delete_gaps(C, ZL, leaf_list)
 #'
 #' @export
-delete.gaps <- function(C, ZL, leaf_list) {
+delete_gaps <- function(C, ZL, leaf_list) {
   H <- length(C)
   nb_leaves <- length(leaf_list)
   continue <- TRUE
@@ -584,9 +750,9 @@ delete.gaps <- function(C, ZL, leaf_list) {
 #' \describe{
 #' \item{\code{curve.V.star.forest.naive}}{Repeatedly calls [V.star()] on each \eqn{S_t}, which is not optimized and time-consuming, this should not be used in practice.}
 #' \item{\code{curve.V.star.forest.fast}}{A fast and optimized version that leverage the fact that\eqn{S_{t+1}} is the union of \eqn{S_t} and a single hypothesis index.
-#' The algorithm needs to work on a complete forest, so this version first completes the forest (unless told that the forest has already been completed, see [forest.completion()]),
+#' The algorithm needs to work on a complete forest, so this version first completes the forest (unless told that the forest has already been completed, see [forest_completion()]),
 #' and the completion fails if the input is a pruned forest (see [pruning()]),
-#' so if a pruned forest is given as input, it MUST be said with the \code{is.pruned} argument
+#' so if a pruned forest is given as input, it MUST be said with the \code{is_pruned} argument
 #' so that the function skips completion (so the pruned forest given as input must also be complete).}
 #' }
 #'
@@ -595,13 +761,13 @@ delete.gaps <- function(C, ZL, leaf_list) {
 #' @param C A list of list representing the forest structure. See [V.star()] for more information.
 #' @param ZL A list of integer vectors representing the upper bounds \eqn{\zeta_k} of the forest structure. See [V.star()] for more information.
 #' @param leaf_list A list of vectors representing the atoms of the forest structure. See [V.star()] for more information.
-#' @param pruning A boolean, \code{FALSE} by default. Whether to prune the forest (see [pruning()]) before computing the bounds. Ignored if \code{is.pruned} is \code{TRUE}.
-#' @param is.pruned A boolean, \code{FALSE} by default. If \code{TRUE}, assumes that the forest structure has already been completed (see [forest.completion()]) and then pruned (see [pruning()])
+#' @param pruning A boolean, \code{FALSE} by default. Whether to prune the forest (see [pruning()]) before computing the bounds. Ignored if \code{is_pruned} is \code{TRUE}.
+#' @param is_pruned A boolean, \code{FALSE} by default. If \code{TRUE}, assumes that the forest structure has already been completed (see [forest_completion()]) and then pruned (see [pruning()])
 #' and so skips the completion step and optional pruning step. Must be set to \code{TRUE} if giving a pruned forest, see Details.
-#' @param is.complete A boolean, \code{FALSE} by default. If \code{TRUE}, assumes that the forest structure has already been completed (see [forest.completion()]) and so skips the completion step.
-#' Ignored if \code{is.pruned} is \code{TRUE}.
-#' @param delete.gaps A boolean, \code{FALSE} by default. If \code{TRUE}, will also delete the gaps in the structure induced
-#' by the pruning, see [delete.gaps()]. Ignored if \code{pruning} is \code{FALSE}.
+#' @param is_complete A boolean, \code{FALSE} by default. If \code{TRUE}, assumes that the forest structure has already been completed (see [forest_completion()]) and so skips the completion step.
+#' Ignored if \code{is_pruned} is \code{TRUE}.
+#' @param delete_gaps A boolean, \code{FALSE} by default. If \code{TRUE}, will also delete the gaps in the structure induced
+#' by the pruning, see [delete_gaps()]. Ignored if \code{pruning} is \code{FALSE}.
 #'
 #' @return A vector of length of same length as \code{perm}, where the \code{t}-th
 #' element is \eqn{V^*(S_t)}.
@@ -633,7 +799,7 @@ delete.gaps <- function(C, ZL, leaf_list) {
 
 #' @rdname curve.V.star.forest
 #' @export
-curve.V.star.forest.naive <- function(perm, C, ZL, leaf_list, pruning = FALSE, delete.gaps = FALSE) {
+curve.V.star.forest.naive <- function(perm, C, ZL, leaf_list, pruning = FALSE, delete_gaps = FALSE) {
   vstars <- numeric(length(perm))
 
   # the naive version doesn't need a proper completion of the
@@ -642,7 +808,7 @@ curve.V.star.forest.naive <- function(perm, C, ZL, leaf_list, pruning = FALSE, d
   # it is allowed to prune leaves
 
   if (pruning) {
-    pruned <- pruning(C, ZL, leaf_list, prune.leafs = TRUE, delete.gaps = delete.gaps)
+    pruned <- pruning(C, ZL, leaf_list, prune.leafs = TRUE, delete_gaps = delete_gaps)
     C <- pruned$C
     ZL <- pruned$ZL
     m <- length(unlist(leaf_list))
@@ -669,22 +835,29 @@ curve.V.star.forest.naive <- function(perm, C, ZL, leaf_list, pruning = FALSE, d
 
 #' @rdname curve.V.star.forest
 #' @export
-curve.V.star.forest.fast <- function(perm, C, ZL, leaf_list, pruning = FALSE, is.pruned = FALSE, is.complete = FALSE, delete.gaps = FALSE) {
+curve.V.star.forest.fast <- function(perm, C, ZL,
+                                     leaf_list,
+                                     pruning = FALSE,
+                                     is_pruned = FALSE,
+                                     is_complete = FALSE,
+                                     delete_gaps = FALSE) {
   vstars <- numeric(length(perm))
 
-  if (!is.pruned) {
-    if (!is.complete) {
+  if (!is_pruned) {
+    if (!is_complete) {
       # the fast version needs a proper completion of the
       # forest structure, and for the same reason
       # it must not prune the leaves
-      completed <- forest.completion(C, ZL, leaf_list)
+      completed <- forest_completion(C, ZL, leaf_list)
       C <- completed$C
       ZL <- completed$ZL
     }
 
     if (pruning) {
-      is.pruned <- TRUE # useless atm, but kept for clarity
-      pruned <- pruning(C, ZL, leaf_list, prune.leafs = FALSE, delete.gaps = delete.gaps)
+      is_pruned <- TRUE # useless atm, but kept for clarity
+      pruned <- pruning(C, ZL, leaf_list,
+        prune.leafs = FALSE, delete_gaps = delete_gaps
+      )
       C <- pruned$C
       ZL <- pruned$ZL
       m <- length(unlist(leaf_list))
@@ -710,17 +883,17 @@ curve.V.star.forest.fast <- function(perm, C, ZL, leaf_list, pruning = FALSE, is
   # M[i, h] gives the index k of C[[h]] such that hypothesis i
   # is in the R_k given by C[[h]][[k]]
   etas <- ZL
-  K.minus <- list()
+  K_MINUS <- list()
   M <- matrix(0, ncol = H, nrow = m)
   for (h in 1:H) {
     zeta_depth_h <- ZL[[h]]
     length_zeta_depth_h <- length(zeta_depth_h)
     etas[[h]] <- rep(0, length_zeta_depth_h)
-    K.minus[[h]] <- vector("list", length(C[[h]]))
+    K_MINUS[[h]] <- vector("list", length(C[[h]]))
     if (length_zeta_depth_h > 0) {
       for (k in 1:length_zeta_depth_h) {
         if (zeta_depth_h[k] == 0) {
-          K.minus[[h]][[k]] <- C[[h]][[k]]
+          K_MINUS[[h]][[k]] <- C[[h]][[k]]
         }
         first_leaf <- leaf_list[[C[[h]][[k]][1]]]
         last_leaf <- leaf_list[[C[[h]][[k]][2]]]
@@ -729,7 +902,7 @@ curve.V.star.forest.fast <- function(perm, C, ZL, leaf_list, pruning = FALSE, is
     }
   }
 
-  for (t in 1:length(perm)) {
+  for (t in seq_along(perm)) {
     i.t <- perm[t]
     if (t > 1) {
       previous.vstar <- vstars[t - 1]
@@ -737,25 +910,24 @@ curve.V.star.forest.fast <- function(perm, C, ZL, leaf_list, pruning = FALSE, is
       previous.vstar <- 0
     }
 
-    # SEARCHING IF i_t IS IN K.MINUS
+    # SEARCHING IF i_t IS IN K_MINUS
     # if so, we let go.next = TRUE
     # and we just go next to step t+1
     go.next <- FALSE
     for (h in 1:H) {
       k <- M[i.t, h]
-      if ((k > 0) && (!is.null(K.minus[[h]][[k]]))) {
+      if ((k > 0) && (!is.null(K_MINUS[[h]][[k]]))) {
         go.next <- TRUE
         break
       }
     }
-    # print(paste0(i.t, " isn't in K minus"))
 
-    # COMPUTING V.STAR AND UPDATING K.MINUS AND ETAS
+    # COMPUTING V.STAR AND UPDATING K_MINUS AND ETAS
     if (go.next) {
-      # Here, i_t is in K.minus
+      # Here, i_t is in K_MINUS
       vstars[t] <- previous.vstar
     } else {
-      # Here, i_t isn't in K.minus
+      # Here, i_t isn't in K_MINUS
       for (h in 1:H) {
         k <- M[i.t, h]
         if (k > 0) {
@@ -767,7 +939,7 @@ curve.V.star.forest.fast <- function(perm, C, ZL, leaf_list, pruning = FALSE, is
           # in this case we just don't do anything
           etas[[h]][[k]] <- etas[[h]][[k]] + 1
           if (etas[[h]][[k]] >= ZL[[h]][[k]]) {
-            K.minus[[h]][[k]] <- C[[h]][[k]]
+            K_MINUS[[h]][[k]] <- C[[h]][[k]]
             break
           }
         }
@@ -780,31 +952,43 @@ curve.V.star.forest.fast <- function(perm, C, ZL, leaf_list, pruning = FALSE, is
 
 #' Complete a forest structure
 #'
-#' @description Completes the forest in the sens of the Reference: adds the missing atoms/leafs
+#' @description Completes the forest in the sens of the Reference:
+#' adds the missing atoms/leafs
 #' in the reference family with a forest structure \eqn{(R_k, \zeta_k)}
-#' so that each atom is well represented by a \eqn{R_k}. The associated \eqn{\zeta_k} is
+#' so that each atom is well represented by a \eqn{R_k}.
+#' The associated \eqn{\zeta_k} is
 #' taken as the trivial \eqn{|R_k|}.
 #'
-#' @details The forest must not be pruned (with [pruning()]) beforehand. The code will not behave expectedly
-#' and will return a wrong result if a pruned forest is given as input. Maybe the function could be rewritten
-#' going from the leaves to the roots instead of the contrary, to avoid this issue.
+#' @details The forest must not be pruned (with [pruning()]) beforehand.
+#' The code will not behave as expected
+#' and will return a wrong result if a pruned forest is given as input.
+#' Maybe the function could be rewritten
+#' going from the leaves to the roots instead of the contrary,
+#' to avoid this issue.
 #'
-#' @param C A list of list representing the forest structure. See [V.star()] for more information.
-#' @param ZL A list of integer vectors representing the upper bounds \eqn{\zeta_k} of the forest structure. See [V.star()] for more information.
-#' @param leaf_list A list of vectors representing the atoms of the forest structure. See [V.star()] for more information.
+#' @param C A list of list representing the forest structure.
+#' See [V.star()] for more information.
+#' @param ZL A list of integer vectors representing the upper bounds
+#' \eqn{\zeta_k} of the forest structure. See [V.star()] for more information.
+#' @param leaf_list A list of vectors representing the atoms of
+#' the forest structure. See [V.star()] for more information.
 #'
 #' @return A list with two named elements. \describe{
 #' \item{\code{C}}{The new \code{C} after completion.}
 #' \item{\code{ZL}}{The new \code{ZL} after completion.}
 #' }
 #'
-#' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc false positive control for structured hypotheses. Scandinavian Journal of Statistics, 47(4), 1114-1148.
-#' @references Durand G. (2025). A fast algorithm to compute a curve of confidence upper bounds for the False Discovery Proportion using a reference family with a forest structure. arXiv:2502.03849.
+#' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020).
+#' Post hoc false positive control for structured hypotheses.
+#' Scandinavian Journal of Statistics, 47(4), 1114-1148.
+#' @references Durand G. (2025). A fast algorithm to compute a curve of
+#' confidence upper bounds for the False Discovery Proportion using a reference
+#' family with a forest structure. arXiv:2502.03849.
 #' @export
-forest.completion <- function(C, ZL, leaf_list) {
+forest_completion <- function(C, ZL, leaf_list) {
   H <- length(C)
 
-  leaves.to.place <- 1:length(leaf_list)
+  leaves.to.place <- seq_along(leaf_list)
   len.to.place <- length(leaves.to.place)
   to.delete <- numeric(0)
 
