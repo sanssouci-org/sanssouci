@@ -43,7 +43,7 @@
 #' mat1 <- matrix(rbinom(p * n1, size = 1, prob = 0.02), ncol = n1)
 #' mat <- cbind(mat0, mat1)
 #' cls <- rep(c(0, 1), times = c(n0, n1))
-#' fbt <- rowBinomialTests(mat, categ = cls, alternative = alt)
+#' fbt <- row_binomial_tests(mat, categ = cls, alternative = alt)
 #' str(fbt)
 #'
 #' # compare with ordinary binom.test:
@@ -57,15 +57,15 @@
 #' all(abs(fbt$statistic - pbt[, "statistic.number of successes"]) < 1e-10)
 #' ## same results
 #'
-rowBinomialTests <- function(mat, categ,
-                             alternative = c("two.sided", "less", "greater"),
-                             warn = TRUE) {
+row_binomial_tests <- function(mat, categ,
+                               alternative = c("two.sided", "less", "greater"),
+                               warn = TRUE) {
   alternative <- match.arg(alternative)
   stopifnot(all(categ %in% c(0, 1)))
   levels(categ) <- NULL
 
   if (is.vector(categ)) {
-    return(rowBinomialTests1(mat, categ,
+    return(row_binomial_tests1(mat, categ,
       alternative = alternative,
       warn = warn
     ))
@@ -78,7 +78,7 @@ rowBinomialTests <- function(mat, categ,
   stat0 <- matrix(NA_real_, nrow = m, ncol = B)
   est0 <- matrix(NA_real_, nrow = m, ncol = B)
   for (bb in 1:B) {
-    rwt <- rowBinomialTests1(mat, categ[, bb],
+    rwt <- row_binomial_tests1(mat, categ[, bb],
       alternative = alternative,
       warn = warn
     )
@@ -96,9 +96,9 @@ rowBinomialTests <- function(mat, categ,
 
 
 #' @importFrom stats pbinom dbinom
-rowBinomialTests1 <- function(mat, categ,
-                              alternative = c("two.sided", "less", "greater"),
-                              warn = TRUE) {
+row_binomial_tests1 <- function(mat, categ,
+                                alternative = c("two.sided", "less", "greater"),
+                                warn = TRUE) {
   alternative <- match.arg(alternative)
   if (alternative == "two.sided" && warn) {
     warning("Two-sided p-value not vectorized yet! Looping for now.")
@@ -111,17 +111,18 @@ rowBinomialTests1 <- function(mat, categ,
   p <- switch(alternative,
     less = pbinom(x, nx, py),
     greater = pbinom(x - 1, nx, py, lower.tail = FALSE),
-    two.sided = rowBinomialP_2s(x = x, n = nx, p = py, relErr = 1 + 1e-07)
+    two.sided = row_binomial_p_value_2s(x = x, n = nx, p = py,
+                                        relative_error = 1 + 1e-07)
   )
   list(
     statistic = x,
-    p.value = p,
+    p_value = p,
     estimate = x / nx - py
   )
 }
 
 # taken from the source code of stats::binom.test
-rowBinomialP_2s <- function(x, n, p, relErr = 1 + 1e-07) {
+row_binomial_p_value_2s <- function(x, n, p, relative_error = 1 + 1e-07) {
   stopifnot(length(x) == length(p))
   pval <- rep(NA_real_, length(x))
   pval[which(p == 0)] <- (x[which(p == 0)] == 0)
@@ -136,13 +137,14 @@ rowBinomialP_2s <- function(x, n, p, relErr = 1 + 1e-07) {
       pval[jj] <- 1
     } else if (xx < m) {
       i <- seq.int(from = ceiling(m), to = n)
-      y <- sum(dbinom(i, n, pp) <= d * relErr)
+      y <- sum(dbinom(i, n, pp) <= d * relative_error)
       pval[jj] <- pbinom(xx, n, pp) + pbinom(n - y, n, pp, lower.tail = FALSE)
     } else {
       i <- seq.int(from = 0, to = floor(m))
-      y <- sum(dbinom(i, n, pp) <= d * relErr)
+      y <- sum(dbinom(i, n, pp) <= d * relative_error)
       pval[jj] <- pbinom(y - 1, n, pp) + pbinom(xx - 1, n, pp,
-                                                lower.tail = FALSE)
+        lower.tail = FALSE
+      )
     }
   }
   pval
