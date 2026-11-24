@@ -10,7 +10,7 @@
 #'
 #' @param B A numeric value, the number of permutations to be performed
 #'
-#' @param rowTestFUN A (vectorized) test function used in the two-sample case.
+#' @param row_test_fun A (vectorized) test function used in the two-sample case.
 #'   Defaults to \code{\link{rowWelchTests}}
 #'
 #' @param alternative A character string specifying the alternative hypothesis.
@@ -29,8 +29,8 @@
 #'   For permutation, we test the null hypothesis: "both groups have the same
 #'   mean" against the alternative specified by parameter \code{alternative}. By
 #'   default, the test is Welch's two-sample test for unequal variances, but
-#'   other tests may be used via the argument \code{rowTestFUN}.  Permuted test
-#'   statistics are calculated by B permutations of the group labels.
+#'   other tests may be used via the argument \code{row_test_fun}.  Permuted
+#'   test statistics are calculated by B permutations of the group labels.
 #'   Corresponding observed and permuted p-values are calculated as the
 #'   proportion of permutations (including the identity) for which the permuted
 #'   test statistic is larger than the observed test statistic.
@@ -49,12 +49,12 @@
 #'
 #'   \item{T}{A vector of \eqn{m} test statistics}
 #'
-#'   \item{T0}{A \eqn{m \times B} matrix of randomized test statistics}
+#'   \item{null_stat}{A \eqn{m \times B} matrix of randomized test statistics}
 #'
 #'   \item{p}{A vector of \eqn{m} parametric \eqn{p}-values}
 #'
-#'   \item{p0}{A \eqn{m \times B} matrix of parametric \eqn{p}-values on
-#'   randomized data}
+#'   \item{null_p_values}{A \eqn{m \times B} matrix of parametric \eqn{p}-values
+#'   on randomized data}
 #'
 #'   \item{flavor}{A character value, the type of randomization performed:
 #'   "perm" for permutation-based randomization in two-sample tests, and "flip"
@@ -82,10 +82,10 @@
 #' sim <- gaussianSamples(m, rho, n, pi0, SNR = 2, prob = 0.5)
 #' X <- sim$X
 #' categ <- sim$categ
-#' tests <- testByRandomization(X = X, categ = categ, B)
-#' testsW <- testByRandomization(
+#' tests <- test_by_randomization(X = X, categ = categ, B)
+#' tests_w <- test_by_randomization(
 #'   X = X, categ = categ, B = 10,
-#'   rowTestFUN = rowWilcoxonTests
+#'   row_test_fun = row_wilcoxon_tests
 #' )
 #'
 #' ## show test statistics
@@ -99,7 +99,10 @@
 #'
 #' # one-sample data:
 #' sim <- gaussianSamples(m, rho, n, pi0, SNR = 2)
-#' tests <- testByRandomization(X = sim$X, categ = sim$categ, B, alternative = "two.sided")
+#' tests <- test_by_randomization(
+#'   X = sim$X, categ = sim$categ, B,
+#'   alternative = "two.sided"
+#' )
 #'
 #' ## show test statistics
 #' pch <- 20
@@ -113,10 +116,11 @@
 #' @importFrom matrixStats rowRanks
 #' @export
 #'
-testByRandomization <- function(X, categ, B,
-                                alternative = c("two.sided", "less", "greater"),
-                                rowTestFUN = rowWelchTests,
-                                rand.p.value = FALSE) {
+test_by_randomization <- function(X, categ, B,
+                                  alternative =
+                                    c("two.sided", "less", "greater"),
+                                  row_test_fun = rowWelchTests,
+                                  rand_p_value = FALSE) {
   alternative <- match.arg(alternative)
   ## sanity checks
   n <- ncol(X)
@@ -128,7 +132,7 @@ testByRandomization <- function(X, categ, B,
       flavor <- "perm"
       tbl <- table(categ)
       if (min(tbl) < 3) {
-        stop("At least 3 observations from each sample are required for two-sample tests")
+        stop(">2 observations from each sample required for two-sample tests")
       }
     } else {
       stop("Tests for more than 2 classes not implemented yet")
@@ -141,76 +145,81 @@ testByRandomization <- function(X, categ, B,
     ## * other statistics ? (difference in empirical means, Mann-Whitney)
     ## * one-sided tests ?
 
-    ## map class labels to 0-1 for simplicity of implementation of rowTestFUN(s)
+    ## map class labels to 0-1 for ease of implementation of row_test_fun(s)
     levels(categ) <- c("0", "1")
     ## observed
-    rwt <- rowTestFUN(X, categ = categ, alternative = alternative)
-    T <- rwt$statistic
-    p <- rwt$p.value ## parametric p-value
-    # df <- rwt$parameter  ## degrees of freedom (for T tests; possibly NULL for other tests)
-    rm(rwt)
+    row_tests <- row_test_fun(X, categ = categ, alternative = alternative)
+    statistics <- row_tests$statistic
+    p_values <- row_tests$p.value ## parametric p-value
+    rm(row_tests)
 
     ## under H0
-    T0 <- matrix(nrow = m, ncol = B) ## test statistics under the null
-    p0 <- matrix(nrow = m, ncol = B) ## parametric p-value
-    # df0 <- matrix(nrow = m, ncol = B)
+    null_statistics <- matrix(nrow = m, ncol = B) ## test statistics under H0
+    null_p_values <- matrix(nrow = m, ncol = B)   ## parametric p-value
     for (bb in 1:B) {
-      #             categ_perm <- sample(categ, length(categ))
       categ_perm <- sample(categ)
-      rwt <- rowTestFUN(X, categ = categ_perm, alternative = alternative)
-      T0[, bb] <- rwt$statistic
-      p0[, bb] <- rwt$p.value
+      row_tests <- row_test_fun(X, categ = categ_perm,
+                                alternative = alternative)
+      null_statistics[, bb] <- row_tests$statistic
+      null_p_values[, bb] <- row_tests$p.value
     }
     res <- list(
-      T = T, T0 = T0,
+      statistics = statistics, null_statistics = null_statistics,
       flavor = flavor,
-      p = p, p0 = p0
+      p_values = p_values, null_p_values = null_p_values
     )
     # df = df, df0 = df0)
   } else if (flavor == "flip") {
     ## observed test statistics and p-values
-    T <- rowSums(X) / sqrt(n)
-    p <- switch(alternative,
-      "two.sided" = 2 * (pnorm(abs(T), lower.tail = FALSE)),
-      "greater" = pnorm(T, lower.tail = FALSE),
-      "less" = pnorm(T, lower.tail = TRUE)
+    statistics <- rowSums(X) / sqrt(n)
+    p_values <- switch(alternative,
+      "two.sided" = 2 * (pnorm(abs(statistics), lower.tail = FALSE)),
+      "greater" = pnorm(statistics, lower.tail = FALSE),
+      "less" = pnorm(statistics, lower.tail = TRUE)
     )
     ## test statistics under H0
-    T0 <- testBySignFlipping(X, B)
-    p0 <- switch(alternative,
-      "two.sided" = 2 * (pnorm(abs(T0), lower.tail = FALSE)),
-      "greater" = pnorm(T0, lower.tail = FALSE),
-      "less" = pnorm(T0, lower.tail = TRUE)
+    null_statistics <- testBySignFlipping(X, B)
+    null_p_values <- switch(alternative,
+      "two.sided" = 2 * (pnorm(abs(null_statistics), lower.tail = FALSE)),
+      "greater" = pnorm(null_statistics, lower.tail = FALSE),
+      "less" = pnorm(null_statistics, lower.tail = TRUE)
     )
-    res <- list(T = T, T0 = T0, p = p, p0 = p0, flavor = flavor)
+    res <- list(
+      statistics = statistics, null_statistics = null_statistics,
+      p_values = p_values, null_p_values = null_p_values,
+      flavor = flavor
+    )
   }
 
-  if (rand.p.value) {
+  if (rand_p_value) {
     ## get m x (B+1) matrix of pvalues under the null (+ original)
     ## by sorting null test statistics as proposed by Ge et al (2003)
-    TT <- cbind(T0, T)
-    pB <- switch(alternative,
-      "two.sided" = rowRanks(-abs(TT), ties.method = "max") / (B + 1),
-      "greater" = rowRanks(-TT, ties.method = "max") / (B + 1),
-      "less" = rowRanks(TT, ties.method = "max") / (B + 1)
+    all_statistics <- cbind(null_statistics, statistics)
+    p_value_boot <- switch(alternative,
+      "two.sided" = rowRanks(-abs(all_statistics),
+                             ties.method = "max") / (B + 1),
+      "greater" = rowRanks(-all_statistics,
+                           ties.method = "max") / (B + 1),
+      "less" = rowRanks(all_statistics,
+                        ties.method = "max") / (B + 1)
     )
 
-    res$rand.p <- pB[, B + 1]
-    res$rand.p0 <- pB[, -(B + 1), drop = FALSE]
+    res$rand.p <- p_value_boot[, B + 1]
+    res$rand.null_p_values <- p_value_boot[, -(B + 1), drop = FALSE]
   }
   return(res)
 }
 
-testBySignFlipping <- function(X, B) {
+test_by_sign_flipping <- function(X, B) {
   m <- nrow(X)
   n <- ncol(X)
 
-  T <- matrix(nrow = m, ncol = B)
+  statistics <- matrix(nrow = m, ncol = B)
   for (bb in 1:B) {
     eps <- rbinom(n, 1, prob = 0.5) * 2 - 1 ## signs
-    eX <- sweep(X, MARGIN = 2, STATS = eps, FUN = `*`)
-    Tb <- rowSums(eX) / sqrt(n)
-    T[, bb] <- Tb
+    X0 <- sweep(X, MARGIN = 2, STATS = eps, FUN = `*`)
+    stat_bb <- rowSums(X0) / sqrt(n)
+    statistics[, bb] <- stat_bb
   }
-  T
+  statistics
 }
