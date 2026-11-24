@@ -1,7 +1,7 @@
 linters: linters_with_defaults(
   line_length_linter = line_length_linter(80),
   object_name_linter = object_name_linter(
-    styles = c("snake_case", "UPPERCASE", "symbols")
+    styles = c("snake_case", "UPPERCASE", "SNAKE_CASE", "symbols")
   ),
   function_name_linter = (function() {
     source("tools/function_name_linter.R", local = TRUE)

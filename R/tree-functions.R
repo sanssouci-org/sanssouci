@@ -67,38 +67,38 @@ dyadic_from_leaf_list <- function(leaf_list, method) {
   leaves <- length(leaf_list)
   if (method == 1) {
     inter <- seq_len(leaves)
-    Ch <- mapply(c, inter, inter, SIMPLIFY = FALSE)
-    C <- list(Ch)
+    CH <- mapply(c, inter, inter, SIMPLIFY = FALSE)
+    C <- list(CH)
     repeat {
-      len <- length(Ch)
+      len <- length(CH)
       if (len == 1) {
         break
       }
-      newCh <- list()
+      NEW_CH <- list()
       j <- 1
       while (j < len) {
-        newCh <- c(newCh, list(c(Ch[[j]][1], Ch[[j + 1]][2])))
+        NEW_CH <- c(NEW_CH, list(c(CH[[j]][1], CH[[j + 1]][2])))
         j <- j + 2
       }
-      Ch <- newCh
-      C <- c(list(Ch), C)
+      CH <- NEW_CH
+      C <- c(list(CH), C)
     }
   } else if (method == 2) {
-    Ch <- list(c(1, leaves))
-    C <- list(Ch)
+    CH <- list(c(1, leaves))
+    C <- list(CH)
     continue <- TRUE
     while (continue) {
       continue <- FALSE
-      oldCh <- Ch
-      Ch <- list()
-      len <- length(oldCh)
+      OLD_CH <- CH
+      CH <- list()
+      len <- length(OLD_CH)
       for (i in seq_len(len)) {
-        oi <- oldCh[[i]]
+        oi <- OLD_CH[[i]]
         leaves_in_node <- oi[2] - oi[1] + 1
         if (leaves_in_node > 1) {
           cut2 <- ceiling(leaves_in_node / 2)
-          Ch <- c(
-            Ch,
+          CH <- c(
+            CH,
             list(c(oi[1], oi[1] + cut2 - 1)),
             list(c(oi[1] + cut2, oi[2]))
           )
@@ -107,7 +107,7 @@ dyadic_from_leaf_list <- function(leaf_list, method) {
           }
         }
       }
-      C <- c(C, list(Ch))
+      C <- c(C, list(CH))
     }
   }
   return(list(leaf_list = leaf_list, C = C))
@@ -143,15 +143,15 @@ dyadic_from_height <- function(m, H = NULL, method) {
     H <- ifelse(m == 1, 1, floor(2 + log2(m - 1)))
   }
   if (m <= 2^(H - 2)) {
-    oldH <- H
+    OLD_H <- H
     H <- ifelse(m == 1, 1, floor(2 + log2(m - 1)))
     warning(
       "H=",
-      oldH,
+      OLD_H,
       " is too large for m=",
       m,
       ", \nH=",
-      oldH,
+      OLD_H,
       " reduced to H=",
       H
     )
@@ -254,10 +254,10 @@ NULL
 #' @export
 zeta_hb <- function(pval, lambda, ...) {
   m <- length(pval)
-  sorted.pval <- sort(pval)
+  sorted_pval <- sort(pval)
 
   thresholds <- lambda / (m - 1:m + 1)
-  v <- sorted.pval - thresholds
+  v <- sorted_pval - thresholds
   indexes <- which(v > 0)
   if (!length(indexes)) {
     return(0)
@@ -288,12 +288,12 @@ zeta_trivial <- function(pval, lambda, ...) {
 #' @export
 zeta_dkwm <- function(pval, lambda, ...) {
   s <- length(pval)
-  sorted.pval <- c(0, sort(pval))
+  sorted_pval <- c(0, sort(pval))
   dkwm <- min(
     (
-      sqrt(log(1 / lambda) / 2) / (2 * (1 - sorted.pval)) +
-        sqrt(log(1 / lambda) / (8 * (1 - sorted.pval)^2) +
-               (s - seq(0, s)) / (1 - sorted.pval))
+      sqrt(log(1 / lambda) / 2) / (2 * (1 - sorted_pval)) +
+        sqrt(log(1 / lambda) / (8 * (1 - sorted_pval)^2) +
+               (s - seq(0, s)) / (1 - sorted_pval))
     )^2,
     na.rm = TRUE
   )
@@ -402,17 +402,17 @@ zetas_tree <- function(C,
     USAGE_K <- NEW_K
     NEW_K <- K
     for (h in H:1) {
-      Ch <- C[[h]]
-      len <- length(Ch)
+      C_H <- C[[h]]
+      len <- length(C_H)
       zeta_inter <- numeric(len)
       if (len > 0) {
         for (k in 1:len) {
-          Rk <- Ch[[k]]
-          pval <- pvalues[unlist(leaf_list[Rk[1]:Rk[2]])]
+          C_HK <- C_H[[k]]
+          pval <- pvalues[unlist(leaf_list[C_HK[1]:C_HK[2]])]
           args_zeta <- list(...)
           if ("pCDFlist" %in% names(args_zeta)) {
             args_zeta$pCDFlist <- args_zeta$pCDFlist[unlist(
-              leaf_list[Rk[1]:Rk[2]]
+              leaf_list[C_HK[1]:C_HK[2]]
             )]
           }
           if (typeof(method) == "list") {
@@ -539,7 +539,7 @@ zetas_tree <- function(C,
 v_star <- function(S, C, ZL, leaf_list) {
   H <- length(C)
   nb_leaves <- length(leaf_list)
-  Vec <- numeric(nb_leaves)
+  vec <- numeric(nb_leaves)
   # the initialization term for each atom P_i
   # is equivalent to completing the family if it isn't,
   # assuming that leaf_list does indeed contain all leaves
@@ -547,26 +547,26 @@ v_star <- function(S, C, ZL, leaf_list) {
   # this initialization also takes care of the minima
   # between \zeta_k and card(S inter R_k)
   for (i in 1:nb_leaves) {
-    Vec[i] <- sum(leaf_list[[i]][length(leaf_list[[i]])] >= S)
+    vec[i] <- sum(leaf_list[[i]][length(leaf_list[[i]])] >= S)
   }
-  Vec <- Vec - c(0, Vec[1:(nb_leaves - 1)])
+  vec <- vec - c(0, vec[1:(nb_leaves - 1)])
   # this way of initializing is much faster than the following naive approach,
   # the downside is that it heavily uses
   # that the elements of leaf_list are sorted
-  # naive approach: for (i in 1:nb_leaves) Vec[i] <- sum(S %in% leaf_list[[i]])
+  # naive approach: for (i in 1:nb_leaves) vec[i] <- sum(S %in% leaf_list[[i]])
   for (h in H:1) {
     nb_regions <- length(C[[h]])
     if (nb_regions > 0) {
       for (k in 1:nb_regions) {
-        Rk <- C[[h]][[k]]
-        sum_succ <- sum(Vec[Rk[1]:Rk[2]])
+        C_HK <- C[[h]][[k]]
+        sum_succ <- sum(vec[C_HK[1]:C_HK[2]])
         res <- min(ZL[[h]][k], sum_succ)
-        Vec[Rk[1]:Rk[2]] <- 0
-        Vec[Rk[1]] <- res
+        vec[C_HK[1]:C_HK[2]] <- 0
+        vec[C_HK[1]] <- res
       }
     }
   }
-  return(sum(Vec))
+  return(sum(vec))
 }
 
 #' Prune a forest structure to speed up computations
@@ -581,7 +581,7 @@ v_star <- function(S, C, ZL, leaf_list) {
 #' See [v_star()] for more information.
 #' @param leaf_list A list of vectors representing the atoms
 #' of the forest structure. See [v_star()] for more information.
-#' @param prune.leafs A boolean, \code{FALSE} by default.
+#' @param prune_leafs A boolean, \code{FALSE} by default.
 #' If \code{TRUE}, will also prune atoms/leafs for
 #' which \eqn{\zeta_k \geq |R_k|},
 #' this makes the computation of [v_star()] and [curve_v_star_forest_naive()]
@@ -608,13 +608,13 @@ v_star <- function(S, C, ZL, leaf_list) {
 #' @export
 pruning <- function(C, ZL,
                     leaf_list,
-                    prune.leafs = FALSE,
+                    prune_leafs = FALSE,
                     delete_gaps = FALSE) {
   H <- length(C)
   nb_leaves <- length(leaf_list)
-  Vec <- numeric(nb_leaves)
+  vec <- numeric(nb_leaves)
   for (i in 1:nb_leaves) {
-    Vec[i] <- length(leaf_list[[i]])
+    vec[i] <- length(leaf_list[[i]])
     # The initialization term for each atom P_i
     # is equivalent to completing the family if it isn't,
     # assuming that leaf_list does indeed contain all leaves
@@ -626,12 +626,12 @@ pruning <- function(C, ZL,
     nb_regions <- length(C[[h]])
     if (nb_regions > 0) {
       for (j in nb_regions:1) {
-        Chj <- C[[h]][[j]]
+        C_HJ <- C[[h]][[j]]
         candidate <- ZL[[h]][j]
-        sum_succ <- sum(Vec[Chj[1]:Chj[2]])
+        sum_succ <- sum(vec[C_HJ[1]:C_HJ[2]])
         if (candidate >= sum_succ) {
           res <- sum_succ
-          if (prune.leafs || (Chj[1] < Chj[2])) {
+          if (prune_leafs || (C_HJ[1] < C_HJ[2])) {
             # Either the region is not a leaf,
             # or it's a leaf and we chose to prune the leafs
             # so we prune.
@@ -646,18 +646,18 @@ pruning <- function(C, ZL,
         } else {
           res <- candidate
         }
-        Vec[Chj[1]:Chj[2]] <- 0
-        Vec[Chj[1]] <- res
+        vec[C_HJ[1]:C_HJ[2]] <- 0
+        vec[C_HJ[1]] <- res
       }
     }
   }
   if (delete_gaps) {
-    gaps.deleted <- delete_gaps(C, ZL, leaf_list)
-    C <- gaps.deleted$C
-    ZL <- gaps.deleted$ZL
+    gaps_deleted <- delete_gaps(C, ZL, leaf_list)
+    C <- gaps_deleted$C
+    ZL <- gaps_deleted$ZL
   }
   return(list(
-    VstarNm = sum(Vec),
+    VstarNm = sum(vec),
     C = C,
     ZL = ZL
   ))
@@ -693,48 +693,48 @@ delete_gaps <- function(C, ZL, leaf_list) {
   H <- length(C)
   nb_leaves <- length(leaf_list)
   continue <- TRUE
-  newC <- list()
-  newZL <- list()
-  loop.counter <- 1
+  NEW_C <- list()
+  NEW_ZL <- list()
+  loop_counter <- 1
   while (continue) {
-    newC[[loop.counter]] <- list()
-    newZL[[loop.counter]] <- numeric(0)
-    leaf.available <- !logical(nb_leaves)
-    regions.delete <- list()
+    NEW_C[[loop_counter]] <- list()
+    NEW_ZL[[loop_counter]] <- numeric(0)
+    leaf_available <- !logical(nb_leaves)
+    regions_delete <- list()
     for (h in 1:H) {
       nb_regions <- length(C[[h]])
       if (nb_regions > 0) {
         for (l in 1:nb_regions) {
-          Chl <- C[[h]][[l]]
-          if (all(leaf.available[Chl[1]:Chl[2]])) {
-            newC[[loop.counter]][[Chl[1]]] <- Chl
-            newZL[[loop.counter]][Chl[1]] <- ZL[[h]][[l]]
-            leaf.available[Chl[1]:Chl[2]] <- FALSE
-            regions.delete <- append(regions.delete, list(c(h, l)))
+          C_HL <- C[[h]][[l]]
+          if (all(leaf_available[C_HL[1]:C_HL[2]])) {
+            NEW_C[[loop_counter]][[C_HL[1]]] <- C_HL
+            NEW_ZL[[loop_counter]][C_HL[1]] <- ZL[[h]][[l]]
+            leaf_available[C_HL[1]:C_HL[2]] <- FALSE
+            regions_delete <- append(regions_delete, list(c(h, l)))
           }
         }
       }
     }
-    for (couple in rev(regions.delete)) {
+    for (couple in rev(regions_delete)) {
       h <- couple[1]
       l <- couple[2]
       C[[h]][[l]] <- NULL
       ZL[[h]] <- ZL[[h]][-l]
     }
-    if (length(newC[[loop.counter]]) > 0) {
-      for (l in rev(seq_along(newC[[loop.counter]]))) {
-        if (is.null(newC[[loop.counter]][[l]])) {
-          newC[[loop.counter]][[l]] <- NULL
-          newZL[[loop.counter]] <- newZL[[loop.counter]][-l]
+    if (length(NEW_C[[loop_counter]]) > 0) {
+      for (l in rev(seq_along(NEW_C[[loop_counter]]))) {
+        if (is.null(NEW_C[[loop_counter]][[l]])) {
+          NEW_C[[loop_counter]][[l]] <- NULL
+          NEW_ZL[[loop_counter]] <- NEW_ZL[[loop_counter]][-l]
         }
       }
     }
-    loop.counter <- loop.counter + 1
+    loop_counter <- loop_counter + 1
     continue <- any(sapply(X = ZL, FUN = function(vec) {
       length(vec) > 0
     }))
   }
-  return(list(C = newC, ZL = newZL))
+  return(list(C = NEW_C, ZL = NEW_ZL))
 }
 
 #' Compute a curve of post hoc bounds based on a reference
@@ -851,7 +851,7 @@ curve_v_star_forest_naive <- function(perm, C, ZL,
 
   if (pruning) {
     pruned <- pruning(C, ZL, leaf_list,
-      prune.leafs = TRUE,
+      prune_leafs = TRUE,
       delete_gaps = delete_gaps
     )
     C <- pruned$C
@@ -901,7 +901,7 @@ curve_v_star_forest_fast <- function(perm, C, ZL,
     if (pruning) {
       is_pruned <- TRUE # useless atm, but kept for clarity
       pruned <- pruning(C, ZL, leaf_list,
-        prune.leafs = FALSE, delete_gaps = delete_gaps
+        prune_leafs = FALSE, delete_gaps = delete_gaps
       )
       C <- pruned$C
       ZL <- pruned$ZL
@@ -948,7 +948,7 @@ curve_v_star_forest_fast <- function(perm, C, ZL,
   }
 
   for (t in seq_along(perm)) {
-    i.t <- perm[t]
+    i_t <- perm[t]
     if (t > 1) {
       previous_vstar <- vstars[t - 1]
     } else {
@@ -956,31 +956,31 @@ curve_v_star_forest_fast <- function(perm, C, ZL,
     }
 
     # SEARCHING IF i_t IS IN K_MINUS
-    # if so, we let go.next = TRUE
+    # if so, we let go_next = TRUE
     # and we just go next to step t+1
-    go.next <- FALSE
+    go_next <- FALSE
     for (h in 1:H) {
-      k <- M[i.t, h]
+      k <- M[i_t, h]
       if ((k > 0) && (!is.null(K_MINUS[[h]][[k]]))) {
-        go.next <- TRUE
+        go_next <- TRUE
         break
       }
     }
 
     # COMPUTING VSTAR AND UPDATING K_MINUS AND ETAS
-    if (go.next) {
+    if (go_next) {
       # Here, i_t is in K_MINUS
       vstars[t] <- previous_vstar
     } else {
       # Here, i_t isn't in K_MINUS
       for (h in 1:H) {
-        k <- M[i.t, h]
+        k <- M[i_t, h]
         if (k > 0) {
           # if k == 0,
           # there is no k^{(t,h)} because either there is a
           # gap in the structure (maybe because of pruning, or because
           # of the way the structure has been built),
-          # either because we are past the max depth of i.t;
+          # either because we are past the max depth of i_t;
           # in this case we just don't do anything
           etas[[h]][[k]] <- etas[[h]][[k]] + 1
           if (etas[[h]][[k]] >= ZL[[h]][[k]]) {
@@ -1033,46 +1033,46 @@ curve_v_star_forest_fast <- function(perm, C, ZL,
 forest_completion <- function(C, ZL, leaf_list) {
   H <- length(C)
 
-  leaves.to.place <- seq_along(leaf_list)
-  len.to.place <- length(leaves.to.place)
-  to.delete <- numeric(0)
+  leaves_to_place <- seq_along(leaf_list)
+  len_to_place <- length(leaves_to_place)
+  to_delete <- numeric(0)
 
   for (h in 1:H) {
     j <- 1
     l <- 1
 
-    while (j <= len.to.place) {
-      expected_leaf <- leaves.to.place[j]
+    while (j <= len_to_place) {
+      expected_leaf <- leaves_to_place[j]
       end_of_line <- l > length(C[[h]])
       if (!end_of_line) {
-        Chl <- C[[h]][[l]]
+        C_HL <- C[[h]][[l]]
       }
-      if ((!end_of_line) && expected_leaf == Chl[[1]]) {
-        if (expected_leaf == Chl[[2]]) {
-          to.delete <- c(to.delete, j)
+      if ((!end_of_line) && expected_leaf == C_HL[[1]]) {
+        if (expected_leaf == C_HL[[2]]) {
+          to_delete <- c(to_delete, j)
         }
-        j <- j + Chl[2] - Chl[1] + 1
+        j <- j + C_HL[2] - C_HL[1] + 1
       } else {
         C[[h]] <- append(C[[h]], list(c(expected_leaf, expected_leaf)), l - 1)
         ZL[[h]] <- append(ZL[[h]], length(leaf_list[[expected_leaf]]), l - 1)
-        to.delete <- c(to.delete, j)
+        to_delete <- c(to_delete, j)
         j <- j + 1
       }
       l <- l + 1
     }
 
-    if (length(to.delete) > 0) {
-      leaves.to.place <- leaves.to.place[-to.delete]
-      len.to.place <- length(leaves.to.place)
-      to.delete <- numeric(0)
+    if (length(to_delete) > 0) {
+      leaves_to_place <- leaves_to_place[-to_delete]
+      len_to_place <- length(leaves_to_place)
+      to_delete <- numeric(0)
     }
   }
 
-  if (len.to.place > 0) {
+  if (len_to_place > 0) {
     h <- H + 1
     C[[h]] <- list()
     ZL[[h]] <- numeric(0)
-    for (expected_leaf in leaves.to.place) {
+    for (expected_leaf in leaves_to_place) {
       C[[h]] <- append(C[[h]], list(c(expected_leaf, expected_leaf)))
       ZL[[h]] <- append(ZL[[h]], length(leaf_list[[expected_leaf]]))
     }
