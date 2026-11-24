@@ -4,7 +4,7 @@
 \alias{pruning}
 \title{Prune a forest structure to speed up computations}
 \usage{
-pruning(C, ZL, leaf_list, prune.leafs = FALSE, delete_gaps = FALSE)
+pruning(C, ZL, leaf_list, prune_leafs = FALSE, delete_gaps = FALSE)
 }
 \arguments{
 \item{C}{A list of list representing the forest structure.
@@ -17,7 +17,7 @@ See \code{\link[=v_star]{v_star()}} for more information.}
 \item{leaf_list}{A list of vectors representing the atoms
 of the forest structure. See \code{\link[=v_star]{v_star()}} for more information.}
 
-\item{prune.leafs}{A boolean, \code{FALSE} by default.
+\item{prune_leafs}{A boolean, \code{FALSE} by default.
 If \code{TRUE}, will also prune atoms/leafs for
 which \eqn{\zeta_k \geq |R_k|},
 this makes the computation of \code{\link[=v_star]{v_star()}} and \code{\link[=curve_v_star_forest_naive]{curve_v_star_forest_naive()}}

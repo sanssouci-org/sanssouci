@@ -8,16 +8,16 @@
 \alias{zeta_dkwm}
 \title{Estimate the number of true null hypotheses among a set of p-values}
 \usage{
-zeta_hb(pval, lambda, ...)
+zeta_hb(p_values, lambda, ...)
 
-zeta_kbonf(pval, lambda, k = 1, ...)
+zeta_kbonf(p_values, lambda, k = 1, ...)
 
-zeta_trivial(pval, lambda, ...)
+zeta_trivial(p_values, lambda, ...)
 
-zeta_dkwm(pval, lambda, ...)
+zeta_dkwm(p_values, lambda, ...)
 }
 \arguments{
-\item{pval}{A vector of \eqn{p}-values.}
+\item{p_values}{A vector of \eqn{p}-values.}
 
 \item{lambda}{A numeric value in \eqn{[0,1]},
 the target error level of the test.}
@@ -52,7 +52,7 @@ upper bound (\code{lambda} is not used)
 }
 \description{
 An upper bound on the number of true null hypotheses in the region associated
-to the \eqn{p}-values \code{pval}
+to the \eqn{p}-values \code{p_values}
 is computed with confidence \code{1 - lambda}.
 The functions described here can be used as the \code{method} argument
 of \code{\link[=zetas_tree]{zetas_tree()}}.
@@ -69,13 +69,13 @@ of conserved hypotheses is a suitable upper bound.
 }
 \examples{
 x <- rnorm(100, mean = c(rep(c(0, 2), each = 50)))
-pval <- 1 - pnorm(x)
+p_values <- 1 - pnorm(x)
 lambda <- 0.05
-zeta_trivial(pval, lambda)
+zeta_trivial(p_values, lambda)
 
-zeta_hb(pval, lambda)
+zeta_hb(p_values, lambda)
 
-zeta_dkwm(pval, lambda)
+zeta_dkwm(p_values, lambda)
 }
 \references{
 Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020).

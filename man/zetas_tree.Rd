@@ -8,7 +8,7 @@ zetas_tree(
   C,
   leaf_list,
   method,
-  pvalues,
+  p_values,
   alpha,
   refine = FALSE,
   verbose = FALSE,
@@ -22,9 +22,10 @@ See \code{\link[=v_star]{v_star()}} for more information.}
 \item{leaf_list}{A list of vectors representing the atoms of the forest
 structure. See \code{\link[=v_star]{v_star()}} for more information.}
 
-\item{method}{A function with arguments \code{(pval, lambda)} that can
+\item{method}{A function with arguments \code{(p_values, lambda, ...)}
+that can
 compute an upper bound on the false positives in the region associated to
-the \eqn{p}-values \code{pval} at confidence level \code{1 - lambda}.
+the \eqn{p}-values \code{p_values} at confidence level \code{1 - lambda}.
 It can also be a list of such functions, where the \code{h}-th function
 is used at depth \code{h} in the tree structure, that is on the \eqn{R_k}'s
 represented by the elements found in \code{C[[h]]}.
@@ -33,7 +34,7 @@ of lists of such functions, mimicking the structure of \code{C} itself,
 that is, \code{method[[h]][[j]]} is applied the \eqn{R_k}
 represented by \code{C[[h]][[j]]}.}
 
-\item{pvalues}{A vector of \eqn{p}-values, must be of size \code{m},
+\item{p_values}{A vector of \eqn{p}-values, must be of size \code{m},
 with \code{m} the highest element found in the vectors of \code{leaf_list}.}
 
 \item{alpha}{A target error level in \eqn{]0,1[]}.}
@@ -76,10 +77,10 @@ the "effective" number of regions.
 m <- 1000
 dd <- dyadic_from_window_size(m, s = 10, method = 2)
 leaf_list <- dd$leaf_list
-pvalues <- runif(m)
+p_values <- runif(m)
 C <- dd$C
 method <- zeta_trivial
-ZL <- zetas_tree(C, leaf_list, method, pvalues, alpha = 0.05)
+ZL <- zetas_tree(C, leaf_list, method, p_values, alpha = 0.05)
 ZL
 }
 \references{
