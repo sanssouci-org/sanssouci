@@ -180,12 +180,12 @@ dyadic_from_height <- function(m, H = NULL, method) {
 #'
 #' @description
 #' An upper bound on the number of true null hypotheses in the region associated
-#' to the \eqn{p}-values \code{pval}
+#' to the \eqn{p}-values \code{p_values}
 #' is computed with confidence \code{1 - lambda}.
 #' The functions described here can be used as the \code{method} argument
 #' of [zetas_tree()].
 #'
-#' @param pval A vector of \eqn{p}-values.
+#' @param p_values A vector of \eqn{p}-values.
 #' @param lambda A numeric value in \eqn{[0,1]},
 #' the target error level of the test.
 #' @param k The positive integer \eqn{k} used by the
@@ -241,23 +241,23 @@ dyadic_from_height <- function(m, H = NULL, method) {
 #' discovery proportion over a path of hypotheses. Computo.
 #' @examples
 #' x <- rnorm(100, mean = c(rep(c(0, 2), each = 50)))
-#' pval <- 1 - pnorm(x)
+#' p_values <- 1 - pnorm(x)
 #' lambda <- 0.05
-#' zeta_trivial(pval, lambda)
+#' zeta_trivial(p_values, lambda)
 #'
-#' zeta_hb(pval, lambda)
+#' zeta_hb(p_values, lambda)
 #'
-#' zeta_dkwm(pval, lambda)
+#' zeta_dkwm(p_values, lambda)
 NULL
 
 #' @rdname zeta
 #' @export
-zeta_hb <- function(pval, lambda, ...) {
-  m <- length(pval)
-  sorted_pval <- sort(pval)
+zeta_hb <- function(p_values, lambda, ...) {
+  m <- length(p_values)
+  sorted_p_values <- sort(p_values)
 
   thresholds <- lambda / (m - 1:m + 1)
-  v <- sorted_pval - thresholds
+  v <- sorted_p_values - thresholds
   indexes <- which(v > 0)
   if (!length(indexes)) {
     return(0)
@@ -265,35 +265,35 @@ zeta_hb <- function(pval, lambda, ...) {
     return(m - indexes[1] + 1)
   }
 }
-# TODO: zeta_hb.sorted that assumes that the pvalues
+# TODO: zeta_hb.sorted that assumes that the p_values
 # are sorted and doesn't sort them
 
 #' @rdname zeta
 #' @export
-zeta_kbonf <- function(pval, lambda, k = 1, ...) {
-  m <- length(pval)
+zeta_kbonf <- function(p_values, lambda, k = 1, ...) {
+  m <- length(p_values)
   threshold <- lambda * k / m
-  indexes <- which(pval <= threshold)
+  indexes <- which(p_values <= threshold)
   bound <- m - length(indexes) + (k - 1)
   return(min(bound, m))
 }
 
 #' @rdname zeta
 #' @export
-zeta_trivial <- function(pval, lambda, ...) {
-  return(length(pval))
+zeta_trivial <- function(p_values, lambda, ...) {
+  return(length(p_values))
 }
 
 #' @rdname zeta
 #' @export
-zeta_dkwm <- function(pval, lambda, ...) {
-  s <- length(pval)
-  sorted_pval <- c(0, sort(pval))
+zeta_dkwm <- function(p_values, lambda, ...) {
+  s <- length(p_values)
+  sorted_p_values <- c(0, sort(p_values))
   dkwm <- min(
     (
-      sqrt(log(1 / lambda) / 2) / (2 * (1 - sorted_pval)) +
-        sqrt(log(1 / lambda) / (8 * (1 - sorted_pval)^2) +
-               (s - seq(0, s)) / (1 - sorted_pval))
+      sqrt(log(1 / lambda) / 2) / (2 * (1 - sorted_p_values)) +
+        sqrt(log(1 / lambda) / (8 * (1 - sorted_p_values)^2) +
+               (s - seq(0, s)) / (1 - sorted_p_values))
     )^2,
     na.rm = TRUE
   )
@@ -329,9 +329,10 @@ nb_elements <- function(C) {
 #' See [v_star()] for more information.
 #' @param leaf_list A list of vectors representing the atoms of the forest
 #' structure. See [v_star()] for more information.
-#' @param method A function with arguments \code{(pval, lambda)} that can
+#' @param method A function with arguments \code{(p_values, lambda, ...)} 
+#' that can
 #' compute an upper bound on the false positives in the region associated to
-#' the \eqn{p}-values \code{pval} at confidence level \code{1 - lambda}.
+#' the \eqn{p}-values \code{p_values} at confidence level \code{1 - lambda}.
 #' It can also be a list of such functions, where the \code{h}-th function
 #' is used at depth \code{h} in the tree structure, that is on the \eqn{R_k}'s
 #' represented by the elements found in \code{C[[h]]}.
@@ -339,7 +340,7 @@ nb_elements <- function(C) {
 #' of lists of such functions, mimicking the structure of \code{C} itself,
 #' that is, \code{method[[h]][[j]]} is applied the \eqn{R_k}
 #' represented by \code{C[[h]][[j]]}.
-#' @param pvalues A vector of \eqn{p}-values, must be of size \code{m},
+#' @param p_values A vector of \eqn{p}-values, must be of size \code{m},
 #' with \code{m} the highest element found in the vectors of \code{leaf_list}.
 #' @param alpha A target error level in \eqn{]0,1[]}.
 #' @param refine A boolean, \code{FALSE} by default.
@@ -379,15 +380,15 @@ nb_elements <- function(C) {
 #' m <- 1000
 #' dd <- dyadic_from_window_size(m, s = 10, method = 2)
 #' leaf_list <- dd$leaf_list
-#' pvalues <- runif(m)
+#' p_values <- runif(m)
 #' C <- dd$C
 #' method <- zeta_trivial
-#' ZL <- zetas_tree(C, leaf_list, method, pvalues, alpha = 0.05)
+#' ZL <- zetas_tree(C, leaf_list, method, p_values, alpha = 0.05)
 #' ZL
 zetas_tree <- function(C,
                        leaf_list,
                        method,
-                       pvalues,
+                       p_values,
                        alpha,
                        refine = FALSE,
                        verbose = FALSE,
@@ -408,10 +409,10 @@ zetas_tree <- function(C,
       if (len > 0) {
         for (k in 1:len) {
           C_HK <- C_H[[k]]
-          pval <- pvalues[unlist(leaf_list[C_HK[1]:C_HK[2]])]
+          extracted_p_values <- p_values[unlist(leaf_list[C_HK[1]:C_HK[2]])]
           args_zeta <- list(...)
-          if ("pCDFlist" %in% names(args_zeta)) {
-            args_zeta$pCDFlist <- args_zeta$pCDFlist[unlist(
+          if ("p_cdfs" %in% names(args_zeta)) {
+            args_zeta$p_cdfs <- args_zeta$p_cdfs[unlist(
               leaf_list[C_HK[1]:C_HK[2]]
             )]
           }
@@ -428,7 +429,7 @@ zetas_tree <- function(C,
             zeta_method,
             c(
               list(
-                pval = pval,
+                p_values = extracted_p_values,
                 lambda = alpha / USAGE_K
               ),
               args_zeta
