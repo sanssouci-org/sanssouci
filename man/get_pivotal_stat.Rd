@@ -34,7 +34,7 @@ X <- matrix(rnorm(m * n), ncol = n, nrow = m)
 categ <- rbinom(n, 1, 0.4)
 B <- 10
 null_groups <- replicate(B, sample(categ))
-p0 <- rowWelchTests(X, null_groups)$p.value
+p0 <- row_welch_tests(X, null_groups)$p_value
 pivStat <- get_pivotal_stat(p0, m)
 quantile(pivStat, 0.2)
 

@@ -26,7 +26,7 @@
 \item{B}{An integer value, the number of permutations to be performed.
 Defaults to 1000}
 
-\item{rowTestFUN}{A (vectorized) test function. Defaults to \link{rowWelchTests}.}
+\item{rowTestFUN}{A (vectorized) test function. Defaults to \link{row_welch_tests}.}
 
 \item{alternative}{A character string specifying the alternative hypothesis.
 Must be one of "two.sided" (default), "greater" or "less".}

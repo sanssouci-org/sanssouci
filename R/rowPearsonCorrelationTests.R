@@ -37,12 +37,12 @@
 #' n <- 38
 #' mat <- matrix(rnorm(m * n), ncol = n)
 #' categ <- rnorm(n, mean = 10)
-#' system.time(fwt <- rowPearsonCorrelationTests(mat, categ,
+#' system.time(fwt <- row_pearson_correlation_tests(mat, categ,
 #'   alternative = "greater"
 #' ))
 #' str(fwt)
 #'
-rowPearsonCorrelationTests <- function(X, categ, alternative = "two.sided") {
+row_pearson_correlation_tests <- function(X, categ, alternative = "two.sided") {
   if (is.null(dim(categ))) {
     r <- row_cor_pearson(X, categ, alternative = alternative)
   } else {

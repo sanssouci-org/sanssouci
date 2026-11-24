@@ -8,7 +8,7 @@ get_perm(
   X,
   categ,
   B,
-  rowTestFUN = rowWelchTests,
+  rowTestFUN = row_welch_tests,
   alternative = c("two.sided", "less", "greater")
 )
 }
@@ -20,7 +20,7 @@ specifying the column indices of the first and second samples.}
 
 \item{B}{An integer value, the number of permutations to be performed}
 
-\item{rowTestFUN}{a vectorized testing function (same I/O as \link{rowWelchTests})}
+\item{rowTestFUN}{a vectorized testing function (same I/O as \link{row_welch_tests})}
 
 \item{alternative}{A character string specifying the alternative hypothesis,
 to be passed to \code{rowTestFUN}. Must be one of "two.sided" (default),
@@ -31,7 +31,7 @@ Get a matrix of statistics and p-values under the null hypothesis obtained by
 repeated permutation of class labels (two-sample tests)
 }
 \details{
-The element 'p.value' of the output is a \verb{m x B} matrix whose entry
+The element 'p_value' of the output is a \verb{m x B} matrix whose entry
 i,j corresponds to \verb{p_\{(i)\}(g_j.X)} with notation of the AoS 2020 paper
 cited below (section 4.5).
 }
@@ -43,18 +43,18 @@ categ <- rbinom(n, 1, 0.4)
 
 B <- 10
 set.seed(123)
-perm0 <- sanssouci:::get_perm(X, categ, B, rowWelchTests)
+perm0 <- sanssouci:::get_perm(X, categ, B, row_welch_tests)
 
 # for this particular test 'get_perm' can be bypassed
 set.seed(123)
 null_groups <- replicate(B, sample(categ))
-perm <- rowWelchTests(X, null_groups)
-identical(perm0$p.value, perm$p.value)
+perm <- row_welch_tests(X, null_groups)
+identical(perm0$p_value, perm$p_value)
 identical(perm0$statistic, perm$statistic)
 # Wilcoxon tests
 set.seed(123)
-perm0 <- sanssouci:::get_perm(X, categ, B, rowWilcoxonTests)
-perm <- rowWilcoxonTests(X, null_groups)
-identical(perm0$p.value, perm$p.value)
+perm0 <- sanssouci:::get_perm(X, categ, B, row_wilcoxonTests)
+perm <- row_wilcoxonTests(X, null_groups)
+identical(perm0$p_value, perm$p_value)
 identical(perm0$statistic, perm$statistic)
 }

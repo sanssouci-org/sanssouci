@@ -60,28 +60,28 @@
 #' mat <- matrix(rnorm(p * n), ncol = n)
 #' cls <- rep(c(0, 1), each = n / 2)
 #'
-#' stats <- rowWilcoxonTests(mat, categ = cls, alternative = "two.sided")
+#' stats <- row_wilcoxon_tests(mat, categ = cls, alternative = "two.sided")
 #' str(stats)
 #'
 #' # permutation of class labels
 #' cls_perm <- replicate(11, sample(cls))
-#' stats <- rowWilcoxonTests(mat, categ = cls_perm, alternative = "two.sided")
+#' stats <- row_wilcoxon_tests(mat, categ = cls_perm, alternative = "two.sided")
 #' str(stats)
 #'
 #' # several unrelated contrasts
 #' cls2 <- cls
 #' cls[1:10] <- 1 # varying nx, ny
 #' cls_mat <- cbind(cls, cls2)
-#' stats <- rowWilcoxonTests(mat, categ = cls_mat, alternative = "two.sided")
+#' stats <- row_wilcoxon_tests(mat, categ = cls_mat, alternative = "two.sided")
 #' str(stats)
-rowWilcoxonTests <- function(mat, categ,
-                             alternative = c("two.sided", "less", "greater"),
-                             correct = TRUE) {
+row_wilcoxon_tests <- function(mat, categ,
+                               alternative = c("two.sided", "less", "greater"),
+                               correct = TRUE) {
   alternative <- match.arg(alternative)
   stopifnot(all(categ %in% c(0, 1)))
   categ <- as.matrix(categ)
   levels(categ) <- NULL
-  apply(categ, 2, categCheck, n = ncol(mat))
+  apply(categ, 2, categ_check, n = ncol(mat))
   B <- ncol(categ)
   m <- nrow(mat)
   n_obs <- nrow(categ)
@@ -140,15 +140,16 @@ rowWilcoxonTests <- function(mat, categ,
 
 # first version
 
-rowWilcoxonTestsV1 <- function(mat, categ,
-                               alternative = c("two.sided", "less", "greater"),
-                               correct = TRUE) {
+row_wilcoxon_tests_v1 <- function(mat, categ,
+                                  alternative =
+                                    c("two.sided", "less", "greater"),
+                                  correct = TRUE) {
   alternative <- match.arg(alternative)
   stopifnot(all(categ %in% c(0, 1)))
   levels(categ) <- NULL
 
   if (is.vector(categ)) {
-    return(rowWilcoxonTests1V1(mat, categ,
+    return(row_wilcoxon_tests1_v1(mat, categ,
       alternative = alternative,
       correct = correct
     ))
@@ -160,7 +161,7 @@ rowWilcoxonTestsV1 <- function(mat, categ,
   pval0 <- matrix(NA_real_, nrow = m, ncol = B)
   stat0 <- matrix(NA_real_, nrow = m, ncol = B)
   for (bb in 1:B) {
-    rwt <- rowWilcoxonTests1V1(mat, categ[, bb],
+    rwt <- row_wilcoxon_tests1_v1(mat, categ[, bb],
       alternative = alternative,
       correct = correct
     )
@@ -175,11 +176,12 @@ rowWilcoxonTestsV1 <- function(mat, categ,
 }
 
 #' @importFrom matrixStats rowMedians
-rowWilcoxonTests1V1 <- function(mat, categ,
-                                alternative = c("two.sided", "less", "greater"),
-                                correct = TRUE) {
+row_wilcoxon_tests1_v1 <- function(mat, categ,
+                                   alternative =
+                                     c("two.sided", "less", "greater"),
+                                   correct = TRUE) {
   alternative <- match.arg(alternative)
-  categCheck(categ, ncol(mat))
+  categ_check(categ, ncol(mat))
 
   rks <- rowRanks(mat, ties.method = "average")
   ny <- sum(categ == 0)

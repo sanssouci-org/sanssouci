@@ -45,7 +45,7 @@ SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
     n_groups <- length(ugroups)
 
     if (n_groups > 1) {
-      categCheck(groups, ncol(Y))
+      categ_check(groups, ncol(Y))
     }
     if (n_groups == 1) {
       type <- "1 sample"
@@ -101,7 +101,7 @@ SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
     all_0 <- identical(truth, rep(0, nrow(Y)))
     all_1 <- identical(truth, rep(1, nrow(Y)))
     if (!all_0 && !all_1) {
-      categCheck(truth, nrow(Y))
+      categ_check(truth, nrow(Y))
     }
   }
   input <- list(
@@ -176,7 +176,7 @@ SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
 #'
 #' \dontrun{
 #' # Use wilcoxon tests instead of Welch tests
-#' res <- fit(obj, B = 100, alpha = 0.1, rowTestFUN = rowWilcoxonTests)
+#' res <- fit(obj, B = 100, alpha = 0.1, rowTestFUN = row_wilcoxon_tests)
 #' volcanoPlot(res, q = 0.05, r = 0.2)
 #' }
 #'
@@ -346,7 +346,7 @@ generics::fit
 #'  Defaults to 1000
 #' @param alternative A character string specifying the alternative hypothesis.
 #'   Must be one of "two.sided" (default), "greater" or "less".
-#' @param rowTestFUN A (vectorized) test function. Defaults to [rowWelchTests].
+#' @param rowTestFUN A (vectorized) test function. Defaults to [row_welch_tests].
 #' @param family A character value, the name of a threshold family. Should be
 #'   one of "Linear", "Beta" and "Simes", or "Oracle". "Linear" and "Simes"
 #'   families are identical.
@@ -434,14 +434,14 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
 
   if (is.null(rowTestFUN)) {
     if (type == "1 sample") {
-      rowTestFUN <- rowZTests
-      funName <- "rowZTests"
+      rowTestFUN <- row_z_tests
+      funName <- "row_z_tests"
     } else if (type == "2 samples") {
-      rowTestFUN <- rowWelchTests
-      funName <- "rowWelchTests"
+      rowTestFUN <- row_welch_tests
+      funName <- "row_welch_tests"
     } else if (type == "Continuous case, correlation test") {
-      rowTestFUN <- rowPearsonCorrelationTests
-      funName <- "rowPearsonCorrelationTests"
+      rowTestFUN <- row_pearson_correlation_tests
+      funName <- "row_pearson_correlation_tests"
     } else if (type == "linear model") {
       row_lm_test_XC <- function(...) {
         row_lm_test(..., X = X, C = C)

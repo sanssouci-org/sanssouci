@@ -39,7 +39,7 @@ families are identical.}
 \item{K}{An integer value in \verb{[1,m]}, the number of elements in the reference
 family. Defaults to \code{m}}
 
-\item{p}{A vector of 'm' p.values, used for step-down control. If not
+\item{p}{A vector of 'm' p-values, used for step-down control. If not
 provided, single step control is performed.}
 
 \item{max_steps_down}{A numeric value, the maximum number of steps down to
@@ -77,11 +77,11 @@ sim <- gaussianSamples(
 )
 Y <- sim$X
 groups <- sim$categ
-p <- rowWelchTests(Y, groups)$p.value
+p <- row_welch_tests(Y, groups)$p_value
 
 B <- 100
 null_groups <- replicate(B, sample(groups))
-p0 <- rowWelchTests(Y, null_groups)$p.value
+p0 <- row_welch_tests(Y, null_groups)$p_value
 
 calib0 <- calibrate0(p0, m, alpha = 0.1) # single step
 calib <- calibrate(p0, m, alpha = 0.1, p = p)
@@ -97,12 +97,12 @@ rm(expr_ALL)
 groups <- ifelse(colnames(X) == "BCR/ABL", 1, 0) # map to 0/1
 
 null_groups <- replicate(500, sample(groups))
-perm <- rowWelchTests(X, null_groups)
-p0 <- perm$p.value
+perm <- row_welch_tests(X, null_groups)
+p0 <- perm$p_value
 
 alpha <- 0.1
 m <- nrow(X)
-p <- rowWelchTests(X, groups)$p.value
+p <- row_welch_tests(X, groups)$p_value
 calib_L <- calibrate(p0, m, alpha, family = "Linear")
 calib_B <- calibrate(p0, m, alpha, family = "Beta", K = 100)
 

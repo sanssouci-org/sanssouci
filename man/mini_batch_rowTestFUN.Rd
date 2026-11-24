@@ -16,7 +16,7 @@ mini_batch_rowTestFUN(
 \arguments{
 \item{rowTestFUN}{A function taking as inputs Y, categ and Alternative and
 giving as a result a matrix of $p$-values.
-Example \code{\link{rowWelchTests}} or \code{\link{rowWilcoxonTests}}.}
+Example \code{\link{row_welch_tests}} or \code{\link{row_wilcoxon_tests}}.}
 
 \item{Y}{A \eqn{m \times n} numeric matrix whose rows correspond to variables
 and columns to observations}
@@ -47,7 +47,7 @@ n <- 35
 mat <- matrix(rnorm(p * n), ncol = n)
 cls <- rep(c(0, 1), times = c(10, n - 10))
 mini_batch_rowTestFUN(
-  rowTestFUN = rowWelchTests, Y = mat,
+  rowTestFUN = row_welch_tests, Y = mat,
   categ = cls, alternative = "two.sided",
   max_batch_size = 1e6
 )
