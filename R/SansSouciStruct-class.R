@@ -89,9 +89,9 @@ SansSouciDyadic <- function(m, leaf_size = NULL, height = NULL,
 #' obj <- SansSouciDyadic(m, leaf_size = s, direction = "top-down")
 #' nHyp(obj)
 #' nLeaves(obj)
-#' mu <- gen.mu.leaves(m = m, K1 = 8, d = 0.9, grouped = TRUE, 
+#' mu <- gen_mu_leaves(m = m, K1 = 8, d = 0.9, grouped = TRUE, 
 #'   setting = "const", barmu = 3, leaf_list = obj$input$leaves)
-#' pvalues <- gen.p.values(m = m, mu = mu, rho = 0)
+#' pvalues <- gen_p_values(m = m, mu = mu, rho = 0)
 #' 
 #' alpha <- 0.05
 #' res <- fit(obj, alpha, pvalues, "DKWM")
@@ -160,9 +160,9 @@ nLeaves.SansSouciStruct <- function(object) {
 #' m <- s*2^q
 #' obj <- SansSouciDyadic(m, leaf_size = s, direction = "top-down")
 #' 
-#' mu <- gen.mu.leaves(m = m, K1 = 8, d = 0.9, grouped = TRUE, 
+#' mu <- gen_mu_leaves(m = m, K1 = 8, d = 0.9, grouped = TRUE, 
 #'   setting = "const", barmu = 3, leaf_list = obj$input$leaves)
-#' pvalues <- gen.p.values(m = m, mu = mu, rho = 0)
+#' pvalues <- gen_p_values(m = m, mu = mu, rho = 0)
 #' 
 #' alpha <- 0.05
 #' S1 <- which(mu != 0)

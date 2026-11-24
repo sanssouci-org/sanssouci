@@ -11,9 +11,9 @@
 #' m <- 100
 #' pi0 <- 0.7
 #' barmu <- 4
-#' mu <- gen.mu.noleaves(m = m, pi0 = pi0, barmu = barmu)
+#' mu <- gen_mu_noleaves(m = m, pi0 = pi0, barmu = barmu)
 #' plot(mu)
-gen.mu.noleaves <- function(m, pi0, barmu) {
+gen_mu_noleaves <- function(m, pi0, barmu) {
   mu <- numeric(m)
   m0 <- floor(m * pi0)
   m1 <- m - m0
@@ -70,25 +70,25 @@ gauss_bloc <- function(barmu, len) {
 #' barmu <- 4
 #' dd <- dyadic.from.window.size(m, s, method = 2)
 #' leaf_list <- dd$leaf_list
-#' muC <- gen.mu.leaves(
+#' muC <- gen_mu_leaves(
 #'   m = m, K1 = K1, d = d, grouped = FALSE,
 #'   setting = "const", barmu = barmu, leaf_list = leaf_list
 #' )
-#' muC <- gen.mu.leaves(
+#' muC <- gen_mu_leaves(
 #'   m = m, K1 = K1, d = d, grouped = TRUE,
 #'   setting = "const", barmu = barmu, leaf_list = leaf_list
 #' )
-#' muG <- gen.mu.leaves(
+#' muG <- gen_mu_leaves(
 #'   m = m, K1 = K1, d = d, grouped = FALSE,
 #'   setting = "gauss", barmu = barmu, leaf_list = leaf_list
 #' )
-#' muP <- gen.mu.leaves(
+#' muP <- gen_mu_leaves(
 #'   m = m, K1 = K1, d = d, grouped = FALSE,
 #'   setting = "poisson", barmu = barmu, leaf_list = leaf_list
 #' )
 #' mu <- cbind(constant = muC, Gaussian = muG, Poisson = muP)
 #' matplot(mu, t = "s")
-gen.mu.leaves <- function(m, K1, d, grouped, setting, barmu, leaf_list) {
+gen_mu_leaves <- function(m, K1, d, grouped, setting, barmu, leaf_list) {
   mu <- numeric(m)
   K <- length(leaf_list)
   if (K1 > K) {
@@ -146,13 +146,13 @@ gen.mu.leaves <- function(m, K1, d, grouped, setting, barmu, leaf_list) {
 #' barmu <- 4
 #' dd <- dyadic.from.window.size(m, s, method = 2)
 #' leaf_list <- dd$leaf_list
-#' mu <- gen.mu.leaves(
+#' mu <- gen_mu_leaves(
 #'   m = m, K1 = K1, d = d, grouped = FALSE,
 #'   setting = "const", barmu = barmu, leaf_list = leaf_list
 #' )
-#' pvals <- gen.p.values(m = m, mu = mu, rho = 0)
+#' pvals <- gen_p_values(m = m, mu = mu, rho = 0)
 #' plot(-log(pvals), t = "b")
-gen.p.values <- function(m, mu = rep(0, m), rho = 0,
+gen_p_values <- function(m, mu = rep(0, m), rho = 0,
                          alternative = c("two.sided", "less", "greater")) {
   alternative <- match.arg(alternative)
   stopifnot(m == length(mu)) ## sanity check
