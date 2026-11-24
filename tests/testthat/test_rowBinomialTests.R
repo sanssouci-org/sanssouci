@@ -1,6 +1,6 @@
 context("Calculation of Binomial test statistics and p-values")
 
-test_that("rowBinomialTests <=> binom.test", {
+test_that("row_binomial_tests <=> binom.test", {
   p <- 25
   n0 <- 40
   n1 <- 60
@@ -11,12 +11,12 @@ test_that("rowBinomialTests <=> binom.test", {
 
   alt <- sample(c("two.sided", "greater", "less"), 1)
   if (alt == "two.sided") {
-    expect_warning(fbt <- rowBinomialTests(
+    expect_warning(fbt <- row_binomial_tests(
       mat = mat, categ = cls,
       alternative = alt
     ))
   } else {
-    fbt <- rowBinomialTests(mat = mat, categ = cls, alternative = alt)
+    fbt <- row_binomial_tests(mat = mat, categ = cls, alternative = alt)
   }
 
   # Ordinary Binomial test (reasonably fast for small number of tests)
@@ -39,9 +39,10 @@ test_that("rowBinomialTests <=> binom.test", {
 
   # matrix version
   cls_perm <- cbind(cls, replicate(3, sample(cls)))
-  fbt_perm <- rowBinomialTests(
+  fbt_perm <- row_binomial_tests(
     mat = mat, categ = cls_perm,
-    alternative = alt
+    alternative = alt,
+    warn = FALSE
   )
 
   expect_equal(fbt_perm$statistic[, 1], fbt$statistic)
@@ -51,7 +52,7 @@ test_that("rowBinomialTests <=> binom.test", {
 })
 
 
-test_that("correctness of rowBinomialTests alternative", {
+test_that("correctness of row_binomial_tests alternative", {
   p <- 123
   n0 <- 600
   n1 <- 400
@@ -78,7 +79,7 @@ test_that("correctness of rowBinomialTests alternative", {
 
   alt <- "two.sided"
   expect_warning({
-    pval <- rowBinomialTests(mat, categ = cls, alternative = alt)$p.value
+    pval <- row_binomial_tests(mat, categ = cls, alternative = alt)$p.value
   })
   m0 <- mean(pval[idx_null])
   mg <- mean(pval[idx_greater])
@@ -89,7 +90,7 @@ test_that("correctness of rowBinomialTests alternative", {
   expect_lt(mg, m0)
 
   alt <- "greater"
-  pval <- rowBinomialTests(mat, categ = cls, alternative = alt)$p.value
+  pval <- row_binomial_tests(mat, categ = cls, alternative = alt)$p.value
   m0 <- mean(pval[idx_null])
   mg <- mean(pval[idx_greater])
   ml <- mean(pval[idx_less])
@@ -98,7 +99,7 @@ test_that("correctness of rowBinomialTests alternative", {
   expect_gt(ml, m0)
 
   alt <- "less"
-  pval <- rowBinomialTests(mat, categ = cls, alternative = alt)$p.value
+  pval <- row_binomial_tests(mat, categ = cls, alternative = alt)$p.value
   m0 <- mean(pval[idx_null])
   mg <- mean(pval[idx_greater])
   ml <- mean(pval[idx_less])

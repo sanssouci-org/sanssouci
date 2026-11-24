@@ -8,7 +8,7 @@ sim <- gaussianSamples(
 X <- sim$X
 categ <- sim$categ
 thr <- t_linear(0.2, seq_len(m), m)
-tests <- rowWelchTests(X, categ)
+tests <- row_welch_tests(X, categ)
 pval <- sort(tests$p.value)
 whats <- c("TP", "FP", "TDP", "FDP")
 

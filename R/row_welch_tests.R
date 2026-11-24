@@ -16,7 +16,7 @@
 #' \describe{
 #'   \item{statistic}{the value of the t-statistics}
 #'   \item{parameter}{the degrees of freedom for the t-statistics}
-#'   \item{p_value}{the p-values for the tests}
+#'   \item{p.value}{the p-values for the tests}
 #'   \item{estimate}{the mean difference between groups}}
 #'   Each of these elements is a matrix of size \code{m x B}, coerced to a
 #'   vector of length \code{m} if \code{B=1}
@@ -186,7 +186,7 @@ suff_welch_tests <- function(m_x, m_y, s_x, s_y, n_x, n_y,
   sse2 <- sse^2
 
   ## test statistic
-  stat <- (m_x - m_y) / sqrt(sse)
+  statistics <- (m_x - m_y) / sqrt(sse)
 
   ## approximate degrees of freedom (Welch-Satterthwaite)
   deno <- divide_cols(sse_x^2, n_x - 1) + divide_cols(sse_y^2, n_y - 1)
@@ -196,8 +196,8 @@ suff_welch_tests <- function(m_x, m_y, s_x, s_y, n_x, n_y,
   mean_diff <- m_x - m_y
 
   # coerce to vector if single column
-  if (ncol(stat) == 1) {
-    stat <- stat[, 1]
+  if (ncol(statistics) == 1) {
+    statistics <- statistics[, 1]
     stopifnot(ncol(df) == 1)
     df <- df[, 1]
     stopifnot(ncol(mean_diff) == 1)
@@ -205,16 +205,16 @@ suff_welch_tests <- function(m_x, m_y, s_x, s_y, n_x, n_y,
   }
 
   ## p-value
-  p_value <- switch(alternative,
-    "two.sided" = 2 * (1 - pt(abs(stat), df = df)),
-    "greater" = 1 - pt(stat, df = df),
-    "less" = pt(stat, df = df)
+  p_values <- switch(alternative,
+    "two.sided" = 2 * (1 - pt(abs(statistics), df = df)),
+    "greater" = 1 - pt(statistics, df = df),
+    "less" = pt(statistics, df = df)
   )
 
   list(
-    statistic = stat,
+    statistic = statistics,
     parameter = df,
-    p.value = p_value,
+    p.value = p_values,
     estimate = mean_diff
   )
 }
@@ -291,20 +291,20 @@ suff_welch_tests1 <- function(m_x, m_y, s_x, s_y, n_x, n_y,
   sse2 <- sse^2
 
   ## test statistic
-  stat <- (m_x - m_y) / sqrt(sse)
+  statistics <- (m_x - m_y) / sqrt(sse)
 
   ## approximate degrees of freedom (Welch-Satterthwaite)
   df <- sse2 / (sse_x^2 / (n_x - 1) + sse_y^2 / (n_y - 1))
 
   ## p-value
   p_value <- switch(alternative,
-    "two.sided" = 2 * (1 - pt(abs(stat), df = df)),
-    "greater" = 1 - pt(stat, df = df),
-    "less" = pt(stat, df = df)
+    "two.sided" = 2 * (1 - pt(abs(statistics), df = df)),
+    "greater" = 1 - pt(statistics, df = df),
+    "less" = pt(statistics, df = df)
   )
 
   list(
-    statistic = stat,
+    statistic = statistics,
     parameter = df,
     p.value = p_value,
     estimate = m_x - m_y
@@ -316,9 +316,9 @@ row_welch_tests1 <- function(mat, categ,
   alternative <- match.arg(alternative)
   categ_check(categ, ncol(mat))
 
-  sstats <- get_summary_statistics(mat, categ = categ)
-  Y <- sstats[["0"]]
-  X <- sstats[["1"]] ## as per the doc of t.test:
+  summary_statistics <- get_summary_statistics(mat, categ = categ)
+  Y <- summary_statistics[["0"]]
+  X <- summary_statistics[["1"]] ## as per the doc of t.test:
   ## 'alternative = "greater"' is the alternative that 'x' has a larger  mean
   ## than 'y'.
   swt <- suff_welch_tests1(X[["mean"]], Y[["mean"]],

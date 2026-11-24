@@ -108,7 +108,7 @@ row_binomial_tests1 <- function(mat, categ,
   nx <- sum(categ == 1)
   x <- rowSums(mat[, categ == 1])
   py <- rowMeans(mat[, categ == 0]) # parameter of the control distribution
-  p <- switch(alternative,
+  p_values <- switch(alternative,
     less = pbinom(x, nx, py),
     greater = pbinom(x - 1, nx, py, lower.tail = FALSE),
     two.sided = row_binomial_p_value_2s(x = x, n = nx, p = py,
@@ -116,7 +116,7 @@ row_binomial_tests1 <- function(mat, categ,
   )
   list(
     statistic = x,
-    p_value = p,
+    p.value = p_values,
     estimate = x / nx - py
   )
 }

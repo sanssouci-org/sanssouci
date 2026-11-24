@@ -6,7 +6,7 @@ n <- 35
 mat <- matrix(rnorm(p * n), ncol = n)
 cls <- rep(c(0, 1), times = c(10, n - 10))
 
-test_that("rowWelchTests <=> welch.test", {
+test_that("row_welch_tests <=> welch.test", {
   alt <- sample(c("two.sided", "greater", "less"), 1)
 
   # Ordinary Welch t-test (reasonably fast for small number of tests)
@@ -18,8 +18,8 @@ test_that("rowWelchTests <=> welch.test", {
   dwt <- as.data.frame(t(wt))
   names(dwt) <- c("p.value", "statistic", "parameter")
 
-  fwt1 <- rowWelchTests1(mat, categ = cls, alternative = alt)
-  fwt <- rowWelchTests(mat, categ = cls, alternative = alt)
+  fwt1 <- row_welch_tests1(mat, categ = cls, alternative = alt)
+  fwt <- row_welch_tests(mat, categ = cls, alternative = alt)
   expect_equal(fwt1, fwt)
 
   expect_equal(fwt$p.value, dwt$p.value)
@@ -27,12 +27,12 @@ test_that("rowWelchTests <=> welch.test", {
   expect_equal(fwt$parameter, dwt$parameter)
 })
 
-test_that("rowWelchTests <=> welch.test (several contrasts at a time)", {
+test_that("row_welch_tests <=> welch.test (several contrasts at a time)", {
   alt <- sample(c("two.sided", "greater", "less"), 1)
   mat_small <- head(mat, 20)
 
   cls_perm <- replicate(10, sample(cls))
-  fwt <- rowWelchTests(mat_small, categ = cls_perm, alternative = alt)
+  fwt <- row_welch_tests(mat_small, categ = cls_perm, alternative = alt)
 
   # Ordinary Welch t-test (reasonably fast for small number of tests)
   nr <- nrow(mat_small)
@@ -53,7 +53,7 @@ test_that("rowWelchTests <=> welch.test (several contrasts at a time)", {
   expect_equivalent(fwt$p.value, res)
 })
 
-test_that("correctness of rowWelchTests alternative", {
+test_that("correctness of row_welch_tests alternative", {
   p <- 100
   n <- 54
   ## null distribution
@@ -70,7 +70,7 @@ test_that("correctness of rowWelchTests alternative", {
   mat[idx_less, i1] <- -1 + mat[idx_less, i1]
 
   alt <- "two.sided"
-  pval <- rowWelchTests(mat, categ = cls, alternative = alt)$p.value
+  pval <- row_welch_tests(mat, categ = cls, alternative = alt)$p.value
   m0 <- mean(pval[idx_null])
   mg <- mean(pval[idx_greater])
   ml <- mean(pval[idx_less])
@@ -80,7 +80,7 @@ test_that("correctness of rowWelchTests alternative", {
   expect_lt(mg, m0)
 
   alt <- "greater"
-  pval <- rowWelchTests(mat, categ = cls, alternative = alt)$p.value
+  pval <- row_welch_tests(mat, categ = cls, alternative = alt)$p.value
   m0 <- mean(pval[idx_null])
   mg <- mean(pval[idx_greater])
   ml <- mean(pval[idx_less])
@@ -89,7 +89,7 @@ test_that("correctness of rowWelchTests alternative", {
   expect_gt(ml, m0)
 
   alt <- "less"
-  pval <- rowWelchTests(mat, categ = cls, alternative = alt)$p.value
+  pval <- row_welch_tests(mat, categ = cls, alternative = alt)$p.value
   m0 <- mean(pval[idx_null])
   mg <- mean(pval[idx_greater])
   ml <- mean(pval[idx_less])
@@ -104,8 +104,8 @@ test_that("suffWelchTest gives identical results to welch.test", {
     x <- rnorm(1234)
     y <- rnorm(2345)
     target <- t.test(x, y)
-    swt <- suffWelchTests(mean(x), mean(y), sd(x), sd(y), length(x), length(y))
-    swt1 <- suffWelchTests1(
+    swt <- suff_welch_tests(mean(x), mean(y), sd(x), sd(y), length(x), length(y))
+    swt1 <- suff_welch_tests1(
       mean(x), mean(y), sd(x), sd(y), length(x),
       length(y)
     )
@@ -119,18 +119,18 @@ test_that("suffWelchTest gives identical results to welch.test", {
 })
 
 
-test_that("Sanity checks of 'categCheck' throw errors when expected to", {
+test_that("Sanity checks of 'categ_check' throw errors when expected to", {
   n <- 10
 
   vec <- rep(1, 5)
   expect_error(
-    categCheck(vec, n),
+    categ_check(vec, n),
     "vec should be of length 10, not5"
   )
 
-  categCheck(c(0, 1, 0, 1), 4)
+  categ_check(c(0, 1, 0, 1), 4)
 
-  categCheck(c(1, 2, 3, 4), 4)
+  categ_check(c(1, 2, 3, 4), 4)
 })
 
 test_that("Corner case with almost null within-group level variance", {
@@ -139,7 +139,7 @@ test_that("Corner case with almost null within-group level variance", {
   groups <- c(1, 0, 0, 0, 0, 1, 1, 0, 0, 0)
 
   res_stat <- t.test(y ~ groups)
-  res_sanssouci <- sanssouci::rowWelchTests(y, groups)
+  res_sanssouci <- sanssouci::row_welch_tests(y, groups)
   names(res_sanssouci)
   expect_equivalent(res_stat$statistic, -res_sanssouci$statistic)
   # inconsistent direction??

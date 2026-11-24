@@ -8,22 +8,22 @@ test_that("Consistency of 'get_perm'", {
 
   B <- 10
   set.seed(123)
-  perm0 <- get_perm(X, categ, B, rowWelchTests)
+  perm0 <- get_perm(X, categ, B, row_welch_tests)
 
   set.seed(123)
   null_groups <- replicate(B, sample(categ))
-  perm <- rowWelchTests(X, null_groups)
+  perm <- row_welch_tests(X, null_groups)
   expect_equal(perm0$p.value, perm$p.value)
   expect_equal(perm0$statistic, perm$statistic)
 
   set.seed(123)
-  perm0 <- get_perm(X, categ, B, rowWilcoxonTests)
+  perm0 <- get_perm(X, categ, B, row_wilcoxon_tests)
   set.seed(123)
-  perm1 <- get_perm(X, categ, B, rowWilcoxonTests1V1)
+  perm1 <- get_perm(X, categ, B, row_wilcoxon_tests1_v1)
   expect_identical(perm0$p.value, perm1$p.value)
   expect_identical(perm0$statistic, perm1$statistic)
 
-  perm <- rowWilcoxonTests(X, null_groups)
+  perm <- row_wilcoxon_tests(X, null_groups)
   expect_identical(perm0$p.value, perm$p.value)
   expect_identical(perm0$statistic, perm$statistic)
 })
@@ -37,7 +37,7 @@ test_that("Vanilla tests for 'get_pivotal_stat'", {
   X[, w1] <- X[, w1] + 0
   B <- 100
   null_groups <- replicate(B, sample(categ))
-  p0 <- rowWelchTests(X, null_groups)$p.value
+  p0 <- row_welch_tests(X, null_groups)$p.value
 
   pivStat <- get_pivotal_stat(p0, m)
   expect_length(pivStat, B)

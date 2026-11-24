@@ -6,7 +6,7 @@ test_that("Basic checks for 'confCurveFromFam'", {
     m = m, rho = 0.5, n = 10, pi0 = 0.8, SNR = 3,
     prob = 0.5
   )
-  rwt <- rowWelchTests(sim$X, sim$categ, alternative = "greater")
+  rwt <- row_welch_tests(sim$X, sim$categ, alternative = "greater")
   p_vals <- rwt$p.value
 
   cb <- confCurveFromFam(p_vals, refFamily = "Simes", param = 0.1, what = "TP")
@@ -46,7 +46,7 @@ test_that("Consistency of output of 'confCurveFromFam'", {
     m = m, rho = 0.5, n = 100, pi0 = 0.8,
     SNR = 3, prob = 0.5
   )
-  dex <- rowWelchTests(sim$X, sim$categ)
+  dex <- row_welch_tests(sim$X, sim$categ)
   conf_bound <- confCurveFromFam(dex$p.value,
     refFamily = "Simes",
     param = alpha,
@@ -124,7 +124,7 @@ test_that("Vanilla test for 'plotConfCurve'", {
     m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3,
     prob = 0.5
   )
-  rwt <- rowWelchTests(sim$X, categ = sim$categ, alternative = "greater")
+  rwt <- row_welch_tests(sim$X, categ = sim$categ, alternative = "greater")
 
   ce <- confCurveFromFam(rwt$p.value, refFamily = "Simes", param = 0.1)
   p <- plotConfCurve(ce, xmax = 200)

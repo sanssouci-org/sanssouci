@@ -60,20 +60,20 @@
 #' mat <- matrix(rnorm(p * n), ncol = n)
 #' cls <- rep(c(0, 1), each = n / 2)
 #'
-#' stats <- row_wilcoxon_tests(mat, categ = cls, alternative = "two.sided")
-#' str(stats)
+#' statistics <- row_wilcoxon_tests(mat, categ = cls, alternative = "two.sided")
+#' str(statistics)
 #'
 #' # permutation of class labels
 #' cls_perm <- replicate(11, sample(cls))
-#' stats <- row_wilcoxon_tests(mat, categ = cls_perm, alternative = "two.sided")
-#' str(stats)
+#' statistics <- row_wilcoxon_tests(mat, categ = cls_perm, alternative = "two.sided")
+#' str(statistics)
 #'
 #' # several unrelated contrasts
 #' cls2 <- cls
 #' cls[1:10] <- 1 # varying nx, ny
 #' cls_mat <- cbind(cls, cls2)
-#' stats <- row_wilcoxon_tests(mat, categ = cls_mat, alternative = "two.sided")
-#' str(stats)
+#' statistics <- row_wilcoxon_tests(mat, categ = cls_mat, alternative = "two.sided")
+#' str(statistics)
 row_wilcoxon_tests <- function(mat, categ,
                                alternative = c("two.sided", "less", "greater"),
                                correct = TRUE) {
@@ -92,8 +92,8 @@ row_wilcoxon_tests <- function(mat, categ,
 
   min_stat <- nx * (nx + 1) / 2
 
-  stats <- rks %*% categ
-  stats <- sweep(stats, MARGIN = 2, STATS = min_stat, FUN = "-")
+  statistics <- rks %*% categ
+  statistics <- sweep(statistics, MARGIN = 2, STATS = min_stat, FUN = "-")
 
   rks2 <- rks
   mode(rks2) <- "integer"
@@ -109,7 +109,7 @@ row_wilcoxon_tests <- function(mat, categ,
     FUN = "*"
   ))
 
-  z <- sweep(stats, MARGIN = 2, STATS = ny * nx / 2, FUN = "-")
+  z <- sweep(statistics, MARGIN = 2, STATS = ny * nx / 2, FUN = "-")
   CORRECTION <- 0
   if (correct) {
     CORRECTION <- switch(alternative,
@@ -121,7 +121,7 @@ row_wilcoxon_tests <- function(mat, categ,
   }
 
   z <- (z - CORRECTION) / sigma
-  p <- switch(alternative,
+  p_values <- switch(alternative,
     less = pnorm(z),
     greater = pnorm(z, lower.tail = FALSE),
     two.sided = 2 * pmin(pnorm(z), pnorm(z, lower.tail = FALSE))
@@ -131,10 +131,10 @@ row_wilcoxon_tests <- function(mat, categ,
   if (dim(categ)[2] == 1) {
     wx <- which(categ == 1)
     est <- rowMedians(mat[, wx]) - rowMedians(mat[, -wx])
-    stats <- as.vector(stats)
-    p <- as.vector(p)
+    statistics <- as.vector(statistics)
+    p_values <- as.vector(p_values)
   }
-  list(p.value = p, statistic = stats, estimate = est)
+  list(p.value = p_values, statistic = statistics, estimate = est)
 }
 
 

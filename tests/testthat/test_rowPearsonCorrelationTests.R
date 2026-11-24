@@ -6,7 +6,7 @@ n <- 35
 mat <- matrix(rnorm(p * n), ncol = n)
 cls <- rnorm(n)
 
-test_that("rowPearsonCorrelationTests <=> cor.test", {
+test_that("row_pearson_correlation_tests <=> cor.test", {
   alt <- sample(c("two.sided", "greater", "less"), 1)
 
   # Ordinary Welch t-test (reasonably fast for small number of tests)
@@ -17,7 +17,7 @@ test_that("rowPearsonCorrelationTests <=> cor.test", {
   dwt <- as.data.frame(t(wt))
   names(dwt) <- c("p.value", "statistic")
 
-  fwt <- rowPearsonCorrelationTests(mat, categ = cls, alternative = alt)
+  fwt <- row_pearson_correlation_tests(mat, categ = cls, alternative = alt)
 
   expect_equal(fwt$p.value, dwt$p.value)
   expect_equal(fwt$statistic, dwt$statistic)
@@ -25,13 +25,13 @@ test_that("rowPearsonCorrelationTests <=> cor.test", {
 
 
 test_that(
-  "rowPearsonCorrelationTests <=> cor.test (several contrasts at a time)",
+  "row_pearson_correlation_tests <=> cor.test (several contrasts at a time)",
   {
     alt <- sample(c("two.sided", "greater", "less"), 1)
     mat_small <- mat
     B <- 10
     cls_perm <- replicate(B, sample(cls))
-    fwt <- rowPearsonCorrelationTests(mat_small,
+    fwt <- row_pearson_correlation_tests(mat_small,
       categ = cls_perm,
       alternative = alt
     )

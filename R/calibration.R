@@ -224,12 +224,12 @@ get_perm <- function(X, categ, B,
   for (bb in 1:B) {
     categ_perm <- sample(categ)
     rwt <- rowTestFUN(X, categ = categ_perm, alternative = alternative)
-    pval0[, bb] <- rwt$p_value
+    pval0[, bb] <- rwt$p.value
     stat0[, bb] <- rwt$statistic
   }
 
   list(
-    p_value = pval0,
+    p.value = pval0,
     statistic = stat0
   )
 }

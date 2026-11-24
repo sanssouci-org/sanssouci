@@ -10,7 +10,7 @@ test_that("Testing mini batch on small datasets", {
   mat <- matrix(rnorm(p * n), ncol = n)
   cls <- rep(c(0, 1), times = c(10, n - 10))
 
-  tests <- c(rowWelchTests, rowWilcoxonTests)
+  tests <- c(row_welch_tests, row_wilcoxon_tests)
 
   for (test in tests) {
     fwt <- test(mat, cls, alternative = alt)

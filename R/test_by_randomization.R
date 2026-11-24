@@ -16,7 +16,7 @@
 #' @param alternative A character string specifying the alternative hypothesis.
 #'   Must be one of "two.sided" (default), "greater" or "less".
 #'
-#' @param rand.p.value A boolean value: should randomization \eqn{p}-values be
+#' @param rand_p_value A boolean value: should randomization \eqn{p}-values be
 #'   calculated and returned? Defaults to @FALSE
 #'
 #' @details The type of randomization is determined by the column names of
@@ -60,11 +60,11 @@
 #'   "perm" for permutation-based randomization in two-sample tests, and "flip"
 #'   for sign-flipping-based randomization in one sample tests. See Details.}
 #'
-#'   \item{rand.p}{A vector of \eqn{m} \eqn{p}-values (only if
-#'   \code{rand.p.value} is \code{TRUE} )}
+#'   \item{rand_p}{A vector of \eqn{m} \eqn{p}-values (only if
+#'   \code{rand_p_value} is \code{TRUE} )}
 #'
 #'   \item{rand}{A \eqn{m \times B} matrix of randomization \eqn{p}-values (only
-#'   if \code{rand.p.value} is \code{TRUE} )}
+#'   if \code{rand_p_value} is \code{TRUE} )}
 #'   }
 #' @references Blanchard, G., Neuvial, P., & Roquain, E. (2020). Post hoc
 #'   confidence bounds on false positives using reference families. Annals of
@@ -178,15 +178,17 @@ test_by_randomization <- function(X, categ, B,
       "less" = pnorm(statistics, lower.tail = TRUE)
     )
     ## test statistics under H0
-    null_statistics <- testBySignFlipping(X, B)
+    null_statistics <- test_by_sign_flipping(X, B)
     null_p_values <- switch(alternative,
       "two.sided" = 2 * (pnorm(abs(null_statistics), lower.tail = FALSE)),
       "greater" = pnorm(null_statistics, lower.tail = FALSE),
       "less" = pnorm(null_statistics, lower.tail = TRUE)
     )
     res <- list(
-      statistics = statistics, null_statistics = null_statistics,
-      p_values = p_values, null_p_values = null_p_values,
+      statistics = statistics, 
+      null_statistics = null_statistics,
+      p_values = p_values, 
+      null_p_values = null_p_values,
       flavor = flavor
     )
   }
@@ -195,7 +197,7 @@ test_by_randomization <- function(X, categ, B,
     ## get m x (B+1) matrix of pvalues under the null (+ original)
     ## by sorting null test statistics as proposed by Ge et al (2003)
     all_statistics <- cbind(null_statistics, statistics)
-    p_value_boot <- switch(alternative,
+    rand_p_values <- switch(alternative,
       "two.sided" = rowRanks(-abs(all_statistics),
                              ties.method = "max") / (B + 1),
       "greater" = rowRanks(-all_statistics,
@@ -204,8 +206,8 @@ test_by_randomization <- function(X, categ, B,
                         ties.method = "max") / (B + 1)
     )
 
-    res$rand.p <- p_value_boot[, B + 1]
-    res$rand.null_p_values <- p_value_boot[, -(B + 1), drop = FALSE]
+    res$rand_p_values <- rand_p_values[, B + 1]
+    res$rand_null_p_values <- rand_p_values[, -(B + 1), drop = FALSE]
   }
   return(res)
 }
