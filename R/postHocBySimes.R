@@ -30,23 +30,23 @@
 #'   hom <- hommelFast(p)
 #'   pickSimes(hom, R, silent=TRUE, alpha = alpha)
 #' }
-#' posthocBySimes(p, R, alpha=alpha)
+#' posthoc_by_simes(p, R, alpha=alpha)
 #'
 #' p <- c(0, 0.01, 0.02, 0.05, 0.1)
 #' alpha <- 0.2
 #' R <- 1:length(p)
-#' posthocBySimes(p, R, alpha, flavor = "single step")
-#' posthocBySimes(p, R, alpha, flavor = "one step down")
-#' posthocBySimes(p, R, alpha, flavor = "full step down")
+#' posthoc_by_simes(p, R, alpha, flavor = "single step")
+#' posthoc_by_simes(p, R, alpha, flavor = "one step down")
+#' posthoc_by_simes(p, R, alpha, flavor = "full step down")
 #' if (require("cherry")) {
 #'   hom <- hommelFast(p)
 #'   pickSimes(hom, R, silent=TRUE, alpha = alpha)
 #' }
 
-posthocBySimes <- function(p, select, alpha,
-                           flavor = c("full step down",
-                                      "one step down",
-                                      "single step")) {
+posthoc_by_simes <- function(p, select, alpha,
+                             flavor = c("full step down",
+                                        "one step down",
+                                        "single step")) {
   m <- length(p)
   stopifnot(all(select <= m))
   stopifnot(all(select >= 1))

@@ -7,7 +7,6 @@ pi0 <- 0.5
 
 test_that("output dimensions are as expected for two-sample tests", {
   sim <- sim_gaussian_equi(m, rho, n, pi0, SNR = 1, prob = 0.5)
-
   expect_equal(ncol(sim$X), n)
   expect_equal(nrow(sim$X), m)
   expect_length(sim$H, m)
@@ -21,7 +20,6 @@ test_that("output dimensions are as expected for two-sample tests", {
 
 test_that("output dimensions are as expected for one-sample tests", {
   sim <- sim_gaussian_equi(m, rho, n, pi0, SNR = 1, prob = 1)
-  
   expect_equal(ncol(sim$X), n)
   expect_equal(nrow(sim$X), m)
   expect_length(sim$H, m)

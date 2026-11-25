@@ -19,7 +19,7 @@ test_that("BNR+Simes is cherry::pickSimes on 'NAEP' data", {
     R <- sample(nR)
     alpha <- 0.1
     res_cherry <- cherry::pickSimes(hom, R, alpha = alpha, silent = TRUE)
-    res_BNR <- posthocBySimes(p, R, alpha, flavor = "full step down")
+    res_BNR <- posthoc_by_simes(p, R, alpha, flavor = "full step down")
     expect_equal(res_cherry, res_BNR)
   })
 })
@@ -38,7 +38,7 @@ test_that("BNR+Simes is cherry::pickSimes on simulated data", {
 
     alpha <- 0.1
     res_cherry <- cherry::pickSimes(hom, R, alpha = alpha, silent = TRUE)
-    res_BNR <- posthocBySimes(p, R, alpha)
+    res_BNR <- posthoc_by_simes(p, R, alpha)
     expect_equal(res_cherry, res_BNR)
   })
 })

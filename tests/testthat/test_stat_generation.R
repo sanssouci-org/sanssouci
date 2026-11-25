@@ -18,10 +18,10 @@ test_that("Simulation of null hypotheses from factor model", {
   })
   expect_equal(length(sim0$Y), m)
   expect_null(sim0$w)
-  S0 <- getFactorModelCovarianceMatrix(m)
+  S0 <- sigma_factor_model(m)
   expect_identical(S0, diag(m))
 
-  Y0 <- sim_null_gaussian(m, flavor = "independent")
+  Y0 <- sim_null_gaussian_factor(m, flavor = "independent")
   expect_identical(Y0[, 1], sim0$Y)
 
   # expected error: "t(P) %*% P should be orthonormal"
@@ -70,9 +70,9 @@ test_that("Simulation of null hypotheses from factor model", {
   )
   expect_identical(Y3[, 1], sim3$Y)
 
-  Sigma <- getFactorModelCovarianceMatrix(m, h, P = P, rho = rho)
-  expect_equal(nrow(Sigma), ncol(Sigma))
-  expect_equal(nrow(Sigma), m)
+  SIGMA <- sigma_factor_model(m, h, P = P, rho = rho)
+  expect_equal(nrow(SIGMA), ncol(SIGMA))
+  expect_equal(nrow(SIGMA), m)
 })
 
 test_that("Simulation of Gaussian null hypotheses from covariance matrix", {
@@ -82,9 +82,8 @@ test_that("Simulation of Gaussian null hypotheses from covariance matrix", {
 
   ## Toeplitz, short range
   tcoefs <- toeplitz((1:m)^(-2))
-  Sigma <- Matrix(tcoefs, sparse = TRUE)
-  Y <- sim_null_gaussian_sigma(Sigma, n)
-  SigmaHat <- Y %*% t(Y) / n
+  SIGMA <- Matrix(tcoefs, sparse = TRUE)
+  Y <- sim_null_gaussian_sigma(SIGMA, n)
   expect_equal(nrow(Y), m)
   expect_equal(ncol(Y), n)
 })

@@ -1,6 +1,6 @@
 context("Joint Error Rate calibration")
 
-test_that("Consistency of 'get_perm'", {
+test_that("Consistency of 'perm_stat'", {
   m <- 5
   n <- 45
   X <- matrix(rnorm(m * n, mean = 1), ncol = n, nrow = m)
@@ -8,7 +8,7 @@ test_that("Consistency of 'get_perm'", {
 
   B <- 10
   set.seed(123)
-  perm0 <- get_perm(X, categ, B, row_welch_tests)
+  perm0 <- perm_stat(X, categ, B, row_welch_tests)
 
   set.seed(123)
   null_groups <- replicate(B, sample(categ))
@@ -17,9 +17,9 @@ test_that("Consistency of 'get_perm'", {
   expect_equal(perm0$statistic, perm$statistic)
 
   set.seed(123)
-  perm0 <- get_perm(X, categ, B, row_wilcoxon_tests)
+  perm0 <- perm_stat(X, categ, B, row_wilcoxon_tests)
   set.seed(123)
-  perm1 <- get_perm(X, categ, B, row_wilcoxon_tests1_v1)
+  perm1 <- perm_stat(X, categ, B, row_wilcoxon_tests1_v1)
   expect_identical(perm0$p.value, perm1$p.value)
   expect_identical(perm0$statistic, perm1$statistic)
 
@@ -28,7 +28,7 @@ test_that("Consistency of 'get_perm'", {
   expect_identical(perm0$statistic, perm$statistic)
 })
 
-test_that("Vanilla tests for 'get_pivotal_stat'", {
+test_that("Vanilla tests for 'pivotal_stat'", {
   m <- 50
   n <- 45
   X <- matrix(rnorm(m * n), ncol = n, nrow = m)
@@ -39,17 +39,17 @@ test_that("Vanilla tests for 'get_pivotal_stat'", {
   null_groups <- replicate(B, sample(categ))
   p0 <- row_welch_tests(X, null_groups)$p.value
 
-  pivStat <- get_pivotal_stat(p0, m)
+  pivStat <- pivotal_stat(p0, m)
   expect_length(pivStat, B)
   expect_lte(max(pivStat), 1)
   expect_gte(min(pivStat), 0)
 
-  pivStat2 <- get_pivotal_stat(p0, m, K = m / 10)
+  pivStat2 <- pivotal_stat(p0, m, K = m / 10)
   expect_gte(min(pivStat2), 0)
   expect_gte(min(pivStat2 - pivStat), 0)
 })
 
-test_that("JER calibration and get_pivotal_stat yield identical pivotal
+test_that("JER calibration and pivotal_stat yield identical pivotal
           statistics", {
             m <- 132
             n <- 54
@@ -59,8 +59,8 @@ test_that("JER calibration and get_pivotal_stat yield identical pivotal
 
             ## TODO: tests all param combinations
             set.seed(0xBEEF)
-            p0 <- get_perm(X, categ, B)$p.value
-            pivStat <- get_pivotal_stat(p0, m, t_inv_linear)
+            p0 <- perm_stat(X, categ, B)$p.value
+            pivStat <- pivotal_stat(p0, m, t_inv_linear)
 
             cal <- calibrate(p0, m, alpha = 1, family = "Linear")
             expect_equal(cal$piv_stat, pivStat)
@@ -75,11 +75,11 @@ test_that("pivotal statistics are non-decreasing in the set of hypotheses used
             categ <- rbinom(n, 1, 0.4)
             B <- 111
 
-            p0 <- get_perm(X, categ, B)$p.value
-            piv_stat <- get_pivotal_stat(p0, m, t_inv_linear)
+            p0 <- perm_stat(X, categ, B)$p.value
+            piv_stat <- pivotal_stat(p0, m, t_inv_linear)
 
             sub <- sample(m, round(m / 2))
-            piv_stat_sub <- get_pivotal_stat(p0[sub, ], m, t_inv_linear)
+            piv_stat_sub <- pivotal_stat(p0[sub, ], m, t_inv_linear)
 
             expect_gte(min(piv_stat_sub - piv_stat_sub), 0)
           })

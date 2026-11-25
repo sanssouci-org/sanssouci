@@ -78,7 +78,7 @@ sim_null_gaussian_factor <- function(m, n = 1,
   }
 
   if (cov) {
-    SIGMA <- getFactorModelCovarianceMatrix(m, h = h, P = P, rho = rho)
+    SIGMA <- sigma_factor_model(m, h = h, P = P, rho = rho)
     attr(Y, "Sigma") <- SIGMA
   }
   Y

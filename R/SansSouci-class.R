@@ -181,7 +181,7 @@ SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
 #' }
 #'
 SansSouciSim <- function(...) {
-  sim <- gaussian_samples(...)
+  sim <- sim_gaussian_equi(...)
   SansSouci(Y = sim$X, groups = sim$categ, truth = sim$H)
 }
 
@@ -521,7 +521,7 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
       } else if (type == "linear model") {
         null_groups <- replicate(B, sample(1:n, n, replace = TRUE))
       }
-      p0 <- mini_batch_rowtestfun(
+      p0 <- minibatch_row_test_fun(
         row_test_fun = rowTestFUN, Y = Y,
         categ = null_groups,
         alternative = alternative,

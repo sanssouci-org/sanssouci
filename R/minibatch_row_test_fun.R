@@ -24,12 +24,12 @@
 #' n <- 35
 #' mat <- matrix(rnorm(p * n), ncol = n)
 #' cls <- rep(c(0, 1), times = c(10, n - 10))
-#' mini_batch_rowtestfun(
+#' minibatch_row_test_fun(
 #'   row_test_fun = row_welch_tests, Y = mat,
 #'   categ = cls, alternative = "two.sided",
 #'   max_batch_size = 1e5
 #' )
-mini_batch_rowtestfun <- function(row_test_fun, Y, categ,
+minibatch_row_test_fun <- function(row_test_fun, Y, categ,
                                   alternative = c("two.sided", "less",
                                                   "greater"),
                                   max_batch_size = 1e6, m = nrow(Y)) {

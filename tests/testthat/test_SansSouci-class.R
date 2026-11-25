@@ -203,11 +203,11 @@ test_that("'fit.SansSouci' reproduces the results of 'calibrate'", {
     alternative = alt, family = fam, max_steps_down = 0
   )
   set.seed(20210311)
-  p0 <- get_perm(obj$input$Y, obj$input$groups, B, alternative = alt)$p.value
+  p0 <- perm_stat(obj$input$Y, obj$input$groups, B, alternative = alt)$p.value
   expect_equal(p0, res$output$p0)
   t_inv <- ifelse(fam == "Simes", t_inv_linear, t_inv_beta)
   t_ <- ifelse(fam == "Simes", t_linear, t_beta)
-  pivStat <- get_pivotal_stat(p0, m, t_inv, K = K)
+  pivStat <- pivotal_stat(p0, m, t_inv, K = K)
   expect_equal(pivStat, res$output$piv_stat)
 })
 
@@ -536,7 +536,7 @@ test_that(
     expect_equal(p0, res$output$p0)
     t_inv <- ifelse(fam == "Simes", t_inv_linear, t_inv_beta)
     t_ <- ifelse(fam == "Simes", t_linear, t_beta)
-    pivStat <- get_pivotal_stat(p0, m, t_inv, K = K)
+    pivStat <- pivotal_stat(p0, m, t_inv, K = K)
     expect_equal(pivStat, res$output$piv_stat)
   }
 )

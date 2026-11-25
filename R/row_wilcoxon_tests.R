@@ -65,14 +65,16 @@
 #'
 #' # permutation of class labels
 #' cls_perm <- replicate(11, sample(cls))
-#' statistics <- row_wilcoxon_tests(mat, categ = cls_perm, alternative = "two.sided")
+#' statistics <- row_wilcoxon_tests(mat, categ = cls_perm,
+#' alternative = "two.sided")
 #' str(statistics)
 #'
 #' # several unrelated contrasts
 #' cls2 <- cls
 #' cls[1:10] <- 1 # varying nx, ny
 #' cls_mat <- cbind(cls, cls2)
-#' statistics <- row_wilcoxon_tests(mat, categ = cls_mat, alternative = "two.sided")
+#' statistics <- row_wilcoxon_tests(mat, categ = cls_mat,
+#' alternative = "two.sided")
 #' str(statistics)
 row_wilcoxon_tests <- function(mat, categ,
                                alternative = c("two.sided", "less", "greater"),

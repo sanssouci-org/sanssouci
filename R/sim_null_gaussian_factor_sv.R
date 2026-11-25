@@ -1,4 +1,4 @@
-#' sim_gaussian_nulls_factor_sv
+#' sim_null_gaussian_factor_sv
 #'
 #' Simulate null hypotheses according to a factor model
 #'
@@ -18,20 +18,20 @@
 #' m <- 10
 #'
 #' ## independent
-#' sim0 <- sanssouci:::sim_gaussian_nulls_factor_sv(m)
+#' sim0 <- sanssouci:::sim_null_gaussian_factor_sv(m)
 #' str(sim0)
-#' sum(is.na(sanssouci:::sim_gaussian_nulls_factor_sv(m)))
-#' S0 <- getFactorModelCovarianceMatrix(m)
+#' sum(is.na(sanssouci:::sim_null_gaussian_factor_sv(m)))
+#' S0 <- sigma_factor_model(m)
 #' image(S0)
 #'
 #' ## equi-correlated
 #' rho <- 0.2
 #' h <- 1
 #' P <- matrix(1, m, length(h))
-#' sim1 <- sanssouci:::sim_gaussian_nulls_factor_sv(m,
+#' sim1 <- sanssouci:::sim_null_gaussian_factor_sv(m,
 #'           h, P, rho=rho)
 #' str(sim1)
-#' S1 <- getFactorModelCovarianceMatrix(m, h, P, rho=rho)
+#' S1 <- sigma_factor_model(m, h, P, rho=rho)
 #' image(S1)
 #'
 #' ## 3-factor model
@@ -43,14 +43,14 @@
 #' gamma3 <- rep(c(-1, 1), times=m/2)
 #' P <- cbind(gamma1, gamma2, gamma3)/sqrt(m)
 #'
-#' sim3 <- sanssouci:::sim_gaussian_nulls_factor_sv(m,
+#' sim3 <- sim_null_gaussian_factor_sv(m,
 #'               h, P, rho=rho)
 #' str(sim3)
-#' S3 <- getFactorModelCovarianceMatrix(m, h, P, rho=rho)
+#' S3 <- sigma_factor_model(m, h, P, rho=rho)
 #' image(S3)
 #' sim3
 #'
-sim_gaussian_nulls_factor_sv <- function(m, h = numeric(0),
+sim_null_gaussian_factor_sv <- function(m, h = numeric(0),
                                       P = Matrix(0, nrow = m, ncol = length(h)),
                                       rho = 0) {
   k <- length(h)
