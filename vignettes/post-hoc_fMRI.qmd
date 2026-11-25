@@ -98,7 +98,7 @@ TP_Simes <- predict(res_Simes, what = "TP")
 TP_Simes
 ```
 
-The Simes bound implies that with probability larger than `r 1-alpha`, the number of voxels associated to the task of interest (among all `r nHyp(obj)` voxels) is at least  `r TP_Simes`.
+The Simes bound implies that with probability larger than `r 1-alpha`, the number of voxels associated to the task of interest (among all `r n_hyp(obj)` voxels) is at least  `r TP_Simes`.
 
 Disregarding (for now) the voxel locations in the brain, we plot confidence bounds on $p$-value level sets (corresponding to maps obtained by thresholding at a given test statistic):
 

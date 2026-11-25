@@ -117,7 +117,7 @@ NULL
 #' @rdname SansSouciStruct-methods
 #' @param object An object of class `SansSouciStruct`
 #' @export
-get_nb_hyp.SansSouciStruct <- function(object) {
+n_hyp.SansSouciStruct <- function(object) {
   object$input$m
 }
 

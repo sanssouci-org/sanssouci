@@ -120,7 +120,7 @@ We want to obtain post hoc guarantees on a set of genes which are associated wit
 ```{r}
 #| label: fit-calibration-1
 alpha <- 0.1
-obj <- SansSouci(Y = Y, X = X, Contrast = C)
+obj <- SansSouci(Y = Y, X = X, contrast = C)
 res <- fit(obj, alpha = alpha, B = 100)
 # B=100 to save computing time, but should use B=1000.
 ```
@@ -229,7 +229,7 @@ We build another `SansSouci` object with this contrast matrix, fit the model and
 
 ```{r}
 #| label: calibration-2
-object <- SansSouci(Y = Y, X = X, Contrast = C)
+object <- SansSouci(Y = Y, X = X, contrast = C)
 res <- fit(object = object, alpha = alpha, B = 100)
 ```
 

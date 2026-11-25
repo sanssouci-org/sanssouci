@@ -44,7 +44,7 @@ test_that("Correctness of the constructor of SansSouciStruct", {
   expect_length(input$leaves, 2^q)
   expect_length(input$struct, q + 1)
 
-  expect_equal(nHyp(obj), m)
+  expect_equal(n_hyp(obj), m)
   expect_equal(obj$input$m, m)
 })
 
