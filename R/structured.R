@@ -891,17 +891,18 @@ pred_pathway_structured <- function(
 #' going from the leaves to the roots instead of the contrary,
 #' to avoid this issue.
 #'
-#' @param C A list of list representing the forest structure.
+#' @param forest_structure A list of list representing the forest structure.
 #' See [pred_subset_structured()] for more information.
-#' @param ZL A list of integer vectors representing the upper bounds
+#' @param zetas_list A list of integer vectors representing the upper bounds
 #' \eqn{\zeta_k} of the forest structure.
 #' See [pred_subset_structured()] for more information.
 #' @param leaf_list A list of vectors representing the atoms of
 #' the forest structure. See [pred_subset_structured()] for more information.
 #'
 #' @return A list with two named elements. \describe{
-#' \item{\code{C}}{The new \code{C} after completion.}
-#' \item{\code{ZL}}{The new \code{ZL} after completion.}
+#' \item{\code{forest_structure}}{The new \code{forest_structure} 
+#' after completion.}
+#' \item{\code{zetas_list}}{The new \code{zetas_list} after completion.}
 #' }
 #'
 #' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020).
@@ -911,8 +912,8 @@ pred_pathway_structured <- function(
 #' confidence upper bounds for the False Discovery Proportion using a reference
 #' family with a forest structure. arXiv:2502.03849.
 #' @export
-forest_completion <- function(C, ZL, leaf_list) {
-  H <- length(C)
+forest_completion <- function(forest_structure, zetas_list, leaf_list) {
+  H <- length(forest_structure)
 
   leaves_to_place <- seq_along(leaf_list)
   len_to_place <- length(leaves_to_place)
@@ -924,9 +925,9 @@ forest_completion <- function(C, ZL, leaf_list) {
 
     while (j <= len_to_place) {
       expected_leaf <- leaves_to_place[j]
-      end_of_line <- l > length(C[[h]])
+      end_of_line <- l > length(forest_structure[[h]])
       if (!end_of_line) {
-        current_node <- C[[h]][[l]]
+        current_node <- forest_structure[[h]][[l]]
       }
       if ((!end_of_line) && expected_leaf == current_node[[1]]) {
         if (expected_leaf == current_node[[2]]) {
@@ -934,8 +935,16 @@ forest_completion <- function(C, ZL, leaf_list) {
         }
         j <- j + current_node[2] - current_node[1] + 1
       } else {
-        C[[h]] <- append(C[[h]], list(c(expected_leaf, expected_leaf)), l - 1)
-        ZL[[h]] <- append(ZL[[h]], length(leaf_list[[expected_leaf]]), l - 1)
+        forest_structure[[h]] <- append(
+          forest_structure[[h]],
+          list(c(expected_leaf, expected_leaf)),
+          l - 1
+        )
+        zetas_list[[h]] <- append(
+          zetas_list[[h]],
+          length(leaf_list[[expected_leaf]]),
+          l - 1
+        )
         to_delete <- c(to_delete, j)
         j <- j + 1
       }
@@ -951,13 +960,19 @@ forest_completion <- function(C, ZL, leaf_list) {
 
   if (len_to_place > 0) {
     h <- H + 1
-    C[[h]] <- list()
-    ZL[[h]] <- numeric(0)
+    forest_structure[[h]] <- list()
+    zetas_list[[h]] <- numeric(0)
     for (expected_leaf in leaves_to_place) {
-      C[[h]] <- append(C[[h]], list(c(expected_leaf, expected_leaf)))
-      ZL[[h]] <- append(ZL[[h]], length(leaf_list[[expected_leaf]]))
+      forest_structure[[h]] <- append(
+        forest_structure[[h]],
+        list(c(expected_leaf, expected_leaf))
+      )
+      zetas_list[[h]] <- append(
+        zetas_list[[h]],
+        length(leaf_list[[expected_leaf]])
+      )
     }
   }
 
-  return(list(C = C, ZL = ZL))
+  return(list(C = C, zetas_list = zetas_list))
 }
