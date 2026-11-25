@@ -185,9 +185,9 @@ test_by_randomization <- function(X, categ, B,
       "less" = pnorm(null_statistics, lower.tail = TRUE)
     )
     res <- list(
-      statistics = statistics, 
+      statistics = statistics,
       null_statistics = null_statistics,
-      p_values = p_values, 
+      p_values = p_values,
       null_p_values = null_p_values,
       flavor = flavor
     )
