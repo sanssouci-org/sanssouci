@@ -772,19 +772,22 @@ pred_pathway_structured <- function(
       # the fast version needs a proper completion of the
       # forest structure, and for the same reason
       # it must not prune the leaves
-      completed <- forest_completion(C, ZL, leaf_list)
-      C <- completed$C
-      ZL <- completed$ZL
+      completed <- forest_completion(forest_structure, zetas_list, leaf_list)
+      forest_structure <- completed$forest_structure
+      zetas_list <- completed$zetas_list
     }
 
     if (pruning) {
       is_pruned <- TRUE # useless atm, but kept for clarity
       pruned <- pruning(
-        C, ZL, leaf_list,
-        prune_leafs = FALSE, delete_gaps = delete_gaps
+        forest_structure,
+        zetas_list,
+        leaf_list,
+        prune_leafs = FALSE,
+        delete_gaps = delete_gaps
       )
-      C <- pruned$C
-      ZL <- pruned$ZL
+      forest_structure <- pruned$forest_structure
+      zetas_list <- pruned$zetas_list
       m <- length(unlist(leaf_list))
 
       if (length(perm) == m) {
@@ -799,31 +802,28 @@ pred_pathway_structured <- function(
     }
   }
 
-  H <- length(C)
+  H <- length(forest_structure)
   m <- length(unlist(leaf_list))
 
   # preparation of the initial value of the etas (a copy of zetas but
   # with only zeroes), of the initial value of K^- (with the R_k's
   # such that zeta_k = 0) and of a m x H matrix M such that
-  # M[i, h] gives the index k of C[[h]] such that hypothesis i
-  # is in the R_k given by C[[h]][[k]]
-  etas <- ZL
+  # M[i, h] gives the index k of forest_structure[[h]] such that hypothesis i
+  # is in the R_k given by forest_structure[[h]][[k]]
+  etas <- zetas_list
   K_MINUS <- list()
-  M <- matrix(0, ncol = H, nrow = m)
+  M <- matrix(0, nrow = m, ncol = H)
   for (h in 1:H) {
-    zeta_depth_h <- ZL[[h]]
-    length_zeta_depth_h <- length(zeta_depth_h)
-    etas[[h]] <- rep(0, length_zeta_depth_h)
-    K_MINUS[[h]] <- vector("list", length(C[[h]]))
-    if (length_zeta_depth_h > 0) {
-      for (k in 1:length_zeta_depth_h) {
-        if (zeta_depth_h[k] == 0) {
-          K_MINUS[[h]][[k]] <- C[[h]][[k]]
-        }
-        first_leaf <- leaf_list[[C[[h]][[k]][1]]]
-        last_leaf <- leaf_list[[C[[h]][[k]][2]]]
-        M[first_leaf[1]:last_leaf[length(last_leaf)], h] <- k
+    zeta_depth_h <- zetas_list[[h]]
+    etas[[h]] <- rep(0, length(zeta_depth_h))
+    K_MINUS[[h]] <- vector("list", length(forest_structure[[h]]))
+    for (k in seq_along(zeta_depth_h)) {
+      if (zeta_depth_h[k] == 0) {
+        K_MINUS[[h]][[k]] <- forest_structure[[h]][[k]]
       }
+      first_leaf <- leaf_list[[forest_structure[[h]][[k]][1]]]
+      last_leaf <- leaf_list[[forest_structure[[h]][[k]][2]]]
+      M[first_leaf[1]:last_leaf[length(last_leaf)], h] <- k
     }
   }
 
@@ -875,9 +875,14 @@ pred_pathway_structured <- function(
   return(vstars)
 }
 
+# TODO: impose by design and by outputs that all forest_structures
+# are without gaps (no more optional delete_gaps argument), in which
+# case forest_completion should work after pruning?
+# even if we prune the leafs???
+
 #' Complete a forest structure
 #'
-#' @description Completes the forest in the sens of the Reference:
+#' @description Completes the forest in the sense of the Reference:
 #' adds the missing atoms/leaves
 #' in the reference family with a forest structure \eqn{(R_k, \zeta_k)}
 #' so that each atom is well represented by a \eqn{R_k}.
@@ -938,12 +943,12 @@ forest_completion <- function(forest_structure, zetas_list, leaf_list) {
         forest_structure[[h]] <- append(
           forest_structure[[h]],
           list(c(expected_leaf, expected_leaf)),
-          l - 1
+          after = l - 1
         )
         zetas_list[[h]] <- append(
           zetas_list[[h]],
           length(leaf_list[[expected_leaf]]),
-          l - 1
+          after = l - 1
         )
         to_delete <- c(to_delete, j)
         j <- j + 1
@@ -974,5 +979,5 @@ forest_completion <- function(forest_structure, zetas_list, leaf_list) {
     }
   }
 
-  return(list(C = C, zetas_list = zetas_list))
+  return(list(forest_structure = forest_structure, zetas_list = zetas_list))
 }
