@@ -46,7 +46,7 @@
 #' B <- 1e3
 #'
 #' ## two-sample data
-#' sim <- gaussian_samples(m, rho, n, pi0, SNR = 2, prob = 0.5)
+#' sim <- sim_gaussian_equi(m, rho, n, pi0, SNR = 2, prob = 0.5)
 #' tests <- testByRandomization(sim$X, sim$categ, B = B)
 #'
 #' ## show test statistics
@@ -56,8 +56,8 @@
 #' legend("topleft", c("H0", "H1"), pch = pch, col = 1:2)
 #'
 #' ## one-sample data
-#' sim <- gaussian_samples(m, rho, n, pi0, SNR = 2)
-#' tests <- testByRandomization(sim$X, B = B)
+#' sim <- sim_gaussian_equi(m, rho, n, pi0, SNR = 2)
+#' tests <- test_by_randomization(sim$X, B = B)
 #'
 #' ## show test statistics
 #' pch <- 20
@@ -65,7 +65,7 @@
 #' plot(tests$T, col = colStat, main = "Test statistics", pch = pch)
 #' legend("topleft", c("H0", "H1"), pch = pch, col = 1:2)
 #'
-gaussian_samples <- function(m, rho, n, pi0, SNR = 1, prob = 1, w = NULL) {
+sim_gaussian_equi <- function(m, rho, n, pi0, SNR = 1, prob = 1, w = NULL) {
   m0 <- round(m * pi0)
   m1 <- m - m0
   H <- rep(c(0, 1), times = c(m0, m1))
@@ -77,7 +77,7 @@ gaussian_samples <- function(m, rho, n, pi0, SNR = 1, prob = 1, w = NULL) {
   }
 
   ## 1. equi-correlated noise
-  eps <- simulateGaussianEquiCorrelatedNulls(m, n = n, rho = rho, w = w)
+  eps <- sim_null_gaussian_equi(m, n = n, rho = rho, w = w)
   w <- attr(eps, "w")
 
   ## 2. signal

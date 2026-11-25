@@ -1,4 +1,4 @@
-#' simulateGaussianEquiCorrelatedNulls
+#' sim_null_gaussian_equi
 #'
 #' Simulate equi-correlated null hypotheses
 #'
@@ -11,6 +11,8 @@
 #' @return A \code{m x n} matrix of simulated observations. The underlying
 #' factor driving equi-correlation is given as \code{attr(Y, "w")}.
 #' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
+#' @export
+#' @keywords internal
 #' @examples
 #'
 #' m <- 1331
@@ -18,14 +20,14 @@
 #' ## equi-correlated
 #' rho <- 0.2
 #'
-#' Y <- sanssouci:::simulateGaussianEquiCorrelatedNulls(m, n, rho)
+#' Y <- sanssouci:::sim_null_gaussian_equi(m, n, rho)
 #' ## check equi-correlation:
 #' covmat <- cov(t(Y))
 #' diag(covmat) <- NA
 #' dim(covmat) <- NULL
 #' summary(covmat)
 #'
-simulateGaussianEquiCorrelatedNulls <- function(m, n = 1e3, rho = 0, w = NULL) {
+sim_null_gaussian_equi <- function(m, n = 1e3, rho = 0, w = NULL) {
   Z <- matrix(rnorm(m * n), ncol = n)
   if (rho == 0) {
     Y <- Z
@@ -44,6 +46,8 @@ simulateGaussianEquiCorrelatedNulls <- function(m, n = 1e3, rho = 0, w = NULL) {
 
 ###########################################################################
 # HISTORY:
+# 2026-11-25
+# o Renaming: camel_case and shorter names
 # 2014-04-21
 # o Created from 'simulateFactorModelNullsFromSingularValuesAndLoadings'.
 ###########################################################################
