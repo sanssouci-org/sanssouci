@@ -29,13 +29,13 @@
 #' B <- 100
 #'
 #' # independent statistics under the full null
-#' sim <- gaussian_test_statistics(m, B)
+#' sim <- sim_gaussian(m, B)
 #'
 #' # equi-correlated statistics under the full null
-#' sim <- gaussian_test_statistics(m, B, dep = "equi", param = 0.2)
+#' sim <- sim_gaussian(m, B, dep = "equi", param = 0.2)
 #'
 #' # equi-correlated statistics with some signal
-#' sim <- gaussian_test_statistics(m, B, pi0 = 0.8, SNR = 1, dep = "equi",
+#' sim <- sim_gaussian(m, B, pi0 = 0.8, SNR = 1, dep = "equi",
 #'                               param = 0.2)
 #'
 #' ## show test statistics
@@ -46,11 +46,11 @@
 #' legend("topleft", c("H0", "H1"), pch = pch, col = 1:2)
 #'
 #' # Toeplitz statistics with some signal
-#' sim <- gaussian_test_statistics(m, B, pi0 = 0.8, SNR = 1, dep = "Toeplitz",
+#' sim <- sim_gaussian(m, B, pi0 = 0.8, SNR = 1, dep = "Toeplitz",
 #'                               param = -0.5)
 #'
-gaussian_test_statistics <- function(m, B, pi0 = 1, SNR = 0,
-                                     dep = c("equi", "Toeplitz"), param = 0) {
+sim_gaussian <- function(m, B, pi0 = 1, SNR = 0, dep = c("equi", "Toeplitz"),
+                         param = 0) {
   # sanity checks
   dep <- match.arg(dep)
   if (dep == "equi") {
@@ -81,11 +81,11 @@ gaussian_test_statistics <- function(m, B, pi0 = 1, SNR = 0,
 
   # noise
   if (dep == "equi") {
-    sim <- simulateGaussianEquiCorrelatedNulls(m, n = 1 + B, rho = param)
+    sim <- sim_null_gaussian_equi(m, n = 1 + B, rho = param)
   } else if (dep == "Toeplitz") {
     tcoefs <- stats::toeplitz((1:m)^(param))
     SIGMA <- Matrix(tcoefs, sparse = TRUE)
-    sim <- simulateGaussianNullsFromSigma(SIGMA, n = 1 + B)
+    sim <- sim_null_gaussian_sigma(SIGMA, n = 1 + B)
   }
 
   x <- mu + sim[, 1]

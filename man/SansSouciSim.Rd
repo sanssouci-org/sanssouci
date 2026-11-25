@@ -47,7 +47,7 @@ confs <- list(
   "Simes+calibration" = predict(res, all = TRUE),
   "Oracle" = predict(oracle, all = TRUE)
 )
-plotConfCurve(confs)
+plot_conf_curve(confs)
 
 \dontrun{
 # Use wilcoxon tests instead of Welch tests

@@ -93,6 +93,6 @@ res_beta <- fit(res, B = 100, alpha = 0.1, family = "Beta", K = 20)
 
 resList <- list("Linear" = res, "Beta" = res_beta)
 bounds <- lapply(resList, predict, all = TRUE)
-plotConfCurve(bounds, xmax = 200)
+plot_conf_curve(bounds, xmax = 200)
 
 }

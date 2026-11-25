@@ -69,7 +69,7 @@ rwt <- row_welch_tests(sim$X, sim$categ, alternative = "greater")
 # calculate, print, and plot confidence bound
 cb <- conf_curve_from_fam(rwt$p.value, ref_family = "Simes", param = 0.1)
 head(cb)
-plotConfCurve(cb, xmax = 200)
+plot_conf_curve(cb, xmax = 200)
 
 }
 \author{
