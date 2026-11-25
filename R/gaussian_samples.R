@@ -46,7 +46,7 @@
 #' B <- 1e3
 #'
 #' ## two-sample data
-#' sim <- gaussianSamples(m, rho, n, pi0, SNR = 2, prob = 0.5)
+#' sim <- gaussian_samples(m, rho, n, pi0, SNR = 2, prob = 0.5)
 #' tests <- testByRandomization(sim$X, sim$categ, B = B)
 #'
 #' ## show test statistics
@@ -56,7 +56,7 @@
 #' legend("topleft", c("H0", "H1"), pch = pch, col = 1:2)
 #'
 #' ## one-sample data
-#' sim <- gaussianSamples(m, rho, n, pi0, SNR = 2)
+#' sim <- gaussian_samples(m, rho, n, pi0, SNR = 2)
 #' tests <- testByRandomization(sim$X, B = B)
 #'
 #' ## show test statistics
@@ -65,7 +65,7 @@
 #' plot(tests$T, col = colStat, main = "Test statistics", pch = pch)
 #' legend("topleft", c("H0", "H1"), pch = pch, col = 1:2)
 #'
-gaussianSamples <- function(m, rho, n, pi0, SNR = 1, prob = 1, w = NULL) {
+gaussian_samples <- function(m, rho, n, pi0, SNR = 1, prob = 1, w = NULL) {
   m0 <- round(m * pi0)
   m1 <- m - m0
   H <- rep(c(0, 1), times = c(m0, m1))

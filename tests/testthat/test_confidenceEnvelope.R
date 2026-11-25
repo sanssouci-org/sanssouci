@@ -1,54 +1,54 @@
 context("Confidence envelopes on the false positives")
 
-test_that("Basic checks for 'confCurveFromFam'", {
+test_that("Basic checks for 'conf_curve_from_fam'", {
   m <- 52
-  sim <- gaussianSamples(
+  sim <- gaussian_samples(
     m = m, rho = 0.5, n = 10, pi0 = 0.8, SNR = 3,
     prob = 0.5
   )
   rwt <- row_welch_tests(sim$X, sim$categ, alternative = "greater")
   p_vals <- rwt$p.value
 
-  cb <- confCurveFromFam(p_vals, refFamily = "Simes", param = 0.1, what = "TP")
+  cb <- conf_curve_from_fam(p_vals, ref_family = "Simes", param = 0.1, what = "TP")
   expect_equal(nrow(cb), m)
   expect_equal(cb$label, rep("Simes(0.1)", m))
 
-  cb_lin <- confCurveFromFam(p_vals,
-    refFamily = "Linear", param = 0.1,
+  cb_lin <- conf_curve_from_fam(p_vals,
+    ref_family = "Linear", param = 0.1,
     what = "TP"
   )
   expect_equal(cb$stat, cb_lin$stat)
 
-  cb <- confCurveFromFam(p_vals,
-    refFamily = "Simes", param = 0.1,
+  cb <- conf_curve_from_fam(p_vals,
+    ref_family = "Simes", param = 0.1,
     what = c("TP", "FP")
   )
   expect_equal(nrow(cb), m * 2)
 
-  cb <- confCurveFromFam(p_vals, refFamily = "Beta", param = 0.1, what = "TP")
+  cb <- conf_curve_from_fam(p_vals, ref_family = "Beta", param = 0.1, what = "TP")
   expect_equal(nrow(cb), m)
 
-  cb <- confCurveFromFam(p_vals,
-    refFamily = "Oracle", param = rep(0, m),
+  cb <- conf_curve_from_fam(p_vals,
+    ref_family = "Oracle", param = rep(0, m),
     what = "TP"
   )
   expect_equal(nrow(cb), m)
-  expect_error(confCurveFromFam(rwt$p.value,
-    refFamily = "unknown_fam",
+  expect_error(conf_curve_from_fam(rwt$p.value,
+    ref_family = "unknown_fam",
     param = 0.1
   ))
 })
 
-test_that("Consistency of output of 'confCurveFromFam'", {
+test_that("Consistency of output of 'conf_curve_from_fam'", {
   m <- 123
   alpha <- 0.1
-  sim <- gaussianSamples(
+  sim <- gaussian_samples(
     m = m, rho = 0.5, n = 100, pi0 = 0.8,
     SNR = 3, prob = 0.5
   )
   dex <- row_welch_tests(sim$X, sim$categ)
-  conf_bound <- confCurveFromFam(dex$p.value,
-    refFamily = "Simes",
+  conf_bound <- conf_curve_from_fam(dex$p.value,
+    ref_family = "Simes",
     param = alpha,
     what = c("FP", "TP", "FDP", "TDP")
   )
@@ -79,7 +79,7 @@ test_that("Consistency of output of 'confCurveFromFam'", {
 })
 
 test_that(
-  "Consistency between outputs of 'fit', 'bound' and 'confCurveFromFam'",
+  "Consistency between outputs of 'fit', 'bound' and 'conf_curve_from_fam'",
   {
     m <- 123
     alpha <- 0.1
@@ -90,13 +90,13 @@ test_that(
     cal <- fit(obj, alpha = alpha, B = 1e2, family = "Simes")
     cb0 <- predict(cal, all = TRUE)
 
-    # using 'confCurveFromFam'
+    # using 'conf_curve_from_fam'
     lambda <- cal$output$lambda
-    cb2 <- confCurveFromFam(pValues(cal), "Simes", param = lambda)
+    cb2 <- conf_curve_from_fam(pValues(cal), "Simes", param = lambda)
     expect_identical(cb0[, c("stat", "bound")], cb2[, c("stat", "bound")])
 
-    # using 'confCurveFromFam' and 'fit(..., B=0)' to bypass calibration
-    cb0 <- confCurveFromFam(pValues(cal), "Simes", param = alpha)
+    # using 'conf_curve_from_fam' and 'fit(..., B=0)' to bypass calibration
+    cb0 <- conf_curve_from_fam(pValues(cal), "Simes", param = alpha)
     cal0 <- fit(obj, alpha = alpha, B = 0, family = "Simes")
     cb00 <- predict(cal0, all = TRUE)
     expect_identical(cb0[, c("stat", "bound")], cb00[, c("stat", "bound")])
@@ -120,13 +120,13 @@ test_that("Ordering of confidence curves with/without calibration", {
 })
 
 test_that("Vanilla test for 'plotConfCurve'", {
-  sim <- gaussianSamples(
+  sim <- gaussian_samples(
     m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3,
     prob = 0.5
   )
   rwt <- row_welch_tests(sim$X, categ = sim$categ, alternative = "greater")
 
-  ce <- confCurveFromFam(rwt$p.value, refFamily = "Simes", param = 0.1)
+  ce <- conf_curve_from_fam(rwt$p.value, ref_family = "Simes", param = 0.1)
   p <- plotConfCurve(ce, xmax = 200)
   expect_true(inherits(p, "ggplot"))
 })

@@ -6,7 +6,7 @@ test_that("Correctness of the constructor of SansSouci", {
   set.seed(seed)
   obj <- SansSouciSim(m = m, rho = 0, n = n, pi0 = 0.8, SNR = 0, prob = 0.4)
   set.seed(seed)
-  sim <- gaussianSamples(m = m, rho = 0, n = n, pi0 = 0.8, SNR = 0, prob = 0.4)
+  sim <- gaussian_samples(m = m, rho = 0, n = n, pi0 = 0.8, SNR = 0, prob = 0.4)
   obj1 <- SansSouci(Y = sim$X, groups = sim$categ, truth = sim$H)
   expect_s3_class(obj, "SansSouci")
   expect_s3_class(obj1, "SansSouci")

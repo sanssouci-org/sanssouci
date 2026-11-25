@@ -21,7 +21,7 @@ Upper bound for the number of false discoveries in a selection
 \examples{
 
 m <- 123
-sim <- gaussianSamples(
+sim <- gaussian_samples(
   m = m, rho = 0.2, n = 100,
   pi0 = 0.8, SNR = 3, prob = 0.5
 )

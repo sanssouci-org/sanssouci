@@ -90,7 +90,7 @@ pi0 <- 0.5
 B <- 1e3
 
 ## two-sample data
-sim <- gaussianSamples(m, rho, n, pi0, SNR = 2, prob = 0.5)
+sim <- gaussian_samples(m, rho, n, pi0, SNR = 2, prob = 0.5)
 X <- sim$X
 categ <- sim$categ
 tests <- test_by_randomization(X = X, categ = categ, B)
@@ -109,7 +109,7 @@ plot(testsW$T, col = colStat, main = "Wilcoxon test statistics", pch = pch)
 legend("topleft", c("H0", "H1"), pch = pch, col = 1:2)
 
 # one-sample data:
-sim <- gaussianSamples(m, rho, n, pi0, SNR = 2)
+sim <- gaussian_samples(m, rho, n, pi0, SNR = 2)
 tests <- test_by_randomization(
   X = sim$X, categ = sim$categ, B,
   alternative = "two.sided"

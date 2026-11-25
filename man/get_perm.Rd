@@ -8,7 +8,7 @@ get_perm(
   X,
   categ,
   B,
-  rowTestFUN = row_welch_tests,
+  row_test_fun = row_welch_tests,
   alternative = c("two.sided", "less", "greater")
 )
 }
@@ -20,10 +20,11 @@ specifying the column indices of the first and second samples.}
 
 \item{B}{An integer value, the number of permutations to be performed}
 
-\item{rowTestFUN}{a vectorized testing function (same I/O as \link{row_welch_tests})}
+\item{row_test_fun}{a vectorized testing function (same I/O as
+\link{row_welch_tests})}
 
 \item{alternative}{A character string specifying the alternative hypothesis,
-to be passed to \code{rowTestFUN}. Must be one of "two.sided" (default),
+to be passed to \code{row_test_fun}. Must be one of "two.sided" (default),
 "greater" or "less".}
 }
 \description{
