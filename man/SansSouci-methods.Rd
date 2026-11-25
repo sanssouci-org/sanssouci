@@ -2,26 +2,26 @@
 % Please edit documentation in R/SansSouci-class.R
 \name{SansSouci-methods}
 \alias{SansSouci-methods}
-\alias{nHyp.SansSouci}
-\alias{nObs.SansSouci}
+\alias{n_hyp.SansSouci}
+\alias{n_observations.SansSouci}
 \alias{label.SansSouci}
 \alias{print.SansSouci}
-\alias{pValues.SansSouci}
-\alias{foldChanges.SansSouci}
+\alias{p_values.SansSouci}
+\alias{fold_changes.SansSouci}
 \alias{thresholds.SansSouci}
 \title{Basic methods for class \code{SansSouci}}
 \usage{
-\method{nHyp}{SansSouci}(object)
+\method{n_hyp}{SansSouci}(object)
 
-\method{nObs}{SansSouci}(object)
+\method{n_observations}{SansSouci}(object)
 
 \method{label}{SansSouci}(object)
 
 \method{print}{SansSouci}(x, ..., verbose = FALSE)
 
-\method{pValues}{SansSouci}(object)
+\method{p_values}{SansSouci}(object)
 
-\method{foldChanges}{SansSouci}(object)
+\method{fold_changes}{SansSouci}(object)
 
 \method{thresholds}{SansSouci}(object)
 }
@@ -37,9 +37,9 @@
 \description{
 Basic methods for class \code{SansSouci}
 
-\code{nHyp}: get the number of hypotheses
+\code{n_hyp}: get the number of hypotheses
 
-\code{nObs} Get the number of observations
+\code{n_observations} Get the number of observations
 
 \code{label} Get the label of a post hoc method
 
@@ -55,15 +55,15 @@ groups <- ifelse(colnames(expr_ALL) == "NEG", 0, 1)
 table(groups)
 a <- SansSouci(Y = expr_ALL, groups = groups)
 print(a)
-nHyp(a)
-nObs(a)
+n_hyp(a)
+n_observations(a)
 label(a)
 
 res <- fit(a, B = 100, alpha = 0.1)
 label(res)
 print(res)
-str(pValues(res))
-str(foldChanges(res))
+str(p_values(res))
+str(fold_changes(res))
 str(thresholds(res))
 vp <- volcanoPlot(res, q = 0.05, r = 0.5)
 

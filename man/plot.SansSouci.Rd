@@ -5,7 +5,7 @@
 \title{Plot confidence bound on the true/false positives among most significant
 items}
 \usage{
-\method{plot}{SansSouci}(x, y, xmax = nHyp(x), ...)
+\method{plot}{SansSouci}(x, y, xmax = n_hyp(x), ...)
 }
 \arguments{
 \item{x}{An object of class 'SansSouci'}
@@ -32,6 +32,6 @@ res <- fit(obj, B = 100, alpha = 0.1)
 plot(res)
 
 # confidence curve for a subset of hypotheses
-S <- which(pValues(res) < 0.1 & foldChanges(res) > 0.3)
+S <- which(p_values(res) < 0.1 & fold_changes(res) > 0.3)
 plot(res, S = S)
 }

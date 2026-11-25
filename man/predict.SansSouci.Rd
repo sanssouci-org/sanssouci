@@ -6,7 +6,7 @@
 \usage{
 \method{predict}{SansSouci}(
   object,
-  S = seq_len(min(nHyp(object), object$input$n_dimensions)),
+  S = seq_len(min(n_hyp(object), object$input$n_dimensions)),
   what = c("TP", "FDP"),
   all = FALSE,
   contrast_name = object$input$contrast_name,
@@ -71,6 +71,6 @@ bounds <- predict(res, all = TRUE)
 head(bounds)
 
 # post hoc bound on a subset
-S <- which(pValues(res) < 0.01)
+S <- which(p_values(res) < 0.01)
 predict(res, S)
 }

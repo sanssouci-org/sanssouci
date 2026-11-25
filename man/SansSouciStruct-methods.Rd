@@ -2,13 +2,13 @@
 % Please edit documentation in R/SansSouciStruct-class.R
 \name{SansSouciStruct-methods}
 \alias{SansSouciStruct-methods}
-\alias{get_nb_hyp.SansSouciStruct}
+\alias{n_hyp.SansSouciStruct}
 \alias{get_nb_leaves.SansSouciStruct}
 \alias{label.SansSouciStruct}
 \alias{get_p_values.SansSouciStruct}
 \title{Basic methods for class \code{SansSouciStruct}}
 \usage{
-get_nb_hyp.SansSouciStruct(object)
+\method{n_hyp}{SansSouciStruct}(object)
 
 \method{get_nb_leaves}{SansSouciStruct}(object)
 
@@ -22,7 +22,7 @@ get_p_values.SansSouciStruct(object)
 \description{
 Basic methods for class \code{SansSouciStruct}
 
-\code{get_nb_hyp}: get the number of hypotheses
+\code{n_hyp}: get the number of hypotheses
 
 \code{get_nb_leaves}: get the number of leaves
 
@@ -36,7 +36,7 @@ q <- 7
 m <- s * 2^q
 
 obj <- SansSouciDyadic(m, leaf_size = s, direction = "top-down")
-get_nb_hyp(obj)
+n_hyp(obj)
 get_nb_leaves(obj)
 mu <- gen_mu_leaves(
   m = m, K1 = 8, d = 0.9, grouped = TRUE,
