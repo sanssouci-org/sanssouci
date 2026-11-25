@@ -520,43 +520,46 @@ pruning <- function(forest_structure,
 #' @details
 #' See [pruning()].
 #'
-#' @param C A list of list representing the forest structure.
+#' @param forest_structure A list of list representing the forest structure.
 #' See [pred_subset_structured()] for more information.
-#' @param ZL A list of integer vectors representing the upper
+#' @param zetas_list A list of integer vectors representing the upper
 #' bounds \eqn{\zeta_k} of the forest structure.
 #' See [pred_subset_structured()] for more information.
 #' @param leaf_list A list of vectors representing the atoms of the
 #' forest structure. See [pred_subset_structured()] for more information.
 #'
 #' @return A list with two named elements. \describe{
-#' \item{\code{C}}{The new \code{C} after deleting the gaps.}
-#' \item{\code{ZL}}{The new \code{ZL} after deleting the gaps.}
+#' \item{\code{forest_structure}}{The new \code{forest_structure}
+#' after deleting the gaps.}
+#' \item{\code{zetas_list}}{The new \code{zetas_list} after deleting the gaps.}
 #' }
 #'
-#' @usage delete_gaps(C, ZL, leaf_list)
+#' @usage delete_gaps(forest_structure, zetas_list, leaf_list)
 #'
 #' @export
-delete_gaps <- function(C, ZL, leaf_list) {
-  H <- length(C)
+delete_gaps <- function(forest_structure, zetas_list, leaf_list) {
+  H <- length(forest_structure)
   nb_leaves <- length(leaf_list)
   continue <- TRUE
-  NEW_C <- list()
-  NEW_ZL <- list()
+  new_forest_structure <- list()
+  new_zetas_list <- list()
   loop_counter <- 1
   while (continue) {
-    NEW_C[[loop_counter]] <- list()
-    NEW_ZL[[loop_counter]] <- numeric(0)
+    new_forest_structure[[loop_counter]] <- list()
+    new_zetas_list[[loop_counter]] <- numeric(0)
     leaf_available <- !logical(nb_leaves)
     regions_delete <- list()
     for (h in 1:H) {
-      nb_regions <- length(C[[h]])
+      nb_regions <- length(forest_structure[[h]])
       if (nb_regions > 0) {
         for (l in 1:nb_regions) {
-          C_HL <- C[[h]][[l]]
-          if (all(leaf_available[C_HL[1]:C_HL[2]])) {
-            NEW_C[[loop_counter]][[C_HL[1]]] <- C_HL
-            NEW_ZL[[loop_counter]][C_HL[1]] <- ZL[[h]][[l]]
-            leaf_available[C_HL[1]:C_HL[2]] <- FALSE
+          current_node <- forest_structure[[h]][[l]]
+          if (all(leaf_available[current_node[1]:current_node[2]])) {
+            new_forest_structure[[loop_counter]][[current_node[1]]] <-
+              current_node
+            new_zetas_list[[loop_counter]][current_node[1]] <-
+              zetas_list[[h]][[l]]
+            leaf_available[current_node[1]:current_node[2]] <- FALSE
             regions_delete <- append(regions_delete, list(c(h, l)))
           }
         }
@@ -565,58 +568,66 @@ delete_gaps <- function(C, ZL, leaf_list) {
     for (couple in rev(regions_delete)) {
       h <- couple[1]
       l <- couple[2]
-      C[[h]][[l]] <- NULL
-      ZL[[h]] <- ZL[[h]][-l]
+      forest_structure[[h]][[l]] <- NULL
+      zetas_list[[h]] <- zetas_list[[h]][-l]
     }
-    if (length(NEW_C[[loop_counter]]) > 0) {
-      for (l in rev(seq_along(NEW_C[[loop_counter]]))) {
-        if (is.null(NEW_C[[loop_counter]][[l]])) {
-          NEW_C[[loop_counter]][[l]] <- NULL
-          NEW_ZL[[loop_counter]] <- NEW_ZL[[loop_counter]][-l]
+    # TODO: instead of adding elements in new_forest_structure at index 
+    # current_node[1], add them at index idx_counter and then increment
+    # idx_counter, so that the following "if" becomes useless 
+    # and can be safely removed?
+    if (length(new_forest_structure[[loop_counter]]) > 0) {
+      for (l in rev(seq_along(new_forest_structure[[loop_counter]]))) {
+        if (is.null(new_forest_structure[[loop_counter]][[l]])) {
+          new_forest_structure[[loop_counter]][[l]] <- NULL
+          new_zetas_list[[loop_counter]] <- new_zetas_list[[loop_counter]][-l]
         }
       }
     }
     loop_counter <- loop_counter + 1
-    continue <- any(sapply(X = ZL, FUN = function(vec) {
+    continue <- any(sapply(X = zetas_list, FUN = function(vec) {
       length(vec) > 0
     }))
   }
-  return(list(C = NEW_C, ZL = NEW_ZL))
+  return(list(
+    forest_structure = new_forest_structure, 
+    zetas_list = new_zetas_list
+  ))
 }
 
 #' Compute a curve of post hoc bounds based on a reference
 #' family with forest structure
 #'
-#' @name curve_v_star_forest
+#' @name pred_pathway_structured
 #'
 #' @description
 #' Computes the post hoc upper bound \eqn{V^*(S_t)} on the number
 #' of false positives in a
 #' given sequence of selection sets \eqn{S_t} of hypotheses, such that
-#' \eqn{S_t\subset S_{t+1}} and \eqn{|S_t| = t},
+#' \eqn{S_t\subset S_{t+1}} and \eqn{|S_t| = t}
+#' (we call such a sequence a pathway),
 #' using a reference family \eqn{(R_k, \zeta_k)}
 #' that possess the forest structure
 #' (see References).
 #'
 #' @details Two functions are available
 #' \describe{
-#' \item{\code{curve_v_star_forest_naive}}{
+#' \item{\code{pred_pathway_structured_naive}}{
 #' Repeatedly calls [pred_subset_structured()] on each \eqn{S_t},
 #' which is not optimized and time-consuming,
-#' this should not be used in practice.
+#' this should not be used in practice and is kept for testing purposes.
 #' }
-#' \item{\code{curve_v_star_forest_fast}}{
+#' \item{\code{pred_pathway_structured}}{
 #' A fast and optimized version that leverage the fact that\eqn{S_{t+1}} is
-#' the union of \eqn{S_t} and a single hypothesis index.
+#' the union of \eqn{S_t} and of a single hypothesis index.
 #' The algorithm needs to work on a complete forest,
 #' so this version first completes the forest
 #' (unless told that the forest has already been completed,
 #' see [forest_completion()]),
 #' and the completion fails if the input is a pruned forest (see [pruning()]),
 #' so if a pruned forest is given as input,
-#' it MUST be said with the \code{is_pruned} argument
+#' it MUST be said so with the \code{is_pruned} argument
 #' so that the function skips completion
-#' (so the pruned forest given as input must also be complete).
+#' (hence the pruned forest given as input must already be complete).
 #' }
 #' }
 #'
@@ -624,9 +635,9 @@ delete_gaps <- function(C, ZL, leaf_list) {
 #' and of size up to \code{m}
 #' (in which case it's a permutation, hence the name).
 #' The set \eqn{S_t} is represented by \code{perm[1:t]}.
-#' @param C A list of list representing the forest structure.
+#' @param forest_structure A list of list representing the forest structure.
 #' See [pred_subset_structured()] for more information.
-#' @param ZL A list of integer vectors representing the upper bounds
+#' @param zetas_list A list of integer vectors representing the upper bounds
 #' \eqn{\zeta_k} of the forest structure.
 #' See [pred_subset_structured()] for more information.
 #' @param leaf_list A list of vectors representing the atoms of the
@@ -648,7 +659,7 @@ delete_gaps <- function(C, ZL, leaf_list) {
 #' by the pruning, see [delete_gaps()].
 #' Ignored if \code{pruning} is \code{FALSE}.
 #'
-#' @return A vector of length of same length as \code{perm},
+#' @return A vector of length equal to the length of \code{perm},
 #' where the \code{t}-th
 #' element is \eqn{V^*(S_t)}.
 #' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020).
@@ -660,7 +671,7 @@ delete_gaps <- function(C, ZL, leaf_list) {
 #' @export
 #' @examples
 #' m <- 20
-#' C <- list(
+#' forest_structure <- list(
 #'   list(c(2, 5), c(8, 15), c(16, 19)),
 #'   list(c(3, 5), c(8, 10), c(12, 15), c(16, 16), c(17, 19)),
 #'   list(
@@ -669,27 +680,35 @@ delete_gaps <- function(C, ZL, leaf_list) {
 #'   ),
 #'   list(c(8, 8), c(9, 9), c(13, 13), c(14, 15), c(18, 18), c(19, 19))
 #' )
-#' ZL <- list(
+#' zetas_list <- list(
 #'   c(4, 8, 4),
 #'   c(3, 3, 4, 1, 3),
 #'   c(2, 2, 1, 1, 2, 1, 2),
 #'   c(1, 1, 1, 2, 1, 1)
 #' )
 #' leaf_list <- as.list(1:m)
-#' curve_v_star_forest_naive(1:m, C, ZL, leaf_list, pruning = FALSE)
+#' pred_pathway_structured_naive(1:m,forest_structure,
+#' zetas_list, leaf_list, pruning = FALSE)
 #'
-#' curve_v_star_forest_naive(1:m, C, ZL, leaf_list, pruning = TRUE)
+#' pred_pathway_structured_naive(1:m, forest_structure,
+#' zetas_list, leaf_list, pruning = TRUE)
 #'
-#' curve_v_star_forest_fast(1:m, C, ZL, leaf_list, pruning = FALSE)
+#' pred_pathway_structured(1:m, forest_structure,
+#' zetas_list, leaf_list, pruning = FALSE)
 #'
-#' curve_v_star_forest_fast(1:m, C, ZL, leaf_list, pruning = TRUE)
+#' pred_pathway_structured(1:m, forest_structure,
+#' zetas_list, leaf_list, pruning = TRUE)
 
-#' @rdname curve_v_star_forest
+#' @rdname pred_pathway_structured
 #' @export
-curve_v_star_forest_naive <- function(perm, C, ZL,
-                                      leaf_list,
-                                      pruning = FALSE,
-                                      delete_gaps = FALSE) {
+pred_pathway_structured_naive <- function(
+    perm,
+    forest_structure,
+    zetas_list,
+    leaf_list,
+    pruning = FALSE,
+    delete_gaps = FALSE
+) {
   vstars <- numeric(length(perm))
 
   # the naive version doesn't need a proper completion of the
@@ -699,12 +718,14 @@ curve_v_star_forest_naive <- function(perm, C, ZL,
 
   if (pruning) {
     pruned <- pruning(
-      C, ZL, leaf_list,
+      forest_structure,
+      zetas_list,
+      leaf_list,
       prune_leafs = TRUE,
       delete_gaps = delete_gaps
     )
-    C <- pruned$C
-    ZL <- pruned$ZL
+    forest_structure <- pruned$forest_structure
+    zetas_list <- pruned$zetas_list
     m <- length(unlist(leaf_list))
     if (length(perm) == m) {
       # means that the last bound to compute
@@ -712,7 +733,7 @@ curve_v_star_forest_naive <- function(perm, C, ZL,
       # but the pruning already computed
       # V^*({1, ..., m}) as a by-product so we
       # might as well use it:
-      vstars[m] <- pruned$VstarNm
+      vstars[m] <- pruned$v_star_all
       perm <- perm[-m]
     }
   }
@@ -722,19 +743,28 @@ curve_v_star_forest_naive <- function(perm, C, ZL,
   for (t in perm) {
     j <- j + 1
     S <- c(S, t)
-    vstars[j] <- pred_subset_structured(S, C, ZL, leaf_list)
+    vstars[j] <- pred_subset_structured(
+      S,
+      forest_structure,
+      zetas_list,
+      leaf_list
+    )
   }
   return(vstars)
 }
 
-#' @rdname curve_v_star_forest
+#' @rdname pred_pathway_structured
 #' @export
-curve_v_star_forest_fast <- function(perm, C, ZL,
-                                     leaf_list,
-                                     pruning = FALSE,
-                                     is_pruned = FALSE,
-                                     is_complete = FALSE,
-                                     delete_gaps = FALSE) {
+pred_pathway_structured <- function(
+    perm,
+    forest_structure,
+    zetas_list,
+    leaf_list,
+    pruning = FALSE,
+    is_pruned = FALSE,
+    is_complete = FALSE,
+    delete_gaps = FALSE
+) {
   vstars <- numeric(length(perm))
 
   if (!is_pruned) {
@@ -763,7 +793,7 @@ curve_v_star_forest_fast <- function(perm, C, ZL,
         # but the pruning already computed
         # V^*({1, ..., m}) as a by-product so we
         # might as well use it:
-        vstars[m] <- pruned$VstarNm
+        vstars[m] <- pruned$v_star_all
         perm <- perm[-m]
       }
     }
@@ -896,13 +926,13 @@ forest_completion <- function(C, ZL, leaf_list) {
       expected_leaf <- leaves_to_place[j]
       end_of_line <- l > length(C[[h]])
       if (!end_of_line) {
-        C_HL <- C[[h]][[l]]
+        current_node <- C[[h]][[l]]
       }
-      if ((!end_of_line) && expected_leaf == C_HL[[1]]) {
-        if (expected_leaf == C_HL[[2]]) {
+      if ((!end_of_line) && expected_leaf == current_node[[1]]) {
+        if (expected_leaf == current_node[[2]]) {
           to_delete <- c(to_delete, j)
         }
-        j <- j + C_HL[2] - C_HL[1] + 1
+        j <- j + current_node[2] - current_node[1] + 1
       } else {
         C[[h]] <- append(C[[h]], list(c(expected_leaf, expected_leaf)), l - 1)
         ZL[[h]] <- append(ZL[[h]], length(leaf_list[[expected_leaf]]), l - 1)
