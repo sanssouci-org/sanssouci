@@ -2,19 +2,19 @@
 % Please edit documentation in R/SansSouciStruct-class.R
 \name{SansSouciStruct-methods}
 \alias{SansSouciStruct-methods}
-\alias{get_nb_hyp.SansSouciStruct}
+\alias{n_hyp.SansSouciStruct}
 \alias{get_nb_leaves.SansSouciStruct}
 \alias{label.SansSouciStruct}
-\alias{get_p_values.SansSouciStruct}
+\alias{p_values.SansSouciStruct}
 \title{Basic methods for class \code{SansSouciStruct}}
 \usage{
-get_nb_hyp.SansSouciStruct(object)
+\method{n_hyp}{SansSouciStruct}(object)
 
 \method{get_nb_leaves}{SansSouciStruct}(object)
 
 \method{label}{SansSouciStruct}(object)
 
-get_p_values.SansSouciStruct(object)
+\method{p_values}{SansSouciStruct}(object)
 }
 \arguments{
 \item{object}{An object of class \code{SansSouci}}

@@ -236,11 +236,11 @@ fit.SansSouciStruct <- function(object, alpha, p_values,
     if (flavor == "partition") {
       struct <- struct[length(struct)]
     }
-    zeta_list <- structured_zetas(
+    zetas_list <- structured_zetas(
       forest_structure = struct, leaf_list = leaves,
       method = zeta, p_values = p_values, alpha = alpha
     )
-    output <- list(p_values = p_values, zeta_list = zeta_list)
+    output <- list(p_values = p_values, zetas_list = zetas_list)
   } else if (family == "Simes") {
     thr <- t_linear(alpha, seq_len(m), m) ## NB: we are forcing K=m
     output <- list(p_values = p_values, thr = thr)
@@ -279,7 +279,7 @@ label.SansSouciStruct <- function(object) {
 #' @rdname SansSouciStruct-methods
 #' @param object An object of class `SansSouci`
 #' @export
-get_p_values.SansSouciStruct <- function(object) {
+p_values.SansSouciStruct <- function(object) {
   object$output$p_values
 }
 
@@ -298,7 +298,7 @@ predict.SansSouciStruct <- function(object, S = seq_len(n_hyp(object)),
   }
   struct <- object$input$struct
   leaves <- object$input$leaves
-  zeta_list <- object$output$zeta_list
+  zetas_list <- object$output$zetas_list
 
   if (object$param$flavor == "partition") {
     struct <- struct[length(struct)]
@@ -314,7 +314,7 @@ predict.SansSouciStruct <- function(object, S = seq_len(n_hyp(object)),
     max_fp[ii] <- pred_subset_structured(
       S[1:idxs[ii]],
       forest_structure = struct,
-      zeta_list = zeta_list,
+      zetas_list = zetas_list,
       leaf_list = leaves
     )
   }

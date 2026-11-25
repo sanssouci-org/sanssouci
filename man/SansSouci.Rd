@@ -4,7 +4,7 @@
 \alias{SansSouci}
 \title{Create an object of class 'SansSouci'}
 \usage{
-SansSouci(Y, X = NULL, Contrast = NULL, groups = NULL, truth = NULL)
+SansSouci(Y, X = NULL, contrast = NULL, groups = NULL, truth = NULL)
 }
 \arguments{
 \item{Y}{A matrix of \eqn{D} variables (hypotheses) by \eqn{n} observations}
@@ -12,7 +12,7 @@ SansSouci(Y, X = NULL, Contrast = NULL, groups = NULL, truth = NULL)
 \item{X}{A design matrix of \eqn{n} observations by \eqn{p} explanatory
 variables in the linear model}
 
-\item{Contrast}{A contrast matrix of size \eqn{L} tested contrasts (in row)
+\item{contrast}{A contrast matrix of size \eqn{L} tested contrasts (in row)
 and \eqn{p} columns corresponding to the parameters to be tested}
 
 \item{groups}{A numeric vector of \eqn{n} values in \eqn{0, 1}, the groups of

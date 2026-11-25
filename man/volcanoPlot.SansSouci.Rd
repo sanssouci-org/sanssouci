@@ -7,7 +7,7 @@
 volcanoPlot.SansSouci(
   x,
   fold_change = foldChanges(x)[contrast_name, ],
-  p_value = pValues(x)[contrast_name, ],
+  p_value = p_values(x)[contrast_name, ],
   p = 1,
   q = 1,
   r = 0,
@@ -22,14 +22,14 @@ volcanoPlot.SansSouci(
 }
 \arguments{
 \item{fold_change}{An optional vector of fold changes, of the same length
-as \code{get_nb_hyp(x)}, used for volcano_plot x-axis.
+as \code{n_hyp(x)}, used for volcano_plot x-axis.
 If not specified, \code{get_fold_changes(x)}
 is used.}
 
 \item{contrast_name}{A character value, the selected contrast. Should be
 chosen in \code{x$input$contrast_name}.}
 
-\item{p_values}{A vector of p-values, of the same length as \code{get_nb_hyp(x)},
+\item{p_values}{A vector of p-values, of the same length as \code{n_hyp(x)},
 used for volcano_plot y-axis. If not specified, \code{get_p_values(x)} is used}
 }
 \description{

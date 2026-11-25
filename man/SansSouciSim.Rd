@@ -51,7 +51,7 @@ plot_conf_curve(confs)
 
 \dontrun{
 # Use wilcoxon tests instead of Welch tests
-res <- fit(obj, B = 100, alpha = 0.1, rowTestFUN = row_wilcoxon_tests)
+res <- fit(obj, B = 100, alpha = 0.1, row_test_fun = row_wilcoxon_tests)
 volcanoPlot(res, q = 0.05, r = 0.2)
 }
 
