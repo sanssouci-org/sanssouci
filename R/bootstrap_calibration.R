@@ -39,7 +39,7 @@
 #' epsilons <- matrix(rnorm(N * D), nrow = N, ncol = D)
 #' Y <- X %*% beta + epsilons
 #' C <- diag(p)
-#' resLM <- lm_test(Y = Y, X = X, C = C)
+#' res_lm <- lm_test(Y = Y, X = X, C = C)
 lm_test <- function(Y, X, C, alternative = c("two.sided", "less", "greater")) {
   alternative <- match.arg(alternative)
   .check_lm_test(Y, X, C)
@@ -47,10 +47,10 @@ lm_test <- function(Y, X, C, alternative = c("two.sided", "less", "greater")) {
   df <- nrow(Y) - qr(X)$rank
 
   ## estimation of model parameters
-  XtX <- crossprod(X)
-  XtY <- crossprod(X, Y)
-  XtX_inv <- solve(XtX)
-  beta_est <- crossprod(XtX_inv, XtY)
+  xtx <- crossprod(X)
+  xty <- crossprod(X, Y)
+  xtx_inv <- solve(xtx)
+  beta_est <- crossprod(xtx_inv, xty)
 
   ## residuals
   epsilon_est <- Y - X %*% beta_est
@@ -59,9 +59,9 @@ lm_test <- function(Y, X, C, alternative = c("two.sided", "less", "greater")) {
   sigma_est <- sqrt(colSums(epsilon_est^2) / df)
 
   ## test statistic
-  CXtX_invCt <- C %*% XtX_inv %*% t(C) # matrix L x L
-  CXtX_diag <- sqrt(diag(CXtX_invCt)) # vector L
-  denom <- outer(CXtX_diag, sigma_est, "*") # matrix L x D
+  cxtx_invct <- C %*% xtx_inv %*% t(C) # matrix L x L
+  cxtx_diag <- sqrt(diag(cxtx_invct)) # vector L
+  denom <- outer(cxtx_diag, sigma_est, "*") # matrix L x D
   stat_test <- C %*% beta_est / denom # matrix (L x D)
 
   ## p-values
@@ -112,7 +112,7 @@ lm_test <- function(Y, X, C, alternative = c("two.sided", "less", "greater")) {
 #' epsilons <- matrix(rnorm(N * D), nrow = N, ncol = D)
 #' Y <- X %*% beta + epsilons
 #' C <- diag(p)
-#' resLM <- bootstrap_permutation(Y = Y, X = X, C = C, B = 10)
+#' res_lm <- bootstrap_permutation(Y = Y, X = X, C = C, B = 10)
 bootstrap_permutation <- function(Y, X, C,
                                   alternative = c(
                                     "two.sided", "less",
@@ -132,8 +132,8 @@ bootstrap_permutation <- function(Y, X, C,
   L <- nrow(C)
 
   ## perform LM test to obtain esiduals
-  resLM <- lm_test(Y = Y, X = X, C = C, alternative = alternative)
-  epsilon_hat <- resLM$epsilon_est
+  res_lm <- lm_test(Y = Y, X = X, C = C, alternative = alternative)
+  epsilon_hat <- res_lm$epsilon_est
 
   ## Bootstrapping of residuals
   epsilon_perm <- array(NA, dim = c(dim(epsilon_hat), B))
@@ -143,13 +143,13 @@ bootstrap_permutation <- function(Y, X, C,
   }
 
   ## computation of permuted expression Y_n^{(b)}
-  Y_perm <- epsilon_perm
+  y_perm <- epsilon_perm
 
   ## Test contrasts for each permuted expression matrix
   pval_perm <- array(NA, dim = c(D, L, B))
   for (b in 1:B) {
     pval_perm[, , b] <- lm_test(
-      Y = as.matrix(Y_perm[, , b]),
+      Y = as.matrix(y_perm[, , b]),
       X = X, C = C,
       alternative = alternative
     )$p.value
@@ -195,13 +195,13 @@ row_lm_test <- function(Y, X, C,
   L <- nrow(C)
   B <- ncol(groups)
 
-  resLM <- lm_test(Y = Y, X = X, C = C, alternative = alternative)
-  epsilon_hat <- resLM$epsilon_est
+  res_lm <- lm_test(Y = Y, X = X, C = C, alternative = alternative)
+  epsilon_hat <- res_lm$epsilon_est
 
   if (all(groups == 1:n) && ncol(matrix(groups)) == 1) {
-    estimate <- C %*% resLM$beta_est
+    estimate <- C %*% res_lm$beta_est
     return(list(
-      p.value = resLM$p.value, statistic = resLM$stat_test,
+      p.value = res_lm$p.value, statistic = res_lm$stat_test,
       estimate = estimate
     ))
   }
@@ -212,9 +212,9 @@ row_lm_test <- function(Y, X, C,
   estimate_perm <- array(NA, dim = c(D, L, B))
   for (b in 1:B) {
     shuffle_idx <- groups[, b]
-    Y_perm <- epsilon_hat[shuffle_idx, ]
+    y_perm <- epsilon_hat[shuffle_idx, ]
     res_perm <- lm_test(
-      Y = as.matrix(Y_perm), X = X, C = C,
+      Y = as.matrix(y_perm), X = X, C = C,
       alternative = alternative
     )
     pval_perm[, , b] <- res_perm$p.value
@@ -284,7 +284,7 @@ row_lm_test <- function(Y, X, C,
 #' epsilons <- matrix(rnorm(N * D), nrow = N, ncol = D)
 #' Y <- X %*% beta + epsilons
 #' C <- diag(p)
-#' resLM <- calibration_bootstap(Y = Y, X = X, C = C, B = 10)
+#' res_lm <- calibration_bootstap(Y = Y, X = X, C = C, B = 10)
 calibration_bootstap <- function(Y, X, C,
                                  alternative = c(
                                    "two.sided", "less", "greater"
