@@ -381,7 +381,7 @@ structured_zetas <- function(forest_structure,
 #' pred_subset_structured(1:m, forest_structure, zetas_list, leaf_list)
 #' @export
 pred_subset_structured <- function(S, forest_structure, zetas_list, leaf_list) {
-  H <- length(C)
+  H <- length(forest_structure)
   n_leaves <- length(leaf_list)
   vec <- numeric(n_leaves)
   # the initialization term for each atom P_i
