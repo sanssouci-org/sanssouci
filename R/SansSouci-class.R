@@ -181,7 +181,7 @@ SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
 #' }
 #'
 SansSouciSim <- function(...) {
-  sim <- gaussian_samples(...)
+  sim <- sim_gaussian_equi(...)
   SansSouci(Y = sim$X, groups = sim$categ, truth = sim$H)
 }
 

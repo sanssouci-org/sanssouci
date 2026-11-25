@@ -21,7 +21,7 @@ test_that("Simulation of null hypotheses from factor model", {
   S0 <- getFactorModelCovarianceMatrix(m)
   expect_identical(S0, diag(m))
 
-  Y0 <- sim_null_gaussian(m, flavor = "independent")
+  Y0 <- sim_null_gaussian_factor(m, flavor = "independent")
   expect_identical(Y0[, 1], sim0$Y)
 
   # expected error: "t(P) %*% P should be orthonormal"
