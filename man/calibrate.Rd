@@ -87,7 +87,7 @@ calib0 <- calibrate0(p0, m, alpha = 0.1) # single step
 calib <- calibrate(p0, m, alpha = 0.1, p = p)
 calib$lambda >= calib0$lambda
 
-maxFP(p, calib$thr)
+max_fp(p, calib$thr)
 
 \dontrun{
 # Gene expression
@@ -108,7 +108,7 @@ calib_B <- calibrate(p0, m, alpha, family = "Beta", K = 100)
 
 ## post hoc bounds
 thr <- calib_L$thr
-minTP(p, thr) ## lower bound on true positives
+min_tp(p, thr) ## lower bound on true positives
 
 
 ## example of user selection: rejections of BH(0.05) procedure
@@ -116,10 +116,10 @@ adjp <- p.adjust(p, method = "BH")
 sel <- which(adjp < 0.05)
 length(sel)
 
-minTP(p[sel], thr)
+min_tp(p[sel], thr)
 
 # confidence bound on the FDP
-FDP_bound <- sanssouci:::curveMaxFP(sort(p), thr) / seq(along = p)
+FDP_bound <- sanssouci:::curve_max_fp(sort(p), thr) / seq(along = p)
 plot(head(FDP_bound, 300),
   t = "s",
   xlab = "Number of features",
