@@ -16,7 +16,7 @@
 #' \describe{
 #'   \item{statistic}{the value of the t-statistics}
 #'   \item{parameter}{the degrees of freedom for the t-statistics}
-#'   \item{p.value}{the p-values for the tests}
+#'   \item{p_value}{the p-values for the tests}
 #'   \item{estimate}{the mean difference between groups}}
 #'   Each of these elements is a matrix of size \code{m x B}, coerced to a
 #'   vector of length \code{m} if \code{B=1}
@@ -45,10 +45,10 @@
 #' str(fwt)
 #'
 #' # compare with ordinary t.test:
-#' s_ystem.time(pwt <- apply(mat, 1, FUN = function(x) {
+#' system.time(pwt <- apply(mat, 1, FUN = function(x) {
 #'   t.test(x[categ == 1], x[categ == 0], alternative = "greater")$p.value
 #' }))
-#' all(abs(fwt$p.value - pwt) < 1e-10) ## same results
+#' all(abs(fwt$p_value - pwt) < 1e-10) ## same results
 #'
 #' # with several contrasts/permutations
 #' B <- 100
@@ -114,7 +114,7 @@ row_welch_tests <- function(X, categ,
 #'   \describe{
 #'   \item{statistic}{the value of the t-statistic}
 #'   \item{parameter}{the degrees of freedom for the t-statistic}
-#'   \item{p.value}{the p-value for the test}
+#'   \item{p_value}{the p-value for the test}
 #'   }
 #' @author Pierre Neuvial
 #'
@@ -133,7 +133,7 @@ row_welch_tests <- function(X, categ,
 #' target <- t.test(x, y)
 #' swt <- suff_welch_tests(mean(x), mean(y), sd(x), sd(y), length(x), length(y))
 #' all.equal(swt$statistic, target$statistic, check.attributes = FALSE)
-#' all.equal(swt$p.value, target$p.value, check.attributes = FALSE)
+#' all.equal(swt$p_value, target$p.value, check.attributes = FALSE)
 #' all.equal(swt$parameter, target$parameter, check.attributes = FALSE)
 #'
 #' target <- t.test(x, y, alternative = "greater")
@@ -142,7 +142,7 @@ row_welch_tests <- function(X, categ,
 #'   alternative = "greater"
 #' )
 #' all.equal(swt$statistic, target$statistic, check.attributes = FALSE)
-#' all.equal(swt$p.value, target$p.value, check.attributes = FALSE)
+#' all.equal(swt$p_value, target$p.value, check.attributes = FALSE)
 #' all.equal(swt$parameter, target$parameter, check.attributes = FALSE)
 #'
 suff_welch_tests <- function(m_x, m_y, s_x, s_y, n_x, n_y,
@@ -214,7 +214,7 @@ suff_welch_tests <- function(m_x, m_y, s_x, s_y, n_x, n_y,
   list(
     statistic = statistics,
     parameter = df,
-    p.value = p_values,
+    p_value = p_values,
     estimate = mean_diff
   )
 }
@@ -239,7 +239,7 @@ divide_cols <- function(a, b) sweep(a, 2, b, "/")
 #' @return A list with elements:
 #'   \describe{ \item{statistic}{the value of the t-statistic}
 #'   \item{parameter}{the degrees of freedom for the t-statistic}
-#'   \item{p.value}{the p-value for the test} }
+#'   \item{p_value}{the p-value for the test} }
 #' @author Pierre Neuvial
 #'
 #' @details In accordance with the implementation of \code{\link[stats]{t.test}}
@@ -257,7 +257,7 @@ divide_cols <- function(a, b) sweep(a, 2, b, "/")
 #' swt <- suff_welch_tests1(mean(x), mean(y),
 #'                          sd(x), sd(y), length(x), length(y))
 #' all.equal(swt$statistic, target$statistic, check.attributes = FALSE)
-#' all.equal(swt$p.value - target$p.value, check.attributes = FALSE)
+#' all.equal(swt$p_value - target$p.value, check.attributes = FALSE)
 #' all.equal(swt$parameter - target$parameter, check.attributes = FALSE)
 #'
 #' target <- t.test(x, y, alternative = "greater")
@@ -266,7 +266,7 @@ divide_cols <- function(a, b) sweep(a, 2, b, "/")
 #'   alternative = "greater"
 #' )
 #' all.equal(swt$statistic, target$statistic, check.attributes = FALSE)
-#' all.equal(swt$p.value, target$p.value, check.attributes = FALSE)
+#' all.equal(swt$p_value, target$p.value, check.attributes = FALSE)
 #' all.equal(swt$parameter, target$parameter, check.attributes = FALSE)
 #'
 #' @noRd
@@ -306,7 +306,7 @@ suff_welch_tests1 <- function(m_x, m_y, s_x, s_y, n_x, n_y,
   list(
     statistic = statistics,
     parameter = df,
-    p.value = p_value,
+    p_value = p_value,
     estimate = m_x - m_y
   )
 }

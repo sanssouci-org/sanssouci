@@ -16,8 +16,9 @@
 #'   the normal approximation for the p-value.
 #'
 #' @return A list containing the following components:
-#'   \describe{ \item{statistic}{the value of the statistics} \item{p.value}{the
-#'   p-values for the tests}}
+#'   \describe{ 
+#'     \item{statistic}{the value of the statistics}
+#'     \item{p_value}{the p-values for the tests}}
 #'
 #' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 #' @seealso wilcox.test
@@ -25,7 +26,7 @@
 #' @return A list containing the following components:
 #' \describe{
 #'   \item{statistic}{the value of the statistics}
-#'   \item{p.value}{the p-values for the tests}
+#'   \item{p_value}{the p-values for the tests}
 #'   \item{estimate}{the median difference between groups (only calculated if
 #'   \code{B=1} for computational efficiency).}
 #'   }
@@ -136,7 +137,7 @@ row_wilcoxon_tests <- function(mat, categ,
     statistics <- as.vector(statistics)
     p_values <- as.vector(p_values)
   }
-  list(p.value = p_values, statistic = statistics, estimate = est)
+  list(p_value = p_values, statistic = statistics, estimate = est)
 }
 
 
@@ -167,12 +168,12 @@ row_wilcoxon_tests_v1 <- function(mat, categ,
       alternative = alternative,
       correct = correct
     )
-    pval0[, bb] <- rwt$p.value
+    pval0[, bb] <- rwt$p_value
     stat0[, bb] <- rwt$statistic
   }
 
   list(
-    p.value = pval0,
+    p_value = pval0,
     statistic = stat0
   )
 }
@@ -222,7 +223,7 @@ row_wilcoxon_tests1_v1 <- function(mat, categ,
   est <- rowMedians(mat[, wx]) - rowMedians(mat[, -wx])
   list(
     statistic = stat,
-    p.value = p,
+    p_value = p,
     estimate = est
   )
 }

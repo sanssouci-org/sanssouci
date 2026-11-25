@@ -18,7 +18,7 @@
 #' @return A list containing the following components:
 #' \describe{
 #'   \item{statistic}{the value of the statistics}
-#'   \item{p.value}{the p-values for the tests}
+#'   \item{p_value}{the p-values for the tests}
 #'   \item{estimate}{the difference between observed group proportions}}
 #'   Each of these elements is a matrix of size \code{nrow(mat) x B},
 #'   coerced to a vector of length \code{nrow(mat)} if \code{B=1}
@@ -51,9 +51,9 @@
 #'   x1 <- mat[ii, cls == 1]
 #'   x0 <- mat[ii, cls == 0]
 #'   bt <- binom.test(sum(x1), length(x1), mean(x0), alternative = alt)
-#'   c(statistic = bt[["statistic"]], p.value = bt[["p.value"]])
+#'   c(statistic = bt[["statistic"]], p_value = bt[["p.value"]])
 #' }))
-#' all(abs(fbt$p.value - pbt[, "p.value"]) < 1e-10) ## same results
+#' all(abs(fbt$p_value - pbt[, "p_value"]) < 1e-10) ## same results
 #' all(abs(fbt$statistic - pbt[, "statistic.number of successes"]) < 1e-10)
 #' ## same results
 #'
@@ -82,13 +82,13 @@ row_binomial_tests <- function(mat, categ,
       alternative = alternative,
       warn = warn
     )
-    pval0[, bb] <- rwt$p.value
+    pval0[, bb] <- rwt$p_value
     stat0[, bb] <- rwt$statistic
     est0[, bb] <- rwt$estimate
   }
 
   list(
-    p.value = pval0,
+    p_value = pval0,
     statistic = stat0,
     estimate = est0
   )
@@ -116,7 +116,7 @@ row_binomial_tests1 <- function(mat, categ,
   )
   list(
     statistic = x,
-    p.value = p_values,
+    p_value = p_values,
     estimate = x / nx - py
   )
 }
