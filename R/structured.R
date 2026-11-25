@@ -132,7 +132,7 @@ structured_zeta_dkwm <- function(p_values, lambda, ...) {
 #' @return An integer, the number of regions.
 #'
 #' @export
-nb_elements <- function(forest_structure) {
+n_elements <- function(forest_structure) {
   H <- length(forest_structure)
   count <- 0
   for (h in H:1) {
@@ -225,11 +225,11 @@ structured_zetas <- function(forest_structure,
                              verbose = FALSE,
                              ...) {
   H <- length(forest_structure)
-  K <- nb_elements(forest_structure)
+  K <- n_elements(forest_structure)
   zetas_list <- list()
   NEW_K <- K
   continue <- TRUE
-  nb_loop <- 0
+  n_loop <- 0
   while (continue) {
     USAGE_K <- NEW_K
     NEW_K <- K
@@ -276,10 +276,10 @@ structured_zetas <- function(forest_structure,
       zetas_list[[h]] <- zeta_inter
     }
     if (verbose) {
-      nb_loop <- nb_loop + 1
+      n_loop <- n_loop + 1
       print(paste0(
         "loop number=",
-        nb_loop,
+        n_loop,
         ", USAGE_K=",
         USAGE_K,
         ", NEW_K=",
@@ -382,32 +382,29 @@ structured_zetas <- function(forest_structure,
 #' @export
 pred_subset_structured <- function(S, forest_structure, zetas_list, leaf_list) {
   H <- length(C)
-  nb_leaves <- length(leaf_list)
-  vec <- numeric(nb_leaves)
+  n_leaves <- length(leaf_list)
+  vec <- numeric(n_leaves)
   # the initialization term for each atom P_i
   # is equivalent to completing the family if it isn't,
   # assuming that leaf_list does indeed contain all leaves
   # and some were just eventually missing in forest_structure and zetas_list
-  for (i in 1:nb_leaves) {
+  for (i in 1:n_leaves) {
     vec[i] <- sum(S <= leaf_list[[i]][length(leaf_list[[i]])])
   }
-  vec <- vec - c(0, vec[1:(nb_leaves - 1)])
+  vec <- vec - c(0, vec[1:(n_leaves - 1)])
   # this way of initializing is much faster than the following naive approach,
   # the downside is that it heavily uses
   # that the elements of leaf_list are sorted
-  # naive approach: for (i in 1:nb_leaves) vec[i] <- sum(S %in% leaf_list[[i]])
+  # naive approach: for (i in 1:n_leaves) vec[i] <- sum(S %in% leaf_list[[i]])
   for (h in H:1) {
     # starting at H takes care of the minima
     # between zeta_k and card(S inter R_k)
-    nb_regions <- length(forest_structure[[h]])
-    if (nb_regions > 0) {
-      for (k in 1:nb_regions) {
-        current_node <- forest_structure[[h]][[k]]
-        sum_succ <- sum(vec[current_node[1]:current_node[2]])
-        res <- min(zetas_list[[h]][k], sum_succ)
-        vec[current_node[1]:current_node[2]] <- 0
-        vec[current_node[1]] <- res
-      }
+    for (k in seq_along(forest_structure[[h]])) {
+      current_node <- forest_structure[[h]][[k]]
+      sum_succ <- sum(vec[current_node[1]:current_node[2]])
+      res <- min(zetas_list[[h]][k], sum_succ)
+      vec[current_node[1]:current_node[2]] <- 0
+      vec[current_node[1]] <- res
     }
   }
   return(sum(vec))
@@ -458,9 +455,9 @@ pruning <- function(forest_structure,
                     prune_leafs = FALSE,
                     delete_gaps = FALSE) {
   H <- length(forest_structure)
-  nb_leaves <- length(leaf_list)
-  vec <- numeric(nb_leaves)
-  for (i in 1:nb_leaves) {
+  n_leaves <- length(leaf_list)
+  vec <- numeric(n_leaves)
+  for (i in 1:n_leaves) {
     vec[i] <- length(leaf_list[[i]])
     # The initialization term for each atom/leaf P_i
     # is equivalent to completing the family if it isn't,
@@ -470,32 +467,29 @@ pruning <- function(forest_structure,
     # will catch atoms P_i with a \zeta_i larger than its length
   }
   for (h in H:1) {
-    nb_regions <- length(forest_structure[[h]])
-    if (nb_regions > 0) {
-      for (j in nb_regions:1) {
-        current_node <- forest_structure[[h]][[j]]
-        current_zeta <- zetas_list[[h]][j]
-        sum_succ <- sum(vec[current_node[1]:current_node[2]])
-        if (current_zeta >= sum_succ) {
-          res <- sum_succ
-          if (prune_leafs || (current_node[1] < current_node[2])) {
-            # Either the region is not a leaf,
-            # or it's a leaf and we chose to prune the leaves
-            # so we prune.
-            zetas_list[[h]] <- zetas_list[[h]][-j]
-            forest_structure[[h]][[j]] <- NULL
-          } else {
-            # The region is a leaf/atom and we chose
-            # to keep the leaves, so we keep it,
-            # but we change the \zeta_i to be the length of P_i.
-            zetas_list[[h]][j] <- sum_succ
-          }
+    for (j in rev(seq_along(forest_structure[[h]]))) {
+      current_node <- forest_structure[[h]][[j]]
+      current_zeta <- zetas_list[[h]][j]
+      sum_succ <- sum(vec[current_node[1]:current_node[2]])
+      if (current_zeta >= sum_succ) {
+        res <- sum_succ
+        if (prune_leafs || (current_node[1] < current_node[2])) {
+          # Either the region is not a leaf,
+          # or it's a leaf and we chose to prune the leaves
+          # so we prune.
+          zetas_list[[h]] <- zetas_list[[h]][-j]
+          forest_structure[[h]][[j]] <- NULL
         } else {
-          res <- current_zeta
+          # The region is a leaf/atom and we chose
+          # to keep the leaves, so we keep it,
+          # but we change the \zeta_i to be the length of P_i.
+          zetas_list[[h]][j] <- sum_succ
         }
-        vec[current_node[1]:current_node[2]] <- 0
-        vec[current_node[1]] <- res
+      } else {
+        res <- current_zeta
       }
+      vec[current_node[1]:current_node[2]] <- 0
+      vec[current_node[1]] <- res
     }
   }
   if (delete_gaps) {
@@ -539,7 +533,7 @@ pruning <- function(forest_structure,
 #' @export
 delete_gaps <- function(forest_structure, zetas_list, leaf_list) {
   H <- length(forest_structure)
-  nb_leaves <- length(leaf_list)
+  n_leaves <- length(leaf_list)
   continue <- TRUE
   new_forest_structure <- list()
   new_zetas_list <- list()
@@ -547,21 +541,18 @@ delete_gaps <- function(forest_structure, zetas_list, leaf_list) {
   while (continue) {
     new_forest_structure[[loop_counter]] <- list()
     new_zetas_list[[loop_counter]] <- numeric(0)
-    leaf_available <- !logical(nb_leaves)
+    leaf_available <- !logical(n_leaves)
     regions_delete <- list()
     for (h in 1:H) {
-      nb_regions <- length(forest_structure[[h]])
-      if (nb_regions > 0) {
-        for (l in 1:nb_regions) {
-          current_node <- forest_structure[[h]][[l]]
-          if (all(leaf_available[current_node[1]:current_node[2]])) {
-            new_forest_structure[[loop_counter]][[current_node[1]]] <-
-              current_node
-            new_zetas_list[[loop_counter]][current_node[1]] <-
-              zetas_list[[h]][[l]]
-            leaf_available[current_node[1]:current_node[2]] <- FALSE
-            regions_delete <- append(regions_delete, list(c(h, l)))
-          }
+      for (l in seq_along(forest_structure[[h]])) {
+        current_node <- forest_structure[[h]][[l]]
+        if (all(leaf_available[current_node[1]:current_node[2]])) {
+          new_forest_structure[[loop_counter]][[current_node[1]]] <-
+            current_node
+          new_zetas_list[[loop_counter]][current_node[1]] <-
+            zetas_list[[h]][[l]]
+          leaf_available[current_node[1]:current_node[2]] <- FALSE
+          regions_delete <- append(regions_delete, list(c(h, l)))
         }
       }
     }
