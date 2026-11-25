@@ -16,33 +16,31 @@ test_that("Consistency between `sanssouci::lm_test` and stat::lm", {
       resLM <- lm_test(Y = Y, X = X, C = C, alternative = alternative)
 
       expect_type(resLM, "list")
-      expect_true("epsilon_est" %in% names(resLM))
-      expect_true("stat_test" %in% names(resLM))
-      expect_true("p.value" %in% names(resLM))
-      expect_true("beta_est" %in% names(resLM))
-      expect_equal(dim(resLM$epsilon_est), c(nrow(Y), ncol(Y)))
-      expect_equal(dim(resLM$stat_test), c(nrow(C), ncol(Y)))
-      expect_equal(dim(resLM$p.value), c(nrow(C), ncol(Y)))
-      expect_equal(dim(resLM$beta_est), c(ncol(X), ncol(Y)))
+      expect_true("statistic" %in% names(resLM))
+      expect_true("p_value" %in% names(resLM))
+      expect_true("estimate" %in% names(resLM))
+      expect_true("residual" %in% names(resLM))
+      expect_equal(dim(resLM$statistic), c(nrow(C), ncol(Y)))
+      expect_equal(dim(resLM$p_value), c(nrow(C), ncol(Y)))
+      expect_equal(dim(resLM$estimate), c(ncol(X), ncol(Y)))
+      expect_equal(dim(resLM$residual), c(nrow(Y), ncol(Y)))
 
       for (j in seq_len(ncol(Y))) {
         fit <- lm(Y[, j] ~ X[, -1], )
         s <- summary(fit)
         stat_lm <- unname(coef(s)[, 3]) # stat
-        expect_equal(resLM$stat_test[, j], stat_lm, tolerance = 1e-6)
+        expect_equal(resLM$statistic[, j], stat_lm, tolerance = 1e-6)
         p_lm <- unname(coef(s)[, 4]) # p-value
         p_lm <- switch(alternative,
           "two.sided" = p_lm,
-          "greater" = 1 - pt(stat_lm,
-            df = nrow(Y) - qr(X)$rank
-          ),
+          "greater" = 1 - pt(stat_lm, df = nrow(Y) - qr(X)$rank),
           "less" = pt(stat_lm,
             df = nrow(Y) - qr(X)$rank
           )
         )
-        expect_equal(resLM$p.value[, j], p_lm, tolerance = 1e-6)
+        expect_equal(resLM$p_value[, j], p_lm, tolerance = 1e-6)
         beta_lm <- unname(coef(s)[, "Estimate"]) # estimated beta
-        expect_equal(resLM$beta_est[, j], beta_lm, tolerance = 1e-6)
+        expect_equal(resLM$estimate[, j], beta_lm, tolerance = 1e-6)
       }
     }
   }
@@ -62,24 +60,24 @@ test_that("Consistency between `sanssouci::lm_test` and stat::lm", {
       resLM <- lm_test(Y = Y, X = X, C = C)
 
       expect_type(resLM, "list")
-      expect_true("epsilon_est" %in% names(resLM))
-      expect_true("stat_test" %in% names(resLM))
-      expect_true("p.value" %in% names(resLM))
-      expect_true("beta_est" %in% names(resLM))
-      expect_equal(dim(resLM$epsilon_est), c(nrow(Y), ncol(Y)))
-      expect_equal(dim(resLM$stat_test), c(nrow(C), ncol(Y)))
-      expect_equal(dim(resLM$p.value), c(nrow(C), ncol(Y)))
-      expect_equal(dim(resLM$beta_est), c(ncol(X), ncol(Y)))
+      expect_true("residual" %in% names(resLM))
+      expect_true("statistic" %in% names(resLM))
+      expect_true("p_value" %in% names(resLM))
+      expect_true("estimate" %in% names(resLM))
+      expect_equal(dim(resLM$residual), c(nrow(Y), ncol(Y)))
+      expect_equal(dim(resLM$statistic), c(nrow(C), ncol(Y)))
+      expect_equal(dim(resLM$p_value), c(nrow(C), ncol(Y)))
+      expect_equal(dim(resLM$estimate), c(ncol(X), ncol(Y)))
 
       for (j in seq_len(ncol(Y))) {
         fit <- lm(Y[, j] ~ X[, -1])
         s <- summary(fit)
         p_lm <- unname(coef(s)[, 4]) # p-value
-        expect_equal(resLM$p.value[, j], p_lm, tolerance = 1e-6)
+        expect_equal(resLM$p_value[, j], p_lm, tolerance = 1e-6)
         stat_lm <- unname(coef(s)[, 3]) # stat
-        expect_equal(resLM$stat_test[, j], stat_lm, tolerance = 1e-6)
+        expect_equal(resLM$statistic[, j], stat_lm, tolerance = 1e-6)
         beta_lm <- unname(coef(s)[, "Estimate"]) # estimated beta
-        expect_equal(resLM$beta_est[, j], beta_lm, tolerance = 1e-6)
+        expect_equal(resLM$estimate[, j], beta_lm, tolerance = 1e-6)
       }
     }
   }
@@ -284,10 +282,9 @@ test_that("test row_lm_test function", {
     alternative = alternative,
     groups = matrix(seq_len(nrow(Y)), ncol = 1)
   )
-
   resLM <- lm_test(Y, X, C, alternative = alternative)
 
-  expect_equal(resrowLM$p.value, resLM$p.value)
+  expect_equal(resrowLM$p_value, resLM$p_value)
 
   B <- 10
   set.seed(20250623)
@@ -297,10 +294,10 @@ test_that("test row_lm_test function", {
     groups = groups
   )
   lmt <- apply(groups, 2, FUN = function(x) {
-    lmt <- lm_test(matrix(resLM$epsilon_est[x, ]), X, C, alternative)
-    lmt$p.value
+    lmt <- lm_test(matrix(resLM$residual[x, ]), X, C, alternative)
+    lmt$p_value
   })
-  expect_equal(lmt, resrowLM$p.value)
+  expect_equal(lmt, resrowLM$p_value)
 
   set.seed(20250623)
   pval_perm <- bootstrap_permutation(

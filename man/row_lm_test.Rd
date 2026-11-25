@@ -32,11 +32,12 @@ of the sample used in the test.}
 \value{
 A list containing the following components:
 \describe{
-\item{statistic}{the value of the t-statistics}
-\item{p_value}{the p-values for the tests}
+\item{p_value}{A vector of p-values}
+\item{statistic}{A vector of test statistic}
+\item{estimate}{A vector of OLS estimators}
+}
 Each of these elements is a matrix of size \code{m x B},
 coerced to a vector of length \code{m} if \code{B=1}
-}
 }
 \description{
 Compute the marginal null t-statistics for a set of contrasts and their

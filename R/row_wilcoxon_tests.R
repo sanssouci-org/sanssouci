@@ -25,8 +25,8 @@
 #'
 #' @return A list containing the following components:
 #' \describe{
-#'   \item{statistic}{the value of the statistics}
 #'   \item{p_value}{the p-values for the tests}
+#'   \item{statistic}{the value of the statistics}
 #'   \item{estimate}{the median difference between groups (only calculated if
 #'   \code{B=1} for computational efficiency).}
 #'   }

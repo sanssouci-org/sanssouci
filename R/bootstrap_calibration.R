@@ -152,7 +152,7 @@ bootstrap_permutation <- function(Y, X, C,
       Y = as.matrix(y_perm[, , b]),
       X = X, C = C,
       alternative = alternative
-    )$p.value
+    )$p_value
   }
 
   return(perm_p_values)
@@ -172,11 +172,12 @@ bootstrap_permutation <- function(Y, X, C,
 #'
 #' @return A list containing the following components:
 #' \describe{
-#'   \item{statistic}{the value of the t-statistics}
-#'   \item{p_value}{the p-values for the tests}
+#'   \item{p_value}{A vector of p-values}
+#'   \item{statistic}{A vector of test statistic}
+#'   \item{estimate}{A vector of OLS estimators}
+#'   }
 #'   Each of these elements is a matrix of size \code{m x B},
 #'   coerced to a vector of length \code{m} if \code{B=1}
-#' }
 #' @export
 row_lm_test <- function(Y, X, C,
                         alternative = c("two.sided", "less", "greater"),
@@ -196,12 +197,13 @@ row_lm_test <- function(Y, X, C,
   B <- ncol(groups)
 
   res_lm <- lm_test(Y = Y, X = X, C = C, alternative = alternative)
-  epsilon_hat <- res_lm$residual
+  residuals <- res_lm$residual
 
   if (all(groups == 1:n) && ncol(matrix(groups)) == 1) {
     estimate <- C %*% res_lm$estimate
     return(list(
-      p_value = res_lm$p.value, statistic = res_lm$statistic,
+      p_value = res_lm$p_value, 
+      statistic = res_lm$statistic,
       estimate = estimate
     ))
   }
@@ -212,13 +214,13 @@ row_lm_test <- function(Y, X, C,
   perm_estimates <- array(NA, dim = c(D, L, B))
   for (b in 1:B) {
     shuffle_idx <- groups[, b]
-    y_perm <- epsilon_hat[shuffle_idx, ]
+    y_perm <- residuals[shuffle_idx, ]
     res_perm <- lm_test(
       Y = as.matrix(y_perm), X = X, C = C,
       alternative = alternative
     )
     perm_statistics[, , b] <- res_perm$statistic
-    perm_p_values[, , b] <- res_perm$p.value
+    perm_p_values[, , b] <- res_perm$p_value
     perm_estimates[, , b] <- C %*% res_perm$estimate
   }
   ## transform 3 dimensional problem (D, L, B) into a matrix (D*L, B)
@@ -228,7 +230,7 @@ row_lm_test <- function(Y, X, C,
 
   return(list(
     statistic = perm_statistics_,
-    p.value = perm_p_values_, 
+    p_value = perm_p_values_, 
     estimate = perm_estimates_
   ))
 }
@@ -316,12 +318,9 @@ calibration_bootstap <- function(Y, X, C,
   perm_p_values_ <- matrix(perm_p_values, nrow = D * L, ncol = B)
 
   ## The next steps of the calibration are already implemented in sanssouci
-  return(calibrate0(perm_p_values_,
-    m = D * L, alpha = alpha,
-    family = family
-  ))
+  cal <- calibrate0(perm_p_values_, m = D * L, alpha = alpha, family = family)
+  return(cal)
 }
-
 
 .check_lm_test <- function(Y, X, C) {
   vars <- list(Y, X, C)
