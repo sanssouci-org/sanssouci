@@ -108,17 +108,17 @@ volcano_plot.numeric <- function(x, p_values,
 
   ## post hoc bounds in selections
   n1 <- length(sel1)
-  FP1 <- maxFP(p_values_bound[sel1], thr = thr)
+  FP1 <- max_fp(p_values_bound[sel1], thr = thr)
   TP1 <- n1 - FP1
   FDP1 <- round(FP1 / max(n1, 1), 2)
 
   n2 <- length(sel2)
-  FP2 <- maxFP(p_values_bound[sel2], thr = thr)
+  FP2 <- max_fp(p_values_bound[sel2], thr = thr)
   TP2 <- n2 - FP2
   FDP2 <- round(FP2 / max(n2, 1), 2)
 
   n12 <- length(sel12)
-  FP12 <- maxFP(p_values_bound[sel12], thr = thr)
+  FP12 <- max_fp(p_values_bound[sel12], thr = thr)
   TP12 <- n12 - FP12
   FDP12 <- round(FP12 / max(n12, 1), 2)
 

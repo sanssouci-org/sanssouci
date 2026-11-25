@@ -255,7 +255,7 @@ test_that("Consistency of output of 'bound.SansSouci'", {
 })
 
 
-test_that("'predict.SansSouci' reproduces the results of 'curveMaxFP'", {
+test_that("'predict.SansSouci' reproduces the results of 'curve_max_fp'", {
   m <- 54
   n <- 132
 
@@ -272,8 +272,8 @@ test_that("'predict.SansSouci' reproduces the results of 'curveMaxFP'", {
   what0 <- c("FP", "TP", "FDP", "TDP")
 
   pvals <- sort(pValues(res))
-  FP <- sanssouci:::curveMaxFP(
-    p.values = pvals,
+  FP <- sanssouci:::curve_max_fp(
+    p_values = pvals,
     thr = thresholds(res)
   )
   FPb <- predict(res, what = "FP", all = TRUE)$bound
@@ -334,8 +334,8 @@ test_that(
 
     # correctnes with curMaxFP
     pvals <- sort(pValues(res)[contrast, ])
-    FP <- sanssouci:::curveMaxFP(
-      p.values = pvals,
+    FP <- sanssouci:::curve_max_fp(
+      p_values = pvals,
       thr = thresholds(res)
     )
     FPb <- predict(res, what = "FP", all = TRUE, contrast_name = contrast)$bound

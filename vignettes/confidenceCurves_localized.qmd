@@ -120,7 +120,7 @@ Here we use the @simes86improved inequality to bound the number of false positiv
 
 ```{r}
 #| label: simes
-simes_bound <- curveMaxFP(pvalues, alpha * 1:m / m)
+simes_bound <- curve_max_fp(pvalues, alpha * 1:m / m)
 label <- rep("Simes", m)
 method <- rep("Simes", m)
 res[["Simes"]] <- data.frame(x = x, label = label, stat = stat,
