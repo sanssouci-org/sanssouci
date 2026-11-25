@@ -73,7 +73,7 @@ Volcano plot for a numeric vector of fold changes and p-values
 The p-values play two distinct roles here: they are displayed as the
 y axis of the volcano plot, and they are also used to compute post hoc
 bounds. In general the same p-values are used. See the vignette
-\url{https://sanssouci-org.github.io/sanssouci/articles/post-hoc_differential-expression_RNAseq.html#custom-statistics-example-using-limma-voom}
+\url{https://sanssouci-org.github.io/sanssouci/articles/post-hoc_differential-expression_RNAseq.html#custom-statistics-example-using-limma-voom} # nolint
 for an example where two different sets of p-values are used.
 }
 \examples{

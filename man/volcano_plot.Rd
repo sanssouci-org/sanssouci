@@ -9,8 +9,8 @@ volcano_plot(x, ...)
 \arguments{
 \item{x}{An object of class \code{SansSouci}, or alternatively a numeric vector
 of fold changes when calling \code{volcano_plot.numeric} directly (x axis of
-the volcano plot). See \code{\link[=volcano_plot.numeric]{volcano_plot.numeric()}} or \code{\link[=volcano_plot.SansSouci]{volcano_plot.SansSouci()}}
-for specifics}
+the volcano plot). See \code{\link[=volcano_plot.numeric]{volcano_plot.numeric()}} or
+\code{\link[=volcano_plot.SansSouci]{volcano_plot.SansSouci()}} for specifics}
 
 \item{...}{Other arguments passed to methods}
 }
