@@ -48,7 +48,7 @@ minibatch_row_test_fun <- function(row_test_fun, Y, categ,
     p_values[, id_batch] <- row_test_fun(Y,
       categ_batch,
       alternative = alternative
-    )$p.value
+    )$p_value
   }
   return(p_values)
 }

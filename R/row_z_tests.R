@@ -54,5 +54,5 @@ row_z_tests <- function(mat, categ, alternative) {
     "greater" = pnorm(statistics, lower.tail = FALSE),
     "less" = pnorm(statistics, lower.tail = TRUE)
   )
-  list(statistics = statistics, p_values = p_values)
+  list(statistics = statistics, p_value = p_values)
 }
