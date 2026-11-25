@@ -3,7 +3,7 @@
 #' @param Y A matrix of \eqn{D} variables (hypotheses) by \eqn{n} observations
 #' @param X A design matrix of \eqn{n} observations by \eqn{p} explanatory
 #'   variables in the linear model
-#' @param Contrast A contrast matrix of size \eqn{L} tested contrasts (in row)
+#' @param contrast A contrast matrix of size \eqn{L} tested contrasts (in row)
 #'   and \eqn{p} columns corresponding to the parameters to be tested
 #' @param groups A numeric vector of \eqn{n} values in \eqn{0, 1}, the groups of
 #'   observations on which to perform two-sample tests
@@ -23,10 +23,10 @@
 #' res_beta <- fit(res, B = 100, alpha = 0.1, family = "Beta", K = 10)
 #' plot(res_beta, xmax = 500)
 #'
-SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
+SansSouci <- function(Y, X = NULL, contrast = NULL, groups = NULL,
                       truth = NULL) {
   # Are the arguments present?
-  signature <- c(!is.null(X), !is.null(Contrast), !is.null(groups))
+  signature <- c(!is.null(X), !is.null(contrast), !is.null(groups))
 
 
   n <- ncol(Y)
@@ -73,19 +73,19 @@ SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
 
     ## X and contrast are given: linear model case
   } else if (identical(signature, c(TRUE, TRUE, FALSE))) {
-    .check_lm_test(t(Y), X, Contrast)
+    .check_lm_test(t(Y), X, contrast)
     type <- "linear model"
-    L <- nrow(Contrast)
+    L <- nrow(contrast)
     P <- ncol(X)
-    if (is.null(rownames(Contrast))) {
-      contrast_name <- paste("Contrast", seq_len(L))
-      rownames(Contrast) <- contrast_name
+    if (is.null(rownames(contrast))) {
+      contrast_name <- paste("contrast", seq_len(L))
+      rownames(contrast) <- contrast_name
     } else {
-      contrast_name <- rownames(Contrast)
+      contrast_name <- rownames(contrast)
     }
     ## The contrast matrix is not provided
   } else if (identical(signature, c(TRUE, FALSE, FALSE))) {
-    stop("Please give a contrast matrix in `Contrast`")
+    stop("Please give a contrast matrix in `contrast`")
     ## The design matrix is not provided
   } else if (identical(signature, c(FALSE, TRUE, FALSE))) {
     stop("Please give a design matrix in `X`")
@@ -93,7 +93,7 @@ SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
   } else if (identical(signature, c(TRUE, FALSE, TRUE)) ||
                identical(signature, c(FALSE, TRUE, TRUE)) ||
                identical(signature, c(TRUE, TRUE, TRUE))) {
-    stop("Please provide either an `X` design matrix and a `Contrast`  matrix,
+    stop("Please provide either an `X` design matrix and a `contrast`  matrix,
          or only a `groups` design vector.")
   }
 
@@ -107,7 +107,7 @@ SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
   input <- list(
     Y = Y,
     X = X,
-    C = Contrast,
+    C = contrast,
     groups = groups,
     n_obs = n,
     n_contrasts = L,
@@ -176,7 +176,7 @@ SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
 #'
 #' \dontrun{
 #' # Use wilcoxon tests instead of Welch tests
-#' res <- fit(obj, B = 100, alpha = 0.1, rowTestFUN = row_wilcoxon_tests)
+#' res <- fit(obj, B = 100, alpha = 0.1, row_test_fun = row_wilcoxon_tests)
 #' volcanoPlot(res, q = 0.05, r = 0.2)
 #' }
 #'
@@ -195,14 +195,14 @@ SansSouciSim <- function(...) {
 #' table(groups)
 #' a <- SansSouci(Y = expr_ALL, groups = groups)
 #' print(a)
-#' nHyp(a)
-#' nObs(a)
+#' n_hyp(a)
+#' n_observations(a)
 #' label(a)
 #'
 #' res <- fit(a, B = 100, alpha = 0.1)
 #' label(res)
 #' print(res)
-#' str(pValues(res))
+#' str(p_values(res))
 #' str(foldChanges(res))
 #' str(thresholds(res))
 #' vp <- volcanoPlot(res, q = 0.05, r = 0.5)
@@ -220,28 +220,28 @@ NULL
 #' @describeIn all-generics ' Get the number of hypotheses
 #' @param object An object. See individual methods for specifics
 #' @export
-nHyp <- function(object) UseMethod("nHyp")
+n_hyp <- function(object) UseMethod("n_hyp")
 
-#' `nHyp`: get the number of hypotheses
+#' `n_hyp`: get the number of hypotheses
 #'
 #' @rdname SansSouci-methods
 #' @param object An object of class `SansSouci`
 #' @export
-nHyp.SansSouci <- function(object) {
+n_hyp.SansSouci <- function(object) {
   object$input$m
 }
 
 #' @describeIn all-generics Get the number of observations
 #' @param object An object. See individual methods for specifics
 #' @export
-nObs <- function(object) UseMethod("nObs")
+n_observations <- function(object) UseMethod("n_observations")
 
-#' `nObs` Get the number of observations
+#' `n_observations` Get the number of observations
 #'
 #' @rdname SansSouci-methods
 #' @param object An object of class `SansSouci`
 #' @export
-nObs.SansSouci <- function(object) {
+n_observations.SansSouci <- function(object) {
   object$input$n_obs
 }
 
@@ -281,9 +281,9 @@ print.SansSouci <- function(x, ..., verbose = FALSE) {
   cat("'SansSouci' object:\n")
   input <- object$input
   if (!is.null(input)) {
-    cat("\tNumber of hypotheses:\t", nHyp(object), "\n")
-    if (!is.null(nObs(object))) {
-      cat("\tNumber of observations:\t", nObs(object), "\n")
+    cat("\tNumber of hypotheses:\t", n_hyp(object), "\n")
+    if (!is.null(n_observations(object))) {
+      cat("\tNumber of observations:\t", n_observations(object), "\n")
     }
     cat("\t", input$type, "\n", sep = "")
     cat("\n")
@@ -299,14 +299,14 @@ print.SansSouci <- function(x, ..., verbose = FALSE) {
       cat("\n")
       cat("\t", sum(truth), "false null hypotheses (signals)")
       pi0 <- 1 - mean(truth)
-      cat(" out of ", nHyp(object), " (pi0=", round(pi0, 3), ")", sep = "")
+      cat(" out of ", n_hyp(object), " (pi0=", round(pi0, 3), ")", sep = "")
       cat("\n")
     }
   }
   params <- object$parameters
   if (!is.null(params)) {
     cat("Parameters:", "\n")
-    cat("\tTest function:\t\t", params$funName, "\n", sep = "")
+    cat("\tTest function:\t\t", params$fun_name, "\n", sep = "")
     cat("\tNumber of permutations:\tB=", params$B, "\n", sep = "")
     cat("\tSignificance level:\talpha=", params$alpha, "\n", sep = "")
     cat("\tReference family:\t", params$fam, "\n", sep = "")
@@ -318,7 +318,7 @@ print.SansSouci <- function(x, ..., verbose = FALSE) {
     cat("Output:\n")
     if (verbose) {
       cat("\tp-values:\n")
-      print(summary(output$p.values))
+      print(summary(output$p_values))
       cat("\tCalibrated thresholds:")
       if (all(output$thr %in% c(0, 1))) {
         print(table(output$thr))
@@ -346,7 +346,8 @@ generics::fit
 #'  Defaults to 1000
 #' @param alternative A character string specifying the alternative hypothesis.
 #'   Must be one of "two.sided" (default), "greater" or "less".
-#' @param rowTestFUN A (vectorized) test function. Defaults to [row_welch_tests].
+#' @param row_test_fun A (vectorized) test function.
+#'  Defaults to [row_welch_tests].
 #' @param family A character value, the name of a threshold family. Should be
 #'   one of "Linear", "Beta" and "Simes", or "Oracle". "Linear" and "Simes"
 #'   families are identical.
@@ -391,7 +392,7 @@ generics::fit
 #' plot(res)
 #'
 #' # confidence curve for a subset
-#' S <- which(pValues(res) < 0.1 & foldChanges(res) > 0.3)
+#' S <- which(p_values(res) < 0.1 & foldChanges(res) > 0.3)
 #' plot(res, S = S)
 #'
 #' # plot two confidence curves
@@ -402,10 +403,10 @@ generics::fit
 #' plot_conf_curve(bounds, xmax = 200)
 #'
 fit.SansSouci <- function(object, alpha, B = 1e3,
-                          rowTestFUN = NULL,
+                          row_test_fun = NULL,
                           alternative = c("two.sided", "less", "greater"),
                           family = c("Simes", "Linear", "Beta", "Oracle"),
-                          max_steps_down = 10L, K = nHyp(object),
+                          max_steps_down = 10L, K = n_hyp(object),
                           force = FALSE,
                           verbose = FALSE, ...) {
   alternative <- match.arg(alternative)
@@ -425,33 +426,32 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
   X <- object$input$X
   C <- object$input$C
   groups <- object$input$groups
-  n_groups <- object$input$n_groups
-  m <- nHyp(object)
-  n <- nObs(object)
+  m <- n_hyp(object)
+  n <- n_observations(object)
   L <- object$input$n_contrasts
-  funName <- NA_character_
+  fun_name <- NA_character_
   type <- object$input$type
 
-  if (is.null(rowTestFUN)) {
+  if (is.null(row_test_fun)) {
     if (type == "1 sample") {
-      rowTestFUN <- row_z_tests
-      funName <- "row_z_tests"
+      row_test_fun <- row_z_tests
+      fun_name <- "row_z_tests"
     } else if (type == "2 samples") {
-      rowTestFUN <- row_welch_tests
-      funName <- "row_welch_tests"
+      row_test_fun <- row_welch_tests
+      fun_name <- "row_welch_tests"
     } else if (type == "Continuous case, correlation test") {
-      rowTestFUN <- row_pearson_correlation_tests
-      funName <- "row_pearson_correlation_tests"
+      row_test_fun <- row_pearson_correlation_tests
+      fun_name <- "row_pearson_correlation_tests"
     } else if (type == "linear model") {
-      row_lm_test_XC <- function(...) {
+      row_lm_test_with_x_c <- function(...) {
         row_lm_test(..., X = X, C = C)
       }
-      rowTestFUN <- row_lm_test_XC
-      funName <- "row_lm_test"
+      row_test_fun <- row_lm_test_with_x_c
+      fun_name <- "row_lm_test"
       groups <- matrix(1:n, ncol = 1)
     }
   } else {
-    funName <- as.character(substitute(rowTestFUN))
+    fun_name <- as.character(substitute(row_test_fun))
   }
 
   ## should we re-calculate p0?
@@ -460,30 +460,31 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
   do_p0 <- TRUE
   if (!is.null(params) && !force) {
     if (!is.null(p0)) {
-      cond_B <- (params$B == B)
-      cond_F <- all.equal(params$rowTestFUN, rowTestFUN)
-      cond_A <- (params$alternative == alternative)
-      do_p0 <- (!cond_B) || (!cond_F) || (!cond_A)
+      cond_n_permutation <- (params$B == B)
+      cond_test_function <- all.equal(params$row_test_fun, row_test_fun)
+      cond_alternative <- (params$alternative == alternative)
+      do_p0 <- (!cond_n_permutation) || (!cond_test_function) ||
+        (!cond_alternative)
     }
   }
 
   ## should we re-calculate the (first) pivotal statistic ?
   params <- object$parameters
-  pivStat0 <- NULL
+  piv_stat0 <- NULL
   if (!is.null(params) && !force) {
-    cond_F <- (params$family == family)
-    cond_K <- (params$K == K)
-    cond_P <- (!do_p0)
-    if (cond_F && cond_K && cond_P) {
-      pivStat0 <- object$output$piv_stat
+    cond_family <- (params$family == family)
+    cond_k <- (params$K == K)
+    cond_p <- (!do_p0)
+    if (cond_family && cond_k && cond_p) {
+      piv_stat0 <- object$output$piv_stat
     }
   }
   object$parameters <- list(
     alpha = alpha,
     B = B,
     alternative = alternative,
-    rowTestFUN = rowTestFUN,
-    funName = funName,
+    row_test_fun = row_test_fun,
+    fun_name = fun_name,
     type = type,
     family = family,
     max_steps_down = max_steps_down,
@@ -494,16 +495,16 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
     warning("For the 'Beta' family we recommend choosing K < m")
   }
 
-  cal <- rowTestFUN(Y, groups, alternative = alternative)
-  if (!is.matrix(cal$p.value)) {
-    cal$p.value <- matrix(cal$p.value, nrow = L)
-    rownames(cal$p.value) <- object$input$contrast_name
+  cal <- row_test_fun(Y, groups, alternative = alternative)
+  if (!is.matrix(cal$p_values)) {
+    cal$p_values <- matrix(cal$p_values, nrow = L)
+    rownames(cal$p_values) <- object$input$contrast_name
   }
   if (!is.null(cal$estimate) && !is.matrix(cal$estimate)) {
     cal$estimate <- matrix(cal$estimate, nrow = L)
     rownames(cal$estimate) <- object$input$contrast_name
   }
-  p.values <- cal$p.value
+  p_values <- cal$p_values
   if (B > 0 && family != "Oracle") {
     t0 <- Sys.time()
     if (verbose) {
@@ -522,7 +523,7 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
         null_groups <- replicate(B, sample(1:n, n, replace = TRUE))
       }
       p0 <- minibatch_row_test_fun(
-        row_test_fun = rowTestFUN, Y = Y,
+        row_test_fun = row_test_fun, Y = Y,
         categ = null_groups,
         alternative = alternative,
         max_batch_size = 1e6, m = m
@@ -542,9 +543,9 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
     calib <- sanssouci::calibrate(
       p0 = p0, m = m, alpha = alpha,
       family = family, K = K,
-      p = p.values,
+      p = p_values,
       max_steps_down = max_steps_down,
-      piv_stat0 = pivStat0
+      piv_stat0 = piv_stat0
     )
     if (verbose) {
       dt <- Sys.time() - t0
@@ -571,21 +572,21 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
 #' @describeIn all-generics Get p-values
 #' @param object An object. See individual methods for specifics
 #' @export
-pValues <- function(object) UseMethod("pValues")
+p_values <- function(object) UseMethod("p_values")
 
 #' `pValues`: get p-values
 #'
 #' @rdname SansSouci-methods
 #' @param object An object of class `SansSouci`
 #' @export
-pValues.SansSouci <- function(object) {
+p_values.SansSouci <- function(object) {
   object$output$p.value
 }
 
 #' @describeIn all-generics Get fold changes
 #' @param object An object. See individual methods for specifics
 #' @export
-foldChanges <- function(object) UseMethod("foldChanges")
+fold_changes <- function(object) UseMethod("fold_changes")
 
 #' @rdname SansSouci-methods
 #' @param object An object of class `SansSouci`
@@ -634,9 +635,9 @@ thresholds.SansSouci <- function(object) object$output$thr
 #' plot(res)
 #'
 #' # confidence curve for a subset of hypotheses
-#' S <- which(pValues(res) < 0.1 & foldChanges(res) > 0.3)
+#' S <- which(p_values(res) < 0.1 & foldChanges(res) > 0.3)
 #' plot(res, S = S)
-plot.SansSouci <- function(x, y, xmax = nHyp(x), ...) {
+plot.SansSouci <- function(x, y, xmax = n_hyp(x), ...) {
   cb <- predict(x, all = TRUE, ...)
   plot_conf_curve(cb, xmax = xmax)
 }
@@ -691,11 +692,11 @@ plot.SansSouci <- function(x, y, xmax = nHyp(x), ...) {
 #' head(bounds)
 #'
 #' # post hoc bound on a subset
-#' S <- which(pValues(res) < 0.01)
+#' S <- which(p_values(res) < 0.01)
 #' predict(res, S)
 predict.SansSouci <- function(object,
                               S = seq_len(min(
-                                nHyp(object),
+                                n_hyp(object),
                                 object$input$n_dimensions
                               )),
                               what = c("TP", "FDP"), all = FALSE,
@@ -704,13 +705,13 @@ predict.SansSouci <- function(object,
   if (!all(contrast_name %in% object$input$contrast_name)) {
     stop("contrast_name must be in object$input$contrast_name")
   }
-  p.values <- pValues(object)
+  p_values <- p_values(object)
   thr <- thresholds(object)
   lab <- label(object)
 
   # If sansSouci object is two sample test (1 contrast) /struct (0 contrast)
   if (length(object$input$contrast_name) <= 1) {
-    bounds <- posthoc_bound(p.values,
+    bounds <- posthoc_bound(p_values,
       S = S, thr = thr, lab = lab,
       what = what, all = all
     )
@@ -727,8 +728,8 @@ predict.SansSouci <- function(object,
     bounds_list <- list()
     for (contrasts in contrast_name) {
       # Only keep p-values of contrasts
-      p.values.contrast <- p.values[contrasts, ]
-      bounds <- posthoc_bound(p.values.contrast,
+      p_values_contrast <- p_values[contrasts, ]
+      bounds <- posthoc_bound(p_values_contrast,
         S = S, thr = thr, lab = lab,
         what = what, all = all
       )
@@ -751,10 +752,10 @@ predict.SansSouci <- function(object,
 #' Volcano plot for a `SansSouci` object
 #'
 #' @param fold_change An optional vector of fold changes, of the same length
-#' as `get_nb_hyp(x)`, used for volcano_plot x-axis.
+#' as `n_hyp(x)`, used for volcano_plot x-axis.
 #' If not specified, `get_fold_changes(x)`
 #' is used.
-#' @param p_values A vector of p-values, of the same length as `get_nb_hyp(x)`,
+#' @param p_values A vector of p-values, of the same length as `n_hyp(x)`,
 #' used for volcano_plot y-axis. If not specified, `get_p_values(x)` is used
 #' @param contrast_name A character value, the selected contrast. Should be
 #' chosen in `x$input$contrast_name`.
@@ -776,7 +777,7 @@ predict.SansSouci <- function(object,
 #' volcanoPlot(res, q = 0.2, r = 0.2, ylim = c(0, 4), feature_label = "gene")
 volcanoPlot.SansSouci <- function(x,
                                   fold_change = foldChanges(x)[contrast_name, ],
-                                  p_value = pValues(x)[contrast_name, ],
+                                  p_value = p_values(x)[contrast_name, ],
                                   p = 1, q = 1, r = 0,
                                   contrast_name = x$input$contrast_name[1],
                                   cex = c(0.4, 1.5),
@@ -785,10 +786,10 @@ volcanoPlot.SansSouci <- function(x,
                                   ylim = NULL,
                                   ...) {
   object <- x
-  if (!(contrast_name %in% rownames(pValues(object)))) {
+  if (!(contrast_name %in% rownames(p_values(object)))) {
     stop(paste(
       "Choose a contrast in",
-      paste(rownames(pValues(object)),
+      paste(rownames(p_values(object)),
         collapse = ", "
       )
     ))
@@ -802,7 +803,7 @@ volcanoPlot.SansSouci <- function(x,
   m <- object$input$n_dimensions
   stopifnot(m == length(fold_change))
   stopifnot(m == length(p_value))
-  p_value_bound <- pValues(object)[contrast_name, ]
+  p_value_bound <- p_values(object)[contrast_name, ]
   thr <- thresholds(object)[1:m] # we select at most m hypotheses here
 
   vp <- volcanoPlot(

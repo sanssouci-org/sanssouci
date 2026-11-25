@@ -97,7 +97,7 @@ SansSouciDyadic <- function(m, leaf_size = NULL, height = NULL,
 #' m <- s * 2^q
 #'
 #' obj <- SansSouciDyadic(m, leaf_size = s, direction = "top-down")
-#' get_nb_hyp(obj)
+#' n_hyp(obj)
 #' get_nb_leaves(obj)
 #' mu <- gen_mu_leaves(
 #'   m = m, K1 = 8, d = 0.9, grouped = TRUE,
@@ -112,12 +112,12 @@ SansSouciDyadic <- function(m, leaf_size = NULL, height = NULL,
 #'
 NULL
 #> NULL
-#' `get_nb_hyp`: get the number of hypotheses
+#' `n_hyp`: get the number of hypotheses
 #'
 #' @rdname SansSouciStruct-methods
 #' @param object An object of class `SansSouciStruct`
 #' @export
-get_nb_hyp.SansSouciStruct <- function(object) {
+n_hyp.SansSouciStruct <- function(object) {
   object$input$m
 }
 
@@ -140,7 +140,7 @@ get_nb_leaves.SansSouciStruct <- function(object) {
 #'
 #' @param object An object of class `SansSouciStruct`
 #' @param alpha Target risk (JER) level
-#' @param p_values A vector of length `get_nb_hyp(object)`,
+#' @param p_values A vector of length `n_hyp(object)`,
 #' @param family A character value describing how the number of true nulls in a
 #' set is estimated. Can be either:
 #' - "DKWM": estimation by the Dvoretzky-Kiefer-Wolfowitz-Massart
@@ -222,7 +222,7 @@ fit.SansSouciStruct <- function(object, alpha, p_values,
       stop("'truth' should be available for 'Oracle'. See ?SansSouci")
     }
   }
-  m <- get_nb_hyp(object)
+  m <- n_hyp(object)
   stopifnot(length(p_values) == m)
   params <- list(alpha = alpha, family = family, flavor = flavor)
   if (family %in% c("DKWM", "HB", "trivial")) {
@@ -284,7 +284,7 @@ get_p_values.SansSouciStruct <- function(object) {
 }
 
 #' @export
-predict.SansSouciStruct <- function(object, S = seq_len(get_nb_hyp(object)),
+predict.SansSouciStruct <- function(object, S = seq_len(n_hyp(object)),
                                     what = c("TP", "FDP"), n_out = 1,
                                     order_by_p = TRUE, ...) {
   lab <- label(object)
@@ -293,7 +293,7 @@ predict.SansSouciStruct <- function(object, S = seq_len(get_nb_hyp(object)),
     S <- ordering[S]
   }
 
-  if (max(S) > get_nb_hyp(object)) {
+  if (max(S) > n_hyp(object)) {
     stop("'S' is not a subset of hypotheses")
   }
   struct <- object$input$struct

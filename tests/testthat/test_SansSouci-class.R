@@ -22,11 +22,11 @@ test_that("Correctness of the constructor of SansSouci", {
   expect_null(obj$output)
 
   Y <- obj$input$Y
-  expect_equal(nHyp(obj), m)
+  expect_equal(n_hyp(obj), m)
   expect_equal(obj$input$m, m)
   expect_equal(nrow(Y), m)
 
-  expect_equal(nObs(obj), n)
+  expect_equal(n_observations(obj), n)
   expect_equal(ncol(Y), n)
   expect_equal(obj$input$n_obs, n)
 
@@ -51,11 +51,11 @@ test_that("Correctness of the constructor of SansSouci", {
   expect_null(obj$output)
 
   Y <- obj$input$Y
-  expect_equal(nHyp(obj), m)
+  expect_equal(n_hyp(obj), m)
   expect_equal(obj$input$m, m)
   expect_equal(nrow(Y), m)
 
-  expect_equal(nObs(obj), n)
+  expect_equal(n_observations(obj), n)
   expect_equal(ncol(Y), n)
   expect_equal(obj$input$n_obs, n)
 
@@ -73,17 +73,17 @@ test_that("Correctness of the constructor of SansSouci", {
   epsilons <- matrix(rnorm(n * D), nrow = D, ncol = n)
   Y <- beta %*% X + epsilons
   C <- diag(p)
-  obj <- SansSouci(Y = Y, X = t(X), Contrast = C)
+  obj <- SansSouci(Y = Y, X = t(X), contrast = C)
   expect_equal(names(obj), c("input", "parameters", "output"))
   expect_null(obj$parameters)
   expect_null(obj$output)
 
   Y <- obj$input$Y
-  expect_equal(nHyp(obj), m)
+  expect_equal(n_hyp(obj), m)
   expect_equal(obj$input$m, m)
   expect_equal(nrow(Y), D)
 
-  expect_equal(nObs(obj), n)
+  expect_equal(n_observations(obj), n)
   expect_equal(ncol(Y), n)
   expect_equal(obj$input$n_obs, n)
 
@@ -91,29 +91,29 @@ test_that("Correctness of the constructor of SansSouci", {
   expect_equal(obj$input$n_dimensions, D)
   expect_equal(obj$input$n_variables, p)
   expect_equal(obj$input$type, "linear model")
-  expect_equal(obj$input$contrast_name, c("Contrast 1", "Contrast 2"))
+  expect_equal(obj$input$contrast_name, c("contrast 1", "contrast 2"))
 
   expect_error(
     SansSouci(Y = Y, X = X),
-    "Please give a contrast matrix in `Contrast`"
+    "Please give a contrast matrix in `contrast`"
   )
   expect_error(
-    SansSouci(Y = Y, Contrast = C),
+    SansSouci(Y = Y, contrast = C),
     "Please give a design matrix in `X`"
   )
   expect_error(
     SansSouci(Y = Y, X = X, groups = sim$categ),
-    "Please provide either an `X` design matrix and a `Contrast`  matrix,
+    "Please provide either an `X` design matrix and a `contrast`  matrix,
          or only a `groups` design vector."
   )
   expect_error(
-    SansSouci(Y = Y, Contrast = C, groups = sim$categ),
-    "Please provide either an `X` design matrix and a `Contrast`  matrix,
+    SansSouci(Y = Y, contrast = C, groups = sim$categ),
+    "Please provide either an `X` design matrix and a `contrast`  matrix,
          or only a `groups` design vector."
   )
   expect_error(
-    SansSouci(Y = Y, X = t(X), Contrast = C, groups = sim$categ),
-    "Please provide either an `X` design matrix and a `Contrast`  matrix,
+    SansSouci(Y = Y, X = t(X), contrast = C, groups = sim$categ),
+    "Please provide either an `X` design matrix and a `contrast`  matrix,
          or only a `groups` design vector."
   )
 })
@@ -241,7 +241,7 @@ test_that("Consistency of output of 'bound.SansSouci'", {
   expect_equal(nrow(b), m * length(what0))
 
   # strict subset
-  S <- order(pValues(res))[seq_len(m - 10)]
+  S <- order(p_values(res))[seq_len(m - 10)]
   bb <- predict(res, S, what = what0, all = TRUE)
   expect_s3_class(bb, "data.frame")
   expect_equal(nrow(bb), length(S) * length(what0))
@@ -271,7 +271,7 @@ test_that("'predict.SansSouci' reproduces the results of 'curve_max_fp'", {
   res <- fit(obj, alpha = alpha, B = B, K = K, alternative = alt, family = fam)
   what0 <- c("FP", "TP", "FDP", "TDP")
 
-  pvals <- sort(pValues(res))
+  pvals <- sort(p_values(res))
   FP <- sanssouci:::curve_max_fp(
     p_values = pvals,
     thr = thresholds(res)
@@ -295,11 +295,11 @@ test_that(
     epsilons <- matrix(rnorm(n * D), nrow = D, ncol = n)
     Y <- beta %*% X + epsilons
     C <- diag(p)
-    obj <- SansSouci(Y = Y, X = t(X), Contrast = C)
+    obj <- SansSouci(Y = Y, X = t(X), contrast = C)
     res <- fit(obj, alpha = 0.1, B = 100)
     what0 <- c("FP", "TP", "FDP", "TDP")
 
-    contrast <- "Contrast 1"
+    contrast <- "contrast 1"
 
     # 'all=FALSE' => return a vector
     b <- predict(res, what = what0, contrast_name = contrast)
@@ -314,7 +314,7 @@ test_that(
     expect_equal(nrow(b), D * length(what0))
 
     # strict subset
-    S <- order(pValues(res)[contrast, ])[seq_len(D - 10)]
+    S <- order(p_values(res)[contrast, ])[seq_len(D - 10)]
     bb <- predict(res, S, what = what0, all = TRUE, contrast_name = contrast)
     expect_s3_class(b, "data.frame")
     expect_equal(nrow(bb), length(S) * length(what0))
@@ -333,7 +333,7 @@ test_that(
     ))
 
     # correctnes with curMaxFP
-    pvals <- sort(pValues(res)[contrast, ])
+    pvals <- sort(p_values(res)[contrast, ])
     FP <- sanssouci:::curve_max_fp(
       p_values = pvals,
       thr = thresholds(res)
@@ -368,14 +368,14 @@ test_that("Correctness of Oracle predictions", {
 
   # selection of first 10 hyps in the order of p-values
   # should contain only signal
-  p_values <- pValues(res_oracle)
+  p_values <- p_values(res_oracle)
   S <- head(order(p_values), 10)
   FP <- predict(res_oracle, S = S, what = "FP")
   expect_equal(FP, 0)
 
   # selection of last 10 hyps in the order of p-values
   # should contain only noise
-  p_values <- pValues(res_oracle)
+  p_values <- p_values(res_oracle)
   S <- tail(order(p_values), 10)
   FP <- predict(res_oracle, S = S, what = "FP")
   expect_equal(FP, length(S))
@@ -407,14 +407,14 @@ test_that("Continuous covariate", {
 
   # selection of first 10 hyps in the order of p-values
   # should contain only signal
-  p_values <- pValues(res_oracle)
+  p_values <- p_values(res_oracle)
   S <- head(order(p_values), 10)
   FP <- predict(res_oracle, S = S, what = "FP")
   expect_lte(FP, 10)
 
   # selection of last 10 hyps in the order of p-values
   # should contain only noise
-  p_values <- pValues(res_oracle)
+  p_values <- p_values(res_oracle)
   S <- tail(order(p_values), 10)
   FP <- predict(res_oracle, S = S, what = "FP")
   expect_equal(FP, length(S))
@@ -440,7 +440,7 @@ test_that(
     epsilons <- matrix(rnorm(n * D), nrow = n, ncol = D)
     Y <- X %*% beta + epsilons
     C <- diag(p)
-    obj <- SansSouci(Y = t(Y), X = X, Contrast = C)
+    obj <- SansSouci(Y = t(Y), X = X, contrast = C)
 
     alpha <- 0.1
     B <- 25
@@ -507,7 +507,7 @@ test_that(
     epsilons <- matrix(rnorm(n * D), nrow = n, ncol = D)
     Y <- X %*% beta + epsilons
     C <- diag(p)
-    obj <- SansSouci(Y = t(Y), X = X, Contrast = C)
+    obj <- SansSouci(Y = t(Y), X = X, contrast = C)
 
     alpha <- 0.07
     B <- 123
