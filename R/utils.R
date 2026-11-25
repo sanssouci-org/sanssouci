@@ -35,4 +35,3 @@ categ_check <- function(categ, n) {
     )
   }
 }
-
