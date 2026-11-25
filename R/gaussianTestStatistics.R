@@ -84,8 +84,8 @@ gaussianTestStatistics <- function(m, B, pi0 = 1, SNR = 0,
     sim <- simulateGaussianEquiCorrelatedNulls(m, n = 1 + B, rho = param)
   } else if (dep == "Toeplitz") {
     tcoefs <- stats::toeplitz((1:m)^(param))
-    Sigma <- Matrix(tcoefs, sparse = TRUE)
-    sim <- simulateGaussianNullsFromSigma(Sigma, n = 1 + B)
+    SIGMA <- Matrix(tcoefs, sparse = TRUE)
+    sim <- simulateGaussianNullsFromSigma(SIGMA, n = 1 + B)
   }
 
   x <- mu + sim[, 1]
