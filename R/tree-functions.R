@@ -177,7 +177,7 @@ nb_elements <- function(forest_structure) {
 #' @param ... Additional arguments that may be passed to
 #' specific \code{structured_zeta} functions.
 #'
-#' @return \code{zeta_list}: A list of integer vectors representing
+#' @return \code{zetas_list}: A list of integer vectors representing
 #' the upper bounds \eqn{\zeta_k} of the forest structure.
 #' See [pred_subset_structured()] for more information.
 #'
@@ -208,14 +208,14 @@ nb_elements <- function(forest_structure) {
 #' p_values <- runif(m)
 #' forest_structure <- dd$forest_structure
 #' method <- structured_zeta_trivial
-#' zeta_list <- structured_zetas(
+#' zetas_list <- structured_zetas(
 #'   forest_structure,
 #'   leaf_list,
 #'   method,
 #'   p_values,
 #'   alpha = 0.05
 #' )
-#' zeta_list
+#' zetas_list
 structured_zetas <- function(forest_structure,
                              leaf_list,
                              method,
@@ -226,7 +226,7 @@ structured_zetas <- function(forest_structure,
                              ...) {
   H <- length(forest_structure)
   K <- nb_elements(forest_structure)
-  zeta_list <- list()
+  zetas_list <- list()
   NEW_K <- K
   continue <- TRUE
   nb_loop <- 0
@@ -273,7 +273,7 @@ structured_zetas <- function(forest_structure,
           }
         }
       }
-      zeta_list[[h]] <- zeta_inter
+      zetas_list[[h]] <- zeta_inter
     }
     if (verbose) {
       nb_loop <- nb_loop + 1
@@ -286,12 +286,13 @@ structured_zetas <- function(forest_structure,
         NEW_K
       ))
     }
-    continue <- refine && (new_K < usage_K) && (new_K > 0)
+    continue <- refine && (NEW_K < USAGE_K) && (NEW_K > 0)
   }
-  return(zeta_list)
+  return(zetas_list)
 }
 
-#' Post hoc bound on the number of false positives
+#' False positives upper bound on a single subset
+#' for a structured reference family
 #'
 #' @description Computes the post hoc upper bound \eqn{V^*(S)} on the number
 #' of false positives in a
@@ -302,44 +303,52 @@ structured_zetas <- function(forest_structure,
 #'
 #' @param S An integer vector with the indices of the hypotheses of
 #' the selection set. Does not need to be ordered.
-#' @param C A list of list representing the forest structure.
-#' Each list of \code{C} represents a level of
+#' @param forest_structure A list of list representing the forest structure.
+#' Each list of \code{forest_structure} represents a level of
 #' depth in the forest structure.
-#' So, \code{C[[1]]} lists the regions at depth 1,
-#' \code{C[[2]]} lists the regions at depth 2,
+#' So, \code{forest_structure[[1]]} lists the regions at depth 1,
+#' \code{forest_structure[[2]]} lists the regions at depth 2,
 #' and so on. We then use the fact that each region of the reference family
 #' is the union of some of its atom over an integer interval.
-#' So he elements of each list \code{C[[i]]} are integer vectors of length 2
+#' So he elements of each list \code{forest_structure[[i]]}
+#' are integer vectors of length 2
 #' representing this interval.
-#' For example, \code{C[[1]][[1]] = c(1, 5)} means that the first region
+#' For example, \code{forest_structure[[1]][[1]] = c(1, 5)}
+#' means that the first region
 #' at depth 1 is the union of the first 5 atoms,
-#' \code{C[[2]][[3]] = c(4, 5)} means that the third region at depth 2
+#' \code{forest_structure[[2]][[3]] = c(4, 5)} means
+#' that the third region at depth 2
 #' is the union of the atoms 4 and 5, and
-#' \code{C[[3]][[5]] = c(5, 5)} means that the fifth region at depth 3
+#' \code{forest_structure[[3]][[5]] = c(5, 5)}
+#' means that the fifth region at depth 3
 #' is simply the fifth atom.
-#' @param ZL A list of integer vectors representing the upper bound
+#' @param zetas_list A list of integer vectors representing the upper bound
 #' \eqn{\zeta_k} associated to a region \eqn{R_k} in the reference family.
-#' \code{ZL[[h]][j]} is the \eqn{\zeta_k} associated to the
-#' \eqn{R_k} described by \code{C[[h]][[j]]}.
+#' \code{zetas_list[[h]][j]} is the \eqn{\zeta_k} associated to the
+#' \eqn{R_k} described by \code{forest_structure[[h]][[j]]}.
 #' @param leaf_list A list of vectors. Each vector is an integer array.
 #' The i-th vector contains the indices
 #' of the hypotheses in the i-th atom.
 #' Atoms form a partition of the set of hypotheses indices :
 #' there cannot be overlap, and each index has to be inside one of the atoms.
 #' It is really important, for all functions
-#' using \code{leaf_list} in this package, that each vector is sorted.
-#' Because functions of the package
+#' using \code{leaf_list} in this package, that each vector is sorted,
+#' and furthermore that
+#' \code{leaf_list[[i]]==leaf_list[[i]][1]:leaf_list[[i]][2]}, that is,
+#' the leaves follow a 1-dimensional structure.
+#' In particular, some functions of the package
 #' implicitly use that
 #' \code{leaf_list[[i]][1]} is the lowest hypothesis
 #' index in leaf \eqn{P_i} and that
-#' \code{leaf_list[[i]][length(leaf_list[[i]])]} is the largest
+#' \code{leaf_list[[i]][length(leaf_list[[i]])]} is the largest.
 #'
 #' @return An integer value, the post hoc upper bound \eqn{V^*(S)}.
 #'
 #' @details For \code{pred_subset_structured},
 #' the forest structure doesn't need to be complete.
 #' That is,
-#' in \code{C}, some trivial intervals \code{c(i,i)}
+#' in \code{forest_structure},
+#' some intervals \code{c(i,i)}
 #' corresponding to regions that are atoms may be missing.
 #'
 #' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020).
@@ -347,7 +356,7 @@ structured_zetas <- function(forest_structure,
 #' Scandinavian Journal of Statistics, 47(4), 1114-1148.
 #' @examples
 #' m <- 20
-#' C <- list(
+#' forest_structure <- list(
 #'   list(c(2, 5), c(8, 15), c(16, 19)),
 #'   list(c(3, 5), c(8, 10), c(12, 15), c(16, 16), c(17, 19)),
 #'   list(
@@ -356,20 +365,20 @@ structured_zetas <- function(forest_structure,
 #'   ),
 #'   list(c(8, 8), c(9, 9), c(13, 13), c(14, 15), c(18, 18), c(19, 19))
 #' )
-#' ZL <- list(
+#' zetas_list <- list(
 #'   c(4, 8, 4),
 #'   c(3, 3, 4, 1, 3),
 #'   c(2, 2, 1, 1, 2, 1, 2),
 #'   c(1, 1, 1, 2, 1, 1)
 #' )
 #' leaf_list <- as.list(1:m)
-#' pred_subset_structured(1, C, ZL, leaf_list)
+#' pred_subset_structured(1, forest_structure, zetas_list, leaf_list)
 #'
-#' pred_subset_structured(1:5, C, ZL, leaf_list)
+#' pred_subset_structured(1:5, forest_structure, zetas_list, leaf_list)
 #'
-#' pred_subset_structured(13:15, C, ZL, leaf_list)
+#' pred_subset_structured(13:15, forest_structure, zetas_list, leaf_list)
 #'
-#' pred_subset_structured(1:m, C, ZL, leaf_list)
+#' pred_subset_structured(1:m, forest_structure, zetas_list, leaf_list)
 #' @export
 pred_subset_structured <- function(S, C, ZL, leaf_list) {
   H <- length(C)
