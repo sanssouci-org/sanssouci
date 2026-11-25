@@ -122,11 +122,11 @@ calibrate <- function(p0, m, alpha,
       K = K,
       piv_stat0 = NULL
     ) ## force piv stat calc
-    R1_new <- which(p < cal$thr[1])
+    R1_NEW <- which(p < cal$thr[1])
 
-    noNewRejection <- all(R1_new %in% R1) ## convergence reached?
-    if (noNewRejection) {
-      if (!identical(R1_new, R1)) { ## can this happen?? covr check
+    no_new_rejection <- all(R1_NEW %in% R1) ## convergence reached?
+    if (no_new_rejection) {
+      if (!identical(R1_NEW, R1)) { ## can this happen?? covr check
         print("Rejecting less hypotheses at next step!")
         ## not a 'TRUE' convergence: override the last step down!
         cal$thr <- thr
@@ -134,7 +134,7 @@ calibrate <- function(p0, m, alpha,
       }
       converged <- TRUE ## stop the step-down process
     } else {
-      R1 <- R1_new
+      R1 <- R1_NEW
     }
   }
   cal$steps_down <- step
@@ -156,16 +156,16 @@ calibrate0 <- function(p0, m, alpha,
     t_inv <- t_inv_beta
     t_ <- t_beta
   }
-  pivStat <- piv_stat0
-  if (is.null(pivStat)) {
-    pivStat <- get_pivotal_stat(p0, m, t_inv, min(nrow(p0), K))
+  piv_stat <- piv_stat0
+  if (is.null(piv_stat)) {
+    piv_stat <- get_pivotal_stat(p0, m, t_inv, min(nrow(p0), K))
   }
-  lambda <- stats::quantile(pivStat, alpha, type = 1)
+  lambda <- stats::quantile(piv_stat, alpha, type = 1)
   # 'type=1' corresponds to inverse empirical cdf as per (20) in BNR 2020
   thr <- t_(lambda, 1:K, m)
   res <- list(
     thr = thr,
-    piv_stat = pivStat,
+    piv_stat = piv_stat,
     lambda = lambda
   )
   return(res)
@@ -180,9 +180,10 @@ calibrate0 <- function(p0, m, alpha,
 #' @param categ An numeric vector of `n` values in `0,1`
 #'   specifying the column indices of the first and second samples.
 #' @param B An integer value, the number of permutations to be performed
-#' @param rowTestFUN a vectorized testing function (same I/O as [row_welch_tests])
+#' @param row_test_fun a vectorized testing function (same I/O as
+#' [row_welch_tests])
 #' @param alternative A character string specifying the alternative hypothesis,
-#'  to be passed to `rowTestFUN`. Must be one of "two.sided" (default),
+#'  to be passed to `row_test_fun`. Must be one of "two.sided" (default),
 #'  "greater" or "less".
 #'
 #' @details The element 'p_value' of the output is a `m x B` matrix whose entry
@@ -215,7 +216,7 @@ calibrate0 <- function(p0, m, alpha,
 #' identical(perm0$p_value, perm$p_value)
 #' identical(perm0$statistic, perm$statistic)
 get_perm <- function(X, categ, B,
-                     rowTestFUN = row_welch_tests,
+                     row_test_fun = row_welch_tests,
                      alternative = c("two.sided", "less", "greater")) {
   m <- nrow(X)
 
@@ -223,7 +224,7 @@ get_perm <- function(X, categ, B,
   stat0 <- matrix(NA_real_, nrow = m, ncol = B)
   for (bb in 1:B) {
     categ_perm <- sample(categ)
-    rwt <- rowTestFUN(X, categ = categ_perm, alternative = alternative)
+    rwt <- row_test_fun(X, categ = categ_perm, alternative = alternative)
     pval0[, bb] <- rwt$p.value
     stat0[, bb] <- rwt$statistic
   }
@@ -263,8 +264,8 @@ get_perm <- function(X, categ, B,
 #' B <- 10
 #' null_groups <- replicate(B, sample(categ))
 #' p0 <- row_welch_tests(X, null_groups)$p_value
-#' pivStat <- get_pivotal_stat(p0, m)
-#' quantile(pivStat, 0.2)
+#' piv_stat <- get_pivotal_stat(p0, m)
+#' quantile(piv_stat, 0.2)
 #'
 #' @export
 get_pivotal_stat <- function(p0, m,
@@ -279,13 +280,13 @@ get_pivotal_stat <- function(p0, m,
   B <- ncol(p0s)
 
   ## Step 3: apply template function
-  tkInv <- matrix(nrow = K, ncol = B)
+  tk_inv <- matrix(nrow = K, ncol = B)
   for (kk in 1:K) {
-    tkInv[kk, ] <- t_inv(p0s[kk, ], kk, m)
+    tk_inv[kk, ] <- t_inv(p0s[kk, ], kk, m)
   }
 
   ## Step 4: report min for each column
-  matrixStats::colMins(tkInv)
+  matrixStats::colMins(tk_inv)
 }
 
 
