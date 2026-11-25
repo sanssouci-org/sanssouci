@@ -1,5 +1,5 @@
 oneSim <- function(m, rho, B, alpha, pi0=1, SNR=0, kMaxs=kMaxs) {
-    sim <- gaussianTestStatistics(m, B, pi0 = pi0, SNR = SNR, dep = "equi", param = rho)
+    sim <- gaussian_test_statistics(m, B, pi0 = pi0, SNR = SNR, dep = "equi", param = rho)
     configs <- expand.grid(kMax=kMaxs, refFam=c("kFWER", "Simes"), stringsAsFactors=FALSE)
     lambdas <- numeric(0L)
     for (rr in 1:nrow(configs)) {

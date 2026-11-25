@@ -25,7 +25,7 @@ testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alphas, n=1000, flavor=
     if (flavor=="equi") {
         rho <- dep
         parName <- "rho"
-        sim <- gaussianTestStatistics(m, B, pi0 = pi0, SNR = SNR, dep = "equi", param = rho)
+        sim <- gaussian_test_statistics(m, B, pi0 = pi0, SNR = SNR, dep = "equi", param = rho)
     } else if (flavor=="Mein2006") {
         stop("Deprecated flavor: ", flavor)
         rho <- dep
@@ -33,7 +33,7 @@ testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alphas, n=1000, flavor=
     } else if (flavor=="Toeplitz") {
         ## Toeplitz, long range
         parName <- "pow"
-        sim <- gaussianTestStatistics(m, B, pi0 = pi0, SNR = SNR, dep = "Toeplitz", param = dep)
+        sim <- gaussian_test_statistics(m, B, pi0 = pi0, SNR = SNR, dep = "Toeplitz", param = dep)
     } else if (flavor=="equi-perm") {
         ## TODO: update with *2* lines of codes: generation of data, and computation of randomized stats
         p <- 0.5 ## currently hardcoded.
@@ -57,7 +57,7 @@ testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alphas, n=1000, flavor=
     rBH5 <- x[wwBH5]
     rBH50 <- x[wwBH50]
     r0 <- x[ww0]
-    
+
     if (trace) {
         t0f <-      format(Sys.time(), "%Y%m%d-%H:%M")
         filename <- sprintf("simTrace,%s,%s.rda", Sys.getpid(), t0f)
@@ -77,7 +77,7 @@ testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alphas, n=1000, flavor=
     nBH51 <- length(intersect(H1, wwBH5))
     nBH501 <- length(intersect(H1, wwBH50))
     n01 <- length(intersect(H1, ww0))
-    
+
     resList <- NULL
     for (alpha in alphas) {
         ## atag <- sprintf("alpha=%s", alpha)
@@ -133,19 +133,19 @@ testStepDown <- function(m, dep, B, pi0, SNR, typeOfSNR, alphas, n=1000, flavor=
                 rej0 <- apply(resFam, 2, rej, x0) ## nb of k / |Rk \cup H0| > k-1 ('violators')
                 rej1 <- apply(resFam, 2, rej, x1) ## nb of k / |Rk \cup H1| > k-1 ('good catchers')
                 rej01 <- apply(resFam, 2, rej, x) ## nb of k / |Rk \cup H|  > k-1 ('detections')
-                
+
                 rejk0 <- apply(resFam, 2, rejk, x0)
                 rejk1 <- apply(resFam, 2, rejk, x1)
                 rejk01 <- apply(resFam, 2, rejk, x)
                 rejkBH5 <- apply(resFam, 2, rejk, rBH5) ## subset of {p<BH(alpha)}
-                rejkBH50 <- apply(resFam, 2, rejk, rBH50) ## subset of {p<BH(alpha)} 
+                rejkBH50 <- apply(resFam, 2, rejk, rBH50) ## subset of {p<BH(alpha)}
                 rejkP0 <- apply(resFam, 2, rejk, r0)  ## subset of {p<alpha}
-                
+
                 ## sanity checks
                 stopifnot(all.equal(colSums(rejk0>=0), rej0))
                 stopifnot(all.equal(colSums(rejk1>=0), rej1))
-                
-                v0 <- (m0-1-pmax(0, matrixStats::colMaxs(rejk0)))/m0  ## estimate of Vbar(H0)/m0: |H0|-1 - max_k |Rk \cup H0| - k =  min_k |Rk^c \cup H0| + (k-1) 
+
+                v0 <- (m0-1-pmax(0, matrixStats::colMaxs(rejk0)))/m0  ## estimate of Vbar(H0)/m0: |H0|-1 - max_k |Rk \cup H0| - k =  min_k |Rk^c \cup H0| + (k-1)
                 s1 <- pmax(0, matrixStats::colMaxs(rejk1))/m1         ## estimate of Sbar(H1)/m1:          max_k |Rk \cap H1| - k
                 ## s1b <- pmax(0, matrixStats::colMaxs(rejk1))/m1+1   ## estimate of Sbar(H1)/m1:          max_k |Rk \cap H1| - (k-1) ## =(by the BNR book)
                 s01 <- pmax(0, matrixStats::colMaxs(rejk01))/m1       ## estimate of Sbar(H)/m1

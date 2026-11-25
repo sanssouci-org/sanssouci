@@ -1,6 +1,6 @@
-#' Mini batch version of a rowTestFUN function.
+#' Mini batch version of a row_test_fun function.
 #'
-#' @param rowTestFUN A function taking as inputs Y, categ and Alternative and
+#' @param row_test_fun A function taking as inputs Y, categ and Alternative and
 #' giving as a result a matrix of $p$-values.
 #' Example \code{\link{row_welch_tests}} or \code{\link{row_wilcoxon_tests}}.
 #' @param Y A \eqn{m \times n} numeric matrix whose rows correspond to variables
@@ -24,12 +24,12 @@
 #' n <- 35
 #' mat <- matrix(rnorm(p * n), ncol = n)
 #' cls <- rep(c(0, 1), times = c(10, n - 10))
-#' mini_batch_rowTestFUN(
-#'   rowTestFUN = row_welch_tests, Y = mat,
+#' mini_batch_rowtestfun(
+#'   row_test_fun = row_welch_tests, Y = mat,
 #'   categ = cls, alternative = "two.sided",
-#'   max_batch_size = 1e6
+#'   max_batch_size = 1e5
 #' )
-mini_batch_rowTestFUN <- function(rowTestFUN, Y, categ,
+mini_batch_rowtestfun <- function(row_test_fun, Y, categ,
                                   alternative = c("two.sided", "less",
                                                   "greater"),
                                   max_batch_size = 1e6, m = nrow(Y)) {
@@ -45,7 +45,7 @@ mini_batch_rowTestFUN <- function(rowTestFUN, Y, categ,
   for (batch_id in unique(idxs)) {
     id_batch <- which(idxs == batch_id)
     categ_batch <- categ[, id_batch]
-    p_values[, id_batch] <- rowTestFUN(Y,
+    p_values[, id_batch] <- row_test_fun(Y,
       categ_batch,
       alternative = alternative
     )$p.value

@@ -14,8 +14,8 @@ test_that("Testing mini batch on small datasets", {
 
   for (test in tests) {
     fwt <- test(mat, cls, alternative = alt)
-    mb <- mini_batch_rowTestFUN(
-      rowTestFUN = test, Y = mat, categ = cls,
+    mb <- mini_batch_rowtestfun(
+      row_test_fun = test, Y = mat, categ = cls,
       alternative = alt, max_batch_size = 1e6
     )
     expect_equal(mb, as.matrix(fwt$p.value))
@@ -26,8 +26,8 @@ test_that("Testing mini batch on small datasets", {
 
   for (test in tests) {
     fwt <- test(mat, cls_perm, alternative = alt)
-    mb <- mini_batch_rowTestFUN(
-      rowTestFUN = test, Y = mat, categ = cls_perm,
+    mb <- mini_batch_rowtestfun(
+      row_test_fun = test, Y = mat, categ = cls_perm,
       alternative = alt, max_batch_size = 1e3
     )
     expect_equal(mb, fwt$p.value)
@@ -35,8 +35,8 @@ test_that("Testing mini batch on small datasets", {
 
   for (test in tests) {
     fwt <- test(mat, cls_perm, alternative = alt)
-    mb <- mini_batch_rowTestFUN(
-      rowTestFUN = test, Y = mat, categ = cls_perm,
+    mb <- mini_batch_rowtestfun(
+      row_test_fun = test, Y = mat, categ = cls_perm,
       alternative = alt, max_batch_size = 1e2
     )
     expect_equal(mb, fwt$p.value)
