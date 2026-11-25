@@ -42,13 +42,38 @@ t_beta <- function(alpha, k, m) {
   qbeta(alpha, k, m + 1 - k)
 }
 
-Simes <- list(
+#' Simes reference family
+#'
+#' Provides the Simes method for combining p‑values.
+#' The object is a list with three components:
+#' \describe{
+#'   \item{name}{character string naming the family.}
+#'   \item{t}{function(lambda, k, m) computing the transformed significance
+#'    level.}
+#'   \item{t_inv}{function(y, k, m) inverse of \code{t}.}
+#' }
+#' @export
+#' @name Simes
+simes <- list(
   name = "Simes",
   t = function(lambda, k, m) lambda * k / m,
   t_inv = function(y, k, m) y * m / k
 )
 
-Beta <- list(
+#' Beta reference family
+#'
+#' Implements the Beta family of reference functions using the beta
+#' distribution.
+#' The list contains three components, analogous to the Simes family:
+#' \describe{
+#'   \item{name}{character string naming the family.}
+#'   \item{t}{function(lambda, k, m) computing the transformed significance
+#'    level via \code{qbeta}.}
+#'   \item{t_inv}{function(y, k, m) inverse transformation via \code{pbeta}.}
+#' }
+#' @export
+#' @name Beta
+beta <- list(
   name = "Beta",
   t = function(lambda, k, m) qbeta(lambda, 1:m, m + 1 - k),
   t_inv = function(y, k, m) pbeta(y, k, m + 1 - k)
