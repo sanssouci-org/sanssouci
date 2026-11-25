@@ -61,7 +61,8 @@ row_pearson_correlation_tests <- function(X, categ, alternative = "two.sided") {
     }
   }
   return(list(
-    statistic = r$statistic, 
-    p_value = r$p_value, 
-    estimate = r$cor))
+    statistic = r$statistic,
+    p_value = r$p_value,
+    estimate = r$cor
+  ))
 }

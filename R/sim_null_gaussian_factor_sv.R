@@ -51,8 +51,9 @@
 #' sim3
 #'
 sim_null_gaussian_factor_sv <- function(m, h = numeric(0),
-                                      P = Matrix(0, nrow = m, ncol = length(h)),
-                                      rho = 0) {
+                                        P = Matrix(0, nrow = m,
+                                                   ncol = length(h)),
+                                        rho = 0) {
   k <- length(h)
   ## sanity checks
   stopifnot(nrow(P) == m)

@@ -216,8 +216,8 @@ calibrate0 <- function(p0, m, alpha,
 #' identical(perm0$p_value, perm$p_value)
 #' identical(perm0$statistic, perm$statistic)
 perm_stat <- function(X, categ, B,
-                     row_test_fun = row_welch_tests,
-                     alternative = c("two.sided", "less", "greater")) {
+                      row_test_fun = row_welch_tests,
+                      alternative = c("two.sided", "less", "greater")) {
   m <- nrow(X)
 
   pval0 <- matrix(NA_real_, nrow = m, ncol = B)
@@ -269,8 +269,8 @@ perm_stat <- function(X, categ, B,
 #'
 #' @export
 pivotal_stat <- function(p0, m,
-                             t_inv = t_inv_linear,
-                             K = nrow(p0)) {
+                         t_inv = t_inv_linear,
+                         K = nrow(p0)) {
   K <- force(K)
   stopifnot(m >= nrow(p0))
   stopifnot(K <= m)

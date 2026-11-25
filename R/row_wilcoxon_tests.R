@@ -16,7 +16,7 @@
 #'   the normal approximation for the p-value.
 #'
 #' @return A list containing the following components:
-#'   \describe{ 
+#'   \describe{
 #'     \item{statistic}{the value of the statistics}
 #'     \item{p_value}{the p-values for the tests}}
 #'

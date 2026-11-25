@@ -237,7 +237,7 @@ divide_cols <- function(a, b) sweep(a, 2, b, "/")
 #' @param alternative A character string specifying the alternative hypothesis.
 #'   Currently only "two.sided" is implemented
 #' @return A list with elements:
-#'   \describe{ 
+#'   \describe{
 #'   \item{statistic}{the value of the t-statistic}
 #'   \item{p_value}{the p-value for the test}
 #'   \item{parameter}{the degrees of freedom for the t-statistic}

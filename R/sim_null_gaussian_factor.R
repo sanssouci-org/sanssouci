@@ -43,11 +43,11 @@
 #' image(S3)
 #'
 sim_null_gaussian_factor <- function(m, n = 1,
-                                      flavor =
-                                        c("independent",
-                                          "equi-correlated",
-                                          "3-factor"),
-                                      rho = 0, cov = FALSE) {
+                                     flavor =
+                                       c("independent",
+                                         "equi-correlated",
+                                         "3-factor"),
+                                     rho = 0, cov = FALSE) {
   flavor <- match.arg(flavor)
   if (flavor == "independent") {
     h <- numeric(0)

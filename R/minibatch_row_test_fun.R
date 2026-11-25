@@ -30,9 +30,9 @@
 #'   max_batch_size = 1e5
 #' )
 minibatch_row_test_fun <- function(row_test_fun, Y, categ,
-                                  alternative = c("two.sided", "less",
-                                                  "greater"),
-                                  max_batch_size = 1e6, m = nrow(Y)) {
+                                   alternative = c("two.sided", "less",
+                                                   "greater"),
+                                   max_batch_size = 1e6, m = nrow(Y)) {
   alternative <- match.arg(alternative)
   categ <- as.matrix(categ)
 
