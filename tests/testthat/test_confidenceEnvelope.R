@@ -9,32 +9,32 @@ test_that("Basic checks for 'conf_curve_from_fam'", {
   rwt <- row_welch_tests(sim$X, sim$categ, alternative = "greater")
   p_vals <- rwt$p.value
 
-  cb <- conf_curve_from_fam(p_vals, refFamily = "Simes", param = 0.1, what = "TP")
+  cb <- conf_curve_from_fam(p_vals, ref_family = "Simes", param = 0.1, what = "TP")
   expect_equal(nrow(cb), m)
   expect_equal(cb$label, rep("Simes(0.1)", m))
 
   cb_lin <- conf_curve_from_fam(p_vals,
-    refFamily = "Linear", param = 0.1,
+    ref_family = "Linear", param = 0.1,
     what = "TP"
   )
   expect_equal(cb$stat, cb_lin$stat)
 
   cb <- conf_curve_from_fam(p_vals,
-    refFamily = "Simes", param = 0.1,
+    ref_family = "Simes", param = 0.1,
     what = c("TP", "FP")
   )
   expect_equal(nrow(cb), m * 2)
 
-  cb <- conf_curve_from_fam(p_vals, refFamily = "Beta", param = 0.1, what = "TP")
+  cb <- conf_curve_from_fam(p_vals, ref_family = "Beta", param = 0.1, what = "TP")
   expect_equal(nrow(cb), m)
 
   cb <- conf_curve_from_fam(p_vals,
-    refFamily = "Oracle", param = rep(0, m),
+    ref_family = "Oracle", param = rep(0, m),
     what = "TP"
   )
   expect_equal(nrow(cb), m)
   expect_error(conf_curve_from_fam(rwt$p.value,
-    refFamily = "unknown_fam",
+    ref_family = "unknown_fam",
     param = 0.1
   ))
 })
@@ -48,7 +48,7 @@ test_that("Consistency of output of 'conf_curve_from_fam'", {
   )
   dex <- row_welch_tests(sim$X, sim$categ)
   conf_bound <- conf_curve_from_fam(dex$p.value,
-    refFamily = "Simes",
+    ref_family = "Simes",
     param = alpha,
     what = c("FP", "TP", "FDP", "TDP")
   )
@@ -126,7 +126,7 @@ test_that("Vanilla test for 'plotConfCurve'", {
   )
   rwt <- row_welch_tests(sim$X, categ = sim$categ, alternative = "greater")
 
-  ce <- conf_curve_from_fam(rwt$p.value, refFamily = "Simes", param = 0.1)
+  ce <- conf_curve_from_fam(rwt$p.value, ref_family = "Simes", param = 0.1)
   p <- plotConfCurve(ce, xmax = 200)
   expect_true(inherits(p, "ggplot"))
 })

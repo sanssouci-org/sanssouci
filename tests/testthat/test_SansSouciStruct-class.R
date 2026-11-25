@@ -94,7 +94,7 @@ test_that("'fit.SansSouciStruct' reproduces the results of 'v_star'", {
 
   # Simes 1
   Vmat <- conf_curve_from_fam(
-    p.values = pvalues, refFamily = "Simes",
+    p_values = pvalues, ref_family = "Simes",
     param = alpha, what = "FP"
   )
   V <- Vmat$bound[idxs]
