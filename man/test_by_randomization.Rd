@@ -28,7 +28,7 @@ Must be one of "two.sided" (default), "greater" or "less".}
 \item{row_test_fun}{A (vectorized) test function used in the two-sample case.
 Defaults to \code{\link{row_welch_tests}}}
 
-\item{rand.p.value}{A boolean value: should randomization \eqn{p}-values be
+\item{rand_p_value}{A boolean value: should randomization \eqn{p}-values be
 calculated and returned? Defaults to @FALSE}
 }
 \value{
@@ -47,11 +47,11 @@ on randomized data}
 "perm" for permutation-based randomization in two-sample tests, and "flip"
 for sign-flipping-based randomization in one sample tests. See Details.}
 
-\item{rand.p}{A vector of \eqn{m} \eqn{p}-values (only if
-\code{rand.p.value} is \code{TRUE} )}
+\item{rand_p}{A vector of \eqn{m} \eqn{p}-values (only if
+\code{rand_p_value} is \code{TRUE} )}
 
 \item{rand}{A \eqn{m \times B} matrix of randomization \eqn{p}-values (only
-if \code{rand.p.value} is \code{TRUE} )}
+if \code{rand_p_value} is \code{TRUE} )}
 }
 }
 \description{

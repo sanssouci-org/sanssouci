@@ -58,3 +58,8 @@ function_name_linter <- function(styles = "snake_case") {
     linter_level = "file"
   )
 }
+
+# function_name_linter = (function() {
+#   source("tools/function_name_linter.R", local = TRUE)
+#   function_name_linter(styles = c("snake_case", "symbols"))
+# })(),

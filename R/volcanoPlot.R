@@ -5,9 +5,8 @@
 #' @rdname volcano_plot
 #' @param x An object of class `SansSouci`, or alternatively a numeric vector
 #'   of fold changes when calling `volcano_plot.numeric` directly (x axis of
-#'   the volcano plot). 
-#'   See [volcano_plot.numeric()] or [volcano_plot.SansSouci()]
-#'   for specifics
+#'   the volcano plot). See [volcano_plot.numeric()] or
+#'   [volcano_plot.SansSouci()] for specifics
 #' @param ... Other arguments passed to methods
 #' @export
 volcano_plot <- function(x, ...) UseMethod("volcano_plot")
@@ -44,7 +43,7 @@ volcano_plot <- function(x, ...) UseMethod("volcano_plot")
 #' @details The p-values play two distinct roles here: they are displayed as the
 #'   y axis of the volcano plot, and they are also used to compute post hoc
 #'   bounds. In general the same p-values are used. See the vignette
-#'   <https://sanssouci-org.github.io/sanssouci/articles/post-hoc_differential-expression_RNAseq.html#custom-statistics-example-using-limma-voom>
+#'   <https://sanssouci-org.github.io/sanssouci/articles/post-hoc_differential-expression_RNAseq.html#custom-statistics-example-using-limma-voom> # nolint
 #'   for an example where two different sets of p-values are used.
 #' @return A 'ggplot' object containing the volcano plot, with the indices of
 #' selected features returned as an attribute named 'selection'
@@ -72,15 +71,15 @@ volcano_plot <- function(x, ...) UseMethod("volcano_plot")
 #' @seealso Volcano plot for objects of class
 #' 'SansSouci': [volcano_plot.SansSouci()]
 volcano_plot.numeric <- function(x, p_values,
-                                thr, p_values_bound = p_values,
-                                p = 1, q = 1, r = 0,
-                                cex = c(0.4, 1.5),
-                                col = c("#33333333", "#FF0000", "#FF666633"),
-                                pch = 19,
-                                feature_label = "feature",
-                                ylim = NULL,
-                                add_signed_selections = TRUE,
-                                ...) {
+                                 thr, p_values_bound = p_values,
+                                 p = 1, q = 1, r = 0,
+                                 cex = c(0.4, 1.5),
+                                 col = c("#33333333", "#FF0000", "#FF666633"),
+                                 pch = 19,
+                                 feature_label = "feature",
+                                 ylim = NULL,
+                                 add_signed_selections = TRUE,
+                                 ...) {
   fold_change <- x
   if (p < 1 && q < 1) {
     warning("Filtering both on p-values and BH-adjusted p-values")
