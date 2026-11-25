@@ -4,13 +4,13 @@
 \alias{delete_gaps}
 \title{Delete the gaps induced by pruning}
 \usage{
-delete_gaps(C, ZL, leaf_list)
+delete_gaps(forest_structure, zetas_list, leaf_list)
 }
 \arguments{
-\item{C}{A list of list representing the forest structure.
+\item{forest_structure}{A list of list representing the forest structure.
 See \code{\link[=pred_subset_structured]{pred_subset_structured()}} for more information.}
 
-\item{ZL}{A list of integer vectors representing the upper
+\item{zetas_list}{A list of integer vectors representing the upper
 bounds \eqn{\zeta_k} of the forest structure.
 See \code{\link[=pred_subset_structured]{pred_subset_structured()}} for more information.}
 
@@ -19,8 +19,9 @@ forest structure. See \code{\link[=pred_subset_structured]{pred_subset_structure
 }
 \value{
 A list with two named elements. \describe{
-\item{\code{C}}{The new \code{C} after deleting the gaps.}
-\item{\code{ZL}}{The new \code{ZL} after deleting the gaps.}
+\item{\code{forest_structure}}{The new \code{forest_structure}
+after deleting the gaps.}
+\item{\code{zetas_list}}{The new \code{zetas_list} after deleting the gaps.}
 }
 }
 \description{

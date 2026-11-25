@@ -521,7 +521,7 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
       } else if (type == "linear model") {
         null_groups <- replicate(B, sample(1:n, n, replace = TRUE))
       }
-      p0 <- mini_batch_rowtestfun(
+      p0 <- minibatch_row_test_fun(
         row_test_fun = rowTestFUN, Y = Y,
         categ = null_groups,
         alternative = alternative,

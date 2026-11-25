@@ -14,7 +14,7 @@ test_that("Testing mini batch on small datasets", {
 
   for (test in tests) {
     fwt <- test(mat, cls, alternative = alt)
-    mb <- mini_batch_rowtestfun(
+    mb <- minibatch_row_test_fun(
       row_test_fun = test, Y = mat, categ = cls,
       alternative = alt, max_batch_size = 1e6
     )
@@ -35,7 +35,7 @@ test_that("Testing mini batch on small datasets", {
 
   for (test in tests) {
     fwt <- test(mat, cls_perm, alternative = alt)
-    mb <- mini_batch_rowtestfun(
+    mb <- minibatch_row_test_fun(
       row_test_fun = test, Y = mat, categ = cls_perm,
       alternative = alt, max_batch_size = 1e2
     )
