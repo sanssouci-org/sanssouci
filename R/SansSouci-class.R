@@ -172,7 +172,7 @@ SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
 #'   "Simes+calibration" = predict(res, all = TRUE),
 #'   "Oracle" = predict(oracle, all = TRUE)
 #' )
-#' plotConfCurve(confs)
+#' plot_conf_curve(confs)
 #'
 #' \dontrun{
 #' # Use wilcoxon tests instead of Welch tests
@@ -399,7 +399,7 @@ generics::fit
 #'
 #' resList <- list("Linear" = res, "Beta" = res_beta)
 #' bounds <- lapply(resList, predict, all = TRUE)
-#' plotConfCurve(bounds, xmax = 200)
+#' plot_conf_curve(bounds, xmax = 200)
 #'
 fit.SansSouci <- function(object, alpha, B = 1e3,
                           rowTestFUN = NULL,
@@ -638,7 +638,7 @@ thresholds.SansSouci <- function(object) object$output$thr
 #' plot(res, S = S)
 plot.SansSouci <- function(x, y, xmax = nHyp(x), ...) {
   cb <- predict(x, all = TRUE, ...)
-  plotConfCurve(cb, xmax = xmax)
+  plot_conf_curve(cb, xmax = xmax)
 }
 
 #' Post hoc confidence bounds on the true/false positives

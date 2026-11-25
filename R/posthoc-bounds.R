@@ -124,7 +124,7 @@ format_bounds <- function(max_fp, idxs = seq_len(max_fp), lab = NULL,
 #'  [predict]
 #' @param xmax Right limit of the plot
 #' @param cols A vector of colors of the same length as `conf_bound`
-#' @param legend.title a character for the title of the legend
+#' @param legend_title a character for the title of the legend
 #' @references Blanchard, G., Neuvial, P., & Roquain, E. (2020).
 #' Post hoc confidence bounds on false positives using reference families.
 #' Annals of Statistics, 48(3), 1281-1303.
@@ -136,7 +136,7 @@ format_bounds <- function(max_fp, idxs = seq_len(max_fp), lab = NULL,
 #'                     prob = 0.5)
 #' res <- fit(obj, B = 100, alpha = 0.1)
 #' cb <- predict(res, all = TRUE)
-#' plotConfCurve(cb, xmax = 200) ## equivalent to 'plot(res, xmax = 200)'
+#' plot_conf_curve(cb, xmax = 200) ## equivalent to 'plot(res, xmax = 200)'
 #'
 #' # plot two confidence curves
 #' res_beta <- fit(res, B = 100, alpha = 0.1, family = "Beta", K = 20)
@@ -146,10 +146,10 @@ format_bounds <- function(max_fp, idxs = seq_len(max_fp), lab = NULL,
 #'   "Simes" = cb,
 #'   "Beta" = cb_beta
 #' )
-#' plotConfCurve(bounds, xmax = 200)
+#' plot_conf_curve(bounds, xmax = 200)
 #'
-plotConfCurve <- function(conf_bound, xmax, cols = NULL,
-                          legend.title = "Contrast") {
+plot_conf_curve <- function(conf_bound, xmax, cols = NULL,
+                            legend_title = "Contrast") {
   nb <- 1
   if (inherits(conf_bound, "data.frame")) { # (assume) a single conf. bound
     ## do nothing!
@@ -192,8 +192,8 @@ plotConfCurve <- function(conf_bound, xmax, cols = NULL,
     ggplot2::labs(
       x = "Number of top features selected",
       y = "Post hoc confidence bounds",
-      color = legend.title,
-      linetype = legend.title
+      color = legend_title,
+      linetype = legend_title
     ) +
     ggplot2::theme_bw() +
     ggplot2::theme(strip.background = NULL) +
