@@ -45,7 +45,7 @@ We write a small function to estimate the size of the Simes test, that is, the l
 ```{r}
 #| label: size-Simes
 size <- function(rho, m, B, alpha = 0.05) {
-  X0 <- gaussian_test_statistics(m, B, dep = "equi", param = rho)$X0
+  X0 <- sim_gaussian(m, B, dep = "equi", param = rho)$X0
   p0 <- pnorm(X0, lower.tail = FALSE)
   thr <- t_linear(alpha, 1:m, m)
   p0s <- apply(p0, 2, sort)

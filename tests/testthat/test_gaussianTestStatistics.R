@@ -3,7 +3,7 @@ context("Simulation of Gaussian test statistics")
 test_that("output dimensions are as expected", {
   m <- 123
   B <- 100
-  sim <- gaussian_test_statistics(m, B)
+  sim <- sim_gaussian(m, B)
 
   expect_length(sim$x, m)
   expect_equal(nrow(sim$X0), m)
@@ -13,7 +13,7 @@ test_that("output dimensions are as expected", {
   pi0 <- 0.8
   m0 <- round(m * pi0)
   test <- replicate(10, {
-    sim <- gaussian_test_statistics(m, B, pi0 = pi0)
+    sim <- sim_gaussian(m, B, pi0 = pi0)
     expect_equal(m0, m - sum(sim$H))
   })
 })
@@ -21,9 +21,9 @@ test_that("output dimensions are as expected", {
 test_that("catching parameter incompatibilities", {
   m <- 123
   B <- 100
-  expect_error(gaussian_test_statistics(m, B, dep = "equi", param = -1))
-  expect_error(gaussian_test_statistics(m, B, param = -1))
-  expect_error(gaussian_test_statistics(m, B, dep = "Toeplitz", param = 1))
+  expect_error(sim_gaussian(m, B, dep = "equi", param = -1))
+  expect_error(sim_gaussian(m, B, param = -1))
+  expect_error(sim_gaussian(m, B, dep = "Toeplitz", param = 1))
 })
 
 test_that("mean under the alternative larger than under the null", {
@@ -31,19 +31,19 @@ test_that("mean under the alternative larger than under the null", {
   B <- 100
   pi0 <- 0.8
 
-  sim <- gaussian_test_statistics(m, B,
+  sim <- sim_gaussian(m, B,
     pi0 = pi0, dep = "equi", param = 0, SNR = 1
   )
   sa <- tapply(sim$x, sim$H, mean)
   expect_gt(sa[2], sa[1])
 
-  sim <- gaussian_test_statistics(m, B,
+  sim <- sim_gaussian(m, B,
     pi0 = pi0, dep = "equi", param = 0.3, SNR = 1
   )
   sa <- tapply(sim$x, sim$H, mean)
   expect_gt(sa[2], sa[1])
 
-  sim <- gaussian_test_statistics(m, B,
+  sim <- sim_gaussian(m, B,
     pi0 = pi0, dep = "Toeplitz", param = -0.5, SNR = 1
   )
   sa <- tapply(sim$x, sim$H, mean)
@@ -55,10 +55,10 @@ test_that("Argument 'SNR'", {
   m <- 123
   B <- 100
   pi0 <- 0.8
-  sim <- gaussian_test_statistics(m, B, pi0 = pi0, SNR = 1)
+  sim <- sim_gaussian(m, B, pi0 = pi0, SNR = 1)
 
   m1 <- m - round(m * pi0)
-  sim <- gaussian_test_statistics(m, B, pi0 = pi0, SNR = rep(1, m1))
+  sim <- sim_gaussian(m, B, pi0 = pi0, SNR = rep(1, m1))
 
-  expect_error(gaussian_test_statistics(m, B, pi0 = pi0, SNR = rep(1, 2 * m)))
+  expect_error(sim_gaussian(m, B, pi0 = pi0, SNR = rep(1, 2 * m)))
 })

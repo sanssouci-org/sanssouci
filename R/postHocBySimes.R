@@ -56,17 +56,17 @@ posthocBySimes <- function(p, select, alpha,
 
   thr <- t_linear(alpha, 1:m, m)
   if (flavor == "one step down") {
-    m0_hat <- maxFP(p.values = p, thr = thr)
+    m0_hat <- max_fp(p_values = p, thr = thr)
     thr <- t_linear(alpha, 1:m0_hat, m0_hat)
   } else if (flavor == "full step down") {
     m0_hat0 <- m
-    m0_hat <- maxFP(p.values = p, thr = thr)
+    m0_hat <- max_fp(p_values = p, thr = thr)
     thr <- t_linear(alpha, 1:m0_hat, m0_hat)
     while (m0_hat < m0_hat0) {
       m0_hat0 <- m0_hat
-      m0_hat <- maxFP(p.values = p, thr = thr)
+      m0_hat <- max_fp(p_values = p, thr = thr)
       thr <- t_linear(alpha, 1:m0_hat, m0_hat)
     }
   }
-  minTP(p[select], thr = thr)
+  min_tp(p[select], thr = thr)
 }

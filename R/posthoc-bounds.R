@@ -58,7 +58,7 @@ posthoc_bound <- function(p_values, S = seq_along(p_values), thr = NULL,
     # then it suffices to count the number of '0' in 'thr', cumulatively
     max_fp <- cumsum(thr[S[o]] == 0)
   } else {
-    max_fp <- curveMaxFP(sorted_p, thr)
+    max_fp <- curve_max_fp(sorted_p, thr)
   }
   bounds <- format_bounds(max_fp, idxs = idxs, lab = lab, what = what,
                           all = all)
@@ -202,7 +202,7 @@ plot_conf_curve <- function(conf_bound, xmax, cols = NULL,
 
 #' Upper bound for the number of false discoveries in a selection
 #'
-#' @param p.values A vector of p-values for the selected items
+#' @param p_values A vector of p-values for the selected items
 #' @param thr A vector of non-decreasing JER-controlling thresholds
 #' @return A post hoc upper bound on the number of false discoveries in the
 #' selection
@@ -226,52 +226,52 @@ plot_conf_curve <- function(conf_bound, xmax, cols = NULL,
 #' calib <- calibrate(p0, m, alpha = 0.1)
 #' thr <- calib$thr
 #'
-#' M0 <- maxFP(p, thr)
+#' M0 <- max_fp(p, thr)
 #' M0 / m
 #'
 #' sorted_p <- sort(p)
-#' maxFP(head(sorted_p, 20), thr) # some signal
-#' maxFP(tail(sorted_p), thr) # no signal
-#' maxFP(c(head(sorted_p), tail(sorted_p)), thr)
-maxFP <- function(p.values, thr) {
-  s <- length(p.values)
+#' max_fp(head(sorted_p, 20), thr) # some signal
+#' max_fp(tail(sorted_p), thr) # no signal
+#' max_fp(c(head(sorted_p), tail(sorted_p)), thr)
+max_fp <- function(p_values, thr) {
+  s <- length(p_values)
   if (s == 0) {
     return(0)
   }
-  all_maxFP <- curveMaxFP(p.values, thr)
-  all_maxFP[s]
+  all_max_fp <- curve_max_fp(p_values, thr)
+  all_max_fp[s]
 }
 
 #' Lower bound for the number of true discoveries in a selection
 #'
-#' @inheritParams maxFP
+#' @inheritParams max_fp
 #' @return A Lower bound on the number of true discoveries in the selection
 #' @export
-minTP <- function(p.values, thr) {
-  length(p.values) - maxFP(p.values, thr)
+min_tp <- function(p_values, thr) {
+  length(p_values) - max_fp(p_values, thr)
 }
 
 #' Lower bound for the true discovery proportion in a selection
 #'
-#' @inheritParams maxFP
+#' @inheritParams max_fp
 #' @return Lower bound on the proportion of true discoveries in the selection
 #' @export
-minTDP <- function(p.values, thr) {
-  1 - maxFP(p.values, thr) / length(p.values)
+min_tdp <- function(p_values, thr) {
+  1 - max_fp(p_values, thr) / length(p_values)
 }
 
 #' Upper bound for the false discovery proportion in a selection
 #'
-#' @inheritParams maxFP
+#' @inheritParams max_fp
 #' @return Upper bound on the proportion of false discoveries in the selection
 #' @export
-maxFDP <- function(p.values, thr) {
-  maxFP(p.values, thr) / length(p.values)
+max_fdp <- function(p_values, thr) {
+  max_fp(p_values, thr) / length(p_values)
 }
 
 #' Upper bound for the number of false discoveries among most significant items
 #'
-#' @param p.values A vector containing s p-values
+#' @param p_values A vector containing s p-values
 #' @param thr A vector of \eqn{K} JER-controlling thresholds
 #'
 #' @return A vector of size \eqn{s} giving an joint upper confidence bound on
@@ -287,24 +287,24 @@ maxFDP <- function(p.values, thr) {
 #' expression studies. Bioinformatics. doi: 10.1093/bioinformatcs/btac693
 #' @details The time and space complexity of this function is O(s), which is
 #'   optimal since s is the length of the returned vector.
-curveMaxFP <- function(p.values, thr) {
-  s <- length(p.values)
+curve_max_fp <- function(p_values, thr) {
+  s <- length(p_values)
   if (s == 0) {
     return(numeric(0L))
   }
-  p.values <- sort(p.values)
+  p_values <- sort(p_values)
   thr <- sort(thr)
 
-  kMax <- length(thr)
-  if (s < kMax) { # truncate thr to first 's' values
-    seqK <- seq(from = 1, to = s, by = 1)
-    thr <- thr[seqK]
+  k_max <- length(thr)
+  if (s < k_max) { # truncate thr to first 's' values
+    seq_k <- seq(from = 1, to = s, by = 1)
+    thr <- thr[seq_k]
   } else { # complete 'thr' to length 's' with its last value
-    thr <- c(thr, rep(thr[kMax], s - kMax))
+    thr <- c(thr, rep(thr[k_max], s - k_max))
   }
   ## sanity checks
   stopifnot(length(thr) == s)
-  rm(kMax)
+  rm(k_max)
 
   K <- rep(s, s) ## K[i] = number of k/ T[i] <= s[k]
   Z <- rep(s, s) ## Z[k] = number of i/ T[i] >  s[k] = cardinal of R_k
@@ -312,7 +312,7 @@ curveMaxFP <- function(p.values, thr) {
   kk <- 1
   ii <- 1
   while ((kk <= s) && (ii <= s)) {
-    if (thr[kk] > p.values[ii]) {
+    if (thr[kk] > p_values[ii]) {
       K[ii] <- kk - 1
       ii <- ii + 1
     } else {
@@ -320,17 +320,17 @@ curveMaxFP <- function(p.values, thr) {
       kk <- kk + 1
     }
   }
-  Vbar <- numeric(s)
+  V_BAR <- numeric(s)
   ww <- which(K > 0)
   A <- Z - (1:s) + 1
-  cA <- cummax(A)[K[ww]] # cA[i] = max_{k<K[i]} A[k]
-  Vbar[ww] <- pmin(ww - cA, K[ww])
-  Vbar
+  CUMMAX_A <- cummax(A)[K[ww]] # cA[i] = max_{k<K[i]} A[k]
+  V_BAR[ww] <- pmin(ww - CUMMAX_A, K[ww])
+  V_BAR
 }
 
 #' Upper bound for the number of false discoveries among most significant items
 #'
-#' @param p.values A vector containing all \eqn{m} p-values, sorted
+#' @param p_values A vector containing all \eqn{m} p-values, sorted
 #' non-decreasingly
 #' @param thr A vector of \eqn{K} JER-controlling thresholds, sorted
 #' non-decreasingly
@@ -339,46 +339,49 @@ curveMaxFP <- function(p.values, thr) {
 #'   for all \eqn{k \in \{1\ldots m\}}.
 #' @author Gilles Blanchard, Nicolas Enjalbert-Courrech, Pierre Neuvial
 #' and Etienne Roquain
-#' @details These older implementations of 'curveMaxFP' are here for the purpose
-#'  of testing that the current one yields consistent results.
+#' @details These older implementations of 'curve_max_fp' are here for the
+#'  purpose of testing that the current one yields consistent results.
 #' @rdname curveMaxFP_alternatives
-curveMaxFP_BNR2014 <- function(p.values, thr) {
-  m <- length(p.values)
-  kMax <- length(thr)
+curve_max_fp_bnr2014 <- function(p_values, thr) {
+  m <- length(p_values)
+  k_max <- length(thr)
   bound <- function(kk, ii) {
-    (kk - 1) + sum(p.values[1:ii] > thr[kk])
+    (kk - 1) + sum(p_values[1:ii] > thr[kk])
   }
-  Vbar <- sapply(1:m, function(ii) {
-    cand <- sapply(1:kMax, bound, ii)
+  V_BAR <- sapply(1:m, function(ii) {
+    cand <- sapply(1:k_max, bound, ii)
     min(cand)
   })
-  Vbar
+  V_BAR
 }
 
 #' @rdname curveMaxFP_alternatives
-curveMaxFP_Mein2006 <- function(p.values, thr) {
-  m <- length(p.values)
-  kMax <- length(thr)
-  if (kMax < m) {
-    thr <- c(thr, rep(thr[kMax], m - kMax))
-    kMax <- length(thr)
+curve_max_fp_mein2006 <- function(p_values, thr) {
+  m <- length(p_values)
+  k_max <- length(thr)
+  if (k_max < m) {
+    thr <- c(thr, rep(thr[k_max], m - k_max))
+    k_max <- length(thr)
   }
 
   ## (loose) upper bound on number of FALSE discoveries among first rejections
   R <- 1:m
-  BB <- sapply(p.values[R], function(x) sum(x > thr)) ## Eqn (7) in Meinshausen
+  BB <- sapply(p_values[R], function(x) sum(x > thr)) ## Eqn (7) in Meinshausen
   ## corresponds to 'K' in 'BNR2016'
 
   ## lower bound on number of TRUE discoveries among first rejections
-  Sbar <- pmax(0, cummax(R - BB))
+  S_BAR <- pmax(0, cummax(R - BB))
 
   ## (tighter) upper bound on number of FALSE discoveries among first rejections
-  Vbar <- R - Sbar[R]
-  Vbar
+  V_BAR <- R - S_BAR[R]
+  V_BAR
 }
 
 ############################################################################
 ## HISTORY of 'curveMaxFP'
+##
+## 2026-11
+## o Rename curveMaxFP -> curve_max_fp
 ##
 ## 2021-09
 ## o Implemented the case |p.values| < |thr|.

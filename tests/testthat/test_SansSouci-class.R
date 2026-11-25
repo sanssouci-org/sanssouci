@@ -6,7 +6,7 @@ test_that("Correctness of the constructor of SansSouci", {
   set.seed(seed)
   obj <- SansSouciSim(m = m, rho = 0, n = n, pi0 = 0.8, SNR = 0, prob = 0.4)
   set.seed(seed)
-  sim <- gaussian_samples(m = m, rho = 0, n = n, pi0 = 0.8, SNR = 0, prob = 0.4)
+  sim <- sim_gaussian_equi(m = m, rho = 0, n = n, pi0 = 0.8, SNR = 0, prob = 0.4)
   obj1 <- SansSouci(Y = sim$X, groups = sim$categ, truth = sim$H)
   expect_s3_class(obj, "SansSouci")
   expect_s3_class(obj1, "SansSouci")
@@ -255,7 +255,7 @@ test_that("Consistency of output of 'bound.SansSouci'", {
 })
 
 
-test_that("'predict.SansSouci' reproduces the results of 'curveMaxFP'", {
+test_that("'predict.SansSouci' reproduces the results of 'curve_max_fp'", {
   m <- 54
   n <- 132
 
@@ -272,8 +272,8 @@ test_that("'predict.SansSouci' reproduces the results of 'curveMaxFP'", {
   what0 <- c("FP", "TP", "FDP", "TDP")
 
   pvals <- sort(pValues(res))
-  FP <- sanssouci:::curveMaxFP(
-    p.values = pvals,
+  FP <- sanssouci:::curve_max_fp(
+    p_values = pvals,
     thr = thresholds(res)
   )
   FPb <- predict(res, what = "FP", all = TRUE)$bound
@@ -334,8 +334,8 @@ test_that(
 
     # correctnes with curMaxFP
     pvals <- sort(pValues(res)[contrast, ])
-    FP <- sanssouci:::curveMaxFP(
-      p.values = pvals,
+    FP <- sanssouci:::curve_max_fp(
+      p_values = pvals,
       thr = thresholds(res)
     )
     FPb <- predict(res, what = "FP", all = TRUE, contrast_name = contrast)$bound

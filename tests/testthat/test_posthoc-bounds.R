@@ -85,39 +85,39 @@ test_that("I/O of 'posthoc_bound'", {
   )
 })
 
-test_that("maxFP and curveMaxFP are consistent", {
+test_that("max_fp and curve_max_fp are consistent", {
   expect_error(maxFP_low(pval, rev(thr))) ## thr is not sorted descendingly
 
   best <- head(pval)
   worse <- tail(pval)
-  b1 <- maxFP(best, thr)
-  b2 <- maxFP(c(best, worse), thr)
-  b3 <- maxFP(worse, thr)
+  b1 <- max_fp(best, thr)
+  b2 <- max_fp(c(best, worse), thr)
+  b3 <- max_fp(worse, thr)
   expect_lt(b1, b2)
   expect_lt(b1, b3)
   expect_lte(b3, b2)
 
-  ub <- curveMaxFP(p.values = pval, thr)
+  ub <- curve_max_fp(p_values = pval, thr)
   expect_equal(ub[length(best)], b1)
 
-  M0 <- maxFP(pval, thr)
-  sM0 <- maxFP(pval, thr)
+  M0 <- max_fp(pval, thr)
+  sM0 <- max_fp(pval, thr)
   expect_equal(M0, sM0)
   expect_equal(M0, ub[m])
 
-  expect_equal(maxFP(numeric(0L), thr), 0)
-  expect_equal(curveMaxFP(numeric(0L), thr), numeric(0))
+  expect_equal(max_fp(numeric(0L), thr), 0)
+  expect_equal(curve_max_fp(numeric(0L), thr), numeric(0))
 
-  expect_equal(curveMaxFP(numeric(0L), thr), numeric(0))
+  expect_equal(curve_max_fp(numeric(0L), thr), numeric(0))
 })
 
 
-test_that("curveMaxFP and maxFP are consistent for subsets", {
-  ub <- curveMaxFP(pval, thr)
+test_that("curve_max_fp and max_fp are consistent for subsets", {
+  ub <- curve_max_fp(pval, thr)
   expect_length(ub, m)
   expect_identical(ub, sort(ub))
   for (kk in seq_len(m)) {
-    bk <- maxFP(pval[seq_len(kk)], thr)
+    bk <- max_fp(pval[seq_len(kk)], thr)
     expect_equal(bk, ub[kk])
   }
 })
