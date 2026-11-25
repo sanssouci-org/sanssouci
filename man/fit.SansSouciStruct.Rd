@@ -18,7 +18,7 @@
 
 \item{alpha}{Target risk (JER) level}
 
-\item{p_values}{A vector of length \code{get_nb_hyp(object)},}
+\item{p_values}{A vector of length \code{n_hyp(object)},}
 
 \item{family}{A character value describing how the number of true nulls in a
 set is estimated. Can be either:
@@ -53,8 +53,8 @@ It is a list of three elements
 \item output: a list of two elements
 \itemize{
 \item p_values: the input argument 'p_values'
-\item ZL: the output of the "zeta function" associated to the
-input parameter 'family', see e.g. \link{zeta_dkwm}
+\item zetas_list: the output of the "zeta function" associated to the
+input parameter 'family', see e.g. \link{structured_zeta_dkwm}
 }
 }
 }

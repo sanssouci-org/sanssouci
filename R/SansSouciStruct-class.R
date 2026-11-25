@@ -17,7 +17,7 @@
 #' m <- s * 2^q
 #'
 #' dd <- dyadic_from_window_size(m, s, method = 2)
-#' obj <- SansSouciStruct(dd$C, dd$leaf_list)
+#' obj <- SansSouciStruct(dd$forest_structure, dd$leaf_list)
 #'
 SansSouciStruct <- function(struct, leaves, truth = NULL) {
   m <- length(unlist(leaves))
@@ -83,7 +83,7 @@ SansSouciDyadic <- function(m, leaf_size = NULL, height = NULL,
   } else {
     dd <- dyadic_from_height(m, H = height, method)
   }
-  SansSouciStruct(struct = dd$C, leaves = dd$leaf_list, ...)
+  SansSouciStruct(struct = dd$forest_structure, leaves = dd$leaf_list, ...)
 }
 
 
@@ -97,7 +97,7 @@ SansSouciDyadic <- function(m, leaf_size = NULL, height = NULL,
 #' m <- s * 2^q
 #'
 #' obj <- SansSouciDyadic(m, leaf_size = s, direction = "top-down")
-#' get_nb_hyp(obj)
+#' n_hyp(obj)
 #' get_nb_leaves(obj)
 #' mu <- gen_mu_leaves(
 #'   m = m, K1 = 8, d = 0.9, grouped = TRUE,
@@ -108,11 +108,11 @@ SansSouciDyadic <- function(m, leaf_size = NULL, height = NULL,
 #' alpha <- 0.05
 #' res <- fit(obj, alpha, p_values, "DKWM")
 #' label(res)
-#' str(get_p_values(res))
+#' str(p_values(res))
 #'
 NULL
 #> NULL
-#' `get_nb_hyp`: get the number of hypotheses
+#' `n_hyp`: get the number of hypotheses
 #'
 #' @rdname SansSouciStruct-methods
 #' @param object An object of class `SansSouciStruct`
@@ -140,7 +140,7 @@ get_nb_leaves.SansSouciStruct <- function(object) {
 #'
 #' @param object An object of class `SansSouciStruct`
 #' @param alpha Target risk (JER) level
-#' @param p_values A vector of length `get_nb_hyp(object)`,
+#' @param p_values A vector of length `n_hyp(object)`,
 #' @param family A character value describing how the number of true nulls in a
 #' set is estimated. Can be either:
 #' - "DKWM": estimation by the Dvoretzky-Kiefer-Wolfowitz-Massart
@@ -164,8 +164,8 @@ get_nb_leaves.SansSouciStruct <- function(object) {
 #'  - param: the input parameters, given as a list
 #'  - output: a list of two elements
 #'    - p_values: the input argument 'p_values'
-#'    - ZL: the output of the "zeta function" associated to the
-#'    input parameter 'family', see e.g. [zeta_dkwm]
+#'    - zetas_list: the output of the "zeta function" associated to the
+#'    input parameter 'family', see e.g. [structured_zeta_dkwm]
 #' @details In the particular case where `family=="Simes"`
 #' or `family=="Oracle"`, the return value is actually of
 #' class `SansSouci` and not `SansSouciStruct`
@@ -222,25 +222,25 @@ fit.SansSouciStruct <- function(object, alpha, p_values,
       stop("'truth' should be available for 'Oracle'. See ?SansSouci")
     }
   }
-  m <- get_nb_hyp(object)
+  m <- n_hyp(object)
   stopifnot(length(p_values) == m)
   params <- list(alpha = alpha, family = family, flavor = flavor)
   if (family %in% c("DKWM", "HB", "trivial")) {
     zeta <- switch(family,
-      "DKWM" = zeta_dkwm,
-      "HB" = zeta_hb,
-      "trivial" = zeta_trivial
+      "DKWM" = structured_zeta_dkwm,
+      "HB" = structured_zeta_hb,
+      "trivial" = structured_zeta_trivial
     )
     struct <- object$input$struct
     leaves <- object$input$leaves
     if (flavor == "partition") {
       struct <- struct[length(struct)]
     }
-    ZL <- zetas_tree(
-      C = struct, leaf_list = leaves,
+    zeta_list <- structured_zetas(
+      forest_structure = struct, leaf_list = leaves,
       method = zeta, p_values = p_values, alpha = alpha
     )
-    output <- list(p_values = p_values, ZL = ZL)
+    output <- list(p_values = p_values, zeta_list = zeta_list)
   } else if (family == "Simes") {
     thr <- t_linear(alpha, seq_len(m), m) ## NB: we are forcing K=m
     output <- list(p_values = p_values, thr = thr)
@@ -274,7 +274,7 @@ label.SansSouciStruct <- function(object) {
   return(lab)
 }
 
-#' `get_p_values`: get p-values
+#' `p_values`: get p-values
 #'
 #' @rdname SansSouciStruct-methods
 #' @param object An object of class `SansSouci`
@@ -284,21 +284,21 @@ get_p_values.SansSouciStruct <- function(object) {
 }
 
 #' @export
-predict.SansSouciStruct <- function(object, S = seq_len(get_nb_hyp(object)),
+predict.SansSouciStruct <- function(object, S = seq_len(n_hyp(object)),
                                     what = c("TP", "FDP"), n_out = 1,
                                     order_by_p = TRUE, ...) {
   lab <- label(object)
   if (order_by_p) {
-    ordering <- order(get_p_values(object))
+    ordering <- order(p_values(object))
     S <- ordering[S]
   }
 
-  if (max(S) > get_nb_hyp(object)) {
+  if (max(S) > n_hyp(object)) {
     stop("'S' is not a subset of hypotheses")
   }
   struct <- object$input$struct
   leaves <- object$input$leaves
-  ZL <- object$output$ZL
+  zeta_list <- object$output$zeta_list
 
   if (object$param$flavor == "partition") {
     struct <- struct[length(struct)]
@@ -311,9 +311,11 @@ predict.SansSouciStruct <- function(object, S = seq_len(get_nb_hyp(object)),
   }
   max_fp <- numeric(length(idxs))
   for (ii in seq(along = idxs)) {
-    max_fp[ii] <- v_star(S[1:idxs[ii]],
-      C = struct,
-      ZL = ZL, leaf_list = leaves
+    max_fp[ii] <- pred_subset_structured(
+      S[1:idxs[ii]],
+      forest_structure = struct,
+      zeta_list = zeta_list,
+      leaf_list = leaves
     )
   }
   bounds <- format_bounds(max_fp,

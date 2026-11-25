@@ -27,7 +27,7 @@ q <- 7
 m <- s * 2^q
 
 dd <- dyadic_from_window_size(m, s, method = 2)
-obj <- SansSouciStruct(dd$C, dd$leaf_list)
+obj <- SansSouciStruct(dd$forest_structure, dd$leaf_list)
 
 }
 \references{
