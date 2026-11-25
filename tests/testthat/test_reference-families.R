@@ -23,9 +23,9 @@ test_that("check_ref_fam", {
   res <- check_ref_fam(Beta)
   expect_null(res)
 
-  Simes2 <- list(
+  simes2 <- list(
     name = "Simes",
     t = function(lambda, k, m) lambda * k / m
   )
-  expect_error(check_ref_fam(Simes2), "Element 't_inv' missing")
+  expect_error(check_ref_fam(simes2), "Element 't_inv' missing")
 })

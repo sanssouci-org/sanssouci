@@ -6,7 +6,8 @@ test_that("Correctness of the constructor of SansSouci", {
   set.seed(seed)
   obj <- SansSouciSim(m = m, rho = 0, n = n, pi0 = 0.8, SNR = 0, prob = 0.4)
   set.seed(seed)
-  sim <- sim_gaussian_equi(m = m, rho = 0, n = n, pi0 = 0.8, SNR = 0, prob = 0.4)
+  sim <- sim_gaussian_equi(m = m, rho = 0, n = n, pi0 = 0.8, SNR = 0,
+                           prob = 0.4)
   obj1 <- SansSouci(Y = sim$X, groups = sim$categ, truth = sim$H)
   expect_s3_class(obj, "SansSouci")
   expect_s3_class(obj1, "SansSouci")
@@ -207,8 +208,8 @@ test_that("'fit.SansSouci' reproduces the results of 'calibrate'", {
   expect_equal(p0, res$output$p0)
   t_inv <- ifelse(fam == "Simes", t_inv_linear, t_inv_beta)
   t_ <- ifelse(fam == "Simes", t_linear, t_beta)
-  pivStat <- pivotal_stat(p0, m, t_inv, K = K)
-  expect_equal(pivStat, res$output$piv_stat)
+  piv_stat <- pivotal_stat(p0, m, t_inv, K = K)
+  expect_equal(piv_stat, res$output$piv_stat)
 })
 
 test_that("Consistency of output of 'bound.SansSouci'", {
@@ -276,8 +277,8 @@ test_that("'predict.SansSouci' reproduces the results of 'curve_max_fp'", {
     p_values = pvals,
     thr = thresholds(res)
   )
-  FPb <- predict(res, what = "FP", all = TRUE)$bound
-  expect_identical(FPb, FP)
+  fp_bound <- predict(res, what = "FP", all = TRUE)$bound
+  expect_identical(fp_bound, FP)
 })
 
 test_that(
@@ -338,8 +339,9 @@ test_that(
       p_values = pvals,
       thr = thresholds(res)
     )
-    FPb <- predict(res, what = "FP", all = TRUE, contrast_name = contrast)$bound
-    expect_identical(FPb, FP)
+    fp_bound <- predict(res, what = "FP", all = TRUE,
+                        contrast_name = contrast)$bound
+    expect_identical(fp_bound, FP)
   }
 )
 
@@ -536,7 +538,7 @@ test_that(
     expect_equal(p0, res$output$p0)
     t_inv <- ifelse(fam == "Simes", t_inv_linear, t_inv_beta)
     t_ <- ifelse(fam == "Simes", t_linear, t_beta)
-    pivStat <- pivotal_stat(p0, m, t_inv, K = K)
-    expect_equal(pivStat, res$output$piv_stat)
+    piv_stat <- pivotal_stat(p0, m, t_inv, K = K)
+    expect_equal(piv_stat, res$output$piv_stat)
   }
 )

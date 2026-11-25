@@ -9,7 +9,8 @@ test_that("Basic checks for 'conf_curve_from_fam'", {
   rwt <- row_welch_tests(sim$X, sim$categ, alternative = "greater")
   p_vals <- rwt$p.value
 
-  cb <- conf_curve_from_fam(p_vals, ref_family = "Simes", param = 0.1, what = "TP")
+  cb <- conf_curve_from_fam(p_vals, ref_family = "Simes", param = 0.1,
+                            what = "TP")
   expect_equal(nrow(cb), m)
   expect_equal(cb$label, rep("Simes(0.1)", m))
 
@@ -25,7 +26,8 @@ test_that("Basic checks for 'conf_curve_from_fam'", {
   )
   expect_equal(nrow(cb), m * 2)
 
-  cb <- conf_curve_from_fam(p_vals, ref_family = "Beta", param = 0.1, what = "TP")
+  cb <- conf_curve_from_fam(p_vals, ref_family = "Beta", param = 0.1,
+                            what = "TP")
   expect_equal(nrow(cb), m)
 
   cb <- conf_curve_from_fam(p_vals,

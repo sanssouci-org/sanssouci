@@ -62,18 +62,18 @@ test_that("correctness of row_binomial_tests alternative", {
   idx_null <- 1:round(p / 3)
   idx_greater <- (round(p / 3) + 1):round(2 * p / 3)
   idx_less <- (round(2 * p / 3) + 1):p
-  idx_two.sided <- c(idx_greater, idx_less)
+  idx_two_sided <- c(idx_greater, idx_less)
 
   pn <- length(idx_null)
-  mat1.0 <- matrix(rbinom(pn * n1, size = 1, prob = p0), ncol = n1)
+  mat1_null <- matrix(rbinom(pn * n1, size = 1, prob = p0), ncol = n1)
 
   pg <- length(idx_greater)
-  mat1.g <- matrix(rbinom(pg * n1, size = 1, prob = 2 * p0), ncol = n1)
+  mat1_greater <- matrix(rbinom(pg * n1, size = 1, prob = 2 * p0), ncol = n1)
 
   pl <- length(idx_less)
-  mat1.l <- matrix(rbinom(pl * n1, size = 1, prob = p0 / 2), ncol = n1)
+  mat1_less <- matrix(rbinom(pl * n1, size = 1, prob = p0 / 2), ncol = n1)
 
-  mat1 <- rbind(mat1.0, mat1.g, mat1.l)
+  mat1 <- rbind(mat1_null, mat1_greater, mat1_less)
   mat <- cbind(mat0, mat1)
   cls <- rep(c(0, 1), times = c(n0, n1))
 
@@ -84,7 +84,7 @@ test_that("correctness of row_binomial_tests alternative", {
   m0 <- mean(pval[idx_null])
   mg <- mean(pval[idx_greater])
   ml <- mean(pval[idx_less])
-  mt <- mean(pval[idx_two.sided])
+  mt <- mean(pval[idx_two_sided])
   expect_lt(mt, m0)
   expect_lt(ml, m0)
   expect_lt(mg, m0)
@@ -94,7 +94,7 @@ test_that("correctness of row_binomial_tests alternative", {
   m0 <- mean(pval[idx_null])
   mg <- mean(pval[idx_greater])
   ml <- mean(pval[idx_less])
-  mt <- mean(pval[idx_two.sided])
+  mt <- mean(pval[idx_two_sided])
   expect_lt(mg, m0)
   expect_gt(ml, m0)
 
@@ -103,7 +103,7 @@ test_that("correctness of row_binomial_tests alternative", {
   m0 <- mean(pval[idx_null])
   mg <- mean(pval[idx_greater])
   ml <- mean(pval[idx_less])
-  mt <- mean(pval[idx_two.sided])
+  mt <- mean(pval[idx_two_sided])
   expect_gt(mg, m0)
   expect_lt(ml, m0)
 })

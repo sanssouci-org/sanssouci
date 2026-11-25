@@ -87,7 +87,7 @@ test_that("Consistency of randomization p-values with different alternatives", {
     expect_equal(two_sided_inv$p_values, two_sided$p_values)
     expect_equal(greater_inv$p_values, less$p_values)
     expect_equal(less_inv$p_values, greater$p_values)
-    
+
     ## randomization
     two_sided <- test_by_randomization(X = mat, categ_inv, B = B,
                                        alternative = "two.sided")

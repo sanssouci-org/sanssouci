@@ -88,32 +88,32 @@ test_that("'fit.SansSouciStruct' reproduces the results of 'v_star'", {
   # Oracle 2
   res <- fit(obj, alpha = alpha, p_values = pvalues, family = "Oracle")
   expect_s3_class(res, "SansSouci")
-  Vmat <- predict(res, what = "FP", all = TRUE)
-  VV <- Vmat$bound[idxs]
+  v_mat <- predict(res, what = "FP", all = TRUE)
+  VV <- v_mat$bound[idxs]
   expect_identical(VV, V)
 
   # Simes 1
-  Vmat <- conf_curve_from_fam(
+  v_mat <- conf_curve_from_fam(
     p_values = pvalues, ref_family = "Simes",
     param = alpha, what = "FP"
   )
-  V <- Vmat$bound[idxs]
+  V <- v_mat$bound[idxs]
 
   # Simes 2
-  res_Simes <- fit(obj, alpha = alpha, p_values = pvalues, family = "Simes")
-  Vmat <- predict(res_Simes, what = "FP", all = TRUE)
-  VV <- Vmat$bound[idxs]
+  res_simes <- fit(obj, alpha = alpha, p_values = pvalues, family = "Simes")
+  v_mat <- predict(res_simes, what = "FP", all = TRUE)
+  VV <- v_mat$bound[idxs]
   expect_identical(VV, V)
 
   idxs1 <- head(idxs, 10)
 
   # DKWM 1 (tree)
-  res_DKWM <- fit(obj, alpha,
+  RES_DKWM <- fit(obj, alpha,
     p_values = pvalues,
     family = "DKWM"
   )
   V <- sapply(idxs1, FUN = function(ii) {
-    predict(res_DKWM, S = seq_len(ii), what = "FP")
+    predict(RES_DKWM, S = seq_len(ii), what = "FP")
   })
 
   # DKWM 2 (tree)
@@ -130,12 +130,12 @@ test_that("'fit.SansSouciStruct' reproduces the results of 'v_star'", {
   expect_identical(VV, V)
 
   # DKWM 1 (part)
-  res_DKWM <- fit(obj, alpha,
+  RES_DKWM <- fit(obj, alpha,
     p.values = pvalues,
     family = "DKWM", flavor = "partition"
   )
   V <- sapply(idxs1, FUN = function(ii) {
-    predict(res_DKWM, S = seq_len(ii), what = "FP")
+    predict(RES_DKWM, S = seq_len(ii), what = "FP")
   })
 
   # DKWM 2 (part)

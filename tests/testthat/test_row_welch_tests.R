@@ -64,8 +64,8 @@ test_that("correctness of row_welch_tests alternative", {
   i1 <- which(cls == 1)
   idx_greater <- 1:10
   idx_less <- 11:20
-  idx_two.sided <- c(idx_greater, idx_less)
-  idx_null <- setdiff(1:p, idx_two.sided)
+  idx_two_sided <- c(idx_greater, idx_less)
+  idx_null <- setdiff(1:p, idx_two_sided)
   mat[idx_greater, i1] <- 1 + mat[idx_greater, i1]
   mat[idx_less, i1] <- -1 + mat[idx_less, i1]
 
@@ -74,7 +74,7 @@ test_that("correctness of row_welch_tests alternative", {
   m0 <- mean(pval[idx_null])
   mg <- mean(pval[idx_greater])
   ml <- mean(pval[idx_less])
-  mt <- mean(pval[idx_two.sided])
+  mt <- mean(pval[idx_two_sided])
   expect_lt(mt, m0)
   expect_lt(ml, m0)
   expect_lt(mg, m0)
@@ -84,7 +84,7 @@ test_that("correctness of row_welch_tests alternative", {
   m0 <- mean(pval[idx_null])
   mg <- mean(pval[idx_greater])
   ml <- mean(pval[idx_less])
-  mt <- mean(pval[idx_two.sided])
+  mt <- mean(pval[idx_two_sided])
   expect_lt(mg, m0)
   expect_gt(ml, m0)
 
@@ -93,7 +93,7 @@ test_that("correctness of row_welch_tests alternative", {
   m0 <- mean(pval[idx_null])
   mg <- mean(pval[idx_greater])
   ml <- mean(pval[idx_less])
-  mt <- mean(pval[idx_two.sided])
+  mt <- mean(pval[idx_two_sided])
   expect_gt(mg, m0)
   expect_lt(ml, m0)
 })
@@ -104,7 +104,8 @@ test_that("suffWelchTest gives identical results to welch.test", {
     x <- rnorm(1234)
     y <- rnorm(2345)
     target <- t.test(x, y)
-    swt <- suff_welch_tests(mean(x), mean(y), sd(x), sd(y), length(x), length(y))
+    swt <- suff_welch_tests(mean(x), mean(y), sd(x), sd(y),
+                            length(x), length(y))
     swt1 <- suff_welch_tests1(
       mean(x), mean(y), sd(x), sd(y), length(x),
       length(y)

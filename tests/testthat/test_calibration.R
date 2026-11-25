@@ -39,14 +39,14 @@ test_that("Vanilla tests for 'pivotal_stat'", {
   null_groups <- replicate(B, sample(categ))
   p0 <- row_welch_tests(X, null_groups)$p.value
 
-  pivStat <- pivotal_stat(p0, m)
-  expect_length(pivStat, B)
-  expect_lte(max(pivStat), 1)
-  expect_gte(min(pivStat), 0)
+  piv_stat <- pivotal_stat(p0, m)
+  expect_length(piv_stat, B)
+  expect_lte(max(piv_stat), 1)
+  expect_gte(min(piv_stat), 0)
 
-  pivStat2 <- pivotal_stat(p0, m, K = m / 10)
-  expect_gte(min(pivStat2), 0)
-  expect_gte(min(pivStat2 - pivStat), 0)
+  piv_stat2 <- pivotal_stat(p0, m, K = m / 10)
+  expect_gte(min(piv_stat2), 0)
+  expect_gte(min(piv_stat2 - piv_stat), 0)
 })
 
 test_that("JER calibration and pivotal_stat yield identical pivotal
@@ -60,10 +60,10 @@ test_that("JER calibration and pivotal_stat yield identical pivotal
             ## TODO: tests all param combinations
             set.seed(0xBEEF)
             p0 <- perm_stat(X, categ, B)$p.value
-            pivStat <- pivotal_stat(p0, m, t_inv_linear)
+            piv_stat <- pivotal_stat(p0, m, t_inv_linear)
 
             cal <- calibrate(p0, m, alpha = 1, family = "Linear")
-            expect_equal(cal$piv_stat, pivStat)
+            expect_equal(cal$piv_stat, piv_stat)
           })
 
 

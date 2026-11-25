@@ -101,8 +101,7 @@ test_that("max_fp and curve_max_fp are consistent", {
   expect_equal(ub[length(best)], b1)
 
   M0 <- max_fp(pval, thr)
-  sM0 <- max_fp(pval, thr)
-  expect_equal(M0, sM0)
+  expect_equal(M0, max_fp(pval, thr))
   expect_equal(M0, ub[m])
 
   expect_equal(max_fp(numeric(0L), thr), 0)
