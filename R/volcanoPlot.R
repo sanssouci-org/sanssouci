@@ -5,7 +5,8 @@
 #' @rdname volcano_plot
 #' @param x An object of class `SansSouci`, or alternatively a numeric vector
 #'   of fold changes when calling `volcano_plot.numeric` directly (x axis of
-#'   the volcano plot). See [volcano_plot.numeric()] or [volcano_plot.SansSouci()]
+#'   the volcano plot). 
+#'   See [volcano_plot.numeric()] or [volcano_plot.SansSouci()]
 #'   for specifics
 #' @param ... Other arguments passed to methods
 #' @export
