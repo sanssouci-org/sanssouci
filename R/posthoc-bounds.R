@@ -60,7 +60,8 @@ posthoc_bound <- function(p_values, S = seq_along(p_values), thr = NULL,
   } else {
     max_fp <- curveMaxFP(sorted_p, thr)
   }
-  bounds <- formatBounds(max_fp, idxs = idxs, lab = lab, what = what, all = all)
+  bounds <- format_bounds(max_fp, idxs = idxs, lab = lab, what = what,
+                          all = all)
   return(bounds)
 }
 
@@ -76,10 +77,10 @@ posthoc_bound <- function(p_values, S = seq_along(p_values), thr = NULL,
 #' @return data frame with the post hoc bounds
 #' @export
 #'
-formatBounds <- function(max_fp, idxs = seq_len(max_fp), lab = NULL,
-                         what = c("TP", "FDP"), all = FALSE) {
+format_bounds <- function(max_fp, idxs = seq_len(max_fp), lab = NULL,
+                          what = c("TP", "FDP"), all = FALSE) {
   stopifnot(length(max_fp) == length(idxs))
-  max_FDP <- max_fp / idxs
+  max_fdp <- max_fp / idxs
   what0 <- c("FP", "TP", "FDP", "TDP")
   if (!all(what %in% what0)) {
     stop("Error in argument 'what':",
@@ -95,7 +96,7 @@ formatBounds <- function(max_fp, idxs = seq_len(max_fp), lab = NULL,
     } else { # output should not be empty (number of FP in empty set is 0)
       idxs <- 0
       max_fp <- 0 # number of FP in empty set is 0
-      max_FDP <- 0 # FDP in empty set is 0
+      max_fdp <- 0 # FDP in empty set is 0
     }
   }
   annot <- data.frame(
@@ -103,17 +104,17 @@ formatBounds <- function(max_fp, idxs = seq_len(max_fp), lab = NULL,
     label = lab,
     row.names = NULL
   )
-  boundsList <- list(
+  bounds_list <- list(
     FP = cbind(annot, stat = "FP", bound = max_fp),
     TP = cbind(annot, stat = "TP", bound = idxs - max_fp),
-    FDP = cbind(annot, stat = "FDP", bound = max_FDP),
-    TDP = cbind(annot, stat = "TDP", bound = 1 - max_FDP)
+    FDP = cbind(annot, stat = "FDP", bound = max_fdp),
+    TDP = cbind(annot, stat = "TDP", bound = 1 - max_fdp)
   )
-  boundsList <- boundsList[what]
+  bounds_list <- bounds_list[what]
   if (!all) {
-    boundsList <- lapply(boundsList, FUN = function(x) x[length(idxs), ])
+    bounds_list <- lapply(bounds_list, FUN = function(x) x[length(idxs), ])
   }
-  bounds <- Reduce(rbind, boundsList)
+  bounds <- Reduce(rbind, bounds_list)
   bounds
 }
 
