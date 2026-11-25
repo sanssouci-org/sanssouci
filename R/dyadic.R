@@ -29,11 +29,11 @@
 #' @return A list with two named elements:\describe{
 #' \item{\code{leaf_list}}{
 #' A list of vectors representing the atoms/leaves of the forest structure.
-#' See [v_star()] for more information.
+#' See [pred_subset_structured()] for more information.
 #' }
 #' \item{\code{forest_structure}}{
 #' A list of list representing the forest structure.
-#' See [v_star()] for more information.
+#' See [pred_subset_structured()] for more information.
 #' }
 #' }
 #'
@@ -60,7 +60,7 @@
 NULL
 
 #' @param leaf_list A list of vectors representing the atoms of the
-#' forest structure. See [v_star()] for more information.
+#' forest structure. See [pred_subset_structured()] for more information.
 #' @export
 #' @rdname dyadic
 dyadic_from_leaf_list <- function(leaf_list, method) {

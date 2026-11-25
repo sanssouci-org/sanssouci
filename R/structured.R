@@ -436,9 +436,10 @@ pred_subset_structured <- function(S, forest_structure, zetas_list, leaf_list) {
 #' by the pruning, see [delete_gaps()].
 #'
 #' @return A list with three named elements. \describe{
-#' \item{\code{v_star_all}}{\eqn{V^*(\mathbb N_m)} is computed as a by-product by
-#' the algorithm, so we might as well return it.}
-#' \item{\code{forest_structure}}{The new \code{forest_structure} after pruning.}
+#' \item{\code{v_star_all}}{\eqn{V^*(\mathbb N_m)} is computed as a by-product
+#' by the algorithm, so we might as well return it.}
+#' \item{\code{forest_structure}}{The new \code{forest_structure}
+#' after pruning.}
 #' \item{\code{zetas_list}}{The new \code{zetas_list} after pruning.}
 #' }
 #'
@@ -562,9 +563,9 @@ delete_gaps <- function(forest_structure, zetas_list, leaf_list) {
       forest_structure[[h]][[l]] <- NULL
       zetas_list[[h]] <- zetas_list[[h]][-l]
     }
-    # TODO: instead of adding elements in new_forest_structure at index 
+    # TODO: instead of adding elements in new_forest_structure at index
     # current_node[1], add them at index idx_counter and then increment
-    # idx_counter, so that the following "if" becomes useless 
+    # idx_counter, so that the following "if" becomes useless
     # and can be safely removed?
     if (length(new_forest_structure[[loop_counter]]) > 0) {
       for (l in rev(seq_along(new_forest_structure[[loop_counter]]))) {
@@ -580,7 +581,7 @@ delete_gaps <- function(forest_structure, zetas_list, leaf_list) {
     }))
   }
   return(list(
-    forest_structure = new_forest_structure, 
+    forest_structure = new_forest_structure,
     zetas_list = new_zetas_list
   ))
 }
@@ -693,12 +694,12 @@ delete_gaps <- function(forest_structure, zetas_list, leaf_list) {
 #' @rdname pred_pathway_structured
 #' @export
 pred_pathway_structured_naive <- function(
-    perm,
-    forest_structure,
-    zetas_list,
-    leaf_list,
-    pruning = FALSE,
-    delete_gaps = FALSE
+  perm,
+  forest_structure,
+  zetas_list,
+  leaf_list,
+  pruning = FALSE,
+  delete_gaps = FALSE
 ) {
   vstars <- numeric(length(perm))
 
@@ -747,14 +748,14 @@ pred_pathway_structured_naive <- function(
 #' @rdname pred_pathway_structured
 #' @export
 pred_pathway_structured <- function(
-    perm,
-    forest_structure,
-    zetas_list,
-    leaf_list,
-    pruning = FALSE,
-    is_pruned = FALSE,
-    is_complete = FALSE,
-    delete_gaps = FALSE
+  perm,
+  forest_structure,
+  zetas_list,
+  leaf_list,
+  pruning = FALSE,
+  is_pruned = FALSE,
+  is_complete = FALSE,
+  delete_gaps = FALSE
 ) {
   vstars <- numeric(length(perm))
 
@@ -896,7 +897,7 @@ pred_pathway_structured <- function(
 #' the forest structure. See [pred_subset_structured()] for more information.
 #'
 #' @return A list with two named elements. \describe{
-#' \item{\code{forest_structure}}{The new \code{forest_structure} 
+#' \item{\code{forest_structure}}{The new \code{forest_structure}
 #' after completion.}
 #' \item{\code{zetas_list}}{The new \code{zetas_list} after completion.}
 #' }

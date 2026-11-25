@@ -15,7 +15,7 @@ dyadic_from_height(m, H = NULL, method)
 }
 \arguments{
 \item{leaf_list}{A list of vectors representing the atoms of the
-forest structure. See \code{\link[=v_star]{v_star()}} for more information.}
+forest structure. See \code{\link[=pred_subset_structured]{pred_subset_structured()}} for more information.}
 
 \item{method}{A numeric value. If \code{method == 1}, start from the leaves
 and group nodes of a same height 2 by 2 as
@@ -36,11 +36,11 @@ maximum achievable height given \code{m}.}
 A list with two named elements:\describe{
 \item{\code{leaf_list}}{
 A list of vectors representing the atoms/leaves of the forest structure.
-See \code{\link[=v_star]{v_star()}} for more information.
+See \code{\link[=pred_subset_structured]{pred_subset_structured()}} for more information.
 }
 \item{\code{forest_structure}}{
 A list of list representing the forest structure.
-See \code{\link[=v_star]{v_star()}} for more information.
+See \code{\link[=pred_subset_structured]{pred_subset_structured()}} for more information.
 }
 }
 }

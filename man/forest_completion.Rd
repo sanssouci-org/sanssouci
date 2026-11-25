@@ -4,13 +4,13 @@
 \alias{forest_completion}
 \title{Complete a forest structure}
 \usage{
-forest_completion(C, ZL, leaf_list)
+forest_completion(forest_structure, zetas_list, leaf_list)
 }
 \arguments{
-\item{C}{A list of list representing the forest structure.
+\item{forest_structure}{A list of list representing the forest structure.
 See \code{\link[=pred_subset_structured]{pred_subset_structured()}} for more information.}
 
-\item{ZL}{A list of integer vectors representing the upper bounds
+\item{zetas_list}{A list of integer vectors representing the upper bounds
 \eqn{\zeta_k} of the forest structure.
 See \code{\link[=pred_subset_structured]{pred_subset_structured()}} for more information.}
 
@@ -19,12 +19,13 @@ the forest structure. See \code{\link[=pred_subset_structured]{pred_subset_struc
 }
 \value{
 A list with two named elements. \describe{
-\item{\code{C}}{The new \code{C} after completion.}
-\item{\code{ZL}}{The new \code{ZL} after completion.}
+\item{\code{forest_structure}}{The new \code{forest_structure}
+after completion.}
+\item{\code{zetas_list}}{The new \code{zetas_list} after completion.}
 }
 }
 \description{
-Completes the forest in the sens of the Reference:
+Completes the forest in the sense of the Reference:
 adds the missing atoms/leaves
 in the reference family with a forest structure \eqn{(R_k, \zeta_k)}
 so that each atom is well represented by a \eqn{R_k}.

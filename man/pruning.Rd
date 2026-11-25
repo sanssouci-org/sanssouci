@@ -38,9 +38,10 @@ by the pruning, see \code{\link[=delete_gaps]{delete_gaps()}}.}
 }
 \value{
 A list with three named elements. \describe{
-\item{\code{v_star_all}}{\eqn{V^*(\mathbb N_m)} is computed as a by-product by
-the algorithm, so we might as well return it.}
-\item{\code{forest_structure}}{The new \code{forest_structure} after pruning.}
+\item{\code{v_star_all}}{\eqn{V^*(\mathbb N_m)} is computed as a by-product
+by the algorithm, so we might as well return it.}
+\item{\code{forest_structure}}{The new \code{forest_structure}
+after pruning.}
 \item{\code{zetas_list}}{The new \code{zetas_list} after pruning.}
 }
 }
