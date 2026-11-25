@@ -7,7 +7,7 @@
 SansSouciSim(...)
 }
 \arguments{
-\item{...}{Parameters to be passed to \link{gaussian_samples}}
+\item{...}{Parameters to be passed to \link{sim_gaussian_equi}}
 }
 \description{
 Create a 'SansSouci' object from simulation in the Gaussian
@@ -24,7 +24,7 @@ alpha <- 0.1
 set.seed(542)
 res <- fit(obj, B = 100, alpha = alpha, family = "Simes")
 plot(res)
-volcano_plot(res, q = 0.05, r = 0.2)
+volcanoPlot(res, q = 0.05, r = 0.2)
 
 # upper bound on number of signals if the entire data set
 # (and corresponding lower bound on FDP)
@@ -52,10 +52,10 @@ plotConfCurve(confs)
 \dontrun{
 # Use wilcoxon tests instead of Welch tests
 res <- fit(obj, B = 100, alpha = 0.1, rowTestFUN = row_wilcoxon_tests)
-volcano_plot(res, q = 0.05, r = 0.2)
+volcanoPlot(res, q = 0.05, r = 0.2)
 }
 
 }
 \seealso{
-\link{gaussian_samples}
+\link{sim_gaussian_equi}
 }

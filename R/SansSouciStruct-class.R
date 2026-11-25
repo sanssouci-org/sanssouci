@@ -316,7 +316,7 @@ predict.SansSouciStruct <- function(object, S = seq_len(get_nb_hyp(object)),
       ZL = ZL, leaf_list = leaves
     )
   }
-  bounds <- formatBounds(max_fp,
+  bounds <- format_bounds(max_fp,
     idxs = idxs,
     lab = lab,
     what = what,

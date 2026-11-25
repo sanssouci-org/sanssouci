@@ -111,7 +111,7 @@ confs <- list(Simes = predict(cal0, all = TRUE),
 
 ```{r}
 #| label: plot-conf-env
-plotConfCurve(confs, xmax = 200, legend.title = "Template")
+plot_conf_curve(confs, xmax = 200, legend_title = "Template")
 ```
 
 ## One sample tests
@@ -148,7 +148,7 @@ confs <- list(Simes = predict(cal0, all = TRUE),
 
 ```{r}
 #| label: plot-conf-env-one-sample
-plotConfCurve(confs, legend.title = "Template")
+plot_conf_curve(confs, legend_title = "Template")
 ```
 
 ## Session information

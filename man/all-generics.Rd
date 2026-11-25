@@ -2,24 +2,24 @@
 % Please edit documentation in R/SansSouci-class.R, R/SansSouciStruct-class.R
 \name{all-generics}
 \alias{all-generics}
-\alias{get_nb_hyp}
+\alias{nHyp}
 \alias{nObs}
 \alias{label}
-\alias{get_p_values}
-\alias{get_fold_changes}
+\alias{pValues}
+\alias{foldChanges}
 \alias{thresholds}
 \alias{get_nb_leaves}
 \title{Generic functions for S3 class SansSouci}
 \usage{
-get_nb_hyp(object)
+nHyp(object)
 
 nObs(object)
 
 label(object)
 
-get_p_values(object)
+pValues(object)
 
-get_fold_changes(object)
+foldChanges(object)
 
 thresholds(object)
 
@@ -33,15 +33,15 @@ Generic functions for S3 class SansSouci
 }
 \section{Functions}{
 \itemize{
-\item \code{get_nb_hyp()}: ' Get the number of hypotheses
+\item \code{nHyp()}: ' Get the number of hypotheses
 
 \item \code{nObs()}: Get the number of observations
 
 \item \code{label()}: Get the label of hypotheses tested
 
-\item \code{get_p_values()}: Get p-values
+\item \code{pValues()}: Get p-values
 
-\item \code{get_fold_changes()}: Get fold changes
+\item \code{foldChanges()}: Get fold changes
 
 \item \code{thresholds()}: Get thresholds
 

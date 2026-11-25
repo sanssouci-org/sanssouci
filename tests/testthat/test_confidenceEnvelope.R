@@ -119,7 +119,7 @@ test_that("Ordering of confidence curves with/without calibration", {
   expect_lte(min(diff), 0)
 })
 
-test_that("Vanilla test for 'plotConfCurve'", {
+test_that("Vanilla test for 'plot_conf_curve'", {
   sim <- gaussian_samples(
     m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3,
     prob = 0.5
@@ -127,6 +127,6 @@ test_that("Vanilla test for 'plotConfCurve'", {
   rwt <- row_welch_tests(sim$X, categ = sim$categ, alternative = "greater")
 
   ce <- conf_curve_from_fam(rwt$p.value, ref_family = "Simes", param = 0.1)
-  p <- plotConfCurve(ce, xmax = 200)
+  p <- plot_conf_curve(ce, xmax = 200)
   expect_true(inherits(p, "ggplot"))
 })

@@ -60,7 +60,8 @@ posthoc_bound <- function(p_values, S = seq_along(p_values), thr = NULL,
   } else {
     max_fp <- curveMaxFP(sorted_p, thr)
   }
-  bounds <- formatBounds(max_fp, idxs = idxs, lab = lab, what = what, all = all)
+  bounds <- format_bounds(max_fp, idxs = idxs, lab = lab, what = what,
+                          all = all)
   return(bounds)
 }
 
@@ -76,10 +77,10 @@ posthoc_bound <- function(p_values, S = seq_along(p_values), thr = NULL,
 #' @return data frame with the post hoc bounds
 #' @export
 #'
-formatBounds <- function(max_fp, idxs = seq_len(max_fp), lab = NULL,
-                         what = c("TP", "FDP"), all = FALSE) {
+format_bounds <- function(max_fp, idxs = seq_len(max_fp), lab = NULL,
+                          what = c("TP", "FDP"), all = FALSE) {
   stopifnot(length(max_fp) == length(idxs))
-  max_FDP <- max_fp / idxs
+  max_fdp <- max_fp / idxs
   what0 <- c("FP", "TP", "FDP", "TDP")
   if (!all(what %in% what0)) {
     stop("Error in argument 'what':",
@@ -95,7 +96,7 @@ formatBounds <- function(max_fp, idxs = seq_len(max_fp), lab = NULL,
     } else { # output should not be empty (number of FP in empty set is 0)
       idxs <- 0
       max_fp <- 0 # number of FP in empty set is 0
-      max_FDP <- 0 # FDP in empty set is 0
+      max_fdp <- 0 # FDP in empty set is 0
     }
   }
   annot <- data.frame(
@@ -103,17 +104,17 @@ formatBounds <- function(max_fp, idxs = seq_len(max_fp), lab = NULL,
     label = lab,
     row.names = NULL
   )
-  boundsList <- list(
+  bounds_list <- list(
     FP = cbind(annot, stat = "FP", bound = max_fp),
     TP = cbind(annot, stat = "TP", bound = idxs - max_fp),
-    FDP = cbind(annot, stat = "FDP", bound = max_FDP),
-    TDP = cbind(annot, stat = "TDP", bound = 1 - max_FDP)
+    FDP = cbind(annot, stat = "FDP", bound = max_fdp),
+    TDP = cbind(annot, stat = "TDP", bound = 1 - max_fdp)
   )
-  boundsList <- boundsList[what]
+  bounds_list <- bounds_list[what]
   if (!all) {
-    boundsList <- lapply(boundsList, FUN = function(x) x[length(idxs), ])
+    bounds_list <- lapply(bounds_list, FUN = function(x) x[length(idxs), ])
   }
-  bounds <- Reduce(rbind, boundsList)
+  bounds <- Reduce(rbind, bounds_list)
   bounds
 }
 
@@ -123,7 +124,7 @@ formatBounds <- function(max_fp, idxs = seq_len(max_fp), lab = NULL,
 #'  [predict]
 #' @param xmax Right limit of the plot
 #' @param cols A vector of colors of the same length as `conf_bound`
-#' @param legend.title a character for the title of the legend
+#' @param legend_title a character for the title of the legend
 #' @references Blanchard, G., Neuvial, P., & Roquain, E. (2020).
 #' Post hoc confidence bounds on false positives using reference families.
 #' Annals of Statistics, 48(3), 1281-1303.
@@ -135,7 +136,7 @@ formatBounds <- function(max_fp, idxs = seq_len(max_fp), lab = NULL,
 #'                     prob = 0.5)
 #' res <- fit(obj, B = 100, alpha = 0.1)
 #' cb <- predict(res, all = TRUE)
-#' plotConfCurve(cb, xmax = 200) ## equivalent to 'plot(res, xmax = 200)'
+#' plot_conf_curve(cb, xmax = 200) ## equivalent to 'plot(res, xmax = 200)'
 #'
 #' # plot two confidence curves
 #' res_beta <- fit(res, B = 100, alpha = 0.1, family = "Beta", K = 20)
@@ -145,10 +146,10 @@ formatBounds <- function(max_fp, idxs = seq_len(max_fp), lab = NULL,
 #'   "Simes" = cb,
 #'   "Beta" = cb_beta
 #' )
-#' plotConfCurve(bounds, xmax = 200)
+#' plot_conf_curve(bounds, xmax = 200)
 #'
-plotConfCurve <- function(conf_bound, xmax, cols = NULL,
-                          legend.title = "Contrast") {
+plot_conf_curve <- function(conf_bound, xmax, cols = NULL,
+                            legend_title = "Contrast") {
   nb <- 1
   if (inherits(conf_bound, "data.frame")) { # (assume) a single conf. bound
     ## do nothing!
@@ -191,8 +192,8 @@ plotConfCurve <- function(conf_bound, xmax, cols = NULL,
     ggplot2::labs(
       x = "Number of top features selected",
       y = "Post hoc confidence bounds",
-      color = legend.title,
-      linetype = legend.title
+      color = legend_title,
+      linetype = legend_title
     ) +
     ggplot2::theme_bw() +
     ggplot2::theme(strip.background = NULL) +

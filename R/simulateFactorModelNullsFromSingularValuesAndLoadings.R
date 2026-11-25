@@ -1,7 +1,6 @@
-#' simulateFactorModelNullsFromSingularValuesAndLoadings
+#' sim_gaussian_nulls_factor_sv
 #'
 #' Simulate null hypotheses according to a factor model
-#'
 #'
 #' @param m Number of tests
 #' @param h A vector of \code{k} singular values associated to each factor
@@ -12,14 +11,16 @@
 #' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 #' @importFrom Matrix Matrix
 #' @importFrom stats rnorm
+#' @export
+#' @keywords internal
 #' @examples
 #'
 #' m <- 10
 #'
 #' ## independent
-#'sim0 <- sanssouci:::simulateFactorModelNullsFromSingularValuesAndLoadings(m)
+#' sim0 <- sanssouci:::sim_gaussian_nulls_factor_sv(m)
 #' str(sim0)
-#' sum(is.na(sanssouci:::simulateFactorModelNullsFromSingularValuesAndLoadings(m)))
+#' sum(is.na(sanssouci:::sim_gaussian_nulls_factor_sv(m)))
 #' S0 <- getFactorModelCovarianceMatrix(m)
 #' image(S0)
 #'
@@ -27,7 +28,7 @@
 #' rho <- 0.2
 #' h <- 1
 #' P <- matrix(1, m, length(h))
-#' sim1 <- sanssouci:::simulateFactorModelNullsFromSingularValuesAndLoadings(m,
+#' sim1 <- sanssouci:::sim_gaussian_nulls_factor_sv(m,
 #'           h, P, rho=rho)
 #' str(sim1)
 #' S1 <- getFactorModelCovarianceMatrix(m, h, P, rho=rho)
@@ -42,41 +43,37 @@
 #' gamma3 <- rep(c(-1, 1), times=m/2)
 #' P <- cbind(gamma1, gamma2, gamma3)/sqrt(m)
 #'
-#' sim3 <- sanssouci:::simulateFactorModelNullsFromSingularValuesAndLoadings(m,
+#' sim3 <- sanssouci:::sim_gaussian_nulls_factor_sv(m,
 #'               h, P, rho=rho)
 #' str(sim3)
 #' S3 <- getFactorModelCovarianceMatrix(m, h, P, rho=rho)
 #' image(S3)
 #' sim3
 #'
-simulateFactorModelNullsFromSingularValuesAndLoadings <- function(
-    m, h = numeric(0), P = Matrix(0, nrow = m, ncol = length(h)), rho = 0) {
-    k <- length(h)
-    ## sanity checks
-    stopifnot(nrow(P) == m)
-    stopifnot(ncol(P) == k)
-    if (k > 1) {
-        ## is P'P orthonormal ?
-        mm <- max(abs(diag(k) - t(P) %*% P))
-        if (mm > 1e-10) {
-            stop("t(P) %*% P should be orthonormal")
-        }
-        rm(mm)
+sim_gaussian_nulls_factor_sv <- function(m, h = numeric(0),
+                                      P = Matrix(0, nrow = m, ncol = length(h)),
+                                      rho = 0) {
+  k <- length(h)
+  ## sanity checks
+  stopifnot(nrow(P) == m)
+  stopifnot(ncol(P) == k)
+  if (k > 1) {
+    ## is P'P orthonormal ?
+    mm <- max(abs(diag(k) - t(P) %*% P))
+    if (mm > 1e-10) {
+      stop("t(P) %*% P should be orthonormal")
     }
+    rm(mm)
+  }
 
-    Z <- matrix(rnorm(m), ncol = 1)
-    W <- rnorm(k)
-    if (rho == 0) {
-        Y <- Z
-    } else {
-        Y <- sqrt(1 - rho) * Z + sqrt(rho) * P %*% Matrix(sqrt(h) * W, ncol = 1)
-        #    [code] : if (sum(is.na(Y))) browser()
-    }
-    Y <- as.vector(Y)
-    list(Y = Y, W = W)
+  Z <- matrix(rnorm(m), ncol = 1)
+  W <- rnorm(k)
+  if (rho == 0) {
+    Y <- Z
+  } else {
+    Y <- sqrt(1 - rho) * Z + sqrt(rho) * P %*% Matrix(sqrt(h) * W, ncol = 1)
+    #    [code] : if (sum(is.na(Y))) browser()
+  }
+  Y <- as.vector(Y)
+  list(Y = Y, W = W)
 }
-############################################################################
-# HISTORY:
-# 2013-03-20
-# o Created from Etienne's code.
-############################################################################

@@ -52,7 +52,7 @@
 #' # calculate, print, and plot confidence bound
 #' cb <- conf_curve_from_fam(rwt$p.value, ref_family = "Simes", param = 0.1)
 #' head(cb)
-#' plotConfCurve(cb, xmax = 200)
+#' plot_conf_curve(cb, xmax = 200)
 #'
 conf_curve_from_fam <- function(p_values, ref_family, param,
                                 K = length(p_values), what = c("TP", "FDP")) {

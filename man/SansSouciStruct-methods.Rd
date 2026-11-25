@@ -8,13 +8,13 @@
 \alias{get_p_values.SansSouciStruct}
 \title{Basic methods for class \code{SansSouciStruct}}
 \usage{
-\method{get_nb_hyp}{SansSouciStruct}(object)
+get_nb_hyp.SansSouciStruct(object)
 
 \method{get_nb_leaves}{SansSouciStruct}(object)
 
 \method{label}{SansSouciStruct}(object)
 
-\method{get_p_values}{SansSouciStruct}(object)
+get_p_values.SansSouciStruct(object)
 }
 \arguments{
 \item{object}{An object of class \code{SansSouci}}

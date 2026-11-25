@@ -135,8 +135,8 @@ SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
 #' Create a 'SansSouci' object from simulation in the Gaussian
 #' equi-correlated model
 #'
-#' @param ... Parameters to be passed to [gaussian_samples]
-#' @seealso [gaussian_samples]
+#' @param ... Parameters to be passed to [sim_gaussian_equi]
+#' @seealso [sim_gaussian_equi]
 #' @export
 #' @examples
 #' obj <- SansSouciSim(
@@ -149,7 +149,7 @@ SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
 #' set.seed(542)
 #' res <- fit(obj, B = 100, alpha = alpha, family = "Simes")
 #' plot(res)
-#' volcano_plot(res, q = 0.05, r = 0.2)
+#' volcanoPlot(res, q = 0.05, r = 0.2)
 #'
 #' # upper bound on number of signals if the entire data set
 #' # (and corresponding lower bound on FDP)
@@ -172,12 +172,12 @@ SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
 #'   "Simes+calibration" = predict(res, all = TRUE),
 #'   "Oracle" = predict(oracle, all = TRUE)
 #' )
-#' plotConfCurve(confs)
+#' plot_conf_curve(confs)
 #'
 #' \dontrun{
 #' # Use wilcoxon tests instead of Welch tests
 #' res <- fit(obj, B = 100, alpha = 0.1, rowTestFUN = row_wilcoxon_tests)
-#' volcano_plot(res, q = 0.05, r = 0.2)
+#' volcanoPlot(res, q = 0.05, r = 0.2)
 #' }
 #'
 SansSouciSim <- function(...) {
@@ -195,17 +195,17 @@ SansSouciSim <- function(...) {
 #' table(groups)
 #' a <- SansSouci(Y = expr_ALL, groups = groups)
 #' print(a)
-#' get_nb_hyp(a)
+#' nHyp(a)
 #' nObs(a)
 #' label(a)
 #'
 #' res <- fit(a, B = 100, alpha = 0.1)
 #' label(res)
 #' print(res)
-#' str(get_p_values(res))
-#' str(get_fold_changes(res))
+#' str(pValues(res))
+#' str(foldChanges(res))
 #' str(thresholds(res))
-#' vp <- volcano_plot(res, q = 0.05, r = 0.5)
+#' vp <- volcanoPlot(res, q = 0.05, r = 0.5)
 #'
 NULL
 #> NULL
@@ -220,14 +220,14 @@ NULL
 #' @describeIn all-generics ' Get the number of hypotheses
 #' @param object An object. See individual methods for specifics
 #' @export
-get_nb_hyp <- function(object) UseMethod("get_nb_hyp")
+nHyp <- function(object) UseMethod("nHyp")
 
-#' `get_nb_hyp`: get the number of hypotheses
+#' `nHyp`: get the number of hypotheses
 #'
 #' @rdname SansSouci-methods
 #' @param object An object of class `SansSouci`
 #' @export
-get_nb_hyp.SansSouci <- function(object) {
+nHyp.SansSouci <- function(object) {
   object$input$m
 }
 
@@ -281,7 +281,7 @@ print.SansSouci <- function(x, ..., verbose = FALSE) {
   cat("'SansSouci' object:\n")
   input <- object$input
   if (!is.null(input)) {
-    cat("\tNumber of hypotheses:\t", get_nb_hyp(object), "\n")
+    cat("\tNumber of hypotheses:\t", nHyp(object), "\n")
     if (!is.null(nObs(object))) {
       cat("\tNumber of observations:\t", nObs(object), "\n")
     }
@@ -299,10 +299,7 @@ print.SansSouci <- function(x, ..., verbose = FALSE) {
       cat("\n")
       cat("\t", sum(truth), "false null hypotheses (signals)")
       pi0 <- 1 - mean(truth)
-      cat(" out of ",
-          get_nb_hyp(object),
-          " (pi0=", round(pi0, 3), ")",
-          sep = "")
+      cat(" out of ", nHyp(object), " (pi0=", round(pi0, 3), ")", sep = "")
       cat("\n")
     }
   }
@@ -321,7 +318,7 @@ print.SansSouci <- function(x, ..., verbose = FALSE) {
     cat("Output:\n")
     if (verbose) {
       cat("\tp-values:\n")
-      print(summary(output$p_values))
+      print(summary(output$p.values))
       cat("\tCalibrated thresholds:")
       if (all(output$thr %in% c(0, 1))) {
         print(table(output$thr))
@@ -349,8 +346,7 @@ generics::fit
 #'  Defaults to 1000
 #' @param alternative A character string specifying the alternative hypothesis.
 #'   Must be one of "two.sided" (default), "greater" or "less".
-#' @param rowTestFUN A (vectorized) test function.
-#' Defaults to [row_welch_tests].
+#' @param rowTestFUN A (vectorized) test function. Defaults to [row_welch_tests].
 #' @param family A character value, the name of a threshold family. Should be
 #'   one of "Linear", "Beta" and "Simes", or "Oracle". "Linear" and "Simes"
 #'   families are identical.
@@ -395,7 +391,7 @@ generics::fit
 #' plot(res)
 #'
 #' # confidence curve for a subset
-#' S <- which(get_p_values(res) < 0.1 & get_fold_changes(res) > 0.3)
+#' S <- which(pValues(res) < 0.1 & foldChanges(res) > 0.3)
 #' plot(res, S = S)
 #'
 #' # plot two confidence curves
@@ -403,13 +399,13 @@ generics::fit
 #'
 #' resList <- list("Linear" = res, "Beta" = res_beta)
 #' bounds <- lapply(resList, predict, all = TRUE)
-#' plotConfCurve(bounds, xmax = 200)
+#' plot_conf_curve(bounds, xmax = 200)
 #'
 fit.SansSouci <- function(object, alpha, B = 1e3,
                           rowTestFUN = NULL,
                           alternative = c("two.sided", "less", "greater"),
                           family = c("Simes", "Linear", "Beta", "Oracle"),
-                          max_steps_down = 10L, K = get_nb_hyp(object),
+                          max_steps_down = 10L, K = nHyp(object),
                           force = FALSE,
                           verbose = FALSE, ...) {
   alternative <- match.arg(alternative)
@@ -430,7 +426,7 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
   C <- object$input$C
   groups <- object$input$groups
   n_groups <- object$input$n_groups
-  m <- get_nb_hyp(object)
+  m <- nHyp(object)
   n <- nObs(object)
   L <- object$input$n_contrasts
   funName <- NA_character_
@@ -507,7 +503,7 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
     cal$estimate <- matrix(cal$estimate, nrow = L)
     rownames(cal$estimate) <- object$input$contrast_name
   }
-  p_values <- cal$p.value
+  p.values <- cal$p.value
   if (B > 0 && family != "Oracle") {
     t0 <- Sys.time()
     if (verbose) {
@@ -546,7 +542,7 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
     calib <- sanssouci::calibrate(
       p0 = p0, m = m, alpha = alpha,
       family = family, K = K,
-      p = p_values,
+      p = p.values,
       max_steps_down = max_steps_down,
       piv_stat0 = pivStat0
     )
@@ -575,32 +571,32 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
 #' @describeIn all-generics Get p-values
 #' @param object An object. See individual methods for specifics
 #' @export
-get_p_values <- function(object) UseMethod("get_p_values")
+pValues <- function(object) UseMethod("pValues")
 
-#' `get_p_values`: get p-values
+#' `pValues`: get p-values
 #'
 #' @rdname SansSouci-methods
 #' @param object An object of class `SansSouci`
 #' @export
-get_p_values.SansSouci <- function(object) {
+pValues.SansSouci <- function(object) {
   object$output$p.value
 }
 
 #' @describeIn all-generics Get fold changes
 #' @param object An object. See individual methods for specifics
 #' @export
-get_fold_changes <- function(object) UseMethod("get_fold_changes")
+foldChanges <- function(object) UseMethod("foldChanges")
 
 #' @rdname SansSouci-methods
 #' @param object An object of class `SansSouci`
 #' @export
-get_fold_changes.SansSouci <- function(object) {
+foldChanges.SansSouci <- function(object) {
   object$output$estimate
 }
 
 ## An attempt with 'setters'
-# 'set_fold_changes<-' <- function(object, value) UseMethod("set_fold_changes")
-# 'set_fold_changes<-.SansSouci' <- function(object, value) {
+# 'foldChanges<-' <- function(object, value) UseMethod("foldChanges")
+# 'foldChanges<-.SansSouci' <- function(object, value) {
 #     object$output$estimate <- value
 #     object
 # }
@@ -638,11 +634,11 @@ thresholds.SansSouci <- function(object) object$output$thr
 #' plot(res)
 #'
 #' # confidence curve for a subset of hypotheses
-#' S <- which(get_p_values(res) < 0.1 & get_fold_changes(res) > 0.3)
+#' S <- which(pValues(res) < 0.1 & foldChanges(res) > 0.3)
 #' plot(res, S = S)
-plot.SansSouci <- function(x, y, xmax = get_nb_hyp(x), ...) {
+plot.SansSouci <- function(x, y, xmax = nHyp(x), ...) {
   cb <- predict(x, all = TRUE, ...)
-  plotConfCurve(cb, xmax = xmax)
+  plot_conf_curve(cb, xmax = xmax)
 }
 
 #' Post hoc confidence bounds on the true/false positives
@@ -695,11 +691,11 @@ plot.SansSouci <- function(x, y, xmax = get_nb_hyp(x), ...) {
 #' head(bounds)
 #'
 #' # post hoc bound on a subset
-#' S <- which(get_p_values(res) < 0.01)
+#' S <- which(pValues(res) < 0.01)
 #' predict(res, S)
 predict.SansSouci <- function(object,
                               S = seq_len(min(
-                                get_nb_hyp(object),
+                                nHyp(object),
                                 object$input$n_dimensions
                               )),
                               what = c("TP", "FDP"), all = FALSE,
@@ -708,13 +704,13 @@ predict.SansSouci <- function(object,
   if (!all(contrast_name %in% object$input$contrast_name)) {
     stop("contrast_name must be in object$input$contrast_name")
   }
-  p_values <- get_p_values(object)
+  p.values <- pValues(object)
   thr <- thresholds(object)
   lab <- label(object)
 
   # If sansSouci object is two sample test (1 contrast) /struct (0 contrast)
   if (length(object$input$contrast_name) <= 1) {
-    bounds <- posthoc_bound(p_values,
+    bounds <- posthoc_bound(p.values,
       S = S, thr = thr, lab = lab,
       what = what, all = all
     )
@@ -731,8 +727,8 @@ predict.SansSouci <- function(object,
     bounds_list <- list()
     for (contrasts in contrast_name) {
       # Only keep p-values of contrasts
-      p_values_contrast <- p_values[contrasts, ]
-      bounds <- posthoc_bound(p_values_contrast,
+      p.values.contrast <- p.values[contrasts, ]
+      bounds <- posthoc_bound(p.values.contrast,
         S = S, thr = thr, lab = lab,
         what = what, all = all
       )
@@ -762,12 +758,12 @@ predict.SansSouci <- function(object,
 #' used for volcano_plot y-axis. If not specified, `get_p_values(x)` is used
 #' @param contrast_name A character value, the selected contrast. Should be
 #' chosen in `x$input$contrast_name`.
-#' @inheritParams volcano_plot.numeric
+#' @inheritParams volcanoPlot.numeric
 #'
 #' @details The default is to use the fold changes and p-values from the input
 #' SansSouci object. See the vignette
-#' <https://sanssouci-org.github.io/sanssouci/articles/post-hoc_differential-expression_RNAseq.html#custom-statistics-example-using-limma-voom>
-#' for an example where custom fold changes and p-values are used.
+#'   <https://sanssouci-org.github.io/sanssouci/articles/post-hoc_differential-expression_RNAseq.html#custom-statistics-example-using-limma-voom>
+#'   for an example where custom fold changes and p-values are used.
 #'
 #' @export
 #'
@@ -777,41 +773,41 @@ predict.SansSouci <- function(object,
 #' a <- SansSouci(Y = expr_ALL, groups = groups)
 #'
 #' res <- fit(a, B = 100, alpha = 0.1)
-#' volcano_plot(res, q = 0.2, r = 0.2, ylim = c(0, 4), feature_label = "gene")
-volcano_plot.SansSouci <- function(x,
-                                   fold_change = get_fold_changes(x)[contrast_name, ],
-                                   p_values = get_p_values(x)[contrast_name, ],
-                                   p = 1, q = 1, r = 0,
-                                   contrast_name = x$input$contrast_name[1],
-                                   cex = c(0.4, 1.5),
-                                   col = c("#33333333", "#FF0000", "#FF666633"),
-                                   pch = 19, feature_label = "feature",
-                                   ylim = NULL,
-                                   ...) {
+#' volcanoPlot(res, q = 0.2, r = 0.2, ylim = c(0, 4), feature_label = "gene")
+volcanoPlot.SansSouci <- function(x,
+                                  fold_change = foldChanges(x)[contrast_name, ],
+                                  p_value = pValues(x)[contrast_name, ],
+                                  p = 1, q = 1, r = 0,
+                                  contrast_name = x$input$contrast_name[1],
+                                  cex = c(0.4, 1.5),
+                                  col = c("#33333333", "#FF0000", "#FF666633"),
+                                  pch = 19, feature_label = "feature",
+                                  ylim = NULL,
+                                  ...) {
   object <- x
-  if (!(contrast_name %in% rownames(get_p_values(object)))) {
+  if (!(contrast_name %in% rownames(pValues(object)))) {
     stop(paste(
       "Choose a contrast in",
-      paste(rownames(get_p_values(object)),
+      paste(rownames(pValues(object)),
         collapse = ", "
       )
     ))
   }
   fold_change <- force(fold_change)
-  p_values <- force(p_values)
+  p_value <- force(p_value)
 
   if (object$input$type == "1 sample") {
     stop("Can't do a volcano plot for one-sample tests!")
   }
   m <- object$input$n_dimensions
   stopifnot(m == length(fold_change))
-  stopifnot(m == length(p_values))
-  p_values_bound <- get_p_values(object)[contrast_name, ]
+  stopifnot(m == length(p_value))
+  p_value_bound <- pValues(object)[contrast_name, ]
   thr <- thresholds(object)[1:m] # we select at most m hypotheses here
 
-  vp <- volcano_plot(
-    x = fold_change, p_values = p_values,
-    thr = thr, p_values_bound = p_values_bound,
+  vp <- volcanoPlot(
+    x = fold_change, p_value = p_value,
+    thr = thr, p_value_bound = p_value_bound,
     p = p, q = q, r = r,
     cex = cex,
     col = col,

@@ -12,7 +12,7 @@
   alternative = c("two.sided", "less", "greater"),
   family = c("Simes", "Linear", "Beta", "Oracle"),
   max_steps_down = 10L,
-  K = get_nb_hyp(object),
+  K = nHyp(object),
   force = FALSE,
   verbose = FALSE,
   ...
@@ -26,8 +26,7 @@
 \item{B}{An integer value, the number of permutations to be performed.
 Defaults to 1000}
 
-\item{rowTestFUN}{A (vectorized) test function.
-Defaults to \link{row_welch_tests}.}
+\item{rowTestFUN}{A (vectorized) test function. Defaults to \link{row_welch_tests}.}
 
 \item{alternative}{A character string specifying the alternative hypothesis.
 Must be one of "two.sided" (default), "greater" or "less".}
@@ -86,7 +85,7 @@ res <- fit(obj, B = 100, alpha = 0.1)
 plot(res)
 
 # confidence curve for a subset
-S <- which(get_p_values(res) < 0.1 & get_fold_changes(res) > 0.3)
+S <- which(pValues(res) < 0.1 & foldChanges(res) > 0.3)
 plot(res, S = S)
 
 # plot two confidence curves
