@@ -50,11 +50,11 @@
 #' rwt <- row_welch_tests(sim$X, sim$categ, alternative = "greater")
 #'
 #' # calculate, print, and plot confidence bound
-#' cb <- confCurveFromFam(rwt$p.value, refFamily = "Simes", param = 0.1)
+#' cb <- conf_curve_from_fam(rwt$p.value, refFamily = "Simes", param = 0.1)
 #' head(cb)
 #' plotConfCurve(cb, xmax = 200)
 #'
-confCurveFromFam <- function(p.values, refFamily, param, K = length(p.values),
+conf_curve_from_fam <- function(p.values, refFamily, param, K = length(p.values),
                              what = c("TP", "FDP")) {
   m <- length(p.values)
   fam0 <- c("Simes", "Linear", "Beta", "Oracle")

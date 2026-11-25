@@ -93,7 +93,7 @@ test_that("'fit.SansSouciStruct' reproduces the results of 'v_star'", {
   expect_identical(VV, V)
 
   # Simes 1
-  Vmat <- confCurveFromFam(
+  Vmat <- conf_curve_from_fam(
     p.values = pvalues, refFamily = "Simes",
     param = alpha, what = "FP"
   )
