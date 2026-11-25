@@ -20,6 +20,7 @@ pkg_link <- function(path) file.path(yaml::read_yaml("_pkgdown.yml")$url, path)
 <!-- badges: start -->
 [![Coverage Status](https://codecov.io/gh/sanssouci-org/sanssouci/branch/develop/graph/badge.svg)](https://codecov.io/github/sanssouci-org/sanssouci/branch/develop)
 [![R-CMD-check](https://github.com/sanssouci-org/sanssouci/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sanssouci-org/sanssouci/actions/workflows/R-CMD-check.yaml)
+[![SWH](https://archive.softwareheritage.org/badge/origin/https://github.com/sanssouci-org/sanssouci/)](https://archive.softwareheritage.org/browse/origin/?origin_url=https://github.com/sanssouci-org/sanssouci)
 <!-- badges: end -->
 
 The goal of sanssouci [sãsusi] is to perform **post hoc inference**: in a multiple testing context, sanssouci provides statistical guarantees on possibly user-defined and/or data-driven sets of hypotheses. 

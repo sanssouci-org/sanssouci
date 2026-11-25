@@ -34,3 +34,5 @@ TODO*.txt
 ^README\.Rmd$
 ^codecov\.yml$
 ^.lintr$
+^\.positai$
+^\.claude$

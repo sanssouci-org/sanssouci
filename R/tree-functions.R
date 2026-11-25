@@ -141,7 +141,7 @@ nb_elements <- function(forest_structure) {
   return(count)
 }
 
-#' Estimate of the proportion of true nulls in each node of a forest strucure
+#' Estimate of the proportion of true nulls in each node of a forest structure
 #'
 #' @description
 #' Takes a forest structure as input, given by
@@ -286,7 +286,7 @@ structured_zetas <- function(forest_structure,
         NEW_K
       ))
     }
-    continue <- refine && (NEW_K < USAGE_K)
+    continue <- refine && (new_K < usage_K) && (new_K > 0)
   }
   return(zeta_list)
 }
