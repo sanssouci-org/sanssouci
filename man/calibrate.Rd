@@ -71,7 +71,7 @@ the output of 'calibrate(..., max_steps_down = 0)' and
 
 set.seed(0xBEEF)
 m <- 50
-sim <- gaussianSamples(
+sim <- gaussian_samples(
   m = m, rho = 0.3, n = 45,
   pi0 = 0.8, SNR = 3, prob = 0.5
 )

@@ -45,7 +45,7 @@
 #' @examples
 #'
 #' # Generate Gaussian data and perform multiple tests
-#' sim <- gaussianSamples(m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3,
+#' sim <- gaussian_samples(m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3,
 #' prob = 0.5)
 #' rwt <- row_welch_tests(sim$X, sim$categ, alternative = "greater")
 #'

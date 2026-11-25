@@ -2,7 +2,7 @@ context("Confidence envelopes on the false positives")
 
 test_that("Basic checks for 'conf_curve_from_fam'", {
   m <- 52
-  sim <- gaussianSamples(
+  sim <- gaussian_samples(
     m = m, rho = 0.5, n = 10, pi0 = 0.8, SNR = 3,
     prob = 0.5
   )
@@ -42,7 +42,7 @@ test_that("Basic checks for 'conf_curve_from_fam'", {
 test_that("Consistency of output of 'conf_curve_from_fam'", {
   m <- 123
   alpha <- 0.1
-  sim <- gaussianSamples(
+  sim <- gaussian_samples(
     m = m, rho = 0.5, n = 100, pi0 = 0.8,
     SNR = 3, prob = 0.5
   )
@@ -120,7 +120,7 @@ test_that("Ordering of confidence curves with/without calibration", {
 })
 
 test_that("Vanilla test for 'plotConfCurve'", {
-  sim <- gaussianSamples(
+  sim <- gaussian_samples(
     m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3,
     prob = 0.5
   )

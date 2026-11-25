@@ -135,8 +135,8 @@ SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
 #' Create a 'SansSouci' object from simulation in the Gaussian
 #' equi-correlated model
 #'
-#' @param ... Parameters to be passed to [gaussianSamples]
-#' @seealso [gaussianSamples]
+#' @param ... Parameters to be passed to [gaussian_samples]
+#' @seealso [gaussian_samples]
 #' @export
 #' @examples
 #' obj <- SansSouciSim(
@@ -181,7 +181,7 @@ SansSouci <- function(Y, X = NULL, Contrast = NULL, groups = NULL,
 #' }
 #'
 SansSouciSim <- function(...) {
-  sim <- gaussianSamples(...)
+  sim <- gaussian_samples(...)
   SansSouci(Y = sim$X, groups = sim$categ, truth = sim$H)
 }
 
@@ -755,7 +755,7 @@ predict.SansSouci <- function(object,
 #' Volcano plot for a `SansSouci` object
 #'
 #' @param fold_change An optional vector of fold changes, of the same length
-#' as `get_nb_hyp(x)`, used for volcano_plot x-axis. 
+#' as `get_nb_hyp(x)`, used for volcano_plot x-axis.
 #' If not specified, `get_fold_changes(x)`
 #' is used.
 #' @param p_values A vector of p-values, of the same length as `get_nb_hyp(x)`,

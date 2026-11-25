@@ -7,7 +7,7 @@
 SansSouciSim(...)
 }
 \arguments{
-\item{...}{Parameters to be passed to \link{gaussianSamples}}
+\item{...}{Parameters to be passed to \link{gaussian_samples}}
 }
 \description{
 Create a 'SansSouci' object from simulation in the Gaussian
@@ -57,5 +57,5 @@ volcano_plot(res, q = 0.05, r = 0.2)
 
 }
 \seealso{
-\link{gaussianSamples}
+\link{gaussian_samples}
 }
