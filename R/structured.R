@@ -801,7 +801,7 @@ pred_pathway_structured <- function(
   # such that zeta_k = 0) and of a m x H matrix M such that
   # M[i, h] gives the index k of forest_structure[[h]] such that hypothesis i
   # is in the R_k given by forest_structure[[h]][[k]]
-  etas <- zetas_list
+  etas <- list()
   K_MINUS <- list()
   M <- matrix(0, nrow = m, ncol = H)
   for (h in 1:H) {
@@ -854,8 +854,8 @@ pred_pathway_structured <- function(
           # either because we are past the max depth of i_t;
           # in this case we just don't do anything
           etas[[h]][[k]] <- etas[[h]][[k]] + 1
-          if (etas[[h]][[k]] >= ZL[[h]][[k]]) {
-            K_MINUS[[h]][[k]] <- C[[h]][[k]]
+          if (etas[[h]][[k]] >= zetas_list[[h]][[k]]) {
+            K_MINUS[[h]][[k]] <- forest_structure[[h]][[k]]
             break
           }
         }
