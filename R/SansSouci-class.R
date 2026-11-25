@@ -203,7 +203,7 @@ SansSouciSim <- function(...) {
 #' label(res)
 #' print(res)
 #' str(p_values(res))
-#' str(foldChanges(res))
+#' str(fold_changes(res))
 #' str(thresholds(res))
 #' vp <- volcanoPlot(res, q = 0.05, r = 0.5)
 #'
@@ -392,7 +392,7 @@ generics::fit
 #' plot(res)
 #'
 #' # confidence curve for a subset
-#' S <- which(p_values(res) < 0.1 & foldChanges(res) > 0.3)
+#' S <- which(p_values(res) < 0.1 & fold_changes(res) > 0.3)
 #' plot(res, S = S)
 #'
 #' # plot two confidence curves
@@ -591,13 +591,13 @@ fold_changes <- function(object) UseMethod("fold_changes")
 #' @rdname SansSouci-methods
 #' @param object An object of class `SansSouci`
 #' @export
-foldChanges.SansSouci <- function(object) {
+fold_changes.SansSouci <- function(object) {
   object$output$estimate
 }
 
 ## An attempt with 'setters'
-# 'foldChanges<-' <- function(object, value) UseMethod("foldChanges")
-# 'foldChanges<-.SansSouci' <- function(object, value) {
+# 'fold_changes<-' <- function(object, value) UseMethod("fold_changes")
+# 'fold_changes<-.SansSouci' <- function(object, value) {
 #     object$output$estimate <- value
 #     object
 # }
@@ -635,7 +635,7 @@ thresholds.SansSouci <- function(object) object$output$thr
 #' plot(res)
 #'
 #' # confidence curve for a subset of hypotheses
-#' S <- which(p_values(res) < 0.1 & foldChanges(res) > 0.3)
+#' S <- which(p_values(res) < 0.1 & fold_changes(res) > 0.3)
 #' plot(res, S = S)
 plot.SansSouci <- function(x, y, xmax = n_hyp(x), ...) {
   cb <- predict(x, all = TRUE, ...)
@@ -776,7 +776,7 @@ predict.SansSouci <- function(object,
 #' res <- fit(a, B = 100, alpha = 0.1)
 #' volcanoPlot(res, q = 0.2, r = 0.2, ylim = c(0, 4), feature_label = "gene")
 volcanoPlot.SansSouci <- function(x,
-                                  fold_change = foldChanges(x)[contrast_name, ],
+                                  fold_change = fold_changes(x)[contrast_name, ],
                                   p_value = p_values(x)[contrast_name, ],
                                   p = 1, q = 1, r = 0,
                                   contrast_name = x$input$contrast_name[1],

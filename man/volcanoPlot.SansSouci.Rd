@@ -6,7 +6,7 @@
 \usage{
 volcanoPlot.SansSouci(
   x,
-  fold_change = foldChanges(x)[contrast_name, ],
+  fold_change = fold_changes(x)[contrast_name, ],
   p_value = p_values(x)[contrast_name, ],
   p = 1,
   q = 1,
