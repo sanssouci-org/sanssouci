@@ -65,6 +65,6 @@ print(res)
 str(p_values(res))
 str(fold_changes(res))
 str(thresholds(res))
-vp <- volcanoPlot(res, q = 0.05, r = 0.5)
+vp <- volcano_plot(res, q = 0.05, r = 0.5)
 
 }

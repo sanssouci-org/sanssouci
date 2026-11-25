@@ -277,7 +277,7 @@ Let us assume that we are interested in genes selected by the BH procedure at le
 ```{r}
 #| label: volcano-Simes
 ylim <- c(0, 6)
-volcanoPlot(res_Simes, q = q, r = r, ylim = ylim)
+volcano_plot(res_Simes, q = q, r = r, ylim = ylim)
 ```
 
 This type of plot is called a "volcano plot" @CC2003. Post hoc inference makes it possible to obtain statistical guarantees on selections such as the ones represented in the above figure.
@@ -286,14 +286,14 @@ The substantial gain in power offered by the above-described calibration is illu
 
 ```{r}
 #| label: volcano-Simes-cal
-volcanoPlot(res, q = q, r = r, ylim = ylim)
+volcano_plot(res, q = q, r = r, ylim = ylim)
 ```
 
 and for the Beta reference family.
 
 ```{r}
 #| label: volcano-Beta-cal
-volcanoPlot(res_Beta, q = q, r = r, ylim = ylim)
+volcano_plot(res_Beta, q = q, r = r, ylim = ylim)
 ```
 
 The comparison between these bounds may be summarized by the following Table:

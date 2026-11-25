@@ -201,7 +201,7 @@ A classical practice in gene expression studies is to define DE genes as those p
 
 ```{r}
 #| label: volcano
-volcanoPlot(res, p = 1e-4, r = 0.5)
+volcano_plot(res, p = 1e-4, r = 0.5)
 ```
 
 This type of plot is called a "volcano plot" @CC2003. Post hoc inference makes it possible to obtain statistical guarantees on selections such as the ones represented in the above figure.
@@ -243,7 +243,7 @@ Finally we obtain the volcano plot based on limma statistics.
 
 ```{r}
 #| label: volcano-limma
-volcanoPlot(res,
+volcano_plot(res,
             fold_changes = TT$logFC,
             p_values = TT$P.Value,
             p = 1e-4, r = 0.5)

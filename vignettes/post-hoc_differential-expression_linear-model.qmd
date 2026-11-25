@@ -206,7 +206,7 @@ A classical practice in gene expression studies is to define DE genes as those p
 
 ```{r}
 #| label: volcano-1
-volcanoPlot(res, p = 1e-3, r = 0.5)
+volcano_plot(res, p = 1e-3, r = 0.5)
 ```
 
 This type of plot is called a "volcano plot" @CC2003. Post hoc inference makes it possible to obtain statistical guarantees on selections such as the ones represented in the above figure.
@@ -300,14 +300,14 @@ The volcano plot can be used to make selection of interest genes. Here, the name
 
 ```{r}
 #| label: volcano-contrast-fev
-volcanoPlot(x = res, contrast_name = "fev1_fvc_utah", p = 1e-3, r = 0.5)
+volcano_plot(x = res, contrast_name = "fev1_fvc_utah", p = 1e-3, r = 0.5)
 ```
 
 Compared to the volcano plot obtained in the preceding section, the selected genes are the same because the $p$-values are identical. However, the confidence bounds are less tight. This is explained by the fact that here two contrasts are tested instead of one: the total number of hypotheses tested is twice as large as previously, resulting in a more severe multiple testing correction.
 
 ```{r}
 #| label: volcano-contrast-age
-volcanoPlot(x = res, contrast_name = "age_enroll", p = 0.001, r = 0.01)
+volcano_plot(x = res, contrast_name = "age_enroll", p = 0.001, r = 0.01)
 ```
 
 As noted above, the association of variable `age_enrol` with gene expression is much weaker.

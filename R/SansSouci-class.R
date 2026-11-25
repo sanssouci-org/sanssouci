@@ -149,7 +149,7 @@ SansSouci <- function(Y, X = NULL, contrast = NULL, groups = NULL,
 #' set.seed(542)
 #' res <- fit(obj, B = 100, alpha = alpha, family = "Simes")
 #' plot(res)
-#' volcanoPlot(res, q = 0.05, r = 0.2)
+#' volcano_plot(res, q = 0.05, r = 0.2)
 #'
 #' # upper bound on number of signals if the entire data set
 #' # (and corresponding lower bound on FDP)
@@ -177,7 +177,7 @@ SansSouci <- function(Y, X = NULL, contrast = NULL, groups = NULL,
 #' \dontrun{
 #' # Use wilcoxon tests instead of Welch tests
 #' res <- fit(obj, B = 100, alpha = 0.1, row_test_fun = row_wilcoxon_tests)
-#' volcanoPlot(res, q = 0.05, r = 0.2)
+#' volcano_plot(res, q = 0.05, r = 0.2)
 #' }
 #'
 SansSouciSim <- function(...) {
@@ -205,7 +205,7 @@ SansSouciSim <- function(...) {
 #' str(p_values(res))
 #' str(fold_changes(res))
 #' str(thresholds(res))
-#' vp <- volcanoPlot(res, q = 0.05, r = 0.5)
+#' vp <- volcano_plot(res, q = 0.05, r = 0.5)
 #'
 NULL
 #> NULL
@@ -759,11 +759,11 @@ predict.SansSouci <- function(object,
 #' used for volcano_plot y-axis. If not specified, `get_p_values(x)` is used
 #' @param contrast_name A character value, the selected contrast. Should be
 #' chosen in `x$input$contrast_name`.
-#' @inheritParams volcanoPlot.numeric
+#' @inheritParams volcano_plot.numeric
 #'
 #' @details The default is to use the fold changes and p-values from the input
 #' SansSouci object. See the vignette
-#'   <https://sanssouci-org.github.io/sanssouci/articles/post-hoc_differential-expression_RNAseq.html#custom-statistics-example-using-limma-voom>
+#'   <https://sanssouci-org.github.io/sanssouci/articles/post-hoc_differential-expression_RNAseq.html#custom-statistics-example-using-limma-voom> # nolint
 #'   for an example where custom fold changes and p-values are used.
 #'
 #' @export
@@ -774,17 +774,19 @@ predict.SansSouci <- function(object,
 #' a <- SansSouci(Y = expr_ALL, groups = groups)
 #'
 #' res <- fit(a, B = 100, alpha = 0.1)
-#' volcanoPlot(res, q = 0.2, r = 0.2, ylim = c(0, 4), feature_label = "gene")
-volcanoPlot.SansSouci <- function(x,
-                                  fold_change = fold_changes(x)[contrast_name, ],
-                                  p_value = p_values(x)[contrast_name, ],
-                                  p = 1, q = 1, r = 0,
-                                  contrast_name = x$input$contrast_name[1],
-                                  cex = c(0.4, 1.5),
-                                  col = c("#33333333", "#FF0000", "#FF666633"),
-                                  pch = 19, feature_label = "feature",
-                                  ylim = NULL,
-                                  ...) {
+#' volcano_plot(res, q = 0.2, r = 0.2, ylim = c(0, 4), feature_label = "gene")
+volcano_plot.SansSouci <- function(x,
+                                   fold_change = fold_changes(x)[
+                                     contrast_name,
+                                   ],
+                                   p_value = p_values(x)[contrast_name, ],
+                                   p = 1, q = 1, r = 0,
+                                   contrast_name = x$input$contrast_name[1],
+                                   cex = c(0.4, 1.5),
+                                   col = c("#33333333", "#FF0000", "#FF666633"),
+                                   pch = 19, feature_label = "feature",
+                                   ylim = NULL,
+                                   ...) {
   object <- x
   if (!(contrast_name %in% rownames(p_values(object)))) {
     stop(paste(
@@ -806,7 +808,7 @@ volcanoPlot.SansSouci <- function(x,
   p_value_bound <- p_values(object)[contrast_name, ]
   thr <- thresholds(object)[1:m] # we select at most m hypotheses here
 
-  vp <- volcanoPlot(
+  vp <- volcano_plot(
     x = fold_change, p_value = p_value,
     thr = thr, p_value_bound = p_value_bound,
     p = p, q = q, r = r,
