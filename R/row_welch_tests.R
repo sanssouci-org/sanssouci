@@ -316,7 +316,7 @@ row_welch_tests1 <- function(mat, categ,
   alternative <- match.arg(alternative)
   categ_check(categ, ncol(mat))
 
-  summary_statistics <- get_summary_statistics(mat, categ = categ)
+  summary_statistics <- summary_statistics(mat, categ = categ)
   Y <- summary_statistics[["0"]]
   X <- summary_statistics[["1"]] ## as per the doc of t.test:
   ## 'alternative = "greater"' is the alternative that 'x' has a larger  mean
@@ -352,8 +352,8 @@ row_welch_tests1 <- function(mat, categ,
 #'
 #' mat <- matrix(rnorm(3051 * 38), ncol = 38)
 #' cls <- rep(c(0, 1), times = c(27, 11))
-#' stats <- get_summary_statistics(mat, categ = cls)
-get_summary_statistics <- function(mat, categ) {
+#' stats <- summary_statistics(mat, categ = cls)
+summary_statistics <- function(mat, categ) {
   stopifnot(ncol(mat) == length(categ))
   cats <- sort(unique(categ))
   res <- list()

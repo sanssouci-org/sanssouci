@@ -14,9 +14,9 @@ test_that("Correctness of permutation p-values", {
 
   # Two different ways of getting permutation p-values
   null_stats <- cbind(res$null_statistics, res$statistics)
-  sw <- sweep(abs(null_stats), 
-              MARGIN = 1, 
-              STATS = abs(res$statistics), 
+  sw <- sweep(abs(null_stats),
+              MARGIN = 1,
+              STATS = abs(res$statistics),
               FUN = ">=")
   p_values <- rowMeans(sw)
   expect_identical(res$rand_p_value, p_values)
@@ -41,16 +41,16 @@ test_that("Correctness of sign-flipping p-values", {
   # Two different ways of getting sign flipping p-values give
   # identical results
   null_stats <- cbind(res$null_statistics, res$statistics)
-  sw <- sweep(abs(null_stats), 
-              MARGIN = 1, 
-              STATS = abs(res$statistics), 
+  sw <- sweep(abs(null_stats),
+              MARGIN = 1,
+              STATS = abs(res$statistics),
               FUN = ">=")
   p_values <- rowMeans(sw)
   expect_identical(res$rand_p_values, p_values)
 
   # consistency between parametric and randomization p-values
   for (alt in c("two.sided", "less", "greater")) {
-    res <- test_by_randomization(X = mat, B = 100, 
+    res <- test_by_randomization(X = mat, B = 100,
                                  rand_p_value = TRUE,
                                  alternative = alt)
     expect_gt(cor(res$p_values, res$rand_p_values), 0.9)
@@ -69,33 +69,33 @@ test_that("Consistency of randomization p-values with different alternatives", {
 
     ## permutation
     categ <- rep(c(0, 1), times = c(27, n - 27))
-    two.sided <- test_by_randomization(X = mat, categ, B = B,
-                                     alternative = "two.sided")
+    two_sided <- test_by_randomization(X = mat, categ, B = B,
+                                       alternative = "two.sided")
     greater <- test_by_randomization(X = mat, categ, B = B,
-                                   alternative = "greater")
+                                     alternative = "greater")
     less <- test_by_randomization(X = mat, categ, B = B, alternative = "less")
-    expect_equal(two.sided$p_values, 2 * pmin(greater$p_values, less$p_values))
+    expect_equal(two_sided$p_values, 2 * pmin(greater$p_values, less$p_values))
 
     ## swapping the class labels
-    categInv <- 1 - categ
-    two.sidedInv <- test_by_randomization(X = mat, categInv, B = B,
-                                        alternative = "two.sided")
-    greaterInv <- test_by_randomization(X = mat, categInv, B = B,
-                                      alternative = "greater")
-    lessInv <- test_by_randomization(X = mat, categInv, B = B,
-                                   alternative = "less")
-    expect_equal(two.sidedInv$p_values, two.sided$p_values)
-    expect_equal(greaterInv$p_values, less$p_values)
-    expect_equal(lessInv$p_values, greater$p_values)
-
+    categ_inv <- 1 - categ
+    two_sided_inv <- test_by_randomization(X = mat, categ_inv, B = B,
+                                           alternative = "two.sided")
+    greater_inv <- test_by_randomization(X = mat, categ_inv, B = B,
+                                         alternative = "greater")
+    less_inv <- test_by_randomization(X = mat, categ_inv, B = B,
+                                      alternative = "less")
+    expect_equal(two_sided_inv$p_values, two_sided$p_values)
+    expect_equal(greater_inv$p_values, less$p_values)
+    expect_equal(less_inv$p_values, greater$p_values)
+    
     ## randomization
-    two.sided <- test_by_randomization(X = mat, categInv, B = B,
-                                     alternative = "two.sided")
-    greater <- test_by_randomization(X = mat, categInv, B = B,
-                                   alternative = "greater")
-    less <- test_by_randomization(X = mat, categInv, B = B,
-                                alternative = "less")
-    expect_equal(two.sided$p_values, 2 * pmin(greater$p_values, less$p_values))
+    two_sided <- test_by_randomization(X = mat, categ_inv, B = B,
+                                       alternative = "two.sided")
+    greater <- test_by_randomization(X = mat, categ_inv, B = B,
+                                     alternative = "greater")
+    less <- test_by_randomization(X = mat, categ_inv, B = B,
+                                  alternative = "less")
+    expect_equal(two_sided$p_values, 2 * pmin(greater$p_values, less$p_values))
   }
 })
 

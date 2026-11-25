@@ -1,6 +1,6 @@
 #' Perform JER calibration from randomization p-values
 #'
-#' @inheritParams get_pivotal_stat
+#' @inheritParams pivotal_stat
 #' @param alpha A numeric value in `[0,1]`, the target (JER) risk
 #' @param family A character value, the name of a threshold family. Should be
 #'   one of "Linear", "Beta" and "Simes", or "Oracle". "Linear" and "Simes"
@@ -158,7 +158,7 @@ calibrate0 <- function(p0, m, alpha,
   }
   piv_stat <- piv_stat0
   if (is.null(piv_stat)) {
-    piv_stat <- get_pivotal_stat(p0, m, t_inv, min(nrow(p0), K))
+    piv_stat <- pivotal_stat(p0, m, t_inv, min(nrow(p0), K))
   }
   lambda <- stats::quantile(piv_stat, alpha, type = 1)
   # 'type=1' corresponds to inverse empirical cdf as per (20) in BNR 2020
@@ -200,9 +200,9 @@ calibrate0 <- function(p0, m, alpha,
 #'
 #' B <- 10
 #' set.seed(123)
-#' perm0 <- sanssouci:::get_perm(X, categ, B, row_welch_tests)
+#' perm0 <- sanssouci:::perm_stat(X, categ, B, row_welch_tests)
 #'
-#' # for this particular test 'get_perm' can be bypassed
+#' # for this particular test 'perm_stat' can be bypassed
 #' set.seed(123)
 #' null_groups <- replicate(B, sample(categ))
 #' perm <- row_welch_tests(X, null_groups)
@@ -211,11 +211,11 @@ calibrate0 <- function(p0, m, alpha,
 
 #' # Wilcoxon tests
 #' set.seed(123)
-#' perm0 <- sanssouci:::get_perm(X, categ, B, row_wilcoxonTests)
+#' perm0 <- sanssouci:::perm_stat(X, categ, B, row_wilcoxonTests)
 #' perm <- row_wilcoxonTests(X, null_groups)
 #' identical(perm0$p_value, perm$p_value)
 #' identical(perm0$statistic, perm$statistic)
-get_perm <- function(X, categ, B,
+perm_stat <- function(X, categ, B,
                      row_test_fun = row_welch_tests,
                      alternative = c("two.sided", "less", "greater")) {
   m <- nrow(X)
@@ -264,11 +264,11 @@ get_perm <- function(X, categ, B,
 #' B <- 10
 #' null_groups <- replicate(B, sample(categ))
 #' p0 <- row_welch_tests(X, null_groups)$p_value
-#' piv_stat <- get_pivotal_stat(p0, m)
+#' piv_stat <- pivotal_stat(p0, m)
 #' quantile(piv_stat, 0.2)
 #'
 #' @export
-get_pivotal_stat <- function(p0, m,
+pivotal_stat <- function(p0, m,
                              t_inv = t_inv_linear,
                              K = nrow(p0)) {
   K <- force(K)
