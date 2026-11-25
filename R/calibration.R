@@ -276,7 +276,7 @@ get_pivotal_stat <- function(p0, m,
   stopifnot(K <= m)
 
   ## Step 2: order each column
-  p0s <- partialColSort(p0, K)
+  p0s <- partial_col_sort(p0, K)
   B <- ncol(p0s)
 
   ## Step 3: apply template function
