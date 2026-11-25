@@ -1,4 +1,4 @@
-# getFactorModelCovarianceMatrix
+# sigma_factor_model
 #
 # calculate the covariance matrix of a factor model
 #
@@ -9,12 +9,12 @@
 # @param rho \code{1-rho} is the standard deviation of the noise
 # @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 #' @importFrom Matrix Matrix
-getFactorModelCovarianceMatrix <- function(m, h = numeric(0),
-                                           P = Matrix(
-                                             nrow = m,
-                                             ncol = length(h)
-                                           ),
-                                           rho = 0) {
+sigma_factor_model <- function(m, h = numeric(0), 
+                               P = Matrix(
+                                 nrow = m,
+                                 ncol = length(h)
+                               ),
+                               rho = 0) {
   k <- length(h)
   ## sanity checks
   stopifnot(nrow(P) == m)

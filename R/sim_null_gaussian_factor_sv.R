@@ -21,7 +21,7 @@
 #' sim0 <- sanssouci:::sim_null_gaussian_factor_sv(m)
 #' str(sim0)
 #' sum(is.na(sanssouci:::sim_null_gaussian_factor_sv(m)))
-#' S0 <- getFactorModelCovarianceMatrix(m)
+#' S0 <- sigma_factor_model(m)
 #' image(S0)
 #'
 #' ## equi-correlated
@@ -31,7 +31,7 @@
 #' sim1 <- sanssouci:::sim_null_gaussian_factor_sv(m,
 #'           h, P, rho=rho)
 #' str(sim1)
-#' S1 <- getFactorModelCovarianceMatrix(m, h, P, rho=rho)
+#' S1 <- sigma_factor_model(m, h, P, rho=rho)
 #' image(S1)
 #'
 #' ## 3-factor model
@@ -43,10 +43,10 @@
 #' gamma3 <- rep(c(-1, 1), times=m/2)
 #' P <- cbind(gamma1, gamma2, gamma3)/sqrt(m)
 #'
-#' sim3 <- sanssouci:::sim_null_gaussian_factor_sv(m,
+#' sim3 <- sim_null_gaussian_factor_sv(m,
 #'               h, P, rho=rho)
 #' str(sim3)
-#' S3 <- getFactorModelCovarianceMatrix(m, h, P, rho=rho)
+#' S3 <- sigma_factor_model(m, h, P, rho=rho)
 #' image(S3)
 #' sim3
 #'

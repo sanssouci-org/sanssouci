@@ -18,7 +18,7 @@ test_that("Simulation of null hypotheses from factor model", {
   })
   expect_equal(length(sim0$Y), m)
   expect_null(sim0$w)
-  S0 <- getFactorModelCovarianceMatrix(m)
+  S0 <- sigma_factor_model(m)
   expect_identical(S0, diag(m))
 
   Y0 <- sim_null_gaussian_factor(m, flavor = "independent")
@@ -70,7 +70,7 @@ test_that("Simulation of null hypotheses from factor model", {
   )
   expect_identical(Y3[, 1], sim3$Y)
 
-  Sigma <- getFactorModelCovarianceMatrix(m, h, P = P, rho = rho)
+  Sigma <- sigma_factor_model(m, h, P = P, rho = rho)
   expect_equal(nrow(Sigma), ncol(Sigma))
   expect_equal(nrow(Sigma), m)
 })
