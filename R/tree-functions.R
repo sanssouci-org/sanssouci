@@ -130,11 +130,11 @@ zeta_dkwm <- function(p_values, lambda, ...) {
 #' @return An integer, the number of regions.
 #'
 #' @export
-nb_elements <- function(C) {
-  H <- length(C)
+nb_elements <- function(forest_structure) {
+  H <- length(forest_structure)
   count <- 0
   for (h in H:1) {
-    count <- count + length(C[[h]])
+    count <- count + length(forest_structure[[h]])
   }
   return(count)
 }
