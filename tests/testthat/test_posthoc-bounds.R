@@ -20,12 +20,12 @@ test_that("I/O of 'posthoc_bound'", {
   s <- sample(m, 1)
   S <- sample(m, s)
   bounds <- posthoc_bound(
-    p.values = pval, S = S, thr = thr, lab = "method",
+    p_values = pval, S = S, thr = thr, lab = "method",
     what = what
   )
   expect_equal(nrow(bounds), nb_stats)
   bounds <- posthoc_bound(
-    p.values = pval, S = S, thr = thr, lab = "method",
+    p_values = pval, S = S, thr = thr, lab = "method",
     what = what, all = TRUE
   )
   expect_equal(nrow(bounds), nb_stats * s)
@@ -34,12 +34,12 @@ test_that("I/O of 'posthoc_bound'", {
   s <- 1
   S <- sample(m, s)
   bounds <- posthoc_bound(
-    p.values = pval, S = S, thr = thr, lab = "method",
+    p_values = pval, S = S, thr = thr, lab = "method",
     what = what
   )
   expect_equal(nrow(bounds), nb_stats)
   bounds <- posthoc_bound(
-    p.values = pval, S = S, thr = thr, lab = "method",
+    p_values = pval, S = S, thr = thr, lab = "method",
     what = what, all = TRUE
   )
   expect_equal(nrow(bounds), nb_stats * s)
@@ -47,41 +47,41 @@ test_that("I/O of 'posthoc_bound'", {
   # empty subset
   S <- integer(0L)
   bounds <- posthoc_bound(
-    p.values = pval, S = S, thr = thr, lab = "method",
+    p_values = pval, S = S, thr = thr, lab = "method",
     what = what
   )
   expect_equal(nrow(bounds), nb_stats)
   bounds <- posthoc_bound(
-    p.values = pval, S = S, thr = thr, lab = "method",
+    p_values = pval, S = S, thr = thr, lab = "method",
     what = what, all = TRUE
   )
   expect_equal(nrow(bounds), 0)
 
   # not a subset
   S <- m + 1
-  expect_error(posthoc_bound(p.values = pval, S = S, thr = thr, lab = "method"),
+  expect_error(posthoc_bound(p_values = pval, S = S, thr = thr, lab = "method"),
     regexp = "Argument 'S' should be a subset of indices between 1 and "
   )
   S <- 1 + 0:m
-  expect_error(posthoc_bound(p.values = pval, S = S, thr = thr, lab = "method"),
+  expect_error(posthoc_bound(p_values = pval, S = S, thr = thr, lab = "method"),
     regexp = "Argument 'S' should be a subset of indices between 1 and "
   )
 
   # invalid 'p.values'
   pval_wrong <- pval
   pval_wrong[1] <- NA
-  expect_error(posthoc_bound(p.values = pval_wrong, thr = thr, lab = "method"),
-    regexp = "Argument 'p.values' should only contain elements between 0 and 1"
+  expect_error(posthoc_bound(p_values = pval_wrong, thr = thr, lab = "method"),
+    regexp = "Argument 'p_values' should only contain elements between 0 and 1"
   )
 
   pval_wrong[1] <- -1
-  expect_error(posthoc_bound(p.values = pval_wrong, thr = thr, lab = "method"),
-    regexp = "Argument 'p.values' should only contain elements between 0 and 1"
+  expect_error(posthoc_bound(p_values = pval_wrong, thr = thr, lab = "method"),
+    regexp = "Argument 'p_values' should only contain elements between 0 and 1"
   )
 
   pval_wrong[1] <- 2
-  expect_error(posthoc_bound(p.values = pval_wrong, thr = thr, lab = "method"),
-    regexp = "Argument 'p.values' should only contain elements between 0 and 1"
+  expect_error(posthoc_bound(p_values = pval_wrong, thr = thr, lab = "method"),
+    regexp = "Argument 'p_values' should only contain elements between 0 and 1"
   )
 })
 

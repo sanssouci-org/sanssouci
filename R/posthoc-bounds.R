@@ -1,4 +1,34 @@
-posthoc_bound <- function(p.values, S = seq_along(p.values), thr = NULL,
+#' Post hoc bounds of a selection
+#'
+#' @param p_values a vector of p-values
+#' @param S the subset of indice of the p_values vector
+#' @param thr a vector a thresholds given by [calibrate]
+#' @param lab label of the method used
+#' @param what type of quantities. Should be in c("FP", "TP", "FDP", "TDP").
+#' @param all Boolean to specify if the function return bounds for all tests
+#'
+#' @returns data frame with the post hoc bounds
+#' @export
+#'
+#' @examples
+#' set.seed(0xBEEF)
+#' m <- 50
+#' sim <- gaussian_samples(
+#'   m = m, rho = 0.3, n = 45,
+#'   pi0 = 0.8, SNR = 3, prob = 0.5
+#' )
+#' Y <- sim$X
+#' groups <- sim$categ
+#' p <- row_welch_tests(Y, groups)$p.value
+#'
+#' B <- 100
+#' null_groups <- replicate(B, sample(groups))
+#' p0 <- row_welch_tests(Y, null_groups)$p.value
+#'
+#' calib0 <- calibrate0(p0, m, alpha = 0.1)
+#' thr = calib0$thr
+#' res <- posthoc_bound(p, thr = thr, lab = "Simes")
+posthoc_bound <- function(p_values, S = seq_along(p_values), thr = NULL,
                           lab = NULL,
                           what = c("TP", "FDP"), all = FALSE) {
   if (is.null(thr)) {
@@ -7,56 +37,56 @@ posthoc_bound <- function(p.values, S = seq_along(p.values), thr = NULL,
   if (is.null(lab)) {
     stop("Argument 'lab' must be non NULL")
   }
-  if (any(is.na(p.values)) || min(p.values) < 0 || max(p.values) > 1) {
-    stop("Argument 'p.values' should only contain elements between 0 and 1")
+  if (any(is.na(p_values)) || min(p_values) < 0 || max(p_values) > 1) {
+    stop("Argument 'p_values' should only contain elements between 0 and 1")
   }
-  if ((length(S) > 0) && (min(S) <= 0 || max(S) > length(p.values))) {
+  if ((length(S) > 0) && (min(S) <= 0 || max(S) > length(p_values))) {
     stop("Argument 'S' should be a subset of indices between 1 and ",
-         length(p.values))
+         length(p_values))
   }
 
   s <- length(S)
   idxs <- seq_len(s)
-  pS <- p.values[S]
+  ps <- p_values[S]
 
-  o <- order(pS)
-  sorted_p <- pS[o]
+  o <- order(ps)
+  sorted_p <- ps[o]
 
-  max_FP <- rep(NA_integer_, s)
-  if (length(thr) == length(p.values) && all(thr %in% c(0, 1))) {
+  max_fp <- rep(NA_integer_, s)
+  if (length(thr) == length(p_values) && all(thr %in% c(0, 1))) {
     # assume 'thr' is in fact the "truth" <=> Oracle thresholds
     # then it suffices to count the number of '0' in 'thr', cumulatively
-    max_FP <- cumsum(thr[S[o]] == 0)
+    max_fp <- cumsum(thr[S[o]] == 0)
   } else {
-    max_FP <- curveMaxFP(sorted_p, thr)
+    max_fp <- curveMaxFP(sorted_p, thr)
   }
-  bounds <- formatBounds(max_FP, idxs = idxs, lab = lab, what = what, all = all)
-  bounds
+  bounds <- formatBounds(max_fp, idxs = idxs, lab = lab, what = what, all = all)
+  return(bounds)
 }
 
 
 #' Table of bounds
 #'
-#' @param max_FP a vector of the upper boud for the number of False Discovery
-#' @param idxs vector of indices of the selection
-#' @param lab label of the method used
+#' @param max_fp a vector of the upper boud for the number of False Discovery.
+#' @param idxs vector of indices of the selection.
+#' @param lab label of the method used.
 #' @param what type of quantities. Should be in c("FP", "TP", "FDP", "TDP").
-#' @param all Boolean to specify if the function return bounds for all tests
+#' @param all Boolean to specify if the function return bounds for all tests.
 #'
 #' @return data frame with the post hoc bounds
 #' @export
 #'
-formatBounds <- function(max_FP, idxs = seq_len(max_FP), lab = NULL,
+formatBounds <- function(max_fp, idxs = seq_len(max_fp), lab = NULL,
                          what = c("TP", "FDP"), all = FALSE) {
-  stopifnot(length(max_FP) == length(idxs))
-  max_FDP <- max_FP / idxs
+  stopifnot(length(max_fp) == length(idxs))
+  max_FDP <- max_fp / idxs
   what0 <- c("FP", "TP", "FDP", "TDP")
   if (!all(what %in% what0)) {
     stop("Error in argument 'what':",
          " only the following statistics are supported: ",
          paste(what0, collapse = ", "))
   }
-  if (length(max_FP) == 0) {
+  if (length(max_fp) == 0) {
     if (all) { # output should be empty (no subsets of positive size)
       mat <- matrix(NA, nrow = 0, ncol = 4)
       colnames(mat) <- c("x", "label", "stat", "bound")
@@ -64,7 +94,7 @@ formatBounds <- function(max_FP, idxs = seq_len(max_FP), lab = NULL,
       return(bounds)
     } else { # output should not be empty (number of FP in empty set is 0)
       idxs <- 0
-      max_FP <- 0 # number of FP in empty set is 0
+      max_fp <- 0 # number of FP in empty set is 0
       max_FDP <- 0 # FDP in empty set is 0
     }
   }
@@ -74,8 +104,8 @@ formatBounds <- function(max_FP, idxs = seq_len(max_FP), lab = NULL,
     row.names = NULL
   )
   boundsList <- list(
-    FP = cbind(annot, stat = "FP", bound = max_FP),
-    TP = cbind(annot, stat = "TP", bound = idxs - max_FP),
+    FP = cbind(annot, stat = "FP", bound = max_fp),
+    TP = cbind(annot, stat = "TP", bound = idxs - max_fp),
     FDP = cbind(annot, stat = "FDP", bound = max_FDP),
     TDP = cbind(annot, stat = "TDP", bound = 1 - max_FDP)
   )

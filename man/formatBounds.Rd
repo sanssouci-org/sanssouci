@@ -13,15 +13,15 @@ formatBounds(
 )
 }
 \arguments{
-\item{max_FP}{a vector of the upper boud for the number of False Discovery}
+\item{max_FP}{a vector of the upper boud for the number of False Discovery.}
 
-\item{idxs}{vector of indices of the selection}
+\item{idxs}{vector of indices of the selection.}
 
-\item{lab}{label of the method used}
+\item{lab}{label of the method used.}
 
 \item{what}{type of quantities. Should be in c("FP", "TP", "FDP", "TDP").}
 
-\item{all}{Boolean to specify if the function return bounds for all tests}
+\item{all}{Boolean to specify if the function return bounds for all tests.}
 }
 \value{
 data frame with the post hoc bounds
