@@ -14,9 +14,9 @@
 #' @return A list containing the following components:
 #' \describe{
 #'   \item{statistic}{the value of the t-statistics}
-#'   \item{parameter}{the degrees of freedom for the t-statistics}
 #'   \item{p_value}{the p-values for the tests}
-#'   \item{estimate}{the correlation}}
+#'   \item{estimate}{the correlation}
+#'   \item{parameter}{the degrees of freedom for the t-statistics}}
 #'   Each of these elements is a matrix of size \code{m x B},
 #'   coerced to a vector of length \code{m} if \code{B=1}
 #'
@@ -60,5 +60,8 @@ row_pearson_correlation_tests <- function(X, categ, alternative = "two.sided") {
       r$cor[, b] <- rr$cor
     }
   }
-  return(list(p_value = r$p_value, statistic = r$statistic, estimate = r$cor))
+  return(list(
+    statistic = r$statistic, 
+    p_value = r$p_value, 
+    estimate = r$cor))
 }

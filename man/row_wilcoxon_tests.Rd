@@ -29,13 +29,14 @@ the normal approximation for the p-value.}
 }
 \value{
 A list containing the following components:
-\describe{ \item{statistic}{the value of the statistics} \item{p.value}{the
-p-values for the tests}}
+\describe{
+\item{statistic}{the value of the statistics}
+\item{p_value}{the p-values for the tests}}
 
 A list containing the following components:
 \describe{
 \item{statistic}{the value of the statistics}
-\item{p.value}{the p-values for the tests}
+\item{p_value}{the p-values for the tests}
 \item{estimate}{the median difference between groups (only calculated if
 \code{B=1} for computational efficiency).}
 }

@@ -22,10 +22,10 @@ Must be one of "two.sided" (default), "greater" or "less".}
 \value{
 A list with elements:
 \describe{
-\item{epsilon_est}{A \eqn{n \times D} matrix of residuals}
-\item{stat_test}{A \eqn{L \times D} matrix of test statistics}
-\item{p.value}{A \eqn{L \times D} matrix of p-values}
-\item{beta_est}{A \eqn{n \times D} matrix of parameter estimates}
+\item{statistic}{A \eqn{L \times D} matrix of test statistics}
+\item{p_value}{A \eqn{L \times D} matrix of p-values}
+\item{estimate}{A \eqn{n \times D} matrix of parameter estimates}
+\item{residual}{A \eqn{n \times D} matrix of residuals}
 }
 }
 \description{

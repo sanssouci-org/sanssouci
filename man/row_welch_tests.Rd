@@ -24,7 +24,7 @@ A list containing the following components:
 \describe{
 \item{statistic}{the value of the t-statistics}
 \item{parameter}{the degrees of freedom for the t-statistics}
-\item{p.value}{the p-values for the tests}
+\item{p_value}{the p-values for the tests}
 \item{estimate}{the mean difference between groups}}
 Each of these elements is a matrix of size \code{m x B}, coerced to a
 vector of length \code{m} if \code{B=1}
@@ -50,10 +50,10 @@ system.time(fwt <- row_welch_tests(mat, categ, alternative = "greater"))
 str(fwt)
 
 # compare with ordinary t.test:
-s_ystem.time(pwt <- apply(mat, 1, FUN = function(x) {
+system.time(pwt <- apply(mat, 1, FUN = function(x) {
   t.test(x[categ == 1], x[categ == 0], alternative = "greater")$p.value
 }))
-all(abs(fwt$p.value - pwt) < 1e-10) ## same results
+all(abs(fwt$p_value - pwt) < 1e-10) ## same results
 
 # with several contrasts/permutations
 B <- 100

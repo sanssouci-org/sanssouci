@@ -14,10 +14,10 @@
 #'
 #' @return A list with elements:
 #' \describe{
-#'   \item{epsilon_est}{A \eqn{n \times D} matrix of residuals}
-#'   \item{stat_test}{A \eqn{L \times D} matrix of test statistics}
-#'   \item{p.value}{A \eqn{L \times D} matrix of p-values}
-#'   \item{beta_est}{A \eqn{n \times D} matrix of parameter estimates}
+#'   \item{statistic}{A \eqn{L \times D} matrix of test statistics}
+#'   \item{p_value}{A \eqn{L \times D} matrix of p-values}
+#'   \item{estimate}{A \eqn{n \times D} matrix of parameter estimates}
+#'   \item{residual}{A \eqn{n \times D} matrix of residuals}
 #' }
 #' @details Based on a python implementation available in the \code{pyperm}
 #'   package: \url{https://github.com/sjdavenport/pyperm/}
@@ -50,32 +50,32 @@ lm_test <- function(Y, X, C, alternative = c("two.sided", "less", "greater")) {
   xtx <- crossprod(X)
   xty <- crossprod(X, Y)
   xtx_inv <- solve(xtx)
-  beta_est <- crossprod(xtx_inv, xty)
+  estimates <- crossprod(xtx_inv, xty)
 
   ## residuals
-  epsilon_est <- Y - X %*% beta_est
+  residuals <- Y - X %*% estimates
 
   ## estimation of residual standard deviation
-  sigma_est <- sqrt(colSums(epsilon_est^2) / df)
+  sigma_est <- sqrt(colSums(residuals^2) / df)
 
   ## test statistic
   cxtx_invct <- C %*% xtx_inv %*% t(C) # matrix L x L
   cxtx_diag <- sqrt(diag(cxtx_invct)) # vector L
   denom <- outer(cxtx_diag, sigma_est, "*") # matrix L x D
-  stat_test <- C %*% beta_est / denom # matrix (L x D)
+  statistics <- C %*% estimates / denom # matrix (L x D)
 
   ## p-values
-  pval <- switch(alternative,
-    "two.sided" = 2 * (1 - pt(abs(stat_test), df = df)),
-    "greater" = 1 - pt(stat_test, df = df),
-    "less" = pt(stat_test, df = df)
+  p_values <- switch(alternative,
+    "two.sided" = 2 * (1 - pt(abs(statistics), df = df)),
+    "greater" = 1 - pt(statistics, df = df),
+    "less" = pt(statistics, df = df)
   )
 
   return(list(
-    epsilon_est = epsilon_est,
-    stat_test = stat_test,
-    p.value = pval,
-    beta_est = beta_est
+    p_value = p_values,
+    statistic = statistics,
+    estimate = estimates,
+    residual = residuals
   ))
 }
 
@@ -133,7 +133,7 @@ bootstrap_permutation <- function(Y, X, C,
 
   ## perform LM test to obtain esiduals
   res_lm <- lm_test(Y = Y, X = X, C = C, alternative = alternative)
-  epsilon_hat <- res_lm$epsilon_est
+  epsilon_hat <- res_lm$residual
 
   ## Bootstrapping of residuals
   epsilon_perm <- array(NA, dim = c(dim(epsilon_hat), B))
@@ -146,16 +146,16 @@ bootstrap_permutation <- function(Y, X, C,
   y_perm <- epsilon_perm
 
   ## Test contrasts for each permuted expression matrix
-  pval_perm <- array(NA, dim = c(D, L, B))
+  perm_p_values <- array(NA, dim = c(D, L, B))
   for (b in 1:B) {
-    pval_perm[, , b] <- lm_test(
+    perm_p_values[, , b] <- lm_test(
       Y = as.matrix(y_perm[, , b]),
       X = X, C = C,
       alternative = alternative
     )$p.value
   }
 
-  return(pval_perm)
+  return(perm_p_values)
 }
 
 #' Mass-univariate bootstrap-based inference for contrasts in a linear model
@@ -173,7 +173,7 @@ bootstrap_permutation <- function(Y, X, C,
 #' @return A list containing the following components:
 #' \describe{
 #'   \item{statistic}{the value of the t-statistics}
-#'   \item{p.value}{the p-values for the tests}
+#'   \item{p_value}{the p-values for the tests}
 #'   Each of these elements is a matrix of size \code{m x B},
 #'   coerced to a vector of length \code{m} if \code{B=1}
 #' }
@@ -196,20 +196,20 @@ row_lm_test <- function(Y, X, C,
   B <- ncol(groups)
 
   res_lm <- lm_test(Y = Y, X = X, C = C, alternative = alternative)
-  epsilon_hat <- res_lm$epsilon_est
+  epsilon_hat <- res_lm$residual
 
   if (all(groups == 1:n) && ncol(matrix(groups)) == 1) {
-    estimate <- C %*% res_lm$beta_est
+    estimate <- C %*% res_lm$estimate
     return(list(
-      p.value = res_lm$p.value, statistic = res_lm$stat_test,
+      p_value = res_lm$p.value, statistic = res_lm$statistic,
       estimate = estimate
     ))
   }
 
   ## Bootstrapping of residuals
-  pval_perm <- array(NA, dim = c(D, L, B))
-  stat_perm <- array(NA, dim = c(D, L, B))
-  estimate_perm <- array(NA, dim = c(D, L, B))
+  perm_statistics <- array(NA, dim = c(D, L, B))
+  perm_p_values <- array(NA, dim = c(D, L, B))
+  perm_estimates <- array(NA, dim = c(D, L, B))
   for (b in 1:B) {
     shuffle_idx <- groups[, b]
     y_perm <- epsilon_hat[shuffle_idx, ]
@@ -217,18 +217,19 @@ row_lm_test <- function(Y, X, C,
       Y = as.matrix(y_perm), X = X, C = C,
       alternative = alternative
     )
-    pval_perm[, , b] <- res_perm$p.value
-    stat_perm[, , b] <- res_perm$stat_test
-    estimate_perm[, , b] <- C %*% res_perm$beta_est
+    perm_statistics[, , b] <- res_perm$statistic
+    perm_p_values[, , b] <- res_perm$p.value
+    perm_estimates[, , b] <- C %*% res_perm$estimate
   }
   ## transform 3 dimensional problem (D, L, B) into a matrix (D*L, B)
-  pval_perm_matrix <- matrix(pval_perm, nrow = D * L, ncol = B)
-  stat_perm_matrix <- matrix(stat_perm, nrow = D * L, ncol = B)
-  estimate_perm_matrix <- matrix(estimate_perm, nrow = D * L, ncol = B)
+  perm_p_values_ <- matrix(perm_p_values, nrow = D * L, ncol = B)
+  perm_statistics_ <- matrix(perm_statistics, nrow = D * L, ncol = B)
+  perm_estimates_ <- matrix(perm_estimates, nrow = D * L, ncol = B)
 
   return(list(
-    p.value = pval_perm_matrix, statistic = stat_perm_matrix,
-    estimate = estimate_perm_matrix
+    statistic = perm_statistics_,
+    p.value = perm_p_values_, 
+    estimate = perm_estimates_
   ))
 }
 
@@ -306,16 +307,16 @@ calibration_bootstap <- function(Y, X, C,
   L <- dim(C)[1]
 
   ## perform permuted pvalues
-  pval_perm <- bootstrap_permutation(
+  perm_p_values <- bootstrap_permutation(
     Y = Y, X = X, C = C, B = B, replace = TRUE,
     alternative = alternative
   )
 
   ## transform 3 dimensional problem (D, L, B) into a matrix (D*L, B)
-  pval_perm_matrix <- matrix(pval_perm, nrow = D * L, ncol = B)
+  perm_p_values_ <- matrix(perm_p_values, nrow = D * L, ncol = B)
 
   ## The next steps of the calibration are already implemented in sanssouci
-  return(calibrate0(pval_perm_matrix,
+  return(calibrate0(perm_p_values_,
     m = D * L, alpha = alpha,
     family = family
   ))
