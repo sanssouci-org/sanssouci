@@ -132,7 +132,7 @@ structured_zeta_dkwm <- function(p_values, lambda, ...) {
 #' @return An integer, the number of regions.
 #'
 #' @export
-n_elements <- function(forest_structure) {
+n_elements_forest_structure <- function(forest_structure) {
   H <- length(forest_structure)
   count <- 0
   for (h in H:1) {
@@ -225,7 +225,7 @@ structured_zetas <- function(forest_structure,
                              verbose = FALSE,
                              ...) {
   H <- length(forest_structure)
-  K <- n_elements(forest_structure)
+  K <- n_elements_forest_structure(forest_structure)
   zetas_list <- list()
   NEW_K <- K
   continue <- TRUE
