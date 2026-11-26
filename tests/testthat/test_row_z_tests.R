@@ -8,7 +8,7 @@ test_that("consistency between row_z_tests and direct implementation", {
     stat <- sum(x) / sqrt(length(x))
     pnorm(stat, lower.tail = FALSE)
   })
-  expect_equal(zt$p_values[, 1], pvals)
+  expect_equal(zt$p_value[, 1], pvals)
 
   # Sign flipping
   B <- 10
@@ -24,5 +24,5 @@ test_that("consistency between row_z_tests and direct implementation", {
   }
 
   expect_equal(zt_perm$statistics, stat_mat)
-  expect_equal(zt_perm$p_values, p_mat)
+  expect_equal(zt_perm$p_value, p_mat)
 })
