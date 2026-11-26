@@ -34,6 +34,9 @@ jobs:
           extra-packages: any::pkgdown, local::.
           needs: website
 
+      - name: Install TinyTeX
+        run: quarto install tinytex
+        
       - name: Build site
         run: pkgdown::build_site_github_pages(new_process = FALSE, quiet = FALSE)
         shell: Rscript {0}
