@@ -94,7 +94,7 @@ test_that(
 
     # using 'conf_curve_from_fam'
     lambda <- cal$output$lambda
-    cb2 <- conf_curve_from_fam(get(p_values(cal), "Simes", param = lambda)
+    cb2 <- conf_curve_from_fam(get_p_values(cal), "Simes", param = lambda)
     expect_identical(cb0[, c("stat", "bound")], cb2[, c("stat", "bound")])
 
     # using 'conf_curve_from_fam' and 'fit(..., B=0)' to bypass calibration
