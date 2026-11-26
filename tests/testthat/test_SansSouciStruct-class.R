@@ -4,48 +4,51 @@ test_that("Correctness of the constructor of SansSouciStruct", {
   m <- s * 2^q
 
   dirs <- c("bottom-up", "top-down")
-  direction <- sample(dirs, 1)
-  dir12 <- switch(direction,
-    "bottom-up" = 1,
-    "top-down" = 2
-  )
+  for (direction in dirs){
+    dir12 <- switch(
+      direction,
+      "bottom-up" = 1,
+      "top-down" = 2
+    )
 
-  expect_warning(SansSouciDyadic(m,
-    leaf_size = s, height = 8,
-    direction = direction
-  ))
-  obj <- SansSouciDyadic(m, leaf_size = s, direction = direction)
-  expect_s3_class(obj, "SansSouciStruct")
+    expect_warning(SansSouciDyadic(
+      m,
+      leaf_size = s, height = 8,
+      direction = direction
+    ))
+    obj <- SansSouciDyadic(m, leaf_size = s, direction = direction)
+    expect_s3_class(obj, "SansSouciStruct")
 
-  dd <- dyadic_from_window_size(m, s, method = dir12)
-  obj1 <- SansSouciStruct(dd$forest_structure, dd$leaf_list)
-  expect_s3_class(obj, "SansSouciStruct")
+    dd <- dyadic_from_window_size(m, s, method = dir12)
+    obj1 <- SansSouciStruct(dd$forest_structure, dd$leaf_list)
+    expect_s3_class(obj, "SansSouciStruct")
 
-  expect_identical(obj1, obj)
-  rm(obj1)
+    expect_identical(obj1, obj)
+    rm(obj1)
 
-  obj <- SansSouciDyadic(m, height = 8, direction = direction)
-  expect_s3_class(obj, "SansSouciStruct")
+    obj <- SansSouciDyadic(m, height = 8, direction = direction)
+    expect_s3_class(obj, "SansSouciStruct")
 
-  obj1 <- SansSouciStruct(dd$forest_structure, dd$leaf_list)
-  expect_s3_class(obj, "SansSouciStruct")
+    obj1 <- SansSouciStruct(dd$forest_structure, dd$leaf_list)
+    expect_s3_class(obj, "SansSouciStruct")
 
-  expect_identical(obj1, obj)
-  rm(obj1)
+    expect_identical(obj1, obj)
+    rm(obj1)
 
-  expect_equal(names(obj), c("input", "parameters", "output"))
-  expect_null(obj$parameters)
-  expect_null(obj$output)
+    expect_equal(names(obj), c("input", "parameters", "output"))
+    expect_null(obj$parameters)
+    expect_null(obj$output)
 
-  input <- obj$input
-  expect_equal(names(input), c("struct", "leaves", "m"))
-  expect_identical(input$struct, dd$forest_structure)
-  expect_identical(input$leaves, dd$leaf_list)
-  expect_length(input$leaves, 2^q)
-  expect_length(input$struct, q + 1)
+    input <- obj$input
+    expect_equal(names(input), c("struct", "leaves", "m"))
+    expect_identical(input$struct, dd$forest_structure)
+    expect_identical(input$leaves, dd$leaf_list)
+    expect_length(input$leaves, 2^q)
+    expect_length(input$struct, q + 1)
 
-  expect_equal(n_hyp(obj), m)
-  expect_equal(obj$input$m, m)
+    expect_equal(n_hyp(obj), m)
+    expect_equal(obj$input$m, m)
+  }
 })
 
 
