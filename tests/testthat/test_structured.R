@@ -1,4 +1,4 @@
-test_that("Vanilla test for tree functions", {
+test_that("Vanilla test for dyadic tree functions", {
   m <- 6
   check_tree <- function(dd) {
     expect_true(class(dd) == "list")
@@ -19,7 +19,7 @@ test_that("Vanilla test for tree functions", {
   }
 })
 
-test_that("Vanilla test for 'zeta' functions", {
+test_that("Vanilla test for 'structured_zeta' functions", {
   m <- 100
   x <- rnorm(m, mean = c(rep(c(0, 2), each = 50)))
   pval <- 1 - pnorm(x)
@@ -40,7 +40,7 @@ test_that("Vanilla test for 'zeta' functions", {
              structured_zeta_kbonf(pval, lambda))
 })
 
-test_that("'curve_v_star.*' functions", {
+test_that("'pred_pathway_structured' functions", {
   m <- 20
   forest_structure <- list(
     list(c(2, 5), c(8, 15), c(16, 19)),
