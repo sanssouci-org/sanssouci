@@ -8,15 +8,16 @@ test_that("Vanilla test for tree functions", {
     expect_identical(names(dd), c("leaf_list", "C"))
   }
 
-  meth <- sample(2, 1)
-  dd <- dyadic_from_window_size(m, s = 2, method = meth)
-  check_tree(dd)
-
-  dd <- dyadic_from_height(m, H = 3, method = meth)
-  check_tree(dd)
-
-  dd <- dyadic_from_height(m, method = meth)
-  check_tree(dd)
+  for (meth in 1:2){
+    dd <- dyadic_from_window_size(m, s = 2, method = meth)
+    check_tree(dd)
+    
+    dd <- dyadic_from_height(m, H = 3, method = meth)
+    check_tree(dd)
+    
+    dd <- dyadic_from_height(m, method = meth)
+    check_tree(dd)
+  }
 })
 
 test_that("Vanilla test for 'zeta' functions", {
