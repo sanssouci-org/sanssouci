@@ -58,8 +58,8 @@ identical(perm0$p_value, perm$p_value)
 identical(perm0$statistic, perm$statistic)
 # Wilcoxon tests
 set.seed(123)
-perm0 <- sanssouci:::perm_stat(X, categ, B, row_wilcoxonTests)
-perm <- row_wilcoxonTests(X, null_groups)
+perm0 <- sanssouci:::perm_stat(X, categ, B, row_wilcoxon_tests)
+perm <- row_wilcoxon_tests(X, null_groups)
 identical(perm0$p_value, perm$p_value)
 identical(perm0$statistic, perm$statistic)
 }

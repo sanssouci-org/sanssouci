@@ -33,7 +33,7 @@ Z tests for rows of a matrix
 p <- 1e4 + 1
 n <- 380
 mat <- matrix(rnorm(p * n, mean = 1), ncol = n)
-z_tests <- rowZTests(mat, alternative = "greater")
+z_tests <- row_z_tests(mat, alternative = "greater")
 str(z_tests)
 
 # compare with apply version:

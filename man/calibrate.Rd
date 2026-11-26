@@ -71,7 +71,7 @@ the output of 'calibrate(..., max_steps_down = 0)' and
 
 set.seed(0xBEEF)
 m <- 50
-sim <- gaussian_samples(
+sim <- sim_gaussian_equi(
   m = m, rho = 0.3, n = 45,
   pi0 = 0.8, SNR = 3, prob = 0.5
 )
@@ -119,7 +119,7 @@ length(sel)
 min_tp(p[sel], thr)
 
 # confidence bound on the FDP
-FDP_bound <- sanssouci:::curve_max_fp(sort(p), thr) / seq(along = p)
+FDP_bound <- curve_max_fp(sort(p), thr) / seq(along = p)
 plot(head(FDP_bound, 300),
   t = "s",
   xlab = "Number of features",

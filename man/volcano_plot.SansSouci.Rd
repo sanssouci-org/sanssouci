@@ -7,8 +7,8 @@
 \method{volcano_plot}{SansSouci}(
   x,
   contrast_name = x$input$contrast_name[1],
-  fold_change = get_fold_changes(x)[contrast_name, ],
-  p_value = get_p_values(x)[contrast_name, ],
+  fold_changes = get_fold_changes(x)[contrast_name, ],
+  p_values = get_p_values(x)[contrast_name, ],
   p = 1,
   q = 1,
   r = 0,
@@ -25,6 +25,14 @@
 
 \item{contrast_name}{A character value, the selected contrast. Should be
 chosen in \code{x$input$contrast_name}.}
+
+\item{fold_changes}{An optional vector of fold changes, of the same length
+as \code{n_hyp(x)}, used for volcano_plot x-axis.
+If not specified, \code{get_fold_changes(x)}
+is used.}
+
+\item{p_values}{A vector of p-values, of the same length as \code{n_hyp(x)},
+used for volcano_plot y-axis. If not specified, \code{get_p_values(x)} is used}
 
 \item{p}{A numeric value, the p-value threshold under which features are
 selected}
@@ -49,14 +57,6 @@ individual hypotheses in the plot title (e.g. "gene", "proteins", ...)}
 \item{ylim}{A numeric vector of length 2, the \eqn{y} limits of the plot}
 
 \item{...}{Not used}
-
-\item{fold_changes}{An optional vector of fold changes, of the same length
-as \code{n_hyp(x)}, used for volcano_plot x-axis.
-If not specified, \code{get_fold_changes(x)}
-is used.}
-
-\item{p_values}{A vector of p-values, of the same length as \code{n_hyp(x)},
-used for volcano_plot y-axis. If not specified, \code{get_p_values(x)} is used}
 }
 \description{
 Volcano plot for a \code{SansSouci} object

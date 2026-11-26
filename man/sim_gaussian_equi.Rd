@@ -59,12 +59,12 @@ B <- 1e3
 
 ## two-sample data
 sim <- sim_gaussian_equi(m, rho, n, pi0, SNR = 2, prob = 0.5)
-tests <- testByRandomization(sim$X, sim$categ, B = B)
+tests <- test_by_randomization(sim$X, sim$categ, B = B)
 
 ## show test statistics
 pch <- 20
 colStat <- 1 + sim$H
-plot(tests$T, col = colStat, main = "Test statistics", pch = pch)
+plot(tests$statistics, col = colStat, main = "Test statistics", pch = pch)
 legend("topleft", c("H0", "H1"), pch = pch, col = 1:2)
 
 ## one-sample data
@@ -74,7 +74,7 @@ tests <- test_by_randomization(sim$X, B = B)
 ## show test statistics
 pch <- 20
 colStat <- 1 + sim$H
-plot(tests$T, col = colStat, main = "Test statistics", pch = pch)
+plot(tests$statistics, col = colStat, main = "Test statistics", pch = pch)
 legend("topleft", c("H0", "H1"), pch = pch, col = 1:2)
 
 }

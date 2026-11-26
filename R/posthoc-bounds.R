@@ -13,17 +13,17 @@
 #' @examples
 #' set.seed(0xBEEF)
 #' m <- 50
-#' sim <- gaussian_samples(
+#' sim <- sim_gaussian_equi(
 #'   m = m, rho = 0.3, n = 45,
 #'   pi0 = 0.8, SNR = 3, prob = 0.5
 #' )
 #' Y <- sim$X
 #' groups <- sim$categ
-#' p <- row_welch_tests(Y, groups)$p.value
+#' p <- row_welch_tests(Y, groups)$p_value
 #'
 #' B <- 100
 #' null_groups <- replicate(B, sample(groups))
-#' p0 <- row_welch_tests(Y, null_groups)$p.value
+#' p0 <- row_welch_tests(Y, null_groups)$p_value
 #'
 #' calib0 <- calibrate0(p0, m, alpha = 0.1)
 #' thr = calib0$thr
@@ -213,16 +213,16 @@ plot_conf_curve <- function(conf_bound, xmax, cols = NULL,
 #' @examples
 #'
 #' m <- 123
-#' sim <- gaussian_samples(
+#' sim <- sim_gaussian_equi(
 #'   m = m, rho = 0.2, n = 100,
 #'   pi0 = 0.8, SNR = 3, prob = 0.5
 #' )
 #' X <- sim$X
 #' groups <- sim$categ
-#' p <- row_welch_tests(X, groups)$p.value
+#' p <- row_welch_tests(X, groups)$p_value
 #'
 #' null_groups <- replicate(100, sample(groups))
-#' p0 <- row_welch_tests(X, null_groups)$p.value
+#' p0 <- row_welch_tests(X, null_groups)$p_value
 #' calib <- calibrate(p0, m, alpha = 0.1)
 #' thr <- calib$thr
 #'

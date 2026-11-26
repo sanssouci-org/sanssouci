@@ -33,7 +33,7 @@
 #'
 #' set.seed(0xBEEF)
 #' m <- 50
-#' sim <- gaussian_samples(
+#' sim <- sim_gaussian_equi(
 #'   m = m, rho = 0.3, n = 45,
 #'   pi0 = 0.8, SNR = 3, prob = 0.5
 #' )
@@ -81,7 +81,7 @@
 #' min_tp(p[sel], thr)
 #'
 #' # confidence bound on the FDP
-#' FDP_bound <- sanssouci:::curve_max_fp(sort(p), thr) / seq(along = p)
+#' FDP_bound <- curve_max_fp(sort(p), thr) / seq(along = p)
 #' plot(head(FDP_bound, 300),
 #'   t = "s",
 #'   xlab = "Number of features",
@@ -214,8 +214,8 @@ calibrate0 <- function(p0, m, alpha,
 
 #' # Wilcoxon tests
 #' set.seed(123)
-#' perm0 <- sanssouci:::perm_stat(X, categ, B, row_wilcoxonTests)
-#' perm <- row_wilcoxonTests(X, null_groups)
+#' perm0 <- sanssouci:::perm_stat(X, categ, B, row_wilcoxon_tests)
+#' perm <- row_wilcoxon_tests(X, null_groups)
 #' identical(perm0$p_value, perm$p_value)
 #' identical(perm0$statistic, perm$statistic)
 perm_stat <- function(X, categ, B,

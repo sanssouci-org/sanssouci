@@ -203,7 +203,7 @@ SansSouciSim <- function(...) {
 #' label(res)
 #' print(res)
 #' str(get_p_values(res))
-#' str(fold_changes(res))
+#' str(get_fold_changes(res))
 #' str(thresholds(res))
 #' vp <- volcano_plot(res, q = 0.05, r = 0.5)
 #'
@@ -777,10 +777,10 @@ predict.SansSouci <- function(object,
 #' volcano_plot(res, q = 0.2, r = 0.2, ylim = c(0, 4), feature_label = "gene")
 volcano_plot.SansSouci <- function(x,
                                    contrast_name = x$input$contrast_name[1],
-                                   fold_change = get_fold_changes(x)[
+                                   fold_changes = get_fold_changes(x)[
                                      contrast_name,
                                    ],
-                                   p_value = get_p_values(x)[contrast_name, ],
+                                   p_values = get_p_values(x)[contrast_name, ],
                                    p = 1, q = 1, r = 0,
                                    cex = c(0.4, 1.5),
                                    col = c("#33333333", "#FF0000", "#FF666633"),
@@ -796,20 +796,20 @@ volcano_plot.SansSouci <- function(x,
       )
     ))
   }
-  fold_change <- force(fold_change)
-  p_value <- force(p_value)
+  fold_changes <- force(fold_changes)
+  p_values <- force(p_values)
 
   if (object$input$type == "1 sample") {
     stop("Can't do a volcano plot for one-sample tests!")
   }
   m <- object$input$n_dimensions
-  stopifnot(m == length(fold_change))
-  stopifnot(m == length(p_value))
+  stopifnot(m == length(fold_changes))
+  stopifnot(m == length(p_values))
   p_values_bound <- get_p_values(object)[contrast_name, ]
   thr <- thresholds(object)[1:m] # we select at most m hypotheses here
 
   vp <- volcano_plot(
-    x = fold_change, p_values = p_value,
+    x = fold_changes, p_values = p_values,
     thr = thr, p_values_bound = p_values_bound,
     p = p, q = q, r = r,
     cex = cex,
