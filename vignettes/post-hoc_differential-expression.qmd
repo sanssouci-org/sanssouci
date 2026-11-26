@@ -84,13 +84,13 @@ The most basic question to ask is:
 
 This question can be addressed by performing one statistical test of no difference between means for each gene, and to define "differentially expressed" genes as those passing some significance threshold.
 
-Below, the Welch test for differential expression is applied to each gene. This can be done e.g. using the `sanssouci::rowWelchTests` function:
+Below, the Welch test for differential expression is applied to each gene. This can be done e.g. using the `sanssouci::row_welch_tests` function:
 
 ```{r}
 #| label: row-welch-tests
 categ <- ifelse(colnames(dat) == "BCR/ABL", 1, 0) # map to 0/1
-dex <- data.frame(rowWelchTests(dat, categ))
-pval <- dex[["p.value"]]
+dex <- data.frame(row_welch_tests(dat, categ))
+pval <- dex[["p_value"]]
 ```
 
 We plot a histogram of the corresponding $p$-values:
@@ -125,7 +125,7 @@ my_col <- "#FF000080"
 dexo <- dex[order(pval), ]  ## order genes by increasing p-values
 dexo[["gene_order"]] <- seq_len(nrow(dex))
 
-bh_plot <- ggplot(dexo, aes(x = gene_order, y = p.value)) +
+bh_plot <- ggplot(dexo, aes(x = gene_order, y = p_value)) +
   geom_line() +
   xlab("Number of top genes") + ylab("Ordered p-value") +
   geom_abline(slope = 1 / m, intercept = 0, linetype = 2, linewidth = 1) +
@@ -142,7 +142,7 @@ bh_plot
 ```{r}
 #| label: bh-plot-zoom
 xmax <- n_bh * 2.5
-ymax <- dexo$p.value[xmax]
+ymax <- dexo$p_value[xmax]
 bh_plot +
   xlim(1, xmax) + ylim(0, ymax) +
   geom_segment(aes(x = n_bh, y = 0, yend = q * n_bh / m, xend = n_bh),
@@ -158,7 +158,7 @@ Post hoc inference makes it possible to build confidence statements on the numbe
 ```{r}
 #| label: basic-bounds-setup
 alpha <- 0.1
-pvalo <- dexo$p.value
+pvalo <- dexo$p_value
 ```
 
 ### $k_0$-Bonferroni bound
@@ -312,7 +312,7 @@ all_bounds <- function(S, RES_LIST) {
 tab <- rbind(all_bounds(S_POS, RES_LIST),
              all_bounds(S_NEG, RES_LIST),
              all_bounds(S_ALL, RES_LIST))
-plab <- paste("BH-adjusted p.value <", q)
+plab <- paste("BH-adjusted p_value <", q)
 lab <- c(paste(plab, "&", " fold change  > ", r),
          paste(plab, "&", " fold change  < ", -r),
          paste(plab, "&", "|fold change| > ", r))

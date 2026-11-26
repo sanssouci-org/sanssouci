@@ -64,8 +64,8 @@ We start by creating a binary tree structure and generating the signal:
 
 ```{r}
 #| label: simulation
-family <- dyadic.from.window.size(m, s = s, method = 2)
-mu <- gen.mu.leaves(m = m, K1 = K1, d = r, grouped = TRUE, setting = "const",
+family <- dyadic_from_window_size(m, s = s, method = 2)
+mu <- gen_mu_leaves(m = m, K1 = K1, d = r, grouped = TRUE, setting = "const",
                     barmu = barmu, leaf_list = family$leaf_list)
 ```
 
@@ -79,7 +79,7 @@ We generate $p$-values according to the simulation setup in @durand20post-hoc:
 
 ```{r}
 #| label: p-values
-pvalues <- gen.p.values(m = m, mu = mu, rho = 0, alternative = "greater")
+pvalues <- gen_p_values(m = m, mu = mu, rho = 0, alternative = "greater")
 ```
 
 ## Calculate confidence curves
@@ -135,10 +135,11 @@ Here we use the DKWM inequality (@dvoretzky1956asymptotic, @massart1990tight) to
 #| label: tree
 label <- rep("DKWM(tree)", m)
 method <- rep("Tree", m)
-c_tree <- family$C[8]
-zl_tree <- zetas.tree(c_tree, family$leaf_list, zeta.DKWM, pvalues, alpha)
-tree_bound <- curve.V.star.forest.fast(ord, c_tree, zl_tree, family$leaf_list,
-                                       pruning = TRUE)
+c_tree <- family$forest_structure[8]
+zl_tree <- structured_zetas(c_tree, family$leaf_list, structured_zeta_dkwm,
+                            pvalues, alpha)
+tree_bound <- pred_pathway_structured(ord, c_tree, zl_tree, family$leaf_list,
+                                      pruning = TRUE)
 res[["Tree"]] <- data.frame(x = x, label = label, stat = stat,
                             bound = tree_bound, method = method)
 ```
@@ -147,9 +148,11 @@ res[["Tree"]] <- data.frame(x = x, label = label, stat = stat,
 #| label: part
 label <- rep("DKWM(partition)", m)
 method <- rep("Partition", m)
-zl_part <- zetas.tree(family$C, family$leaf_list, zeta.DKWM, pvalues, alpha)
-part_bound <- curve.V.star.forest.fast(ord, family$C, zl_part, family$leaf_list,
-                                       pruning = TRUE)
+zl_part <- structured_zetas(family$forest_structure, family$leaf_list,
+                            structured_zeta_dkwm, pvalues, alpha)
+part_bound <- pred_pathway_structured(ord, family$forest_structure,
+                                      zl_part, family$leaf_list,
+                                      pruning = TRUE)
 res[["Partition"]] <- data.frame(x = x, label = label, stat = stat,
                                  bound = part_bound, method = method)
 ```
