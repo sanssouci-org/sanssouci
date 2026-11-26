@@ -42,33 +42,44 @@ test_that("Vanilla test for 'zeta' functions", {
 
 test_that("'curve_v_star.*' functions", {
   m <- 20
-  C <- list(
+  forest_structure <- list(
     list(c(2, 5), c(8, 15), c(16, 19)),
     list(c(3, 5), c(8, 10), c(12, 15), c(16, 16), c(17, 19)),
     list(c(4, 5), c(8, 9), c(10, 10), c(12, 12), c(13, 15), c(17, 17),
          c(18, 19)),
     list(c(8, 8), c(9, 9), c(13, 13), c(14, 15), c(18, 18), c(19, 19))
   )
-  ZL <- list(
+  zetas_list <- list(
     c(4, 8, 4),
     c(3, 3, 4, 1, 3),
     c(2, 2, 1, 1, 2, 1, 2),
     c(1, 1, 1, 2, 1, 1)
   )
   leaf_list <- as.list(1:m)
-  res_naive <- curve_v_star_forest_naive(1:m, C, ZL, leaf_list, pruning = FALSE)
-  res_fast <- curve_v_star_forest_fast(1:m, C, ZL, leaf_list, pruning = FALSE)
+  res_naive <- pred_pathway_structured_naive(1:m, forest_structure, zetas_list,
+                                         leaf_list, pruning = FALSE)
+  res_fast <- pred_pathway_structured(1:m, forest_structure, zetas_list,
+                                       leaf_list, pruning = FALSE)
   expect_equal(res_naive, res_fast)
 
-  res_naive <- curve_v_star_forest_naive(1:m, C, ZL, leaf_list, pruning = TRUE)
-  res_fast <- curve_v_star_forest_fast(1:m, C, ZL, leaf_list, pruning = TRUE)
+  res_naive <- pred_pathway_structured_naive(1:m, forest_structure, zetas_list,
+                                         leaf_list, pruning = TRUE)
+  res_fast <- pred_pathway_structured(1:m, forest_structure, zetas_list,
+                                       leaf_list, pruning = TRUE)
   expect_equal(res_naive, res_fast)
 
-  res_naive <- curve_v_star_forest_naive(1:m, C, ZL, leaf_list,
+  res_naive <- pred_pathway_structured_naive(
+    1:m,
+    forest_structure,
+    zetas_list, leaf_list,
     pruning = TRUE,
     delete_gaps = TRUE
   )
-  res_fast <- curve_v_star_forest_fast(1:m, C, ZL, leaf_list,
+  res_fast <- pred_pathway_structured(
+    1:m,
+    forest_structure,
+    zetas_list,
+    leaf_list,
     pruning = TRUE,
     delete_gaps = TRUE
   )
