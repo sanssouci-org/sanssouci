@@ -27,6 +27,10 @@ specifying the column indices of the first and second samples.}
 to be passed to \code{row_test_fun}. Must be one of "two.sided" (default),
 "greater" or "less".}
 }
+\value{
+a list with \code{p_value}, the matrix of permuted p-values and
+\code{statistic}, the matrix of permuted statistics.
+}
 \description{
 Get a matrix of statistics and p-values under the null hypothesis obtained by
 repeated permutation of class labels (two-sample tests)
