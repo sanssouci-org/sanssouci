@@ -2,6 +2,10 @@
 Package: sanssouci
 ==================
 
+Version 0.17.0
+
+* Consistency: application of naming convensions (mainly snake_case) (#157)
+
 Version 0.16.6
 
 * Compatible volcanoPlot with ggplotly (#142)
