@@ -190,6 +190,9 @@ calibrate0 <- function(p0, m, alpha,
 #' i,j corresponds to `p_{(i)}(g_j.X)` with notation of the AoS 2020 paper
 #' cited below (section 4.5).
 #'
+#' @return a list with `p_value`, the matrix of permuted p-values and
+#' `statistic`, the matrix of permuted statistics.
+#'
 #' @export
 #'
 #' @examples
@@ -225,12 +228,12 @@ perm_stat <- function(X, categ, B,
   for (bb in 1:B) {
     categ_perm <- sample(categ)
     rwt <- row_test_fun(X, categ = categ_perm, alternative = alternative)
-    pval0[, bb] <- rwt$p.value
+    pval0[, bb] <- rwt$p_value
     stat0[, bb] <- rwt$statistic
   }
 
   list(
-    p.value = pval0,
+    p_value = pval0,
     statistic = stat0
   )
 }

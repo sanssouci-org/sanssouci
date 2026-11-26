@@ -13,18 +13,24 @@ test_that("Consistency of 'perm_stat'", {
   set.seed(123)
   null_groups <- replicate(B, sample(categ))
   perm <- row_welch_tests(X, null_groups)
-  expect_equal(perm0$p.value, perm$p.value)
+  expect_true(!is.null(perm0$p_value))
+  expect_equal(perm0$p_value, perm$p_value)
+  expect_true(!is.null(perm0$statistic))
   expect_equal(perm0$statistic, perm$statistic)
 
   set.seed(123)
   perm0 <- perm_stat(X, categ, B, row_wilcoxon_tests)
   set.seed(123)
   perm1 <- perm_stat(X, categ, B, row_wilcoxon_tests1_v1)
-  expect_identical(perm0$p.value, perm1$p.value)
+  expect_true(!is.null(perm0$p_value))
+  expect_identical(perm0$p_value, perm1$p_value)
+  expect_true(!is.null(perm0$statistic))
   expect_identical(perm0$statistic, perm1$statistic)
 
   perm <- row_wilcoxon_tests(X, null_groups)
-  expect_identical(perm0$p.value, perm$p.value)
+  expect_true(!is.null(perm$p_value))
+  expect_identical(perm0$p_value, perm$p_value)
+  expect_true(!is.null(perm$statistic))
   expect_identical(perm0$statistic, perm$statistic)
 })
 
@@ -37,7 +43,7 @@ test_that("Vanilla tests for 'pivotal_stat'", {
   X[, w1] <- X[, w1] + 0
   B <- 100
   null_groups <- replicate(B, sample(categ))
-  p0 <- row_welch_tests(X, null_groups)$p.value
+  p0 <- row_welch_tests(X, null_groups)$p_value
 
   piv_stat <- pivotal_stat(p0, m)
   expect_length(piv_stat, B)
@@ -59,7 +65,7 @@ test_that("JER calibration and pivotal_stat yield identical pivotal
 
             ## TODO: tests all param combinations
             set.seed(0xBEEF)
-            p0 <- perm_stat(X, categ, B)$p.value
+            p0 <- perm_stat(X, categ, B)$p_value
             piv_stat <- pivotal_stat(p0, m, t_inv_linear)
 
             cal <- calibrate(p0, m, alpha = 1, family = "Linear")
@@ -75,7 +81,7 @@ test_that("pivotal statistics are non-decreasing in the set of hypotheses used
             categ <- rbinom(n, 1, 0.4)
             B <- 111
 
-            p0 <- perm_stat(X, categ, B)$p.value
+            p0 <- perm_stat(X, categ, B)$p_value
             piv_stat <- pivotal_stat(p0, m, t_inv_linear)
 
             sub <- sample(m, round(m / 2))
