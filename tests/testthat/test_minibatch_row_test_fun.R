@@ -18,7 +18,7 @@ test_that("Testing mini batch on small datasets", {
       row_test_fun = test, Y = mat, categ = cls,
       alternative = alt, max_batch_size = 1e6
     )
-    expect_equal(mb, as.matrix(fwt$p.value))
+    expect_equal(mb, as.matrix(fwt$p_value))
   }
 
 
@@ -30,7 +30,7 @@ test_that("Testing mini batch on small datasets", {
       row_test_fun = test, Y = mat, categ = cls_perm,
       alternative = alt, max_batch_size = 1e3
     )
-    expect_equal(mb, fwt$p.value)
+    expect_equal(mb, fwt$p_value)
   }
 
   for (test in tests) {
@@ -39,6 +39,6 @@ test_that("Testing mini batch on small datasets", {
       row_test_fun = test, Y = mat, categ = cls_perm,
       alternative = alt, max_batch_size = 1e2
     )
-    expect_equal(mb, fwt$p.value)
+    expect_equal(mb, fwt$p_value)
   }
 })

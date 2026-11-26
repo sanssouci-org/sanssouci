@@ -9,7 +9,7 @@ X <- sim$X
 categ <- sim$categ
 thr <- t_linear(0.2, seq_len(m), m)
 tests <- row_welch_tests(X, categ)
-pval <- sort(tests$p.value)
+pval <- sort(tests$p_value)
 whats <- c("TP", "FP", "TDP", "FDP")
 
 test_that("I/O of 'posthoc_bound'", {
