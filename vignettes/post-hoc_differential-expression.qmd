@@ -301,7 +301,7 @@ The comparison between these bounds may be summarized by the following Table:
 ```{r}
 #| label: tbl-compare-volcano-bounds
 #| tbl-cap: "Post hoc bounds on true positives in user-defined gene selections"
-fc <- fold_changes(res)
+fc <- get_fold_changes(res)
 S_pos <- which(fc >= r & adjp_BH <= q)
 S_neg <- which(fc <= -r & adjp_BH <= q)
 S_all <- union(S_pos, S_neg)

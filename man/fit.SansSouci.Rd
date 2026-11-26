@@ -86,7 +86,7 @@ res <- fit(obj, B = 100, alpha = 0.1)
 plot(res)
 
 # confidence curve for a subset
-S <- which(get_p_values(res) < 0.1 & fold_changes(res) > 0.3)
+S <- which(get_p_values(res) < 0.1 & get_fold_changes(res) > 0.3)
 plot(res, S = S)
 
 # plot two confidence curves

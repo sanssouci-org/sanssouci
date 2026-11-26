@@ -7,7 +7,7 @@
 \alias{label.SansSouci}
 \alias{print.SansSouci}
 \alias{get_p_values.SansSouci}
-\alias{fold_changes.SansSouci}
+\alias{get_fold_changes.SansSouci}
 \alias{thresholds.SansSouci}
 \title{Basic methods for class \code{SansSouci}}
 \usage{
@@ -21,7 +21,7 @@
 
 \method{get_p_values}{SansSouci}(object)
 
-\method{fold_changes}{SansSouci}(object)
+\method{get_fold_changes}{SansSouci}(object)
 
 \method{thresholds}{SansSouci}(object)
 }

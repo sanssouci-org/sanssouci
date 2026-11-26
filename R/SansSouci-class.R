@@ -392,7 +392,7 @@ generics::fit
 #' plot(res)
 #'
 #' # confidence curve for a subset
-#' S <- which(get_p_values(res) < 0.1 & fold_changes(res) > 0.3)
+#' S <- which(get_p_values(res) < 0.1 & get_fold_changes(res) > 0.3)
 #' plot(res, S = S)
 #'
 #' # plot two confidence curves
@@ -586,12 +586,12 @@ get_p_values.SansSouci <- function(object) {
 #' @describeIn all-generics Get fold changes
 #' @param object An object. See individual methods for specifics
 #' @export
-fold_changes <- function(object) UseMethod("fold_changes")
+get_fold_changes <- function(object) UseMethod("get_fold_changes")
 
 #' @rdname SansSouci-methods
 #' @param object An object of class `SansSouci`
 #' @export
-fold_changes.SansSouci <- function(object) {
+get_fold_changes.SansSouci <- function(object) {
   object$output$estimate
 }
 
@@ -635,7 +635,7 @@ thresholds.SansSouci <- function(object) object$output$thr
 #' plot(res)
 #'
 #' # confidence curve for a subset of hypotheses
-#' S <- which(get_p_values(res) < 0.1 & fold_changes(res) > 0.3)
+#' S <- which(get_p_values(res) < 0.1 & get_fold_changes(res) > 0.3)
 #' plot(res, S = S)
 plot.SansSouci <- function(x, y, xmax = n_hyp(x), ...) {
   cb <- predict(x, all = TRUE, ...)
@@ -777,7 +777,7 @@ predict.SansSouci <- function(object,
 #' volcano_plot(res, q = 0.2, r = 0.2, ylim = c(0, 4), feature_label = "gene")
 volcano_plot.SansSouci <- function(x,
                                    contrast_name = x$input$contrast_name[1],
-                                   fold_change = fold_changes(x)[
+                                   fold_change = get_fold_changes(x)[
                                      contrast_name,
                                    ],
                                    p_value = get_p_values(x)[contrast_name, ],

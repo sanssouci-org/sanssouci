@@ -7,7 +7,7 @@
 \method{volcano_plot}{SansSouci}(
   x,
   contrast_name = x$input$contrast_name[1],
-  fold_change = fold_changes(x)[contrast_name, ],
+  fold_change = get_fold_changes(x)[contrast_name, ],
   p_value = get_p_values(x)[contrast_name, ],
   p = 1,
   q = 1,
