@@ -328,54 +328,6 @@ curve_max_fp <- function(p_values, thr) {
   V_BAR
 }
 
-#' Upper bound for the number of false discoveries among most significant items
-#'
-#' @param p_values A vector containing all \eqn{m} p-values, sorted
-#' non-decreasingly
-#' @param thr A vector of \eqn{K} JER-controlling thresholds, sorted
-#' non-decreasingly
-#' @return A vector of size \eqn{m} giving an joint upper confidence bound on
-#'   the number of false discoveries among the \eqn{k} most significant items
-#'   for all \eqn{k \in \{1\ldots m\}}.
-#' @author Gilles Blanchard, Nicolas Enjalbert-Courrech, Pierre Neuvial
-#' and Etienne Roquain
-#' @details These older implementations of 'curve_max_fp' are here for the
-#'  purpose of testing that the current one yields consistent results.
-#' @rdname curveMaxFP_alternatives
-curve_max_fp_bnr2014 <- function(p_values, thr) {
-  m <- length(p_values)
-  k_max <- length(thr)
-  bound <- function(kk, ii) {
-    (kk - 1) + sum(p_values[1:ii] > thr[kk])
-  }
-  V_BAR <- sapply(1:m, function(ii) {
-    cand <- sapply(1:k_max, bound, ii)
-    min(cand)
-  })
-  V_BAR
-}
-
-#' @rdname curveMaxFP_alternatives
-curve_max_fp_mein2006 <- function(p_values, thr) {
-  m <- length(p_values)
-  k_max <- length(thr)
-  if (k_max < m) {
-    thr <- c(thr, rep(thr[k_max], m - k_max))
-    k_max <- length(thr)
-  }
-
-  ## (loose) upper bound on number of FALSE discoveries among first rejections
-  R <- 1:m
-  BB <- sapply(p_values[R], function(x) sum(x > thr)) ## Eqn (7) in Meinshausen
-  ## corresponds to 'K' in 'BNR2016'
-
-  ## lower bound on number of TRUE discoveries among first rejections
-  S_BAR <- pmax(0, cummax(R - BB))
-
-  ## (tighter) upper bound on number of FALSE discoveries among first rejections
-  V_BAR <- R - S_BAR[R]
-  V_BAR
-}
 
 ############################################################################
 ## HISTORY of 'curveMaxFP'
