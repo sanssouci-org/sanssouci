@@ -108,7 +108,7 @@ SansSouciDyadic <- function(m, leaf_size = NULL, height = NULL,
 #' alpha <- 0.05
 #' res <- fit(obj, alpha, p_values, "DKWM")
 #' label(res)
-#' str(p_values(res))
+#' str(get_p_values(res))
 #'
 NULL
 #> NULL
@@ -289,7 +289,7 @@ predict.SansSouciStruct <- function(object, S = seq_len(n_hyp(object)),
                                     order_by_p = TRUE, ...) {
   lab <- label(object)
   if (order_by_p) {
-    ordering <- order(p_values(object))
+    ordering <- order(get_p_values(object))
     S <- ordering[S]
   }
 

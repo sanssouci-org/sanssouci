@@ -6,12 +6,12 @@
 \usage{
 \method{volcano_plot}{SansSouci}(
   x,
+  contrast_name = x$input$contrast_name[1],
   fold_change = fold_changes(x)[contrast_name, ],
-  p_value = p_values(x)[contrast_name, ],
+  p_value = get_p_values(x)[contrast_name, ],
   p = 1,
   q = 1,
   r = 0,
-  contrast_name = x$input$contrast_name[1],
   cex = c(0.4, 1.5),
   col = c("#33333333", "#FF0000", "#FF666633"),
   pch = 19,
@@ -23,10 +23,8 @@
 \arguments{
 \item{x}{A numeric vector of fold changes (x axis of the volcano plot)}
 
-\item{fold_change}{An optional vector of fold changes, of the same length
-as \code{n_hyp(x)}, used for volcano_plot x-axis.
-If not specified, \code{get_fold_changes(x)}
-is used.}
+\item{contrast_name}{A character value, the selected contrast. Should be
+chosen in \code{x$input$contrast_name}.}
 
 \item{p}{A numeric value, the p-value threshold under which features are
 selected}
@@ -36,9 +34,6 @@ under which features are selected}
 
 \item{r}{A numeric value, the absolute fold change above which features are
 selected}
-
-\item{contrast_name}{A character value, the selected contrast. Should be
-chosen in \code{x$input$contrast_name}.}
 
 \item{cex}{A numeric vector of length 2, the relative magnification factor
 for unselected (\code{cex[1]}) and unselected (\code{cex[2]}) features.}
@@ -54,6 +49,11 @@ individual hypotheses in the plot title (e.g. "gene", "proteins", ...)}
 \item{ylim}{A numeric vector of length 2, the \eqn{y} limits of the plot}
 
 \item{...}{Not used}
+
+\item{fold_changes}{An optional vector of fold changes, of the same length
+as \code{n_hyp(x)}, used for volcano_plot x-axis.
+If not specified, \code{get_fold_changes(x)}
+is used.}
 
 \item{p_values}{A vector of p-values, of the same length as \code{n_hyp(x)},
 used for volcano_plot y-axis. If not specified, \code{get_p_values(x)} is used}

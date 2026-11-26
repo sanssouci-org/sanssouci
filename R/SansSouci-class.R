@@ -202,7 +202,7 @@ SansSouciSim <- function(...) {
 #' res <- fit(a, B = 100, alpha = 0.1)
 #' label(res)
 #' print(res)
-#' str(p_values(res))
+#' str(get_p_values(res))
 #' str(fold_changes(res))
 #' str(thresholds(res))
 #' vp <- volcano_plot(res, q = 0.05, r = 0.5)
@@ -392,7 +392,7 @@ generics::fit
 #' plot(res)
 #'
 #' # confidence curve for a subset
-#' S <- which(p_values(res) < 0.1 & fold_changes(res) > 0.3)
+#' S <- which(get_p_values(res) < 0.1 & fold_changes(res) > 0.3)
 #' plot(res, S = S)
 #'
 #' # plot two confidence curves
@@ -572,14 +572,14 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
 #' @describeIn all-generics Get p-values
 #' @param object An object. See individual methods for specifics
 #' @export
-p_values <- function(object) UseMethod("p_values")
+get_p_values <- function(object) UseMethod("get_p_values")
 
-#' `pValues`: get p-values
+#' `get_p_values`: get p-values
 #'
 #' @rdname SansSouci-methods
 #' @param object An object of class `SansSouci`
 #' @export
-p_values.SansSouci <- function(object) {
+get_p_values.SansSouci <- function(object) {
   object$output$p_value
 }
 
@@ -635,7 +635,7 @@ thresholds.SansSouci <- function(object) object$output$thr
 #' plot(res)
 #'
 #' # confidence curve for a subset of hypotheses
-#' S <- which(p_values(res) < 0.1 & fold_changes(res) > 0.3)
+#' S <- which(get_p_values(res) < 0.1 & fold_changes(res) > 0.3)
 #' plot(res, S = S)
 plot.SansSouci <- function(x, y, xmax = n_hyp(x), ...) {
   cb <- predict(x, all = TRUE, ...)
@@ -692,7 +692,7 @@ plot.SansSouci <- function(x, y, xmax = n_hyp(x), ...) {
 #' head(bounds)
 #'
 #' # post hoc bound on a subset
-#' S <- which(p_values(res) < 0.01)
+#' S <- which(get_p_values(res) < 0.01)
 #' predict(res, S)
 predict.SansSouci <- function(object,
                               S = seq_len(min(
@@ -705,7 +705,7 @@ predict.SansSouci <- function(object,
   if (!all(contrast_name %in% object$input$contrast_name)) {
     stop("contrast_name must be in object$input$contrast_name")
   }
-  p_values <- p_values(object)
+  p_values <- get_p_values(object)
   thr <- thresholds(object)
   lab <- label(object)
 
@@ -776,48 +776,48 @@ predict.SansSouci <- function(object,
 #' res <- fit(a, B = 100, alpha = 0.1)
 #' volcano_plot(res, q = 0.2, r = 0.2, ylim = c(0, 4), feature_label = "gene")
 volcano_plot.SansSouci <- function(x,
-                                   fold_changes = fold_changes(x)[
+                                   contrast_name = x$input$contrast_name[1],
+                                   fold_change = fold_changes(x)[
                                      contrast_name,
                                    ],
-                                   p_values = p_values(x)[contrast_name, ],
+                                   p_value = get_p_values(x)[contrast_name, ],
                                    p = 1, q = 1, r = 0,
-                                   contrast_name = x$input$contrast_name[1],
                                    cex = c(0.4, 1.5),
                                    col = c("#33333333", "#FF0000", "#FF666633"),
                                    pch = 19, feature_label = "feature",
                                    ylim = NULL,
                                    ...) {
   object <- x
-  if (!(contrast_name %in% rownames(p_values(object)))) {
+  if (!(contrast_name %in% rownames(get_p_values(object)))) {
     stop(paste(
       "Choose a contrast in",
-      paste(rownames(p_values(object)),
+      paste(rownames(get_p_values(object)),
         collapse = ", "
       )
     ))
   }
-  fold_changes <- force(fold_changes)
-  p_values <- force(p_values)
+  fold_change <- force(fold_change)
+  p_value <- force(p_value)
 
   if (object$input$type == "1 sample") {
     stop("Can't do a volcano plot for one-sample tests!")
   }
   m <- object$input$n_dimensions
-  stopifnot(m == length(fold_changes))
-  stopifnot(m == length(p_values))
-  p_values_bound <- p_values(object)[contrast_name, ]
+  stopifnot(m == length(fold_change))
+  stopifnot(m == length(p_value))
+  p_values_bound <- get_p_values(object)[contrast_name, ]
   thr <- thresholds(object)[1:m] # we select at most m hypotheses here
 
   vp <- volcano_plot(
-    x = fold_changes, p_values = p_values,
-    thr = thr, p_values_bound = p_values_bounds,
+    x = fold_change, p_values = p_value,
+    thr = thr, p_values_bound = p_values_bound,
     p = p, q = q, r = r,
     cex = cex,
     col = col,
     pch = pch,
     feature_label = feature_label,
     ylim = ylim,
-    add_signed_selections = TRUE, ...
+    add_signed_selections = TRUE#, ...
   )
 
   return(vp)

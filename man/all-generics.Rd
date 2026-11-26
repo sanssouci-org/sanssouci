@@ -5,7 +5,7 @@
 \alias{n_hyp}
 \alias{n_observations}
 \alias{label}
-\alias{p_values}
+\alias{get_p_values}
 \alias{fold_changes}
 \alias{thresholds}
 \alias{get_nb_leaves}
@@ -17,7 +17,7 @@ n_observations(object)
 
 label(object)
 
-p_values(object)
+get_p_values(object)
 
 fold_changes(object)
 
@@ -39,7 +39,7 @@ Generic functions for S3 class SansSouci
 
 \item \code{label()}: Get the label of hypotheses tested
 
-\item \code{p_values()}: Get p-values
+\item \code{get_p_values()}: Get p-values
 
 \item \code{fold_changes()}: Get fold changes
 

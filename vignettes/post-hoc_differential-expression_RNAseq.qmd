@@ -185,7 +185,7 @@ The above example also illustrates the increase in power obtained by calibration
 We argue that ensuring *with high probability* that the FDP is less than some user-defined budget, as done above, is more interpretable than the widely used False Discovery Rate (FDR) control introduced by @benjamini95controlling. Indeed, FDR control guarantees that the *expected* (or average) FDP among DE genes is less than some user-defined FDR budget.  However, **the true FDP may well be far from its expected value**, especially since the variability of the FDP is known to increase with the degree of dependence between genes.
 
 ```{r}
-adjp <- p.adjust(p_values(res), method = "BH")
+adjp <- p.adjust(get_p_values(res), method = "BH")
 FDR_level <- 0.05
 n_BH <- sum(adjp < FDR_level)
 n_BH
@@ -232,7 +232,7 @@ The next plot suggests that the $p$-values obtained from limma-voom and from Wil
 
 ```{r}
 #| label: compare-p-values
-df <- data.frame(wilcox = -log10(as.vector(p_values(res))),
+df <- data.frame(wilcox = -log10(as.vector(get_p_values(res))),
                  limma = -log10(TT$P.Value))
 ggplot(df, aes(x = limma, y = wilcox)) +
   geom_point(color = "#10101010") +

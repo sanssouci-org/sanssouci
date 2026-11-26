@@ -71,6 +71,6 @@ bounds <- predict(res, all = TRUE)
 head(bounds)
 
 # post hoc bound on a subset
-S <- which(p_values(res) < 0.01)
+S <- which(get_p_values(res) < 0.01)
 predict(res, S)
 }

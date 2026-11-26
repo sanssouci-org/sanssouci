@@ -14,7 +14,7 @@
 
 \method{label}{SansSouciStruct}(object)
 
-\method{p_values}{SansSouciStruct}(object)
+p_values.SansSouciStruct(object)
 }
 \arguments{
 \item{object}{An object of class \code{SansSouci}}
@@ -47,6 +47,6 @@ p_values <- gen_p_values(m = m, mu = mu, rho = 0)
 alpha <- 0.05
 res <- fit(obj, alpha, p_values, "DKWM")
 label(res)
-str(p_values(res))
+str(get_p_values(res))
 
 }

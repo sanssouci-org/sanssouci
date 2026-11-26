@@ -242,7 +242,7 @@ test_that("Consistency of output of 'bound.SansSouci'", {
   expect_equal(nrow(b), m * length(what0))
 
   # strict subset
-  S <- order(p_values(res))[seq_len(m - 10)]
+  S <- order(get_p_values(res))[seq_len(m - 10)]
   bb <- predict(res, S, what = what0, all = TRUE)
   expect_s3_class(bb, "data.frame")
   expect_equal(nrow(bb), length(S) * length(what0))
@@ -272,7 +272,7 @@ test_that("'predict.SansSouci' reproduces the results of 'curve_max_fp'", {
   res <- fit(obj, alpha = alpha, B = B, K = K, alternative = alt, family = fam)
   what0 <- c("FP", "TP", "FDP", "TDP")
 
-  pvals <- sort(p_values(res))
+  pvals <- sort(get_p_values(res))
   FP <- sanssouci:::curve_max_fp(
     p_values = pvals,
     thr = thresholds(res)
@@ -315,7 +315,7 @@ test_that(
     expect_equal(nrow(b), D * length(what0))
 
     # strict subset
-    S <- order(p_values(res)[contrast, ])[seq_len(D - 10)]
+    S <- order(get_p_values(res)[contrast, ])[seq_len(D - 10)]
     bb <- predict(res, S, what = what0, all = TRUE, contrast_name = contrast)
     expect_s3_class(b, "data.frame")
     expect_equal(nrow(bb), length(S) * length(what0))
@@ -334,7 +334,7 @@ test_that(
     ))
 
     # correctnes with curMaxFP
-    pvals <- sort(p_values(res)[contrast, ])
+    pvals <- sort(get_p_values(res)[contrast, ])
     FP <- sanssouci:::curve_max_fp(
       p_values = pvals,
       thr = thresholds(res)
@@ -370,14 +370,14 @@ test_that("Correctness of Oracle predictions", {
 
   # selection of first 10 hyps in the order of p-values
   # should contain only signal
-  p_values <- p_values(res_oracle)
+  p_values <- get_p_values(res_oracle)
   S <- head(order(p_values), 10)
   FP <- predict(res_oracle, S = S, what = "FP")
   expect_equal(FP, 0)
 
   # selection of last 10 hyps in the order of p-values
   # should contain only noise
-  p_values <- p_values(res_oracle)
+  p_values <- get_p_values(res_oracle)
   S <- tail(order(p_values), 10)
   FP <- predict(res_oracle, S = S, what = "FP")
   expect_equal(FP, length(S))
@@ -409,14 +409,14 @@ test_that("Continuous covariate", {
 
   # selection of first 10 hyps in the order of p-values
   # should contain only signal
-  p_values <- p_values(res_oracle)
+  p_values <- get_p_values(res_oracle)
   S <- head(order(p_values), 10)
   FP <- predict(res_oracle, S = S, what = "FP")
   expect_lte(FP, 10)
 
   # selection of last 10 hyps in the order of p-values
   # should contain only noise
-  p_values <- p_values(res_oracle)
+  p_values <- get_p_values(res_oracle)
   S <- tail(order(p_values), 10)
   FP <- predict(res_oracle, S = S, what = "FP")
   expect_equal(FP, length(S))
