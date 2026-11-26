@@ -1,13 +1,13 @@
-# sigma_factor_model
-#
-# calculate the covariance matrix of a factor model
-#
-#
-# @param m Number of tests
-# @param h A vector of \code{k} singular values associated to each factor
-# @param P A \code{m x k} matrix of factor loadings
-# @param rho \code{1-rho} is the standard deviation of the noise
-# @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
+#' sigma_factor_model
+#'
+#' calculate the covariance matrix of a factor model
+#'
+#'
+#' @param m Number of tests
+#' @param h A vector of \code{k} singular values associated to each factor
+#' @param P A \code{m x k} matrix of factor loadings
+#' @param rho \code{1-rho} is the standard deviation of the noise
+#' @author Gilles Blanchard, Pierre Neuvial and Etienne Roquain
 #' @importFrom Matrix Matrix
 sigma_factor_model <- function(m, h = numeric(0),
                                P = Matrix(

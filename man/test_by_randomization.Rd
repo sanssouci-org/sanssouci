@@ -34,11 +34,12 @@ calculated and returned? Defaults to @FALSE}
 \value{
 a list with elements: \describe{
 
-\item{T}{A vector of \eqn{m} test statistics}
+\item{statistics}{A vector of \eqn{m} test statistics}
 
-\item{null_stat}{A \eqn{m \times B} matrix of randomized test statistics}
+\item{null_statistics}{A \eqn{m \times B} matrix of randomized test
+statistics}
 
-\item{p}{A vector of \eqn{m} parametric \eqn{p}-values}
+\item{p_values}{A vector of \eqn{m} parametric \eqn{p}-values}
 
 \item{null_p_values}{A \eqn{m \times B} matrix of parametric \eqn{p}-values
 on randomized data}
@@ -102,10 +103,11 @@ tests_w <- test_by_randomization(
 ## show test statistics
 pch <- 20
 colStat <- 1 + sim$H
-plot(tests$T, col = colStat, main = "T-Test statistics", pch = pch)
+plot(tests$statistics, col = colStat, main = "T-Test statistics", pch = pch)
 legend("topleft", c("H0", "H1"), pch = pch, col = 1:2)
 
-plot(testsW$T, col = colStat, main = "Wilcoxon test statistics", pch = pch)
+plot(tests_w$statistics, col = colStat, main = "Wilcoxon test statistics",
+pch = pch)
 legend("topleft", c("H0", "H1"), pch = pch, col = 1:2)
 
 # one-sample data:
@@ -118,10 +120,11 @@ tests <- test_by_randomization(
 ## show test statistics
 pch <- 20
 colStat <- 1 + sim$H
-plot(tests$T, col = colStat, main = "Test statistics", pch = pch)
+plot(tests$statistics, col = colStat, main = "Test statistics", pch = pch)
 legend("topleft", c("H0", "H1"), pch = pch, col = 1:2)
 
-plot(-log10(tests$p), col = colStat, main = "-log[10](p-value)", pch = pch)
+plot(-log10(tests$p_values), col = colStat, main = "-log[10](p-value)",
+pch = pch)
 legend("topleft", c("H0", "H1"), pch = pch, col = 1:2)
 
 }
