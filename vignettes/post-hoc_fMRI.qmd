@@ -87,24 +87,25 @@ We set the target confidence level to $\alpha = `r alpha`$. The Simes bound is i
 #| label: simes-bound
 groups <- ifelse(colnames(Y) == "left", 0, 1) # map to 0/1
 obj <- SansSouci(Y = Y, groups = groups)
-res_Simes <- fit(obj, B = 0, family = "Simes", alpha = alpha) ## B=0 => no calibration!
+res_simes <- fit(obj, B = 0, family = "Simes", alpha = alpha)
+## B=0 => no calibration!
 ```
 
 Post hoc bounds are obtained from the `bound` function:
 
 ```{r}
-TP_Simes <- predict(res_Simes, what = "TP")
-TP_Simes
+tp_simes <- predict(res_simes, what = "TP")
+tp_simes
 ```
 
-The Simes bound implies that with probability larger than `r 1-alpha`, the number of voxels associated to the task of interest (among all `r nHyp(obj)` voxels) is at least  `r TP_Simes`.
+The Simes bound implies that with probability larger than `r 1-alpha`, the number of voxels associated to the task of interest (among all `r n_hyp(obj)` voxels) is at least  `r tp_simes`.
 
 Disregarding (for now) the voxel locations in the brain, we plot confidence bounds on $p$-value level sets (corresponding to maps obtained by thresholding at a given test statistic):
 
 ```{r}
 #| label: plot-conf-bounds-Simes
 xmax <- 800
-plot(res_Simes, xmax = xmax) +
+plot(res_simes, xmax = xmax) +
   ggtitle("Post hoc confidence curves: Simes/ARI")
 ```
 
@@ -127,19 +128,19 @@ An alternative to the Simes/Linear reference family is the Beta reference family
 #| label: post-hoc-calibration-beta
 #| cache: true
 K <- 500
-res_Beta <- fit(res, alpha = alpha, B = B, family = "Beta", K = K)
+res_beta <- fit(res, alpha = alpha, B = B, family = "Beta", K = K)
 ```
 
 As expected from the theory, the post hoc bounds obtained after calibration by these methods is much tighter than the Simes bound:
 
 ```{r}
 #| label: tighter-bounds
-resList <- list("Simes/ARI" = res_Simes,
-            "Linear" = res,
-            "Beta" = res_Beta)
-names(resList)[3] <- sprintf("Beta (K=%s)", K)
+RES_LIST <- list("Simes/ARI" = res_simes,
+                 "Linear" = res,
+                 "Beta" = res_beta)
+names(RES_LIST)[3] <- sprintf("Beta (K=%s)", K)
 
-bounds <- sapply(resList, predict, what = "TP")
+bounds <- sapply(RES_LIST, predict, what = "TP")
 knitr::kable(bounds, digits = 2, col.names = c("Lower bound on True Positives"))
 ```
 
@@ -160,11 +161,11 @@ The confidence curves obtained by calibration of the Simes and Beta families can
 
 ```{r}
 #| label: plot-conf-bounds
-conf_bounds <- lapply(resList, predict, all = TRUE)
-# cols <- c("lightgray", "black", "darkgray")
+conf_bounds <- lapply(RES_LIST, predict, all = TRUE)
 cols <- RColorBrewer::brewer.pal(length(conf_bounds), "Dark2")
-p <- plotConfCurve(conf_bounds, xmax = 700, cols = cols, legend.title = "Template")
-p + geom_line(size=1.5)
+p <- plot_conf_curve(conf_bounds, xmax = 700, cols = cols,
+                     legend_title = "Template")
+p + geom_line(size = 1.5)
 ```
 
 In this example, ARI is outperformed by permutation-based approaches, which are able to adapt to unknown dependency: for the same target risk level ($\alpha = `r alpha`$), both permutation-based bounds are much less conservative than the classical Simes/ARI bound.
@@ -184,7 +185,7 @@ This atlas is made of `r nrow(brainAtlas)` areas. For each of these areas, we  c
 #| label: posthoc-bounds-atlas
 bounds <- apply(brainAtlas, 1, FUN = function(reg) {
   S <- which(reg > 0)
-  c("Region size" = length(S), sapply(resList, predict, S, "TP"))
+  c("Region size" = length(S), sapply(RES_LIST, predict, S, "TP"))
 })
 ```
 
@@ -192,9 +193,9 @@ In this particular case, some signal is revealed by the post hoc bound for `r su
 
 ```{r}
 #| label: posthoc-bounds-atlas-table
-ww <- which(colSums(bounds[3:4, ])>0)
-cap <- sprintf("Lower bounds on the number of true positives in %s brain regions.",
-               length(ww))
+ww <- which(colSums(bounds[3:4, ]) > 0)
+cap <- paste("Lower bounds on the number of true positives in",
+             length(ww), "brain regions.")
 knitr::kable(t(bounds[, ww]), caption = cap)
 ```
 

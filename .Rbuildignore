@@ -33,5 +33,6 @@ TODO*.txt
 ^pkgdown$
 ^README\.Rmd$
 ^codecov\.yml$
+^.lintr$
 ^\.positai$
 ^\.claude$

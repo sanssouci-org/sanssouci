@@ -35,7 +35,7 @@ We consider $m$ null ordered hypotheses partitioned in intervals of size $s$. Fo
 #| label: param1
 s <- 100
 q <- 7
-m <- s*2^q
+m <- s * 2^q
 ```
 
 Therefore, we have $m = `r m`$. Our goal is to compare three post hoc bounds. These bounds are obtained by interpolation from a *reference family* where the amount of signal is estimated by probabilistic inequalities, following the general principle laid down by @blanchard20post-hoc, and they differ by the choice of the reference family:
@@ -52,7 +52,7 @@ We define the following numerical parameters, which characterize the true/false 
 #| label: param2
 K1 <- 8
 r <- 0.9
-m1 <-  r*K1*s
+m1 <-  r * K1 * s
 barmu <- 3
 ```
 
@@ -64,8 +64,8 @@ We start by creating a binary tree structure and generating the signal:
 
 ```{r}
 #| label: simulation
-family <- dyadic.from.window.size(m, s = s, method = 2)
-mu <- gen.mu.leaves(m = m, K1 = K1, d = r, grouped = TRUE, setting = "const",
+family <- dyadic_from_window_size(m, s = s, method = 2)
+mu <- gen_mu_leaves(m = m, K1 = K1, d = r, grouped = TRUE, setting = "const",
                     barmu = barmu, leaf_list = family$leaf_list)
 ```
 
@@ -79,7 +79,7 @@ We generate $p$-values according to the simulation setup in @durand20post-hoc:
 
 ```{r}
 #| label: p-values
-pvalues <- gen.p.values(m = m, mu = mu, rho = 0, alternative = "greater")
+pvalues <- gen_p_values(m = m, mu = mu, rho = 0, alternative = "greater")
 ```
 
 ## Calculate confidence curves
@@ -110,7 +110,8 @@ The true number of false positives will be called "Oracle" bound in the plots be
 label <- rep("Oracle", m)
 method <- rep("Oracle", m)
 oracle_bound <- cumsum(mu[ord] == 0)
-res[["Oracle"]] <- data.frame(x = x, label = label, stat = stat, bound = oracle_bound, method = method)
+res[["Oracle"]] <- data.frame(x = x, label = label, stat = stat,
+                              bound = oracle_bound, method = method)
 ```
 
 ### Simes-based confidence curve
@@ -119,10 +120,11 @@ Here we use the @simes86improved inequality to bound the number of false positiv
 
 ```{r}
 #| label: simes
-simes_bound <- curveMaxFP(pvalues, alpha * 1:m / m)
+simes_bound <- curve_max_fp(pvalues, alpha * 1:m / m)
 label <- rep("Simes", m)
 method <- rep("Simes", m)
-res[["Simes"]] <- data.frame(x = x, label = label, stat = stat, bound = simes_bound, method = method)
+res[["Simes"]] <- data.frame(x = x, label = label, stat = stat,
+                             bound = simes_bound, method = method)
 ```
 
 ### DKWM-based confidence curve
@@ -133,19 +135,26 @@ Here we use the DKWM inequality (@dvoretzky1956asymptotic, @massart1990tight) to
 #| label: tree
 label <- rep("DKWM(tree)", m)
 method <- rep("Tree", m)
-C_tree <- family$C[8]
-ZL_tree <- zetas.tree(C_tree, family$leaf_list, zeta.DKWM, pvalues, alpha)
-tree_bound <- curve.V.star.forest.fast(ord, C_tree, ZL_tree, family$leaf_list, pruning = TRUE)
-res[["Tree"]] <- data.frame(x = x, label = label, stat = stat, bound = tree_bound, method = method)
+c_tree <- family$forest_structure[8]
+zl_tree <- structured_zetas(c_tree, family$leaf_list, structured_zeta_dkwm,
+                            pvalues, alpha)
+tree_bound <- pred_pathway_structured(ord, c_tree, zl_tree, family$leaf_list,
+                                      pruning = TRUE)
+res[["Tree"]] <- data.frame(x = x, label = label, stat = stat,
+                            bound = tree_bound, method = method)
 ```
 
 ```{r}
 #| label: part
 label <- rep("DKWM(partition)", m)
 method <- rep("Partition", m)
-ZL_part <- zetas.tree(family$C, family$leaf_list, zeta.DKWM, pvalues, alpha)
-part_bound <- curve.V.star.forest.fast(ord, family$C, ZL_part, family$leaf_list, pruning = TRUE)
-res[["Partition"]] <- data.frame(x = x, label = label, stat = stat, bound = part_bound, method = method)
+zl_part <- structured_zetas(family$forest_structure, family$leaf_list,
+                            structured_zeta_dkwm, pvalues, alpha)
+part_bound <- pred_pathway_structured(ord, family$forest_structure,
+                                      zl_part, family$leaf_list,
+                                      pruning = TRUE)
+res[["Partition"]] <- data.frame(x = x, label = label, stat = stat,
+                                 bound = part_bound, method = method)
 ```
 
 ## Plot confidence curves
@@ -163,13 +172,13 @@ names(cols) <- lvls
 
 ```{r}
 #| label: plot-confidence-curve
-xymax <- m1;
-pV <- ggplot(dat, aes(x, bound, colour = method)) +
-    geom_line() +
-    ylab("Upper bound on the number of false positives") +
-    xlab("sorted hypotheses") +
-    scale_colour_manual(values = cols)
-pV
+xymax <- m1
+plot_v <- ggplot(dat, aes(x, bound, colour = method)) +
+  geom_line() +
+  ylab("Upper bound on the number of false positives") +
+  xlab("sorted hypotheses") +
+  scale_colour_manual(values = cols)
+plot_v
 ```
 
 The "Tree" and "Partition" bounds are sharper than the "Simes" bound as soon as we are considering "large" sets of hypotheses.  The fact that the "Tree" and "Partition" bounds are not as sharp as the "Simes" bound for the first hundred of hypotheses can be explained by our choice of the ordering of the null hypotheses in the sets $S_k$, which as discussed above is favorable to the "Simes" bound.
@@ -179,8 +188,8 @@ Zooming on the first `r xymax` null hypotheses (in the order of the $p$-values):
 ```{r}
 #| label: zoom-plot-confidence-curve
 #| warning: false
-pV + coord_cartesian(xlim = c(1, xymax),
-                     ylim = c(0, xymax))
+plot_v + coord_cartesian(xlim = c(1, xymax),
+                         ylim = c(0, xymax))
 ```
 
 ## Lower bound on the number of true positives
@@ -194,14 +203,14 @@ dat$S <- dat$x - dat$bound
 
 ```{r}
 #| label: plot-lower-bound
-xmax <- m1;
-ymax <- max(dat$S[m1]);
-pS <- ggplot(dat, aes(x, S, colour = method)) +
-    geom_line() +
-    ylab("Lower bound on the number of true positives") +
-    xlab("sorted hypotheses") +
-    scale_colour_manual(values = cols)
-pS
+xmax <- m1
+ymax <- max(dat$S[m1])
+plot_s <- ggplot(dat, aes(x, S, colour = method)) +
+  geom_line() +
+  ylab("Lower bound on the number of true positives") +
+  xlab("sorted hypotheses") +
+  scale_colour_manual(values = cols)
+plot_s
 ```
 
 Zooming in the first `r xymax` null hypotheses (in the order of the $p$-values), we recover the middle plot in Figure 12 of @durand20post-hoc.
@@ -209,7 +218,7 @@ Zooming in the first `r xymax` null hypotheses (in the order of the $p$-values),
 ```{r}
 #| label: zoom-plot-lower-bound
 #| warning: false
-pS + xlim(1, xmax) + ylim(0, ymax)
+plot_s + xlim(1, xmax) + ylim(0, ymax)
 ```
 
 ## Session information

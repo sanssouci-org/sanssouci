@@ -33,12 +33,13 @@ calibrate0(
 \item{alpha}{A numeric value in \verb{[0,1]}, the target (JER) risk}
 
 \item{family}{A character value, the name of a threshold family. Should be
-one of "Linear", "Beta" and "Simes", or "Oracle". "Linear" and "Simes" families are
-identical.}
+one of "Linear", "Beta" and "Simes", or "Oracle". "Linear" and "Simes"
+families are identical.}
 
-\item{K}{An integer value in \verb{[1,m]}, the number of elements in the reference family. Defaults to \code{m}}
+\item{K}{An integer value in \verb{[1,m]}, the number of elements in the reference
+family. Defaults to \code{m}}
 
-\item{p}{A vector of 'm' p.values, used for step-down control. If not
+\item{p}{A vector of 'm' p-values, used for step-down control. If not
 provided, single step control is performed.}
 
 \item{max_steps_down}{A numeric value, the maximum number of steps down to
@@ -70,55 +71,60 @@ the output of 'calibrate(..., max_steps_down = 0)' and
 
 set.seed(0xBEEF)
 m <- 50
-sim <- gaussianSamples(m = m, rho = 0.3, n = 45, 
-                       pi0 = 0.8, SNR = 3, prob = 0.5)
+sim <- sim_gaussian_equi(
+  m = m, rho = 0.3, n = 45,
+  pi0 = 0.8, SNR = 3, prob = 0.5
+)
 Y <- sim$X
 groups <- sim$categ
-p <- rowWelchTests(Y, groups)$p.value
+p <- row_welch_tests(Y, groups)$p_value
 
 B <- 100
 null_groups <- replicate(B, sample(groups))
-p0 <- rowWelchTests(Y, null_groups)$p.value
+p0 <- row_welch_tests(Y, null_groups)$p_value
 
 calib0 <- calibrate0(p0, m, alpha = 0.1) # single step
 calib <- calibrate(p0, m, alpha = 0.1, p = p)
-calib$lambda >= calib0$lambda 
+calib$lambda >= calib0$lambda
 
-maxFP(p, calib$thr)
+max_fp(p, calib$thr)
 
 \dontrun{
 # Gene expression
 data(expr_ALL, package = "sanssouci.data")
-X <- expr_ALL; rm(expr_ALL)
+X <- expr_ALL
+rm(expr_ALL)
 groups <- ifelse(colnames(X) == "BCR/ABL", 1, 0) # map to 0/1
 
 null_groups <- replicate(500, sample(groups))
-perm <- rowWelchTests(X, null_groups)
-p0 <- perm$p.value
+perm <- row_welch_tests(X, null_groups)
+p0 <- perm$p_value
 
 alpha <- 0.1
 m <- nrow(X)
-p <- rowWelchTests(X, groups)$p.value
+p <- row_welch_tests(X, groups)$p_value
 calib_L <- calibrate(p0, m, alpha, family = "Linear")
 calib_B <- calibrate(p0, m, alpha, family = "Beta", K = 100)
 
 ## post hoc bounds
 thr <- calib_L$thr
-minTP(p, thr)  ## lower bound on true positives
+min_tp(p, thr) ## lower bound on true positives
 
 
 ## example of user selection: rejections of BH(0.05) procedure
-adjp <- p.adjust(p, method = "BH") 
+adjp <- p.adjust(p, method = "BH")
 sel <- which(adjp < 0.05)
 length(sel)
 
-minTP(p[sel], thr)
+min_tp(p[sel], thr)
 
 # confidence bound on the FDP
-FDP_bound <- sanssouci:::curveMaxFP(sort(p), thr)/seq(along = p)
-plot(head(FDP_bound, 300), t = 's', 
+FDP_bound <- curve_max_fp(sort(p), thr) / seq(along = p)
+plot(head(FDP_bound, 300),
+  t = "s",
   xlab = "Number of features",
-  ylab = "Upper bound on False Discovery Proportion")
+  ylab = "Upper bound on False Discovery Proportion"
+)
 }
 
 }

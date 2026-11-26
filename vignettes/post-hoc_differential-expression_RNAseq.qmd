@@ -74,10 +74,9 @@ This data set consists of gene expression measurements for  $n = `r ncol(Y)`$ pa
 
 ```{r}
 #| label: CPM-filter
-CPM <- Y/colSums(Y)*1e6
-# plot(density(rowMaxs(log(1 + CPM))))
+CPM <- Y / colSums(Y) * 1e6
 ww <- which(rowMaxs(CPM) < 10)
-ww <- which(rowQuantiles(log(1 + CPM), prob = 0.75) < log(1+5))
+ww <- which(rowQuantiles(log(1 + CPM), prob = 0.75) < log(1 + 5))
 Y <- CPM[-ww, ]
 plot(density(log(1 + Y)))
 plot(density(log(1 + CPM)))
@@ -96,7 +95,7 @@ The goal of this study is to understand the molecular differences at the gene ex
 > For which genes is there a difference in the distribution of expression levels between the stage II and stage III populations?
 
 This question can be addressed by performing one statistical test per gene, and to define "differentially expressed" genes as those passing some significance threshold.
-Below, we use the Wilcoxon rank sum (or Mann-Whitney) test for comparing two independent samples. This is a rank-based non-parametric test. A fast version of this test is implemented in the  `sanssouci::rowWilcoxonTests` function.
+Below, we use the Wilcoxon rank sum (or Mann-Whitney) test for comparing two independent samples. This is a rank-based non-parametric test. A fast version of this test is implemented in the  `sanssouci::row_wilcoxon_tests` function.
 
 To obtain post hoc bounds, we create an object of class `SansSouci` and run the `fit` method to perform calibration with $B=1,000$ permutations. The target risk level is set to $\alpha = 0.1$, meaning that all of the statements made below will be true with probability greater than $1-\alpha= 0.9$.
 
@@ -106,18 +105,18 @@ To obtain post hoc bounds, we create an object of class `SansSouci` and run the 
 alpha <- 0.1
 obj <- SansSouci(Y = log(1 + Y), groups = groups)
 res <- fit(obj, B = 1000, alpha = alpha, family = "Simes",
-           rowTestFUN = rowWilcoxonTests)
+           row_test_fun = row_wilcoxon_tests)
 ```
 
 For comparison purposes we also run the (parametric) Simes method introduced by @GS2011:
 
 ```{r}
 #| label: Simes
-res_Simes <- fit(obj, B = 0, family = "Simes", alpha = alpha,
-                 rowTestFUN = rowWilcoxonTests) ## B=0 => no calibration!
+res_simes <- fit(obj, B = 0, family = "Simes", alpha = alpha,
+                 row_test_fun = row_wilcoxon_tests) ## B=0 => no calibration!
 
-resList <- list("SansSouci" = res,
-                "Simes (parametric)" = res_Simes)
+RES_LIST <- list("SansSouci" = res,
+                 "Simes (parametric)" = res_simes)
 ```
 
 # Confidence curves for "top-$k$" lists
@@ -131,12 +130,12 @@ The confidence curve obtained by calibration is the solid black line in the figu
 ```{r}
 #| label: conf-env-plot
 #| cache: true
-conf_bounds <- lapply(resList, predict, all = TRUE)
+conf_bounds <- lapply(RES_LIST, predict, all = TRUE)
 cols <- c("black", "darkgray")
-p <- plotConfCurve(conf_bounds, xmax = 5000, cols = cols, legend.title = "Template") +
+p <- plot_conf_curve(conf_bounds, xmax = 5000, cols = cols,
+                     legend_title = "Template") +
   geom_line(linewidth = 1.5)
 p
-# ggsave(p, file = "conf-curve.pdf", width = 6, height = 4)
 ```
 
 ```{r}
@@ -145,13 +144,13 @@ p
 x <- 2000
 TP <- predict(res, what = "TP", all = TRUE)$bound
 FDP <- predict(res, what = "FDP", all = TRUE)$bound
-TP_Simes <- predict(res_Simes, what = "TP", all = TRUE)$bound
-FDP_Simes <- predict(res_Simes, what = "FDP", all = TRUE)$bound
+tp_simes <- predict(res_simes, what = "TP", all = TRUE)$bound
+fdp_simes <- predict(res_simes, what = "FDP", all = TRUE)$bound
 ```
 
 This plot can be interpreted as follows: among the `r x` most significant genes, the number of truly differentially expressed genes is at least `r TP[x]` (right panel). Equivalently, the FDP among these `r x` genes is at most `r ceiling(FDP[x]*100)/100` (left panel).
 
-The dashed gray curve is obtained by the parametric Simes method introduced by @GS2011. The comparison between the two curves illustrates the gain in power obtained by using permutations methods to adapt to the dependence between genes. In this example, the parametric Simes method gives the following guarantees: among the `r x` most significant genes, the number of truly differentially expressed genes is at least `r TP_Simes[x]` (right panel). Equivalently, the FDP among these `r x` genes is at most `r ceiling(FDP_Simes[x]*100)/100` (left panel).
+The dashed gray curve is obtained by the parametric Simes method introduced by @GS2011. The comparison between the two curves illustrates the gain in power obtained by using permutations methods to adapt to the dependence between genes. In this example, the parametric Simes method gives the following guarantees: among the `r x` most significant genes, the number of truly differentially expressed genes is at least `r tp_simes[x]` (right panel). Equivalently, the FDP among these `r x` genes is at most `r ceiling(fdp_simes[x]*100)/100` (left panel).
 
 ## Differentially expressed genes
 
@@ -164,34 +163,35 @@ To do so, we *define* differentially expressed genes as the largest set of genes
 ```{r}
 #| label: post-hoc-FDP-control
 q <- 0.1 # FDP budget (user-defined)
-FDP <- lapply(resList, predict, what = "FDP", all = TRUE)
-n_DEG <- sapply(FDP, function(x) sum(x <= q))
+FDP <- lapply(RES_LIST, predict, what = "FDP", all = TRUE)
+n_deg <- sapply(FDP, function(x) sum(x <= q))
 
 linewidth <- 1.5
-p <- plotConfCurve(FDP, xmax = 2.5*n_DEG, col = cols, legend.title = "Template") +
+p <- plot_conf_curve(FDP, xmax = 2.5 * n_deg, col = cols,
+                     legend_title = "Template") +
   geom_hline(yintercept = q, linetype = "dashed", linewidth = linewidth) +
-  geom_vline(xintercept = n_DEG, linetype = "dotted", col = cols, linewidth = linewidth) +
+  geom_vline(xintercept = n_deg, linetype = "dotted", col = cols,
+             linewidth = linewidth) +
   geom_line(linewidth = linewidth)
 p
-# ggsave(p, file = "conf-curve_DEG.pdf", width = 6, height = 4)
 ```
 
-Using $q = `r q`$, we obtain `r n_DEG[["SansSouci"]]` differentially expressed genes. Note that this gene list has a clear statistical interpretation: with probability $1-\alpha = `r 1-alpha`$, the proportion of false positives (that is, genes that are called DE by mistake) is less than $q = `r q`$.
+Using $q = `r q`$, we obtain `r n_deg[["SansSouci"]]` differentially expressed genes. Note that this gene list has a clear statistical interpretation: with probability $1-\alpha = `r 1-alpha`$, the proportion of false positives (that is, genes that are called DE by mistake) is less than $q = `r q`$.
 
-The above example also illustrates the increase in power obtained by calibration, since the parametric Simes method yields a subset of "only" `r n_DEG[["Simes (parametric)"]]` genes called differentially expressed (with identical statistical guarantees).
+The above example also illustrates the increase in power obtained by calibration, since the parametric Simes method yields a subset of "only" `r n_deg[["Simes (parametric)"]]` genes called differentially expressed (with identical statistical guarantees).
 
 ## Comparison to FDR control
 
 We argue that ensuring *with high probability* that the FDP is less than some user-defined budget, as done above, is more interpretable than the widely used False Discovery Rate (FDR) control introduced by @benjamini95controlling. Indeed, FDR control guarantees that the *expected* (or average) FDP among DE genes is less than some user-defined FDR budget.  However, **the true FDP may well be far from its expected value**, especially since the variability of the FDP is known to increase with the degree of dependence between genes.
 
 ```{r}
-adjp <- p.adjust(pValues(res), method = "BH")
-FDR_level <- 0.05
-n_BH <- sum(adjp < FDR_level)
-n_BH
+adjp <- p.adjust(get_p_values(res), method = "BH")
+fdr_level <- 0.05
+n_bh <- sum(adjp < fdr_level)
+n_bh
 ```
 
-In our case, the BH procedure would consider `r n_BH` genes as differentially expressed at the FDR level `r FDR_level`. This set of DE genes is larger than the `r n_DEG[["SansSouci"]]` genes called DE by our method, but the latter comes with stronger and more interpretable statistical guarantees than FDR control.
+In our case, the BH procedure would consider `r n_bh` genes as differentially expressed at the FDR level `r fdr_level`. This set of DE genes is larger than the `r n_deg[["SansSouci"]]` genes called DE by our method, but the latter comes with stronger and more interpretable statistical guarantees than FDR control.
 
 # Volcano plots
 
@@ -201,7 +201,7 @@ A classical practice in gene expression studies is to define DE genes as those p
 
 ```{r}
 #| label: volcano
-volcanoPlot(res, p = 1e-4, r = 0.5)
+volcano_plot(res, p = 1e-4, r = 0.5)
 ```
 
 This type of plot is called a "volcano plot" @CC2003. Post hoc inference makes it possible to obtain statistical guarantees on selections such as the ones represented in the above figure.
@@ -216,13 +216,13 @@ library(limma)
 library(edgeR)
 d <- DGEList(Y)
 d <- calcNormFactors(d)
-Grp <- as.factor(groups)
-mm <- model.matrix(~0 + Grp)
+grp <- as.factor(groups)
+mm <- model.matrix(~0 + grp)
 
 y <- voom(d, mm, plot = FALSE)
 
 res_lm <- lmFit(y, mm)
-contr <- makeContrasts(Grp1 - Grp0, levels = colnames(coef(res_lm)))
+contr <- makeContrasts(grp1 - grp0, levels = colnames(coef(res_lm)))
 res_fit <- contrasts.fit(res_lm, contr)
 res_eb <- eBayes(res_fit)
 TT <- topTable(res_eb, sort.by = "none", number = Inf)
@@ -232,7 +232,8 @@ The next plot suggests that the $p$-values obtained from limma-voom and from Wil
 
 ```{r}
 #| label: compare-p-values
-df <- data.frame(wilcox = -log10(as.vector(pValues(res))), limma = -log10(TT$P.Value))
+df <- data.frame(wilcox = -log10(as.vector(get_p_values(res))),
+                 limma = -log10(TT$P.Value))
 ggplot(df, aes(x = limma, y = wilcox)) +
   geom_point(color = "#10101010") +
   ggtitle("p-values (log-scale)")
@@ -242,10 +243,10 @@ Finally we obtain the volcano plot based on limma statistics.
 
 ```{r}
 #| label: volcano-limma
-volcanoPlot(res,
-            fold_changes = TT$logFC,
-            p_values = TT$P.Value,
-            p = 1e-4, r = 0.5)
+volcano_plot(res,
+             fold_changes = TT$logFC,
+             p_values = TT$P.Value,
+             p = 1e-4, r = 0.5)
 ```
 
 # Session information

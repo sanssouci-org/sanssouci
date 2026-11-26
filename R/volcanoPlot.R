@@ -2,41 +2,51 @@
 #'
 #' Volcano plot for differential expression studies
 #'
-#' @rdname volcanoPlot
+#' @rdname volcano_plot
 #' @param x An object of class `SansSouci`, or alternatively a numeric vector
-#'   of fold changes when calling `volcanoPlot.numeric` directly (x axis of
-#'   the volcano plot). See [volcanoPlot.numeric()] or [volcanoPlot.SansSouci()]
-#'   for specifics
+#'   of fold changes when calling `volcano_plot.numeric` directly (x axis of
+#'   the volcano plot). See [volcano_plot.numeric()] or
+#'   [volcano_plot.SansSouci()] for specifics
 #' @param ... Other arguments passed to methods
 #' @export
-volcanoPlot <- function(x, ...) UseMethod("volcanoPlot")
+volcano_plot <- function(x, ...) UseMethod("volcano_plot")
 
 
 #' Volcano plot for a numeric vector of fold changes and p-values
 #' @param x A numeric vector of fold changes (x axis of the volcano plot)
-#' @param p_value A numeric vector of p-values, of the same length as `x`
+#' @param p_values A numeric vector of p-values, of the same length as `x`
 #'   (y axis of the volcano plot). If it is a named vector, then it is used in
 #'   hover text for transformed ggplotly.
-#' @param thr A numeric vector of length K, a JER controlling family, used to estimate post-hoc bounds
-#' @param p_value_bound A numeric vector of p-values, of the same length as `x`, used to estimate post-hoc bounds. Defaults to 'p_value'
-#' @param p A numeric value, the p-value threshold under which features are selected
-#' @param q A numeric value, the q-value (or FDR-adjusted p-value) threshold under which features are selected
-#' @param r A numeric value, the absolute fold change above which features are selected
-#' @param cex A numeric vector of length 2, the relative magnification factor for unselected (\code{cex[1]}) and unselected (\code{cex[2]}) features.
+#' @param thr A numeric vector of length K, a JER controlling family, used to
+#'  estimate post-hoc bounds
+#' @param p_values_bound A numeric vector of p-values, of the same length as
+#'  `x`, used to estimate post-hoc bounds. Defaults to 'p_values'
+#' @param p A numeric value, the p-value threshold under which features are
+#'  selected
+#' @param q A numeric value, the q-value (or FDR-adjusted p-value) threshold
+#'  under which features are selected
+#' @param r A numeric value, the absolute fold change above which features are
+#'  selected
+#' @param cex A numeric vector of length 2, the relative magnification factor
+#' for unselected (\code{cex[1]}) and unselected (\code{cex[2]}) features.
 #'
 #' @param col A vector of length 3
-#' @param pch An integer or single character string specifying the plotting character, see \code{\link{par}}
-#' @param feature_label A character, the label to be used to designate individual hypotheses in the plot title
-#' (e.g. "gene", "proteins", ...)
+#' @param pch An integer or single character string specifying the plotting
+#' character, see \code{\link{par}}
+#' @param feature_label A character, the label to be used to designate
+#' individual hypotheses in the plot title (e.g. "gene", "proteins", ...)
 #' @param ylim A numeric vector of length 2, the \eqn{y} limits of the plot
-#' @param add_signed_selections A boolean value: should the post hoc bounds for the subselections corresponding to positive and negative fold change be displayed? Defaults to TRUE
+#' @param add_signed_selections A boolean value: should the post hoc bounds for
+#' the subselections corresponding to positive and negative fold change be
+#'  displayed? Defaults to TRUE
 #' @param ... Not used
 #' @details The p-values play two distinct roles here: they are displayed as the
 #'   y axis of the volcano plot, and they are also used to compute post hoc
 #'   bounds. In general the same p-values are used. See the vignette
-#'   <https://sanssouci-org.github.io/sanssouci/articles/post-hoc_differential-expression_RNAseq.html#custom-statistics-example-using-limma-voom>
+#'   <https://sanssouci-org.github.io/sanssouci/articles/post-hoc_differential-expression_RNAseq.html#custom-statistics-example-using-limma-voom> # nolint
 #'   for an example where two different sets of p-values are used.
-#' @return A 'ggplot' object containing the volcano plot, with the indices of selected features returned as an attribute named 'selection'
+#' @return A 'ggplot' object containing the volcano plot, with the indices of
+#' selected features returned as an attribute named 'selection'
 #'
 #' @exportS3Method
 #' @importFrom graphics abline legend rect title
@@ -48,40 +58,44 @@ volcanoPlot <- function(x, ...) UseMethod("volcanoPlot")
 #' a <- SansSouci(Y = expr_ALL, groups = groups)
 #'
 #' res <- fit(a, B = 100, alpha = 0.1)
-#' fold_changes <- foldChanges(res)
-#' p_values <- pValues(res)
+#' fold_changes <- get_fold_changes(res)
+#' p_values <- get_p_values(res)
 #' thr <- thresholds(res)
-#' volcanoPlot(x = fold_changes[1, ], p_value = p_values[1, ], thr = thr,
-#'   q = 0.2, r = 0.2, ylim = c(0, 4), feature_label = "gene")
+#' volcano_plot(
+#'   x = fold_changes[1, ], p_values = p_values[1, ], thr = thr,
+#'   q = 0.2, r = 0.2, ylim = c(0, 4), feature_label = "gene"
+#' )
 #'
-#' @seealso Volcano plot shiny app at \url{ https://shiny-iidea-sanssouci.apps.math.cnrs.fr/}
-#' @seealso Volcano plot for objects of class 'SansSouci': [volcanoPlot.SansSouci()]
-volcanoPlot.numeric <- function(x, p_value,
-                                thr, p_value_bound = p_value,
-                                p = 1, q = 1, r = 0,
-                                cex = c(0.4, 1.5),
-                                col = c("#33333333", "#FF0000", "#FF666633"),
-                                pch = 19,
-                                feature_label = "feature",
-                                ylim = NULL,
-                                add_signed_selections = TRUE,
-                                ...) {
+#' @seealso Volcano plot shiny app at
+#'  \url{https://shiny-iidea-sanssouci.apps.math.cnrs.fr/}
+#' @seealso Volcano plot for objects of class
+#' 'SansSouci': [volcano_plot.SansSouci()]
+volcano_plot.numeric <- function(x, p_values,
+                                 thr, p_values_bound = p_values,
+                                 p = 1, q = 1, r = 0,
+                                 cex = c(0.4, 1.5),
+                                 col = c("#33333333", "#FF0000", "#FF666633"),
+                                 pch = 19,
+                                 feature_label = "feature",
+                                 ylim = NULL,
+                                 add_signed_selections = TRUE,
+                                 ...) {
   fold_change <- x
   if (p < 1 && q < 1) {
     warning("Filtering both on p-values and BH-adjusted p-values")
   }
-  m <- length(p_value)
+  m <- length(p_values)
 
   ## sanity checks
   stopifnot(length(fold_change) == m)
-  stopifnot(length(p_value) == m)
-  stopifnot(length(p_value_bound) == m)
+  stopifnot(length(p_values) == m)
+  stopifnot(length(p_values_bound) == m)
   stopifnot(length(thr) <= m)
 
-  logp <- -log10(p_value)
-  adjp <- p.adjust(p_value, method = "BH") ## adjusted p-values
-  y_sel <- which((adjp <= q) &       ## selected by q-value
-                   (p_value <= p))         ## and/or p-value
+  logp <- -log10(p_values)
+  adjp <- p.adjust(p_values, method = "BH") ## adjusted p-values
+  ## selected by q-value and/or p-value
+  y_sel <- which((adjp <= q) & (p_values <= p))
   y_thr <- Inf
   if (length(y_sel) > 0) {
     y_thr <- min(logp[y_sel]) ## threshold on the log(p-value) scale
@@ -94,17 +108,17 @@ volcanoPlot.numeric <- function(x, p_value,
 
   ## post hoc bounds in selections
   n1 <- length(sel1)
-  FP1 <- maxFP(p_value_bound[sel1], thr = thr)
+  FP1 <- max_fp(p_values_bound[sel1], thr = thr)
   TP1 <- n1 - FP1
   FDP1 <- round(FP1 / max(n1, 1), 2)
 
   n2 <- length(sel2)
-  FP2 <- maxFP(p_value_bound[sel2], thr = thr)
+  FP2 <- max_fp(p_values_bound[sel2], thr = thr)
   TP2 <- n2 - FP2
   FDP2 <- round(FP2 / max(n2, 1), 2)
 
   n12 <- length(sel12)
-  FP12 <- maxFP(p_value_bound[sel12], thr = thr)
+  FP12 <- max_fp(p_values_bound[sel12], thr = thr)
   TP12 <- n12 - FP12
   FDP12 <- round(FP12 / max(n12, 1), 2)
 
@@ -116,26 +130,27 @@ volcanoPlot.numeric <- function(x, p_value,
   cexs[sel12] <- cex[2]
 
   xlab <- "Fold change (log scale)"
-  ylab <- "p-value (-log10 scale)"
+  ylab <- "p-values (-log10 scale)"
 
   feature_names <- names(logp)
   if (is.null(feature_names)) {
     feature_names <- seq_along(logp)
   }
   tooltip_hover <- paste0(
-    feature_label, ": ",feature_names, "<br>",
+    feature_label, ": ", feature_names, "<br>",
     "logFC: ", round(fold_change, 3), "<br>",
-    "p-value: ", round(adjp, 6), sep = ""
+    "p-values: ", round(adjp, 6),
+    sep = ""
   )
 
 
   df <- data.frame(
-    log_p_value = logp,
+    log_p_values = logp,
     log_fold_change = fold_change,
     feature_name = feature_names,
     text_hover = tooltip_hover,
     selected = factor(ifelse(seq(m) %in% sel12, "In", "Out"),
-                      levels = c("Out", "In")
+      levels = c("Out", "In")
     )
   )
   title <- sprintf(
@@ -149,9 +164,11 @@ volcanoPlot.numeric <- function(x, p_value,
 
   vp <- suppressWarnings(ggplot2::ggplot(
     df,
-    ggplot2::aes(x = .data$log_fold_change,
-                 y = .data$log_p_value,
-                 color = .data$selected)
+    ggplot2::aes(
+      x = .data$log_fold_change,
+      y = .data$log_p_values,
+      color = .data$selected
+    )
   ) +
     ggplot2::geom_hline(
       yintercept = y_thr,
@@ -177,7 +194,7 @@ volcanoPlot.numeric <- function(x, p_value,
       ggplot2::aes(text = .data$text_hover)
     ) +
     ggplot2::scale_color_manual(values = col[1:2]) +
-    ggplot2::scale_size_manual(values = cex) + # cex = c(0.2, 0.6)
+    ggplot2::scale_size_manual(values = cex) +
     ggplot2::theme_bw() +
     ggplot2::labs(
       title = title,
@@ -200,8 +217,7 @@ volcanoPlot.numeric <- function(x, p_value,
       xmin = r, xmax = Inf,
       ymin = y_thr, ymax = Inf,
       fill = col[3], alpha = 0.3
-    )
-  )
+    ))
 
   if (add_signed_selections) {
     txt_right <- sprintf(
@@ -230,10 +246,10 @@ volcanoPlot.numeric <- function(x, p_value,
         vjust = 1.2
       )
   }
-  attr(vp, "selection") <- list(sel12 = sel12,
-                                n1 = n1, TP1 = TP1, FDP1 = FDP1,
-                                n2 = n2, TP2 = TP2, FDP2 = FDP2)
+  attr(vp, "selection") <- list(
+    sel12 = sel12,
+    n1 = n1, TP1 = TP1, FDP1 = FDP1,
+    n2 = n2, TP2 = TP2, FDP2 = FDP2
+  )
   return(vp)
 }
-
-

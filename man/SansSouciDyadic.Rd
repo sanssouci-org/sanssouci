@@ -41,7 +41,7 @@ is built with the desired leaf size.
 \examples{
 s <- 100
 q <- 7
-m <- s*2^q
+m <- s * 2^q
 
 obj <- SansSouciDyadic(m, leaf_size = s, direction = "top-down")
 obj <- SansSouciDyadic(m, height = 8, direction = "top-down")
@@ -53,6 +53,5 @@ Post hoc false positive control for structured hypotheses. Scandinavian
 Journal of Statistics, 47(4), 1114-1148.
 }
 \seealso{
-dyadic.from.leave.list dyadic.from.window.size dyadic.from.height
-dyadic.from.max.height
+dyadic_from_leaf_list dyadic_from_window_size dyadic_from_height
 }
