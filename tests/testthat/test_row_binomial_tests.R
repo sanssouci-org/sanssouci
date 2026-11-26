@@ -32,7 +32,7 @@ test_that("row_binomial_tests <=> binom.test", {
   }))
   pbt <- as.data.frame(pbt)
   names(pbt) <- c("statistic", "p.value", "estimate")
-  expect_equal(fbt$p.value, pbt$p.value)
+  expect_equal(fbt$p_value, pbt$p.value)
   expect_equal(fbt$statistic, pbt$statistic)
   py <- rowMeans(mat[, cls == 0])
   expect_equal(fbt$estimate, pbt$estimate - py)
@@ -46,9 +46,9 @@ test_that("row_binomial_tests <=> binom.test", {
   )
 
   expect_equal(fbt_perm$statistic[, 1], fbt$statistic)
-  expect_equal(fbt_perm$p.value[, 1], fbt$p.value)
+  expect_equal(fbt_perm$p_value[, 1], fbt$p_value)
   expect_equal(fbt_perm$estimate[, 1], fbt$estimate)
-  expect_equal(ncol(fbt_perm$p.value), ncol(cls_perm))
+  expect_equal(ncol(fbt_perm$p_value), ncol(cls_perm))
 })
 
 
@@ -79,7 +79,7 @@ test_that("correctness of row_binomial_tests alternative", {
 
   alt <- "two.sided"
   expect_warning({
-    pval <- row_binomial_tests(mat, categ = cls, alternative = alt)$p.value
+    pval <- row_binomial_tests(mat, categ = cls, alternative = alt)$p_value
   })
   m0 <- mean(pval[idx_null])
   mg <- mean(pval[idx_greater])
@@ -90,7 +90,7 @@ test_that("correctness of row_binomial_tests alternative", {
   expect_lt(mg, m0)
 
   alt <- "greater"
-  pval <- row_binomial_tests(mat, categ = cls, alternative = alt)$p.value
+  pval <- row_binomial_tests(mat, categ = cls, alternative = alt)$p_value
   m0 <- mean(pval[idx_null])
   mg <- mean(pval[idx_greater])
   ml <- mean(pval[idx_less])
@@ -99,7 +99,7 @@ test_that("correctness of row_binomial_tests alternative", {
   expect_gt(ml, m0)
 
   alt <- "less"
-  pval <- row_binomial_tests(mat, categ = cls, alternative = alt)$p.value
+  pval <- row_binomial_tests(mat, categ = cls, alternative = alt)$p_value
   m0 <- mean(pval[idx_null])
   mg <- mean(pval[idx_greater])
   ml <- mean(pval[idx_less])

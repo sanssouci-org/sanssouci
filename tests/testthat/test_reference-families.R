@@ -17,10 +17,10 @@ test_that("Beta reference family", {
 })
 
 test_that("check_ref_fam", {
-  res <- check_ref_fam(Simes)
+  res <- check_ref_fam(simes)
   expect_null(res)
 
-  res <- check_ref_fam(Beta)
+  res <- check_ref_fam(beta)
   expect_null(res)
 
   simes2 <- list(
