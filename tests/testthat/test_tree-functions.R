@@ -1,11 +1,10 @@
-
 test_that("Vanilla test for tree functions", {
   m <- 6
   check_tree <- function(dd) {
     expect_true(class(dd) == "list")
     expect_length(dd, 2)
     expect_named(dd)
-    expect_identical(names(dd), c("leaf_list", "C"))
+    expect_identical(names(dd), c("leaf_list", "forest_structure"))
   }
 
   meth <- sample(2, 1)
@@ -26,17 +25,18 @@ test_that("Vanilla test for 'zeta' functions", {
   lambda <- 0.05
 
   expect_equal(
-    zeta_trivial(pval, lambda),
+    structured_zeta_trivial(pval, lambda),
     length(x)
   )
 
   expect_equal(
-    zeta_hb(pval, lambda),
+    structured_zeta_hb(pval, lambda),
     sum(p.adjust(pval, method = "holm") >= lambda)
   )
 
-  expect_lte(zeta_dkwm(pval, lambda), m)
-  expect_lte(zeta_hb(pval, lambda), zeta_kbonf(pval, lambda))
+  expect_lte(structured_zeta_dkwm(pval, lambda), m)
+  expect_lte(structured_zeta_hb(pval, lambda),
+             structured_zeta_kbonf(pval, lambda))
 })
 
 test_that("'curve_v_star.*' functions", {
