@@ -16,7 +16,7 @@
 #'   \item{statistics}{the value of the statistics}
 #'   \item{p_values}{the p-values for the tests}}
 #'   Each of these elements is a matrix of size \code{nrow(mat) x B}, coerced
-#'   to a vector of length \code{nrow(mat) if \code{B=1}}
+#'   to a vector of length \code{nrow(mat)} if \code{B=1}
 #' @author Pierre Neuvial
 #'
 #' @export
