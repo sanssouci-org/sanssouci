@@ -496,15 +496,15 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
   }
 
   cal <- row_test_fun(Y, groups, alternative = alternative)
-  if (!is.matrix(cal$p_values)) {
-    cal$p_values <- matrix(cal$p_values, nrow = L)
-    rownames(cal$p_values) <- object$input$contrast_name
+  if (!is.matrix(cal$p_value)) {
+    cal$p_value <- matrix(cal$p_value, nrow = L)
+    rownames(cal$p_value) <- object$input$contrast_name
   }
   if (!is.null(cal$estimate) && !is.matrix(cal$estimate)) {
     cal$estimate <- matrix(cal$estimate, nrow = L)
     rownames(cal$estimate) <- object$input$contrast_name
   }
-  p_values <- cal$p_values
+  p_values <- cal$p_value
   if (B > 0 && family != "Oracle") {
     t0 <- Sys.time()
     if (verbose) {
@@ -580,7 +580,7 @@ p_values <- function(object) UseMethod("p_values")
 #' @param object An object of class `SansSouci`
 #' @export
 p_values.SansSouci <- function(object) {
-  object$output$p.value
+  object$output$p_value
 }
 
 #' @describeIn all-generics Get fold changes

@@ -148,13 +148,13 @@ test_that("Correctness of elements of fitted  'SansSouci' object", {
   capture_output(print(res))
   output <- res$output
   nms <- c(
-    "statistic", "parameter", "p.value", "estimate", "p0", "thr",
+    "statistic", "parameter", "p_value", "estimate", "p0", "thr",
     "piv_stat", "lambda", "steps_down"
   )
   expect_identical(names(output), nms)
   expect_length(output$statistic, m)
   expect_length(output$parameter, m)
-  expect_length(output$p.value, m)
+  expect_length(output$p_value, m)
   expect_length(output$estimate, m)
   p0 <- output$p0
   expect_equal(nrow(p0), m)
@@ -204,7 +204,7 @@ test_that("'fit.SansSouci' reproduces the results of 'calibrate'", {
     alternative = alt, family = fam, max_steps_down = 0
   )
   set.seed(20210311)
-  p0 <- perm_stat(obj$input$Y, obj$input$groups, B, alternative = alt)$p.value
+  p0 <- perm_stat(obj$input$Y, obj$input$groups, B, alternative = alt)$p_value
   expect_equal(p0, res$output$p0)
   t_inv <- ifelse(fam == "Simes", t_inv_linear, t_inv_beta)
   t_ <- ifelse(fam == "Simes", t_linear, t_beta)
@@ -467,12 +467,12 @@ test_that(
 
     output <- res$output
     nms <- c(
-      "p.value", "statistic", "estimate", "p0", "thr",
+      "p_value", "statistic", "estimate", "p0", "thr",
       "piv_stat", "lambda", "steps_down"
     )
     expect_identical(names(output), nms)
     expect_length(output$statistic, m)
-    expect_length(output$p.value, m)
+    expect_length(output$p_value, m)
     expect_length(output$estimate, m)
     p0 <- output$p0
     expect_equal(nrow(p0), m)
