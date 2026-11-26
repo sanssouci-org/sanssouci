@@ -279,7 +279,7 @@ label.SansSouciStruct <- function(object) {
 #' @rdname SansSouciStruct-methods
 #' @param object An object of class `SansSouci`
 #' @export
-p_values.SansSouciStruct <- function(object) {
+get_p_values.SansSouciStruct <- function(object) {
   object$output$p_values
 }
 
