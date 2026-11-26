@@ -20,7 +20,7 @@ test_that("row_wilcoxon_tests <=> wilcox.test", {
   })
   dwt <- as.data.frame(t(wt))
   names(dwt) <- c("p.value", "statistic")
-  expect_equal(fwt$p.value, dwt$p.value)
+  expect_equal(fwt$p_value, dwt$p.value)
   expect_equal(fwt$statistic, dwt$statistic)
 })
 
@@ -49,7 +49,7 @@ test_that("row_wilcoxon_tests <=> wilcox.test (several contrasts at a time)", {
       res[rr, cc] <- tt$p.value
     }
   }
-  expect_equal(fwt$p.value, res)
+  expect_equal(fwt$p_value, res)
 })
 
 
@@ -70,7 +70,7 @@ test_that("Direction of 'alternative' in row_wilcoxon_tests", {
   mat[idx_less, i1] <- -1 + mat[idx_less, i1]
 
   alt <- "two.sided"
-  pval <- row_wilcoxon_tests(mat, categ = cls, alternative = alt)$p.value
+  pval <- row_wilcoxon_tests(mat, categ = cls, alternative = alt)$p_value
   m0 <- mean(pval[idx_null])
   mg <- mean(pval[idx_greater])
   ml <- mean(pval[idx_less])
@@ -80,7 +80,7 @@ test_that("Direction of 'alternative' in row_wilcoxon_tests", {
   expect_lt(mg, m0)
 
   alt <- "greater"
-  pval <- row_wilcoxon_tests(mat, categ = cls, alternative = alt)$p.value
+  pval <- row_wilcoxon_tests(mat, categ = cls, alternative = alt)$p_value
   m0 <- mean(pval[idx_null])
   mg <- mean(pval[idx_greater])
   ml <- mean(pval[idx_less])
@@ -89,7 +89,7 @@ test_that("Direction of 'alternative' in row_wilcoxon_tests", {
   expect_gt(ml, m0)
 
   alt <- "less"
-  pval <- row_wilcoxon_tests(mat, categ = cls, alternative = alt)$p.value
+  pval <- row_wilcoxon_tests(mat, categ = cls, alternative = alt)$p_value
   m0 <- mean(pval[idx_null])
   mg <- mean(pval[idx_greater])
   ml <- mean(pval[idx_less])
@@ -123,7 +123,7 @@ test_that("row_wilcoxon_tests_v1 <=> wilcox.test", {
   })
   dwt <- as.data.frame(t(wt))
   names(dwt) <- c("p.value", "statistic")
-  expect_equal(fwt$p.value, dwt$p.value)
+  expect_equal(fwt$p_value, dwt$p.value)
   expect_equal(fwt$statistic, dwt$statistic)
 })
 
@@ -152,7 +152,7 @@ test_that("row_wilcoxon_tests <=> wilcox.test (several contrasts at a time)", {
       res[rr, cc] <- tt$p.value
     }
   }
-  expect_equal(fwt$p.value, res)
+  expect_equal(fwt$p_value, res)
 })
 
 
@@ -173,7 +173,7 @@ test_that("correctness of row_wilcoxon_tests alternative", {
   mat[idx_less, i1] <- -1 + mat[idx_less, i1]
 
   alt <- "two.sided"
-  pval <- row_wilcoxon_tests_v1(mat, categ = cls, alternative = alt)$p.value
+  pval <- row_wilcoxon_tests_v1(mat, categ = cls, alternative = alt)$p_value
   m0 <- mean(pval[idx_null])
   mg <- mean(pval[idx_greater])
   ml <- mean(pval[idx_less])
@@ -183,7 +183,7 @@ test_that("correctness of row_wilcoxon_tests alternative", {
   expect_lt(mg, m0)
 
   alt <- "greater"
-  pval <- row_wilcoxon_tests_v1(mat, categ = cls, alternative = alt)$p.value
+  pval <- row_wilcoxon_tests_v1(mat, categ = cls, alternative = alt)$p_value
   m0 <- mean(pval[idx_null])
   mg <- mean(pval[idx_greater])
   ml <- mean(pval[idx_less])
@@ -192,7 +192,7 @@ test_that("correctness of row_wilcoxon_tests alternative", {
   expect_gt(ml, m0)
 
   alt <- "less"
-  pval <- row_wilcoxon_tests_v1(mat, categ = cls, alternative = alt)$p.value
+  pval <- row_wilcoxon_tests_v1(mat, categ = cls, alternative = alt)$p_value
   m0 <- mean(pval[idx_null])
   mg <- mean(pval[idx_greater])
   ml <- mean(pval[idx_less])

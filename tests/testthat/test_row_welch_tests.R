@@ -22,7 +22,7 @@ test_that("row_welch_tests <=> welch.test", {
   fwt <- row_welch_tests(mat, categ = cls, alternative = alt)
   expect_equal(fwt1, fwt)
 
-  expect_equal(fwt$p.value, dwt$p.value)
+  expect_equal(fwt$p_value, dwt$p.value)
   expect_equal(fwt$statistic, dwt$statistic)
   expect_equal(fwt$parameter, dwt$parameter)
 })
@@ -50,7 +50,7 @@ test_that("row_welch_tests <=> welch.test (several contrasts at a time)", {
     }
   }
 
-  expect_equivalent(fwt$p.value, res)
+  expect_equivalent(fwt$p_value, res)
 })
 
 test_that("correctness of row_welch_tests alternative", {
@@ -70,7 +70,7 @@ test_that("correctness of row_welch_tests alternative", {
   mat[idx_less, i1] <- -1 + mat[idx_less, i1]
 
   alt <- "two.sided"
-  pval <- row_welch_tests(mat, categ = cls, alternative = alt)$p.value
+  pval <- row_welch_tests(mat, categ = cls, alternative = alt)$p_value
   m0 <- mean(pval[idx_null])
   mg <- mean(pval[idx_greater])
   ml <- mean(pval[idx_less])
@@ -80,7 +80,7 @@ test_that("correctness of row_welch_tests alternative", {
   expect_lt(mg, m0)
 
   alt <- "greater"
-  pval <- row_welch_tests(mat, categ = cls, alternative = alt)$p.value
+  pval <- row_welch_tests(mat, categ = cls, alternative = alt)$p_value
   m0 <- mean(pval[idx_null])
   mg <- mean(pval[idx_greater])
   ml <- mean(pval[idx_less])
@@ -89,7 +89,7 @@ test_that("correctness of row_welch_tests alternative", {
   expect_gt(ml, m0)
 
   alt <- "less"
-  pval <- row_welch_tests(mat, categ = cls, alternative = alt)$p.value
+  pval <- row_welch_tests(mat, categ = cls, alternative = alt)$p_value
   m0 <- mean(pval[idx_null])
   mg <- mean(pval[idx_greater])
   ml <- mean(pval[idx_less])
@@ -113,7 +113,7 @@ test_that("suffWelchTest gives identical results to welch.test", {
     expect_identical(swt, swt1)
 
     expect_equivalent(swt$statistic, target$statistic)
-    expect_equal(swt$p.value, target$p.value)
+    expect_equal(swt$p_value, target$p.value)
     expect_equivalent(swt$parameter, target$parameter)
     expect_equivalent(swt$estimate, -diff(target$estimate))
   })
@@ -144,6 +144,6 @@ test_that("Corner case with almost null within-group level variance", {
   names(res_sanssouci)
   expect_equivalent(res_stat$statistic, -res_sanssouci$statistic)
   # inconsistent direction??
-  expect_equivalent(res_stat$p.value, res_sanssouci$p.value)
+  expect_equivalent(res_stat$p.value, res_sanssouci$p_value)
   expect_equivalent(res_stat$parameter, res_sanssouci$parameter)
 })

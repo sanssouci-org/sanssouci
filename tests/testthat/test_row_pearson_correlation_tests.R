@@ -19,7 +19,7 @@ test_that("row_pearson_correlation_tests <=> cor.test", {
 
   fwt <- row_pearson_correlation_tests(mat, categ = cls, alternative = alt)
 
-  expect_equal(fwt$p.value, dwt$p.value)
+  expect_equal(fwt$p_value, dwt$p.value)
   expect_equal(fwt$statistic, dwt$statistic)
 })
 
@@ -56,7 +56,7 @@ test_that(
       }
     }
 
-    expect_equivalent(fwt$p.value, res)
+    expect_equivalent(fwt$p_value, res)
     expect_equivalent(fwt$statistic, stat)
   }
 )

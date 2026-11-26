@@ -45,6 +45,7 @@
 row_pearson_correlation_tests <- function(X, categ, alternative = "two.sided") {
   if (is.null(dim(categ))) {
     r <- row_cor_pearson(X, categ, alternative = alternative)
+    r$p_value <- r$pvalue
   } else {
     m <- dim(X)[1]
     B <- dim(categ)[2]
@@ -55,7 +56,7 @@ row_pearson_correlation_tests <- function(X, categ, alternative = "two.sided") {
     )
     for (b in 1:B) {
       rr <- row_cor_pearson(X, categ[, b], alternative = alternative)
-      r$pvalue[, b] <- rr$p_value
+      r$p_value[, b] <- rr$pvalue
       r$statistic[, b] <- rr$statistic
       r$cor[, b] <- rr$cor
     }
