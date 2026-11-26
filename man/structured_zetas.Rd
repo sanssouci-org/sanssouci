@@ -10,7 +10,7 @@ structured_zetas(
   method,
   p_values,
   alpha,
-  refine = FALSE,
+  stepdown = FALSE,
   verbose = FALSE,
   ...
 )
@@ -40,7 +40,7 @@ with \code{m} the highest element found in the vectors of \code{leaf_list}.}
 
 \item{alpha}{A target error level in \eqn{(0,1)}.}
 
-\item{refine}{A boolean, \code{FALSE} by default.
+\item{stepdown}{A boolean, \code{FALSE} by default.
 Whether to use the step-down refinement to try to
 produce smaller \eqn{\zeta_k}'s, see Details.}
 
