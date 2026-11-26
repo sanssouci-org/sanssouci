@@ -150,7 +150,7 @@ test_by_randomization <- function(X, categ, B,
     ## observed
     row_tests <- row_test_fun(X, categ = categ, alternative = alternative)
     statistics <- row_tests$statistic
-    p_values <- row_tests$p.value ## parametric p-value
+    p_values <- row_tests$p_value ## parametric p-value
     rm(row_tests)
 
     ## under H0
@@ -161,7 +161,7 @@ test_by_randomization <- function(X, categ, B,
       row_tests <- row_test_fun(X, categ = categ_perm,
                                 alternative = alternative)
       null_statistics[, bb] <- row_tests$statistic
-      null_p_values[, bb] <- row_tests$p.value
+      null_p_values[, bb] <- row_tests$p_value
     }
     res <- list(
       statistics = statistics, null_statistics = null_statistics,

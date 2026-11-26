@@ -7,7 +7,7 @@ test_that("Basic checks for 'conf_curve_from_fam'", {
     prob = 0.5
   )
   rwt <- row_welch_tests(sim$X, sim$categ, alternative = "greater")
-  p_vals <- rwt$p.value
+  p_vals <- rwt$p_value
 
   cb <- conf_curve_from_fam(p_vals, ref_family = "Simes", param = 0.1,
                             what = "TP")
@@ -35,7 +35,7 @@ test_that("Basic checks for 'conf_curve_from_fam'", {
     what = "TP"
   )
   expect_equal(nrow(cb), m)
-  expect_error(conf_curve_from_fam(rwt$p.value,
+  expect_error(conf_curve_from_fam(rwt$p_value,
     ref_family = "unknown_fam",
     param = 0.1
   ))
@@ -49,7 +49,7 @@ test_that("Consistency of output of 'conf_curve_from_fam'", {
     SNR = 3, prob = 0.5
   )
   dex <- row_welch_tests(sim$X, sim$categ)
-  conf_bound <- conf_curve_from_fam(dex$p.value,
+  conf_bound <- conf_curve_from_fam(dex$p_value,
     ref_family = "Simes",
     param = alpha,
     what = c("FP", "TP", "FDP", "TDP")
@@ -128,7 +128,7 @@ test_that("Vanilla test for 'plot_conf_curve'", {
   )
   rwt <- row_welch_tests(sim$X, categ = sim$categ, alternative = "greater")
 
-  ce <- conf_curve_from_fam(rwt$p.value, ref_family = "Simes", param = 0.1)
+  ce <- conf_curve_from_fam(rwt$p_value, ref_family = "Simes", param = 0.1)
   p <- plot_conf_curve(ce, xmax = 200)
   expect_true(inherits(p, "ggplot"))
 })
