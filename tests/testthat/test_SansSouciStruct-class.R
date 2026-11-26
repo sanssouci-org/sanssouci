@@ -18,7 +18,7 @@ test_that("Correctness of the constructor of SansSouciStruct", {
   expect_s3_class(obj, "SansSouciStruct")
 
   dd <- dyadic_from_window_size(m, s, method = dir12)
-  obj1 <- SansSouciStruct(dd$C, dd$leaf_list)
+  obj1 <- SansSouciStruct(dd$forest_structure, dd$leaf_list)
   expect_s3_class(obj, "SansSouciStruct")
 
   expect_identical(obj1, obj)
@@ -27,7 +27,7 @@ test_that("Correctness of the constructor of SansSouciStruct", {
   obj <- SansSouciDyadic(m, height = 8, direction = direction)
   expect_s3_class(obj, "SansSouciStruct")
 
-  obj1 <- SansSouciStruct(dd$C, dd$leaf_list)
+  obj1 <- SansSouciStruct(dd$forest_structure, dd$leaf_list)
   expect_s3_class(obj, "SansSouciStruct")
 
   expect_identical(obj1, obj)
@@ -39,7 +39,7 @@ test_that("Correctness of the constructor of SansSouciStruct", {
 
   input <- obj$input
   expect_equal(names(input), c("struct", "leaves", "m"))
-  expect_identical(input$struct, dd$C)
+  expect_identical(input$struct, dd$forest_structure)
   expect_identical(input$leaves, dd$leaf_list)
   expect_length(input$leaves, 2^q)
   expect_length(input$struct, q + 1)
@@ -70,9 +70,9 @@ test_that("'fit.SansSouciStruct' reproduces the results of 'v_star'", {
   gb <- gauss_bloc(barmu, 10)
 
   obj$input$truth <- as.numeric(mu != 0)
-  pvalues <- gen_p_values(m = m, mu = mu, rho = 0)
+  p_values <- gen_p_values(m = m, mu = mu, rho = 0)
 
-  ord <- order(pvalues)
+  ord <- order(p_values)
   idxs <- round(c(
     seq(from = 1, to = 2 * m1, length = 30),
     seq(from = 2 * m1, to = m, length = 10)[-1]
@@ -86,7 +86,7 @@ test_that("'fit.SansSouciStruct' reproduces the results of 'v_star'", {
   V <- V[idxs]
 
   # Oracle 2
-  res <- fit(obj, alpha = alpha, p_values = pvalues, family = "Oracle")
+  res <- fit(obj, alpha = alpha, p_values = p_values, family = "Oracle")
   expect_s3_class(res, "SansSouci")
   v_mat <- predict(res, what = "FP", all = TRUE)
   VV <- v_mat$bound[idxs]
@@ -94,13 +94,13 @@ test_that("'fit.SansSouciStruct' reproduces the results of 'v_star'", {
 
   # Simes 1
   v_mat <- conf_curve_from_fam(
-    p_values = pvalues, ref_family = "Simes",
+    p_values = p_values, ref_family = "Simes",
     param = alpha, what = "FP"
   )
   V <- v_mat$bound[idxs]
 
   # Simes 2
-  res_simes <- fit(obj, alpha = alpha, p_values = pvalues, family = "Simes")
+  res_simes <- fit(obj, alpha = alpha, p_values = p_values, family = "Simes")
   v_mat <- predict(res_simes, what = "FP", all = TRUE)
   VV <- v_mat$bound[idxs]
   expect_identical(VV, V)
@@ -109,7 +109,7 @@ test_that("'fit.SansSouciStruct' reproduces the results of 'v_star'", {
 
   # DKWM 1 (tree)
   RES_DKWM <- fit(obj, alpha,
-    p_values = pvalues,
+    p_values = p_values,
     family = "DKWM"
   )
   V <- sapply(idxs1, FUN = function(ii) {
@@ -119,19 +119,19 @@ test_that("'fit.SansSouciStruct' reproduces the results of 'v_star'", {
   # DKWM 2 (tree)
   struct <- obj$input$struct
   leaves <- obj$input$leaves
-  ZL <- zetas_tree(struct, leaves, zeta_dkwm, p_values, alpha = alpha)
+  ZL <- structured_zetas(struct, leaves, structured_zeta_dkwm, p_values, alpha = alpha)
   VV <- sapply(idxs1, FUN = function(ii) {
-    V.star(ord[1:ii],
-      C = struct,
-      ZL = ZL,
-      leaf_list = leaves
+    pred_pathway_structured(ord[1:ii],
+                            forest_structure = struct,
+                            zetas_list = ZL,
+                            leaf_list = leaves
     )
   })
   expect_identical(VV, V)
 
   # DKWM 1 (part)
   RES_DKWM <- fit(obj, alpha,
-    p.values = pvalues,
+    p_values = p_values,
     family = "DKWM", flavor = "partition"
   )
   V <- sapply(idxs1, FUN = function(ii) {
@@ -142,7 +142,7 @@ test_that("'fit.SansSouciStruct' reproduces the results of 'v_star'", {
   struct <- obj$input$struct
   CC <- struct[length(struct)]
   leaves <- obj$input$leaves
-  ZL <- zetas_tree(CC, leaves, zeta.DKWM, pvalues, alpha = alpha)
+  ZL <- zetas_tree(CC, leaves, zeta.DKWM, p_values, alpha = alpha)
 
   VV <- sapply(idxs1, FUN = function(ii) {
     V.star(ord[1:ii],
