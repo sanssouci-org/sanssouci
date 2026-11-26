@@ -135,9 +135,9 @@ Here we use the DKWM inequality (@dvoretzky1956asymptotic, @massart1990tight) to
 #| label: tree
 label <- rep("DKWM(tree)", m)
 method <- rep("Tree", m)
-C_tree <- family$C[8]
-ZL_tree <- zetas.tree(C_tree, family$leaf_list, zeta.DKWM, pvalues, alpha)
-tree_bound <- curve.V.star.forest.fast(ord, C_tree, ZL_tree, family$leaf_list,
+c_tree <- family$C[8]
+zl_tree <- zetas.tree(c_tree, family$leaf_list, zeta.DKWM, pvalues, alpha)
+tree_bound <- curve.V.star.forest.fast(ord, c_tree, zl_tree, family$leaf_list,
                                        pruning = TRUE)
 res[["Tree"]] <- data.frame(x = x, label = label, stat = stat,
                             bound = tree_bound, method = method)
@@ -147,8 +147,8 @@ res[["Tree"]] <- data.frame(x = x, label = label, stat = stat,
 #| label: part
 label <- rep("DKWM(partition)", m)
 method <- rep("Partition", m)
-ZL_part <- zetas.tree(family$C, family$leaf_list, zeta.DKWM, pvalues, alpha)
-part_bound <- curve.V.star.forest.fast(ord, family$C, ZL_part, family$leaf_list,
+zl_part <- zetas.tree(family$C, family$leaf_list, zeta.DKWM, pvalues, alpha)
+part_bound <- curve.V.star.forest.fast(ord, family$C, zl_part, family$leaf_list,
                                        pruning = TRUE)
 res[["Partition"]] <- data.frame(x = x, label = label, stat = stat,
                                  bound = part_bound, method = method)
@@ -170,12 +170,12 @@ names(cols) <- lvls
 ```{r}
 #| label: plot-confidence-curve
 xymax <- m1
-pV <- ggplot(dat, aes(x, bound, colour = method)) +
+plot_v <- ggplot(dat, aes(x, bound, colour = method)) +
   geom_line() +
   ylab("Upper bound on the number of false positives") +
   xlab("sorted hypotheses") +
   scale_colour_manual(values = cols)
-pV
+plot_v
 ```
 
 The "Tree" and "Partition" bounds are sharper than the "Simes" bound as soon as we are considering "large" sets of hypotheses.  The fact that the "Tree" and "Partition" bounds are not as sharp as the "Simes" bound for the first hundred of hypotheses can be explained by our choice of the ordering of the null hypotheses in the sets $S_k$, which as discussed above is favorable to the "Simes" bound.
@@ -185,8 +185,8 @@ Zooming on the first `r xymax` null hypotheses (in the order of the $p$-values):
 ```{r}
 #| label: zoom-plot-confidence-curve
 #| warning: false
-pV + coord_cartesian(xlim = c(1, xymax),
-                     ylim = c(0, xymax))
+plot_v + coord_cartesian(xlim = c(1, xymax),
+                         ylim = c(0, xymax))
 ```
 
 ## Lower bound on the number of true positives
@@ -202,12 +202,12 @@ dat$S <- dat$x - dat$bound
 #| label: plot-lower-bound
 xmax <- m1
 ymax <- max(dat$S[m1])
-pS <- ggplot(dat, aes(x, S, colour = method)) +
+plot_s <- ggplot(dat, aes(x, S, colour = method)) +
   geom_line() +
   ylab("Lower bound on the number of true positives") +
   xlab("sorted hypotheses") +
   scale_colour_manual(values = cols)
-pS
+plot_s
 ```
 
 Zooming in the first `r xymax` null hypotheses (in the order of the $p$-values), we recover the middle plot in Figure 12 of @durand20post-hoc.
@@ -215,7 +215,7 @@ Zooming in the first `r xymax` null hypotheses (in the order of the $p$-values),
 ```{r}
 #| label: zoom-plot-lower-bound
 #| warning: false
-pS + xlim(1, xmax) + ylim(0, ymax)
+plot_s + xlim(1, xmax) + ylim(0, ymax)
 ```
 
 ## Session information

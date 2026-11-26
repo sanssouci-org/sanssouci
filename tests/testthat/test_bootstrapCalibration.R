@@ -13,23 +13,23 @@ test_that("Consistency between `sanssouci::lm_test` and stat::lm", {
       Y <- X %*% beta + epsilons
       C <- diag(p)
       alternative <- sample(c("two.sided", "less", "greater"), size = 1)
-      resLM <- lm_test(Y = Y, X = X, C = C, alternative = alternative)
+      res_lm <- lm_test(Y = Y, X = X, C = C, alternative = alternative)
 
-      expect_type(resLM, "list")
-      expect_true("statistic" %in% names(resLM))
-      expect_true("p_value" %in% names(resLM))
-      expect_true("estimate" %in% names(resLM))
-      expect_true("residual" %in% names(resLM))
-      expect_equal(dim(resLM$statistic), c(nrow(C), ncol(Y)))
-      expect_equal(dim(resLM$p_value), c(nrow(C), ncol(Y)))
-      expect_equal(dim(resLM$estimate), c(ncol(X), ncol(Y)))
-      expect_equal(dim(resLM$residual), c(nrow(Y), ncol(Y)))
+      expect_type(res_lm, "list")
+      expect_true("statistic" %in% names(res_lm))
+      expect_true("p_value" %in% names(res_lm))
+      expect_true("estimate" %in% names(res_lm))
+      expect_true("residual" %in% names(res_lm))
+      expect_equal(dim(res_lm$statistic), c(nrow(C), ncol(Y)))
+      expect_equal(dim(res_lm$p_value), c(nrow(C), ncol(Y)))
+      expect_equal(dim(res_lm$estimate), c(ncol(X), ncol(Y)))
+      expect_equal(dim(res_lm$residual), c(nrow(Y), ncol(Y)))
 
       for (j in seq_len(ncol(Y))) {
         fit <- lm(Y[, j] ~ X[, -1], )
         s <- summary(fit)
         stat_lm <- unname(coef(s)[, 3]) # stat
-        expect_equal(resLM$statistic[, j], stat_lm, tolerance = 1e-6)
+        expect_equal(res_lm$statistic[, j], stat_lm, tolerance = 1e-6)
         p_lm <- unname(coef(s)[, 4]) # p-value
         p_lm <- switch(alternative,
           "two.sided" = p_lm,
@@ -38,9 +38,9 @@ test_that("Consistency between `sanssouci::lm_test` and stat::lm", {
             df = nrow(Y) - qr(X)$rank
           )
         )
-        expect_equal(resLM$p_value[, j], p_lm, tolerance = 1e-6)
+        expect_equal(res_lm$p_value[, j], p_lm, tolerance = 1e-6)
         beta_lm <- unname(coef(s)[, "Estimate"]) # estimated beta
-        expect_equal(resLM$estimate[, j], beta_lm, tolerance = 1e-6)
+        expect_equal(res_lm$estimate[, j], beta_lm, tolerance = 1e-6)
       }
     }
   }
@@ -57,27 +57,27 @@ test_that("Consistency between `sanssouci::lm_test` and stat::lm", {
       Y <- X %*% beta + epsilons
       C <- diag(p)
 
-      resLM <- lm_test(Y = Y, X = X, C = C)
+      res_lm <- lm_test(Y = Y, X = X, C = C)
 
-      expect_type(resLM, "list")
-      expect_true("residual" %in% names(resLM))
-      expect_true("statistic" %in% names(resLM))
-      expect_true("p_value" %in% names(resLM))
-      expect_true("estimate" %in% names(resLM))
-      expect_equal(dim(resLM$residual), c(nrow(Y), ncol(Y)))
-      expect_equal(dim(resLM$statistic), c(nrow(C), ncol(Y)))
-      expect_equal(dim(resLM$p_value), c(nrow(C), ncol(Y)))
-      expect_equal(dim(resLM$estimate), c(ncol(X), ncol(Y)))
+      expect_type(res_lm, "list")
+      expect_true("residual" %in% names(res_lm))
+      expect_true("statistic" %in% names(res_lm))
+      expect_true("p_value" %in% names(res_lm))
+      expect_true("estimate" %in% names(res_lm))
+      expect_equal(dim(res_lm$residual), c(nrow(Y), ncol(Y)))
+      expect_equal(dim(res_lm$statistic), c(nrow(C), ncol(Y)))
+      expect_equal(dim(res_lm$p_value), c(nrow(C), ncol(Y)))
+      expect_equal(dim(res_lm$estimate), c(ncol(X), ncol(Y)))
 
       for (j in seq_len(ncol(Y))) {
         fit <- lm(Y[, j] ~ X[, -1])
         s <- summary(fit)
         p_lm <- unname(coef(s)[, 4]) # p-value
-        expect_equal(resLM$p_value[, j], p_lm, tolerance = 1e-6)
+        expect_equal(res_lm$p_value[, j], p_lm, tolerance = 1e-6)
         stat_lm <- unname(coef(s)[, 3]) # stat
-        expect_equal(resLM$statistic[, j], stat_lm, tolerance = 1e-6)
+        expect_equal(res_lm$statistic[, j], stat_lm, tolerance = 1e-6)
         beta_lm <- unname(coef(s)[, "Estimate"]) # estimated beta
-        expect_equal(resLM$estimate[, j], beta_lm, tolerance = 1e-6)
+        expect_equal(res_lm$estimate[, j], beta_lm, tolerance = 1e-6)
       }
     }
   }
@@ -151,11 +151,11 @@ test_that("`bootstrap_permutation`", {
         expect_equal(dim(pval_perm), c(ncol(Y), nrow(C), B))
         expect_true(all(pval_perm <= 1))
         expect_true(all(pval_perm >= 0))
-        pval_perm_R <- matrix(pval_perm, nrow = ncol(Y) * nrow(C), ncol = B)
-        m <- nrow(pval_perm_R)
+        pval_perm_r <- matrix(pval_perm, nrow = ncol(Y) * nrow(C), ncol = B)
+        m <- nrow(pval_perm_r)
         sample_m <- sample(1:m, min(m, 20), replace = FALSE)
         for (mm in sample_m) {
-          expect_true(ks.test(pval_perm_R[mm, ], "punif")$p.value > 1e-4)
+          expect_true(ks.test(pval_perm_r[mm, ], "punif")$p.value > 1e-4)
         }
       }
     }
@@ -278,26 +278,26 @@ test_that("test row_lm_test function", {
   Y <- X %*% beta + epsilons
   C <- diag(p)
   alternative <- sample(c("two.sided", "less", "greater"), size = 1)
-  resrowLM <- row_lm_test(t(Y), X, C,
+  res_row_lm <- row_lm_test(t(Y), X, C,
     alternative = alternative,
     groups = matrix(seq_len(nrow(Y)), ncol = 1)
   )
-  resLM <- lm_test(Y, X, C, alternative = alternative)
+  res_lm <- lm_test(Y, X, C, alternative = alternative)
 
-  expect_equal(resrowLM$p_value, resLM$p_value)
+  expect_equal(res_row_lm$p_value, res_lm$p_value)
 
   B <- 10
   set.seed(20250623)
   groups <- replicate(B, sample(1:N, replace = TRUE))
-  resrowLM <- row_lm_test(t(Y), X, C,
+  res_row_lm <- row_lm_test(t(Y), X, C,
     alternative = alternative,
     groups = groups
   )
   lmt <- apply(groups, 2, FUN = function(x) {
-    lmt <- lm_test(matrix(resLM$residual[x, ]), X, C, alternative)
+    lmt <- lm_test(matrix(res_lm$residual[x, ]), X, C, alternative)
     lmt$p_value
   })
-  expect_equal(lmt, resrowLM$p_value)
+  expect_equal(lmt, res_row_lm$p_value)
 
   set.seed(20250623)
   pval_perm <- bootstrap_permutation(
@@ -321,6 +321,6 @@ test_that("calibration_bootstrap", {
   epsilons <- matrix(rnorm(N * D), nrow = N, ncol = D)
   Y <- X %*% beta + epsilons
   C <- diag(p)
-  resLM <- calibration_bootstap(Y = Y, X = X, C = C, B = 10)
-  expect_equal(names(resLM), c("thr", "piv_stat", "lambda"))
+  res_lm <- calibration_bootstap(Y = Y, X = X, C = C, B = 10)
+  expect_equal(names(res_lm), c("thr", "piv_stat", "lambda"))
 })

@@ -10,10 +10,10 @@ test_that("Vanilla test for dyadic tree functions", {
   for (meth in 1:2){
     dd <- dyadic_from_window_size(m, s = 2, method = meth)
     check_tree(dd)
-    
+
     dd <- dyadic_from_height(m, H = 3, method = meth)
     check_tree(dd)
-    
+
     dd <- dyadic_from_height(m, method = meth)
     check_tree(dd)
   }
@@ -57,15 +57,15 @@ test_that("'pred_pathway_structured' functions", {
   )
   leaf_list <- as.list(1:m)
   res_naive <- pred_pathway_structured_naive(1:m, forest_structure, zetas_list,
-                                         leaf_list, pruning = FALSE)
+                                             leaf_list, pruning = FALSE)
   res_fast <- pred_pathway_structured(1:m, forest_structure, zetas_list,
-                                       leaf_list, pruning = FALSE)
+                                      leaf_list, pruning = FALSE)
   expect_equal(res_naive, res_fast)
 
   res_naive <- pred_pathway_structured_naive(1:m, forest_structure, zetas_list,
-                                         leaf_list, pruning = TRUE)
+                                             leaf_list, pruning = TRUE)
   res_fast <- pred_pathway_structured(1:m, forest_structure, zetas_list,
-                                       leaf_list, pruning = TRUE)
+                                      leaf_list, pruning = TRUE)
   expect_equal(res_naive, res_fast)
 
   res_naive <- pred_pathway_structured_naive(

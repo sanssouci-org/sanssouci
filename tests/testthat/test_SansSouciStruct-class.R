@@ -119,12 +119,14 @@ test_that("'fit.SansSouciStruct' reproduces the results of 'v_star'", {
   # DKWM 2 (tree)
   struct <- obj$input$struct
   leaves <- obj$input$leaves
-  ZL <- structured_zetas(struct, leaves, structured_zeta_dkwm, p_values, alpha = alpha)
+  ZL <- structured_zetas(struct, leaves, structured_zeta_dkwm, p_values,
+                         alpha = alpha)
   VV <- sapply(idxs1, FUN = function(ii) {
-    pred_subset_structured(ord[1:ii],
-                            forest_structure = struct,
-                            zetas_list = ZL,
-                            leaf_list = leaves
+    pred_subset_structured(
+      ord[1:ii],
+      forest_structure = struct,
+      zetas_list = ZL,
+      leaf_list = leaves
     )
   })
   expect_identical(VV, V)
@@ -142,7 +144,8 @@ test_that("'fit.SansSouciStruct' reproduces the results of 'v_star'", {
   struct <- obj$input$struct
   CC <- struct[length(struct)]
   leaves <- obj$input$leaves
-  ZL <- structured_zetas(CC, leaves, structured_zeta_dkwm, p_values, alpha = alpha)
+  ZL <- structured_zetas(CC, leaves, structured_zeta_dkwm, p_values,
+                         alpha = alpha)
 
   VV <- sapply(idxs1, FUN = function(ii) {
     pred_subset_structured(ord[1:ii],

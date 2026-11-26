@@ -202,7 +202,7 @@ row_lm_test <- function(Y, X, C,
   if (all(groups == 1:n) && ncol(matrix(groups)) == 1) {
     estimate <- C %*% res_lm$estimate
     return(list(
-      p_value = res_lm$p_value, 
+      p_value = res_lm$p_value,
       statistic = res_lm$statistic,
       estimate = estimate
     ))
@@ -230,7 +230,7 @@ row_lm_test <- function(Y, X, C,
 
   return(list(
     statistic = perm_statistics_,
-    p_value = perm_p_values_, 
+    p_value = perm_p_values_,
     estimate = perm_estimates_
   ))
 }

@@ -1,15 +1,15 @@
-dataSets <- c("chiaretti", "golub", "hedenfalk", "loi", "rosenwald")
-dataSets <- dataSets[-4] ## Dropping Loi: too weak signal
+data_sets <- c("chiaretti", "golub", "hedenfalk", "loi", "rosenwald")
+data_sets <- data_sets[-4] ## Dropping Loi: too weak signal
 
-getStats <- function(dataSet) {
-  filename <- sprintf("%s.rds", dataSet)
+get_stats <- function(data_set) {
+  filename <- sprintf("%s.rds", data_set)
   pathname <- file.path("local/data", filename)
   dat <- readRDS(pathname)
   rm(pathname)
 
   cn <- colnames(dat)[1]
   categ <- ifelse(colnames(dat) == cn, 1, 0) # map to 0/1
-  res <- rowWelchTests(dat, categ)
+  res <- row_welch_tests(dat, categ)
   mres <- Reduce(cbind, res)
   colnames(mres) <- names(res)
 
@@ -23,7 +23,7 @@ getStats <- function(dataSet) {
   adjp <- p.adjust(p, method = "BH")
   dat <- data.frame(
     id = gid,
-    dataSet = dataSet,
+    dataSet = data_set,
     meanDiff = round(mres[, "meanDiff"], 3),
     p.value = p,
     adjp.BH = round(adjp, 3),
@@ -33,6 +33,6 @@ getStats <- function(dataSet) {
   dat
 }
 
-dfList <- lapply(dataSets, getStats)
-volcano <- Reduce(rbind, dfList)
+df_list <- lapply(data_sets, get_stats)
+volcano <- Reduce(rbind, df_list)
 save(volcano, file = "data/volcano_plot.rda", compress = "xz")

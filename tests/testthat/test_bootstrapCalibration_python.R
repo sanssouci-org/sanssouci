@@ -46,14 +46,14 @@ test_that("Consistency of lm_test with pyperm package", {
         design = X,
         contrast_matrix = C
       )
-      tstats_R <- lm_test(Y = Y, X = X, C = C)
+      tstats_r <- lm_test(Y = Y, X = X, C = C)
 
       expect_equal(t(tstats_py[[1]]$field),
-        tstats_R$stat_test,
+        tstats_r$stat_test,
         tolerance = 1e-14
       )
       expect_equal(as.numeric(t(tstats_py[[2]])),
-        as.numeric(tstats_R$epsilon_est),
+        as.numeric(tstats_r$epsilon_est),
         tolerance = 1e-14
       )
     }
@@ -93,10 +93,10 @@ test_that("R/python consistency of `bootstrap_permutation`", {
     X[, 1] <- 1
     X[, -1] <- runif(N * (p - 1), min = 0, max = 3)
     beta <- matrix(0, nrow = p, ncol = D)
-    Sigma <- toeplitz(0.9^(0:(D - 1))) # correlation (similar to real data)
-    Sigma_tri <- chol(Sigma)
+    SIGMA <- toeplitz(0.9^(0:(D - 1))) # correlation (similar to real data)
+    SIGMA_TRI <- chol(SIGMA)
     Z <- matrix(rnorm(N * D), nrow = N, ncol = D)
-    epsilons <- Z %*% t(Sigma_tri)
+    epsilons <- Z %*% t(SIGMA_TRI)
     Y <- X %*% beta + epsilons
     C <- matrix(diag(p)[1:L, ], nrow = L)
     B <- 500L
@@ -111,21 +111,21 @@ test_that("R/python consistency of `bootstrap_permutation`", {
       replace = TRUE,
       alternative = "two.sided"
     )
-    pval_perm_R <- matrix(pval_perm, nrow = D * nrow(C), ncol = B)
+    pval_perm_r <- matrix(pval_perm, nrow = D * nrow(C), ncol = B)
 
     pval_perm_py <- t(res_py[[4]])
 
     m <- D * L
     sample_m <- sample(1:m, min(m, 20), replace = FALSE)
     for (mm in sample_m) {
-      expect_true(ks.test(pval_perm_R[mm, ], "punif")$p.value > 1e-4)
-      expect_true(ks.test(pval_perm_py[mm, ], pval_perm_R[mm, ])$p.value > 1e-4)
+      expect_true(ks.test(pval_perm_r[mm, ], "punif")$p.value > 1e-4)
+      expect_true(ks.test(pval_perm_py[mm, ], pval_perm_r[mm, ])$p.value > 1e-4)
     }
 
     for (mm in sample_m) {
       for (mm2 in sample_m[which(sample_m != mm)]) {
         expect_equal(cor(pval_perm_py[mm, ], pval_perm_py[mm2, ]),
-          cor(pval_perm_R[mm, ], pval_perm_R[mm2, ]),
+          cor(pval_perm_r[mm, ], pval_perm_r[mm2, ]),
           tolerance = 0.25
         )
       }
@@ -153,22 +153,22 @@ test_that("R/python consistency of `bootstrap_permutation`", {
     replace = TRUE,
     alternative = "two.sided"
   )
-  pval_perm_R <- matrix(pval_perm, nrow = nrow(Y) * nrow(C), ncol = B)
+  pval_perm_r <- matrix(pval_perm, nrow = nrow(Y) * nrow(C), ncol = B)
 
   pval_perm_py <- t(res_py[[4]])
 
   m <- nrow(Y) * nrow(C)
   sample_m <- sample(1:m, min(m, 50), replace = FALSE)
   for (mm in sample_m) {
-    expect_true(ks.test(pval_perm_R[mm, ], "punif")$p.value > 1e-4)
-    expect_true(ks.test(pval_perm_py[mm, ], pval_perm_R[mm, ])$p.value > 1e-4)
+    expect_true(ks.test(pval_perm_r[mm, ], "punif")$p.value > 1e-4)
+    expect_true(ks.test(pval_perm_py[mm, ], pval_perm_r[mm, ])$p.value > 1e-4)
   }
 
   df <- data.frame()
   for (mm in sample_m) {
     for (mm2 in sample_m[which(sample_m != mm)]) {
       expect_equal(cor(pval_perm_py[mm, ], pval_perm_py[mm2, ]),
-        cor(pval_perm_R[mm, ], pval_perm_R[mm2, ]),
+        cor(pval_perm_r[mm, ], pval_perm_r[mm2, ]),
         tolerance = 0.25
       )
     }

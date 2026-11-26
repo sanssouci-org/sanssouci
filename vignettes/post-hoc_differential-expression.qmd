@@ -110,11 +110,11 @@ The state of the art approach to large-scale multiple testing is to control the 
 ```{r}
 #| label: bh
 q <- 0.05
-adjp_BH <- p.adjust(pval, method = "BH")
-dex$adjp <- adjp_BH
-S_BH <- which(adjp_BH <= q)
-nBH <- length(S_BH)
-nBH
+adjp_bh <- p.adjust(pval, method = "BH")
+dex$adjp <- adjp_bh
+S_BH <- which(adjp_bh <= q)
+n_bh <- length(S_BH)
+n_bh
 ```
 
 The application of the BH procedure at level $q = `r q`$ is illustrated in the figures below (all genes are displayed in the first one, second one is a zoom on the top genes):
@@ -141,13 +141,13 @@ bh_plot
 
 ```{r}
 #| label: bh-plot-zoom
-xmax <- nBH * 2.5
+xmax <- n_bh * 2.5
 ymax <- dexo$p.value[xmax]
 bh_plot +
   xlim(1, xmax) + ylim(0, ymax) +
-  geom_segment(aes(x = nBH, y = 0, yend = q * nBH / m, xend = nBH),
+  geom_segment(aes(x = n_bh, y = 0, yend = q * n_bh / m, xend = n_bh),
                linetype = "dotted") +
-  geom_segment(aes(x = 1, y = q * nBH / m, xend = nBH, yend = q * nBH / m),
+  geom_segment(aes(x = 1, y = q * n_bh / m, xend = n_bh, yend = q * n_bh / m),
                linetype = "dotted", col = 1)
 ```
 
@@ -172,26 +172,26 @@ As an application we calculate the bound associated to $k_0=100$ for $\alpha = `
 ```{r}
 #| label: k0-bonf
 k0 <- 100
-S <- 1:nBH
-FP_k0 <- sum(pvalo[S] >= alpha * k0 / m) + k0 - 1
-FP_k0 / nBH
+S <- 1:n_bh
+FP_K0 <- sum(pvalo[S] >= alpha * k0 / m) + k0 - 1
+FP_K0 / n_bh
 ```
 
-This implies that with probability larger than `r 1-alpha` the false discovery proportion among the genes selected by the BH procedure at level $q= `r q`$ is upper bounded by `r ceiling(FP_k0/nBH*100)/100`.
+This implies that with probability larger than `r 1-alpha` the false discovery proportion among the genes selected by the BH procedure at level $q= `r q`$ is upper bounded by `r ceiling(FP_K0/n_bh*100)/100`.
 
 ### Simes bound
 
-A more refined post hoc bound has been proposed by @GS2011 under the PRDS assumption. In the framework of @BNR:chap this bound is a direct consequence of the @simes86improved inequality. It can be applied to the `r nBH` rejections of the BH procedure as follows:
+A more refined post hoc bound has been proposed by @GS2011 under the PRDS assumption. In the framework of @BNR:chap this bound is a direct consequence of the @simes86improved inequality. It can be applied to the `r n_bh` rejections of the BH procedure as follows:
 
 ```{r}
 #| label: Simes
 obj <- SansSouci(Y = dat, groups = categ)
-res_Simes <- fit(obj, B = 0, family = "Simes", alpha = alpha)
+res_simes <- fit(obj, B = 0, family = "Simes", alpha = alpha)
 ## B=0 => no calibration!
-FP_Simes <- predict(res_Simes, S_BH, what = "FP")
+fp_simes <- predict(res_simes, S_BH, what = "FP")
 ```
 
-The Simes bound implies that with probability larger than `r 1-alpha`, the false discovery proportion among the genes selected by the BH procedure at level $q= `r q`$ is upper bounded by `r ceiling(FP_Simes/nBH*100)/100`. The Simes bound is sharper than the $k_0$-Bonferroni bound because it is obtained from a *joint* control of all $k$-FWER for all $k=1, \dots, m$.  The $k_0$-Bonferroni bound will therefore not be considered further in this vignette.
+The Simes bound implies that with probability larger than `r 1-alpha`, the false discovery proportion among the genes selected by the BH procedure at level $q= `r q`$ is upper bounded by `r ceiling(fp_simes/n_bh*100)/100`. The Simes bound is sharper than the $k_0$-Bonferroni bound because it is obtained from a *joint* control of all $k$-FWER for all $k=1, \dots, m$.  The $k_0$-Bonferroni bound will therefore not be considered further in this vignette.
 
 # Tighter confidence bounds by adaptation to unknown dependence
 
@@ -216,19 +216,19 @@ An alternative to the Simes/Linear reference family is the Beta reference family
 #| label: calibration-beta
 #| cache: true
 K <- 50
-res_Beta <- fit(res, B = B, alpha = alpha, family = "Beta", K = K)
+res_beta <- fit(res, B = B, alpha = alpha, family = "Beta", K = K)
 ```
 
 As expected from the theory, the post hoc bounds obtained after calibration by these methods is much tighter than the Simes bound:
 
 ```{r}
 #| label: tighter-bounds
-resList <- list("Simes" = res_Simes,
-                "Linear" = res,
-                "Beta" = res_Beta)
-names(resList)[3] <- sprintf("Beta (K=%s)", K)
+RES_LIST <- list("Simes" = res_simes,
+                 "Linear" = res,
+                 "Beta" = res_beta)
+names(RES_LIST)[3] <- sprintf("Beta (K=%s)", K)
 
-bounds <- sapply(resList, predict, S_BH)
+bounds <- sapply(RES_LIST, predict, S_BH)
 rownames(bounds) <- c("Lower bound on True Positives",
                       "Upper bound on False Discovery Proportion")
 knitr::kable(t(bounds), digits = 2)
@@ -251,11 +251,11 @@ The confidence curves obtained by calibration of the Simes and Beta families can
 
 ```{r}
 #| label: conf-env-plot
-conf_bounds <- lapply(resList, predict, all = TRUE)
+conf_bounds <- lapply(RES_LIST, predict, all = TRUE)
 cols <- RColorBrewer::brewer.pal(length(conf_bounds), "Dark2")
 p <- plot_conf_curve(conf_bounds, xmax = 300, cols = cols,
-                   legend_title = "Template")
-p + geom_vline(xintercept = nBH, color = "gray", linetype = "dotted",
+                     legend_title = "Template")
+p + geom_vline(xintercept = n_bh, color = "gray", linetype = "dotted",
                linewidth = 1.5) +
   geom_line(linewidth = 1.5)
 ```
@@ -277,7 +277,7 @@ Let us assume that we are interested in genes selected by the BH procedure at le
 ```{r}
 #| label: volcano-Simes
 ylim <- c(0, 6)
-volcano_plot(res_Simes, q = q, r = r, ylim = ylim)
+volcano_plot(res_simes, q = q, r = r, ylim = ylim)
 ```
 
 This type of plot is called a "volcano plot" @CC2003. Post hoc inference makes it possible to obtain statistical guarantees on selections such as the ones represented in the above figure.
@@ -293,7 +293,7 @@ and for the Beta reference family.
 
 ```{r}
 #| label: volcano-Beta-cal
-volcano_plot(res_Beta, q = q, r = r, ylim = ylim)
+volcano_plot(res_beta, q = q, r = r, ylim = ylim)
 ```
 
 The comparison between these bounds may be summarized by the following Table:
@@ -302,16 +302,16 @@ The comparison between these bounds may be summarized by the following Table:
 #| label: tbl-compare-volcano-bounds
 #| tbl-cap: "Post hoc bounds on true positives in user-defined gene selections"
 fc <- get_fold_changes(res)
-S_pos <- which(fc >= r & adjp_BH <= q)
-S_neg <- which(fc <= -r & adjp_BH <= q)
-S_all <- union(S_pos, S_neg)
+S_POS <- which(fc >= r & adjp_bh <= q)
+S_NEG <- which(fc <= -r & adjp_bh <= q)
+S_ALL <- union(S_POS, S_NEG)
 
-all_bounds <- function(S, resList) {
-  c(length(S), sapply(resList, predict, S, "TP"))
+all_bounds <- function(S, RES_LIST) {
+  c(length(S), sapply(RES_LIST, predict, S, "TP"))
 }
-tab <- rbind(all_bounds(S_pos, resList),
-             all_bounds(S_neg, resList),
-             all_bounds(S_all, resList))
+tab <- rbind(all_bounds(S_POS, RES_LIST),
+             all_bounds(S_NEG, RES_LIST),
+             all_bounds(S_ALL, RES_LIST))
 plab <- paste("BH-adjusted p.value <", q)
 lab <- c(paste(plab, "&", " fold change  > ", r),
          paste(plab, "&", " fold change  < ", -r),
