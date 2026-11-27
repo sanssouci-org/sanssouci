@@ -240,42 +240,39 @@ structured_zetas <- function(forest_structure,
     NEW_K <- K
     for (h in H:1) {
       current_depth <- forest_structure[[h]]
-      len <- length(current_depth)
-      zeta_inter <- numeric(len)
-      if (len > 0) {
-        for (k in 1:len) {
-          current_node <- current_depth[[k]]
-          extracted_p_values <- p_values[unlist(
+      zeta_inter <- numeric(length(current_depth))
+      for (k in seq_along(current_depth)) {
+        current_node <- current_depth[[k]]
+        extracted_p_values <- p_values[unlist(
+          leaf_list[current_node[1]:current_node[2]]
+        )]
+        args_zeta <- list(...)
+        if ("p_cdfs" %in% names(args_zeta)) {
+          args_zeta$p_cdfs <- args_zeta$p_cdfs[unlist(
             leaf_list[current_node[1]:current_node[2]]
           )]
-          args_zeta <- list(...)
-          if ("p_cdfs" %in% names(args_zeta)) {
-            args_zeta$p_cdfs <- args_zeta$p_cdfs[unlist(
-              leaf_list[current_node[1]:current_node[2]]
-            )]
-          }
-          if (typeof(FUN) == "list") {
-            if (typeof(FUN[[h]]) == "list") {
-              zeta_function <- FUN[[h]][[k]]
-            } else {
-              zeta_function <- FUN[[h]]
-            }
+        }
+        if (typeof(FUN) == "list") {
+          if (typeof(FUN[[h]]) == "list") {
+            zeta_function <- FUN[[h]][[k]]
           } else {
-            zeta_function <- FUN
+            zeta_function <- FUN[[h]]
           }
-          zeta_inter[k] <- do.call(
-            zeta_function,
-            c(
-              list(
-                p_values = extracted_p_values,
-                lambda = alpha / USAGE_K
-              ),
-              args_zeta
-            )
+        } else {
+          zeta_function <- FUN
+        }
+        zeta_inter[k] <- do.call(
+          zeta_function,
+          c(
+            list(
+              p_values = extracted_p_values,
+              lambda = alpha / USAGE_K
+            ),
+            args_zeta
           )
-          if (zeta_inter[k] == 0) {
-            NEW_K <- NEW_K - 1
-          }
+        )
+        if (zeta_inter[k] == 0) {
+          NEW_K <- NEW_K - 1
         }
       }
       zetas_list[[h]] <- zeta_inter
