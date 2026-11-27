@@ -173,7 +173,7 @@ n_elements_forest_structure <- function(forest_structure) {
 #' @param p_values A vector of \eqn{p}-values, must be of size \code{m},
 #' with \code{m} the highest element found in the vectors of \code{leaf_list}.
 #' @param alpha A target error level in \eqn{(0,1)}.
-#' @param stepdown A boolean, \code{FALSE} by default.
+#' @param step_down A boolean, \code{FALSE} by default.
 #' Whether to use the step-down refinement to try to
 #' produce smaller \eqn{\zeta_k}'s, see Details.
 #' @param verbose A boolean, \code{FALSE} by default.
@@ -226,7 +226,7 @@ structured_zetas <- function(forest_structure,
                              FUN,
                              p_values,
                              alpha,
-                             stepdown = FALSE,
+                             step_down = FALSE,
                              verbose = FALSE,
                              ...) {
   H <- length(forest_structure)
@@ -288,7 +288,7 @@ structured_zetas <- function(forest_structure,
         NEW_K
       ))
     }
-    continue <- stepdown && (NEW_K < USAGE_K) && (NEW_K > 0)
+    continue <- step_down && (NEW_K < USAGE_K) && (NEW_K > 0)
   }
   return(zetas_list)
 }
