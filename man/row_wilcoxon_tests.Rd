@@ -6,7 +6,7 @@
 \usage{
 row_wilcoxon_tests(
   mat,
-  categ,
+  group,
   alternative = c("two.sided", "less", "greater"),
   correct = TRUE
 )
@@ -15,7 +15,7 @@ row_wilcoxon_tests(
 \item{mat}{A \code{m x n} numeric matrix whose rows correspond to variables
 and columns to observations}
 
-\item{categ}{Either a numeric vector of \code{n} categories in \eqn{0, 1} for
+\item{group}{Either a numeric vector of \code{n} groups in \eqn{0, 1} for
 the observations, or a \code{n x B} matrix stacking \code{B} such vectors
 (typically permutations of an original vector of size \code{n})}
 
@@ -52,7 +52,7 @@ This function performs \code{m x B} Wilcoxon T tests on
 makes the code much faster than using loops of 'apply' functions,
 especially for high-dimensional problems (small n and large m) because the
 overhead of the call to the 'wilcox.test' function is avoided. Note that it
-is not vectorized along the columns of \code{categ} (if any), as a basic
+is not vectorized along the columns of \code{group} (if any), as a basic
 'for' loop is used.
 
 The p-values are computed using the normal approximation as
@@ -69,22 +69,22 @@ medians, which does not match the component 'estimate' output by
 p <- 200
 n <- 50
 mat <- matrix(rnorm(p * n), ncol = n)
-cls <- rep(c(0, 1), each = n / 2)
+groups <- rep(c(0, 1), each = n / 2)
 
-statistics <- row_wilcoxon_tests(mat, categ = cls, alternative = "two.sided")
+statistics <- row_wilcoxon_tests(mat, group = groups, alternative = "two.sided")
 str(statistics)
 
 # permutation of class labels
-cls_perm <- replicate(11, sample(cls))
-statistics <- row_wilcoxon_tests(mat, categ = cls_perm,
+groups_perm <- replicate(11, sample(groups))
+statistics <- row_wilcoxon_tests(mat, group = groups_perm,
 alternative = "two.sided")
 str(statistics)
 
 # several unrelated contrasts
-cls2 <- cls
-cls[1:10] <- 1 # varying nx, ny
-cls_mat <- cbind(cls, cls2)
-statistics <- row_wilcoxon_tests(mat, categ = cls_mat,
+groups2 <- groups
+groups[1:10] <- 1 # varying nx, ny
+groups_mat <- cbind(groups, groups2)
+statistics <- row_wilcoxon_tests(mat, group = groups_mat,
 alternative = "two.sided")
 str(statistics)
 }

@@ -7,21 +7,21 @@
 minibatch_row_test_fun(
   row_test_fun,
   Y,
-  categ,
+  groups,
   alternative = c("two.sided", "less", "greater"),
   max_batch_size = 1e+06,
   m = nrow(Y)
 )
 }
 \arguments{
-\item{row_test_fun}{A function taking as inputs Y, categ and Alternative and
+\item{row_test_fun}{A function taking as inputs Y, groups and alternative and
 giving as a result a matrix of $p$-values.
 Example \code{\link{row_welch_tests}} or \code{\link{row_wilcoxon_tests}}.}
 
 \item{Y}{A \eqn{m \times n} numeric matrix whose rows correspond to variables
 and columns to observations}
 
-\item{categ}{Either a numeric vector of \code{n} categories in \eqn{0, 1} for
+\item{groups}{Either a numeric vector of \code{n} groups in \eqn{0, 1} for
 the observations, or a \code{n x B} matrix stacking \code{B} such vectors
 (typically permutations of an original vector of size \code{n})}
 
@@ -45,10 +45,10 @@ Mini batch version of a row_test_fun function.
 p <- 53
 n <- 35
 mat <- matrix(rnorm(p * n), ncol = n)
-cls <- rep(c(0, 1), times = c(10, n - 10))
+groups <- rep(c(0, 1), times = c(10, n - 10))
 minibatch_row_test_fun(
   row_test_fun = row_welch_tests, Y = mat,
-  categ = cls, alternative = "two.sided",
+  groups = groups, alternative = "two.sided",
   max_batch_size = 1e5
 )
 }

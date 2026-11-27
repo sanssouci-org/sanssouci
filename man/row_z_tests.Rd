@@ -4,13 +4,13 @@
 \alias{row_z_tests}
 \title{Z tests for rows of a matrix}
 \usage{
-row_z_tests(mat, categ, alternative)
+row_z_tests(mat, groups, alternative)
 }
 \arguments{
 \item{mat}{A numeric matrix whose rows correspond to \code{m} variables and
 columns to \code{n} observations}
 
-\item{categ}{Either a numeric vector of \code{n} values in \eqn{-1, 1} to
+\item{groups}{Either a numeric vector of \code{n} values in \eqn{-1, 1} to
 perform sign flips, or a \code{n x B} matrix stacking \code{B} such
 vectors. If missing, coerced to \code{rep(1, n)}}
 

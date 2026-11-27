@@ -10,7 +10,7 @@
   method = c("simes", "lambdacalibration", "heterosimes"),
   adapt = FALSE,
   stepdown = FALSE,
-  n_permutations = 1000,
+  n_permutations = NULL,
   K = get_n_hyp(object),
   template = c("Simes", "Beta", "Oracle", "notip"),
   p_cdfs = NULL,
@@ -66,5 +66,6 @@ groups <- ifelse(colnames(expr_ALL) == "NEG", 0, 1)
 table(groups)
 a <- new_sanssouci_data(Y = expr_ALL, X = groups)
 
-fit_kfwer(a, alpha = 0.1, method = "simes")
+res <- fit_kfwer(a, alpha = 0.1, method = "simes")
+res <- fit_kfwer(a, alpha = 0.1, method = "lambdacalibration", stepdown = TRUE)
 }

@@ -76,7 +76,7 @@ sim <- sim_gaussian_equi(
   pi0 = 0.8, SNR = 3, prob = 0.5
 )
 Y <- sim$X
-groups <- sim$categ
+groups <- sim$groups
 p <- row_welch_tests(Y, groups)$p_value
 
 B <- 100

@@ -6,7 +6,7 @@
 \usage{
 row_binomial_tests(
   mat,
-  categ,
+  groups,
   alternative = c("two.sided", "less", "greater"),
   warn = TRUE
 )
@@ -15,7 +15,7 @@ row_binomial_tests(
 \item{mat}{A numeric matrix whose rows correspond to variables and columns to
 observations}
 
-\item{categ}{Either a numeric vector of \code{n} categories in \eqn{0, 1} for
+\item{groups}{Either a numeric vector of \code{n} groups in \eqn{0, 1} for
 the observations, or a \code{n x B} matrix stacking \code{B} such vectors
 (typically permutations of an original vector of size \code{n})}
 
@@ -55,14 +55,14 @@ n1 <- 40
 mat0 <- matrix(rbinom(p * n0, size = 1, prob = 0.05), ncol = n0)
 mat1 <- matrix(rbinom(p * n1, size = 1, prob = 0.02), ncol = n1)
 mat <- cbind(mat0, mat1)
-cls <- rep(c(0, 1), times = c(n0, n1))
-fbt <- row_binomial_tests(mat, categ = cls, alternative = alt)
+groups <- rep(c(0, 1), times = c(n0, n1))
+fbt <- row_binomial_tests(mat, groups = groups, alternative = alt)
 str(fbt)
 
 # compare with ordinary binom.test:
 pbt <- t(sapply(1:p, FUN = function(ii) {
-  x1 <- mat[ii, cls == 1]
-  x0 <- mat[ii, cls == 0]
+  x1 <- mat[ii, groups == 1]
+  x0 <- mat[ii, groups == 0]
   bt <- binom.test(sum(x1), length(x1), mean(x0), alternative = alt)
   c(statistic = bt[["statistic"]], p_value = bt[["p.value"]])
 }))

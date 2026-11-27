@@ -6,7 +6,7 @@
 \usage{
 test_by_randomization(
   X,
-  categ,
+  groups,
   B,
   alternative = c("two.sided", "less", "greater"),
   row_test_fun = row_welch_tests,
@@ -16,7 +16,7 @@ test_by_randomization(
 \arguments{
 \item{X}{a matrix of \code{m} variables by \code{n} observations}
 
-\item{categ}{An optional numeric vector of \eqn{n} values in \eqn{0, 1}
+\item{groups}{An optional numeric vector of \eqn{n} values in \eqn{0, 1}
 specifying the column indices of the first and second samples. If not
 provided, a one-sample test is performed.}
 
@@ -93,10 +93,10 @@ B <- 1e3
 ## two-sample data
 sim <- sim_gaussian_equi(m, rho, n, pi0, SNR = 2, prob = 0.5)
 X <- sim$X
-categ <- sim$categ
-tests <- test_by_randomization(X = X, categ = categ, B)
+groups <- sim$groups
+tests <- test_by_randomization(X = X, groups = groups, B)
 tests_w <- test_by_randomization(
-  X = X, categ = categ, B = 10,
+  X = X, groups = groups, B = 10,
   row_test_fun = row_wilcoxon_tests
 )
 
@@ -113,7 +113,7 @@ legend("topleft", c("H0", "H1"), pch = pch, col = 1:2)
 # one-sample data:
 sim <- sim_gaussian_equi(m, rho, n, pi0, SNR = 2)
 tests <- test_by_randomization(
-  X = sim$X, categ = sim$categ, B,
+  X = sim$X, groups = sim$groups, B,
   alternative = "two.sided"
 )
 

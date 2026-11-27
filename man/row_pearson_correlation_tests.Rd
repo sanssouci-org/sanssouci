@@ -4,13 +4,13 @@
 \alias{row_pearson_correlation_tests}
 \title{Pearson's correlation test for rows of a matrix}
 \usage{
-row_pearson_correlation_tests(X, categ, alternative = "two.sided")
+row_pearson_correlation_tests(X, groups, alternative = "two.sided")
 }
 \arguments{
 \item{X}{A \code{m x n} numeric matrix whose rows correspond to variables
 and columns to observations}
 
-\item{categ}{Either a numeric vector of continuous covariate for
+\item{groups}{Either a numeric vector of continuous covariate for
 the observations}
 
 \item{alternative}{A character string specifying the alternative hypothesis.
@@ -40,8 +40,8 @@ This function is a wrapper around the
 m <- 300
 n <- 38
 mat <- matrix(rnorm(m * n), ncol = n)
-categ <- rnorm(n, mean = 10)
-system.time(fwt <- row_pearson_correlation_tests(mat, categ,
+groups <- rnorm(n, mean = 10)
+system.time(fwt <- row_pearson_correlation_tests(mat, groups,
   alternative = "greater"
 ))
 str(fwt)

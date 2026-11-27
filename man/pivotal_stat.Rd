@@ -31,9 +31,9 @@ to permutation p-values and to a reference family
 m <- 50
 n <- 45
 X <- matrix(rnorm(m * n), ncol = n, nrow = m)
-categ <- rbinom(n, 1, 0.4)
+groups <- rbinom(n, 1, 0.4)
 B <- 10
-null_groups <- replicate(B, sample(categ))
+null_groups <- replicate(B, sample(groups))
 p0 <- row_welch_tests(X, null_groups)$p_value
 piv_stat <- pivotal_stat(p0, m)
 quantile(piv_stat, 0.2)

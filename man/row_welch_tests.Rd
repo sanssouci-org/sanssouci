@@ -4,13 +4,13 @@
 \alias{row_welch_tests}
 \title{Welch T-tests for rows of a matrix}
 \usage{
-row_welch_tests(X, categ, alternative = c("two.sided", "less", "greater"))
+row_welch_tests(X, groups, alternative = c("two.sided", "less", "greater"))
 }
 \arguments{
 \item{X}{A \code{m x n} numeric matrix whose rows correspond to variables
 and columns to observations}
 
-\item{categ}{Either a numeric vector of \code{n} categories in \eqn{0, 1} for
+\item{groups}{Either a numeric vector of \code{n} groups in \eqn{0, 1} for
 the observations, or a \code{n x B} matrix stacking \code{B} such vectors
 (typically permutations of an original vector of size \code{n})}
 
@@ -45,20 +45,20 @@ the code is vectorized
 m <- 300
 n <- 38
 mat <- matrix(rnorm(m * n), ncol = n)
-categ <- rep(c(0, 1), times = c(27, n - 27))
-system.time(fwt <- row_welch_tests(mat, categ, alternative = "greater"))
+groups <- rep(c(0, 1), times = c(27, n - 27))
+system.time(fwt <- row_welch_tests(mat, groups, alternative = "greater"))
 str(fwt)
 
 # compare with ordinary t.test:
 system.time(pwt <- apply(mat, 1, FUN = function(x) {
-  t.test(x[categ == 1], x[categ == 0], alternative = "greater")$p.value
+  t.test(x[groups == 1], x[groups == 0], alternative = "greater")$p.value
 }))
 all(abs(fwt$p_value - pwt) < 1e-10) ## same results
 
 # with several contrasts/permutations
 B <- 100
-categ_perm <- replicate(B, sample(categ))
-system.time(fwt_perm <- row_welch_tests(mat, categ_perm,
+groups_perm <- replicate(B, sample(groups))
+system.time(fwt_perm <- row_welch_tests(mat, groups_perm,
   alternative = "greater"
 ))
 str(fwt_perm)

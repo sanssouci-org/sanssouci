@@ -64,7 +64,7 @@ length m indicating whether each null hypothesis is true or false.
 # Generate Gaussian data and perform multiple tests
 sim <- sim_gaussian_equi(m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3,
 prob = 0.5)
-rwt <- row_welch_tests(sim$X, sim$categ, alternative = "greater")
+rwt <- row_welch_tests(sim$X, sim$groups, alternative = "greater")
 
 # calculate, print, and plot confidence bound
 cb <- conf_curve_from_fam(rwt$p_value, ref_family = "Simes", param = 0.1)

@@ -6,7 +6,7 @@
 \usage{
 perm_stat(
   X,
-  categ,
+  groups,
   B,
   row_test_fun = row_welch_tests,
   alternative = c("two.sided", "less", "greater")
@@ -15,7 +15,7 @@ perm_stat(
 \arguments{
 \item{X}{A matrix of \code{m} variables (hypotheses) by \code{n} observations}
 
-\item{categ}{An numeric vector of \code{n} values in \verb{0,1}
+\item{groups}{An numeric vector of \code{n} values in \verb{0,1}
 specifying the column indices of the first and second samples.}
 
 \item{B}{An integer value, the number of permutations to be performed}
@@ -44,21 +44,21 @@ cited below (section 4.5).
 m <- 50
 n <- 45
 X <- matrix(rnorm(m * n), ncol = n, nrow = m)
-categ <- rbinom(n, 1, 0.4)
+groups <- rbinom(n, 1, 0.4)
 
 B <- 10
 set.seed(123)
-perm0 <- sanssouci:::perm_stat(X, categ, B, row_welch_tests)
+perm0 <- sanssouci:::perm_stat(X, groups, B, row_welch_tests)
 
 # for this particular test 'perm_stat' can be bypassed
 set.seed(123)
-null_groups <- replicate(B, sample(categ))
+null_groups <- replicate(B, sample(groups))
 perm <- row_welch_tests(X, null_groups)
 identical(perm0$p_value, perm$p_value)
 identical(perm0$statistic, perm$statistic)
 # Wilcoxon tests
 set.seed(123)
-perm0 <- sanssouci:::perm_stat(X, categ, B, row_wilcoxon_tests)
+perm0 <- sanssouci:::perm_stat(X, groups, B, row_wilcoxon_tests)
 perm <- row_wilcoxon_tests(X, null_groups)
 identical(perm0$p_value, perm$p_value)
 identical(perm0$statistic, perm$statistic)
