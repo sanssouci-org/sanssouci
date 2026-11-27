@@ -223,6 +223,16 @@ get_n_hyp.sanssouci_data <- function(object) {
   object$n_hyp
 }
 
+get_n_observations <- function(object) UseMethod("get_n_observations")
+#' `get_n_observations`: get number of observations
+#'
+#' @rdname sanssouci_data-methods
+#' @param object An object of class `sanssouci_data`
+#' @export
+get_n_observations.sanssouci_data <- function(object) {
+  object$n_observations
+}
+
 get_test_fun <- function(object) UseMethod("get_test_fun")
 #' `get_test_fun`: get test function
 #'

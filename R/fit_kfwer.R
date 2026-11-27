@@ -48,7 +48,7 @@ fit_kfwer <- function(object, alpha, method, ...) UseMethod("fit_kfwer")
 #' a <- new_sanssouci_data(Y = expr_ALL, X = groups)
 #'
 #' res <- fit_kfwer(a, alpha = 0.1, method = "simes")
-#' res <- fit_kfwer(a, alpha = 0.1, method = "lambdacalibration")
+#' res <- fit_kfwer(a, alpha = 0.1, method = "lambdacalibration", stepdown = TRUE)
 fit_kfwer.sanssouci_data <- function(object, alpha,
                                      method = c(
                                        "simes",
@@ -126,7 +126,7 @@ fit_kfwer.sanssouci_data <- function(object, alpha,
       stop("'notip' template is not currently implemented. Come back soon ;)")
     }
 
-    row_test_fun <- get_test_fun(object) ## todo add get_test.sanssouci_data
+    row_test_fun <- get_test_fun(object)
     if (is.null(row_test_fun)) {
       stop(
         "Test function must be refered in new_sanssouci_data",
@@ -142,7 +142,7 @@ fit_kfwer.sanssouci_data <- function(object, alpha,
     Y <- get_y(object)
     alternative <- object$alternative
     type <- get_test_type(object)
-    n_obs <- n_observations(object)
+    n_obs <- get_n_observations(object)
     groups <- get_groups_to_permute(object)
 
 
@@ -153,6 +153,11 @@ fit_kfwer.sanssouci_data <- function(object, alpha,
     }
 
     if (template %in% c("Simes", "Beta")) {
+      if(is.null(n_permutations)){
+        n_permutations <- 1000
+        message("for lambadacalibration, if _n_permutations is null, then ",
+                "n_permutations is set to 1000 by default")
+      }
       if (n_permutations > 0) {
         t0 <- Sys.time()
         if (verbose) {
@@ -198,6 +203,7 @@ fit_kfwer.sanssouci_data <- function(object, alpha,
 
         thr <- calib$thr
         lambda <- calib$lambda
+        hat_m <- m
 
         if (verbose) {
           dt <- Sys.time() - t0
@@ -251,6 +257,8 @@ fit_kfwer.sanssouci_data <- function(object, alpha,
   return(object)
 }
 
+
+
 new_ref_family_kfwer <- function(alpha, method, adapt, stepdown,
                                  n_permutations, K, template, p_cdfs,
                                  p_values, thr, hat_m0, lambda) {
@@ -278,4 +286,35 @@ new_ref_family_kfwer <- function(alpha, method, adapt, stepdown,
     object,
     class = "ref_family_kfwer"
   )
+}
+
+
+#' `get_p_values`: get p-values
+#'
+#' @rdname sanssouci_data-methods
+#' @param object An object of class `sanssouci_data`
+#' @export
+get_p_values.ref_family_kfwer <- function(object) {
+  object$p_values
+}
+
+get_thresholds <- function(object) UseMethod("get_thresholds")
+#' `get_thresholds`: get p-values
+#'
+#' @rdname sanssouci_data-methods
+#' @param object An object of class `sanssouci_data`
+#' @export
+get_thresholds.ref_family_kfwer <- function(object) {
+  object$p_values
+}
+
+get_templates <- function(object) UseMethod("get_templates")
+#' `get_templates`: get p-values
+#'
+#' @rdname sanssouci_data-methods
+#' @param object An object of class `sanssouci_data`
+#' @export
+get_templates.ref_family_kfwer <- function(object) {
+  label <- object$parameters$template
+  if(object$parameters$n_h)
 }
