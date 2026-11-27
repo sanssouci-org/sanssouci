@@ -3,7 +3,7 @@
 #' @param X A \code{m x n} numeric matrix whose rows correspond to variables
 #'   and columns to observations
 #'
-#' @param categ Either a numeric vector of continuous covariate for
+#' @param groups Either a numeric vector of continuous covariate for
 #'   the observations
 #'
 #' @param alternative A character string specifying the alternative hypothesis.
@@ -36,26 +36,26 @@
 #' m <- 300
 #' n <- 38
 #' mat <- matrix(rnorm(m * n), ncol = n)
-#' categ <- rnorm(n, mean = 10)
-#' system.time(fwt <- row_pearson_correlation_tests(mat, categ,
+#' groups <- rnorm(n, mean = 10)
+#' system.time(fwt <- row_pearson_correlation_tests(mat, groups,
 #'   alternative = "greater"
 #' ))
 #' str(fwt)
 #'
-row_pearson_correlation_tests <- function(X, categ, alternative = "two.sided") {
-  if (is.null(dim(categ))) {
-    r <- row_cor_pearson(X, categ, alternative = alternative)
+row_pearson_correlation_tests <- function(X, groups, alternative = "two.sided") {
+  if (is.null(dim(groups))) {
+    r <- row_cor_pearson(X, groups, alternative = alternative)
     r$p_value <- r$pvalue
   } else {
     m <- dim(X)[1]
-    B <- dim(categ)[2]
+    B <- dim(groups)[2]
     r <- list(
       p_value = matrix(nrow = m, ncol = B),
       statistic = matrix(nrow = m, ncol = B),
       cor = matrix(nrow = m, ncol = B)
     )
     for (b in 1:B) {
-      rr <- row_cor_pearson(X, categ[, b], alternative = alternative)
+      rr <- row_cor_pearson(X, groups[, b], alternative = alternative)
       r$p_value[, b] <- rr$pvalue
       r$statistic[, b] <- rr$statistic
       r$cor[, b] <- rr$cor

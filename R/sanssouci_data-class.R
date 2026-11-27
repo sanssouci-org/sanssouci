@@ -64,7 +64,7 @@ new_sanssouci_data <- function(Y = NULL,
           ## No 'contrast': detection of one, two samples or continuous
           n_groups <- length(unique(X))
           if (n_groups > 1) {
-            categ_check(X, ncol(Y))
+            .check_groups(X, ncol(Y))
           }
           if (n_groups == 1) {
             type <- "1 sample"
@@ -117,7 +117,7 @@ new_sanssouci_data <- function(Y = NULL,
     all_0 <- identical(truth, rep(0, nrow(Y)))
     all_1 <- identical(truth, rep(1, nrow(Y)))
     if (!all_0 && !all_1) {
-      categ_check(truth, nrow(Y))
+      .check_groups(truth, nrow(Y))
     }
   }
   obj <- struct(

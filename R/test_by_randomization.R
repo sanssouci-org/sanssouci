@@ -4,7 +4,7 @@
 #'
 #' @param X a matrix of \code{m} variables by \code{n} observations
 #'
-#' @param categ An optional numeric vector of \eqn{n} values in \eqn{0, 1}
+#' @param groups An optional numeric vector of \eqn{n} values in \eqn{0, 1}
 #'   specifying the column indices of the first and second samples. If not
 #'   provided, a one-sample test is performed.
 #'
@@ -82,10 +82,10 @@
 #' ## two-sample data
 #' sim <- sim_gaussian_equi(m, rho, n, pi0, SNR = 2, prob = 0.5)
 #' X <- sim$X
-#' categ <- sim$categ
-#' tests <- test_by_randomization(X = X, categ = categ, B)
+#' groups <- sim$groups
+#' tests <- test_by_randomization(X = X, groups = groups, B)
 #' tests_w <- test_by_randomization(
-#'   X = X, categ = categ, B = 10,
+#'   X = X, groups = groups, B = 10,
 #'   row_test_fun = row_wilcoxon_tests
 #' )
 #'
@@ -102,7 +102,7 @@
 #' # one-sample data:
 #' sim <- sim_gaussian_equi(m, rho, n, pi0, SNR = 2)
 #' tests <- test_by_randomization(
-#'   X = sim$X, categ = sim$categ, B,
+#'   X = sim$X, groups = sim$groups, B,
 #'   alternative = "two.sided"
 #' )
 #'
@@ -119,7 +119,7 @@
 #' @importFrom matrixStats rowRanks
 #' @export
 #'
-test_by_randomization <- function(X, categ, B,
+test_by_randomization <- function(X, groups, B,
                                   alternative =
                                     c("two.sided", "less", "greater"),
                                   row_test_fun = row_welch_tests,
@@ -127,13 +127,13 @@ test_by_randomization <- function(X, categ, B,
   alternative <- match.arg(alternative)
   ## sanity checks
   n <- ncol(X)
-  if (missing(categ) || (length(unique(categ)) == 1)) {
+  if (missing(groups) || (length(unique(groups)) == 1)) {
     flavor <- "flip"
   } else {
-    if (length(unique(categ)) == 2) {
-      stopifnot(all(categ %in% c(0, 1)))
+    if (length(unique(groups)) == 2) {
+      stopifnot(all(groups %in% c(0, 1)))
       flavor <- "perm"
-      tbl <- table(categ)
+      tbl <- table(groups)
       if (min(tbl) < 3) {
         stop(">2 observations from each sample required for two-sample tests")
       }
@@ -149,9 +149,9 @@ test_by_randomization <- function(X, categ, B,
     ## * one-sided tests ?
 
     ## map class labels to 0-1 for ease of implementation of row_test_fun(s)
-    levels(categ) <- c("0", "1")
+    levels(groups) <- c("0", "1")
     ## observed
-    row_tests <- row_test_fun(X, categ = categ, alternative = alternative)
+    row_tests <- row_test_fun(X, groups = groups, alternative = alternative)
     statistics <- row_tests$statistic
     p_values <- row_tests$p_value ## parametric p-value
     rm(row_tests)
@@ -160,8 +160,8 @@ test_by_randomization <- function(X, categ, B,
     null_statistics <- matrix(nrow = m, ncol = B) ## test statistics under H0
     null_p_values <- matrix(nrow = m, ncol = B)   ## parametric p-value
     for (bb in 1:B) {
-      categ_perm <- sample(categ)
-      row_tests <- row_test_fun(X, categ = categ_perm,
+      groups_perm <- sample(groups)
+      row_tests <- row_test_fun(X, groups = groups_perm,
                                 alternative = alternative)
       null_statistics[, bb] <- row_tests$statistic
       null_p_values[, bb] <- row_tests$p_value

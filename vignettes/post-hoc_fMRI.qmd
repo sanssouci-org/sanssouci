@@ -68,8 +68,8 @@ The samples are classified into two subgoups, These subgroups correspond to two 
 ```{r}
 #| label: colnames
 m <- nrow(Y)
-categ <- colnames(Y)
-knitr::kable(table(categ))
+groups <- colnames(Y)
+knitr::kable(table(groups))
 ```
 
 # Post hoc inference by the Simes inequality

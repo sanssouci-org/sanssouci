@@ -7,22 +7,22 @@ test_that("row_binomial_tests <=> binom.test", {
   mat0 <- matrix(rbinom(p * n0, size = 1, prob = 0.05), ncol = n0)
   mat1 <- matrix(rbinom(p * n1, size = 1, prob = 0.02), ncol = n1)
   mat <- cbind(mat0, mat1)
-  cls <- rep(c(0, 1), times = c(n0, n1))
+  groups <- rep(c(0, 1), times = c(n0, n1))
 
   alt <- sample(c("two.sided", "greater", "less"), 1)
   if (alt == "two.sided") {
     expect_warning(fbt <- row_binomial_tests(
-      mat = mat, categ = cls,
+      mat = mat, groups = groups,
       alternative = alt
     ))
   } else {
-    fbt <- row_binomial_tests(mat = mat, categ = cls, alternative = alt)
+    fbt <- row_binomial_tests(mat = mat, groups = groups, alternative = alt)
   }
 
   # Ordinary Binomial test (reasonably fast for small number of tests)
   pbt <- t(sapply(1:p, FUN = function(ii) {
-    x1 <- mat[ii, cls == 1]
-    x0 <- mat[ii, cls == 0]
+    x1 <- mat[ii, groups == 1]
+    x0 <- mat[ii, groups == 0]
     bt <- binom.test(sum(x1), length(x1), mean(x0), alternative = alt)
     c(
       statistic = bt[["statistic"]],
@@ -34,13 +34,13 @@ test_that("row_binomial_tests <=> binom.test", {
   names(pbt) <- c("statistic", "p.value", "estimate")
   expect_equal(fbt$p_value, pbt$p.value)
   expect_equal(fbt$statistic, pbt$statistic)
-  py <- rowMeans(mat[, cls == 0])
+  py <- rowMeans(mat[, groups == 0])
   expect_equal(fbt$estimate, pbt$estimate - py)
 
   # matrix version
-  cls_perm <- cbind(cls, replicate(3, sample(cls)))
+  groups_perm <- cbind(groups, replicate(3, sample(groups)))
   fbt_perm <- row_binomial_tests(
-    mat = mat, categ = cls_perm,
+    mat = mat, groups = groups_perm,
     alternative = alt,
     warn = FALSE
   )
@@ -48,7 +48,7 @@ test_that("row_binomial_tests <=> binom.test", {
   expect_equal(fbt_perm$statistic[, 1], fbt$statistic)
   expect_equal(fbt_perm$p_value[, 1], fbt$p_value)
   expect_equal(fbt_perm$estimate[, 1], fbt$estimate)
-  expect_equal(ncol(fbt_perm$p_value), ncol(cls_perm))
+  expect_equal(ncol(fbt_perm$p_value), ncol(groups_perm))
 })
 
 
@@ -75,11 +75,11 @@ test_that("correctness of row_binomial_tests alternative", {
 
   mat1 <- rbind(mat1_null, mat1_greater, mat1_less)
   mat <- cbind(mat0, mat1)
-  cls <- rep(c(0, 1), times = c(n0, n1))
+  groups <- rep(c(0, 1), times = c(n0, n1))
 
   alt <- "two.sided"
   expect_warning({
-    pval <- row_binomial_tests(mat, categ = cls, alternative = alt)$p_value
+    pval <- row_binomial_tests(mat, groups = groups, alternative = alt)$p_value
   })
   m0 <- mean(pval[idx_null])
   mg <- mean(pval[idx_greater])
@@ -90,7 +90,7 @@ test_that("correctness of row_binomial_tests alternative", {
   expect_lt(mg, m0)
 
   alt <- "greater"
-  pval <- row_binomial_tests(mat, categ = cls, alternative = alt)$p_value
+  pval <- row_binomial_tests(mat, groups = groups, alternative = alt)$p_value
   m0 <- mean(pval[idx_null])
   mg <- mean(pval[idx_greater])
   ml <- mean(pval[idx_less])
@@ -99,7 +99,7 @@ test_that("correctness of row_binomial_tests alternative", {
   expect_gt(ml, m0)
 
   alt <- "less"
-  pval <- row_binomial_tests(mat, categ = cls, alternative = alt)$p_value
+  pval <- row_binomial_tests(mat, groups = groups, alternative = alt)$p_value
   m0 <- mean(pval[idx_null])
   mg <- mean(pval[idx_greater])
   ml <- mean(pval[idx_less])

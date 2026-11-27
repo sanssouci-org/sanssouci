@@ -3,10 +3,10 @@ context("Calculation of randomization p-values")
 m <- 513
 n <- 38
 mat <- matrix(rnorm(m * n), ncol = n)
-categ <- rep(c(0, 1), times = c(27, n - 27))
+groups <- rep(c(0, 1), times = c(27, n - 27))
 
 test_that("Correctness of permutation p-values", {
-  res <- test_by_randomization(X = mat, categ, B = 100, rand_p_value = TRUE)
+  res <- test_by_randomization(X = mat, groups, B = 100, rand_p_value = TRUE)
   expect_equal(res$flavor, "perm")
 
   # consistency between parametric and randomization p-values
@@ -68,32 +68,32 @@ test_that("Consistency of randomization p-values with different alternatives", {
   for (alt in c("two.sided", "less", "greater")) {
 
     ## permutation
-    categ <- rep(c(0, 1), times = c(27, n - 27))
-    two_sided <- test_by_randomization(X = mat, categ, B = B,
+    groups <- rep(c(0, 1), times = c(27, n - 27))
+    two_sided <- test_by_randomization(X = mat, groups, B = B,
                                        alternative = "two.sided")
-    greater <- test_by_randomization(X = mat, categ, B = B,
+    greater <- test_by_randomization(X = mat, groups, B = B,
                                      alternative = "greater")
-    less <- test_by_randomization(X = mat, categ, B = B, alternative = "less")
+    less <- test_by_randomization(X = mat, groups, B = B, alternative = "less")
     expect_equal(two_sided$p_values, 2 * pmin(greater$p_values, less$p_values))
 
     ## swapping the class labels
-    categ_inv <- 1 - categ
-    two_sided_inv <- test_by_randomization(X = mat, categ_inv, B = B,
+    groups_inv <- 1 - groups
+    two_sided_inv <- test_by_randomization(X = mat, groups_inv, B = B,
                                            alternative = "two.sided")
-    greater_inv <- test_by_randomization(X = mat, categ_inv, B = B,
+    greater_inv <- test_by_randomization(X = mat, groups_inv, B = B,
                                          alternative = "greater")
-    less_inv <- test_by_randomization(X = mat, categ_inv, B = B,
+    less_inv <- test_by_randomization(X = mat, groups_inv, B = B,
                                       alternative = "less")
     expect_equal(two_sided_inv$p_values, two_sided$p_values)
     expect_equal(greater_inv$p_values, less$p_values)
     expect_equal(less_inv$p_values, greater$p_values)
 
     ## randomization
-    two_sided <- test_by_randomization(X = mat, categ_inv, B = B,
+    two_sided <- test_by_randomization(X = mat, groups_inv, B = B,
                                        alternative = "two.sided")
-    greater <- test_by_randomization(X = mat, categ_inv, B = B,
+    greater <- test_by_randomization(X = mat, groups_inv, B = B,
                                      alternative = "greater")
-    less <- test_by_randomization(X = mat, categ_inv, B = B,
+    less <- test_by_randomization(X = mat, groups_inv, B = B,
                                   alternative = "less")
     expect_equal(two_sided$p_values, 2 * pmin(greater$p_values, less$p_values))
   }
@@ -103,13 +103,13 @@ test_that("Correctness of sanity checks", {
   m <- 5
   n <- 20
   mat <- matrix(rnorm(m * n), ncol = n)
-  categ <- rep(c(0, 1), times = c(2, n - 2))
+  groups <- rep(c(0, 1), times = c(2, n - 2))
   expect_error(
-    test_by_randomization(mat, categ, B = 1),
+    test_by_randomization(mat, groups, B = 1),
     ">2 observations from each sample required for two-sample tests"
   )
-  categ[1] <- 12
-  expect_error(test_by_randomization(mat, categ, B = 1),
+  groups[1] <- 12
+  expect_error(test_by_randomization(mat, groups, B = 1),
                "Tests for more than 2 classes not implemented yet")
 
 })

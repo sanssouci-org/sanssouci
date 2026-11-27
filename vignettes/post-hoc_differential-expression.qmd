@@ -88,8 +88,8 @@ Below, the Welch test for differential expression is applied to each gene. This 
 
 ```{r}
 #| label: row-welch-tests
-categ <- ifelse(colnames(dat) == "BCR/ABL", 1, 0) # map to 0/1
-dex <- data.frame(row_welch_tests(dat, categ))
+groups <- ifelse(colnames(dat) == "BCR/ABL", 1, 0) # map to 0/1
+dex <- data.frame(row_welch_tests(dat, groups))
 pval <- dex[["p_value"]]
 ```
 
@@ -185,7 +185,7 @@ A more refined post hoc bound has been proposed by @GS2011 under the PRDS assump
 
 ```{r}
 #| label: Simes
-obj <- SansSouci(Y = dat, groups = categ)
+obj <- SansSouci(Y = dat, groups = groups)
 res_simes <- fit(obj, B = 0, family = "Simes", alpha = alpha)
 ## B=0 => no calibration!
 fp_simes <- predict(res_simes, S_BH, what = "FP")

@@ -18,7 +18,7 @@
 #'   pi0 = 0.8, SNR = 3, prob = 0.5
 #' )
 #' Y <- sim$X
-#' groups <- sim$categ
+#' groups <- sim$groups
 #' p <- row_welch_tests(Y, groups)$p_value
 #'
 #' B <- 100
@@ -218,7 +218,7 @@ plot_conf_curve <- function(conf_bound, xmax, cols = NULL,
 #'   pi0 = 0.8, SNR = 3, prob = 0.5
 #' )
 #' X <- sim$X
-#' groups <- sim$categ
+#' groups <- sim$groups
 #' p <- row_welch_tests(X, groups)$p_value
 #'
 #' null_groups <- replicate(100, sample(groups))

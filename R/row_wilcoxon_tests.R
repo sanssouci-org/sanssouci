@@ -3,7 +3,7 @@
 #' @param mat A \code{m x n} numeric matrix whose rows correspond to variables
 #' and columns to observations
 #'
-#' @param categ Either a numeric vector of \code{n} categories in \eqn{0, 1} for
+#' @param group Either a numeric vector of \code{n} groups in \eqn{0, 1} for
 #'   the observations, or a \code{n x B} matrix stacking \code{B} such vectors
 #'   (typically permutations of an original vector of size \code{n})
 #'
@@ -40,7 +40,7 @@
 #'   makes the code much faster than using loops of 'apply' functions,
 #'   especially for high-dimensional problems (small n and large m) because the
 #'   overhead of the call to the 'wilcox.test' function is avoided. Note that it
-#'   is not vectorized along the columns of \code{categ} (if any), as a basic
+#'   is not vectorized along the columns of \code{group} (if any), as a basic
 #'   'for' loop is used.
 #'
 #' @details The p-values are computed using the normal approximation as
@@ -59,43 +59,43 @@
 #' p <- 200
 #' n <- 50
 #' mat <- matrix(rnorm(p * n), ncol = n)
-#' cls <- rep(c(0, 1), each = n / 2)
+#' groups <- rep(c(0, 1), each = n / 2)
 #'
-#' statistics <- row_wilcoxon_tests(mat, categ = cls, alternative = "two.sided")
+#' statistics <- row_wilcoxon_tests(mat, group = groups, alternative = "two.sided")
 #' str(statistics)
 #'
 #' # permutation of class labels
-#' cls_perm <- replicate(11, sample(cls))
-#' statistics <- row_wilcoxon_tests(mat, categ = cls_perm,
+#' groups_perm <- replicate(11, sample(groups))
+#' statistics <- row_wilcoxon_tests(mat, group = groups_perm,
 #' alternative = "two.sided")
 #' str(statistics)
 #'
 #' # several unrelated contrasts
-#' cls2 <- cls
-#' cls[1:10] <- 1 # varying nx, ny
-#' cls_mat <- cbind(cls, cls2)
-#' statistics <- row_wilcoxon_tests(mat, categ = cls_mat,
+#' groups2 <- groups
+#' groups[1:10] <- 1 # varying nx, ny
+#' groups_mat <- cbind(groups, groups2)
+#' statistics <- row_wilcoxon_tests(mat, group = groups_mat,
 #' alternative = "two.sided")
 #' str(statistics)
-row_wilcoxon_tests <- function(mat, categ,
+row_wilcoxon_tests <- function(mat, group,
                                alternative = c("two.sided", "less", "greater"),
                                correct = TRUE) {
   alternative <- match.arg(alternative)
-  stopifnot(all(categ %in% c(0, 1)))
-  categ <- as.matrix(categ)
-  levels(categ) <- NULL
-  apply(categ, 2, categ_check, n = ncol(mat))
-  B <- ncol(categ)
+  stopifnot(all(group %in% c(0, 1)))
+  group <- as.matrix(group)
+  levels(group) <- NULL
+  apply(group, 2, .check_groups, n = ncol(mat))
+  B <- ncol(group)
   m <- nrow(mat)
-  n_obs <- nrow(categ)
+  n_obs <- nrow(group)
 
   rks <- rowRanks(mat, ties.method = "average")
-  nx <- colSums(categ)
+  nx <- colSums(group)
   ny <- n_obs - nx
 
   min_stat <- nx * (nx + 1) / 2
 
-  statistics <- rks %*% categ
+  statistics <- rks %*% group
   statistics <- sweep(statistics, MARGIN = 2, STATS = min_stat, FUN = "-")
 
   rks2 <- rks
@@ -131,8 +131,8 @@ row_wilcoxon_tests <- function(mat, categ,
   )
 
   est <- matrix(NA_real_, nrow = m, ncol = B)
-  if (dim(categ)[2] == 1) {
-    wx <- which(categ == 1)
+  if (dim(group)[2] == 1) {
+    wx <- which(group == 1)
     est <- rowMedians(mat[, wx]) - rowMedians(mat[, -wx])
     statistics <- as.vector(statistics)
     p_values <- as.vector(p_values)
@@ -143,28 +143,28 @@ row_wilcoxon_tests <- function(mat, categ,
 
 # first version
 
-row_wilcoxon_tests_v1 <- function(mat, categ,
+row_wilcoxon_tests_v1 <- function(mat, group,
                                   alternative =
                                     c("two.sided", "less", "greater"),
                                   correct = TRUE) {
   alternative <- match.arg(alternative)
-  stopifnot(all(categ %in% c(0, 1)))
-  levels(categ) <- NULL
+  stopifnot(all(group %in% c(0, 1)))
+  levels(group) <- NULL
 
-  if (is.vector(categ)) {
-    return(row_wilcoxon_tests1_v1(mat, categ,
+  if (is.vector(group)) {
+    return(row_wilcoxon_tests1_v1(mat, group,
       alternative = alternative,
       correct = correct
     ))
   }
-  stopifnot(is.matrix(categ))
-  B <- ncol(categ)
+  stopifnot(is.matrix(group))
+  B <- ncol(group)
   m <- nrow(mat)
 
   pval0 <- matrix(NA_real_, nrow = m, ncol = B)
   stat0 <- matrix(NA_real_, nrow = m, ncol = B)
   for (bb in 1:B) {
-    rwt <- row_wilcoxon_tests1_v1(mat, categ[, bb],
+    rwt <- row_wilcoxon_tests1_v1(mat, group[, bb],
       alternative = alternative,
       correct = correct
     )
@@ -179,19 +179,19 @@ row_wilcoxon_tests_v1 <- function(mat, categ,
 }
 
 #' @importFrom matrixStats rowMedians
-row_wilcoxon_tests1_v1 <- function(mat, categ,
+row_wilcoxon_tests1_v1 <- function(mat, group,
                                    alternative =
                                      c("two.sided", "less", "greater"),
                                    correct = TRUE) {
   alternative <- match.arg(alternative)
-  categ_check(categ, ncol(mat))
+  .check_groups(group, ncol(mat))
 
   rks <- rowRanks(mat, ties.method = "average")
-  ny <- sum(categ == 0)
-  nx <- sum(categ == 1)
+  ny <- sum(group == 0)
+  nx <- sum(group == 1)
   min_stat <- nx * (nx + 1) / 2 ## mininmal rank sum
 
-  wx <- which(categ == 1)
+  wx <- which(group == 1)
   stat <- rowSums(rks[, wx])
   stat <- stat - min_stat
 

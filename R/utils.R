@@ -21,13 +21,13 @@ pluralize <- function(word, n) {
 }
 
 
-categ_check <- function(categ, n) {
-  name <- as.character(substitute(categ))
-  if (length(categ) != n) {
-    stop(name, " should be of length ", n, ", not", length(categ))
+.check_groups <- function(groups, n) {
+  name <- as.character(substitute(groups))
+  if (length(groups) != n) {
+    stop(name, " should be of length ", n, ", not", length(groups))
   }
-  categ <- as.factor(categ)
-  cats <- levels(categ)
+  groups <- as.factor(groups)
+  cats <- levels(groups)
   if (!identical(cats, c("0", "1")) && length(cats) <= 2) {
     stop(
       "'", name,

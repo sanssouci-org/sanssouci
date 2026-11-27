@@ -38,7 +38,7 @@
 #'   pi0 = 0.8, SNR = 3, prob = 0.5
 #' )
 #' Y <- sim$X
-#' groups <- sim$categ
+#' groups <- sim$groups
 #' p <- row_welch_tests(Y, groups)$p_value
 #'
 #' B <- 100
@@ -177,7 +177,7 @@ calibrate0 <- function(p0, m, alpha,
 #'  repeated permutation of class labels (two-sample tests)
 #'
 #' @param X A matrix of `m` variables (hypotheses) by `n` observations
-#' @param categ An numeric vector of `n` values in `0,1`
+#' @param groups An numeric vector of `n` values in `0,1`
 #'   specifying the column indices of the first and second samples.
 #' @param B An integer value, the number of permutations to be performed
 #' @param row_test_fun a vectorized testing function (same I/O as
@@ -199,26 +199,26 @@ calibrate0 <- function(p0, m, alpha,
 #' m <- 50
 #' n <- 45
 #' X <- matrix(rnorm(m * n), ncol = n, nrow = m)
-#' categ <- rbinom(n, 1, 0.4)
+#' groups <- rbinom(n, 1, 0.4)
 #'
 #' B <- 10
 #' set.seed(123)
-#' perm0 <- sanssouci:::perm_stat(X, categ, B, row_welch_tests)
+#' perm0 <- sanssouci:::perm_stat(X, groups, B, row_welch_tests)
 #'
 #' # for this particular test 'perm_stat' can be bypassed
 #' set.seed(123)
-#' null_groups <- replicate(B, sample(categ))
+#' null_groups <- replicate(B, sample(groups))
 #' perm <- row_welch_tests(X, null_groups)
 #' identical(perm0$p_value, perm$p_value)
 #' identical(perm0$statistic, perm$statistic)
 
 #' # Wilcoxon tests
 #' set.seed(123)
-#' perm0 <- sanssouci:::perm_stat(X, categ, B, row_wilcoxon_tests)
+#' perm0 <- sanssouci:::perm_stat(X, groups, B, row_wilcoxon_tests)
 #' perm <- row_wilcoxon_tests(X, null_groups)
 #' identical(perm0$p_value, perm$p_value)
 #' identical(perm0$statistic, perm$statistic)
-perm_stat <- function(X, categ, B,
+perm_stat <- function(X, groups, B,
                       row_test_fun = row_welch_tests,
                       alternative = c("two.sided", "less", "greater")) {
   m <- nrow(X)
@@ -226,8 +226,8 @@ perm_stat <- function(X, categ, B,
   pval0 <- matrix(NA_real_, nrow = m, ncol = B)
   stat0 <- matrix(NA_real_, nrow = m, ncol = B)
   for (bb in 1:B) {
-    categ_perm <- sample(categ)
-    rwt <- row_test_fun(X, categ = categ_perm, alternative = alternative)
+    groups_perm <- sample(groups)
+    rwt <- row_test_fun(X, groups = groups_perm, alternative = alternative)
     pval0[, bb] <- rwt$p_value
     stat0[, bb] <- rwt$statistic
   }
@@ -263,9 +263,9 @@ perm_stat <- function(X, categ, B,
 #' m <- 50
 #' n <- 45
 #' X <- matrix(rnorm(m * n), ncol = n, nrow = m)
-#' categ <- rbinom(n, 1, 0.4)
+#' groups <- rbinom(n, 1, 0.4)
 #' B <- 10
-#' null_groups <- replicate(B, sample(categ))
+#' null_groups <- replicate(B, sample(groups))
 #' p0 <- row_welch_tests(X, null_groups)$p_value
 #' piv_stat <- pivotal_stat(p0, m)
 #' quantile(piv_stat, 0.2)

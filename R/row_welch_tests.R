@@ -3,7 +3,7 @@
 #' @param X A \code{m x n} numeric matrix whose rows correspond to variables
 #'   and columns to observations
 #'
-#' @param categ Either a numeric vector of \code{n} categories in \eqn{0, 1} for
+#' @param groups Either a numeric vector of \code{n} groups in \eqn{0, 1} for
 #'   the observations, or a \code{n x B} matrix stacking \code{B} such vectors
 #'   (typically permutations of an original vector of size \code{n})
 #'
@@ -40,38 +40,38 @@
 #' m <- 300
 #' n <- 38
 #' mat <- matrix(rnorm(m * n), ncol = n)
-#' categ <- rep(c(0, 1), times = c(27, n - 27))
-#' system.time(fwt <- row_welch_tests(mat, categ, alternative = "greater"))
+#' groups <- rep(c(0, 1), times = c(27, n - 27))
+#' system.time(fwt <- row_welch_tests(mat, groups, alternative = "greater"))
 #' str(fwt)
 #'
 #' # compare with ordinary t.test:
 #' system.time(pwt <- apply(mat, 1, FUN = function(x) {
-#'   t.test(x[categ == 1], x[categ == 0], alternative = "greater")$p.value
+#'   t.test(x[groups == 1], x[groups == 0], alternative = "greater")$p.value
 #' }))
 #' all(abs(fwt$p_value - pwt) < 1e-10) ## same results
 #'
 #' # with several contrasts/permutations
 #' B <- 100
-#' categ_perm <- replicate(B, sample(categ))
-#' system.time(fwt_perm <- row_welch_tests(mat, categ_perm,
+#' groups_perm <- replicate(B, sample(groups))
+#' system.time(fwt_perm <- row_welch_tests(mat, groups_perm,
 #'   alternative = "greater"
 #' ))
 #' str(fwt_perm)
 #'
-row_welch_tests <- function(X, categ,
+row_welch_tests <- function(X, groups,
                             alternative = c("two.sided", "less", "greater")) {
   alternative <- match.arg(alternative)
-  stopifnot(all(categ %in% c(0, 1)))
+  stopifnot(all(groups %in% c(0, 1)))
 
-  categ0 <- as.matrix(categ)
-  categ1 <- 1 - categ0
+  groups0 <- as.matrix(groups)
+  groups1 <- 1 - groups0
 
-  n_x <- as.matrix(colSums(categ0))
-  n_y <- as.matrix(colSums(categ1))
+  n_x <- as.matrix(colSums(groups0))
+  n_y <- as.matrix(colSums(groups1))
 
   XX <- X * X
-  sum_x <- X %*% categ0
-  sum2_x <- (XX) %*% categ0
+  sum_x <- X %*% groups0
+  sum2_x <- (XX) %*% groups0
   m_x <- divide_cols(sum_x, n_x)
 
   num <- sum2_x - divide_cols(sum_x^2, n_x)
@@ -81,8 +81,8 @@ row_welch_tests <- function(X, categ,
   num <- abs(num) # fix rare corner cases where num ~= -1e-15
   s_x <- sqrt(divide_cols(num, n_x - 1))
 
-  sum_y <- X %*% categ1
-  sum2_y <- (XX) %*% categ1
+  sum_y <- X %*% groups1
+  sum2_y <- (XX) %*% groups1
   m_y <- divide_cols(sum_y, n_y)
   rm(XX)
 
@@ -313,12 +313,12 @@ suff_welch_tests1 <- function(m_x, m_y, s_x, s_y, n_x, n_y,
   )
 }
 
-row_welch_tests1 <- function(mat, categ,
+row_welch_tests1 <- function(mat, groups,
                              alternative = c("two.sided", "less", "greater")) {
   alternative <- match.arg(alternative)
-  categ_check(categ, ncol(mat))
+  .check_groups(groups, ncol(mat))
 
-  summary_statistics <- summary_statistics(mat, categ = categ)
+  summary_statistics <- summary_statistics(mat, groups = groups)
   Y <- summary_statistics[["0"]]
   X <- summary_statistics[["1"]] ## as per the doc of t.test:
   ## 'alternative = "greater"' is the alternative that 'x' has a larger  mean
@@ -333,8 +333,8 @@ row_welch_tests1 <- function(mat, categ,
 
 #' Convert a matrix of observations into summary statistics
 #'
-#' Convert a matrix of observations labelled into categories into summary
-#' statistics for each category
+#' Convert a matrix of observations labelled into groups into summary
+#' statistics for each group
 #'
 #' The following statistics are calculated: sums, sums of squares, means,
 #' standard deviations, sample sizes
@@ -342,10 +342,10 @@ row_welch_tests1 <- function(mat, categ,
 #' @param mat A \code{m x n} numeric matrix whose rows correspond to variables
 #'   and columns to observations
 #'
-#' @param categ A vector of \code{n} categories for the observations
+#' @param groups A vector of \code{n} groups for the observations
 #'
 #' @return A list of \code{n} elements containing the above-described
-#'   summary statistics for each category
+#'   summary statistics for each group
 #'
 #' @author Pierre Neuvial
 #'
@@ -353,14 +353,14 @@ row_welch_tests1 <- function(mat, categ,
 #' @examples
 #'
 #' mat <- matrix(rnorm(3051 * 38), ncol = 38)
-#' cls <- rep(c(0, 1), times = c(27, 11))
-#' stats <- summary_statistics(mat, categ = cls)
-summary_statistics <- function(mat, categ) {
-  stopifnot(ncol(mat) == length(categ))
-  cats <- sort(unique(categ))
+#' groups <- rep(c(0, 1), times = c(27, 11))
+#' stats <- summary_statistics(mat, groups = groups)
+summary_statistics <- function(mat, groups) {
+  stopifnot(ncol(mat) == length(groups))
+  cats <- sort(unique(groups))
   res <- list()
   for (cc in seq(along = cats)) {
-    ww <- which(categ == cats[cc])
+    ww <- which(groups == cats[cc])
     matc <- mat[, ww, drop = FALSE]
 
     sumc <- rowSums(matc)

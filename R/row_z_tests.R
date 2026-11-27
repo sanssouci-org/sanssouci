@@ -3,7 +3,7 @@
 #' @param mat A numeric matrix whose rows correspond to \code{m} variables and
 #'   columns to \code{n} observations
 #'
-#' @param categ Either a numeric vector of \code{n} values in \eqn{-1, 1} to
+#' @param groups Either a numeric vector of \code{n} values in \eqn{-1, 1} to
 #'   perform sign flips, or a \code{n x B} matrix stacking \code{B} such
 #'   vectors. If missing, coerced to \code{rep(1, n)}
 #'
@@ -41,12 +41,12 @@
 #' eps <- replicate(B, rbinom(n, 1, 0.5) * 2 - 1) ## Rademacher
 #' z_tests_perm <- row_z_tests(mat, eps, alternative = "greater")
 #' str(z_tests_perm)
-row_z_tests <- function(mat, categ, alternative) {
+row_z_tests <- function(mat, groups, alternative) {
   n <- ncol(mat)
-  if (missing(categ)) {
-    categ <- rep(1, n)
+  if (missing(groups)) {
+    groups <- rep(1, n)
   }
-  statistics <- mat %*% categ / sqrt(n)
+  statistics <- mat %*% groups / sqrt(n)
   p_values <- switch(alternative,
     "two.sided" = 2 * (pnorm(abs(statistics),
       lower.tail = FALSE

@@ -6,9 +6,9 @@ sim <- sim_gaussian_equi(
   prob = 0.5
 )
 X <- sim$X
-categ <- sim$categ
+groups <- sim$groups
 thr <- t_linear(0.2, seq_len(m), m)
-tests <- row_welch_tests(X, categ)
+tests <- row_welch_tests(X, groups)
 pval <- sort(tests$p_value)
 whats <- c("TP", "FP", "TDP", "FDP")
 

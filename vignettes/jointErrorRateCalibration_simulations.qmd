@@ -116,7 +116,7 @@ plot_conf_curve(confs, xmax = 200, legend_title = "Template")
 
 ## One sample tests
 
-The code is identical, except for the line to generate the observations (where we do not specify a probability of belonging to one of the two populations using the `prob` argument); moreover it is not necessary to specify a vector of categories 'categ' in 'calibrateJER'.
+The code is identical, except for the line to generate the observations (where we do not specify a probability of belonging to one of the two populations using the `prob` argument); moreover it is not necessary to specify a vector of 'groups' in 'calibrateJER'.
 
 ```{r}
 #| label: sim-one-sample

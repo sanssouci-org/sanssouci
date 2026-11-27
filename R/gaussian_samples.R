@@ -19,7 +19,7 @@
 #'   observations, where \eqn{m1} rows are under H1, and \eqn{m0} rows are
 #'   under H0, with \eqn{m0/m = pi0}}
 #'
-#'   \item{categ}{A numeric vector of length \eqn{n} matching each observation
+#'   \item{groups}{A numeric vector of length \eqn{n} matching each observation
 #'   to a sample (in 0 or 1)}
 #'
 #'   \item{H}{A vector of length \eqn{m}, the status of each hypothesis: 0 for
@@ -47,7 +47,7 @@
 #'
 #' ## two-sample data
 #' sim <- sim_gaussian_equi(m, rho, n, pi0, SNR = 2, prob = 0.5)
-#' tests <- test_by_randomization(sim$X, sim$categ, B = B)
+#' tests <- test_by_randomization(sim$X, sim$groups, B = B)
 #'
 #' ## show test statistics
 #' pch <- 20
@@ -101,5 +101,5 @@ sim_gaussian_equi <- function(m, rho, n, pi0, SNR = 1, prob = 1, w = NULL) {
 
   # data is signal + noise
   X <- mu + eps
-  list(X = X, categ = y, H = H)
+  list(X = X, groups = y, H = H)
 }

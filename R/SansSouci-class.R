@@ -27,8 +27,7 @@ SansSouci <- function(Y, X = NULL, contrast = NULL, groups = NULL,
                       truth = NULL) {
   # Are the arguments present?
   signature <- c(!is.null(X), !is.null(contrast), !is.null(groups))
-
-
+  
   n <- ncol(Y)
   D <- nrow(Y)
 
@@ -45,7 +44,7 @@ SansSouci <- function(Y, X = NULL, contrast = NULL, groups = NULL,
     n_groups <- length(ugroups)
 
     if (n_groups > 1) {
-      categ_check(groups, ncol(Y))
+      .check_groups(groups, ncol(Y))
     }
     if (n_groups == 1) {
       type <- "1 sample"
@@ -101,7 +100,7 @@ SansSouci <- function(Y, X = NULL, contrast = NULL, groups = NULL,
     all_0 <- identical(truth, rep(0, nrow(Y)))
     all_1 <- identical(truth, rep(1, nrow(Y)))
     if (!all_0 && !all_1) {
-      categ_check(truth, nrow(Y))
+      .check_groups(truth, nrow(Y))
     }
   }
   input <- list(
@@ -182,7 +181,7 @@ SansSouci <- function(Y, X = NULL, contrast = NULL, groups = NULL,
 #'
 SansSouciSim <- function(...) {
   sim <- sim_gaussian_equi(...)
-  SansSouci(Y = sim$X, groups = sim$categ, truth = sim$H)
+  SansSouci(Y = sim$X, groups = sim$groups, truth = sim$H)
 }
 
 #' Basic methods for class `SansSouci`
@@ -524,7 +523,7 @@ fit.SansSouci <- function(object, alpha, B = 1e3,
       }
       p0 <- minibatch_row_test_fun(
         row_test_fun = row_test_fun, Y = Y,
-        categ = null_groups,
+        groups = null_groups,
         alternative = alternative,
         max_batch_size = 1e6, m = m
       )

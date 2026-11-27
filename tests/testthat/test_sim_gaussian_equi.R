@@ -11,7 +11,7 @@ test_that("output dimensions are as expected for two-sample tests", {
   expect_equal(nrow(sim$X), m)
   expect_length(sim$H, m)
 
-  tbl <- table(sim$categ)
+  tbl <- table(sim$groups)
   expect_length(tbl, 2)
 
   tbl <- table(sim$H)
@@ -24,7 +24,7 @@ test_that("output dimensions are as expected for one-sample tests", {
   expect_equal(nrow(sim$X), m)
   expect_length(sim$H, m)
 
-  tbl <- table(sim$categ)
+  tbl <- table(sim$groups)
   expect_length(tbl, 1)
 
   tbl <- table(sim$H)
@@ -35,18 +35,18 @@ test_that("output dimensions are as expected for one-sample tests", {
 test_that("one- and two-sample tests are generated as desired", {
   # one-sample
   sim <- sim_gaussian_equi(m, rho, n, pi0, SNR = 1, prob = 0)
-  tbl <- table(sim$categ)
+  tbl <- table(sim$groups)
   expect_length(tbl, 1)
   expect_equal(names(tbl), "0")
 
   # one-sample
   sim <- sim_gaussian_equi(m, rho, n, pi0, SNR = 1, prob = 1)
-  tbl <- table(sim$categ)
+  tbl <- table(sim$groups)
   expect_length(tbl, 1)
   expect_equal(names(tbl), "1")
 
   # two-sample
   sim <- sim_gaussian_equi(m, rho, n, pi0, SNR = 1, prob = 0.5)
-  tbl <- table(sim$categ)
+  tbl <- table(sim$groups)
   expect_length(tbl, 2)
 })

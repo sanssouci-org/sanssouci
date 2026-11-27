@@ -110,7 +110,7 @@ If "Use public data" is unchecked, users can upload their own gene expression da
 
 Gene expression data must be in of the two following formats (see also the example data files that can be downloaded from IIDEA):
 
-- A matrix containing gene expression data, in the form of a gene $\times$ condition matrix. The first row of this matrix should be a header containing category labels 0 or 1. The first column contains an unique gene identifier per row. One current limitation of IIDEA in this case is that it performs Welch $T$ tests for differential expression, which is only suitable for microarray data;
+- A matrix containing gene expression data, in the form of a gene $\times$ condition matrix. The first row of this matrix should be a header containing group labels 0 or 1. The first column contains an unique gene identifier per row. One current limitation of IIDEA in this case is that it performs Welch $T$ tests for differential expression, which is only suitable for microarray data;
 
 - A matrix containing $p$-values and fold changes for each gene. This matrix can be obtained from any standard differential expression method (e.g. DESeq2, edgeR, limma-voom).
 

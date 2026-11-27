@@ -4,20 +4,20 @@ p <- 53
 n <- 35
 ## null distribution
 mat <- matrix(rnorm(p * n), ncol = n)
-cls <- rnorm(n)
+groups <- rnorm(n)
 
 test_that("row_pearson_correlation_tests <=> cor.test", {
   alt <- sample(c("two.sided", "greater", "less"), 1)
 
   # Ordinary Welch t-test (reasonably fast for small number of tests)
   wt <- apply(mat, 1, FUN = function(x) {
-    tt <- cor.test(x, cls, alternative = alt) ## test stat positive if "1 > 0"
+    tt <- cor.test(x, groups, alternative = alt) ## test stat positive if "1 > 0"
     c(tt$p.value, tt$statistic)
   })
   dwt <- as.data.frame(t(wt))
   names(dwt) <- c("p.value", "statistic")
 
-  fwt <- row_pearson_correlation_tests(mat, categ = cls, alternative = alt)
+  fwt <- row_pearson_correlation_tests(mat, groups = groups, alternative = alt)
 
   expect_equal(fwt$p_value, dwt$p.value)
   expect_equal(fwt$statistic, dwt$statistic)
@@ -30,23 +30,23 @@ test_that(
     alt <- sample(c("two.sided", "greater", "less"), 1)
     mat_small <- mat
     B <- 10
-    cls_perm <- replicate(B, sample(cls))
+    groups_perm <- replicate(B, sample(groups))
     fwt <- row_pearson_correlation_tests(mat_small,
-      categ = cls_perm,
+      groups = groups_perm,
       alternative = alt
     )
 
     # Ordinary Pearson's correlation-test
     # (reasonably fast for small number of tests)
     nr <- nrow(mat_small)
-    nc <- ncol(cls_perm)
+    nc <- ncol(groups_perm)
     res <- matrix(NA_real_, nr, nc)
     stat <- matrix(NA_real_, nr, nc)
     est <- matrix(NA_real_, nr, nc)
     for (rr in seq_len(nr)) {
       xy <- mat_small[rr, ]
       for (cc in seq_len(nc)) {
-        cp <- cls_perm[, cc]
+        cp <- groups_perm[, cc]
         tt <- cor.test(xy,
           cp,
           alternative = alt

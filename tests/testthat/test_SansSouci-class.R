@@ -8,7 +8,7 @@ test_that("Correctness of the constructor of SansSouci", {
   set.seed(seed)
   sim <- sim_gaussian_equi(m = m, rho = 0, n = n, pi0 = 0.8, SNR = 0,
                            prob = 0.4)
-  obj1 <- SansSouci(Y = sim$X, groups = sim$categ, truth = sim$H)
+  obj1 <- SansSouci(Y = sim$X, groups = sim$groups, truth = sim$H)
   expect_s3_class(obj, "SansSouci")
   expect_s3_class(obj1, "SansSouci")
   expect_identical(obj, obj1)
@@ -38,11 +38,11 @@ test_that("Correctness of the constructor of SansSouci", {
   expect_equal(obj$input$contrast_name, "Group 1 vs group 0")
 
   expect_error(
-    SansSouci(Y = sim$X, groups = sim$categ + 1),
+    SansSouci(Y = sim$X, groups = sim$groups + 1),
     "'groups' should consist only of '0' and '1' or distinct continuous values."
   )
   expect_error(
-    SansSouci(Y = sim$X, groups = sim$categ, truth = sim$H + 1),
+    SansSouci(Y = sim$X, groups = sim$groups, truth = sim$H + 1),
     "'truth' should consist only of '0' and '1' or distinct continuous values."
   )
 
@@ -103,17 +103,17 @@ test_that("Correctness of the constructor of SansSouci", {
     "Please give a design matrix in `X`"
   )
   expect_error(
-    SansSouci(Y = Y, X = X, groups = sim$categ),
+    SansSouci(Y = Y, X = X, groups = sim$groups),
     "Please provide either an `X` design matrix and a `contrast`  matrix,
          or only a `groups` design vector."
   )
   expect_error(
-    SansSouci(Y = Y, contrast = C, groups = sim$categ),
+    SansSouci(Y = Y, contrast = C, groups = sim$groups),
     "Please provide either an `X` design matrix and a `contrast`  matrix,
          or only a `groups` design vector."
   )
   expect_error(
-    SansSouci(Y = Y, X = t(X), contrast = C, groups = sim$categ),
+    SansSouci(Y = Y, X = t(X), contrast = C, groups = sim$groups),
     "Please provide either an `X` design matrix and a `contrast`  matrix,
          or only a `groups` design vector."
   )

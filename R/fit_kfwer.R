@@ -160,7 +160,7 @@ fit_kfwer.sanssouci_data <- function(object, alpha,
         }
         p0 <- minibatch_row_test_fun(
           row_test_fun = row_test_fun, Y = Y,
-          categ = null_groups,
+          groups = null_groups,
           alternative = alternative,
           max_batch_size = 1e6, m = m
         )

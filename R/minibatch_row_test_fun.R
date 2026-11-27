@@ -1,11 +1,11 @@
 #' Mini batch version of a row_test_fun function.
 #'
-#' @param row_test_fun A function taking as inputs Y, categ and Alternative and
+#' @param row_test_fun A function taking as inputs Y, groups and alternative and
 #' giving as a result a matrix of $p$-values.
 #' Example \code{\link{row_welch_tests}} or \code{\link{row_wilcoxon_tests}}.
 #' @param Y A \eqn{m \times n} numeric matrix whose rows correspond to variables
 #' and columns to observations
-#' @param categ Either a numeric vector of \code{n} categories in \eqn{0, 1} for
+#' @param groups Either a numeric vector of \code{n} groups in \eqn{0, 1} for
 #'   the observations, or a \code{n x B} matrix stacking \code{B} such vectors
 #'   (typically permutations of an original vector of size \code{n})
 #' @param alternative A character string specifying the alternative hypothesis.
@@ -23,20 +23,20 @@
 #' p <- 53
 #' n <- 35
 #' mat <- matrix(rnorm(p * n), ncol = n)
-#' cls <- rep(c(0, 1), times = c(10, n - 10))
+#' groups <- rep(c(0, 1), times = c(10, n - 10))
 #' minibatch_row_test_fun(
 #'   row_test_fun = row_welch_tests, Y = mat,
-#'   categ = cls, alternative = "two.sided",
+#'   groups = groups, alternative = "two.sided",
 #'   max_batch_size = 1e5
 #' )
-minibatch_row_test_fun <- function(row_test_fun, Y, categ,
+minibatch_row_test_fun <- function(row_test_fun, Y, groups,
                                    alternative = c("two.sided", "less",
                                                    "greater"),
                                    max_batch_size = 1e6, m = nrow(Y)) {
   alternative <- match.arg(alternative)
-  categ <- as.matrix(categ)
+  groups <- as.matrix(groups)
 
-  B <- dim(categ)[2]
+  B <- dim(groups)[2]
   nb_batch <- ceiling(B * m / max_batch_size)
 
   idxs <- rep(1:nb_batch, each = ceiling(B / nb_batch))[1:B]
@@ -44,9 +44,9 @@ minibatch_row_test_fun <- function(row_test_fun, Y, categ,
   p_values <- matrix(NA_real_, nrow = m, ncol = B)
   for (batch_id in unique(idxs)) {
     id_batch <- which(idxs == batch_id)
-    categ_batch <- categ[, id_batch]
+    groups_batch <- groups[, id_batch]
     p_values[, id_batch] <- row_test_fun(Y,
-      categ_batch,
+      groups_batch,
       alternative = alternative
     )$p_value
   }

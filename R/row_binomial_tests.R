@@ -3,7 +3,7 @@
 #' @param mat A numeric matrix whose rows correspond to variables and columns to
 #'   observations
 #'
-#' @param categ Either a numeric vector of \code{n} categories in \eqn{0, 1} for
+#' @param groups Either a numeric vector of \code{n} groups in \eqn{0, 1} for
 #'   the observations, or a \code{n x B} matrix stacking \code{B} such vectors
 #'   (typically permutations of an original vector of size \code{n})
 #'
@@ -42,14 +42,14 @@
 #' mat0 <- matrix(rbinom(p * n0, size = 1, prob = 0.05), ncol = n0)
 #' mat1 <- matrix(rbinom(p * n1, size = 1, prob = 0.02), ncol = n1)
 #' mat <- cbind(mat0, mat1)
-#' cls <- rep(c(0, 1), times = c(n0, n1))
-#' fbt <- row_binomial_tests(mat, categ = cls, alternative = alt)
+#' groups <- rep(c(0, 1), times = c(n0, n1))
+#' fbt <- row_binomial_tests(mat, groups = groups, alternative = alt)
 #' str(fbt)
 #'
 #' # compare with ordinary binom.test:
 #' pbt <- t(sapply(1:p, FUN = function(ii) {
-#'   x1 <- mat[ii, cls == 1]
-#'   x0 <- mat[ii, cls == 0]
+#'   x1 <- mat[ii, groups == 1]
+#'   x0 <- mat[ii, groups == 0]
 #'   bt <- binom.test(sum(x1), length(x1), mean(x0), alternative = alt)
 #'   c(statistic = bt[["statistic"]], p_value = bt[["p.value"]])
 #' }))
@@ -57,28 +57,28 @@
 #' all(abs(fbt$statistic - pbt[, "statistic.number of successes"]) < 1e-10)
 #' ## same results
 #'
-row_binomial_tests <- function(mat, categ,
+row_binomial_tests <- function(mat, groups,
                                alternative = c("two.sided", "less", "greater"),
                                warn = TRUE) {
   alternative <- match.arg(alternative)
-  stopifnot(all(categ %in% c(0, 1)))
-  levels(categ) <- NULL
+  stopifnot(all(groups %in% c(0, 1)))
+  levels(groups) <- NULL
 
-  if (is.vector(categ)) {
-    return(row_binomial_tests1(mat, categ,
+  if (is.vector(groups)) {
+    return(row_binomial_tests1(mat, groups,
       alternative = alternative,
       warn = warn
     ))
   }
-  stopifnot(is.matrix(categ))
-  B <- ncol(categ)
+  stopifnot(is.matrix(groups))
+  B <- ncol(groups)
   m <- nrow(mat)
 
   pval0 <- matrix(NA_real_, nrow = m, ncol = B)
   stat0 <- matrix(NA_real_, nrow = m, ncol = B)
   est0 <- matrix(NA_real_, nrow = m, ncol = B)
   for (bb in 1:B) {
-    rwt <- row_binomial_tests1(mat, categ[, bb],
+    rwt <- row_binomial_tests1(mat, groups[, bb],
       alternative = alternative,
       warn = warn
     )
@@ -96,18 +96,18 @@ row_binomial_tests <- function(mat, categ,
 
 
 #' @importFrom stats pbinom dbinom
-row_binomial_tests1 <- function(mat, categ,
+row_binomial_tests1 <- function(mat, groups,
                                 alternative = c("two.sided", "less", "greater"),
                                 warn = TRUE) {
   alternative <- match.arg(alternative)
   if (alternative == "two.sided" && warn) {
     warning("Two-sided p-value not vectorized yet! Looping for now.")
   }
-  categ_check(categ, ncol(mat))
+  .check_groups(groups, ncol(mat))
 
-  nx <- sum(categ == 1)
-  x <- rowSums(mat[, categ == 1])
-  py <- rowMeans(mat[, categ == 0]) # parameter of the control distribution
+  nx <- sum(groups == 1)
+  x <- rowSums(mat[, groups == 1])
+  py <- rowMeans(mat[, groups == 0]) # parameter of the control distribution
   p_values <- switch(alternative,
     less = pbinom(x, nx, py),
     greater = pbinom(x - 1, nx, py, lower.tail = FALSE),

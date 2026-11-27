@@ -6,7 +6,7 @@ test_that("Basic checks for 'conf_curve_from_fam'", {
     m = m, rho = 0.5, n = 10, pi0 = 0.8, SNR = 3,
     prob = 0.5
   )
-  rwt <- row_welch_tests(sim$X, sim$categ, alternative = "greater")
+  rwt <- row_welch_tests(sim$X, sim$groups, alternative = "greater")
   p_vals <- rwt$p_value
 
   cb <- conf_curve_from_fam(p_vals, ref_family = "Simes", param = 0.1,
@@ -48,7 +48,7 @@ test_that("Consistency of output of 'conf_curve_from_fam'", {
     m = m, rho = 0.5, n = 100, pi0 = 0.8,
     SNR = 3, prob = 0.5
   )
-  dex <- row_welch_tests(sim$X, sim$categ)
+  dex <- row_welch_tests(sim$X, sim$groups)
   conf_bound <- conf_curve_from_fam(dex$p_value,
     ref_family = "Simes",
     param = alpha,
@@ -126,7 +126,7 @@ test_that("Vanilla test for 'plot_conf_curve'", {
     m = 502, rho = 0.5, n = 100, pi0 = 0.8, SNR = 3,
     prob = 0.5
   )
-  rwt <- row_welch_tests(sim$X, categ = sim$categ, alternative = "greater")
+  rwt <- row_welch_tests(sim$X, groups = sim$groups, alternative = "greater")
 
   ce <- conf_curve_from_fam(rwt$p_value, ref_family = "Simes", param = 0.1)
   p <- plot_conf_curve(ce, xmax = 200)

@@ -4,14 +4,14 @@ test_that("Consistency of 'perm_stat'", {
   m <- 5
   n <- 45
   X <- matrix(rnorm(m * n, mean = 1), ncol = n, nrow = m)
-  categ <- rbinom(n, 1, 0.4)
+  groups <- rbinom(n, 1, 0.4)
 
   B <- 10
   set.seed(123)
-  perm0 <- perm_stat(X, categ, B, row_welch_tests)
+  perm0 <- perm_stat(X, groups, B, row_welch_tests)
 
   set.seed(123)
-  null_groups <- replicate(B, sample(categ))
+  null_groups <- replicate(B, sample(groups))
   perm <- row_welch_tests(X, null_groups)
   expect_true(!is.null(perm0$p_value))
   expect_equal(perm0$p_value, perm$p_value)
@@ -19,9 +19,9 @@ test_that("Consistency of 'perm_stat'", {
   expect_equal(perm0$statistic, perm$statistic)
 
   set.seed(123)
-  perm0 <- perm_stat(X, categ, B, row_wilcoxon_tests)
+  perm0 <- perm_stat(X, groups, B, row_wilcoxon_tests)
   set.seed(123)
-  perm1 <- perm_stat(X, categ, B, row_wilcoxon_tests1_v1)
+  perm1 <- perm_stat(X, groups, B, row_wilcoxon_tests1_v1)
   expect_true(!is.null(perm0$p_value))
   expect_identical(perm0$p_value, perm1$p_value)
   expect_true(!is.null(perm0$statistic))
@@ -38,11 +38,11 @@ test_that("Vanilla tests for 'pivotal_stat'", {
   m <- 50
   n <- 45
   X <- matrix(rnorm(m * n), ncol = n, nrow = m)
-  categ <- rbinom(n, 1, 0.4)
-  w1 <- which(categ == 1)
+  groups <- rbinom(n, 1, 0.4)
+  w1 <- which(groups == 1)
   X[, w1] <- X[, w1] + 0
   B <- 100
-  null_groups <- replicate(B, sample(categ))
+  null_groups <- replicate(B, sample(groups))
   p0 <- row_welch_tests(X, null_groups)$p_value
 
   piv_stat <- pivotal_stat(p0, m)
@@ -60,12 +60,12 @@ test_that("JER calibration and pivotal_stat yield identical pivotal
             m <- 132
             n <- 54
             X <- matrix(rnorm(m * n), ncol = n, nrow = m)
-            categ <- rbinom(n, 1, 0.4)
+            groups <- rbinom(n, 1, 0.4)
             B <- 11
 
             ## TODO: tests all param combinations
             set.seed(0xBEEF)
-            p0 <- perm_stat(X, categ, B)$p_value
+            p0 <- perm_stat(X, groups, B)$p_value
             piv_stat <- pivotal_stat(p0, m, t_inv_linear)
 
             cal <- calibrate(p0, m, alpha = 1, family = "Linear")
@@ -78,10 +78,10 @@ test_that("pivotal statistics are non-decreasing in the set of hypotheses used
             m <- 132
             n <- 54
             X <- matrix(rnorm(m * n), ncol = n, nrow = m)
-            categ <- rbinom(n, 1, 0.4)
+            groups <- rbinom(n, 1, 0.4)
             B <- 111
 
-            p0 <- perm_stat(X, categ, B)$p_value
+            p0 <- perm_stat(X, groups, B)$p_value
             piv_stat <- pivotal_stat(p0, m, t_inv_linear)
 
             sub <- sample(m, round(m / 2))
