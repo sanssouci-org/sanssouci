@@ -595,13 +595,6 @@ get_fold_changes.SansSouci <- function(object) {
   object$output$estimate
 }
 
-## An attempt with 'setters'
-# 'fold_changes<-' <- function(object, value) UseMethod("fold_changes")
-# 'fold_changes<-.SansSouci' <- function(object, value) {
-#     object$output$estimate <- value
-#     object
-# }
-
 
 #' @describeIn all-generics Get thresholds
 #' @param object An object. See individual methods for specifics

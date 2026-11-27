@@ -22,15 +22,15 @@ curve_max_fp_mein2006 <- function(p_values, thr) {
     thr <- c(thr, rep(thr[k_max], m - k_max))
     k_max <- length(thr)
   }
-  
+
   ## (loose) upper bound on number of FALSE discoveries among first rejections
   R <- 1:m
   BB <- sapply(p_values[R], function(x) sum(x > thr)) ## Eqn (7) in Meinshausen
   ## corresponds to 'K' in 'BNR2016'
-  
+
   ## lower bound on number of TRUE discoveries among first rejections
   S_BAR <- pmax(0, cummax(R - BB))
-  
+
   ## (tighter) upper bound on number of FALSE discoveries among first rejections
   V_BAR <- R - S_BAR[R]
   V_BAR
