@@ -70,7 +70,6 @@ test_that("'fit.SansSouciStruct' reproduces the results of 'v_star'", {
     barmu = barmu, leaf_list = obj$input$leaves
   )
   mu_no <- gen_mu_noleaves(m = m, pi0 = 1, barmu = barmu)
-  gb <- gauss_bloc(barmu, 10)
 
   obj$input$truth <- as.numeric(mu != 0)
   p_values <- gen_p_values(m = m, mu = mu, rho = 0)
