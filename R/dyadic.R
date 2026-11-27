@@ -20,10 +20,10 @@
 #' }
 #' }
 #'
-#' @param method A numeric value. If \code{method == 1}, start from the leaves
+#' @param fashion A numeric value. If \code{fashion == 1}, start from the leaves
 #' and group nodes of a same height 2 by 2 as
 #' long as possible (note that this can introduce gaps).
-#' If \code{method==2}, start from the root and divide nodes in 2 nodes of equal
+#' If \code{fashion==2}, start from the root and divide nodes in 2 nodes of equal
 #' size as long as possible
 #'
 #' @return A list with two named elements:\describe{
@@ -45,17 +45,17 @@
 #' proportion over a path of hypotheses. Computo.
 #' @examples
 #' m <- 6
-#' dd <- dyadic_from_window_size(m, s = 2, method = 2)
+#' dd <- dyadic_from_window_size(m, s = 2, fashion = 2)
 #' str(dd)
 #'
-#' dd <- dyadic_from_height(m, H = 3, method = 2)
+#' dd <- dyadic_from_height(m, H = 3, fashion = 2)
 #' str(dd)
 #'
-#' dd <- dyadic_from_height(m, method = 2)
+#' dd <- dyadic_from_height(m, fashion = 2)
 #' str(dd)
 #'
 #' leaf_list <- dd$leaf_list
-#' dd <- dyadic_from_leaf_list(leaf_list, method = 2)
+#' dd <- dyadic_from_leaf_list(leaf_list, fashion = 2)
 #' str(dd)
 NULL
 
@@ -63,9 +63,9 @@ NULL
 #' forest structure. See [pred_subset_structured()] for more information.
 #' @export
 #' @rdname dyadic
-dyadic_from_leaf_list <- function(leaf_list, method) {
+dyadic_from_leaf_list <- function(leaf_list, fashion) {
   nb_leaves <- length(leaf_list)
-  if (method == 1) {
+  if (fashion == 1) {
     inter <- seq_len(nb_leaves)
     current_depth <- mapply(c, inter, inter, SIMPLIFY = FALSE)
     forest_structure <- list(current_depth)
@@ -86,7 +86,7 @@ dyadic_from_leaf_list <- function(leaf_list, method) {
       current_depth <- new_depth
       forest_structure <- c(list(current_depth), forest_structure)
     }
-  } else if (method == 2) {
+  } else if (fashion == 2) {
     current_depth <- list(c(1, nb_leaves))
     forest_structure <- list(current_depth)
     continue <- TRUE
@@ -120,7 +120,7 @@ dyadic_from_leaf_list <- function(leaf_list, method) {
 #' @param s An integer value, the number of elements in each atom/leaf
 #' @export
 #' @rdname dyadic
-dyadic_from_window_size <- function(m, s, method) {
+dyadic_from_window_size <- function(m, s, fashion) {
   leaves <- floor(m / s)
   leaf_list <- list()
   for (l in 1:leaves) {
@@ -131,7 +131,7 @@ dyadic_from_window_size <- function(m, s, method) {
     leaf <- seq(1 + l * s, m)
     leaf_list <- c(leaf_list, list(leaf))
   }
-  forest_structure <- dyadic_from_leaf_list(leaf_list, method)$forest_structure
+  forest_structure <- dyadic_from_leaf_list(leaf_list, fashion)$forest_structure
   return(list(leaf_list = leaf_list, forest_structure = forest_structure))
 }
 
@@ -141,7 +141,7 @@ dyadic_from_window_size <- function(m, s, method) {
 #' maximum achievable height given \code{m}.
 #' @export
 #' @rdname dyadic
-dyadic_from_height <- function(m, H = NULL, method) {
+dyadic_from_height <- function(m, H = NULL, fashion) {
   if (is.null(H)) {
     H <- ifelse(m == 1, 1, floor(2 + log2(m - 1)))
   }
@@ -175,6 +175,6 @@ dyadic_from_height <- function(m, H = NULL, method) {
       )
     }
   }
-  forest_structure <- dyadic_from_leaf_list(leaf_list, method)$forest_structure
+  forest_structure <- dyadic_from_leaf_list(leaf_list, fashion)$forest_structure
   return(list(leaf_list = leaf_list, forest_structure = forest_structure))
 }

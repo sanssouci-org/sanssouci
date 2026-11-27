@@ -64,7 +64,7 @@ We start by creating a binary tree structure and generating the signal:
 
 ```{r}
 #| label: simulation
-family <- dyadic_from_window_size(m, s = s, method = 2)
+family <- dyadic_from_window_size(m, s = s, fashion = 2)
 mu <- gen_mu_leaves(m = m, K1 = K1, d = r, grouped = TRUE, setting = "const",
                     barmu = barmu, leaf_list = family$leaf_list)
 ```

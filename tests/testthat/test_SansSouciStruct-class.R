@@ -19,7 +19,7 @@ test_that("Correctness of the constructor of SansSouciStruct", {
     obj <- SansSouciDyadic(m, leaf_size = s, direction = direction)
     expect_s3_class(obj, "SansSouciStruct")
 
-    dd <- dyadic_from_window_size(m, s, method = dir12)
+    dd <- dyadic_from_window_size(m, s, fashion = dir12)
     obj1 <- SansSouciStruct(dd$forest_structure, dd$leaf_list)
     expect_s3_class(obj, "SansSouciStruct")
 

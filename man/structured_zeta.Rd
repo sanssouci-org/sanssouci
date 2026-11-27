@@ -56,7 +56,7 @@ in a deterministic region
 is computed with confidence \code{1 - lambda},
 using the the \eqn{p}-values \code{p_values} associated to
 those hypotheses.
-The functions described here can be used as the \code{method} argument
+The functions described here can be used as the \code{FUN} argument
 of \code{\link[=structured_zetas]{structured_zetas()}}.
 }
 \details{

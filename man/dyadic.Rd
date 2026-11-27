@@ -7,20 +7,20 @@
 \alias{dyadic_from_height}
 \title{Create a complete dyadic tree structure}
 \usage{
-dyadic_from_leaf_list(leaf_list, method)
+dyadic_from_leaf_list(leaf_list, fashion)
 
-dyadic_from_window_size(m, s, method)
+dyadic_from_window_size(m, s, fashion)
 
-dyadic_from_height(m, H = NULL, method)
+dyadic_from_height(m, H = NULL, fashion)
 }
 \arguments{
 \item{leaf_list}{A list of vectors representing the atoms of the
 forest structure. See \code{\link[=pred_subset_structured]{pred_subset_structured()}} for more information.}
 
-\item{method}{A numeric value. If \code{method == 1}, start from the leaves
+\item{fashion}{A numeric value. If \code{fashion == 1}, start from the leaves
 and group nodes of a same height 2 by 2 as
 long as possible (note that this can introduce gaps).
-If \code{method==2}, start from the root and divide nodes in 2 nodes of equal
+If \code{fashion==2}, start from the root and divide nodes in 2 nodes of equal
 size as long as possible}
 
 \item{m}{An integer value, the number of hypotheses to have in the structure}
@@ -65,17 +65,17 @@ the total height of the tree is set to \code{H}
 }
 \examples{
 m <- 6
-dd <- dyadic_from_window_size(m, s = 2, method = 2)
+dd <- dyadic_from_window_size(m, s = 2, fashion = 2)
 str(dd)
 
-dd <- dyadic_from_height(m, H = 3, method = 2)
+dd <- dyadic_from_height(m, H = 3, fashion = 2)
 str(dd)
 
-dd <- dyadic_from_height(m, method = 2)
+dd <- dyadic_from_height(m, fashion = 2)
 str(dd)
 
 leaf_list <- dd$leaf_list
-dd <- dyadic_from_leaf_list(leaf_list, method = 2)
+dd <- dyadic_from_leaf_list(leaf_list, fashion = 2)
 str(dd)
 }
 \references{

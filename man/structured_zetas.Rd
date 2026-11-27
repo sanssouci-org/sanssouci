@@ -7,7 +7,7 @@
 structured_zetas(
   forest_structure,
   leaf_list,
-  method,
+  FUN,
   p_values,
   alpha,
   stepdown = FALSE,
@@ -22,17 +22,22 @@ See \code{\link[=pred_subset_structured]{pred_subset_structured()}} for more inf
 \item{leaf_list}{A list of vectors representing the atoms of the forest
 structure. See \code{\link[=pred_subset_structured]{pred_subset_structured()}} for more information.}
 
-\item{method}{A function with arguments \code{(p_values, lambda, ...)}
-that can
-compute an upper bound on the false positives in the region associated to
-the \eqn{p}-values \code{p_values} at confidence level \code{1 - lambda}.
-It can also be a list of such functions, where the \code{h}-th function
-is used at depth \code{h} in the tree structure, that is to the \eqn{R_k}'s
-represented by the elements found in \code{forest_structure[[h]]}.
-Finally, it can also be a list
-of lists of such functions, mimicking the structure
-of \code{forest_structure} itself,
-that is, \code{method[[h]][[j]]} is applied to the \eqn{R_k}
+\item{FUN}{A function or a list.
+If a function, \code{FUN} must have arguments \code{(p_values, lambda, ...)}
+and
+computes an upper bound on the false positives in the region associated to
+the \eqn{p}-values \code{p_values} at confidence level \code{1 - lambda},
+see for example: \code{\link[=structured_zeta_dkwm]{structured_zeta_dkwm()}}. In that case,
+\code{FUN} will be applied to each region \eqn{R_k}.
+If a list, it must have the same length as \code{forest_structure}, and
+\code{FUN[[h]]} must be either a function as before or a list.
+If \code{FUN[[h]]} is a function, it is applied to each \eqn{R_k}
+represented by the elements found in \code{forest_structure[[h]]}, that is
+each \eqn{R_k} at depth \eqn{h} in the forest structure.
+If \code{FUN[[h]]} is a list, it must have the same
+length as \code{forest_structure[[h]]}, and in that case \code{FUN[[h]][[j]]}
+is a function as before and
+is applied to the \eqn{R_k}
 represented by \code{forest_structure[[h]][[j]]}.}
 
 \item{p_values}{A vector of \eqn{p}-values, must be of size \code{m},
@@ -76,15 +81,15 @@ the "effective" number of regions.
 }
 \examples{
 m <- 1000
-dd <- dyadic_from_window_size(m, s = 10, method = 2)
+dd <- dyadic_from_window_size(m, s = 10, fashion = 2)
 leaf_list <- dd$leaf_list
 p_values <- runif(m)
 forest_structure <- dd$forest_structure
-method <- structured_zeta_trivial
+FUN <- structured_zeta_trivial
 zetas_list <- structured_zetas(
   forest_structure,
   leaf_list,
-  method,
+  FUN,
   p_values,
   alpha = 0.05
 )
