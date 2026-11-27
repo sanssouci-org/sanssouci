@@ -25,11 +25,11 @@ new_sanssouci_data <- function(Y = NULL,
                                p_values = NULL,
                                X = NULL, 
                                contrast = NULL,
-                               structure = NULL,
+                               struct = NULL,
                                test_fun = NULL,
                                truth = NULL) {
   # first check: not all NULL
-  if (is.null(structure)) {
+  if (is.null(struct)) {
     # Are the arguments present?
     signature <- c(!is.null(X), !is.null(contrast))
     
@@ -39,7 +39,7 @@ new_sanssouci_data <- function(Y = NULL,
     # one sample case
     if (all(X == 1)) {
       if (!is.null(contrast)) {
-        warning("Argument 'contrast' not used if 'structure' is not NULL")
+        warning("Argument 'contrast' not used if 'struct' is not NULL")
       }
       groups <- rep(1, ncol(Y))
       type <- "1 sample"
@@ -105,13 +105,13 @@ new_sanssouci_data <- function(Y = NULL,
     }
     
   } else {
-    # check structure format    
+    # check struct format    
     if (is.null(p_values)) {
-      stop("Argument 'p_values' cannot be NULL if 'structure' is not NULL")
+      stop("Argument 'p_values' cannot be NULL if 'struct' is not NULL")
     }
     if (!is.null(Y) | !is.null(X) | !is.null(contrast) | !is.null(test_fun)) {
       warning("Arguments 'Y', 'X', 'contrast', 'test_fun' not used ", 
-              "if 'structure' is not NULL")
+              "if 'struct' is not NULL")
     }
   }
   if (!is.null(truth)) {
@@ -121,7 +121,7 @@ new_sanssouci_data <- function(Y = NULL,
       categ_check(truth, nrow(Y))
     }
   }
-  obj <- structure(
+  obj <- struct(
     list(
       Y = Y,
       X = X,
@@ -129,7 +129,7 @@ new_sanssouci_data <- function(Y = NULL,
       groups = groups,
       C = contrast,
       contrast_name = contrast_name,
-      structure = structure,
+      struct = struct,
       n_dimensions = D,
       n_contrasts = L,
       n_hypotheses = D * L,
@@ -153,13 +153,13 @@ get_p_values.sanssouci_data <- function(object) {
   object$p_values
 }
 
-get_structure <- function(object) UseMethod("get_structure")
-#' `get_structure`: get structure
+get_struct <- function(object) UseMethod("get_struct")
+#' `get_struct`: get struct
 #'
 #' @rdname sanssouci_data-methods
 #' @param object An object of class `sanssouci_data`
 #' @export
-get_structure.sanssouci_data <- function(object) {
-  object$structure
+get_struct.sanssouci_data <- function(object) {
+  object$struct
 }
 
