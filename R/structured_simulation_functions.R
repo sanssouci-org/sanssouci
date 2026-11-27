@@ -109,10 +109,6 @@ gen_mu_leaves <- function(m, K1, d, grouped, setting, barmu, leaf_list) {
       },
       gauss = {
         gauss_bloc(barmu, m1loc)
-        # [code] gauss_bloc(barmu, length_leaf)[signal]
-        # old code, broken because
-        # that way the signal doesn't have mean barmu
-        # but lesser mean as soon as d<1
       },
       poisson = {
         rpois(m1loc, 999 * barmu / 1000) + barmu / 1000

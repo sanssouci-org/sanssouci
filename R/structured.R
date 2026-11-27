@@ -395,7 +395,8 @@ pred_subset_structured <- function(S, forest_structure, zetas_list, leaf_list) {
   # this way of initializing is much faster than the following naive approach,
   # the downside is that it heavily uses
   # that the elements of leaf_list are sorted
-  # naive approach: for (i in 1:n_leaves) vec[i] <- sum(S %in% leaf_list[[i]])
+  # naive approach:
+  # [code] for (i in 1:n_leaves) vec[i] <- sum(S %in% leaf_list[[i]])
   for (h in H:1) {
     # starting at H takes care of the minima
     # between zeta_k and card(S inter R_k)
