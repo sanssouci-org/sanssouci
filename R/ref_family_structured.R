@@ -4,23 +4,19 @@ set_struct.sanssouci_data <- function(
   leaf_list = NULL,
   s = NULL,
   H = NULL,
-  fashion = 2
+  flavor = 2
 ) {
   m <- get_n_hyp(object)
   if (!is.null(forest_structure) && !is.null(leaf_list)) {
     object$struct <- list(
       leaf_list = leaf_list,
-      forest_structure = forest_structure
-      )
-  }
-  else if (!is.null(leaf_list)) {
-    object$struct <- dyadic_from_leaf_list(leaf_list, fashion)
-  }
-  else if (!is.null(s)) {
-    object$struct <- dyadic_from_window_size(m, s, fashion)
-  }
-  else {
-    object$struct <- dyadic_from_height(m, H, fashion)
+      forest_structure = forest_structure)
+  } else if (!is.null(leaf_list)) {
+    object$struct <- dyadic_from_leaf_list(leaf_list, flavor)
+  } else if (!is.null(s)) {
+    object$struct <- dyadic_from_window_size(m, s, flavor)
+  } else {
+    object$struct <- dyadic_from_height(m, H, flavor)
   }
   object
 }
@@ -30,14 +26,14 @@ new_ref_family_structured <- function(
   zetas_list,
   alpha,
   method,
-  stepdown = FALSE,
+  step_down = FALSE,
   ...
 ) {
   parameters <- list(
     alpha = alpha,
     setting = "structured",
     method = method,
-    stepdown = stepdown,
+    step_down = step_down
   )
   parameters <- c(parameters, list(...))
   obj <- list(
@@ -54,9 +50,9 @@ new_ref_family_structured <- function(
 
 switch_method_name <- function(method) {
   switch(method,
-         "dkwm" = structured_zeta_dkwm,
-         "hb" = structured_zeta_hb,
-         "kbonf" = structured_zeta_kbonf,
+         "DKWM" = structured_zeta_dkwm,
+         "HB" = structured_zeta_hb,
+         "kBonf" = structured_zeta_kbonf,
          "trivial" = structured_zeta_trivial
   )
 }
@@ -81,13 +77,13 @@ fit_structured.sanssouci_data <- function(
   object,
   alpha,
   method,
-  stepdown = FALSE,
+  step_down = FALSE,
   ...
 ) {
   struct <- get_struct(object)
   leaf_list <- struct$leaf_list
   forest_structure <- struct$forest_structure
-  p_values <- get_pvalues(object)
+  p_values <- get_p_values(object)
   FUN <- method_to_function(method)
   zetas_list <- structured_zetas(
     forest_structure,
@@ -95,7 +91,7 @@ fit_structured.sanssouci_data <- function(
     FUN,
     p_values,
     alpha,
-    stepdown = stepdown,
+    step_down = step_down,
     verbose = FALSE,
     ...)
   new_ref_family_structured(
@@ -103,7 +99,7 @@ fit_structured.sanssouci_data <- function(
     zetas_list,
     alpha,
     method,
-    stepdown,
+    step_down,
     ...
   )
 }

@@ -81,7 +81,7 @@ the "effective" number of regions.
 }
 \examples{
 m <- 1000
-dd <- dyadic_from_window_size(m, s = 10, fashion = 2)
+dd <- dyadic_from_window_size(m, s = 10, flavor = 2)
 leaf_list <- dd$leaf_list
 p_values <- runif(m)
 forest_structure <- dd$forest_structure

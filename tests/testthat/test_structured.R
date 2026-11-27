@@ -8,13 +8,13 @@ test_that("Vanilla test for dyadic tree functions", {
   }
 
   for (meth in 1:2){
-    dd <- dyadic_from_window_size(m, s = 2, fashion = meth)
+    dd <- dyadic_from_window_size(m, s = 2, flavor = meth)
     check_tree(dd)
 
-    dd <- dyadic_from_height(m, H = 3, fashion = meth)
+    dd <- dyadic_from_height(m, H = 3, flavor = meth)
     check_tree(dd)
 
-    dd <- dyadic_from_height(m, fashion = meth)
+    dd <- dyadic_from_height(m, flavor = meth)
     check_tree(dd)
   }
 })

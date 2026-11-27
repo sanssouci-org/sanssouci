@@ -2,18 +2,25 @@
 % Please edit documentation in R/fit_kfwer.R, R/sanssouci_data-class.R
 \name{get_p_values.ref_family_kfwer}
 \alias{get_p_values.ref_family_kfwer}
+\alias{get_thresholds.ref_family_kfwer}
+\alias{get_templates.ref_family_kfwer}
 \alias{get_p_values.sanssouci_data}
 \alias{get_struct.sanssouci_data}
 \alias{get_n_hyp.sanssouci_data}
-\alias{get_n_observations.sanssouci_data}
+\alias{get_n_obs.sanssouci_data}
 \alias{get_test_fun.sanssouci_data}
 \alias{get_test_type.sanssouci_data}
 \alias{get_groups_to_permute.sanssouci_data}
 \alias{get_y.sanssouci_data}
 \alias{get_truth.sanssouci_data}
+\alias{print.sanssouci_data}
 \title{\code{get_p_values}: get p-values}
 \usage{
 \method{get_p_values}{ref_family_kfwer}(object)
+
+\method{get_thresholds}{ref_family_kfwer}(object)
+
+\method{get_templates}{ref_family_kfwer}(object)
 
 \method{get_p_values}{sanssouci_data}(object)
 
@@ -21,7 +28,7 @@
 
 \method{get_n_hyp}{sanssouci_data}(object)
 
-\method{get_n_observations}{sanssouci_data}(object)
+\method{get_n_obs}{sanssouci_data}(object)
 
 \method{get_test_fun}{sanssouci_data}(object)
 
@@ -32,12 +39,24 @@
 \method{get_y}{sanssouci_data}(object)
 
 \method{get_truth}{sanssouci_data}(object)
+
+\method{print}{sanssouci_data}(x, ..., verbose = FALSE)
 }
 \arguments{
 \item{object}{An object of class \code{sanssouci_data}}
+
+\item{x}{An object of class \code{sanssouci_data}}
+
+\item{...}{Not used}
+
+\item{verbose}{Should detailed output be printed? Defaults to FALSE}
 }
 \description{
 \code{get_p_values}: get p-values
+
+\code{get_thresholds}: get p-values
+
+\code{get_templates}: get p-values
 
 \code{get_p_values}: get p-values
 
@@ -45,7 +64,7 @@
 
 \code{get_n_hyp}: get number of hypotheses
 
-\code{get_n_observations}: get number of observations
+\code{get_n_obs}: get number of observations
 
 \code{get_test_fun}: get test function
 
@@ -57,4 +76,6 @@ linear model test)
 \code{get_y}: get Y
 
 \code{get_truth}: get truth
+
+Print 'sanssouci_data' objects
 }

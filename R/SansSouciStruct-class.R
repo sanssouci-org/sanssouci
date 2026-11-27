@@ -16,7 +16,7 @@
 #' q <- 7
 #' m <- s * 2^q
 #'
-#' dd <- dyadic_from_window_size(m, s, fashion = 2)
+#' dd <- dyadic_from_window_size(m, s, flavor = 2)
 #' obj <- SansSouciStruct(dd$forest_structure, dd$leaf_list)
 #'
 SansSouciStruct <- function(struct, leaves, truth = NULL) {
@@ -70,7 +70,7 @@ SansSouciDyadic <- function(m, leaf_size = NULL, height = NULL,
                             direction = c("bottom-up", "top-down"),
                             ...) {
   direction <- match.arg(direction)
-  fashion <- switch(direction,
+  flavor <- switch(direction,
     "bottom-up" = 1,
     "top-down" = 2
   )
@@ -79,9 +79,9 @@ SansSouciDyadic <- function(m, leaf_size = NULL, height = NULL,
     if (!is.null(height)) {
       warning("Both 'leaf_size' and 'height' provided: ignoring 'height'")
     }
-    dd <- dyadic_from_window_size(m, s = leaf_size, fashion)
+    dd <- dyadic_from_window_size(m, s = leaf_size, flavor)
   } else {
-    dd <- dyadic_from_height(m, H = height, fashion)
+    dd <- dyadic_from_height(m, H = height, flavor)
   }
   SansSouciStruct(struct = dd$forest_structure, leaves = dd$leaf_list, ...)
 }

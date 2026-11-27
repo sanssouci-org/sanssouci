@@ -6,7 +6,7 @@
 \usage{
 row_wilcoxon_tests(
   mat,
-  group,
+  groups,
   alternative = c("two.sided", "less", "greater"),
   correct = TRUE
 )
@@ -15,7 +15,7 @@ row_wilcoxon_tests(
 \item{mat}{A \code{m x n} numeric matrix whose rows correspond to variables
 and columns to observations}
 
-\item{group}{Either a numeric vector of \code{n} groups in \eqn{0, 1} for
+\item{groups}{Either a numeric vector of \code{n} groups in \eqn{0, 1} for
 the observations, or a \code{n x B} matrix stacking \code{B} such vectors
 (typically permutations of an original vector of size \code{n})}
 
@@ -71,12 +71,12 @@ n <- 50
 mat <- matrix(rnorm(p * n), ncol = n)
 groups <- rep(c(0, 1), each = n / 2)
 
-statistics <- row_wilcoxon_tests(mat, group = groups, alternative = "two.sided")
+statistics <- row_wilcoxon_tests(mat, groups = groups, alternative = "two.sided")
 str(statistics)
 
 # permutation of class labels
 groups_perm <- replicate(11, sample(groups))
-statistics <- row_wilcoxon_tests(mat, group = groups_perm,
+statistics <- row_wilcoxon_tests(mat, groups = groups_perm,
 alternative = "two.sided")
 str(statistics)
 
@@ -84,7 +84,7 @@ str(statistics)
 groups2 <- groups
 groups[1:10] <- 1 # varying nx, ny
 groups_mat <- cbind(groups, groups2)
-statistics <- row_wilcoxon_tests(mat, group = groups_mat,
+statistics <- row_wilcoxon_tests(mat, groups = groups_mat,
 alternative = "two.sided")
 str(statistics)
 }

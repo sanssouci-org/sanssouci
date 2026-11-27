@@ -7,34 +7,27 @@
 \method{fit_kfwer}{sanssouci_data}(
   object,
   alpha,
-  method = c("simes", "lambdacalibration", "heterosimes"),
+  Method = c("Simes", "lambda-calibration", "Heterogeneous Simes"),
   adapt = FALSE,
-  stepdown = FALSE,
+  step_down = FALSE,
   n_permutations = NULL,
   K = get_n_hyp(object),
-  template = c("Simes", "Beta", "Oracle", "notip"),
+  template = c("Simes", "Beta", "Oracle", "Notip"),
   p_cdfs = NULL,
-  max_stepdown = 10L,
+  max_step_down = 10L,
   verbose = FALSE
 )
 }
 \arguments{
-\item{method}{A string in \{"simes", "lambdacalibration", "heterosimes"\}.
-"simes" correponds to naive Simes template.
-"lambdacalibration" corresponds to lambda calibration with
-different template (see \code{template} argument)
-"heterosimes" : not currently implemented but in process.}
-
-\item{K}{An integer value in \verb{[1,m]}, the number of elements in the
-template. Defaults to m, the number of hypothesis.}
+\item{K}{An integer value in \verb{[1,m]}, the number of elements in the template.
+Defaults to m, the number of hypothesis.}
 
 \item{template}{A character value, the name of a threshold family. Should be
 one of "Simes", "Beta", or "Oracle".
 \itemize{
 \item Simes: The classical family of thresholds introduced by
-Simes (1986).
-This family yields JER control if the test statistics are positively
-dependent (PRDS) under H0.
+Simes (1986). This family yields JER control if the test statistics are
+positively dependent (PRDS) under H0.
 \item Beta: A family of thresholds that achieves marginal kFWER control under
 independence
 \item Oracle A family such that the associated bounds correspond to the true
@@ -42,13 +35,17 @@ numbers/proportions of true/false positives. "truth" must be available in
 object$truth.
 }}
 
-\item{p_cdfs}{argument for method = "heterosimes"}
+\item{p_cdfs}{argument for method = "Heterogeneous Simes"}
 
-\item{verbose}{A boolean, well you know verbose argument,
-by default FALSE.}
+\item{verbose}{A boolean, well you know verbose argument, by default FALSE.}
 
-\item{n_permutatitons}{An integer value, the number of permutations to be performed.
-Defaults to 1000}
+\item{method}{A string in \{"Simes", "lambda-calibration", "Het Simes"\}.
+"Simes" corresponds to the Simes reference family. "lambda-calibration"
+corresponds to lambda calibration with different template (see \code{template}
+argument) "Het Simes": not currently implemented.}
+
+\item{n_permutatitons}{An integer value, the number of permutations to be
+performed. Defaults to 1000.}
 
 \item{max_steps_down}{A numeric value, the maximum number of steps down to
 perform. Defaults to 10 (but the algorithm generally converges in 1 or 2
@@ -66,6 +63,6 @@ groups <- ifelse(colnames(expr_ALL) == "NEG", 0, 1)
 table(groups)
 a <- new_sanssouci_data(Y = expr_ALL, X = groups)
 
-res <- fit_kfwer(a, alpha = 0.1, method = "simes")
-res <- fit_kfwer(a, alpha = 0.1, method = "lambdacalibration", stepdown = TRUE)
+res <- fit_kfwer(a, alpha = 0.1, method = "Simes")
+res <- fit_kfwer(a, alpha = 0.1, method = "lambda-calibration", step_down = TRUE)
 }

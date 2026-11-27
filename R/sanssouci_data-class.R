@@ -325,3 +325,30 @@ print.sanssouci_data <- function(x, ..., verbose = FALSE) {
   }
 invisible(object)
 }
+
+#' Fit Joint Error Rate Controlling Reference Family
+#'
+#' @export
+fit.sanssouci_data <- function(object, alpha,
+                               setting = c("kFWER", "level sets", "structured"),
+                               method, adapt = FALSE,
+                               step_down = FALSE, ...) {
+  
+  if (mode(alpha) != "numeric" || alpha < 0 || alpha > 1) {
+    stop("Argument 'alpha' should be a numeric value in [0,1]")
+  }
+  
+  setting <- match.arg(setting)
+  if (setting == "kfwer") {
+    ref_fam <- fit_kfwer(object, alpha = alpha, method = method,
+                         adapt = adapt, step_down = step_down, ...)
+  } else if (setting == "struct") {
+    ref_fam <- fit_struct(object, alpha = alpha, method = method,
+                          adapt = adapt, step_down = step_down, ...)
+    
+  } else if (setting == "levelsets"){
+    stop("Setting 'levelsets' not currently available")
+  } 
+  return(ref_fam)
+  
+}
