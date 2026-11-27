@@ -1,3 +1,43 @@
+#' Fit Joint Error Rate with k-Family Wise Error Rate
+#'
+#' @inheritParams fit.sanssouci_data object alpha adapt stepdown
+#' @param method A string in \{"simes", "lambdacalibration", "heterosimes"\}.
+#'                "simes" correponds to naive Simes template.
+#'                "lambdacalibration" corresponds to lambda calibration with
+#'                different template (see `template` argument)
+#'                "heterosimes" : not currently implemented but in process.
+#' @param n_permutatitons An integer value, the number of permutations to be performed.
+#'  Defaults to 1000
+#' @param K An integer value in `[1,m]`, the number of elements in the
+#'   template. Defaults to m, the number of hypothesis.
+#' @param template A character value, the name of a threshold family. Should be
+#'   one of "Simes", "Beta", or "Oracle".
+#'
+#'   - Simes: The classical family of thresholds introduced by
+#'   Simes (1986).
+#'   This family yields JER control if the test statistics are positively
+#'   dependent (PRDS) under H0.
+#'
+#'   - Beta: A family of thresholds that achieves marginal kFWER control under
+#'   independence
+#'
+#'   - Oracle A family such that the associated bounds correspond to the true
+#'   numbers/proportions of true/false positives. "truth" must be available in
+#'   object$input$truth.
+#'
+#' @param p_cdfs argument for method = "heterosimes"
+#'
+#' @param max_steps_down A numeric value, the maximum number of steps down to
+#'   perform. Defaults to 10 (but the algorithm generally converges in 1 or 2
+#'   steps).
+#' @param verbose A boolean, well you know verbose argument,
+#' by default FALSE.
+#'
+#' @returns a ref_family_kfwer object.
+#' @export
+#'
+#' @examples
+#' # todo
 fit_kfwer.sanssouci_data <- function(object, alpha,
                                      method = c(
                                        "simes",
@@ -7,7 +47,8 @@ fit_kfwer.sanssouci_data <- function(object, alpha,
                                      adapt = FALSE, stepdown = FALSE,
                                      n_permutations = 1000,
                                      K = n_hyp.SansSouci(object),
-                                     template = c("Simes", "Beta", "notip"),
+                                     template = c("Simes", "Beta", "Oracle",
+                                                  "notip"),
                                      p_cdfs = NULL, max_stepdown = 10L,
                                      verbose = FALSE) {
   match.arg(method)
@@ -16,6 +57,13 @@ fit_kfwer.sanssouci_data <- function(object, alpha,
   if (mode(alpha) != "numeric" || alpha < 0 || alpha > 1) {
     stop("Argument 'alpha' should be a numeric value in [0,1]")
   }
+  if (!is.null(p_cdfs) & method != "heterosimes") {
+    message(
+      "'p_cdfs' is not used in the case method != 'heterosimes'.",
+      "Please use method = 'heterosimes'."
+    )
+    p_cdfs <- NULL
+  }
 
   if (!stepdown) {
     max_stepdown <- 0L
@@ -23,16 +71,11 @@ fit_kfwer.sanssouci_data <- function(object, alpha,
 
   p_values <- get_p_values(object)
 
-  m <- n_hyp.SansSouci(object)
+  m <- get_n_hyp(object)
+
+
 
   if (method == "simes") {
-    if (!is.null(p_cdfs)) {
-      message(
-        "'p_cdfs' is not used in the case.",
-        "Please use method = 'heterosimes'."
-      )
-      p_cdfs <- NULL
-    }
 
     if (!is.null(n_permutations) && n_permutations != 0) {
       warning(
@@ -165,6 +208,10 @@ fit_kfwer.sanssouci_data <- function(object, alpha,
         thr <- obj_template$t(alpha, 1:hat_m, hat_m)
         lambda <- NULL # ou ici alpha ?
       }
+    } else if (template == "Oracle"){
+      hat_m = m
+      lambda = NULL
+      thr = object$truth
     }
   } else if (method == "heterosimes") {
     stop(
