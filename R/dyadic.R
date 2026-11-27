@@ -91,7 +91,7 @@ dyadic_from_leaf_list <- function(leaf_list, fashion = 2) {
   } else if (fashion == 2) {
     current_depth <- list(c(1, nb_leaves))
     forest_structure <- list(current_depth)
-    continue <- TRUE
+    continue <- (nb_leaves > 1)
     while (continue) {
       continue <- FALSE
       old_depth <- current_depth
