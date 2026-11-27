@@ -138,7 +138,7 @@ new_sanssouci_data <- function(Y = NULL,
 
       }
 
-      if(!is.null(p_values)){
+      if (!is.null(p_values)) {
         warning("p_values is provided as well as Y, then p_values will be",
                 "discarded.")
       }
