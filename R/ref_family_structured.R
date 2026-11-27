@@ -1,3 +1,30 @@
+set_struct.sanssouci_data <- function(
+  object,
+  forest_structure = NULL,
+  leaf_list = NULL,
+  s = NULL,
+  H = NULL,
+  fashion = 2
+) {
+  m <- get_n_hyp(object)
+  if (!is.null(forest_structure) && !is.null(leaf_list)) {
+    object$struct <- list(
+      leaf_list = leaf_list,
+      forest_structure = forest_structure
+      )
+  }
+  else if (!is.null(leaf_list)) {
+    object$struct <- dyadic_from_leaf_list(leaf_list, fashion)
+  }
+  else if (!is.null(s)) {
+    object$struct <- dyadic_from_window_size(m, s, fashion)
+  }
+  else {
+    object$struct <- dyadic_from_height(m, H, fashion)
+  }
+  object
+}
+
 new_ref_family_structured <- function(
   struct,
   zetas_list,
