@@ -223,14 +223,14 @@ get_n_hyp.sanssouci_data <- function(object) {
   object$n_hyp
 }
 
-get_n_observations <- function(object) UseMethod("get_n_observations")
-#' `get_n_observations`: get number of observations
+get_n_obs <- function(object) UseMethod("get_n_obs")
+#' `get_n_obs`: get number of observations
 #'
 #' @rdname sanssouci_data-methods
 #' @param object An object of class `sanssouci_data`
 #' @export
-get_n_observations.sanssouci_data <- function(object) {
-  object$n_observations
+get_n_obs.sanssouci_data <- function(object) {
+  object$n_obs
 }
 
 get_test_fun <- function(object) UseMethod("get_test_fun")
@@ -284,3 +284,44 @@ get_truth.sanssouci_data <- function(object) {
   object$truth
 }
 
+
+
+#' Print 'sanssouci_data' objects
+#'
+#' @rdname sanssouci_data-methods
+#' @param x An object of class `sanssouci_data`
+#' @param ... Not used
+#' @param verbose Should detailed output be printed? Defaults to FALSE
+#' @importFrom utils str
+#' @export
+print.sanssouci_data <- function(x, ..., verbose = FALSE) {
+  object <- x
+  rm(x)
+  cat("'sanssouci_data' object:\n")
+  cat("\tNumber of hypotheses:\t", get_n_hyp(object), "\n")
+  if (!is.null(get_n_obs(object))) {
+    cat("\tNumber of observations:\t", get_n_obs(object), "\n")
+  }
+  cat("\t", get_test_type(object), "\n", sep = "")
+  cat("\tTest function:\t\t", object$test_fun_name, "\n", sep = "")
+  if (verbose) {
+    cat("Data:")
+    cat("\n")
+    str(object$Y)
+    cat("\n")
+    str(object$X)
+    cat("\n")
+    str(object$contrast)
+    cat("\n")
+  }
+  truth <- object$truth
+  if (!is.null(truth)) {
+    cat("Truth: ")
+    cat("\n")
+    cat("\t", sum(truth), "false null hypotheses (signals)")
+    pi0 <- 1 - mean(truth)
+    cat(" out of ", get_n_hyp(object), " (pi0=", round(pi0, 3), ")", sep = "")
+    cat("\n")
+  }
+invisible(object)
+}
