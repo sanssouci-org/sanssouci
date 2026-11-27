@@ -275,7 +275,7 @@ new_ref_family_kfwer <- function(alpha, method, adapt, stepdown,
   )
 
   object <- list(
-    parameters <- parameters,
+    parameters = parameters,
     p_values = p_values,
     thr = thr,
     hat_m0 = hat_m0,
@@ -315,6 +315,5 @@ get_templates <- function(object) UseMethod("get_templates")
 #' @param object An object of class `sanssouci_data`
 #' @export
 get_templates.ref_family_kfwer <- function(object) {
-  label <- object$parameters$template
-  if(object$parameters$n_h)
+  object$parameters$template
 }
