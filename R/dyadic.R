@@ -20,11 +20,13 @@
 #' }
 #' }
 #'
-#' @param fashion A numeric value. If \code{fashion == 1}, start from the leaves
+#' @param fashion An integer equal to 1 or 2 (which is the default).
+#' If \code{fashion == 1}, start from the leaves
 #' and group nodes of a same height 2 by 2 as
 #' long as possible (note that this can introduce gaps).
-#' If \code{fashion==2}, start from the root and divide nodes in 2 nodes of equal
-#' size as long as possible
+#' If \code{fashion==2}, start from the root and divide nodes in
+#' 2 nodes of equal
+#' size as long as possible.
 #'
 #' @return A list with two named elements:\describe{
 #' \item{\code{leaf_list}}{
@@ -63,7 +65,7 @@ NULL
 #' forest structure. See [pred_subset_structured()] for more information.
 #' @export
 #' @rdname dyadic
-dyadic_from_leaf_list <- function(leaf_list, fashion) {
+dyadic_from_leaf_list <- function(leaf_list, fashion = 2) {
   nb_leaves <- length(leaf_list)
   if (fashion == 1) {
     inter <- seq_len(nb_leaves)
@@ -117,10 +119,11 @@ dyadic_from_leaf_list <- function(leaf_list, fashion) {
 }
 
 #' @param m An integer value, the number of hypotheses to have in the structure
-#' @param s An integer value, the number of elements in each atom/leaf
+#' @param s An integer value, the number of elements in each atom/leaf.
+#' Default value is 1.
 #' @export
 #' @rdname dyadic
-dyadic_from_window_size <- function(m, s, fashion) {
+dyadic_from_window_size <- function(m, s = 1, fashion = 2) {
   leaves <- floor(m / s)
   leaf_list <- list()
   for (l in 1:leaves) {
@@ -137,14 +140,15 @@ dyadic_from_window_size <- function(m, s, fashion) {
 
 #' @param H An integer value, the desired maximal height of the tree.
 #' If NULL (by default),
-#' use \code{floor(2 + log2(m - 1))} which gives the
+#' use \code{floor(2 + log2(m - 1))} (or 1 if \code{m} = 1), which is the
 #' maximum achievable height given \code{m}.
 #' @export
 #' @rdname dyadic
-dyadic_from_height <- function(m, H = NULL, fashion) {
-  if (is.null(H)) {
-    H <- ifelse(m == 1, 1, floor(2 + log2(m - 1)))
-  }
+dyadic_from_height <- function(
+  m,
+  H = ifelse(m == 1, 1, floor(2 + log2(m - 1))),
+  fashion = 2
+) {
   if (m <= 2^(H - 2)) {
     OLD_H <- H
     H <- ifelse(m == 1, 1, floor(2 + log2(m - 1)))

@@ -7,29 +7,36 @@
 \alias{dyadic_from_height}
 \title{Create a complete dyadic tree structure}
 \usage{
-dyadic_from_leaf_list(leaf_list, fashion)
+dyadic_from_leaf_list(leaf_list, fashion = 2)
 
-dyadic_from_window_size(m, s, fashion)
+dyadic_from_window_size(m, s = 1, fashion = 2)
 
-dyadic_from_height(m, H = NULL, fashion)
+dyadic_from_height(
+  m,
+  H = ifelse(m == 1, 1, floor(2 + log2(m - 1))),
+  fashion = 2
+)
 }
 \arguments{
 \item{leaf_list}{A list of vectors representing the atoms of the
 forest structure. See \code{\link[=pred_subset_structured]{pred_subset_structured()}} for more information.}
 
-\item{fashion}{A numeric value. If \code{fashion == 1}, start from the leaves
+\item{fashion}{An integer equal to 1 or 2 (which is the default).
+If \code{fashion == 1}, start from the leaves
 and group nodes of a same height 2 by 2 as
 long as possible (note that this can introduce gaps).
-If \code{fashion==2}, start from the root and divide nodes in 2 nodes of equal
-size as long as possible}
+If \code{fashion==2}, start from the root and divide nodes in
+2 nodes of equal
+size as long as possible.}
 
 \item{m}{An integer value, the number of hypotheses to have in the structure}
 
-\item{s}{An integer value, the number of elements in each atom/leaf}
+\item{s}{An integer value, the number of elements in each atom/leaf.
+Default value is 1.}
 
 \item{H}{An integer value, the desired maximal height of the tree.
 If NULL (by default),
-use \code{floor(2 + log2(m - 1))} which gives the
+use \code{floor(2 + log2(m - 1))} (or 1 if \code{m} = 1), which is the
 maximum achievable height given \code{m}.}
 }
 \value{
