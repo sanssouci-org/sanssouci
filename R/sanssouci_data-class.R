@@ -328,6 +328,27 @@ invisible(object)
 
 #' Fit Joint Error Rate Controlling Reference Family
 #'
+#' @rdname sanssouci_data-methods
+#' @param object An object of class `sanssouci_data`
+#' @param alpha A numeric value in `[0,1]`, the target (JER) risk
+#' @param setting A character value, the considered setting for JER control. 
+#'   * `"kFWER"`: joint k-Family-Wise Error Rate control (Blanchard et al. 2020)
+#'   * `"level sets"`: not implemented yet.
+#'   * `"structured"`: structured hypotheses (Durand et al. 2020)
+#' @param method A character value, the method used to obtain JER control for a 
+#' given setting. See [fit_kfwer.sanssouci_data], [fit_levelsets.sanssouci_data] 
+#' and [fit_structured.sanssouci_data].
+#' @param adapt A boolean value. Not implemented yet.
+#' @param step_down A boolean value: should the step-down version of the 
+#'   reference family be computed? Defaults to `FALSE`
+#' @references Blanchard, G., Neuvial, P., & Roquain, E. (2020).
+#' Post hoc confidence bounds on false positives using reference families.
+#' Annals of Statistics, 48(3), 1281-1303.
+#' @references Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020).
+#' Post hoc false positive control for structured hypotheses.
+#' @references Enjalbert-Courrech, N. & Neuvial, P. (2022). Powerful and
+#' interpretable control of false discoveries in two-group differential
+#' expression studies. Bioinformatics. doi: 10.1093/bioinformatcs/btac693
 #' @export
 fit.sanssouci_data <- function(object, alpha,
                                setting = c("kFWER", "level sets", "structured"),
@@ -339,15 +360,16 @@ fit.sanssouci_data <- function(object, alpha,
   }
   
   setting <- match.arg(setting)
-  if (setting == "kfwer") {
+  if (setting == "kFWER") {
     ref_fam <- fit_kfwer(object, alpha = alpha, method = method,
                          adapt = adapt, step_down = step_down, ...)
-  } else if (setting == "struct") {
-    ref_fam <- fit_struct(object, alpha = alpha, method = method,
+  } else if (setting == "structured") {
+    ref_fam <- fit_structured(object, alpha = alpha, method = method,
                           adapt = adapt, step_down = step_down, ...)
     
-  } else if (setting == "levelsets"){
-    stop("Setting 'levelsets' not currently available")
+  } else if (setting == "level sets"){
+    ref_fam <- fit_structured(object, alpha = alpha, method = method,
+                              adapt = adapt, step_down = step_down, ...)
   } 
   return(ref_fam)
   

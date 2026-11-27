@@ -21,6 +21,17 @@ set_struct.sanssouci_data <- function(
   object
 }
 
+#' Create an object of class 'ref_family_structured'
+#'
+#' @param struct A list...
+#' @param zetas_list A list...
+#' @param alpha A value...
+#' @param method A character value...
+#' @param step_down A boolean value...
+#' @param ... Other parameters to be listed.
+#' @return An object of class `ref_family_structured`
+#' @export
+#'
 new_ref_family_structured <- function(
   struct,
   zetas_list,
@@ -73,6 +84,18 @@ method_to_function <- function(method){
   FUN
 }
 
+
+#' Fit Joint Error Rate with...
+#'
+#' @export
+fit_structured <- function(object, alpha, method, ...) UseMethod("fit_kfwer")
+
+#' Fit Joint Error Rate with...
+#'
+#' @inheritParams fit.sanssouci_data
+#' @param method A character value...
+#' @returns An object of class `ref_family_structured`.
+#' @export
 fit_structured.sanssouci_data <- function(
   object,
   alpha,
