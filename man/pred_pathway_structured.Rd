@@ -2,19 +2,9 @@
 % Please edit documentation in R/structured.R
 \name{pred_pathway_structured}
 \alias{pred_pathway_structured}
-\alias{pred_pathway_structured_naive}
 \title{Compute a curve of post hoc bounds based on a reference
 family with forest structure}
 \usage{
-pred_pathway_structured_naive(
-  perm,
-  forest_structure,
-  zetas_list,
-  leaf_list,
-  pruning = FALSE,
-  delete_gaps = FALSE
-)
-
 pred_pathway_structured(
   perm,
   forest_structure,
@@ -46,11 +36,6 @@ forest structure. See \code{\link[=pred_subset_structured]{pred_subset_structure
 Whether to prune the forest (see \code{\link[=pruning]{pruning()}}) before computing the bounds.
 Ignored if \code{is_pruned} is \code{TRUE}.}
 
-\item{delete_gaps}{A boolean, \code{FALSE} by default.
-If \code{TRUE}, will also delete the gaps in the structure induced
-by the pruning, see \code{\link[=delete_gaps]{delete_gaps()}}.
-Ignored if \code{pruning} is \code{FALSE}.}
-
 \item{is_pruned}{A boolean, \code{FALSE} by default. If \code{TRUE},
 assumes that the forest structure has already been completed
 (see \code{\link[=forest_completion]{forest_completion()}}) and then pruned (see \code{\link[=pruning]{pruning()}})
@@ -61,6 +46,11 @@ Must be set to \code{TRUE} if giving a pruned forest, see Details.}
 If \code{TRUE}, assumes that the forest structure has already been completed
 (see \code{\link[=forest_completion]{forest_completion()}}) and so skips the completion step.
 Ignored if \code{is_pruned} is \code{TRUE}.}
+
+\item{delete_gaps}{A boolean, \code{FALSE} by default.
+If \code{TRUE}, will also delete the gaps in the structure induced
+by the pruning, see \code{\link[=delete_gaps]{delete_gaps()}}.
+Ignored if \code{pruning} is \code{FALSE}.}
 }
 \value{
 A vector of length equal to the length of \code{perm},
@@ -78,18 +68,11 @@ that possess the forest structure
 (see References).
 }
 \details{
-Two functions are available
-\describe{
-\item{\code{pred_pathway_structured_naive}}{
-Repeatedly calls \code{\link[=pred_subset_structured]{pred_subset_structured()}} on each \eqn{S_t},
-which is not optimized and time-consuming,
-this should not be used in practice and is kept for testing purposes.
-}
-\item{\code{pred_pathway_structured}}{
-A fast and optimized version that leverage the fact that\eqn{S_{t+1}} is
+A fast and optimized algorithm that leverages
+the fact that\eqn{S_{t+1}} is
 the union of \eqn{S_t} and of a single hypothesis index.
 The algorithm needs to work on a complete forest,
-so this version first completes the forest
+so this implementation first completes the forest
 (unless told that the forest has already been completed,
 see \code{\link[=forest_completion]{forest_completion()}}),
 and the completion fails if the input is a pruned forest (see \code{\link[=pruning]{pruning()}}),
@@ -97,8 +80,6 @@ so if a pruned forest is given as input,
 it MUST be said so with the \code{is_pruned} argument
 so that the function skips completion
 (hence the pruned forest given as input must already be complete).
-}
-}
 }
 \examples{
 m <- 20
@@ -118,11 +99,6 @@ zetas_list <- list(
   c(1, 1, 1, 2, 1, 1)
 )
 leaf_list <- as.list(1:m)
-pred_pathway_structured_naive(1:m,forest_structure,
-zetas_list, leaf_list, pruning = FALSE)
-
-pred_pathway_structured_naive(1:m, forest_structure,
-zetas_list, leaf_list, pruning = TRUE)
 
 pred_pathway_structured(1:m, forest_structure,
 zetas_list, leaf_list, pruning = FALSE)

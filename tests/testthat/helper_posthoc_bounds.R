@@ -35,3 +35,59 @@ curve_max_fp_mein2006 <- function(p_values, thr) {
   V_BAR <- R - S_BAR[R]
   V_BAR
 }
+
+# Naive confidence envelope computations on a pathway in the structured setting
+# Repeatedly calls [pred_subset_structured()] on each \eqn{S_t},
+# which is not optimized and time-consuming,
+# this should not be used in practice and is kept for testing purposes.
+pred_pathway_structured_naive <- function(
+  perm,
+  forest_structure,
+  zetas_list,
+  leaf_list,
+  pruning = FALSE,
+  delete_gaps = FALSE
+) {
+  vstars <- numeric(length(perm))
+
+  # the naive version doesn't need a proper completion of the
+  # forest structure because pred_subset_structured
+  # implicitly completes, and for the same reason
+  # it is allowed to prune leaves
+
+  if (pruning) {
+    pruned <- pruning(
+      forest_structure,
+      zetas_list,
+      leaf_list,
+      prune_leafs = TRUE,
+      delete_gaps = delete_gaps
+    )
+    forest_structure <- pruned$forest_structure
+    zetas_list <- pruned$zetas_list
+    m <- length(unlist(leaf_list))
+    if (length(perm) == m) {
+      # means that the last bound to compute
+      # is V^*({1, ..., m}),
+      # but the pruning already computed
+      # V^*({1, ..., m}) as a by-product so we
+      # might as well use it:
+      vstars[m] <- pruned$v_star_all
+      perm <- perm[-m]
+    }
+  }
+
+  S <- numeric(0)
+  j <- 0
+  for (t in perm) {
+    j <- j + 1
+    S <- c(S, t)
+    vstars[j] <- pred_subset_structured(
+      S,
+      forest_structure,
+      zetas_list,
+      leaf_list
+    )
+  }
+  return(vstars)
+}

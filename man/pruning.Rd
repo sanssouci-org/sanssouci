@@ -27,7 +27,6 @@ of the forest structure. See \code{\link[=pred_subset_structured]{pred_subset_st
 If \code{TRUE}, will also prune atoms/leaves for
 which \eqn{\zeta_k \geq |R_k|},
 this makes the computation of \code{\link[=pred_subset_structured]{pred_subset_structured()}}
-and \code{\link[=pred_pathway_structured_naive]{pred_pathway_structured_naive()}}
 even faster but should not be used with \code{\link[=pred_pathway_structured]{pred_pathway_structured()}}
 because this needs the structure to be complete (i.e., with all its atoms).
 This is why the default option is \code{FALSE}.}
@@ -47,8 +46,8 @@ after pruning.}
 }
 \description{
 The pruned forest structure makes the computation
-of \code{\link[=pred_subset_structured]{pred_subset_structured()}},
-\code{\link[=pred_pathway_structured]{pred_pathway_structured()}} and \code{\link[=pred_pathway_structured_naive]{pred_pathway_structured_naive()}} faster.
+of \code{\link[=pred_subset_structured]{pred_subset_structured()}} and
+\code{\link[=pred_pathway_structured]{pred_pathway_structured()}} faster.
 }
 \references{
 Durand, G., Blanchard, G., Neuvial, P., & Roquain, E. (2020).

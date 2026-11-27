@@ -413,8 +413,8 @@ pred_subset_structured <- function(S, forest_structure, zetas_list, leaf_list) {
 #' Prune a forest structure to speed up computations
 #'
 #' @description The pruned forest structure makes the computation
-#' of [pred_subset_structured()],
-#' [pred_pathway_structured()] and [pred_pathway_structured_naive()] faster.
+#' of [pred_subset_structured()] and
+#' [pred_pathway_structured()] faster.
 #'
 #' @param forest_structure A list of list representing the forest structure.
 #' See [pred_subset_structured()] for more information.
@@ -427,7 +427,6 @@ pred_subset_structured <- function(S, forest_structure, zetas_list, leaf_list) {
 #' If \code{TRUE}, will also prune atoms/leaves for
 #' which \eqn{\zeta_k \geq |R_k|},
 #' this makes the computation of [pred_subset_structured()]
-#' and [pred_pathway_structured_naive()]
 #' even faster but should not be used with [pred_pathway_structured()]
 #' because this needs the structure to be complete (i.e., with all its atoms).
 #' This is why the default option is \code{FALSE}.
@@ -601,18 +600,11 @@ delete_gaps <- function(forest_structure, zetas_list, leaf_list) {
 #' that possess the forest structure
 #' (see References).
 #'
-#' @details Two functions are available
-#' \describe{
-#' \item{\code{pred_pathway_structured_naive}}{
-#' Repeatedly calls [pred_subset_structured()] on each \eqn{S_t},
-#' which is not optimized and time-consuming,
-#' this should not be used in practice and is kept for testing purposes.
-#' }
-#' \item{\code{pred_pathway_structured}}{
-#' A fast and optimized version that leverage the fact that\eqn{S_{t+1}} is
+#' @details A fast and optimized algorithm that leverages
+#' the fact that\eqn{S_{t+1}} is
 #' the union of \eqn{S_t} and of a single hypothesis index.
 #' The algorithm needs to work on a complete forest,
-#' so this version first completes the forest
+#' so this implementation first completes the forest
 #' (unless told that the forest has already been completed,
 #' see [forest_completion()]),
 #' and the completion fails if the input is a pruned forest (see [pruning()]),
@@ -620,8 +612,6 @@ delete_gaps <- function(forest_structure, zetas_list, leaf_list) {
 #' it MUST be said so with the \code{is_pruned} argument
 #' so that the function skips completion
 #' (hence the pruned forest given as input must already be complete).
-#' }
-#' }
 #'
 #' @param perm An integer vector of elements in \code{1:m}, all different,
 #' and of size up to \code{m}
@@ -679,71 +669,12 @@ delete_gaps <- function(forest_structure, zetas_list, leaf_list) {
 #'   c(1, 1, 1, 2, 1, 1)
 #' )
 #' leaf_list <- as.list(1:m)
-#' pred_pathway_structured_naive(1:m,forest_structure,
-#' zetas_list, leaf_list, pruning = FALSE)
-#'
-#' pred_pathway_structured_naive(1:m, forest_structure,
-#' zetas_list, leaf_list, pruning = TRUE)
 #'
 #' pred_pathway_structured(1:m, forest_structure,
 #' zetas_list, leaf_list, pruning = FALSE)
 #'
 #' pred_pathway_structured(1:m, forest_structure,
 #' zetas_list, leaf_list, pruning = TRUE)
-
-#' @rdname pred_pathway_structured
-#' @export
-pred_pathway_structured_naive <- function(
-  perm,
-  forest_structure,
-  zetas_list,
-  leaf_list,
-  pruning = FALSE,
-  delete_gaps = FALSE
-) {
-  vstars <- numeric(length(perm))
-
-  # the naive version doesn't need a proper completion of the
-  # forest structure because pred_subset_structured
-  # implicitly completes, and for the same reason
-  # it is allowed to prune leaves
-
-  if (pruning) {
-    pruned <- pruning(
-      forest_structure,
-      zetas_list,
-      leaf_list,
-      prune_leafs = TRUE,
-      delete_gaps = delete_gaps
-    )
-    forest_structure <- pruned$forest_structure
-    zetas_list <- pruned$zetas_list
-    m <- length(unlist(leaf_list))
-    if (length(perm) == m) {
-      # means that the last bound to compute
-      # is V^*({1, ..., m}),
-      # but the pruning already computed
-      # V^*({1, ..., m}) as a by-product so we
-      # might as well use it:
-      vstars[m] <- pruned$v_star_all
-      perm <- perm[-m]
-    }
-  }
-
-  S <- numeric(0)
-  j <- 0
-  for (t in perm) {
-    j <- j + 1
-    S <- c(S, t)
-    vstars[j] <- pred_subset_structured(
-      S,
-      forest_structure,
-      zetas_list,
-      leaf_list
-    )
-  }
-  return(vstars)
-}
 
 #' @rdname pred_pathway_structured
 #' @export
