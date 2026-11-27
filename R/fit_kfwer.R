@@ -1,5 +1,10 @@
 #' Fit Joint Error Rate with k-Family Wise Error Rate
 #'
+#' @export
+fit_kfwer <- function(object, alpha, method, ...) UseMethod("fit_kfwer")
+
+#' Fit Joint Error Rate with k-Family Wise Error Rate
+#'
 #' @inheritParams fit.sanssouci_data object alpha adapt stepdown
 #' @param method A string in \{"simes", "lambdacalibration", "heterosimes"\}.
 #'                "simes" correponds to naive Simes template.
@@ -23,7 +28,7 @@
 #'
 #'   - Oracle A family such that the associated bounds correspond to the true
 #'   numbers/proportions of true/false positives. "truth" must be available in
-#'   object$input$truth.
+#'   object$truth.
 #'
 #' @param p_cdfs argument for method = "heterosimes"
 #'
@@ -37,7 +42,13 @@
 #' @export
 #'
 #' @examples
-#' # todo
+#' data(expr_ALL, package = "sanssouci.data")
+#' groups <- ifelse(colnames(expr_ALL) == "NEG", 0, 1)
+#' table(groups)
+#' a <- new_sanssouci_data(Y = expr_ALL, X = groups)
+#'
+#' res <- fit_kfwer(a, alpha = 0.1, method = "simes")
+#' res <- fit_kfwer(a, alpha = 0.1, method = "lambdacalibration")
 fit_kfwer.sanssouci_data <- function(object, alpha,
                                      method = c(
                                        "simes",
@@ -45,14 +56,17 @@ fit_kfwer.sanssouci_data <- function(object, alpha,
                                        "heterosimes"
                                      ),
                                      adapt = FALSE, stepdown = FALSE,
-                                     n_permutations = 1000,
-                                     K = n_hyp.SansSouci(object),
+                                     n_permutations = NULL,
+                                     K = get_n_hyp(object),
                                      template = c("Simes", "Beta", "Oracle",
                                                   "notip"),
                                      p_cdfs = NULL, max_stepdown = 10L,
                                      verbose = FALSE) {
-  match.arg(method)
-  match.arg(template)
+  method <- match.arg(method)
+  template <- match.arg(template)
+
+  print(method)
+  print(template)
 
   if (mode(alpha) != "numeric" || alpha < 0 || alpha > 1) {
     stop("Argument 'alpha' should be a numeric value in [0,1]")
@@ -86,7 +100,7 @@ fit_kfwer.sanssouci_data <- function(object, alpha,
       n_permutations <- NULL
     }
 
-    if (!is.null(template) && template != "Simes") {
+    if ( template != "Simes") {
       message("With method = 'simes', template is set to 'Simes'")
       template <- "Simes"
     }
@@ -112,7 +126,7 @@ fit_kfwer.sanssouci_data <- function(object, alpha,
       stop("'notip' template is not currently implemented. Come back soon ;)")
     }
 
-    row_test_fun <- get_test(object) ## todo add get_test.sanssouci_data
+    row_test_fun <- get_test_fun(object) ## todo add get_test.sanssouci_data
     if (is.null(row_test_fun)) {
       stop(
         "Test function must be refered in new_sanssouci_data",
@@ -125,10 +139,11 @@ fit_kfwer.sanssouci_data <- function(object, alpha,
     }
 
     ## getter on object
-    Y <- object$Y
+    Y <- get_y(object)
     alternative <- object$alternative
-    type <- object$type
+    type <- get_test_type(object)
     n_obs <- n_observations(object)
+    groups <- get_groups_to_permute(object)
 
 
     ## core function
@@ -209,9 +224,13 @@ fit_kfwer.sanssouci_data <- function(object, alpha,
         lambda <- NULL # ou ici alpha ?
       }
     } else if (template == "Oracle"){
+
+      if(is.null(get_truth(object))){
+        stop("Please provide truth in new_sanssouci_data.")
+      }
       hat_m = m
       lambda = NULL
-      thr = object$truth
+      thr = get_truth(object)
     }
   } else if (method == "heterosimes") {
     stop(
@@ -229,6 +248,7 @@ fit_kfwer.sanssouci_data <- function(object, alpha,
     p_values = p_values, thr = thr,
     hat_m0 = hat_m, lambda = lambda
   )
+  return(object)
 }
 
 new_ref_family_kfwer <- function(alpha, method, adapt, stepdown,

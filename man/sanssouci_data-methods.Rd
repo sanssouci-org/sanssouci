@@ -3,11 +3,29 @@
 \name{get_p_values.sanssouci_data}
 \alias{get_p_values.sanssouci_data}
 \alias{get_struct.sanssouci_data}
+\alias{get_n_hyp.sanssouci_data}
+\alias{get_test_fun.sanssouci_data}
+\alias{get_test_type.sanssouci_data}
+\alias{get_groups_to_permute.sanssouci_data}
+\alias{get_y.sanssouci_data}
+\alias{get_truth.sanssouci_data}
 \title{\code{get_p_values}: get p-values}
 \usage{
 \method{get_p_values}{sanssouci_data}(object)
 
 \method{get_struct}{sanssouci_data}(object)
+
+\method{get_n_hyp}{sanssouci_data}(object)
+
+\method{get_test_fun}{sanssouci_data}(object)
+
+\method{get_test_type}{sanssouci_data}(object)
+
+\method{get_groups_to_permute}{sanssouci_data}(object)
+
+\method{get_y}{sanssouci_data}(object)
+
+\method{get_truth}{sanssouci_data}(object)
 }
 \arguments{
 \item{object}{An object of class \code{sanssouci_data}}
@@ -16,4 +34,17 @@
 \code{get_p_values}: get p-values
 
 \code{get_struct}: get struct
+
+\code{get_n_hyp}: get number of hypotheses
+
+\code{get_test_fun}: get test function
+
+\code{get_test_type}: get type of test (one sample, two sample, correlation test,
+linear model test)
+
+\code{get_groups_to_permute}: get groups
+
+\code{get_y}: get Y
+
+\code{get_truth}: get truth
 }

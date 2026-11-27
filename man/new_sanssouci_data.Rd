@@ -11,6 +11,7 @@ new_sanssouci_data(
   contrast = NULL,
   struct = NULL,
   test_fun = NULL,
+  alternative = c("two.sided", "less", "greater"),
   truth = NULL
 )
 }
@@ -37,11 +38,8 @@ Create an object of class 'sanssouci_data'
 data(expr_ALL, package = "sanssouci.data")
 groups <- ifelse(colnames(expr_ALL) == "NEG", 0, 1)
 table(groups)
-a <- SansSouci(Y = expr_ALL, groups = groups)
+a <- new_sanssouci_data(Y = expr_ALL, X = groups)
 
-res <- fit(a, B = 100, alpha = 0.1)
-plot(res, xmax = 500)
-res_beta <- fit(res, B = 100, alpha = 0.1, family = "Beta", K = 10)
-plot(res_beta, xmax = 500)
+b <- new_sanssouci_data(Y = expr_ALL, X = groups, test = row_wilcoxon_tests)
 
 }

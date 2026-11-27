@@ -1,4 +1,4 @@
-fit.sanssouc_data <- function(object, alpha,
+fit.sanssouci_data <- function(object, alpha,
                               setting = c("kfwer", "levelets", "struct"),
                               method, adapt = FALSE,
                               stepdown = FALSE, ...) {

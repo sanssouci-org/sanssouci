@@ -14,103 +14,151 @@
 #' data(expr_ALL, package = "sanssouci.data")
 #' groups <- ifelse(colnames(expr_ALL) == "NEG", 0, 1)
 #' table(groups)
-#' a <- SansSouci(Y = expr_ALL, groups = groups)
+#' a <- new_sanssouci_data(Y = expr_ALL, X = groups)
 #'
-#' res <- fit(a, B = 100, alpha = 0.1)
-#' plot(res, xmax = 500)
-#' res_beta <- fit(res, B = 100, alpha = 0.1, family = "Beta", K = 10)
-#' plot(res_beta, xmax = 500)
+#' b <- new_sanssouci_data(Y = expr_ALL, X = groups, test = row_wilcoxon_tests)
 #'
-new_sanssouci_data <- function(Y = NULL, 
+new_sanssouci_data <- function(Y = NULL,
                                p_values = NULL,
-                               X = NULL, 
+                               X = NULL,
                                contrast = NULL,
                                struct = NULL,
                                test_fun = NULL,
                                alternative = c("two.sided", "less", "greater"),
                                truth = NULL) {
   # first check: not all NULL
-  if (is.null(Y) & is.null(p_values) & is.null(X) & is.null(contrast) 
-      & is.null(struct)) {
-    stop("At least one of 'Y', 'p_values', 'X', 'contrast', 'struct' ",
-         "should be provided")
+  if (is.null(Y) & is.null(p_values) & is.null(X) & is.null(contrast) &
+      is.null(struct)) {
+    stop(
+      "At least one of 'Y', 'p_values', 'X', 'contrast', 'struct' ",
+      "should be provided"
+    )
   }
   alternative <- match.arg(alternative)
   if (is.null(struct)) {
     # Are the arguments present?
     signature <- c(!is.null(X), !is.null(contrast))
-    
+
     n_obs <- ncol(Y)
     D <- nrow(Y)
-    
+
     if (is.null(Y)) {
       ## can only do Simes and if so, need p-values
+      ## setting = kfwer, method = Simes
+      ## setting kfwer, method = lambdacalibration and n_permutations = 0
       if (is.null(p_values)) {
         stop("'p_values' should be provided if 'Y' is NULL")
       }
-      if (!is.null(X) | !is.null(contrast) | !is.null(test_fun)) {
-        message("If 'Y' is not provided, 'X', 'contrast' and 'test_fun' 
+      if (!is.null(X) || !is.null(contrast) || !is.null(test_fun)) {
+        message("If 'Y' is not provided, 'X', 'contrast' and 'test_fun'
                 cannot be used")
       }
     } else { ## Y is not null
+
       if (is.null(X)) {
-        # one sample test + message
-        type <- "1 sample"
-        contrast_name <- "One sample test"
+        X <- rep(1, n_obs)
         message("No design matrix provided: one-sample tests will be performed")
+        # one sample test + message
         ## check consistency of function row tests ?
-      } else { ## Y and X are not null
-        if (is.null(contrast)) {
-          ## No 'contrast': detection of one, two samples or continuous
-          n_groups <- length(unique(X))
-          if (n_groups > 1) {
-            .check_groups(X, ncol(Y))
+      }
+
+      ## Y and X are not null
+
+      if (is.null(contrast)) {
+        ## No 'contrast': detection of one, two samples or continuous
+
+        ## assume that if contrast is NULL, then X must be a vector.
+        if(is.matrix(X)){
+          stop("If contrast is NULL, please provide a vector for X.",
+               "To test a matrix X, please provide a contrast matrix.")
+        }
+
+        n_groups <- length(unique(X))
+        if (n_groups > 1) {
+          .check_groups(X, ncol(Y))
+        }
+
+
+        fun_name <- as.character(substitute(test_fun))
+
+        if (n_groups == 1) {
+          type <- "1 sample"
+          contrast_name <- "One sample test"
+          if(is.null(test_fun)){
+            test_fun <- row_z_tests
+            fun_name <- "row_z_tests"
           }
-          if (n_groups == 1) {
-            type <- "1 sample"
-            contrast_name <- "One sample test"
-          } else if (n_groups == 2) {
-            type <- "2 samples"
-            contrast_name <- "Group 1 vs group 0"
-            # } else if (n_groups == n) {
-          } else { # by default consider a continuous
-            type <- "Continuous case, correlation test"
-            contrast_name <- "Correlation test"
-            if (n_groups != n_obs) {
-              message(
-                "Ties were detected in the grouping variable, but a continuous",
-                " vector was provided for groups, and a correlation test is being",
-                " performed. If you intend to test associations across more than",
-                " two groups, please provide a full design matrix using the X",
-                " argument instead."
-              )
-            }
-            groups <- X
+        } else if (n_groups == 2) {
+          type <- "2 samples"
+          contrast_name <- "Group 1 vs group 0"
+          if(is.null(test_fun)){
+            test_fun <- row_welch_tests
+            fun_name <- "row_welch_tests"
           }
-          L <- 1                              
-          P <- 1
-        } else { # 'Y', 'X' and 'contrast' are not NULL: linear model
-          .check_lm_test(t(Y), X, contrast)
-          type <- "linear model"
-          L <- nrow(contrast)
-          P <- ncol(X)
-          if (is.null(rownames(contrast))) {
-            contrast_name <- paste("contrast", seq_len(L))
-            rownames(contrast) <- contrast_name
-          } else {
-            contrast_name <- rownames(contrast)
+          # } else if (n_groups == n) {
+        } else { # by default consider a continuous
+          type <- "Continuous case, correlation test"
+          contrast_name <- "Correlation test"
+          if (n_groups != n_obs) {
+            message(
+              "Ties were detected in the grouping variable, but a continuous",
+              " vector was provided for groups, and a correlation test is being",
+              " performed. If you intend to test associations across more than",
+              " two groups, please provide a full design matrix using the X",
+              " argument instead."
+            )
+          }
+          groups <- X
+          if(is.null(test_fun)){
+            test_fun <- row_pearson_correlation_tests
+            fun_name <- "row_pearson_correlation_tests"
           }
         }
+        L <- 1
+        P <- 1
+      } else { # 'Y', 'X' and 'contrast' are not NULL: linear model
+
+        .check_lm_test(t(Y), X, contrast)
+        type <- "linear model"
+        L <- nrow(contrast)
+        P <- ncol(X)
+
+        contrast_name <- rownames(contrast)
+        if (is.null(contrast_name)) {
+          contrast_name <- paste("contrast", seq_len(L))
+          rownames(contrast) <- contrast_name
+        }
+
+        row_lm_test_with_x_c <- function(...) {
+          row_lm_test(..., X = X, C = C)
+        }
+        test_fun <- row_lm_test_with_x_c
+        fun_name <- "row_lm_test"
+        groups <- matrix(1:n, ncol = 1)
+
       }
+
+      if(!is.null(p_values)){
+        warning("p_values is provided as well as Y, then p_values will be",
+                "discarded.")
+      }
+
+      res_test <- test_fun(Y, groups, alternative = alternative)
+      p_values <- res_test$p_value
+      estimates <- res_test$estimate #foldchange info
+
+
     }
   } else {
-    # check struct format    
+    # check struct format
     if (is.null(p_values)) {
       stop("Argument 'p_values' cannot be NULL if 'struct' is not NULL")
     }
     if (!is.null(Y) | !is.null(X) | !is.null(contrast) | !is.null(test_fun)) {
-      warning("Arguments 'Y', 'X', 'contrast', 'test_fun' not used ", 
-              "if 'struct' is not NULL")
+      warning(
+        "Arguments 'Y', 'X', 'contrast', 'test_fun' not used ",
+        "if 'struct' is not NULL"
+      )
     }
   }
   if (!is.null(truth)) {
@@ -120,11 +168,12 @@ new_sanssouci_data <- function(Y = NULL,
       .check_groups(truth, nrow(Y))
     }
   }
-  obj <- struct(
+  obj <- structure(
     list(
       Y = Y,
       X = X,
       p_values = p_values,
+      estimates = estimates,
       groups = groups,
       C = contrast,
       contrast_name = contrast_name,
@@ -132,8 +181,10 @@ new_sanssouci_data <- function(Y = NULL,
       n_dimensions = D,
       n_contrasts = L,
       n_hypotheses = D * L,
-      n_obs = n,
+      n_obs = n_obs,
       n_variables = P,
+      test_fun = test_fun,
+      test_fun_name = fun_name,
       type = type,
       truth = truth
     ),
@@ -141,7 +192,7 @@ new_sanssouci_data <- function(Y = NULL,
   )
   obj
 }
-    
+
 get_p_values <- function(object) UseMethod("get_p_values")
 #' `get_p_values`: get p-values
 #'
@@ -171,3 +222,55 @@ get_n_hyp <- function(object) UseMethod("get_n_hyp")
 get_n_hyp.sanssouci_data <- function(object) {
   object$n_hyp
 }
+
+get_test_fun <- function(object) UseMethod("get_test_fun")
+#' `get_test_fun`: get test function
+#'
+#' @rdname sanssouci_data-methods
+#' @param object An object of class `sanssouci_data`
+#' @export
+get_test_fun.sanssouci_data <- function(object) {
+  object$test_fun
+}
+
+get_test_type <- function(object) UseMethod("get_test_type")
+#' `get_test_type`: get type of test (one sample, two sample, correlation test,
+#' linear model test)
+#'
+#' @rdname sanssouci_data-methods
+#' @param object An object of class `sanssouci_data`
+#' @export
+get_test_type.sanssouci_data <- function(object) {
+  object$type
+}
+
+get_groups_to_permute <- function(object) UseMethod("get_groups_to_permute")
+#' `get_groups_to_permute`: get groups
+#'
+#' @rdname sanssouci_data-methods
+#' @param object An object of class `sanssouci_data`
+#' @export
+get_groups_to_permute.sanssouci_data <- function(object) {
+  object$groups
+}
+
+get_y <- function(object) UseMethod("get_y")
+#' `get_y`: get Y
+#'
+#' @rdname sanssouci_data-methods
+#' @param object An object of class `sanssouci_data`
+#' @export
+get_y.sanssouci_data <- function(object) {
+  object$Y
+}
+
+get_truth <- function(object) UseMethod("get_truth")
+#' `get_truth`: get truth
+#'
+#' @rdname sanssouci_data-methods
+#' @param object An object of class `sanssouci_data`
+#' @export
+get_truth.sanssouci_data <- function(object) {
+  object$truth
+}
+
